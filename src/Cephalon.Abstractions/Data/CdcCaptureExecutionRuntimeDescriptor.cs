@@ -346,6 +346,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus ManagedConnectorDistributedRetryLease { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector distributed retry orchestration posture derived from automatic retry, retry policy, durable journal, and distributed retry lease truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus ManagedConnectorDistributedRetryOrchestration { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

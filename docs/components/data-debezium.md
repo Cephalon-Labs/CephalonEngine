@@ -646,9 +646,17 @@ distributed scheduler, or second coordinator.
   journal evidence so the shared execution-runtime catalog can block automatic retry when
   cross-node idempotency is still in-memory-only or duplicated even though raw coordination remains
   lease-held
+- the `ENG-188` follow-through keeps that same bounded retry lane orchestration-aware:
+  `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDistributedRetryOrchestration` now
+  publishes stable `not-applicable`, `disabled`, `operator-only`, `cooldown`, `blocked`,
+  `scheduled`, and `completed` posture together with scheduler identity, polling cadence,
+  orchestration owner, active reporter, retry fingerprint, durable-history evidence, and
+  `CanScheduleAutomaticRetryOnCurrentNode`, so the shared execution-runtime catalog can drive the
+  existing bounded automatic retry loop from one shared answer instead of provider-local scheduler
+  checks
 - automatic background retry execution currently remains bounded shared in-process truth; it does
-  not mean Cephalon already owns durable distributed command journals, distributed retry
-  schedulers, or full managed-connector idempotency orchestration
+  not mean Cephalon already owns durable distributed command journals, durable distributed
+  schedulers, or full provider-owned control-plane execution orchestration
 
 ## Not shipped in these slices
 
@@ -659,7 +667,7 @@ This pack intentionally still does not claim:
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
-- durable distributed command journals, durable distributed retry schedulers, or full idempotency orchestration beyond the shipped shared bounded command-journal plus durable journal posture plus bounded automatic background retry plus coordination posture plus distributed retry lease truth
+- durable distributed command journals, durable distributed retry schedulers, or full idempotency orchestration beyond the shipped shared bounded command-journal plus durable journal posture plus bounded automatic background retry plus coordination posture plus distributed retry lease truth plus distributed retry orchestration truth
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

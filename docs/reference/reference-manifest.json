@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T21:50:12.6403019+00:00",
+  "GeneratedAtUtc": "2026-04-23T22:16:33.5916112+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 461
+      "TypeCount": 465
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -571,7 +571,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 181
+      "TypeCount": 185
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3210,7 +3210,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 35,
+        "Properties": 36,
         "Methods": 0
       }
     },
@@ -3886,6 +3886,66 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 42,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector distributed retry orchestration answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 19,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
+      "Summary": "Defines the stable source identifiers used by managed-connector distributed retry orchestration answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector distributed retry orchestration answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "Summary": "Describes the current operator-facing managed-connector distributed retry orchestration posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 37,
         "Methods": 0
       }
     },
@@ -7966,7 +8026,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 58
+        "Methods": 61
       }
     },
     {
@@ -14660,6 +14720,17 @@
     {
       "DisplayName": "ActiveReporterId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-activereporterid",
+      "Signature": "string ActiveReporterId { get; set; }",
+      "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
+    },
+    {
+      "DisplayName": "ActiveReporterId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -14709,6 +14780,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-activereporterleaseexpiresatutc",
+      "Signature": "DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when the active reporter lease expires when one is known."
+    },
+    {
+      "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-activereporterleaseexpiresatutc",
       "Signature": "DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }",
       "Summary": "Gets the UTC timestamp when the active reporter lease expires when one is known."
     },
@@ -17729,6 +17811,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19190,6 +19283,17 @@
       "Summary": "Gets the number of retained automatic retry attempts currently visible to distributed retry lease posture."
     },
     {
+      "DisplayName": "AutomaticRetryAttemptRecorded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-automaticretryattemptrecorded",
+      "Signature": "const string AutomaticRetryAttemptRecorded",
+      "Summary": "The bounded command history already records one automatic retry attempt."
+    },
+    {
       "DisplayName": "AutomaticRetryCoordination",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources",
@@ -19221,6 +19325,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-automaticretrycoordinationstate",
       "Signature": "string AutomaticRetryCoordinationState { get; set; }",
       "Summary": "Gets the current managed-connector automatic background retry coordination state that informed distributed retry lease posture."
+    },
+    {
+      "DisplayName": "AutomaticRetryCoordinationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-automaticretrycoordinationstate",
+      "Signature": "string AutomaticRetryCoordinationState { get; set; }",
+      "Summary": "Gets the current managed-connector automatic background retry coordination state that informed distributed retry orchestration."
     },
     {
       "DisplayName": "AutomaticRetryDisabled",
@@ -19267,6 +19382,17 @@
       "Summary": "The automatic background retry coordination answer was derived primarily from automatic retry posture."
     },
     {
+      "DisplayName": "AutomaticRetryExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-automaticretryexecution",
+      "Signature": "const string AutomaticRetryExecution",
+      "Summary": "The distributed retry orchestration answer was derived primarily from automatic background retry execution truth."
+    },
+    {
       "DisplayName": "AutomaticRetryExecutionState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus",
@@ -19298,6 +19424,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-automaticretryexecutionstate",
       "Signature": "string AutomaticRetryExecutionState { get; set; }",
       "Summary": "Gets the current managed-connector automatic background retry execution state that informed distributed retry lease posture."
+    },
+    {
+      "DisplayName": "AutomaticRetryExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-automaticretryexecutionstate",
+      "Signature": "string AutomaticRetryExecutionState { get; set; }",
+      "Summary": "Gets the current managed-connector automatic background retry execution state that informed distributed retry orchestration."
     },
     {
       "DisplayName": "AutomaticRetryHistory",
@@ -20699,6 +20836,17 @@
     {
       "DisplayName": "Blocked",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-blocked",
+      "Signature": "const string Blocked",
+      "Summary": "Distributed retry orchestration remains blocked by lease, durability, or safety truth."
+    },
+    {
+      "DisplayName": "Blocked",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20992,6 +21140,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-boundedretention",
       "Signature": "const string BoundedRetention",
       "Summary": "The command journal currently exposes bounded retention for recent command evidence."
+    },
+    {
+      "DisplayName": "BoundedSharedScheduler",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-boundedsharedscheduler",
+      "Signature": "const string BoundedSharedScheduler",
+      "Summary": "The runtime participates in the shared bounded distributed retry scheduler."
     },
     {
       "DisplayName": "BreakDurationSeconds",
@@ -21654,6 +21813,17 @@
       "Summary": "Gets a value indicating whether Cephalon can reuse the full matching safety context for retry execution."
     },
     {
+      "DisplayName": "CanScheduleAutomaticRetryOnCurrentNode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-canscheduleautomaticretryoncurrentnode",
+      "Signature": "bool CanScheduleAutomaticRetryOnCurrentNode { get; set; }",
+      "Summary": "Gets a value indicating whether the current node can currently schedule one bounded automatic retry attempt."
+    },
+    {
       "DisplayName": "CanUseProviderExecutionAdapter",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
@@ -22129,6 +22299,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active distributed retry orchestration categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22334,6 +22515,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable distributed retry lease categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable distributed retry orchestration categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -22664,6 +22856,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-ctor-system-string-system-string",
       "Signature": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus(string state, string description)",
       "Summary": "Creates a new managed-connector distributed retry lease answer."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector distributed retry orchestration answer."
     },
     {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
@@ -23005,6 +23208,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with distributed retry lease posture."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with distributed retry orchestration."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -25086,6 +25300,17 @@
       "Summary": "The distributed retry lease answer was derived primarily from durable command-journal truth."
     },
     {
+      "DisplayName": "CommandJournalDurability",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-commandjournaldurability",
+      "Signature": "const string CommandJournalDurability",
+      "Summary": "The distributed retry orchestration answer was derived primarily from durable command-journal truth."
+    },
+    {
       "DisplayName": "CommandJournalDurabilityState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
@@ -25095,6 +25320,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-commandjournaldurabilitystate",
       "Signature": "string CommandJournalDurabilityState { get; set; }",
       "Summary": "Gets the current managed-connector command-journal durability state that informed distributed retry lease posture."
+    },
+    {
+      "DisplayName": "CommandJournalDurabilityState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-commandjournaldurabilitystate",
+      "Signature": "string CommandJournalDurabilityState { get; set; }",
+      "Summary": "Gets the current managed-connector command-journal durability state that informed distributed retry orchestration."
     },
     {
       "DisplayName": "CommandJournalSourceId",
@@ -25315,6 +25551,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstates-completed",
       "Signature": "const string Completed",
       "Summary": "Automatic background retry execution has already recorded one matching shared retry attempt."
+    },
+    {
+      "DisplayName": "Completed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-completed",
+      "Signature": "const string Completed",
+      "Summary": "Distributed retry orchestration does not currently need to schedule another retry attempt."
     },
     {
       "DisplayName": "Completed",
@@ -26793,6 +27040,17 @@
     {
       "DisplayName": "Cooldown",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-cooldown",
+      "Signature": "const string Cooldown",
+      "Summary": "Distributed retry orchestration is waiting for the active cooldown window to elapse."
+    },
+    {
+      "DisplayName": "Cooldown",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26892,6 +27150,17 @@
     {
       "DisplayName": "CooldownUntilUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-cooldownuntilutc",
+      "Signature": "DateTimeOffset? CooldownUntilUtc { get; set; }",
+      "Summary": "Gets the timestamp when the active retry cooldown window ends, when one applies."
+    },
+    {
+      "DisplayName": "CooldownUntilUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26899,6 +27168,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-cooldownuntilutc",
       "Signature": "DateTimeOffset? CooldownUntilUtc { get; set; }",
       "Summary": "Gets the timestamp when the active retry cooldown window ends, when one applies."
+    },
+    {
+      "DisplayName": "CooldownWindow",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-cooldownwindow",
+      "Signature": "const string CooldownWindow",
+      "Summary": "The current retry policy is still waiting for a cooldown window to elapse."
     },
     {
       "DisplayName": "CoordinatedMigrationIds",
@@ -26985,6 +27265,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-coordinationownerid",
+      "Signature": "string CoordinationOwnerId { get; set; }",
+      "Summary": "Gets the host-owned coordination owner identifier when one was configured for automatic retry."
+    },
+    {
+      "DisplayName": "CoordinationOwnerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-coordinationownerid",
       "Signature": "string CoordinationOwnerId { get; set; }",
       "Summary": "Gets the host-owned coordination owner identifier when one was configured for automatic retry."
     },
@@ -27528,6 +27819,17 @@
       "Summary": "Cross-node idempotency currently remains risky for automatic retry."
     },
     {
+      "DisplayName": "CrossNodeIdempotencyRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-crossnodeidempotencyrisk",
+      "Signature": "const string CrossNodeIdempotencyRisk",
+      "Summary": "Cross-node idempotency currently remains risky for automatic retry."
+    },
+    {
       "DisplayName": "CrossNodeIdempotentSafe",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
@@ -27535,6 +27837,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-crossnodeidempotentsafe",
+      "Signature": "const string CrossNodeIdempotentSafe",
+      "Summary": "Cross-node idempotency currently looks safe for automatic retry."
+    },
+    {
+      "DisplayName": "CrossNodeIdempotentSafe",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-crossnodeidempotentsafe",
       "Signature": "const string CrossNodeIdempotentSafe",
       "Summary": "Cross-node idempotency currently looks safe for automatic retry."
     },
@@ -27592,6 +27905,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-currentnodeexecutable",
       "Signature": "const string CurrentNodeExecutable",
       "Summary": "The current host can execute automatic retry safely on this node."
+    },
+    {
+      "DisplayName": "CurrentNodeSchedulable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-currentnodeschedulable",
+      "Signature": "const string CurrentNodeSchedulable",
+      "Summary": "The current runtime can schedule automatic retry on the current node."
     },
     {
       "DisplayName": "CurrentVersion",
@@ -28812,6 +29136,28 @@
       "Summary": "Gets the default root folder name used for split project configuration files."
     },
     {
+      "DisplayName": "DefaultSchedulerId",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-defaultschedulerid",
+      "Signature": "const string DefaultSchedulerId",
+      "Summary": "The stable shared scheduler identifier used by the bounded distributed retry orchestration lane."
+    },
+    {
+      "DisplayName": "DefaultSchedulerKind",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-defaultschedulerkind",
+      "Signature": "const string DefaultSchedulerKind",
+      "Summary": "The stable shared scheduler kind used by the bounded distributed retry orchestration lane."
+    },
+    {
       "DisplayName": "DefaultSectionPath",
       "Category": "Fields",
       "DeclaringTypeName": "SfidIdOptions",
@@ -29613,6 +29959,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing distributed retry lease summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing distributed retry orchestration summary."
     },
     {
       "DisplayName": "Description",
@@ -30804,6 +31161,17 @@
     },
     {
       "DisplayName": "Disabled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-disabled",
+      "Signature": "const string Disabled",
+      "Summary": "Distributed retry orchestration is currently disabled for the runtime."
+    },
+    {
+      "DisplayName": "Disabled",
       "Category": "Methods",
       "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
@@ -31793,6 +32161,28 @@
       "Summary": "Releases runtime resources."
     },
     {
+      "DisplayName": "DistributedRetryLease",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-distributedretrylease",
+      "Signature": "const string DistributedRetryLease",
+      "Summary": "The distributed retry orchestration answer was derived primarily from distributed retry lease truth."
+    },
+    {
+      "DisplayName": "DistributedRetryLeaseState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-distributedretryleasestate",
+      "Signature": "string DistributedRetryLeaseState { get; set; }",
+      "Summary": "Gets the current managed-connector distributed retry lease state that informed distributed retry orchestration."
+    },
+    {
       "DisplayName": "Distribution",
       "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
@@ -32442,6 +32832,17 @@
       "Summary": "A durable command-journal store is configured for the runtime."
     },
     {
+      "DisplayName": "DurableJournalConfigured",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-durablejournalconfigured",
+      "Signature": "const string DurableJournalConfigured",
+      "Summary": "A durable command-journal store is configured for the runtime."
+    },
+    {
       "DisplayName": "DurableJournalHealthy",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
@@ -32449,6 +32850,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-durablejournalhealthy",
+      "Signature": "const string DurableJournalHealthy",
+      "Summary": "The durable command journal currently looks healthy for cross-node retry decisions."
+    },
+    {
+      "DisplayName": "DurableJournalHealthy",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-durablejournalhealthy",
       "Signature": "const string DurableJournalHealthy",
       "Summary": "The durable command journal currently looks healthy for cross-node retry decisions."
     },
@@ -36239,6 +36651,17 @@
     {
       "DisplayName": "ExecutionOwnership",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-executionownership",
+      "Signature": "string ExecutionOwnership { get; set; }",
+      "Summary": "Gets the operator-facing execution-ownership mode that informed distributed retry orchestration."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
       "NamespaceName": "Cephalon.Data.Configuration",
       "AssemblyName": "Cephalon.Data",
@@ -36360,6 +36783,17 @@
     {
       "DisplayName": "ExecutionRuntimeId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with distributed retry orchestration."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36433,6 +36867,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-executiontopology",
       "Signature": "string ExecutionTopology { get; set; }",
       "Summary": "Gets the operator-facing execution-topology classification that informed distributed retry lease posture."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets the operator-facing execution-topology classification that informed distributed retry orchestration."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -39625,6 +40070,39 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector distributed retry lease answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorDistributedRetryOrchestrationCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryorchestrationcategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorDistributedRetryOrchestrationCategory(string orchestrationCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorDistributedRetryOrchestrationOwnerId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryorchestrationownerid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorDistributedRetryOrchestrationOwnerId(string ownerId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer references the requested local coordination owner identifier."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorDistributedRetryOrchestrationState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryorchestrationstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorDistributedRetryOrchestrationState(string orchestrationState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorDriftCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -41825,6 +42303,17 @@
       "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
     },
     {
+      "DisplayName": "HasDurableStoreConfigured",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-hasdurablestoreconfigured",
+      "Signature": "bool HasDurableStoreConfigured { get; set; }",
+      "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
+    },
+    {
       "DisplayName": "HasFreshnessWindow",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
@@ -42144,6 +42633,17 @@
       "Summary": "Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history."
     },
     {
+      "DisplayName": "HasPersistedRecordedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-haspersistedrecordedhistory",
+      "Signature": "bool HasPersistedRecordedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history."
+    },
+    {
       "DisplayName": "HasPersistedSnapshot",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -42283,6 +42783,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasrecoveredpersistedhistory",
+      "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the current process recovered persisted command history for this runtime."
+    },
+    {
+      "DisplayName": "HasRecoveredPersistedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-hasrecoveredpersistedhistory",
       "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
       "Summary": "Gets a value indicating whether the current process recovered persisted command history for this runtime."
     },
@@ -46137,6 +46648,17 @@
       "Summary": "Automatic retry currently depends on in-memory command history only."
     },
     {
+      "DisplayName": "InMemoryJournalOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-inmemoryjournalonly",
+      "Signature": "const string InMemoryJournalOnly",
+      "Summary": "Automatic retry currently depends on in-memory command history only."
+    },
+    {
       "DisplayName": "InMemoryOnly",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
@@ -46623,6 +47145,17 @@
     {
       "DisplayName": "IsBlocked",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-isblocked",
+      "Signature": "bool IsBlocked { get; }",
+      "Summary": "Gets a value indicating whether distributed retry orchestration is currently blocked by shared runtime truth."
+    },
+    {
+      "DisplayName": "IsBlocked",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -46742,6 +47275,17 @@
       "Summary": "Gets a value indicating whether automatic background retry execution already recorded one matching shared retry attempt."
     },
     {
+      "DisplayName": "IsCompleted",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-iscompleted",
+      "Signature": "bool IsCompleted { get; }",
+      "Summary": "Gets a value indicating whether distributed retry orchestration currently does not need to schedule another retry attempt."
+    },
+    {
       "DisplayName": "IsConfigured",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointAuthoringPolicyDescriptor",
@@ -46784,6 +47328,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-iscooldown",
       "Signature": "bool IsCooldown { get; }",
       "Summary": "Gets a value indicating whether the current retry posture is waiting for a cooldown window to elapse."
+    },
+    {
+      "DisplayName": "IsCooldown",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-iscooldown",
+      "Signature": "bool IsCooldown { get; }",
+      "Summary": "Gets a value indicating whether distributed retry orchestration is currently waiting for a cooldown window."
     },
     {
       "DisplayName": "IsCooldown",
@@ -47004,6 +47559,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-isdisabled",
       "Signature": "bool IsDisabled { get; }",
       "Summary": "Gets a value indicating whether automatic background retry execution is currently disabled."
+    },
+    {
+      "DisplayName": "IsDisabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-isdisabled",
+      "Signature": "bool IsDisabled { get; }",
+      "Summary": "Gets a value indicating whether distributed retry orchestration is currently disabled."
     },
     {
       "DisplayName": "IsDrifted",
@@ -47514,6 +48080,17 @@
     {
       "DisplayName": "IsOperatorOnly",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether distributed retry orchestration still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -47741,6 +48318,17 @@
       "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-isreusable",
       "Signature": "bool IsReusable { get; }",
       "Summary": "Gets a value indicating whether the MVC filter instance can be reused across requests."
+    },
+    {
+      "DisplayName": "IsScheduled",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-isscheduled",
+      "Signature": "bool IsScheduled { get; }",
+      "Summary": "Gets a value indicating whether distributed retry orchestration can currently schedule one bounded automatic retry attempt."
     },
     {
       "DisplayName": "IsSelected",
@@ -49382,6 +49970,17 @@
       "Summary": "Gets the latest automatic retry attempt identifier currently associated with distributed retry lease posture."
     },
     {
+      "DisplayName": "LatestAutomaticRetryAttemptId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-latestautomaticretryattemptid",
+      "Signature": "string LatestAutomaticRetryAttemptId { get; set; }",
+      "Summary": "Gets the latest automatic retry attempt identifier currently associated with distributed retry orchestration."
+    },
+    {
       "DisplayName": "LatestAutomaticRetryExecutionFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -49413,6 +50012,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestautomaticretryrecordedatutc",
       "Signature": "DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }",
       "Summary": "Gets the timestamp when Cephalon recorded the latest automatic background retry attempt when one exists."
+    },
+    {
+      "DisplayName": "LatestAutomaticRetryRecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-latestautomaticretryrecordedatutc",
+      "Signature": "DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }",
+      "Summary": "Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists."
     },
     {
       "DisplayName": "LatestAutomaticRetryState",
@@ -49840,6 +50450,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-leasecoordinatedruntime",
+      "Signature": "const string LeaseCoordinatedRuntime",
+      "Summary": "The runtime depends on cross-node lease coordination before automatic retry should execute."
+    },
+    {
+      "DisplayName": "LeaseCoordinatedRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-leasecoordinatedruntime",
       "Signature": "const string LeaseCoordinatedRuntime",
       "Summary": "The runtime depends on cross-node lease coordination before automatic retry should execute."
     },
@@ -50515,6 +51136,17 @@
       "Summary": "Gets the operator-facing managed-connector distributed retry lease posture derived from automatic retry coordination, durable command-journal truth, and retained cross-node idempotency evidence."
     },
     {
+      "DisplayName": "ManagedConnectorDistributedRetryOrchestration",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordistributedretryorchestration",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus ManagedConnectorDistributedRetryOrchestration { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector distributed retry orchestration posture derived from automatic retry, retry policy, durable journal, and distributed retry lease truth."
+    },
+    {
       "DisplayName": "ManagedConnectorDrift",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -50742,6 +51374,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -55199,6 +55842,17 @@
       "Summary": "The current shared runtime truth indicates that no additional provider command is needed."
     },
     {
+      "DisplayName": "NoFurtherRetryNeeded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-nofurtherretryneeded",
+      "Signature": "const string NoFurtherRetryNeeded",
+      "Summary": "No further automatic retry scheduling is currently needed for the runtime."
+    },
+    {
       "DisplayName": "NoMatchingCommandHistory",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories",
@@ -55582,6 +56236,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-notapplicable",
       "Signature": "const string NotApplicable",
       "Summary": "Distributed retry lease posture does not currently apply to the execution runtime."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "Distributed retry orchestration does not currently apply to the execution runtime."
     },
     {
       "DisplayName": "NotApplicable",
@@ -56807,6 +57472,17 @@
     {
       "DisplayName": "OperationId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier currently associated with distributed retry orchestration."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -57034,6 +57710,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-operatoronly",
       "Signature": "const string OperatorOnly",
       "Summary": "Distributed retry lease posture still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Distributed retry orchestration still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Distributed retry orchestration still remains operator-owned outside Cephalon."
     },
     {
       "DisplayName": "OperatorOnly",
@@ -57881,6 +58579,17 @@
       "Summary": "The current host coordination owner matches the active reporter lease."
     },
     {
+      "DisplayName": "OwnerMatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-ownermatch",
+      "Signature": "const string OwnerMatch",
+      "Summary": "The current host coordination owner matches the active reporter lease."
+    },
+    {
       "DisplayName": "OwnerMismatch",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories",
@@ -57899,6 +58608,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-ownermismatch",
+      "Signature": "const string OwnerMismatch",
+      "Summary": "The current host coordination owner does not match the active reporter lease."
+    },
+    {
+      "DisplayName": "OwnerMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-ownermismatch",
       "Signature": "const string OwnerMismatch",
       "Summary": "The current host coordination owner does not match the active reporter lease."
     },
@@ -59069,6 +59789,17 @@
       "Summary": "The durable command journal currently exposes persisted recorded history."
     },
     {
+      "DisplayName": "PersistedHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-persistedhistory",
+      "Signature": "const string PersistedHistory",
+      "Summary": "The durable command journal currently exposes persisted recorded history."
+    },
+    {
       "DisplayName": "PersistedRecordedHistory",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
@@ -59496,6 +60227,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-policysource",
       "Signature": "string PolicySource { get; }",
       "Summary": "Gets the source of the effective automation policy."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets the bounded retry scheduler polling interval, in seconds, when one is configured."
     },
     {
       "DisplayName": "PollingIntervalSeconds",
@@ -62484,6 +63226,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-recoveredhistory",
+      "Signature": "const string RecoveredHistory",
+      "Summary": "The durable command journal currently exposes recovered recorded history."
+    },
+    {
+      "DisplayName": "RecoveredHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-recoveredhistory",
       "Signature": "const string RecoveredHistory",
       "Summary": "The durable command journal currently exposes recovered recorded history."
     },
@@ -67020,6 +67773,17 @@
       "Summary": "The distributed retry lease answer was derived primarily from retry-execution policy truth."
     },
     {
+      "DisplayName": "RetryExecutionPolicy",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-retryexecutionpolicy",
+      "Signature": "const string RetryExecutionPolicy",
+      "Summary": "The distributed retry orchestration answer was derived primarily from retry-execution policy truth."
+    },
+    {
       "DisplayName": "RetryExecutionPolicySourceId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -67086,6 +67850,17 @@
       "Summary": "Gets the current managed-connector retry-execution policy state that informed distributed retry lease posture."
     },
     {
+      "DisplayName": "RetryExecutionPolicyState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-retryexecutionpolicystate",
+      "Signature": "string RetryExecutionPolicyState { get; set; }",
+      "Summary": "Gets the current managed-connector retry-execution policy state that informed distributed retry orchestration."
+    },
+    {
       "DisplayName": "RetryFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -67128,6 +67903,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-retryfingerprint",
       "Signature": "string RetryFingerprint { get; set; }",
       "Summary": "Gets the deterministic retry fingerprint currently associated with distributed retry lease posture."
+    },
+    {
+      "DisplayName": "RetryFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-retryfingerprint",
+      "Signature": "string RetryFingerprint { get; set; }",
+      "Summary": "Gets the deterministic retry fingerprint currently associated with distributed retry orchestration."
     },
     {
       "DisplayName": "RetryFingerprint",
@@ -68835,6 +69621,61 @@
       "Summary": "Gets or sets the route prefix used by the Scalar UI."
     },
     {
+      "DisplayName": "Scheduled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-scheduled",
+      "Signature": "const string Scheduled",
+      "Summary": "Distributed retry orchestration can schedule one bounded automatic retry attempt on the current node."
+    },
+    {
+      "DisplayName": "SchedulerDisabled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-schedulerdisabled",
+      "Signature": "const string SchedulerDisabled",
+      "Summary": "The shared bounded distributed retry scheduler is disabled for the current runtime."
+    },
+    {
+      "DisplayName": "SchedulerEnabled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-schedulerenabled",
+      "Signature": "const string SchedulerEnabled",
+      "Summary": "The shared bounded distributed retry scheduler is enabled for the current runtime."
+    },
+    {
+      "DisplayName": "SchedulerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-schedulerid",
+      "Signature": "string SchedulerId { get; set; }",
+      "Summary": "Gets the stable shared scheduler identifier currently associated with distributed retry orchestration."
+    },
+    {
+      "DisplayName": "SchedulerKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-schedulerkind",
+      "Signature": "string SchedulerKind { get; set; }",
+      "Summary": "Gets the stable shared scheduler kind currently associated with distributed retry orchestration."
+    },
+    {
       "DisplayName": "Schema",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleDescriptor",
@@ -69979,6 +70820,17 @@
       "Summary": "The runtime can evaluate automatic retry on a single node without lease coordination."
     },
     {
+      "DisplayName": "SingleNodeRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-singlenoderuntime",
+      "Signature": "const string SingleNodeRuntime",
+      "Summary": "The runtime can evaluate automatic retry on a single node without lease coordination."
+    },
+    {
       "DisplayName": "Skipped",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchExecutionOutcomes",
@@ -70527,6 +71379,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-sourceid",
       "Signature": "string SourceId { get; set; }",
       "Summary": "Gets the primary source identifier Cephalon used to derive distributed retry lease posture."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive distributed retry orchestration."
     },
     {
       "DisplayName": "SourceId",
@@ -72153,6 +73016,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector distributed retry lease state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector distributed retry orchestration state."
     },
     {
       "DisplayName": "State",
@@ -77037,6 +77911,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-unknown",
       "Signature": "const string Unknown",
       "Summary": "The distributed retry lease answer does not currently resolve to one specific source."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The distributed retry orchestration answer does not currently resolve to one specific source."
     },
     {
       "DisplayName": "Unknown",

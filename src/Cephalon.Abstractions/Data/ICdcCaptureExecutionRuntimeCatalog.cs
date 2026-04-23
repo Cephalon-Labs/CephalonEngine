@@ -410,6 +410,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseOwnerId(string ownerId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer matches the requested state.
+    /// </summary>
+    /// <param name="orchestrationState">The stable managed-connector distributed retry orchestration state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that orchestration state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryOrchestrationState(string orchestrationState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer includes the requested category.
+    /// </summary>
+    /// <param name="orchestrationCategory">The stable managed-connector distributed retry orchestration category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that orchestration category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryOrchestrationCategory(string orchestrationCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer references the requested local coordination owner identifier.
+    /// </summary>
+    /// <param name="ownerId">The stable local coordination owner identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryOrchestrationOwnerId(string ownerId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

@@ -3027,6 +3027,91 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-188 Phase 13 managed-connector distributed retry orchestration baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, `ENG-185`, `ENG-186`, and `ENG-187` already shipped shared coverage, remediation,
+  governance, desired-versus-observed drift, action-planning, write-path readiness, preflight,
+  dry-run, execution-intent, execution-approval, command-envelope, command-issuance, provider
+  execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry execution, automatic background retry
+  coordination, durable command-journal, and distributed retry lease truth, but operators still
+  lacked one shared answer for whether the bounded automatic retry lane should actually schedule
+  the next retry on the current node
+- the next follow-through needed to keep distributed retry orchestration posture additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only scheduler
+  lane, second coordinator, or second retry registry
+- teams also needed one shared orchestration answer that joined scheduler identity, polling
+  cadence, cooldown windows, durable-history evidence, lease safety, and latest automatic-attempt
+  context so later durable scheduler work can build on truthful runtime orchestration posture
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector distributed retry orchestration contract
+  on `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `disabled`,
+  `operator-only`, `cooldown`, `blocked`, `scheduled`, and `completed` posture together with
+  orchestration categories, source truth, scheduler id/kind, polling interval, owner and reporter
+  identity, retry fingerprint, cooldown windows, latest attempt metadata, durable-history evidence,
+  and `CanScheduleAutomaticRetryOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive distributed-retry-orchestration state,
+  category, and owner filters while deriving that posture from the same shared automatic-retry,
+  coordination, retry-policy, command-journal-durability, and distributed-retry-lease truth
+  instead of forcing hosts or providers to invent a second scheduler index
+- the shared data pack now gates `ManagedConnectorAutomaticRetryHostedService` and automatic
+  `ManagedConnectorCommandExecutor` invocations through the richer distributed retry orchestration
+  answer so bounded background retry scheduling comes from one shared runtime contract
+- ASP.NET Core publishes those same distributed-retry-orchestration filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down, and the
+  orchestration answer stays additive beside the existing lease, journal, durability,
+  automatic-retry, and coordination surfaces instead of branching into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later richer cross-node idempotency hardening, broader multi-node lease
+  execution, durable shared scheduler orchestration, or broader Kafka Connect control-plane
+  ownership remain separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorDistributedRetryOrchestration`
+- `Cephalon.Data` now derives managed-connector distributed retry orchestration posture from merged
+  automatic-retry execution, automatic-retry coordination, retry-execution policy,
+  command-journal durability, and distributed retry lease truth, including `disabled`,
+  `operator-only`, `cooldown`, `blocked`, `scheduled`, and `completed` answers, and
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorDistributedRetryOrchestrationState(...)`,
+  `GetByManagedConnectorDistributedRetryOrchestrationCategory(...)`, and
+  `GetByManagedConnectorDistributedRetryOrchestrationOwnerId(...)`
+- `Cephalon.Data` now also gates `ManagedConnectorAutomaticRetryHostedService` and automatic
+  invocations in `ManagedConnectorCommandExecutor` through that richer shared answer so bounded
+  background retry scheduling no longer depends on scattered raw lease checks
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/distributed-retry-orchestrations/{orchestrationState}`,
+  `/engine/cdc-capture-runtimes/distributed-retry-orchestrations/categories/{orchestrationCategory}`,
+  `/engine/cdc-capture-runtimes/distributed-retry-orchestrations/owners/{ownerId}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-orchestration` so host
+  routes stay aligned with the same shared automatic-retry, coordination, durability, and lease
+  story
+- `Cephalon.Data.Debezium` now participates in that shared distributed retry orchestration lane
+  through the existing managed-connector runtime and command surface while targeted coverage proves
+  both `scheduled`, `cooldown`, and `blocked` posture without claiming a Debezium-only scheduler or
+  second retry subsystem
+- targeted coverage now proves the distributed retry orchestration baseline through composition
+  tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference docs publish
+  script
+
 ### ENG-187 Phase 13 managed-connector distributed retry lease / cross-node idempotency hardening baseline
 
 Status: done

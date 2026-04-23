@@ -390,6 +390,19 @@ truth, and the shared data pack now gates both `ManagedConnectorAutomaticRetryHo
 automatic command invocations through that richer cross-node answer instead of inventing a second
 distributed retry coordinator.
 
+That same shared execution-runtime story now also keeps managed-connector distributed retry
+orchestration explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDistributedRetryOrchestration` publishes
+stable `not-applicable` / `disabled` / `operator-only` / `cooldown` / `blocked` / `scheduled` /
+`completed` posture together with orchestration categories, scheduler id/kind, polling interval,
+owner and reporter identity, retry fingerprint, cooldown windows, latest-attempt metadata,
+durable-history evidence, and `CanScheduleAutomaticRetryOnCurrentNode`. The shared
+execution-runtime catalog derives that answer from the existing automatic-retry execution,
+automatic-retry coordination, retry-execution-policy, command-journal durability, and distributed
+retry lease truth, and the shared data pack now gates both
+`ManagedConnectorAutomaticRetryHostedService` and automatic command invocations through that one
+orchestration answer instead of scattering scheduler checks across host code.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -414,7 +427,9 @@ category, managed-connector command-journal-durability state,
 managed-connector command-journal-durability category, managed-connector automatic-retry state,
 managed-connector automatic-retry category, managed-connector automatic-retry operation,
 managed-connector automatic-retry-coordination state, managed-connector automatic-retry-coordination
-category, and managed-connector automatic-retry-coordination owner id as well.
+category, managed-connector automatic-retry-coordination owner id, managed-connector
+distributed-retry-orchestration state, managed-connector distributed-retry-orchestration category,
+and managed-connector distributed-retry-orchestration owner id as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -462,7 +477,10 @@ category, and managed-connector automatic-retry-coordination owner id as well.
 `GetByManagedConnectorAutomaticRetryExecutionOperationId(...)`,
 `GetByManagedConnectorAutomaticRetryCoordinationState(...)`,
 `GetByManagedConnectorAutomaticRetryCoordinationCategory(...)`, and
-`GetByManagedConnectorAutomaticRetryCoordinationOwnerId(...)`, plus
+`GetByManagedConnectorAutomaticRetryCoordinationOwnerId(...)`,
+`GetByManagedConnectorDistributedRetryOrchestrationState(...)`,
+`GetByManagedConnectorDistributedRetryOrchestrationCategory(...)`, and
+`GetByManagedConnectorDistributedRetryOrchestrationOwnerId(...)`, plus
 `GetManagedConnectorCommandExecutionHistory(...)`, so host code, provider packs, and tooling can
 narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
 managed-connector governance, managed-connector drift, managed-connector action-planning,
@@ -475,7 +493,8 @@ managed-connector command-journal,
 managed-connector command-journal durability, or
 managed-connector distributed retry lease,
 managed-connector automatic background retry execution,
-managed-connector automatic background retry coordination, or
+managed-connector automatic background retry coordination,
+managed-connector distributed retry orchestration, or
 managed-connector command-execution-history
 index.
 ASP.NET Core maps those same filters through
@@ -539,8 +558,12 @@ ASP.NET Core maps those same filters through
 `/engine/cdc-capture-runtimes/automatic-retries/operations/{operationId}` plus
 `/engine/cdc-capture-runtimes/automatic-retry-coordinations/{coordinationState}`,
 `/engine/cdc-capture-runtimes/automatic-retry-coordinations/categories/{coordinationCategory}`,
-and `/engine/cdc-capture-runtimes/automatic-retry-coordinations/owners/{ownerId}` so the live host
-surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
+`/engine/cdc-capture-runtimes/automatic-retry-coordinations/owners/{ownerId}` plus
+`/engine/cdc-capture-runtimes/distributed-retry-orchestrations/{orchestrationState}`,
+`/engine/cdc-capture-runtimes/distributed-retry-orchestrations/categories/{orchestrationCategory}`,
+`/engine/cdc-capture-runtimes/distributed-retry-orchestrations/owners/{ownerId}`, and
+`/engine/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-orchestration` so the live
+host surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,
@@ -586,8 +609,8 @@ operator action-planning truth on the same `/engine/cdc-*`, `/engine/runtime-sto
 back into typed runtime-level operator summaries, provider execution-adapter posture, latest
 managed-connector command-execution outcome/history, additive command-retry/idempotency truth,
 additive retry-execution-policy truth, additive bounded command-journal truth, and additive
-automatic background retry plus automatic-retry-coordination truth instead of inventing a
-Debezium-only status registry.
+automatic background retry plus automatic-retry-coordination plus distributed retry lease plus
+distributed retry orchestration truth instead of inventing a Debezium-only status registry.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

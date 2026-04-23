@@ -946,6 +946,33 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryLeaseOwner");
+        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-orchestrations/{orchestrationState}", (string orchestrationState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorDistributedRetryOrchestrationState(orchestrationState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationState");
+        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-orchestrations/categories/{orchestrationCategory}", (string orchestrationCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorDistributedRetryOrchestrationCategory(orchestrationCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-orchestrations/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorDistributedRetryOrchestrationOwnerId(ownerId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationOwner");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
@@ -991,6 +1018,17 @@ public static class EngineWebApplicationExtensions
                     : Results.Ok(runtimeDescriptor.ManagedConnectorDistributedRetryLease);
             })
             .WithName("GetCephalonManagedConnectorDistributedRetryLease");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-orchestration", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null
+                    ? Results.NotFound()
+                    : Results.Ok(runtimeDescriptor.ManagedConnectorDistributedRetryOrchestration);
+            })
+            .WithName("GetCephalonManagedConnectorDistributedRetryOrchestration");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

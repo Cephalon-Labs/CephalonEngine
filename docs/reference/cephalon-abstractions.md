@@ -8508,6 +8508,16 @@ CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus ManagedCon
 
 Gets the operator-facing managed-connector distributed retry lease posture derived from automatic retry coordination, durable command-journal truth, and retained cross-node idempotency evidence.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordistributedretryorchestration"></a>
+
+##### `ManagedConnectorDistributedRetryOrchestration`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus ManagedConnectorDistributedRetryOrchestration { get; set; }
+```
+
+Gets the operator-facing managed-connector distributed retry orchestration posture derived from automatic retry, retry policy, durable journal, and distributed retry lease truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordrift"></a>
 
 ##### `ManagedConnectorDrift`
@@ -16564,6 +16574,776 @@ string State { get; }
 ```
 
 Gets the stable managed-connector distributed retry lease state.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories`
+
+Defines the stable category identifiers used by managed-connector distributed retry orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-automaticretryattemptrecorded"></a>
+
+##### `AutomaticRetryAttemptRecorded`
+
+```csharp
+const string AutomaticRetryAttemptRecorded
+```
+
+The bounded command history already records one automatic retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-boundedsharedscheduler"></a>
+
+##### `BoundedSharedScheduler`
+
+```csharp
+const string BoundedSharedScheduler
+```
+
+The runtime participates in the shared bounded distributed retry scheduler.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-cooldownwindow"></a>
+
+##### `CooldownWindow`
+
+```csharp
+const string CooldownWindow
+```
+
+The current retry policy is still waiting for a cooldown window to elapse.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-crossnodeidempotencyrisk"></a>
+
+##### `CrossNodeIdempotencyRisk`
+
+```csharp
+const string CrossNodeIdempotencyRisk
+```
+
+Cross-node idempotency currently remains risky for automatic retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-crossnodeidempotentsafe"></a>
+
+##### `CrossNodeIdempotentSafe`
+
+```csharp
+const string CrossNodeIdempotentSafe
+```
+
+Cross-node idempotency currently looks safe for automatic retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-currentnodeschedulable"></a>
+
+##### `CurrentNodeSchedulable`
+
+```csharp
+const string CurrentNodeSchedulable
+```
+
+The current runtime can schedule automatic retry on the current node.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-durablejournalconfigured"></a>
+
+##### `DurableJournalConfigured`
+
+```csharp
+const string DurableJournalConfigured
+```
+
+A durable command-journal store is configured for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-durablejournalhealthy"></a>
+
+##### `DurableJournalHealthy`
+
+```csharp
+const string DurableJournalHealthy
+```
+
+The durable command journal currently looks healthy for cross-node retry decisions.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-inmemoryjournalonly"></a>
+
+##### `InMemoryJournalOnly`
+
+```csharp
+const string InMemoryJournalOnly
+```
+
+Automatic retry currently depends on in-memory command history only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-leasecoordinatedruntime"></a>
+
+##### `LeaseCoordinatedRuntime`
+
+```csharp
+const string LeaseCoordinatedRuntime
+```
+
+The runtime depends on cross-node lease coordination before automatic retry should execute.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-nofurtherretryneeded"></a>
+
+##### `NoFurtherRetryNeeded`
+
+```csharp
+const string NoFurtherRetryNeeded
+```
+
+No further automatic retry scheduling is currently needed for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Distributed retry orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-ownermatch"></a>
+
+##### `OwnerMatch`
+
+```csharp
+const string OwnerMatch
+```
+
+The current host coordination owner matches the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-ownermismatch"></a>
+
+##### `OwnerMismatch`
+
+```csharp
+const string OwnerMismatch
+```
+
+The current host coordination owner does not match the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-persistedhistory"></a>
+
+##### `PersistedHistory`
+
+```csharp
+const string PersistedHistory
+```
+
+The durable command journal currently exposes persisted recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The durable command journal currently exposes recovered recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-schedulerdisabled"></a>
+
+##### `SchedulerDisabled`
+
+```csharp
+const string SchedulerDisabled
+```
+
+The shared bounded distributed retry scheduler is disabled for the current runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-schedulerenabled"></a>
+
+##### `SchedulerEnabled`
+
+```csharp
+const string SchedulerEnabled
+```
+
+The shared bounded distributed retry scheduler is enabled for the current runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-singlenoderuntime"></a>
+
+##### `SingleNodeRuntime`
+
+```csharp
+const string SingleNodeRuntime
+```
+
+The runtime can evaluate automatic retry on a single node without lease coordination.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources`
+
+Defines the stable source identifiers used by managed-connector distributed retry orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-automaticretryexecution"></a>
+
+##### `AutomaticRetryExecution`
+
+```csharp
+const string AutomaticRetryExecution
+```
+
+The distributed retry orchestration answer was derived primarily from automatic background retry execution truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-commandjournaldurability"></a>
+
+##### `CommandJournalDurability`
+
+```csharp
+const string CommandJournalDurability
+```
+
+The distributed retry orchestration answer was derived primarily from durable command-journal truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-distributedretrylease"></a>
+
+##### `DistributedRetryLease`
+
+```csharp
+const string DistributedRetryLease
+```
+
+The distributed retry orchestration answer was derived primarily from distributed retry lease truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-retryexecutionpolicy"></a>
+
+##### `RetryExecutionPolicy`
+
+```csharp
+const string RetryExecutionPolicy
+```
+
+The distributed retry orchestration answer was derived primarily from retry-execution policy truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The distributed retry orchestration answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates`
+
+Defines the stable state identifiers used by managed-connector distributed retry orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+Distributed retry orchestration remains blocked by lease, durability, or safety truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-completed"></a>
+
+##### `Completed`
+
+```csharp
+const string Completed
+```
+
+Distributed retry orchestration does not currently need to schedule another retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-cooldown"></a>
+
+##### `Cooldown`
+
+```csharp
+const string Cooldown
+```
+
+Distributed retry orchestration is waiting for the active cooldown window to elapse.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Distributed retry orchestration is currently disabled for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Distributed retry orchestration does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Distributed retry orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstates-scheduled"></a>
+
+##### `Scheduled`
+
+```csharp
+const string Scheduled
+```
+
+Distributed retry orchestration can schedule one bounded automatic retry attempt on the current node.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus`
+
+Describes the current operator-facing managed-connector distributed retry orchestration posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus(string state, string description)
+```
+
+Creates a new managed-connector distributed retry orchestration answer.
+
+Parameters:
+- `state`: The stable distributed retry orchestration state, such as `not-applicable`, `disabled`, `operator-only`, `cooldown`, `blocked`, `scheduled`, or `completed`.
+- `description`: An optional operator-facing distributed retry orchestration summary.
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-defaultschedulerid"></a>
+
+##### `DefaultSchedulerId`
+
+```csharp
+const string DefaultSchedulerId
+```
+
+The stable shared scheduler identifier used by the bounded distributed retry orchestration lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-defaultschedulerkind"></a>
+
+##### `DefaultSchedulerKind`
+
+```csharp
+const string DefaultSchedulerKind
+```
+
+The stable shared scheduler kind used by the bounded distributed retry orchestration lane.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-automaticretrycoordinationstate"></a>
+
+##### `AutomaticRetryCoordinationState`
+
+```csharp
+string AutomaticRetryCoordinationState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry coordination state that informed distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-automaticretryexecutionstate"></a>
+
+##### `AutomaticRetryExecutionState`
+
+```csharp
+string AutomaticRetryExecutionState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry execution state that informed distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-canscheduleautomaticretryoncurrentnode"></a>
+
+##### `CanScheduleAutomaticRetryOnCurrentNode`
+
+```csharp
+bool CanScheduleAutomaticRetryOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can currently schedule one bounded automatic retry attempt.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active distributed retry orchestration categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable distributed retry orchestration categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-commandjournaldurabilitystate"></a>
+
+##### `CommandJournalDurabilityState`
+
+```csharp
+string CommandJournalDurabilityState { get; set; }
+```
+
+Gets the current managed-connector command-journal durability state that informed distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-cooldownuntilutc"></a>
+
+##### `CooldownUntilUtc`
+
+```csharp
+DateTimeOffset? CooldownUntilUtc { get; set; }
+```
+
+Gets the timestamp when the active retry cooldown window ends, when one applies.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one was configured for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing distributed retry orchestration summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-distributedretryleasestate"></a>
+
+##### `DistributedRetryLeaseState`
+
+```csharp
+string DistributedRetryLeaseState { get; set; }
+```
+
+Gets the current managed-connector distributed retry lease state that informed distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether distributed retry orchestration is currently blocked by shared runtime truth.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-iscompleted"></a>
+
+##### `IsCompleted`
+
+```csharp
+bool IsCompleted { get; }
+```
+
+Gets a value indicating whether distributed retry orchestration currently does not need to schedule another retry attempt.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-iscooldown"></a>
+
+##### `IsCooldown`
+
+```csharp
+bool IsCooldown { get; }
+```
+
+Gets a value indicating whether distributed retry orchestration is currently waiting for a cooldown window.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-isdisabled"></a>
+
+##### `IsDisabled`
+
+```csharp
+bool IsDisabled { get; }
+```
+
+Gets a value indicating whether distributed retry orchestration is currently disabled.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether distributed retry orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-isscheduled"></a>
+
+##### `IsScheduled`
+
+```csharp
+bool IsScheduled { get; }
+```
+
+Gets a value indicating whether distributed retry orchestration can currently schedule one bounded automatic retry attempt.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-latestautomaticretryattemptid"></a>
+
+##### `LatestAutomaticRetryAttemptId`
+
+```csharp
+string LatestAutomaticRetryAttemptId { get; set; }
+```
+
+Gets the latest automatic retry attempt identifier currently associated with distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-latestautomaticretryrecordedatutc"></a>
+
+##### `LatestAutomaticRetryRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-pollingintervalseconds"></a>
+
+##### `PollingIntervalSeconds`
+
+```csharp
+int PollingIntervalSeconds { get; set; }
+```
+
+Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-schedulerid"></a>
+
+##### `SchedulerId`
+
+```csharp
+string SchedulerId { get; set; }
+```
+
+Gets the stable shared scheduler identifier currently associated with distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-schedulerkind"></a>
+
+##### `SchedulerKind`
+
+```csharp
+string SchedulerKind { get; set; }
+```
+
+Gets the stable shared scheduler kind currently associated with distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive distributed retry orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector distributed retry orchestration state.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids"></a>
 
@@ -28635,6 +29415,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `leaseState`: The stable managed-connector distributed retry lease state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryorchestrationcategory-system-string"></a>
+
+##### `GetByManagedConnectorDistributedRetryOrchestrationCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryOrchestrationCategory(string orchestrationCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that orchestration category.
+
+Parameters:
+- `orchestrationCategory`: The stable managed-connector distributed retry orchestration category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryorchestrationownerid-system-string"></a>
+
+##### `GetByManagedConnectorDistributedRetryOrchestrationOwnerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryOrchestrationOwnerId(string ownerId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer references the requested local coordination owner identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.
+
+Parameters:
+- `ownerId`: The stable local coordination owner identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryorchestrationstate-system-string"></a>
+
+##### `GetByManagedConnectorDistributedRetryOrchestrationState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryOrchestrationState(string orchestrationState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that orchestration state.
+
+Parameters:
+- `orchestrationState`: The stable managed-connector distributed retry orchestration state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordriftcategory-system-string"></a>
 

@@ -3543,11 +3543,15 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.IdempotentSafe,
                 eligibleRuntime.ManagedConnectorDistributedRetryLease.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Scheduled,
+                eligibleRuntime.ManagedConnectorDistributedRetryOrchestration.State);
             Assert.True(eligibleRuntime.ManagedConnectorRetryExecutionPolicy.CanReuseApprovalFromMatchingHistory);
             Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryExecution.CanReuseApprovalFromMatchingHistory);
             Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryExecution.LatestMatchingApprovalApplied);
             Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
             Assert.True(eligibleRuntime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
+            Assert.True(eligibleRuntime.ManagedConnectorDistributedRetryOrchestration.CanScheduleAutomaticRetryOnCurrentNode);
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMatch,
                 eligibleRuntime.ManagedConnectorAutomaticRetryCoordination.CategoryIds);
@@ -3563,6 +3567,9 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories.PersistedHistory,
                 eligibleRuntime.ManagedConnectorDistributedRetryLease.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.CurrentNodeSchedulable,
+                eligibleRuntime.ManagedConnectorDistributedRetryOrchestration.CategoryIds);
 
             try
             {
@@ -3612,10 +3619,24 @@ public sealed class DebeziumDataCdcPackTests
                 Assert.Equal(
                     CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.IdempotentSafe,
                     completedRuntime.ManagedConnectorDistributedRetryLease.State);
+                Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Cooldown,
+                    completedRuntime.ManagedConnectorDistributedRetryOrchestration.State);
                 Assert.True(completedRuntime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
                 Assert.True(completedRuntime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
+                Assert.False(completedRuntime.ManagedConnectorDistributedRetryOrchestration.CanScheduleAutomaticRetryOnCurrentNode);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorDistributedRetryLease.CoordinationOwnerId);
+                Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorDistributedRetryOrchestration.CoordinationOwnerId);
+                Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus.DefaultSchedulerId,
+                    completedRuntime.ManagedConnectorDistributedRetryOrchestration.SchedulerId);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.CooldownWindow,
+                    completedRuntime.ManagedConnectorDistributedRetryOrchestration.CategoryIds);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.AutomaticRetryAttemptRecorded,
+                    completedRuntime.ManagedConnectorDistributedRetryOrchestration.CategoryIds);
 
                 var history = runtimeCatalog.GetManagedConnectorCommandExecutionHistory(automaticRetryRuntimeId);
 
@@ -3685,6 +3706,24 @@ public sealed class DebeziumDataCdcPackTests
                     [automaticRetryRuntimeId],
                     runtimeCatalog
                         .GetByManagedConnectorDistributedRetryLeaseOwnerId("connect-worker-auto")
+                        .Select(static runtime => runtime.Id)
+                        .ToArray());
+                Assert.Equal(
+                    [automaticRetryRuntimeId],
+                    runtimeCatalog
+                        .GetByManagedConnectorDistributedRetryOrchestrationState(CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Cooldown)
+                        .Select(static runtime => runtime.Id)
+                        .ToArray());
+                Assert.Equal(
+                    [automaticRetryRuntimeId],
+                    runtimeCatalog
+                        .GetByManagedConnectorDistributedRetryOrchestrationCategory(CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.CooldownWindow)
+                        .Select(static runtime => runtime.Id)
+                        .ToArray());
+                Assert.Equal(
+                    [automaticRetryRuntimeId],
+                    runtimeCatalog
+                        .GetByManagedConnectorDistributedRetryOrchestrationOwnerId("connect-worker-auto")
                         .Select(static runtime => runtime.Id)
                         .ToArray());
             }
@@ -3802,13 +3841,23 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(
             CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.IdempotencyRisk,
             riskRuntime.ManagedConnectorDistributedRetryLease.State);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Blocked,
+            riskRuntime.ManagedConnectorDistributedRetryOrchestration.State);
         Assert.False(riskRuntime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
+        Assert.False(riskRuntime.ManagedConnectorDistributedRetryOrchestration.CanScheduleAutomaticRetryOnCurrentNode);
         Assert.Contains(
             CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories.InMemoryJournalOnly,
             riskRuntime.ManagedConnectorDistributedRetryLease.CategoryIds);
         Assert.Contains(
             CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories.CrossNodeIdempotencyRisk,
             riskRuntime.ManagedConnectorDistributedRetryLease.CategoryIds);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.InMemoryJournalOnly,
+            riskRuntime.ManagedConnectorDistributedRetryOrchestration.CategoryIds);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.CrossNodeIdempotencyRisk,
+            riskRuntime.ManagedConnectorDistributedRetryOrchestration.CategoryIds);
 
         try
         {
@@ -3830,8 +3879,12 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.IdempotencyRisk,
                 refreshedRuntime.ManagedConnectorDistributedRetryLease.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Blocked,
+                refreshedRuntime.ManagedConnectorDistributedRetryOrchestration.State);
             Assert.False(refreshedRuntime.ManagedConnectorDistributedRetryLease.HasMatchingAutomaticRetryAttempt);
             Assert.False(refreshedRuntime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
+            Assert.False(refreshedRuntime.ManagedConnectorDistributedRetryOrchestration.CanScheduleAutomaticRetryOnCurrentNode);
 
             Assert.Single(history);
             Assert.Equal(
@@ -3856,6 +3909,24 @@ public sealed class DebeziumDataCdcPackTests
                 [automaticRetryRuntimeId],
                 runtimeCatalog
                     .GetByManagedConnectorDistributedRetryLeaseOwnerId("connect-worker-risk")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorDistributedRetryOrchestrationState(CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Blocked)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorDistributedRetryOrchestrationCategory(CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.InMemoryJournalOnly)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorDistributedRetryOrchestrationOwnerId("connect-worker-risk")
                     .Select(static runtime => runtime.Id)
                     .ToArray());
         }
