@@ -319,6 +319,20 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyOperationId(string operationId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current bounded managed-connector command-journal answer matches the requested state.
+    /// </summary>
+    /// <param name="journalState">The stable managed-connector command-journal state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that journal state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalState(string journalState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current bounded managed-connector command-journal answer includes the requested category.
+    /// </summary>
+    /// <param name="journalCategory">The stable managed-connector command-journal category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that journal category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalCategory(string journalCategory);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

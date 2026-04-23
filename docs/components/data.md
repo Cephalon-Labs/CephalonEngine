@@ -291,8 +291,9 @@ explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandExecution
 execution-adapter and command-issuance state, deterministic command/execution fingerprints, and
 latest recorded attempt metadata such as `AttemptId`, `RecordedAtUtc`, and `HasRecordedOutcome`.
 The shared execution-runtime catalog now keeps that latest-outcome answer plus bounded recent
-history on the same `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of
-inventing a Debezium-only command journal.
+history on the same `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces, and that
+same bounded history now feeds the later shared managed-connector command-journal answer instead
+of inventing a Debezium-only durable journal.
 
 That same shared execution-runtime story now also keeps managed-connector command-retry and
 idempotency posture explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandRetry`
@@ -321,6 +322,21 @@ wait, require approval, or stay blocked by policy" on the same `/engine/cdc-*`,
 `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a Debezium-only retry-policy
 registry.
 
+That same shared execution-runtime story now also keeps managed-connector bounded command-journal
+truth explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandJournal` publishes
+stable `not-applicable` / `empty` / `bounded` / `truncated` / `cooldown-active` /
+`duplicate-evidence-present` / `insufficient-for-automation` posture together with journal
+categories, the intended operation id, source coverage/remediation/governance/drift/action-plan/
+write-path-readiness/preflight/dry-run/execution-intent/execution-approval/command-envelope/
+command-issuance/execution-adapter/latest-command-execution/command-retry/retry-execution-policy
+state, retained-versus-recorded history counts, deterministic fingerprint matching, cooldown
+windows, and latest-versus-oldest retained attempt metadata. The shared execution-runtime catalog
+derives that answer from the existing command-execution history, command-retry posture, and
+retry-execution-policy posture, so hosts can answer whether the bounded journal is empty,
+truncated, cooling down, duplicate-backed, or still insufficient for automation on the same
+`/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a
+Debezium-only durable journal registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -339,8 +355,9 @@ managed-connector execution-adapter category, managed-connector execution-adapte
 managed-connector command-execution state, managed-connector command-execution operation,
 managed-connector command-retry state, managed-connector command-retry category,
 managed-connector command-retry operation, managed-connector retry-execution-policy state,
-managed-connector retry-execution-policy category, and managed-connector retry-execution-policy
-operation as well.
+managed-connector retry-execution-policy category, managed-connector retry-execution-policy
+operation, managed-connector command-journal state, and managed-connector command-journal
+category as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -375,7 +392,9 @@ operation as well.
 `GetByManagedConnectorCommandRetryOperationId(...)`,
 `GetByManagedConnectorRetryExecutionPolicyState(...)`,
 `GetByManagedConnectorRetryExecutionPolicyCategory(...)`, and
-`GetByManagedConnectorRetryExecutionPolicyOperationId(...)`, plus
+`GetByManagedConnectorRetryExecutionPolicyOperationId(...)`,
+`GetByManagedConnectorCommandJournalState(...)`, and
+`GetByManagedConnectorCommandJournalCategory(...)`, plus
 `GetManagedConnectorCommandExecutionHistory(...)`, so host code, provider packs, and tooling can
 narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
 managed-connector governance, managed-connector drift, managed-connector action-planning,
@@ -383,7 +402,8 @@ managed-connector readiness, managed-connector preflight, managed-connector dry-
 managed-connector execution-intent, managed-connector execution-approval, managed-connector
 command-envelope, managed-connector command-issuance, managed-connector execution-adapter,
 managed-connector command-execution, managed-connector command-retry,
-managed-connector retry-execution-policy, or
+managed-connector retry-execution-policy,
+managed-connector command-journal, or
 managed-connector command-execution-history
 index.
 ASP.NET Core maps those same filters through
@@ -431,7 +451,10 @@ ASP.NET Core maps those same filters through
 `/engine/cdc-capture-runtimes/command-retries/operations/{operationId}` plus
 `/engine/cdc-capture-runtimes/retry-execution-policies/{policyState}`,
 `/engine/cdc-capture-runtimes/retry-execution-policies/categories/{policyCategory}`, and
-`/engine/cdc-capture-runtimes/retry-execution-policies/operations/{operationId}` so the live host
+`/engine/cdc-capture-runtimes/retry-execution-policies/operations/{operationId}` plus
+`/engine/cdc-capture-runtimes/command-journals/{journalState}`,
+`/engine/cdc-capture-runtimes/command-journals/categories/{journalCategory}`, and
+`/engine/cdc-capture-runtimes/{executionRuntimeId}/command-journal` so the live host
 surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
@@ -476,8 +499,9 @@ reporter-coordination truth, governance posture, desired-versus-observed drift p
 operator action-planning truth on the same `/engine/cdc-*`, `/engine/runtime-story`, and
 `snapshot` surfaces, while the shared execution-runtime catalog now rolls that connector posture
 back into typed runtime-level operator summaries, provider execution-adapter posture, latest
-managed-connector command-execution outcome/history, additive command-retry/idempotency truth, and
-additive retry-execution-policy truth instead of inventing a Debezium-only status registry.
+managed-connector command-execution outcome/history, additive command-retry/idempotency truth,
+additive retry-execution-policy truth, and additive bounded command-journal truth instead of
+inventing a Debezium-only status registry.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

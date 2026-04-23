@@ -1,6 +1,6 @@
 # Cephalon.Data.Debezium
 
-`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, managed-connector execution-intent posture, managed-connector execution-approval posture, managed-connector command-envelope posture, managed-connector command-issuance posture, managed-connector execution-adapter posture, managed-connector command-execution outcome/history, managed-connector command-retry posture, managed-connector retry-execution-policy posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
+`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, managed-connector execution-intent posture, managed-connector execution-approval posture, managed-connector command-envelope posture, managed-connector command-issuance posture, managed-connector execution-adapter posture, managed-connector command-execution outcome/history, managed-connector command-retry posture, managed-connector retry-execution-policy posture, managed-connector bounded command-journal posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
 
 ## What it owns
 
@@ -546,6 +546,41 @@ coordinator.
   Cephalon already owns automatic background retries, durable distributed command journals, or full
   managed-connector retry orchestration
 
+## Managed-connector bounded command-journal baseline
+
+The `ENG-183` follow-through keeps shared bounded command-journal truth additive over that same
+shared runtime surface instead of introducing a Debezium-only durable journal or second
+coordinator.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandJournal` now publishes stable
+  `not-applicable`, `empty`, `bounded`, `truncated`, `cooldown-active`,
+  `duplicate-evidence-present`, and `insufficient-for-automation` posture for Debezium-managed
+  runtimes together with journal categories, the intended operation id, source
+  coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/
+  execution-intent/execution-approval/command-envelope/command-issuance/execution-adapter/
+  latest-command-execution/command-retry/retry-execution-policy state, retained-versus-recorded
+  history counts, deterministic retry and command fingerprint matching, cooldown windows, and
+  latest-versus-oldest retained attempt metadata
+- the shared execution-runtime catalog now derives that command-journal answer from the already
+  shipped command-execution history, command-retry posture, and retry-execution-policy posture, so
+  empty history, bounded retained history, truncated retained history, cooldown-backed history,
+  duplicate-evidence history, and still-insufficient automation history surface back on the same
+  merged CDC runtime surface instead of forcing Debezium callers to invent a parallel durable
+  journal or history-governance cache
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/command-journals/{journalState}`,
+  `/engine/cdc-capture-runtimes/command-journals/categories/{journalCategory}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/command-journal` on the same shared route
+  family, so operator drill-down stays aligned with the engine-owned catalog instead of a
+  Debezium-only endpoint family
+- Debezium pause/delete command history now proves shared cooldown and duplicate-evidence journal
+  posture, repeated reconcile command history now proves shared truncated bounded-history posture,
+  and future-control-plane reconcile paths still surface `insufficient-for-automation` truth
+  instead of pretending Cephalon already owns automatic background retries or a durable
+  distributed command journal
+- bounded command-journal posture currently remains read-only operator and automation-readiness
+  truth; it does not mean Cephalon already owns automatic background retries, durable distributed
+  command journals, or full managed-connector idempotency orchestration
+
 ## Not shipped in these slices
 
 This pack intentionally still does not claim:
@@ -555,7 +590,7 @@ This pack intentionally still does not claim:
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
-- durable distributed command journals, automatic background retries, or full idempotency orchestration
+- durable distributed command journals, automatic background retries, or full idempotency orchestration beyond the shipped shared bounded command-journal posture
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

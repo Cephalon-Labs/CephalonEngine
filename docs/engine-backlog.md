@@ -3027,6 +3027,83 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-183 Phase 13 managed-connector bounded command-journal hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, and `ENG-182` already
+  shipped shared coverage, remediation, governance, desired-versus-observed drift,
+  action-planning, write-path readiness, preflight, dry-run, execution-intent,
+  execution-approval, command-envelope, command-issuance, provider execution-adapter, execution
+  outcome/history, retry/idempotency, and retry-execution-policy truth, but operators still lacked
+  one shared answer for whether the bounded command history behind those retry and automation
+  decisions was empty, truncated, duplicate-backed, cooling down, or still insufficient for safe
+  automation
+- the next follow-through needed to keep command-journal posture additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only durable
+  journal, second coordinator, or premature automatic background retry loop
+- teams also needed retained-versus-recorded history counts plus oldest-versus-latest retained
+  attempt truth so shared command history could explain bounded retention and truncation semantics
+  without rebuilding journal governance inside hosts or provider packs
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector command-journal contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `empty`, `bounded`,
+  `truncated`, `cooldown-active`, `duplicate-evidence-present`, and
+  `insufficient-for-automation` posture together with journal categories, intended operation id,
+  source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/
+  dry-run/execution-intent/execution-approval/command-envelope/command-issuance/
+  execution-adapter/latest-command-execution/command-retry/retry-execution-policy state,
+  retained-versus-recorded history counts, deterministic fingerprint matching, latest-versus-oldest
+  retained attempt metadata, and cooldown windows
+- the shared execution-runtime catalog now exposes additive command-journal-state and
+  command-journal-category methods while deriving journal posture from the same shared
+  command-execution history, command-retry, and retry-execution-policy lane instead of forcing
+  hosts or providers to invent a second durable journal registry
+- ASP.NET Core publishes those same command-journal filters plus a per-runtime command-journal read
+  on the existing `/engine/cdc-capture-runtimes*` route family, and the journal answer stays
+  additive beside the existing command-execution-history, command-retry, and retry-execution-policy
+  surfaces instead of branching into a Debezium-only durable-journal endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the
+  shipped slice while later automatic background retry or broader idempotency hardening remains
+  separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalOperationIds`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorCommandJournal`
+- `Cephalon.Data` now derives managed-connector command-journal posture from merged
+  command-execution history, command-retry, retry-execution-policy, command-issuance,
+  execution-adapter, execution-approval, command-envelope, execution-intent, dry-run, preflight,
+  write-path-readiness, governance, drift, remediation, and coverage truth, including retained
+  versus recorded history counts, truncation posture, cooldown windows, duplicate-fingerprint
+  evidence, latest-versus-oldest retained attempt metadata, and
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes `GetByManagedConnectorCommandJournalState(...)`
+  plus `GetByManagedConnectorCommandJournalCategory(...)`
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/command-journals/{journalState}`,
+  `/engine/cdc-capture-runtimes/command-journals/categories/{journalCategory}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/command-journal` so host routes stay aligned
+  with the same shared command lane, retry-policy surface, and bounded-history story
+- `Cephalon.Data.Debezium` now proves that shared command-journal baseline against the existing
+  pause/delete/reconcile command lane by surfacing empty, bounded, truncated, cooldown-active,
+  duplicate-evidence-present, and insufficient-for-automation truth without claiming automatic
+  background retry, durable distributed journals, or a second Debezium command-journal registry
+- targeted coverage now proves the bounded command-journal baseline through composition tests
+  `39/39`, hosting tests `17/17`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-182 Phase 13 managed-connector retry-execution policy baseline
 
 Status: done

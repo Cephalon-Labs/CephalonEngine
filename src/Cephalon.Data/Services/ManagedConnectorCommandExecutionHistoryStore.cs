@@ -4,9 +4,9 @@ namespace Cephalon.Data.Services;
 
 internal sealed class ManagedConnectorCommandExecutionHistoryStore
 {
-    private const int MaxHistoryEntriesPerRuntime = 20;
+    internal const int MaximumRetainedEntryCount = 20;
     private readonly object syncRoot = new();
-    private readonly Dictionary<string, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]> historyByRuntimeId =
+    private readonly Dictionary<string, ManagedConnectorCommandExecutionJournal> historyByRuntimeId =
         new(StringComparer.OrdinalIgnoreCase);
 
     public CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult Record(
@@ -19,11 +19,12 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
         var normalizedResult = Normalize(result, recordedAtUtc);
         lock (syncRoot)
         {
-            historyByRuntimeId.TryGetValue(normalizedResult.ExecutionRuntimeId, out var existingHistory);
-            existingHistory ??= [];
+            historyByRuntimeId.TryGetValue(normalizedResult.ExecutionRuntimeId, out var existingJournal);
+            existingJournal ??= ManagedConnectorCommandExecutionJournal.Empty(normalizedResult.ExecutionRuntimeId);
+            var existingHistory = existingJournal.Entries;
 
             var updatedHistory = new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[
-                Math.Min(existingHistory.Length + 1, MaxHistoryEntriesPerRuntime)];
+                Math.Min(existingHistory.Count + 1, MaximumRetainedEntryCount)];
             updatedHistory[0] = normalizedResult;
 
             for (var index = 0; index < updatedHistory.Length - 1; index++)
@@ -31,7 +32,11 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
                 updatedHistory[index + 1] = existingHistory[index];
             }
 
-            historyByRuntimeId[normalizedResult.ExecutionRuntimeId] = updatedHistory;
+            historyByRuntimeId[normalizedResult.ExecutionRuntimeId] = new ManagedConnectorCommandExecutionJournal(
+                normalizedResult.ExecutionRuntimeId,
+                updatedHistory,
+                existingJournal.TotalRecordedEntryCount + 1,
+                MaximumRetainedEntryCount);
         }
 
         return normalizedResult;
@@ -46,8 +51,9 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
 
         lock (syncRoot)
         {
-            return historyByRuntimeId.TryGetValue(executionRuntimeId.Trim(), out var history) && history.Length > 0
-                ? history[0]
+            return historyByRuntimeId.TryGetValue(executionRuntimeId.Trim(), out var journal) &&
+                   journal.Entries.Count > 0
+                ? journal.Entries[0]
                 : null;
         }
     }
@@ -61,9 +67,30 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
 
         lock (syncRoot)
         {
-            return historyByRuntimeId.TryGetValue(executionRuntimeId.Trim(), out var history)
-                ? [.. history]
+            return historyByRuntimeId.TryGetValue(executionRuntimeId.Trim(), out var journal)
+                ? [.. journal.Entries]
                 : [];
+        }
+    }
+
+    public ManagedConnectorCommandExecutionJournal GetJournal(string executionRuntimeId)
+    {
+        if (string.IsNullOrWhiteSpace(executionRuntimeId))
+        {
+            return ManagedConnectorCommandExecutionJournal.Empty(string.Empty);
+        }
+
+        lock (syncRoot)
+        {
+            if (!historyByRuntimeId.TryGetValue(executionRuntimeId.Trim(), out var journal))
+            {
+                return ManagedConnectorCommandExecutionJournal.Empty(executionRuntimeId.Trim());
+            }
+
+            return journal with
+            {
+                Entries = [.. journal.Entries]
+            };
         }
     }
 

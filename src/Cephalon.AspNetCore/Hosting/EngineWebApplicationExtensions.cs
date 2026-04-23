@@ -829,6 +829,24 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyOperation");
+        engineGroup.MapGet("/cdc-capture-runtimes/command-journals/{journalState}", (string journalState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorCommandJournalState(journalState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalState");
+        engineGroup.MapGet("/cdc-capture-runtimes/command-journals/categories/{journalCategory}", (string journalCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorCommandJournalCategory(journalCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalCategory");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
@@ -841,6 +859,17 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimeCatalog?.GetManagedConnectorCommandExecutionHistory(executionRuntimeId) ?? []);
             })
             .WithName("GetCephalonManagedConnectorCommandExecutionHistory");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-journal", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null
+                    ? Results.NotFound()
+                    : Results.Ok(runtimeDescriptor.ManagedConnectorCommandJournal);
+            })
+            .WithName("GetCephalonManagedConnectorCommandJournal");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

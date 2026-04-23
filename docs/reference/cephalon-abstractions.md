@@ -8448,6 +8448,16 @@ CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus ManagedConnector
 
 Gets the operator-facing managed-connector command-issuance posture derived from command envelopes, execution approval, execution intent, dry-run, preflight, and the broader shared runtime truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandjournal"></a>
+
+##### `ManagedConnectorCommandJournal`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus ManagedConnectorCommandJournal { get; set; }
+```
+
+Gets the operator-facing bounded managed-connector command journal derived from shared command history, command retry, and retry-execution policy truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandretry"></a>
 
 ##### `ManagedConnectorCommandRetry`
@@ -11184,6 +11194,1047 @@ string WritePathReadinessState { get; set; }
 ```
 
 Gets the current managed-connector write-path readiness state that informed command issuance.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories`
+
+Defines the stable category identifiers used by managed-connector command-journal answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-automaticretrydisabled"></a>
+
+##### `AutomaticRetryDisabled`
+
+```csharp
+const string AutomaticRetryDisabled
+```
+
+The current command journal exposes a safe retry candidate, but automatic background retry remains disabled.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-boundedretention"></a>
+
+##### `BoundedRetention`
+
+```csharp
+const string BoundedRetention
+```
+
+The command journal currently exposes bounded retention for recent command evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-controlplaneownershipgap"></a>
+
+##### `ControlPlaneOwnershipGap`
+
+```csharp
+const string ControlPlaneOwnershipGap
+```
+
+The current command journal remains constrained because control-plane ownership still remains outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-cooldownactive"></a>
+
+##### `CooldownActive`
+
+```csharp
+const string CooldownActive
+```
+
+The current command journal still reflects a cooldown window that has not elapsed.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-duplicatecommand"></a>
+
+##### `DuplicateCommand`
+
+```csharp
+const string DuplicateCommand
+```
+
+The current command journal contains evidence that replaying the command would be duplicative.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The current command journal remains constrained by governance that is out of policy.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-historytruncated"></a>
+
+##### `HistoryTruncated`
+
+```csharp
+const string HistoryTruncated
+```
+
+The command journal has truncated older entries beyond the current bounded retention window.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-latestexecutionadapted"></a>
+
+##### `LatestExecutionAdapted`
+
+```csharp
+const string LatestExecutionAdapted
+```
+
+The latest retained command-execution outcome already translated the provider command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-latestexecutionblocked"></a>
+
+##### `LatestExecutionBlocked`
+
+```csharp
+const string LatestExecutionBlocked
+```
+
+The latest retained command-execution outcome remained blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-latestexecutionfailed"></a>
+
+##### `LatestExecutionFailed`
+
+```csharp
+const string LatestExecutionFailed
+```
+
+The latest retained command-execution outcome failed while Cephalon was translating the provider command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-latestexecutionunavailable"></a>
+
+##### `LatestExecutionUnavailable`
+
+```csharp
+const string LatestExecutionUnavailable
+```
+
+The latest retained command-execution outcome could not resolve a provider execution adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-manualapprovalrequired"></a>
+
+##### `ManualApprovalRequired`
+
+```csharp
+const string ManualApprovalRequired
+```
+
+The current command journal still requires explicit manual approval before automation should continue.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-matchingcommandfingerprint"></a>
+
+##### `MatchingCommandFingerprint`
+
+```csharp
+const string MatchingCommandFingerprint
+```
+
+The current command journal contains retained evidence matching the derived command fingerprint.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-noexecutionneeded"></a>
+
+##### `NoExecutionNeeded`
+
+```csharp
+const string NoExecutionNeeded
+```
+
+The current command journal indicates that no additional provider command is needed.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-norecordedcommand"></a>
+
+##### `NoRecordedCommand`
+
+```csharp
+const string NoRecordedCommand
+```
+
+No managed-connector command-execution outcome has been recorded yet for the journal.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The command journal is not currently applicable because the runtime remains observe-only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+The current command journal remains operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-policyblocked"></a>
+
+##### `PolicyBlocked`
+
+```csharp
+const string PolicyBlocked
+```
+
+The current command journal remains blocked by shared runtime truth or policy guardrails.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-runtimetruthincomplete"></a>
+
+##### `RuntimeTruthIncomplete`
+
+```csharp
+const string RuntimeTruthIncomplete
+```
+
+The current command journal remains constrained by incomplete shared runtime truth.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaloperationids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalOperationIds`
+
+Defines the stable management-operation identifiers used by managed-connector command-journal answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaloperationids-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+The command journal currently targets a connector delete operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaloperationids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No managed-connector operation is currently associated with the command journal.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaloperationids-pause"></a>
+
+##### `Pause`
+
+```csharp
+const string Pause
+```
+
+The command journal currently targets a connector pause operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaloperationids-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+The command journal currently targets a future connector reconcile operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaloperationids-restart"></a>
+
+##### `Restart`
+
+```csharp
+const string Restart
+```
+
+The command journal currently targets a connector restart operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaloperationids-resume"></a>
+
+##### `Resume`
+
+```csharp
+const string Resume
+```
+
+The command journal currently targets a connector resume operation.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalSources`
+
+Defines the stable source identifiers used by managed-connector command-journal answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalsources-commandexecutionhistory"></a>
+
+##### `CommandExecutionHistory`
+
+```csharp
+const string CommandExecutionHistory
+```
+
+The command journal was derived primarily from bounded shared command-execution history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalsources-commandretry"></a>
+
+##### `CommandRetry`
+
+```csharp
+const string CommandRetry
+```
+
+The command journal was derived primarily from the shared command-retry lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalsources-retryexecutionpolicy"></a>
+
+##### `RetryExecutionPolicy`
+
+```csharp
+const string RetryExecutionPolicy
+```
+
+The command journal was derived primarily from the shared retry-execution policy lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The command journal does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates`
+
+Defines the stable state identifiers used by managed-connector command-journal answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-bounded"></a>
+
+##### `Bounded`
+
+```csharp
+const string Bounded
+```
+
+The command journal currently retains bounded recent history and the retained evidence is sufficient for operator-facing automation answers.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-cooldownactive"></a>
+
+##### `CooldownActive`
+
+```csharp
+const string CooldownActive
+```
+
+The command journal currently retains matching recent command evidence that is still inside the retry cooldown window.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-duplicateevidencepresent"></a>
+
+##### `DuplicateEvidencePresent`
+
+```csharp
+const string DuplicateEvidencePresent
+```
+
+The command journal currently retains matching command evidence showing that replaying the command would be duplicative.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-empty"></a>
+
+##### `Empty`
+
+```csharp
+const string Empty
+```
+
+The command journal currently has no recorded managed-connector command outcomes.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-insufficientforautomation"></a>
+
+##### `InsufficientForAutomation`
+
+```csharp
+const string InsufficientForAutomation
+```
+
+The command journal currently retains history, but the retained evidence is still insufficient for automatic execution or background automation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The command journal does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-truncated"></a>
+
+##### `Truncated`
+
+```csharp
+const string Truncated
+```
+
+The command journal currently retains only the newest bounded command history because older entries were truncated.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus`
+
+Describes the current operator-facing managed-connector bounded command-journal posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus(string state, string description)
+```
+
+Creates a new managed-connector command-journal answer.
+
+Parameters:
+- `state`: The stable command-journal state, such as `not-applicable`, `empty`, `bounded`, `truncated`, `cooldown-active`, `duplicate-evidence-present`, or `insufficient-for-automation`.
+- `description`: An optional operator-facing command-journal summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active command-journal categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable command-journal categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-commandenvelopestate"></a>
+
+##### `CommandEnvelopeState`
+
+```csharp
+string CommandEnvelopeState { get; set; }
+```
+
+Gets the current managed-connector command-envelope state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-commandissuancestate"></a>
+
+##### `CommandIssuanceState`
+
+```csharp
+string CommandIssuanceState { get; set; }
+```
+
+Gets the current managed-connector command-issuance state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-commandretrysourceid"></a>
+
+##### `CommandRetrySourceId`
+
+```csharp
+string CommandRetrySourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with the command-retry lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-commandretrystate"></a>
+
+##### `CommandRetryState`
+
+```csharp
+string CommandRetryState { get; set; }
+```
+
+Gets the current managed-connector command-retry state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-cooldownuntilutc"></a>
+
+##### `CooldownUntilUtc`
+
+```csharp
+DateTimeOffset? CooldownUntilUtc { get; set; }
+```
+
+Gets the timestamp when the active retry cooldown window ends, when one applies.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing command-journal summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-dryrunstate"></a>
+
+##### `DryRunState`
+
+```csharp
+string DryRunState { get; set; }
+```
+
+Gets the current managed-connector dry-run state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-executionadapterstate"></a>
+
+##### `ExecutionAdapterState`
+
+```csharp
+string ExecutionAdapterState { get; set; }
+```
+
+Gets the current managed-connector execution-adapter state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-executionapprovalstate"></a>
+
+##### `ExecutionApprovalState`
+
+```csharp
+string ExecutionApprovalState { get; set; }
+```
+
+Gets the current managed-connector execution-approval state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-executionintentstate"></a>
+
+##### `ExecutionIntentState`
+
+```csharp
+string ExecutionIntentState { get; set; }
+```
+
+Gets the current managed-connector execution-intent state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-hascooldownwindow"></a>
+
+##### `HasCooldownWindow`
+
+```csharp
+bool HasCooldownWindow { get; }
+```
+
+Gets a value indicating whether the bounded command journal currently exposes an active cooldown window.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-hasduplicateevidence"></a>
+
+##### `HasDuplicateEvidence`
+
+```csharp
+bool HasDuplicateEvidence { get; }
+```
+
+Gets a value indicating whether the bounded command journal contains evidence that replaying the command would be duplicative.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-hasmatchingcommandfingerprint"></a>
+
+##### `HasMatchingCommandFingerprint`
+
+```csharp
+bool HasMatchingCommandFingerprint { get; set; }
+```
+
+Gets a value indicating whether the latest retained command currently matches the derived command fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-hasmatchingretryfingerprint"></a>
+
+##### `HasMatchingRetryFingerprint`
+
+```csharp
+bool HasMatchingRetryFingerprint { get; set; }
+```
+
+Gets a value indicating whether the latest retained command currently matches the derived retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-hasrecordedcommandhistory"></a>
+
+##### `HasRecordedCommandHistory`
+
+```csharp
+bool HasRecordedCommandHistory { get; }
+```
+
+Gets a value indicating whether Cephalon has recorded one or more managed-connector command outcomes for the journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-hasretainedcommandhistory"></a>
+
+##### `HasRetainedCommandHistory`
+
+```csharp
+bool HasRetainedCommandHistory { get; }
+```
+
+Gets a value indicating whether the bounded command journal currently retains one or more entries.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-hastruncatedhistory"></a>
+
+##### `HasTruncatedHistory`
+
+```csharp
+bool HasTruncatedHistory { get; }
+```
+
+Gets a value indicating whether the bounded command journal has truncated at least one older entry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-isautomaticretryenabled"></a>
+
+##### `IsAutomaticRetryEnabled`
+
+```csharp
+bool IsAutomaticRetryEnabled { get; set; }
+```
+
+Gets a value indicating whether automatic background retry execution is enabled for the current journal answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-isbounded"></a>
+
+##### `IsBounded`
+
+```csharp
+bool IsBounded { get; }
+```
+
+Gets a value indicating whether the bounded command journal currently retains enough evidence for operator-facing automation answers.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-iscooldownactive"></a>
+
+##### `IsCooldownActive`
+
+```csharp
+bool IsCooldownActive { get; }
+```
+
+Gets a value indicating whether the bounded command journal currently exposes an active cooldown window.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current command journal targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-isempty"></a>
+
+##### `IsEmpty`
+
+```csharp
+bool IsEmpty { get; }
+```
+
+Gets a value indicating whether the bounded command journal currently has no recorded entries.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-isinsufficientforautomation"></a>
+
+##### `IsInsufficientForAutomation`
+
+```csharp
+bool IsInsufficientForAutomation { get; }
+```
+
+Gets a value indicating whether the bounded command journal currently remains insufficient for automation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-istruncated"></a>
+
+##### `IsTruncated`
+
+```csharp
+bool IsTruncated { get; }
+```
+
+Gets a value indicating whether the bounded command journal has truncated older entries.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest retained command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-latestexecutionfingerprint"></a>
+
+##### `LatestExecutionFingerprint`
+
+```csharp
+string LatestExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic latest retained execution fingerprint currently visible to the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest retained command-execution outcome that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-maximumretainedentrycount"></a>
+
+##### `MaximumRetainedEntryCount`
+
+```csharp
+int MaximumRetainedEntryCount { get; set; }
+```
+
+Gets the maximum number of bounded journal entries Cephalon retains for one execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-oldestretainedattemptid"></a>
+
+##### `OldestRetainedAttemptId`
+
+```csharp
+string OldestRetainedAttemptId { get; set; }
+```
+
+Gets the stable oldest retained command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-oldestretainedrecordedatutc"></a>
+
+##### `OldestRetainedRecordedAtUtc`
+
+```csharp
+DateTimeOffset? OldestRetainedRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the oldest retained command-execution outcome currently visible in the bounded journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-preflightstate"></a>
+
+##### `PreflightState`
+
+```csharp
+string PreflightState { get; set; }
+```
+
+Gets the current managed-connector preflight state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current command journal still requires an explicit approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-retainedentrycount"></a>
+
+##### `RetainedEntryCount`
+
+```csharp
+int RetainedEntryCount { get; set; }
+```
+
+Gets the number of bounded journal entries Cephalon currently retains for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-retryexecutionpolicysourceid"></a>
+
+##### `RetryExecutionPolicySourceId`
+
+```csharp
+string RetryExecutionPolicySourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with the retry-execution policy lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier currently associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector command-journal state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-totalrecordedentrycount"></a>
+
+##### `TotalRecordedEntryCount`
+
+```csharp
+int TotalRecordedEntryCount { get; set; }
+```
+
+Gets the total number of command-execution outcomes Cephalon has recorded for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current command journal still reflects one or more shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-writepathreadinessstate"></a>
+
+##### `WritePathReadinessState`
+
+```csharp
+string WritePathReadinessState { get; set; }
+```
+
+Gets the current managed-connector write-path readiness state that informed the command journal.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories"></a>
 
@@ -24026,6 +25077,36 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `issuanceState`: The stable managed-connector command-issuance state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandjournalcategory-system-string"></a>
+
+##### `GetByManagedConnectorCommandJournalCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalCategory(string journalCategory)
+```
+
+Gets the CDC capture execution runtimes whose current bounded managed-connector command-journal answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that journal category.
+
+Parameters:
+- `journalCategory`: The stable managed-connector command-journal category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandjournalstate-system-string"></a>
+
+##### `GetByManagedConnectorCommandJournalState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalState(string journalState)
+```
+
+Gets the CDC capture execution runtimes whose current bounded managed-connector command-journal answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that journal state.
+
+Parameters:
+- `journalState`: The stable managed-connector command-journal state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandretrycategory-system-string"></a>
 

@@ -2885,6 +2885,79 @@ public sealed class DebeziumDataCdcPackTests
             .GetByManagedConnectorRetryExecutionPolicyOperationId(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.Delete)
             .Select(static runtime => runtime.Id)
             .ToArray());
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable, observeOnly.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty, outOfPolicy.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty, waiting.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty, blocked.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Bounded, ready.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.CooldownActive, pauseRequired.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.CooldownActive, deleteRequired.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty, pauseSatisfied.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.InsufficientForAutomation, futureControlPlane.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalOperationIds.Reconcile, ready.ManagedConnectorCommandJournal.OperationId);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalOperationIds.Pause, pauseRequired.ManagedConnectorCommandJournal.OperationId);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalOperationIds.Delete, deleteRequired.ManagedConnectorCommandJournal.OperationId);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalOperationIds.Reconcile, futureControlPlane.ManagedConnectorCommandJournal.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.ObserveOnlyMode, observeOnly.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.NoRecordedCommand, outOfPolicy.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.BoundedRetention, ready.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.CooldownActive, pauseRequired.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.CooldownActive, deleteRequired.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.ControlPlaneOwnershipGap, futureControlPlane.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.OperatorOnly, futureControlPlane.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.True(ready.ManagedConnectorCommandJournal.IsBounded);
+        Assert.True(pauseRequired.ManagedConnectorCommandJournal.IsCooldownActive);
+        Assert.True(deleteRequired.ManagedConnectorCommandJournal.IsCooldownActive);
+        Assert.True(futureControlPlane.ManagedConnectorCommandJournal.IsInsufficientForAutomation);
+        Assert.True(ready.ManagedConnectorCommandJournal.HasRecordedCommandHistory);
+        Assert.False(outOfPolicy.ManagedConnectorCommandJournal.HasRecordedCommandHistory);
+        Assert.Equal(1, ready.ManagedConnectorCommandJournal.TotalRecordedEntryCount);
+        Assert.Equal(2, pauseRequired.ManagedConnectorCommandJournal.TotalRecordedEntryCount);
+        Assert.Equal(2, deleteRequired.ManagedConnectorCommandJournal.TotalRecordedEntryCount);
+        Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandJournalState(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [BlockedRuntimeId, OutOfPolicyRuntimeId, PauseSatisfiedRuntimeId, WaitingRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandJournalState(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([ReadyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandJournalState(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Bounded)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandJournalState(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.CooldownActive)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandJournalState(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.InsufficientForAutomation)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [BlockedRuntimeId, OutOfPolicyRuntimeId, PauseSatisfiedRuntimeId, WaitingRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandJournalCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.NoRecordedCommand)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandJournalCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.CooldownActive)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandJournalCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.ControlPlaneOwnershipGap)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
 
         timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-23T06:11:10Z", CultureInfo.InvariantCulture));
         pauseRequired = runtimeCatalog.GetById(PauseRequiredRuntimeId);
@@ -2918,6 +2991,24 @@ public sealed class DebeziumDataCdcPackTests
             [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
             runtimeCatalog
                 .GetByManagedConnectorRetryExecutionPolicyCategory(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.DuplicateCommand)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.DuplicateEvidencePresent, pauseRequired.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.DuplicateEvidencePresent, deleteRequired.ManagedConnectorCommandJournal.State);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.DuplicateCommand, pauseRequired.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.DuplicateCommand, deleteRequired.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandJournalState(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.DuplicateEvidencePresent)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandJournalCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.DuplicateCommand)
                 .Select(static runtime => runtime.Id)
                 .OrderBy(static id => id, StringComparer.Ordinal)
                 .ToArray());
@@ -3085,6 +3176,104 @@ public sealed class DebeziumDataCdcPackTests
             [PauseRequiredRuntimeId],
             runtimeCatalog
                 .GetByManagedConnectorRetryExecutionPolicyOperationId(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.Pause)
+                .Select(static runtime => runtime.Id)
+                .ToArray());
+    }
+
+    [Fact]
+    public async Task AddDebeziumData_ManagedConnectorCommandJournalCatalogMarksTruncatedBoundedHistory()
+    {
+        const string truncatedRuntimeId = "inventory-journal-truncated-connector";
+        const string truncatedCaptureId = "inventory-journal-truncated-cdc";
+
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-24T02:00:00Z", CultureInfo.InvariantCulture));
+        var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData();
+            engine.AddDebeziumData(options =>
+            {
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: truncatedRuntimeId,
+                    captureId: truncatedCaptureId,
+                    displayName: "Inventory Journal Truncated Connector",
+                    captureDisplayName: "Inventory Journal Truncated CDC",
+                    captureDescription: "Records enough no-op reconcile outcomes to truncate the bounded shared command journal.",
+                    connectClusterId: "connect-cluster-journal",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-journal-truncated",
+                    managementMode: "apply-and-reconcile",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+        var commandExecutor = provider.GetRequiredService<ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor>();
+
+        await reportSink.ReportAsync(
+            truncatedRuntimeId,
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: truncatedCaptureId,
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-24T01:59:30Z", CultureInfo.InvariantCulture),
+                    reportId: "debezium-report-journal-truncated-001",
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["connectorState"] = "RUNNING",
+                        ["connectClusterId"] = "connect-cluster-journal",
+                        ["connectorClass"] = "io.debezium.connector.postgresql.PostgresConnector",
+                        ["sourceProviderId"] = "postgresql",
+                        ["reportedTaskIds"] = "0",
+                        ["activeTaskIds"] = "0"
+                    },
+                    reporterId: "connect-worker-journal")
+            ]);
+
+        for (var index = 0; index < 25; index++)
+        {
+            timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-24T02:00:00Z", CultureInfo.InvariantCulture).AddSeconds(index + 1));
+            var result = await commandExecutor.ExecuteAsync(
+                truncatedRuntimeId,
+                CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile);
+
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NoOp, result.State);
+        }
+
+        var truncatedRuntime = runtimeCatalog.GetById(truncatedRuntimeId);
+
+        Assert.NotNull(truncatedRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Truncated, truncatedRuntime.ManagedConnectorCommandJournal.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalOperationIds.Reconcile, truncatedRuntime.ManagedConnectorCommandJournal.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.HistoryTruncated, truncatedRuntime.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.BoundedRetention, truncatedRuntime.ManagedConnectorCommandJournal.CategoryIds);
+        Assert.Equal(25, truncatedRuntime.ManagedConnectorCommandJournal.TotalRecordedEntryCount);
+        Assert.Equal(20, truncatedRuntime.ManagedConnectorCommandJournal.RetainedEntryCount);
+        Assert.Equal(20, truncatedRuntime.ManagedConnectorCommandJournal.MaximumRetainedEntryCount);
+        Assert.True(truncatedRuntime.ManagedConnectorCommandJournal.IsTruncated);
+        Assert.True(truncatedRuntime.ManagedConnectorCommandJournal.HasTruncatedHistory);
+        Assert.False(string.IsNullOrWhiteSpace(truncatedRuntime.ManagedConnectorCommandJournal.LatestAttemptId));
+        Assert.False(string.IsNullOrWhiteSpace(truncatedRuntime.ManagedConnectorCommandJournal.OldestRetainedAttemptId));
+        Assert.Equal(
+            [truncatedRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandJournalState(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Truncated)
+                .Select(static runtime => runtime.Id)
+                .ToArray());
+        Assert.Equal(
+            [truncatedRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandJournalCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.HistoryTruncated)
                 .Select(static runtime => runtime.Id)
                 .ToArray());
     }
