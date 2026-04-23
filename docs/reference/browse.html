@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T13:26:20.7444458+00:00",
+  "GeneratedAtUtc": "2026-04-23T14:54:40.0387081+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -3313,7 +3313,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 27,
+        "Properties": 28,
         "Methods": 0
       }
     },
@@ -3478,7 +3478,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 33,
+        "Properties": 37,
         "Methods": 0
       }
     },
@@ -3492,7 +3492,7 @@
       "Summary": "Defines the stable state identifiers used by managed-connector command-execution results.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 7,
+        "Fields": 8,
         "Properties": 0,
         "Methods": 0
       }
@@ -7574,7 +7574,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 36
+        "Methods": 39
       }
     },
     {
@@ -17784,6 +17784,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-attempt",
       "Signature": "int Attempt { get; }",
       "Summary": "Gets the application-managed attempt number associated with this observation."
+    },
+    {
+      "DisplayName": "AttemptId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid",
+      "Signature": "string AttemptId { get; set; }",
+      "Summary": "Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome."
     },
     {
       "DisplayName": "AttemptTimeoutSeconds",
@@ -36571,6 +36582,28 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector command envelope matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorCommandExecutionOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandexecutionoperationid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorCommandExecutionOperationId(string operationId)",
+      "Summary": "Gets the CDC capture execution runtimes whose latest managed-connector command-execution outcome references the requested operation."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorCommandExecutionState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandexecutionstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorCommandExecutionState(string executionState)",
+      "Summary": "Gets the CDC capture execution runtimes whose latest managed-connector command-execution outcome matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorCommandIssuanceCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -37726,6 +37759,17 @@
       "Summary": "Gets the reported publication-state entries whose latest observation is failed."
     },
     {
+      "DisplayName": "GetManagedConnectorCommandExecutionHistory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getmanagedconnectorcommandexecutionhistory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult\u003E GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)",
+      "Summary": "Gets the bounded managed-connector command-execution history currently recorded for one execution runtime."
+    },
+    {
       "DisplayName": "GetResources",
       "Category": "Methods",
       "DeclaringTypeName": "ILocalizedTextCatalog",
@@ -38747,6 +38791,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasprovidercommand",
       "Signature": "bool HasProviderCommand { get; }",
       "Summary": "Gets a value indicating whether the request currently carries one translated provider command."
+    },
+    {
+      "DisplayName": "HasRecordedOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasrecordedoutcome",
+      "Signature": "bool HasRecordedOutcome { get; }",
+      "Summary": "Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome."
     },
     {
       "DisplayName": "HasRejectedReporters",
@@ -43743,6 +43798,17 @@
       "Summary": "Gets a value indicating whether no provider execution adapter is currently registered for the runtime."
     },
     {
+      "DisplayName": "IsUnrecorded",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isunrecorded",
+      "Signature": "bool IsUnrecorded { get; }",
+      "Summary": "Gets a value indicating whether Cephalon has not yet recorded any command-execution outcome for the runtime."
+    },
+    {
       "DisplayName": "IsVerified",
       "Category": "Properties",
       "DeclaringTypeName": "PackageSignatureManifest",
@@ -45446,6 +45512,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandenvelope",
       "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus ManagedConnectorCommandEnvelope { get; set; }",
       "Summary": "Gets the operator-facing managed-connector write-path command envelope derived from execution approval, execution intent, dry-run, preflight, and the broader shared runtime truth."
+    },
+    {
+      "DisplayName": "ManagedConnectorCommandExecution",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandexecution",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult ManagedConnectorCommandExecution { get; set; }",
+      "Summary": "Gets the latest recorded managed-connector command-execution outcome visible on the shared runtime surface."
     },
     {
       "DisplayName": "ManagedConnectorCommandIssuance",
@@ -56209,6 +56286,17 @@
       "AnchorId": "member-m-cephalon-audit-services-iauditrecorder-recordasync-cephalon-audit-services-auditrecordrequest-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CAuditEntry\u003E RecordAsync(AuditRecordRequest request, CancellationToken cancellationToken)",
       "Summary": "Records one audit entry and returns the normalized entry that was written."
+    },
+    {
+      "DisplayName": "RecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-recordedatutc",
+      "Signature": "DateTimeOffset? RecordedAtUtc { get; set; }",
+      "Summary": "Gets the timestamp when Cephalon recorded this command-execution outcome."
     },
     {
       "DisplayName": "RecreateSlotIfInvalidated",
@@ -69935,6 +70023,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-unmet",
       "Signature": "const string Unmet",
       "Summary": "The condition is not satisfied."
+    },
+    {
+      "DisplayName": "Unrecorded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-unrecorded",
+      "Signature": "const string Unrecorded",
+      "Summary": "No managed-connector command-execution outcome has been recorded yet for the execution runtime."
     },
     {
       "DisplayName": "Unreported",

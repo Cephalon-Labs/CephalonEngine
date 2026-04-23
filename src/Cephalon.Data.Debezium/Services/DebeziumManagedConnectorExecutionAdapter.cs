@@ -158,7 +158,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
             executionAdapter,
             normalizedOperationId,
             CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted,
-            $"Cephalon translated the managed-connector request into Debezium provider command shape '{httpMethod} {relativePath}'. Provider completion and execution-outcome history remain later work.",
+            $"Cephalon translated the managed-connector request into Debezium provider command shape '{httpMethod} {relativePath}'. Provider completion remains later work, while command-execution outcomes now stay visible on the shared runtime surface.",
             httpMethod,
             relativePath));
     }

@@ -2796,6 +2796,12 @@ public sealed class PackageSurfaceTests
             .GetMethod("GetByManagedConnectorExecutionAdapterCategory", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
             .GetMethod("GetByManagedConnectorExecutionAdapterOperationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorCommandExecutionState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorCommandExecutionOperationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetManagedConnectorCommandExecutionHistory", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor)
             .GetMethod("ExecuteAsync", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter)
@@ -2842,6 +2848,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("ManagedConnectorCommandIssuance", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
             .GetProperty("ManagedConnectorExecutionAdapter", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("ManagedConnectorCommandExecution", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
             .GetProperty("ReportedCdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
@@ -3861,7 +3869,11 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates)
             .GetField("Ready", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
+            .GetField("Unrecorded", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
             .GetField("NotApplicable", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
+            .GetField("Unrecorded", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
             .GetField("Blocked", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
@@ -3977,6 +3989,10 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest)
             .GetProperty("AllowDestructive", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)
+            .GetProperty("AttemptId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)
+            .GetProperty("RecordedAtUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)
             .GetProperty("RequestedOperationId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)
             .GetProperty("ExecutionAdapterState", BindingFlags.Instance | BindingFlags.Public));
@@ -3990,6 +4006,10 @@ public sealed class PackageSurfaceTests
             .GetProperty("ExecutionFingerprint", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)
             .GetProperty("HasProviderCommand", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)
+            .GetProperty("IsUnrecorded", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)
+            .GetProperty("HasRecordedOutcome", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)
             .GetProperty("IsAdapted", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult)

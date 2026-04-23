@@ -757,6 +757,36 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionAdapterOperation");
+        engineGroup.MapGet("/cdc-capture-runtimes/command-executions/{executionState}", (string executionState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorCommandExecutionState(executionState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandExecutionState");
+        engineGroup.MapGet("/cdc-capture-runtimes/command-executions/operations/{operationId}", (string operationId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorCommandExecutionOperationId(operationId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandExecutionOperation");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
+                var runtimeDescriptor = runtimeCatalog?.GetById(executionRuntimeId);
+                if (runtimeDescriptor is null)
+                {
+                    return Results.NotFound();
+                }
+
+                return Results.Ok(runtimeCatalog?.GetManagedConnectorCommandExecutionHistory(executionRuntimeId) ?? []);
+            })
+            .WithName("GetCephalonManagedConnectorCommandExecutionHistory");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

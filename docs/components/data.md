@@ -284,6 +284,16 @@ desired-versus-observed drift, governance, remediation, and coverage truth, so p
 translation can stay on the existing `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot`
 surfaces instead of inventing a Debezium-only transport registry.
 
+That same shared execution-runtime story now also keeps managed-connector command-execution outcomes
+explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandExecution` publishes stable
+`not-applicable` / `unrecorded` / `blocked` / `operator-only` / `unavailable` / `no-op` /
+`adapted` / `failed` posture together with the requested and resolved operation ids, source
+execution-adapter and command-issuance state, deterministic command/execution fingerprints, and
+latest recorded attempt metadata such as `AttemptId`, `RecordedAtUtc`, and `HasRecordedOutcome`.
+The shared execution-runtime catalog now keeps that latest-outcome answer plus bounded recent
+history on the same `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of
+inventing a Debezium-only command journal.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -326,12 +336,16 @@ well.
 `GetByManagedConnectorCommandIssuanceOperationId(...)`,
 `GetByManagedConnectorExecutionAdapterState(...)`,
 `GetByManagedConnectorExecutionAdapterCategory(...)`, and
-`GetByManagedConnectorExecutionAdapterOperationId(...)`, so host code, provider packs, and tooling can
+`GetByManagedConnectorExecutionAdapterOperationId(...)`,
+`GetByManagedConnectorCommandExecutionState(...)`,
+`GetByManagedConnectorCommandExecutionOperationId(...)`, and
+`GetManagedConnectorCommandExecutionHistory(...)`, so host code, provider packs, and tooling can
 narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
 managed-connector governance, managed-connector drift, managed-connector action-planning,
 managed-connector readiness, managed-connector preflight, managed-connector dry-run,
 managed-connector execution-intent, managed-connector execution-approval, managed-connector
-command-envelope, managed-connector command-issuance, or managed-connector execution-adapter
+command-envelope, managed-connector command-issuance, managed-connector execution-adapter, or
+managed-connector command-execution-history
 index.
 ASP.NET Core maps those same filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
@@ -369,8 +383,11 @@ ASP.NET Core maps those same filters through
 `/engine/cdc-capture-runtimes/command-envelopes/operations/{operationId}` plus
 `/engine/cdc-capture-runtimes/command-issuances/{issuanceState}`,
 `/engine/cdc-capture-runtimes/command-issuances/categories/{issuanceCategory}`, and
-`/engine/cdc-capture-runtimes/command-issuances/operations/{operationId}` so the live host
-surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
+`/engine/cdc-capture-runtimes/command-issuances/operations/{operationId}` plus
+`/engine/cdc-capture-runtimes/command-executions/{executionState}`,
+`/engine/cdc-capture-runtimes/command-executions/operations/{operationId}`, and
+`/engine/cdc-capture-runtimes/{executionRuntimeId}/command-executions` so the live host surface
+stays aligned with the same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,
@@ -413,7 +430,8 @@ shared report-sink bridge keep Debezium or Kafka Connect style lifecycle, reconc
 reporter-coordination truth, governance posture, desired-versus-observed drift posture, and
 operator action-planning truth on the same `/engine/cdc-*`, `/engine/runtime-story`, and
 `snapshot` surfaces, while the shared execution-runtime catalog now rolls that connector posture
-back into typed runtime-level operator summaries instead of inventing a Debezium-only status
+back into typed runtime-level operator summaries, provider execution-adapter posture, and latest
+managed-connector command-execution outcome/history instead of inventing a Debezium-only status
 registry.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively

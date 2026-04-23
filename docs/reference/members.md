@@ -1149,6 +1149,9 @@ Browse the published API surface by public member.
 - [Attempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-attempt): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the application-managed attempt number associated with this observation.
   - `int Attempt { get; }`
+- [AttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome.
+  - `string AttemptId { get; set; }`
 - [AttemptTimeoutSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-attempttimeoutseconds): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AttemptTimeoutSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the per-attempt timeout in seconds requested for an execution.
   - `int? AttemptTimeoutSeconds { get; }`
@@ -6288,6 +6291,12 @@ Browse the published API surface by public member.
 - [GetByManagedConnectorCommandEnvelopeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandenvelopestate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCommandEnvelopeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector command envelope matches the requested state.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandEnvelopeState(string commandState)`
+- [GetByManagedConnectorCommandExecutionOperationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandexecutionoperationid-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCommandExecutionOperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose latest managed-connector command-execution outcome references the requested operation.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandExecutionOperationId(string operationId)`
+- [GetByManagedConnectorCommandExecutionState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandexecutionstate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose latest managed-connector command-execution outcome matches the requested state.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandExecutionState(string executionState)`
 - [GetByManagedConnectorCommandIssuanceCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandissuancecategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCommandIssuanceCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector command issuance includes the requested category.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandIssuanceCategory(string issuanceCategory)`
@@ -6603,6 +6612,9 @@ Browse the published API surface by public member.
 - [GetFailedPublications](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getfailedpublications): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetFailedPublications&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported publication-state entries whose latest observation is failed.
   - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetFailedPublications()`
+- [GetManagedConnectorCommandExecutionHistory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getmanagedconnectorcommandexecutionhistory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetManagedConnectorCommandExecutionHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)`
 - [GetResources](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-getresources-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
   - Returns the localized resources visible for one culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
@@ -6885,6 +6897,9 @@ Browse the published API surface by public member.
 - [HasProviderCommand](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasprovidercommand): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasProviderCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the request currently carries one translated provider command.
   - `bool HasProviderCommand { get; }`
+- [HasRecordedOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasrecordedoutcome): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecordedOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome.
+  - `bool HasRecordedOutcome { get; }`
 - [HasRejectedReporters](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-hasrejectedreporters): `Properties` on `CdcCaptureExecutionRuntimeReporterCoordinationRollup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRejectedReporters&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently exposes rejected reporters anywhere in its coordination story.
   - `bool HasRejectedReporters { get; }`
@@ -8250,6 +8265,9 @@ Browse the published API surface by public member.
 - [IsUnavailable](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isunavailable): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsUnavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether no provider execution adapter is currently registered for the runtime.
   - `bool IsUnavailable { get; }`
+- [IsUnrecorded](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isunrecorded): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsUnrecorded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether Cephalon has not yet recorded any command-execution outcome for the runtime.
+  - `bool IsUnrecorded { get; }`
 - [IsVerified](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-isverified): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=IsVerified&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets a value indicating whether this signature was cryptographically verified against a trusted signing identity.
   - `bool IsVerified { get; }`
@@ -8727,6 +8745,9 @@ Browse the published API surface by public member.
 - [ManagedConnectorCommandEnvelope](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandenvelope): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorCommandEnvelope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector write-path command envelope derived from execution approval, execution intent, dry-run, preflight, and the broader shared runtime truth.
   - `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus ManagedConnectorCommandEnvelope { get; set; }`
+- [ManagedConnectorCommandExecution](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandexecution): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorCommandExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest recorded managed-connector command-execution outcome visible on the shared runtime surface.
+  - `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult ManagedConnectorCommandExecution { get; set; }`
 - [ManagedConnectorCommandIssuance](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandissuance): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorCommandIssuance&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector command-issuance posture derived from command envelopes, execution approval, execution intent, dry-run, preflight, and the broader shared runtime truth.
   - `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus ManagedConnectorCommandIssuance { get; set; }`
@@ -11673,6 +11694,9 @@ Browse the published API surface by public member.
 - [RecordAsync](cephalon-audit.md#member-m-cephalon-audit-services-iauditrecorder-recordasync-cephalon-audit-services-auditrecordrequest-system-threading-cancellationtoken): `Methods` on `IAuditRecorder` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=RecordAsync&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Records one audit entry and returns the normalized entry that was written.
   - `ValueTask<AuditEntry> RecordAsync(AuditRecordRequest request, CancellationToken cancellationToken)`
+- [RecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-recordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the timestamp when Cephalon recorded this command-execution outcome.
+  - `DateTimeOffset? RecordedAtUtc { get; set; }`
 - [RecreateSlotIfInvalidated](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-recreateslotifinvalidated): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=RecreateSlotIfInvalidated&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should drop and recreate the logical replication slot when it exists but is no longer usable.
   - `bool RecreateSlotIfInvalidated { get; set; }`
@@ -15424,6 +15448,9 @@ Browse the published API surface by public member.
 - [Unmet](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-unmet): `Fields` on `CellTrafficAutomationMaterializationConditionStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unmet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The condition is not satisfied.
   - `const string Unmet`
+- [Unrecorded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-unrecorded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unrecorded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - No managed-connector command-execution outcome has been recorded yet for the execution runtime.
+  - `const string Unrecorded`
 - [Unreported](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-unreported): `Fields` on `CdcCaptureExecutionRuntimeReportingCoverageStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unreported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime owns declared CDC captures, but none of them have reported runtime state yet.
   - `const string Unreported`

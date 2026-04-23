@@ -298,6 +298,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus ManagedConnectorExecutionAdapter { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the latest recorded managed-connector command-execution outcome visible on the shared runtime surface.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult ManagedConnectorCommandExecution { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

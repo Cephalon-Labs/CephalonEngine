@@ -4,7 +4,9 @@ namespace Cephalon.Data.Services;
 
 internal sealed class ManagedConnectorCommandExecutor(
     ICdcCaptureExecutionRuntimeCatalog runtimeCatalog,
-    IEnumerable<ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter> executionAdapters)
+    IEnumerable<ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter> executionAdapters,
+    ManagedConnectorCommandExecutionHistoryStore commandExecutionHistoryStore,
+    TimeProvider timeProvider)
     : ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor
 {
     private readonly ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter[] executionAdapters = executionAdapters.ToArray();
@@ -33,12 +35,12 @@ internal sealed class ManagedConnectorCommandExecutor(
                 CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None,
                 StringComparison.OrdinalIgnoreCase))
         {
-            return CreateResult(
+            return Record(CreateResult(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NotApplicable,
-                "Managed-connector operation 'none' does not represent a runnable provider command.");
+                "Managed-connector operation 'none' does not represent a runnable provider command."));
         }
 
         if (executionAdapter.AppliesToManagedConnector &&
@@ -48,56 +50,57 @@ internal sealed class ManagedConnectorCommandExecutor(
                 normalizedOperationId,
                 StringComparison.OrdinalIgnoreCase))
         {
-            return CreateResult(
+            return Record(CreateResult(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
-                $"Managed connector '{runtime.Id}' currently resolves operation '{executionAdapter.OperationId}', not '{normalizedOperationId}'.");
+                $"Managed connector '{runtime.Id}' currently resolves operation '{executionAdapter.OperationId}', not '{normalizedOperationId}'."));
         }
 
         if (!executionAdapter.AppliesToManagedConnector)
         {
-            return CreateResult(
+            return Record(CreateResult(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NotApplicable,
-                executionAdapter.Description ?? "The execution runtime does not currently participate in a managed-connector provider execution lane.");
+                executionAdapter.Description ?? "The execution runtime does not currently participate in a managed-connector provider execution lane."));
         }
 
         if (executionAdapter.IsBlocked)
         {
-            return CreateResult(
+            return Record(CreateResult(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
-                executionAdapter.Description ?? "The managed connector remains blocked before Cephalon can route a provider command.");
+                executionAdapter.Description ?? "The managed connector remains blocked before Cephalon can route a provider command."));
         }
 
         if (executionAdapter.IsOperatorOnly)
         {
-            return CreateResult(
+            return Record(CreateResult(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly,
-                executionAdapter.Description ?? "The managed connector still remains operator-owned outside Cephalon.");
+                executionAdapter.Description ?? "The managed connector still remains operator-owned outside Cephalon."));
         }
 
         var providerExecutionAdapter = ResolveExecutionAdapter(runtime, executionAdapter.AdapterId);
         if (providerExecutionAdapter is null)
         {
-            return CreateResult(
+            return Record(CreateResult(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unavailable,
-                executionAdapter.Description ?? "No matching provider execution adapter is currently registered for the managed connector.");
+                executionAdapter.Description ?? "No matching provider execution adapter is currently registered for the managed connector."));
         }
 
-        return await providerExecutionAdapter.ExecuteAsync(runtime, normalizedOperationId, request, cancellationToken);
+        var result = await providerExecutionAdapter.ExecuteAsync(runtime, normalizedOperationId, request, cancellationToken);
+        return Record(result);
     }
 
     private ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter? ResolveExecutionAdapter(
@@ -186,6 +189,14 @@ internal sealed class ManagedConnectorCommandExecutor(
             IsDestructiveOperation = executionAdapter.IsDestructiveOperation,
             WouldApplyChanges = executionAdapter.WouldApplyChanges
         };
+    }
+
+    private CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult Record(
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult result)
+    {
+        ArgumentNullException.ThrowIfNull(result);
+
+        return commandExecutionHistoryStore.Record(result, timeProvider.GetUtcNow());
     }
 
     private static string CreateExecutionFingerprint(

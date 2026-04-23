@@ -3027,6 +3027,71 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-180 Phase 13 managed-connector execution outcome/history baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, and `ENG-179` already shipped shared coverage, remediation,
+  governance, desired-versus-observed drift, action-planning, write-path readiness, preflight,
+  dry-run, execution-intent, execution-approval, command-envelope, command-issuance, and provider
+  execution-adapter truth, but operators still lacked one shared answer for what the last managed
+  connector command attempt did and whether any recent execution history existed on the same runtime
+  surface
+- the next follow-through needed to keep latest command outcome plus bounded recent history additive
+  on the existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only execution
+  journal, second coordinator, or separate provider control-plane registry
+- teams also needed typed attempt ids, recorded timestamps, and explicit `unrecorded` posture so the
+  shared command-execution lane could distinguish "no attempt yet" from blocked, no-op, adapted, or
+  operator-only command answers without rebuilding that logic in hosts or provider packs
+
+Acceptance:
+
+- `Cephalon.Abstractions` extends the stable managed-connector command-execution contract with
+  additive latest-outcome metadata on `CdcCaptureExecutionRuntimeDescriptor` plus explicit
+  `unrecorded` posture, recorded-at timestamps, recorded-outcome flags, and deterministic attempt
+  identity for shared command execution
+- the shared execution-runtime catalog now exposes additive command-execution-state,
+  command-execution-operation, and per-runtime command-execution-history methods while deriving the
+  latest published outcome from the same shared command lane instead of forcing hosts or providers to
+  invent a second execution-history registry
+- ASP.NET Core publishes those same command-execution filters and per-runtime history reads on the
+  existing `/engine/cdc-capture-runtimes*` route family, and the command-execution POST from
+  `ENG-179` now records the resulting shared outcome on that same surface instead of branching into a
+  Debezium-only execution-history endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the
+  shipped slice while later retry/idempotency hardening remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now extends
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates` with stable `Unrecorded`, adds
+  additive `AttemptId`, `RecordedAtUtc`, `IsUnrecorded`, and `HasRecordedOutcome` on
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult`, and adds additive
+  `ManagedConnectorCommandExecution` on `CdcCaptureExecutionRuntimeDescriptor`
+- `Cephalon.Data` now records latest managed-connector command-execution posture plus bounded recent
+  history through `ManagedConnectorCommandExecutionHistoryStore`, enriches the shared execution
+  runtime with the latest recorded command outcome, and exposes
+  `GetByManagedConnectorCommandExecutionState(...)`,
+  `GetByManagedConnectorCommandExecutionOperationId(...)`, and
+  `GetManagedConnectorCommandExecutionHistory(...)` on `ICdcCaptureExecutionRuntimeCatalog`
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/command-executions/{executionState}`,
+  `/engine/cdc-capture-runtimes/command-executions/operations/{operationId}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/command-executions` so host routes stay aligned
+  with the same shared command lane and latest-outcome story
+- `Cephalon.Data.Debezium` now keeps Debezium or Kafka Connect command translation additive while the
+  shared runtime surface records the immediate result of explicit pause/resume/restart/delete or
+  reconcile requests, including typed attempt ids and timestamps, without claiming durable retry or
+  full provider completion ownership
+- targeted coverage now proves the execution outcome/history baseline through composition tests
+  `37/37`, hosting tests `15/15`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-179 Phase 13 managed-connector provider write-path execution-adapter baseline
 
 Status: done

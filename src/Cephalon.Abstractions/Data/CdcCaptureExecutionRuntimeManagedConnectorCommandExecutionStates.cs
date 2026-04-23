@@ -6,6 +6,11 @@ namespace Cephalon.Abstractions.Data;
 public static class CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates
 {
     /// <summary>
+    /// No managed-connector command-execution outcome has been recorded yet for the execution runtime.
+    /// </summary>
+    public const string Unrecorded = "unrecorded";
+
+    /// <summary>
     /// The requested command does not currently apply to the execution runtime.
     /// </summary>
     public const string NotApplicable = "not-applicable";

@@ -458,7 +458,34 @@ runtime surface instead of introducing a Debezium-only transport registry or sec
   already owns Kafka Connect execution outcomes, automatic reconcile loops, retries, idempotency,
   or broader managed-connector control-plane orchestration
 
-## Not shipped in this slice
+## Managed-connector execution outcome/history baseline
+
+The `ENG-180` follow-through keeps latest managed-connector command outcome plus bounded recent
+history additive on that same shared runtime surface instead of introducing a Debezium-only command
+journal or second coordinator.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandExecution` now publishes the latest
+  shared command-execution answer for Debezium-managed runtimes, including stable
+  `not-applicable`, `unrecorded`, `blocked`, `operator-only`, `unavailable`, `no-op`, `adapted`,
+  and `failed` posture together with requested versus resolved operation ids, deterministic
+  fingerprints, and recorded attempt metadata such as `AttemptId`, `RecordedAtUtc`, and
+  `HasRecordedOutcome`
+- the shared execution-runtime catalog now keeps that latest outcome plus bounded recent history on
+  the same merged CDC runtime surface, and `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  command-execution state filters, operation filters, and per-runtime command-execution history
+  without forcing Debezium callers to invent a parallel history registry
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/command-executions/{executionState}`,
+  `/engine/cdc-capture-runtimes/command-executions/operations/{operationId}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/command-executions` on the same shared route
+  family, while the additive `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}`
+  lane from `ENG-179` now records the resulting shared outcome instead of only returning a transient
+  command result
+- Debezium command translation still stays immediate and bounded: pause, resume, restart, and delete
+  requests can translate into provider command shape, reconcile remains blocked until a later
+  configuration-payload lane exists, and the new history surface records those typed outcomes
+  without claiming automatic retries or durable provider completion tracking
+
+## Not shipped in these slices
 
 This pack intentionally still does not claim:
 
@@ -467,6 +494,7 @@ This pack intentionally still does not claim:
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
+- durable distributed command journals, automatic retries, or idempotency orchestration
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

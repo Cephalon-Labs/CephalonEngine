@@ -261,4 +261,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable managed-connector execution-adapter operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose latest managed-connector command-execution outcome matches the requested state.
+    /// </summary>
+    /// <param name="executionState">The stable managed-connector command-execution state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandExecutionState(string executionState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose latest managed-connector command-execution outcome references the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandExecutionOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
+    /// </summary>
+    /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>
+    /// <returns>The latest-first bounded command-execution history for the runtime, or an empty list when no outcome has been recorded yet.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId);
 }

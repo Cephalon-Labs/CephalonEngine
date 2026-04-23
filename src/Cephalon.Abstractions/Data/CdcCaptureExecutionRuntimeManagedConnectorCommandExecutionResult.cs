@@ -9,7 +9,7 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionR
     /// Creates a new managed-connector command-execution result.
     /// </summary>
     /// <param name="state">
-    /// The stable command-execution state, such as <c>blocked</c>, <c>operator-only</c>, <c>unavailable</c>, <c>no-op</c>, <c>adapted</c>, <c>failed</c>, or <c>not-applicable</c>.
+    /// The stable command-execution state, such as <c>unrecorded</c>, <c>blocked</c>, <c>operator-only</c>, <c>unavailable</c>, <c>no-op</c>, <c>adapted</c>, <c>failed</c>, or <c>not-applicable</c>.
     /// </param>
     /// <param name="description">An optional operator-facing command-execution summary.</param>
     public CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult(
@@ -29,6 +29,16 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionR
     /// Gets the stable managed-connector command-execution state.
     /// </summary>
     public string State { get; }
+
+    /// <summary>
+    /// Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome.
+    /// </summary>
+    public string AttemptId { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Gets the timestamp when Cephalon recorded this command-execution outcome.
+    /// </summary>
+    public DateTimeOffset? RecordedAtUtc { get; init; }
 
     /// <summary>
     /// Gets an optional operator-facing command-execution summary.
@@ -161,6 +171,16 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionR
     public bool HasProviderCommand =>
         !string.IsNullOrWhiteSpace(HttpMethod) &&
         !string.IsNullOrWhiteSpace(RelativePath);
+
+    /// <summary>
+    /// Gets a value indicating whether Cephalon has not yet recorded any command-execution outcome for the runtime.
+    /// </summary>
+    public bool IsUnrecorded => string.Equals(State, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unrecorded, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome.
+    /// </summary>
+    public bool HasRecordedOutcome => RecordedAtUtc.HasValue;
 
     /// <summary>
     /// Gets a value indicating whether the request is currently blocked.

@@ -8428,6 +8428,16 @@ CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus ManagedConnector
 
 Gets the operator-facing managed-connector write-path command envelope derived from execution approval, execution intent, dry-run, preflight, and the broader shared runtime truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandexecution"></a>
+
+##### `ManagedConnectorCommandExecution`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult ManagedConnectorCommandExecution { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution outcome visible on the shared runtime surface.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandissuance"></a>
 
 ##### `ManagedConnectorCommandIssuance`
@@ -9846,7 +9856,7 @@ CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult(string state, s
 Creates a new managed-connector command-execution result.
 
 Parameters:
-- `state`: The stable command-execution state, such as `blocked`, `operator-only`, `unavailable`, `no-op`, `adapted`, `failed`, or `not-applicable`.
+- `state`: The stable command-execution state, such as `unrecorded`, `blocked`, `operator-only`, `unavailable`, `no-op`, `adapted`, `failed`, or `not-applicable`.
 - `description`: An optional operator-facing command-execution summary.
 
 #### Properties
@@ -9870,6 +9880,16 @@ string AdapterId { get; set; }
 ```
 
 Gets the current provider execution-adapter identifier that handled the request when one was available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid"></a>
+
+##### `AttemptId`
+
+```csharp
+string AttemptId { get; set; }
+```
+
+Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-commandenvelopestate"></a>
 
@@ -9981,6 +10001,16 @@ bool HasProviderCommand { get; }
 
 Gets a value indicating whether the request currently carries one translated provider command.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasrecordedoutcome"></a>
+
+##### `HasRecordedOutcome`
+
+```csharp
+bool HasRecordedOutcome { get; }
+```
+
+Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-httpmethod"></a>
 
 ##### `HttpMethod`
@@ -10071,6 +10101,16 @@ bool IsUnavailable { get; }
 
 Gets a value indicating whether no provider execution adapter is currently available for the request.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isunrecorded"></a>
+
+##### `IsUnrecorded`
+
+```csharp
+bool IsUnrecorded { get; }
+```
+
+Gets a value indicating whether Cephalon has not yet recorded any command-execution outcome for the runtime.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-managementmode"></a>
 
 ##### `ManagementMode`
@@ -10090,6 +10130,16 @@ string ProviderId { get; set; }
 ```
 
 Gets the provider identifier associated with the command when one was available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-recordedatutc"></a>
+
+##### `RecordedAtUtc`
+
+```csharp
+DateTimeOffset? RecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded this command-execution outcome.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-relativepath"></a>
 
@@ -10263,6 +10313,16 @@ const string Unavailable
 ```
 
 No matching provider execution adapter is currently available for the requested command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-unrecorded"></a>
+
+##### `Unrecorded`
+
+```csharp
+const string Unrecorded
+```
+
+No managed-connector command-execution outcome has been recorded yet for the execution runtime.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancecategories"></a>
 
@@ -21750,6 +21810,36 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 Parameters:
 - `commandState`: The stable managed-connector command-envelope state identifier to filter by.
 
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandexecutionoperationid-system-string"></a>
+
+##### `GetByManagedConnectorCommandExecutionOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandExecutionOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose latest managed-connector command-execution outcome references the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable managed-connector operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandexecutionstate-system-string"></a>
+
+##### `GetByManagedConnectorCommandExecutionState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandExecutionState(string executionState)
+```
+
+Gets the CDC capture execution runtimes whose latest managed-connector command-execution outcome matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution state.
+
+Parameters:
+- `executionState`: The stable managed-connector command-execution state identifier to filter by.
+
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandissuancecategory-system-string"></a>
 
 ##### `GetByManagedConnectorCommandIssuanceCategory`
@@ -22184,6 +22274,21 @@ Returns: The matching execution-runtime descriptors, or an empty list when the r
 
 Parameters:
 - `reporterId`: The reporter identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getmanagedconnectorcommandexecutionhistory-system-string"></a>
+
+##### `GetManagedConnectorCommandExecutionHistory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)
+```
+
+Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
+
+Returns: The latest-first bounded command-execution history for the runtime, or an empty list when no outcome has been recorded yet.
+
+Parameters:
+- `executionRuntimeId`: The stable execution-runtime identifier to resolve.
 
 <a id="type-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorcommandexecutor"></a>
 
