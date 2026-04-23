@@ -946,6 +946,42 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryLeaseOwner");
+        engineGroup.MapGet("/cdc-capture-runtimes/cross-node-idempotency-hardenings/{hardeningState}", (string hardeningState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorCrossNodeIdempotencyHardeningState(hardeningState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningState");
+        engineGroup.MapGet("/cdc-capture-runtimes/cross-node-idempotency-hardenings/categories/{hardeningCategory}", (string hardeningCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(hardeningCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/cross-node-idempotency-hardenings/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(ownerId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningOwner");
+        engineGroup.MapGet("/cdc-capture-runtimes/cross-node-idempotency-hardenings/fingerprints/{retryFingerprint}", (string retryFingerprint, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(retryFingerprint) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint");
         engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-orchestrations/{orchestrationState}", (string orchestrationState, HttpContext httpContext) =>
             {
                 var runtimes = httpContext.RequestServices
@@ -1018,6 +1054,17 @@ public static class EngineWebApplicationExtensions
                     : Results.Ok(runtimeDescriptor.ManagedConnectorDistributedRetryLease);
             })
             .WithName("GetCephalonManagedConnectorDistributedRetryLease");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/cross-node-idempotency-hardening", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null
+                    ? Results.NotFound()
+                    : Results.Ok(runtimeDescriptor.ManagedConnectorCrossNodeIdempotencyHardening);
+            })
+            .WithName("GetCephalonManagedConnectorCrossNodeIdempotencyHardening");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-orchestration", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

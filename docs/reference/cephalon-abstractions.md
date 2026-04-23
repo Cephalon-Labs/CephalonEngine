@@ -8498,6 +8498,16 @@ CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus ManagedConnectorCom
 
 Gets the operator-facing managed-connector command-retry and idempotency posture derived from the shared command lane plus bounded execution history.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcrossnodeidempotencyhardening"></a>
+
+##### `ManagedConnectorCrossNodeIdempotencyHardening`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus ManagedConnectorCrossNodeIdempotencyHardening { get; set; }
+```
+
+Gets the operator-facing managed-connector cross-node idempotency-hardening posture derived from retry coordination, durable journal truth, and retained command lineage evidence.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordistributedretrylease"></a>
 
 ##### `ManagedConnectorDistributedRetryLease`
@@ -15737,6 +15747,874 @@ string WritePathReadinessState { get; set; }
 
 Gets the current managed-connector write-path readiness state that informed command retry.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories`
+
+Defines the stable category identifiers used by managed-connector cross-node idempotency-hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-activeleasevisible"></a>
+
+##### `ActiveLeaseVisible`
+
+```csharp
+const string ActiveLeaseVisible
+```
+
+The current runtime still exposes one active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-activereportervisible"></a>
+
+##### `ActiveReporterVisible`
+
+```csharp
+const string ActiveReporterVisible
+```
+
+The current runtime still exposes one active reporter identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-crossnoderuntime"></a>
+
+##### `CrossNodeRuntime`
+
+```csharp
+const string CrossNodeRuntime
+```
+
+The runtime depends on cross-node idempotency evidence before automatic retry should execute.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current node can execute automatic retry safely for the current cross-node hardening answer.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicateautomaticretryattempts"></a>
+
+##### `DuplicateAutomaticRetryAttempts`
+
+```csharp
+const string DuplicateAutomaticRetryAttempts
+```
+
+Retained history currently contains duplicated automatic retry attempts for the current retry posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatecommandlineage"></a>
+
+##### `DuplicateCommandLineage`
+
+```csharp
+const string DuplicateCommandLineage
+```
+
+Retained history currently contains duplicated command lineage for the current retry posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatelineagerisk"></a>
+
+##### `DuplicateLineageRisk`
+
+```csharp
+const string DuplicateLineageRisk
+```
+
+Cross-node idempotency currently remains risky because retained command lineage already looks duplicated.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-durablejournalconfigured"></a>
+
+##### `DurableJournalConfigured`
+
+```csharp
+const string DurableJournalConfigured
+```
+
+A durable command-journal store is configured for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-idempotentsafe"></a>
+
+##### `IdempotentSafe`
+
+```csharp
+const string IdempotentSafe
+```
+
+Cross-node idempotency currently looks safe for the current retry posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-inmemoryjournalonly"></a>
+
+##### `InMemoryJournalOnly`
+
+```csharp
+const string InMemoryJournalOnly
+```
+
+Automatic retry still depends on in-memory command history only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-leaseconflict"></a>
+
+##### `LeaseConflict`
+
+```csharp
+const string LeaseConflict
+```
+
+Cross-node retry lease ownership remains conflicted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-leasemissing"></a>
+
+##### `LeaseMissing`
+
+```csharp
+const string LeaseMissing
+```
+
+Cross-node retry lease ownership remains missing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-matchingautomaticretryattempt"></a>
+
+##### `MatchingAutomaticRetryAttempt`
+
+```csharp
+const string MatchingAutomaticRetryAttempt
+```
+
+Retained history currently contains one automatic retry attempt for the current retry fingerprint.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-matchingretryhistory"></a>
+
+##### `MatchingRetryHistory`
+
+```csharp
+const string MatchingRetryHistory
+```
+
+Retained history currently contains evidence for the current retry fingerprint.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Cross-node idempotency hardening still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-ownermatch"></a>
+
+##### `OwnerMatch`
+
+```csharp
+const string OwnerMatch
+```
+
+The current host coordination owner matches the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-ownermismatch"></a>
+
+##### `OwnerMismatch`
+
+```csharp
+const string OwnerMismatch
+```
+
+The current host coordination owner does not match the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-persistedhistory"></a>
+
+##### `PersistedHistory`
+
+```csharp
+const string PersistedHistory
+```
+
+The durable command journal currently exposes persisted recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The durable command journal currently exposes recovered recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-replaywindowrisk"></a>
+
+##### `ReplayWindowRisk`
+
+```csharp
+const string ReplayWindowRisk
+```
+
+Cross-node idempotency currently remains risky because the durable replay window still lacks enough retained evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-singlenoderuntime"></a>
+
+##### `SingleNodeRuntime`
+
+```csharp
+const string SingleNodeRuntime
+```
+
+The runtime can evaluate automatic retry on a single node without cross-node hardening.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-staleownerrisk"></a>
+
+##### `StaleOwnerRisk`
+
+```csharp
+const string StaleOwnerRisk
+```
+
+Cross-node idempotency currently remains risky because ownership truth still looks stale.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources`
+
+Defines the stable source identifiers used by managed-connector cross-node idempotency-hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-automaticretrycoordination"></a>
+
+##### `AutomaticRetryCoordination`
+
+```csharp
+const string AutomaticRetryCoordination
+```
+
+The cross-node idempotency-hardening answer was derived primarily from automatic-retry coordination truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-commandexecutionhistory"></a>
+
+##### `CommandExecutionHistory`
+
+```csharp
+const string CommandExecutionHistory
+```
+
+The cross-node idempotency-hardening answer was derived primarily from retained command-execution history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-commandjournaldurability"></a>
+
+##### `CommandJournalDurability`
+
+```csharp
+const string CommandJournalDurability
+```
+
+The cross-node idempotency-hardening answer was derived primarily from durable command-journal truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-distributedretrylease"></a>
+
+##### `DistributedRetryLease`
+
+```csharp
+const string DistributedRetryLease
+```
+
+The cross-node idempotency-hardening answer was derived primarily from distributed retry lease truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-retryexecutionpolicy"></a>
+
+##### `RetryExecutionPolicy`
+
+```csharp
+const string RetryExecutionPolicy
+```
+
+The cross-node idempotency-hardening answer was derived primarily from retry-execution policy truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The cross-node idempotency-hardening answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates`
+
+Defines the stable state identifiers used by managed-connector cross-node idempotency-hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-duplicatelineagerisk"></a>
+
+##### `DuplicateLineageRisk`
+
+```csharp
+const string DuplicateLineageRisk
+```
+
+Cross-node idempotency remains risky because retained command lineage already looks duplicated for the current retry posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-idempotentsafe"></a>
+
+##### `IdempotentSafe`
+
+```csharp
+const string IdempotentSafe
+```
+
+Cross-node idempotency evidence currently looks safe for the current retry posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Cross-node idempotency hardening does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Cross-node idempotency hardening still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-replaywindowrisk"></a>
+
+##### `ReplayWindowRisk`
+
+```csharp
+const string ReplayWindowRisk
+```
+
+Cross-node idempotency remains risky because the durable replay window still lacks enough retained evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-staleownerrisk"></a>
+
+##### `StaleOwnerRisk`
+
+```csharp
+const string StaleOwnerRisk
+```
+
+Cross-node idempotency remains risky because ownership or reporter-lease truth still looks stale or conflicted.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus`
+
+Describes the current operator-facing managed-connector cross-node idempotency-hardening posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus(string state, string description)
+```
+
+Creates a new managed-connector cross-node idempotency-hardening answer.
+
+Parameters:
+- `state`: The stable cross-node idempotency-hardening state, such as `not-applicable`, `operator-only`, `idempotent-safe`, `stale-owner-risk`, `duplicate-lineage-risk`, or `replay-window-risk`.
+- `description`: An optional operator-facing cross-node idempotency-hardening summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretryattemptcount"></a>
+
+##### `AutomaticRetryAttemptCount`
+
+```csharp
+int AutomaticRetryAttemptCount { get; set; }
+```
+
+Gets the number of retained automatic retry attempts currently visible for the runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretrycoordinationstate"></a>
+
+##### `AutomaticRetryCoordinationState`
+
+```csharp
+string AutomaticRetryCoordinationState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry coordination state that informed cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretryexecutionstate"></a>
+
+##### `AutomaticRetryExecutionState`
+
+```csharp
+string AutomaticRetryExecutionState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry execution state that informed cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-canexecuteautomaticretryoncurrentnode"></a>
+
+##### `CanExecuteAutomaticRetryOnCurrentNode`
+
+```csharp
+bool CanExecuteAutomaticRetryOnCurrentNode { get; }
+```
+
+Gets a value indicating whether the current node can execute automatic retry safely for the current cross-node hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active cross-node idempotency-hardening categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable cross-node idempotency-hardening categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint currently associated with cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandjournaldurabilitystate"></a>
+
+##### `CommandJournalDurabilityState`
+
+```csharp
+string CommandJournalDurabilityState { get; set; }
+```
+
+Gets the current managed-connector command-journal durability state that informed cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector command-journal state that informed cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one was configured for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-coordinationownermatchesactivereporter"></a>
+
+##### `CoordinationOwnerMatchesActiveReporter`
+
+```csharp
+bool CoordinationOwnerMatchesActiveReporter { get; set; }
+```
+
+Gets a value indicating whether the current host coordination owner matches the active reporter identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing cross-node idempotency-hardening summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-distributedretryleasestate"></a>
+
+##### `DistributedRetryLeaseState`
+
+```csharp
+string DistributedRetryLeaseState { get; set; }
+```
+
+Gets the current managed-connector distributed retry lease state that informed cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasduplicateautomaticretryattempts"></a>
+
+##### `HasDuplicateAutomaticRetryAttempts`
+
+```csharp
+bool HasDuplicateAutomaticRetryAttempts { get; set; }
+```
+
+Gets a value indicating whether retained history currently contains duplicated automatic retry attempts for the current retry posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasduplicatecommandlineage"></a>
+
+##### `HasDuplicateCommandLineage`
+
+```csharp
+bool HasDuplicateCommandLineage { get; set; }
+```
+
+Gets a value indicating whether retained history currently contains duplicated command lineage for the current retry posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasmatchingautomaticretryattempt"></a>
+
+##### `HasMatchingAutomaticRetryAttempt`
+
+```csharp
+bool HasMatchingAutomaticRetryAttempt { get; set; }
+```
+
+Gets a value indicating whether retained history currently contains one automatic retry attempt for the current retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasmatchingretryfingerprinthistory"></a>
+
+##### `HasMatchingRetryFingerprintHistory`
+
+```csharp
+bool HasMatchingRetryFingerprintHistory { get; set; }
+```
+
+Gets a value indicating whether retained history currently contains evidence for the current retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command journal currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isduplicatelineagerisk"></a>
+
+##### `IsDuplicateLineageRisk`
+
+```csharp
+bool IsDuplicateLineageRisk { get; }
+```
+
+Gets a value indicating whether cross-node idempotency currently remains risky because retained command lineage already looks duplicated.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isidempotentsafe"></a>
+
+##### `IsIdempotentSafe`
+
+```csharp
+bool IsIdempotentSafe { get; }
+```
+
+Gets a value indicating whether cross-node idempotency currently looks safe for the current retry posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether cross-node idempotency hardening still remains operator-owned.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isreplaywindowrisk"></a>
+
+##### `IsReplayWindowRisk`
+
+```csharp
+bool IsReplayWindowRisk { get; }
+```
+
+Gets a value indicating whether cross-node idempotency currently remains risky because the durable replay window still lacks enough retained evidence.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isstaleownerrisk"></a>
+
+##### `IsStaleOwnerRisk`
+
+```csharp
+bool IsStaleOwnerRisk { get; }
+```
+
+Gets a value indicating whether cross-node idempotency currently remains risky because ownership truth still looks stale.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestautomaticretryattemptid"></a>
+
+##### `LatestAutomaticRetryAttemptId`
+
+```csharp
+string LatestAutomaticRetryAttemptId { get; set; }
+```
+
+Gets the stable latest automatic retry attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestautomaticretryexecutionfingerprint"></a>
+
+##### `LatestAutomaticRetryExecutionFingerprint`
+
+```csharp
+string LatestAutomaticRetryExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic execution fingerprint of the latest automatic retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-matchingautomaticretryattemptcount"></a>
+
+##### `MatchingAutomaticRetryAttemptCount`
+
+```csharp
+int MatchingAutomaticRetryAttemptCount { get; set; }
+```
+
+Gets the number of retained automatic retry attempts that currently match the retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-matchingcommandlineageentrycount"></a>
+
+##### `MatchingCommandLineageEntryCount`
+
+```csharp
+int MatchingCommandLineageEntryCount { get; set; }
+```
+
+Gets the number of retained command-execution entries that currently match the command lineage fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retainedentrycount"></a>
+
+##### `RetainedEntryCount`
+
+```csharp
+int RetainedEntryCount { get; set; }
+```
+
+Gets the number of retained bounded journal entries currently visible to cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive cross-node idempotency hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector cross-node idempotency-hardening state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-totalrecordedentrycount"></a>
+
+##### `TotalRecordedEntryCount`
+
+```csharp
+int TotalRecordedEntryCount { get; set; }
+```
+
+Gets the total number of command-execution outcomes currently visible to cross-node idempotency hardening.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories`
@@ -16810,6 +17688,16 @@ const string CommandJournalDurability
 ```
 
 The distributed retry orchestration answer was derived primarily from durable command-journal truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-crossnodeidempotencyhardening"></a>
+
+##### `CrossNodeIdempotencyHardening`
+
+```csharp
+const string CrossNodeIdempotencyHardening
+```
+
+The distributed retry orchestration answer was derived primarily from cross-node idempotency-hardening truth.
 
 <a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-distributedretrylease"></a>
 
@@ -29370,6 +30258,66 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `retryState`: The stable managed-connector command-retry state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningcategory-system-string"></a>
+
+##### `GetByManagedConnectorCrossNodeIdempotencyHardeningCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(string hardeningCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening category.
+
+Parameters:
+- `hardeningCategory`: The stable cross-node idempotency-hardening category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningownerid-system-string"></a>
+
+##### `GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(string ownerId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer references the requested coordination owner.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.
+
+Parameters:
+- `ownerId`: The stable coordination-owner identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningretryfingerprint-system-string"></a>
+
+##### `GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(string retryFingerprint)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer references the requested retry fingerprint.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that retry fingerprint.
+
+Parameters:
+- `retryFingerprint`: The stable retry fingerprint to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningstate-system-string"></a>
+
+##### `GetByManagedConnectorCrossNodeIdempotencyHardeningState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningState(string hardeningState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening state.
+
+Parameters:
+- `hardeningState`: The stable cross-node idempotency-hardening state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryleasecategory-system-string"></a>
 

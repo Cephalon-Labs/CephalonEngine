@@ -3027,6 +3027,97 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-189 Phase 13 managed-connector richer cross-node idempotency hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, `ENG-185`, `ENG-186`, `ENG-187`, and `ENG-188` already shipped shared coverage,
+  remediation, governance, desired-versus-observed drift, action-planning, write-path readiness,
+  preflight, dry-run, execution-intent, execution-approval, command-envelope, command-issuance,
+  provider execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry execution, automatic background retry
+  coordination, durable command-journal, distributed retry lease, and distributed retry
+  orchestration truth, but operators still lacked one shared answer for whether raw lease truth and
+  retained command lineage were actually safe enough to schedule the next retry across nodes
+- the next follow-through needed to keep cross-node idempotency hardening additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only idempotency
+  registry, second coordinator, or second retry journal
+- teams also needed one shared hardening answer that joined reporter ownership, retained lineage,
+  retry fingerprints, automatic-attempt evidence, and durable-history posture so later broader
+  multi-node lease execution or durable shared scheduler work can build on truthful cross-node
+  safety evidence
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector cross-node idempotency-hardening
+  contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`,
+  `operator-only`, `idempotent-safe`, `stale-owner-risk`, `duplicate-lineage-risk`, and
+  `replay-window-risk` posture together with hardening categories, source truth, coordination-owner
+  and active-reporter identity, retry and command fingerprints, retained-lineage evidence,
+  automatic-attempt evidence, durable-history truth, and `CanExecuteAutomaticRetryOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive cross-node-idempotency-hardening state,
+  category, owner, and retry-fingerprint filters while deriving that posture from the same shared
+  automatic-retry, coordination, retry-policy, command-journal, command-journal-durability,
+  distributed-retry-lease, and retained command-history truth instead of forcing hosts or providers
+  to invent a second idempotency index
+- the shared data pack now feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  `ManagedConnectorCommandExecutor` invocations through that richer shared hardening answer so
+  distributed retry orchestration no longer trusts raw lease truth alone when retained lineage or
+  replay evidence still looks unsafe
+- ASP.NET Core publishes those same cross-node-idempotency-hardening filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down, and the
+  hardening answer stays additive beside the existing lease, journal, durability, automatic-retry,
+  coordination, and orchestration surfaces instead of branching into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later broader multi-node lease execution, durable shared scheduler
+  orchestration, or broader Kafka Connect control-plane ownership remain separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorCrossNodeIdempotencyHardening`
+- `Cephalon.Data` now derives managed-connector richer cross-node idempotency hardening posture
+  from merged automatic-retry execution, automatic-retry coordination, retry-execution policy,
+  command-journal, command-journal durability, distributed retry lease, and retained command
+  history truth, including `operator-only`, `idempotent-safe`, `stale-owner-risk`,
+  `duplicate-lineage-risk`, and `replay-window-risk` answers, and
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorCrossNodeIdempotencyHardeningState(...)`,
+  `GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(...)`,
+  `GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(...)`, and
+  `GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(...)`
+- `Cephalon.Data` now also feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  invocations in `ManagedConnectorCommandExecutor` back through that richer shared hardening answer
+  when deriving distributed retry orchestration, so bounded background retry scheduling no longer
+  depends on raw lease posture alone
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/{hardeningState}`,
+  `/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/categories/{hardeningCategory}`,
+  `/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/owners/{ownerId}`,
+  `/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/fingerprints/{retryFingerprint}`,
+  and `/engine/cdc-capture-runtimes/{executionRuntimeId}/cross-node-idempotency-hardening` so host
+  routes stay aligned with the same shared automatic-retry, coordination, durability, lease, and
+  orchestration story
+- `Cephalon.Data.Debezium` now participates in that richer shared hardening lane through the
+  existing managed-connector runtime and command surface while targeted coverage proves
+  `idempotent-safe`, `stale-owner-risk`, and `replay-window-risk` posture without claiming a
+  Debezium-only idempotency subsystem
+- targeted coverage now proves the richer cross-node idempotency hardening baseline through
+  composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference
+  docs publish script
+
 ### ENG-188 Phase 13 managed-connector distributed retry orchestration baseline
 
 Status: done

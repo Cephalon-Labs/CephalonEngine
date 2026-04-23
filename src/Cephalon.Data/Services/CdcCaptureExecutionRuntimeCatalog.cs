@@ -681,6 +681,49 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningState(string hardeningState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(hardeningState);
+        var normalizedHardeningState = hardeningState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorCrossNodeIdempotencyHardening.State,
+            normalizedHardeningState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(string hardeningCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(hardeningCategory);
+        var normalizedHardeningCategory = hardeningCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorCrossNodeIdempotencyHardening.CategoryIds.Contains(
+            normalizedHardeningCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(string ownerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ownerId);
+        var normalizedOwnerId = ownerId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorCrossNodeIdempotencyHardening.CoordinationOwnerId,
+            normalizedOwnerId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(string retryFingerprint)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(retryFingerprint);
+        var normalizedRetryFingerprint = retryFingerprint.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorCrossNodeIdempotencyHardening.RetryFingerprint,
+            normalizedRetryFingerprint,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryOrchestrationState(string orchestrationState)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(orchestrationState);
@@ -983,7 +1026,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandJournal,
             managedConnectorCommandJournalDurability,
             commandExecutionHistory);
-        var managedConnectorDistributedRetryOrchestration = CreateManagedConnectorDistributedRetryOrchestration(
+        var managedConnectorCrossNodeIdempotencyHardening = CreateManagedConnectorCrossNodeIdempotencyHardening(
             runtime.Id,
             captureIds,
             runtime.ExecutionOwnership,
@@ -995,8 +1038,26 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorAutomaticRetryExecution,
             managedConnectorAutomaticRetryCoordination,
             managedConnectorRetryExecutionPolicy,
+            managedConnectorCommandJournal,
             managedConnectorCommandJournalDurability,
             managedConnectorDistributedRetryLease,
+            commandExecutionHistory);
+        var managedConnectorDistributedRetryOrchestration = CreateManagedConnectorDistributedRetryOrchestration(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionOwnership,
+            runtime.ExecutionTopology,
+            managedConnectorRetryExecutionPolicy.ManagementMode ??
+            managedConnectorAutomaticRetryExecution.ManagementMode ??
+            managedConnectorAutomaticRetryCoordination.ManagementMode ??
+            managedConnectorDistributedRetryLease.ManagementMode ??
+            managedConnectorCrossNodeIdempotencyHardening.ManagementMode,
+            managedConnectorAutomaticRetryExecution,
+            managedConnectorAutomaticRetryCoordination,
+            managedConnectorRetryExecutionPolicy,
+            managedConnectorCommandJournalDurability,
+            managedConnectorDistributedRetryLease,
+            managedConnectorCrossNodeIdempotencyHardening,
             managedConnectorAutomaticRetryPollingIntervalSeconds);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
@@ -1026,6 +1087,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorAutomaticRetryExecution = managedConnectorAutomaticRetryExecution,
             ManagedConnectorAutomaticRetryCoordination = managedConnectorAutomaticRetryCoordination,
             ManagedConnectorDistributedRetryLease = managedConnectorDistributedRetryLease,
+            ManagedConnectorCrossNodeIdempotencyHardening = managedConnectorCrossNodeIdempotencyHardening,
             ManagedConnectorDistributedRetryOrchestration = managedConnectorDistributedRetryOrchestration
         };
     }
@@ -8016,6 +8078,494 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         return CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources.AutomaticRetryCoordination;
     }
 
+    private static CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus CreateManagedConnectorCrossNodeIdempotencyHardening(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string executionOwnership,
+        string executionTopology,
+        string? managementMode,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus automaticRetryExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease,
+        IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> commandExecutionHistory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(automaticRetryExecution);
+        ArgumentNullException.ThrowIfNull(automaticRetryCoordination);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(commandJournalDurability);
+        ArgumentNullException.ThrowIfNull(distributedRetryLease);
+        ArgumentNullException.ThrowIfNull(commandExecutionHistory);
+
+        var normalizedExecutionOwnership = string.IsNullOrWhiteSpace(executionOwnership)
+            ? "runtime-managed"
+            : executionOwnership.Trim();
+        var normalizedExecutionTopology = string.IsNullOrWhiteSpace(executionTopology)
+            ? "not-configured"
+            : executionTopology.Trim();
+        var operationId = string.IsNullOrWhiteSpace(automaticRetryExecution.OperationId)
+            ? string.IsNullOrWhiteSpace(retryExecutionPolicy.OperationId)
+                ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds.None
+                : retryExecutionPolicy.OperationId.Trim()
+            : automaticRetryExecution.OperationId.Trim();
+        var normalizedCommandFingerprint = string.IsNullOrWhiteSpace(automaticRetryExecution.CommandFingerprint)
+            ? commandJournal.CommandFingerprint
+            : automaticRetryExecution.CommandFingerprint;
+        var normalizedRetryFingerprint = string.IsNullOrWhiteSpace(automaticRetryExecution.RetryFingerprint)
+            ? commandJournal.RetryFingerprint
+            : automaticRetryExecution.RetryFingerprint;
+        var automaticRetryAttempts = commandExecutionHistory
+            .Where(static entry => entry.IsAutomaticRetryInvocation)
+            .ToArray();
+        var matchingCommandLineageEntryCount = string.IsNullOrWhiteSpace(normalizedCommandFingerprint)
+            ? 0
+            : commandExecutionHistory.Count(entry => string.Equals(
+                entry.CommandFingerprint,
+                normalizedCommandFingerprint,
+                StringComparison.OrdinalIgnoreCase));
+        var matchingAutomaticRetryAttemptCount = string.IsNullOrWhiteSpace(normalizedCommandFingerprint)
+            ? automaticRetryAttempts.Length
+            : automaticRetryAttempts.Count(entry => string.Equals(
+                entry.CommandFingerprint,
+                normalizedCommandFingerprint,
+                StringComparison.OrdinalIgnoreCase));
+        var hasMatchingRetryFingerprintHistory = commandJournal.HasMatchingRetryFingerprint || distributedRetryLease.HasMatchingRetryFingerprintHistory;
+        var hasMatchingAutomaticRetryAttempt = automaticRetryExecution.HasMatchingAutomaticRetryAttempt ||
+                                              distributedRetryLease.HasMatchingAutomaticRetryAttempt ||
+                                              matchingAutomaticRetryAttemptCount > 0;
+        var hasDuplicateAutomaticRetryAttempts = distributedRetryLease.HasDuplicateAutomaticRetryAttempts ||
+                                                matchingAutomaticRetryAttemptCount > 1;
+        var hasDuplicateCommandLineage = !string.IsNullOrWhiteSpace(normalizedCommandFingerprint) &&
+                                         commandExecutionHistory
+                                             .Where(entry => string.Equals(
+                                                 entry.CommandFingerprint,
+                                                 normalizedCommandFingerprint,
+                                                 StringComparison.OrdinalIgnoreCase))
+                                             .GroupBy(static entry => entry.InvocationSourceId, StringComparer.OrdinalIgnoreCase)
+                                             .Any(static group => group.Count() > 1);
+        var hasCrossNodeRuntime = string.Equals(normalizedExecutionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) &&
+                                  automaticRetryExecution.AppliesToManagedConnector &&
+                                  !automaticRetryCoordination.IsSingleNode &&
+                                  !distributedRetryLease.IsSingleNode;
+        var ownerMismatch = automaticRetryCoordination.HasCoordinationOwner &&
+                            automaticRetryCoordination.HasActiveReporterLease &&
+                            !automaticRetryCoordination.CoordinationOwnerMatchesActiveReporter;
+        var staleOwnerRisk = hasCrossNodeRuntime &&
+                             (distributedRetryLease.IsLeaseMissing ||
+                              distributedRetryLease.IsLeaseConflicted ||
+                              automaticRetryCoordination.IsConflicted ||
+                              automaticRetryCoordination.IsUncoordinated ||
+                              ownerMismatch);
+        var duplicateLineageRisk = hasCrossNodeRuntime &&
+                                   (hasDuplicateCommandLineage || hasDuplicateAutomaticRetryAttempts);
+        var replayWindowRisk = hasCrossNodeRuntime &&
+                               !staleOwnerRisk &&
+                               !duplicateLineageRisk &&
+                               (!commandJournalDurability.HasDurableStoreConfigured ||
+                                !commandJournalDurability.IsDurable ||
+                                commandJournalDurability.HasRecoveryError ||
+                                commandJournalDurability.HasPersistenceError ||
+                                commandJournal.HasTruncatedHistory ||
+                                !hasMatchingRetryFingerprintHistory ||
+                                (automaticRetryExecution.HasAutomaticRetryAttempt && !hasMatchingAutomaticRetryAttempt) ||
+                                distributedRetryLease.IsIdempotencyRisk);
+
+        var state =
+            !hasCrossNodeRuntime
+                ? CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.NotApplicable
+                : retryExecutionPolicy.IsOperatorOnly || distributedRetryLease.IsOperatorOnly || automaticRetryCoordination.IsOperatorOnly
+                    ? CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.OperatorOnly
+                    : staleOwnerRisk
+                        ? CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.StaleOwnerRisk
+                        : duplicateLineageRisk
+                            ? CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.DuplicateLineageRisk
+                            : replayWindowRisk
+                                ? CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.ReplayWindowRisk
+                                : CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.IdempotentSafe;
+
+        var categories = CreateManagedConnectorCrossNodeIdempotencyHardeningCategories(
+            state,
+            automaticRetryCoordination,
+            commandJournal,
+            commandJournalDurability,
+            distributedRetryLease,
+            hasCrossNodeRuntime,
+            ownerMismatch,
+            hasDuplicateCommandLineage,
+            hasMatchingRetryFingerprintHistory,
+            hasMatchingAutomaticRetryAttempt,
+            hasDuplicateAutomaticRetryAttempts);
+        var description = CreateManagedConnectorCrossNodeIdempotencyHardeningDescription(
+            state,
+            operationId,
+            automaticRetryExecution,
+            automaticRetryCoordination,
+            retryExecutionPolicy,
+            commandJournal,
+            commandJournalDurability,
+            distributedRetryLease,
+            ownerMismatch,
+            hasDuplicateCommandLineage,
+            hasMatchingRetryFingerprintHistory,
+            hasMatchingAutomaticRetryAttempt,
+            hasDuplicateAutomaticRetryAttempts);
+        var sourceId = ResolveManagedConnectorCrossNodeIdempotencyHardeningSourceId(
+            state,
+            automaticRetryCoordination,
+            retryExecutionPolicy,
+            commandJournal,
+            commandJournalDurability,
+            distributedRetryLease,
+            ownerMismatch,
+            hasDuplicateCommandLineage,
+            hasMatchingRetryFingerprintHistory,
+            hasMatchingAutomaticRetryAttempt,
+            hasDuplicateAutomaticRetryAttempts);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus(state, description)
+        {
+            CategoryIds = categories,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ExecutionOwnership = normalizedExecutionOwnership,
+            ExecutionTopology = normalizedExecutionTopology,
+            ManagementMode = managementMode,
+            OperationId = operationId,
+            CoordinationOwnerId = automaticRetryCoordination.CoordinationOwnerId,
+            ActiveReporterId = automaticRetryCoordination.ActiveReporterId,
+            ActiveReporterLeaseExpiresAtUtc = automaticRetryCoordination.ActiveReporterLeaseExpiresAtUtc,
+            AutomaticRetryExecutionState = automaticRetryExecution.State,
+            AutomaticRetryCoordinationState = automaticRetryCoordination.State,
+            RetryExecutionPolicyState = retryExecutionPolicy.State,
+            CommandJournalState = commandJournal.State,
+            CommandJournalDurabilityState = commandJournalDurability.State,
+            DistributedRetryLeaseState = distributedRetryLease.State,
+            LatestCommandExecutionState = automaticRetryExecution.LatestCommandExecutionState,
+            SourceId = sourceId,
+            CommandFingerprint = normalizedCommandFingerprint ?? string.Empty,
+            RetryFingerprint = normalizedRetryFingerprint ?? string.Empty,
+            LatestAutomaticRetryAttemptId = automaticRetryExecution.LatestAutomaticRetryAttemptId,
+            LatestAutomaticRetryExecutionFingerprint = automaticRetryExecution.LatestAutomaticRetryExecutionFingerprint,
+            TotalRecordedEntryCount = commandJournal.TotalRecordedEntryCount,
+            RetainedEntryCount = commandJournal.RetainedEntryCount,
+            MatchingCommandLineageEntryCount = matchingCommandLineageEntryCount,
+            AutomaticRetryAttemptCount = automaticRetryAttempts.Length,
+            MatchingAutomaticRetryAttemptCount = matchingAutomaticRetryAttemptCount,
+            HasDurableStoreConfigured = commandJournalDurability.HasDurableStoreConfigured,
+            HasPersistedRecordedHistory = commandJournalDurability.HasPersistedRecordedHistory,
+            HasRecoveredPersistedHistory = commandJournalDurability.HasRecoveredPersistedHistory,
+            HasMatchingRetryFingerprintHistory = hasMatchingRetryFingerprintHistory,
+            HasMatchingAutomaticRetryAttempt = hasMatchingAutomaticRetryAttempt,
+            HasDuplicateCommandLineage = hasDuplicateCommandLineage,
+            HasDuplicateAutomaticRetryAttempts = hasDuplicateAutomaticRetryAttempts,
+            CoordinationOwnerMatchesActiveReporter = automaticRetryCoordination.CoordinationOwnerMatchesActiveReporter
+        };
+    }
+
+    private static string[] CreateManagedConnectorCrossNodeIdempotencyHardeningCategories(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease,
+        bool hasCrossNodeRuntime,
+        bool ownerMismatch,
+        bool hasDuplicateCommandLineage,
+        bool hasMatchingRetryFingerprintHistory,
+        bool hasMatchingAutomaticRetryAttempt,
+        bool hasDuplicateAutomaticRetryAttempts)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(automaticRetryCoordination);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(commandJournalDurability);
+        ArgumentNullException.ThrowIfNull(distributedRetryLease);
+
+        var categories = new List<string>(capacity: 18);
+
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        AddCategory(
+            categories,
+            hasCrossNodeRuntime
+                ? CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.CrossNodeRuntime
+                : CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.SingleNodeRuntime);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.OperatorOnly);
+        }
+
+        if (!string.IsNullOrWhiteSpace(automaticRetryCoordination.ActiveReporterId))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.ActiveReporterVisible);
+        }
+
+        if (automaticRetryCoordination.HasActiveReporterLease)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.ActiveLeaseVisible);
+        }
+
+        if (automaticRetryCoordination.CoordinationOwnerMatchesActiveReporter)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.OwnerMatch);
+        }
+        else if (ownerMismatch)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.OwnerMismatch);
+        }
+
+        if (distributedRetryLease.IsLeaseMissing)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.LeaseMissing);
+        }
+
+        if (distributedRetryLease.IsLeaseConflicted || automaticRetryCoordination.IsConflicted || automaticRetryCoordination.IsUncoordinated)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.LeaseConflict);
+        }
+
+        if (commandJournalDurability.HasDurableStoreConfigured)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.DurableJournalConfigured);
+        }
+        else
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.InMemoryJournalOnly);
+        }
+
+        if (commandJournalDurability.HasPersistedRecordedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.PersistedHistory);
+        }
+
+        if (commandJournalDurability.HasRecoveredPersistedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.RecoveredHistory);
+        }
+
+        if (hasMatchingRetryFingerprintHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.MatchingRetryHistory);
+        }
+
+        if (hasMatchingAutomaticRetryAttempt)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.MatchingAutomaticRetryAttempt);
+        }
+
+        if (hasDuplicateCommandLineage)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.DuplicateCommandLineage);
+        }
+
+        if (hasDuplicateAutomaticRetryAttempts)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.DuplicateAutomaticRetryAttempts);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.IdempotentSafe, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.IdempotentSafe);
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.CurrentNodeExecutable);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.StaleOwnerRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.StaleOwnerRisk);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.DuplicateLineageRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.DuplicateLineageRisk);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.ReplayWindowRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.ReplayWindowRisk);
+        }
+
+        return [.. categories];
+    }
+
+    private static string CreateManagedConnectorCrossNodeIdempotencyHardeningDescription(
+        string state,
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus automaticRetryExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease,
+        bool ownerMismatch,
+        bool hasDuplicateCommandLineage,
+        bool hasMatchingRetryFingerprintHistory,
+        bool hasMatchingAutomaticRetryAttempt,
+        bool hasDuplicateAutomaticRetryAttempts)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(automaticRetryExecution);
+        ArgumentNullException.ThrowIfNull(automaticRetryCoordination);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(commandJournalDurability);
+        ArgumentNullException.ThrowIfNull(distributedRetryLease);
+
+        var detail = CombineManagedConnectorCommandEnvelopeDetail(
+            CombineManagedConnectorCommandEnvelopeDetail(
+                automaticRetryCoordination.Description,
+                distributedRetryLease.Description,
+                commandJournalDurability.Description),
+            CombineManagedConnectorCommandEnvelopeDetail(
+                commandJournal.Description,
+                automaticRetryExecution.Description,
+                retryExecutionPolicy.Description));
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            var summary = automaticRetryCoordination.IsSingleNode || distributedRetryLease.IsSingleNode
+                ? "Cephalon does not currently require cross-node idempotency hardening for this execution runtime because retry coordination remains single-node."
+                : "Cephalon does not currently require cross-node idempotency hardening for this execution runtime.";
+
+            return AppendManagedConnectorCommandEnvelopeDetail(summary, detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can observe cross-node idempotency posture for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but this hardening lane still remains operator-owned outside Cephalon.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.IdempotentSafe, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Reporter '{NormalizeManagedConnectorFingerprintSegment(automaticRetryCoordination.ActiveReporterId)}' currently aligns with the active coordination owner, and durable retained command history now provides cross-node idempotency evidence for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on this node.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.StaleOwnerRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            var staleReason =
+                distributedRetryLease.IsLeaseMissing
+                    ? "No active retry lease is currently visible for the managed connector."
+                    : ownerMismatch
+                        ? "The configured coordination owner does not match the active reporter lease."
+                        : "Reporter ownership or retry lease coordination still remains conflicted on the current node.";
+
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon still blocks cross-node automatic retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} because ownership truth looks stale. {staleReason}",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.DuplicateLineageRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            var duplicateReason = hasDuplicateAutomaticRetryAttempts
+                ? "Retained history already contains multiple automatic retry attempts for the same retry posture."
+                : hasDuplicateCommandLineage
+                    ? "Retained history already contains duplicated command lineage for the same retry posture."
+                    : "Retained command lineage already looks duplicated for the current retry posture.";
+
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon still blocks cross-node automatic retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} because retained command lineage could replay duplicate work. {duplicateReason}",
+                detail);
+        }
+
+        var replayReason =
+            !commandJournalDurability.HasDurableStoreConfigured || commandJournalDurability.IsInMemoryOnly
+                ? "The runtime still depends on in-memory command history only."
+                : commandJournalDurability.HasRecoveryError || commandJournalDurability.HasPersistenceError
+                    ? "The durable command-journal store currently reports a recovery or persistence failure."
+                    : commandJournal.HasTruncatedHistory
+                        ? "The bounded command journal has already truncated older retained command lineage."
+                        : !hasMatchingRetryFingerprintHistory
+                            ? "Retained history does not currently expose matching retry-fingerprint evidence."
+                            : automaticRetryExecution.HasAutomaticRetryAttempt && !hasMatchingAutomaticRetryAttempt
+                                ? "Retained history does not currently expose a matching automatic retry attempt."
+                                : "Cross-node replay evidence remains incomplete for the current retry posture.";
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"Cephalon still blocks cross-node automatic retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} because the durable replay window lacks enough retained evidence. {replayReason}",
+            detail);
+    }
+
+    private static string ResolveManagedConnectorCrossNodeIdempotencyHardeningSourceId(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease,
+        bool ownerMismatch,
+        bool hasDuplicateCommandLineage,
+        bool hasMatchingRetryFingerprintHistory,
+        bool hasMatchingAutomaticRetryAttempt,
+        bool hasDuplicateAutomaticRetryAttempts)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(automaticRetryCoordination);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(commandJournalDurability);
+        ArgumentNullException.ThrowIfNull(distributedRetryLease);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.Unknown;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.RetryExecutionPolicy;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.StaleOwnerRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            return ownerMismatch || automaticRetryCoordination.IsConflicted || automaticRetryCoordination.IsUncoordinated
+                ? CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.AutomaticRetryCoordination
+                : CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.DistributedRetryLease;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.DuplicateLineageRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.CommandExecutionHistory;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.ReplayWindowRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            if (!commandJournalDurability.HasDurableStoreConfigured ||
+                commandJournalDurability.IsInMemoryOnly ||
+                commandJournalDurability.HasRecoveryError ||
+                commandJournalDurability.HasPersistenceError ||
+                commandJournal.HasTruncatedHistory)
+            {
+                return CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.CommandJournalDurability;
+            }
+
+            if (!hasMatchingRetryFingerprintHistory ||
+                !hasMatchingAutomaticRetryAttempt ||
+                hasDuplicateAutomaticRetryAttempts ||
+                hasDuplicateCommandLineage)
+            {
+                return CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.CommandExecutionHistory;
+            }
+
+            return CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.DistributedRetryLease;
+        }
+
+        return distributedRetryLease.IsIdempotentSafe
+            ? CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.DistributedRetryLease
+            : CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources.CommandJournalDurability;
+    }
+
     private static CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus CreateManagedConnectorDistributedRetryOrchestration(
         string executionRuntimeId,
         IReadOnlyList<string> cdcCaptureIds,
@@ -8027,6 +8577,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
         CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
         CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease,
+        CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus crossNodeIdempotencyHardening,
         int pollingIntervalSeconds)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -8036,6 +8587,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
         ArgumentNullException.ThrowIfNull(commandJournalDurability);
         ArgumentNullException.ThrowIfNull(distributedRetryLease);
+        ArgumentNullException.ThrowIfNull(crossNodeIdempotencyHardening);
 
         var normalizedExecutionOwnership = string.IsNullOrWhiteSpace(executionOwnership)
             ? "runtime-managed"
@@ -8064,7 +8616,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                             : automaticRetryExecution.IsCompleted || retryExecutionPolicy.IsNotNeeded
                                 ? CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Completed
                                 : automaticRetryExecution.IsEligible &&
-                                  distributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode
+                                  crossNodeIdempotencyHardening.CanExecuteAutomaticRetryOnCurrentNode
                                     ? CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Scheduled
                                     : CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Blocked;
 
@@ -8074,7 +8626,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             automaticRetryCoordination,
             retryExecutionPolicy,
             commandJournalDurability,
-            distributedRetryLease);
+            distributedRetryLease,
+            crossNodeIdempotencyHardening);
         var description = CreateManagedConnectorDistributedRetryOrchestrationDescription(
             state,
             operationId,
@@ -8082,13 +8635,15 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             automaticRetryCoordination,
             retryExecutionPolicy,
             commandJournalDurability,
-            distributedRetryLease);
+            distributedRetryLease,
+            crossNodeIdempotencyHardening);
         var sourceId = ResolveManagedConnectorDistributedRetryOrchestrationSourceId(
             state,
             automaticRetryExecution,
             retryExecutionPolicy,
             commandJournalDurability,
-            distributedRetryLease);
+            distributedRetryLease,
+            crossNodeIdempotencyHardening);
 
         return new CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus(state, description)
         {
@@ -8131,7 +8686,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
         CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
         CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
-        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease)
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease,
+        CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus crossNodeIdempotencyHardening)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentNullException.ThrowIfNull(automaticRetryExecution);
@@ -8139,6 +8695,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
         ArgumentNullException.ThrowIfNull(commandJournalDurability);
         ArgumentNullException.ThrowIfNull(distributedRetryLease);
+        ArgumentNullException.ThrowIfNull(crossNodeIdempotencyHardening);
 
         if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
         {
@@ -8203,12 +8760,15 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.RecoveredHistory);
         }
 
-        if (distributedRetryLease.IsIdempotentSafe)
+        if (crossNodeIdempotencyHardening.IsIdempotentSafe)
         {
             AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.CrossNodeIdempotentSafe);
         }
 
-        if (distributedRetryLease.IsIdempotencyRisk)
+        if (crossNodeIdempotencyHardening.IsStaleOwnerRisk ||
+            crossNodeIdempotencyHardening.IsDuplicateLineageRisk ||
+            crossNodeIdempotencyHardening.IsReplayWindowRisk ||
+            distributedRetryLease.IsIdempotencyRisk)
         {
             AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories.CrossNodeIdempotencyRisk);
         }
@@ -8250,7 +8810,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
         CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
         CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
-        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease)
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease,
+        CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus crossNodeIdempotencyHardening)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentNullException.ThrowIfNull(automaticRetryExecution);
@@ -8258,12 +8819,14 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
         ArgumentNullException.ThrowIfNull(commandJournalDurability);
         ArgumentNullException.ThrowIfNull(distributedRetryLease);
+        ArgumentNullException.ThrowIfNull(crossNodeIdempotencyHardening);
 
         var detail = CombineManagedConnectorCommandEnvelopeDetail(
             CombineManagedConnectorCommandEnvelopeDetail(
+                crossNodeIdempotencyHardening.Description,
                 distributedRetryLease.Description,
-                retryExecutionPolicy.Description,
-                automaticRetryExecution.Description),
+                retryExecutionPolicy.Description),
+            automaticRetryExecution.Description,
             commandJournalDurability.Description);
 
         if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
@@ -8317,12 +8880,12 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         var blockedReason =
-            distributedRetryLease.IsLeaseMissing
-                ? "No active retry lease is currently visible for this managed connector."
-                : distributedRetryLease.IsLeaseConflicted || automaticRetryCoordination.IsConflicted || automaticRetryCoordination.IsUncoordinated
-                    ? "Retry lease ownership remains conflicted or uncoordinated on the current node."
-                    : distributedRetryLease.IsIdempotencyRisk
-                        ? "Cross-node idempotency evidence remains risky for the current retry fingerprint."
+            crossNodeIdempotencyHardening.IsStaleOwnerRisk
+                ? "Ownership or retry lease truth still looks stale on the current node."
+                : crossNodeIdempotencyHardening.IsDuplicateLineageRisk
+                    ? "Retained command lineage already looks duplicated for the current retry posture."
+                    : crossNodeIdempotencyHardening.IsReplayWindowRisk || distributedRetryLease.IsIdempotencyRisk
+                        ? "Cross-node replay evidence remains risky for the current retry fingerprint."
                         : "Shared runtime truth still blocks the next bounded retry scheduling step.";
 
         return AppendManagedConnectorCommandEnvelopeDetail(
@@ -8335,13 +8898,15 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus automaticRetryExecution,
         CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
         CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
-        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease)
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus distributedRetryLease,
+        CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus crossNodeIdempotencyHardening)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentNullException.ThrowIfNull(automaticRetryExecution);
         ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
         ArgumentNullException.ThrowIfNull(commandJournalDurability);
         ArgumentNullException.ThrowIfNull(distributedRetryLease);
+        ArgumentNullException.ThrowIfNull(crossNodeIdempotencyHardening);
 
         if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
         {
@@ -8365,6 +8930,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             return automaticRetryExecution.IsCompleted
                 ? CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources.AutomaticRetryExecution
                 : CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources.RetryExecutionPolicy;
+        }
+
+        if (crossNodeIdempotencyHardening.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources.CrossNodeIdempotencyHardening;
         }
 
         if (distributedRetryLease.AppliesToManagedConnector)

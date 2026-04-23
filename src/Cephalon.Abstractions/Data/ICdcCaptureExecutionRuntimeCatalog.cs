@@ -410,6 +410,34 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseOwnerId(string ownerId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer matches the requested state.
+    /// </summary>
+    /// <param name="hardeningState">The stable cross-node idempotency-hardening state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningState(string hardeningState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer includes the requested category.
+    /// </summary>
+    /// <param name="hardeningCategory">The stable cross-node idempotency-hardening category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(string hardeningCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer references the requested coordination owner.
+    /// </summary>
+    /// <param name="ownerId">The stable coordination-owner identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(string ownerId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer references the requested retry fingerprint.
+    /// </summary>
+    /// <param name="retryFingerprint">The stable retry fingerprint to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that retry fingerprint.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(string retryFingerprint);
+
+    /// <summary>
     /// Gets the CDC capture execution runtimes whose current managed-connector distributed retry orchestration answer matches the requested state.
     /// </summary>
     /// <param name="orchestrationState">The stable managed-connector distributed retry orchestration state identifier to filter by.</param>

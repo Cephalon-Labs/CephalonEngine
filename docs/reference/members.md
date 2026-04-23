@@ -177,6 +177,9 @@ Browse the published API surface by public member.
 - [ActiveLeaseHeld](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-activeleaseheld): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveLeaseHeld&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current host coordination owner holds the active reporter lease.
   - `const string ActiveLeaseHeld`
+- [ActiveLeaseVisible](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-activeleasevisible): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveLeaseVisible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current runtime still exposes one active reporter lease.
+  - `const string ActiveLeaseVisible`
 - [ActiveReporterCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-activereportercount): `Properties` on `CdcCaptureExecutionRuntimeReporterCoordinationRollup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of distinct active reporters currently visible across the execution runtime.
   - `int ActiveReporterCount { get; }`
@@ -184,6 +187,9 @@ Browse the published API surface by public member.
   - Gets the number of active reporters currently visible in the coordination story.
   - `int ActiveReporterCount { get; }`
 - [ActiveReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-activereporterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the active reporter identifier currently visible for the execution runtime when one exists.
+  - `string ActiveReporterId { get; set; }`
+- [ActiveReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-activereporterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the active reporter identifier currently visible for the execution runtime when one exists.
   - `string ActiveReporterId { get; set; }`
 - [ActiveReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-activereporterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -204,6 +210,9 @@ Browse the published API surface by public member.
 - [ActiveReporterLeaseExpiresAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-activereporterleaseexpiresatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterLeaseExpiresAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the active reporter lease expires when one is known.
   - `DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }`
+- [ActiveReporterLeaseExpiresAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-activereporterleaseexpiresatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterLeaseExpiresAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp when the active reporter lease expires when one is known.
+  - `DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }`
 - [ActiveReporterLeaseExpiresAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-activereporterleaseexpiresatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterLeaseExpiresAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the active reporter lease expires when one is known.
   - `DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }`
@@ -215,6 +224,9 @@ Browse the published API surface by public member.
   - `DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }`
 - [ActiveReporterVisible](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-activereportervisible): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterVisible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently exposes one active reporter owner.
+  - `const string ActiveReporterVisible`
+- [ActiveReporterVisible](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-activereportervisible): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterVisible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current runtime still exposes one active reporter identifier.
   - `const string ActiveReporterVisible`
 - [ActiveTaskIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-activetaskids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveTaskIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported active managed-connector task identifiers when they are known.
@@ -1029,6 +1041,9 @@ Browse the published API surface by public member.
 - [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently represents a managed connector.
   - `bool AppliesToManagedConnector { get; }`
+- [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the execution runtime currently represents a managed connector.
+  - `bool AppliesToManagedConnector { get; }`
 - [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently represents a managed connector.
   - `bool AppliesToManagedConnector { get; }`
@@ -1431,17 +1446,26 @@ Browse the published API surface by public member.
 - [AutomaticRetry](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutioninvocationsources-automaticretry): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command-execution result was recorded from the shared automatic background retry lane.
   - `const string AutomaticRetry`
+- [AutomaticRetryAttemptCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretryattemptcount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryAttemptCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of retained automatic retry attempts currently visible for the runtime.
+  - `int AutomaticRetryAttemptCount { get; set; }`
 - [AutomaticRetryAttemptCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-automaticretryattemptcount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryAttemptCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of retained automatic retry attempts currently visible to distributed retry lease posture.
   - `int AutomaticRetryAttemptCount { get; set; }`
 - [AutomaticRetryAttemptRecorded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-automaticretryattemptrecorded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryAttemptRecorded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The bounded command history already records one automatic retry attempt.
   - `const string AutomaticRetryAttemptRecorded`
+- [AutomaticRetryCoordination](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-automaticretrycoordination): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryCoordination&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The cross-node idempotency-hardening answer was derived primarily from automatic-retry coordination truth.
+  - `const string AutomaticRetryCoordination`
 - [AutomaticRetryCoordination](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-automaticretrycoordination): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryCoordination&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The distributed retry lease answer was derived primarily from automatic-retry coordination truth.
   - `const string AutomaticRetryCoordination`
 - [AutomaticRetryCoordinationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-automaticretrycoordinationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryCoordinationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector automatic background retry coordination state that informed durability.
+  - `string AutomaticRetryCoordinationState { get; set; }`
+- [AutomaticRetryCoordinationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretrycoordinationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryCoordinationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector automatic background retry coordination state that informed cross-node idempotency hardening.
   - `string AutomaticRetryCoordinationState { get; set; }`
 - [AutomaticRetryCoordinationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-automaticretrycoordinationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryCoordinationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector automatic background retry coordination state that informed distributed retry lease posture.
@@ -1469,6 +1493,9 @@ Browse the published API surface by public member.
   - `string AutomaticRetryExecutionState { get; set; }`
 - [AutomaticRetryExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-automaticretryexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector automatic background retry execution state that informed durability.
+  - `string AutomaticRetryExecutionState { get; set; }`
+- [AutomaticRetryExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretryexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector automatic background retry execution state that informed cross-node idempotency hardening.
   - `string AutomaticRetryExecutionState { get; set; }`
 - [AutomaticRetryExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-automaticretryexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector automatic background retry execution state that informed distributed retry lease posture.
@@ -2067,6 +2094,9 @@ Browse the published API surface by public member.
 - [CanEvaluateDrift](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-canevaluatedrift): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanEvaluateDrift&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current drift posture can be evaluated from the available baseline and report data.
   - `bool CanEvaluateDrift { get; }`
+- [CanExecuteAutomaticRetryOnCurrentNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-canexecuteautomaticretryoncurrentnode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanExecuteAutomaticRetryOnCurrentNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current node can execute automatic retry safely for the current cross-node hardening answer.
+  - `bool CanExecuteAutomaticRetryOnCurrentNode { get; }`
 - [CanExecuteAutomaticRetryOnCurrentNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-canexecuteautomaticretryoncurrentnode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanExecuteAutomaticRetryOnCurrentNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether automatic retry can safely execute on the current node.
   - `bool CanExecuteAutomaticRetryOnCurrentNode { get; }`
@@ -2259,6 +2289,9 @@ Browse the published API surface by public member.
 - [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active command-retry categories currently visible for the execution runtime.
   - `int CategoryCount { get; }`
+- [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of active cross-node idempotency-hardening categories currently visible for the execution runtime.
+  - `int CategoryCount { get; }`
 - [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active distributed retry lease categories currently visible for the execution runtime.
   - `int CategoryCount { get; }`
@@ -2318,6 +2351,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable command-retry categories currently active for the execution runtime.
+  - `IReadOnlyList<string> CategoryIds { get; set; }`
+- [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable cross-node idempotency-hardening categories currently active for the execution runtime.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable distributed retry lease categories currently active for the execution runtime.
@@ -2412,6 +2448,9 @@ Browse the published API surface by public member.
 - [CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new managed-connector command-retry answer.
   - `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus(string state, string description)`
+- [CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new managed-connector cross-node idempotency-hardening answer.
+  - `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus(string state, string description)`
 - [CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new managed-connector distributed retry lease answer.
   - `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus(string state, string description)`
@@ -2507,6 +2546,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
 - [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture identifiers currently associated with command retry.
+  - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
+- [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture identifiers currently associated with cross-node idempotency hardening.
   - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
 - [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture identifiers currently associated with distributed retry lease posture.
@@ -3021,6 +3063,9 @@ Browse the published API surface by public member.
 - [CommandExecutionHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrysources-commandexecutionhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetrySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandExecutionHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The retry posture was derived from bounded shared command-execution history.
   - `const string CommandExecutionHistory`
+- [CommandExecutionHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-commandexecutionhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandExecutionHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The cross-node idempotency-hardening answer was derived primarily from retained command-execution history.
+  - `const string CommandExecutionHistory`
 - [CommandExecutionHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-commandexecutionhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandExecutionHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The distributed retry lease answer was derived primarily from retained command-execution history.
   - `const string CommandExecutionHistory`
@@ -3041,6 +3086,9 @@ Browse the published API surface by public member.
   - `string CommandFingerprint { get; set; }`
 - [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic command fingerprint currently associated with the retry posture.
+  - `string CommandFingerprint { get; set; }`
+- [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic command fingerprint currently associated with cross-node idempotency hardening.
   - `string CommandFingerprint { get; set; }`
 - [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic command fingerprint already associated with the current managed connector.
@@ -3078,12 +3126,18 @@ Browse the published API surface by public member.
 - [CommandJournal](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionsources-commandjournal): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournal&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The automatic background retry execution answer was derived primarily from the bounded command journal.
   - `const string CommandJournal`
+- [CommandJournalDurability](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-commandjournaldurability): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalDurability&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The cross-node idempotency-hardening answer was derived primarily from durable command-journal truth.
+  - `const string CommandJournalDurability`
 - [CommandJournalDurability](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-commandjournaldurability): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalDurability&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The distributed retry lease answer was derived primarily from durable command-journal truth.
   - `const string CommandJournalDurability`
 - [CommandJournalDurability](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-commandjournaldurability): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalDurability&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The distributed retry orchestration answer was derived primarily from durable command-journal truth.
   - `const string CommandJournalDurability`
+- [CommandJournalDurabilityState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandjournaldurabilitystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalDurabilityState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-journal durability state that informed cross-node idempotency hardening.
+  - `string CommandJournalDurabilityState { get; set; }`
 - [CommandJournalDurabilityState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-commandjournaldurabilitystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalDurabilityState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-journal durability state that informed distributed retry lease posture.
   - `string CommandJournalDurabilityState { get; set; }`
@@ -3101,6 +3155,9 @@ Browse the published API surface by public member.
   - `string CommandJournalState { get; set; }`
 - [CommandJournalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-commandjournalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current bounded managed-connector command-journal state that informed durability.
+  - `string CommandJournalState { get; set; }`
+- [CommandJournalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandjournalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-journal state that informed cross-node idempotency hardening.
   - `string CommandJournalState { get; set; }`
 - [CommandJournalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-commandjournalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector bounded command-journal state that informed distributed retry lease posture.
@@ -3615,6 +3672,9 @@ Browse the published API surface by public member.
 - [CoordinationOwnerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-coordinationownerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the host-owned coordination owner identifier when one was configured for automatic retry.
   - `string CoordinationOwnerId { get; set; }`
+- [CoordinationOwnerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-coordinationownerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the host-owned coordination owner identifier when one was configured for automatic retry.
+  - `string CoordinationOwnerId { get; set; }`
 - [CoordinationOwnerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-coordinationownerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the host-owned coordination owner identifier when one was configured for automatic retry.
   - `string CoordinationOwnerId { get; set; }`
@@ -3624,6 +3684,9 @@ Browse the published API surface by public member.
 - [CoordinationOwnerMatchesActiveReporter](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-coordinationownermatchesactivereporter): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerMatchesActiveReporter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current host coordination owner matches the active reporter identifier.
   - `bool CoordinationOwnerMatchesActiveReporter { get; }`
+- [CoordinationOwnerMatchesActiveReporter](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-coordinationownermatchesactivereporter): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerMatchesActiveReporter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current host coordination owner matches the active reporter identifier.
+  - `bool CoordinationOwnerMatchesActiveReporter { get; set; }`
 - [CoordinationOwnerMatchesActiveReporter](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-coordinationownermatchesactivereporter): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerMatchesActiveReporter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current host coordination owner matches the active reporter identifier.
   - `bool CoordinationOwnerMatchesActiveReporter { get; }`
@@ -3765,6 +3828,9 @@ Browse the published API surface by public member.
 - [Critical](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-critical): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Critical&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event indicates a critical condition that usually requires immediate attention.
   - `const DiagnosticSeverity Critical`
+- [CrossNodeIdempotencyHardening](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-crossnodeidempotencyhardening): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeIdempotencyHardening&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The distributed retry orchestration answer was derived primarily from cross-node idempotency-hardening truth.
+  - `const string CrossNodeIdempotencyHardening`
 - [CrossNodeIdempotencyRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-crossnodeidempotencyrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeIdempotencyRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cross-node idempotency currently remains risky for automatic retry.
   - `const string CrossNodeIdempotencyRisk`
@@ -3777,6 +3843,9 @@ Browse the published API surface by public member.
 - [CrossNodeIdempotentSafe](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-crossnodeidempotentsafe): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeIdempotentSafe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cross-node idempotency currently looks safe for automatic retry.
   - `const string CrossNodeIdempotentSafe`
+- [CrossNodeRuntime](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-crossnoderuntime): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeRuntime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The runtime depends on cross-node idempotency evidence before automatic retry should execute.
+  - `const string CrossNodeRuntime`
 - [Current](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturelagstates-current): `Fields` on `CdcCaptureLagStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Current&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the provider reports the capture as caught up.
   - `const string Current`
@@ -3789,6 +3858,9 @@ Browse the published API surface by public member.
 - [Current](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-itenantcontextaccessor-current): `Properties` on `ITenantContextAccessor` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=Current&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the tenant context currently active for the ambient runtime scope.
   - `TenantContext Current { get; }`
+- [CurrentNodeExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-currentnodeexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current node can execute automatic retry safely for the current cross-node hardening answer.
+  - `const string CurrentNodeExecutable`
 - [CurrentNodeExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-currentnodeexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current host can execute automatic retry safely on this node.
   - `const string CurrentNodeExecutable`
@@ -4349,6 +4421,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing command-retry summary.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing cross-node idempotency-hardening summary.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing distributed retry lease summary.
@@ -4953,9 +5028,15 @@ Browse the published API surface by public member.
 - [Dispose](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-dispose): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Dispose&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Releases runtime resources.
   - `void Dispose()`
+- [DistributedRetryLease](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-distributedretrylease): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DistributedRetryLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The cross-node idempotency-hardening answer was derived primarily from distributed retry lease truth.
+  - `const string DistributedRetryLease`
 - [DistributedRetryLease](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-distributedretrylease): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DistributedRetryLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The distributed retry orchestration answer was derived primarily from distributed retry lease truth.
   - `const string DistributedRetryLease`
+- [DistributedRetryLeaseState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-distributedretryleasestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DistributedRetryLeaseState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector distributed retry lease state that informed cross-node idempotency hardening.
+  - `string DistributedRetryLeaseState { get; set; }`
 - [DistributedRetryLeaseState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-distributedretryleasestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DistributedRetryLeaseState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector distributed retry lease state that informed distributed retry orchestration.
   - `string DistributedRetryLeaseState { get; set; }`
@@ -5094,6 +5175,9 @@ Browse the published API surface by public member.
 - [Duplicate](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-duplicate): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Duplicate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth matches an already-recorded command and replaying it would be duplicative.
   - `const string Duplicate`
+- [DuplicateAutomaticRetryAttempts](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicateautomaticretryattempts): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateAutomaticRetryAttempts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Retained history currently contains duplicated automatic retry attempts for the current retry posture.
+  - `const string DuplicateAutomaticRetryAttempts`
 - [DuplicateAutomaticRetryAttempts](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-duplicateautomaticretryattempts): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateAutomaticRetryAttempts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The bounded command journal currently retains multiple automatic retry attempts for the same retry fingerprint.
   - `const string DuplicateAutomaticRetryAttempts`
@@ -5106,9 +5190,18 @@ Browse the published API surface by public member.
 - [DuplicateCommand](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-duplicatecommand): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Replaying the current retry-execution policy would duplicate a previously recorded command.
   - `const string DuplicateCommand`
+- [DuplicateCommandLineage](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatecommandlineage): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCommandLineage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Retained history currently contains duplicated command lineage for the current retry posture.
+  - `const string DuplicateCommandLineage`
 - [DuplicateEvidencePresent](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-duplicateevidencepresent): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateEvidencePresent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal currently retains matching command evidence showing that replaying the command would be duplicative.
   - `const string DuplicateEvidencePresent`
+- [DuplicateLineageRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatelineagerisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateLineageRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency currently remains risky because retained command lineage already looks duplicated.
+  - `const string DuplicateLineageRisk`
+- [DuplicateLineageRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-duplicatelineagerisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateLineageRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency remains risky because retained command lineage already looks duplicated for the current retry posture.
+  - `const string DuplicateLineageRisk`
 - [DurableExecutionCompensationAction](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutioncompensationaction-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionCompensationAction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Initializes a new instance of the `DurableExecutionCompensationAction` class.
   - `DurableExecutionCompensationAction(string id, string displayName, string description, string triggerKind, string compensationBehaviorId, IReadOnlyDictionary<string, string> metadata)`
@@ -5133,6 +5226,9 @@ Browse the published API surface by public member.
 - [DurableExecutionStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutionstates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DurableExecutionStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<DurableExecutionRuntimeState> DurableExecutionStates { get; set; }`
+- [DurableJournalConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-durablejournalconfigured): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableJournalConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - A durable command-journal store is configured for the runtime.
+  - `const string DurableJournalConfigured`
 - [DurableJournalConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-durablejournalconfigured): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableJournalConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - A durable command-journal store is configured for the runtime.
   - `const string DurableJournalConfigured`
@@ -6177,6 +6273,9 @@ Browse the published API surface by public member.
 - [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-executionownership): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-ownership mode that informed automatic background retry coordination.
   - `string ExecutionOwnership { get; set; }`
+- [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executionownership): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing execution-ownership mode that informed cross-node idempotency hardening.
+  - `string ExecutionOwnership { get; set; }`
 - [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-executionownership): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-ownership mode that informed distributed retry lease posture.
   - `string ExecutionOwnership { get; set; }`
@@ -6213,6 +6312,9 @@ Browse the published API surface by public member.
 - [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable execution-runtime identifier currently associated with command retry.
   - `string ExecutionRuntimeId { get; set; }`
+- [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable execution-runtime identifier currently associated with cross-node idempotency hardening.
+  - `string ExecutionRuntimeId { get; set; }`
 - [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable execution-runtime identifier currently associated with distributed retry lease posture.
   - `string ExecutionRuntimeId { get; set; }`
@@ -6236,6 +6338,9 @@ Browse the published API surface by public member.
   - `string ExecutionTopology { get; set; }`
 - [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-topology classification that informed command-journal durability.
+  - `string ExecutionTopology { get; set; }`
+- [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing execution-topology classification that informed cross-node idempotency hardening.
   - `string ExecutionTopology { get; set; }`
 - [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-topology classification that informed distributed retry lease posture.
@@ -7110,6 +7215,18 @@ Browse the published API surface by public member.
 - [GetByManagedConnectorCommandRetryState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandretrystate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCommandRetryState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector command-retry answer matches the requested state.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandRetryState(string retryState)`
+- [GetByManagedConnectorCrossNodeIdempotencyHardeningCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningcategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCrossNodeIdempotencyHardeningCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer includes the requested category.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(string hardeningCategory)`
+- [GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningownerid-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer references the requested coordination owner.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(string ownerId)`
+- [GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningretryfingerprint-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer references the requested retry fingerprint.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(string retryFingerprint)`
+- [GetByManagedConnectorCrossNodeIdempotencyHardeningState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningstate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorCrossNodeIdempotencyHardeningState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer matches the requested state.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCrossNodeIdempotencyHardeningState(string hardeningState)`
 - [GetByManagedConnectorDistributedRetryLeaseCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryleasecategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorDistributedRetryLeaseCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector distributed retry lease answer includes the requested category.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseCategory(string leaseCategory)`
@@ -7665,6 +7782,9 @@ Browse the published API surface by public member.
 - [HasActiveReporterLease](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-hasactivereporterlease): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasActiveReporterLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently exposes one active reporter lease.
   - `bool HasActiveReporterLease { get; }`
+- [HasActiveReporterLease](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasactivereporterlease): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasActiveReporterLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the runtime currently exposes one active reporter lease.
+  - `bool HasActiveReporterLease { get; }`
 - [HasActiveReporterLease](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasactivereporterlease): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasActiveReporterLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently exposes one active reporter lease.
   - `bool HasActiveReporterLease { get; }`
@@ -7719,14 +7839,23 @@ Browse the published API surface by public member.
 - [HasDispatchReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasdispatchreports): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDispatchReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the linked outbox dispatch path has reported runtime state.
   - `bool HasDispatchReports { get; }`
+- [HasDuplicateAutomaticRetryAttempts](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasduplicateautomaticretryattempts): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDuplicateAutomaticRetryAttempts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether retained history currently contains duplicated automatic retry attempts for the current retry posture.
+  - `bool HasDuplicateAutomaticRetryAttempts { get; set; }`
 - [HasDuplicateAutomaticRetryAttempts](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasduplicateautomaticretryattempts): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDuplicateAutomaticRetryAttempts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the bounded command journal currently retains multiple automatic retry attempts for the same retry fingerprint.
   - `bool HasDuplicateAutomaticRetryAttempts { get; set; }`
+- [HasDuplicateCommandLineage](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasduplicatecommandlineage): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDuplicateCommandLineage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether retained history currently contains duplicated command lineage for the current retry posture.
+  - `bool HasDuplicateCommandLineage { get; set; }`
 - [HasDuplicateEvidence](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-hasduplicateevidence): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDuplicateEvidence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the bounded command journal contains evidence that replaying the command would be duplicative.
   - `bool HasDuplicateEvidence { get; }`
 - [HasDurableStoreConfigured](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasdurablestoreconfigured): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDurableStoreConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether a durable journal store is currently configured.
+  - `bool HasDurableStoreConfigured { get; set; }`
+- [HasDurableStoreConfigured](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasdurablestoreconfigured): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDurableStoreConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether a durable command-journal store is currently configured.
   - `bool HasDurableStoreConfigured { get; set; }`
 - [HasDurableStoreConfigured](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasdurablestoreconfigured): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDurableStoreConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether a durable command-journal store is currently configured.
@@ -7758,6 +7887,9 @@ Browse the published API surface by public member.
 - [HasMatchingAutomaticRetryAttempt](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-hasmatchingautomaticretryattempt): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingAutomaticRetryAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether Cephalon has already recorded one automatic background retry attempt matching the current retry fingerprint.
   - `bool HasMatchingAutomaticRetryAttempt { get; set; }`
+- [HasMatchingAutomaticRetryAttempt](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasmatchingautomaticretryattempt): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingAutomaticRetryAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether retained history currently contains one automatic retry attempt for the current retry fingerprint.
+  - `bool HasMatchingAutomaticRetryAttempt { get; set; }`
 - [HasMatchingAutomaticRetryAttempt](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasmatchingautomaticretryattempt): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingAutomaticRetryAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the bounded command journal currently retains one matching automatic retry attempt.
   - `bool HasMatchingAutomaticRetryAttempt { get; set; }`
@@ -7785,6 +7917,9 @@ Browse the published API surface by public member.
 - [HasMatchingRetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingretryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingRetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest recorded command currently matches the derived retry fingerprint.
   - `bool HasMatchingRetryFingerprint { get; set; }`
+- [HasMatchingRetryFingerprintHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasmatchingretryfingerprinthistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingRetryFingerprintHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether retained history currently contains evidence for the current retry fingerprint.
+  - `bool HasMatchingRetryFingerprintHistory { get; set; }`
 - [HasMatchingRetryFingerprintHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasmatchingretryfingerprinthistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingRetryFingerprintHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the bounded command journal currently retains one matching retry fingerprint.
   - `bool HasMatchingRetryFingerprintHistory { get; set; }`
@@ -7817,6 +7952,9 @@ Browse the published API surface by public member.
   - `bool HasPendingTimers { get; }`
 - [HasPersistedRecordedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-haspersistedrecordedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPersistedRecordedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current runtime has recorded command history in the persisted snapshot.
+  - `bool HasPersistedRecordedHistory { get; set; }`
+- [HasPersistedRecordedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-haspersistedrecordedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPersistedRecordedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the durable command journal currently exposes persisted recorded history.
   - `bool HasPersistedRecordedHistory { get; set; }`
 - [HasPersistedRecordedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-haspersistedrecordedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPersistedRecordedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
@@ -7859,6 +7997,9 @@ Browse the published API surface by public member.
   - `bool HasRecordedOutcome { get; }`
 - [HasRecoveredPersistedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasrecoveredpersistedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecoveredPersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current process recovered command history for this runtime from durable storage.
+  - `bool HasRecoveredPersistedHistory { get; set; }`
+- [HasRecoveredPersistedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasrecoveredpersistedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecoveredPersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current process recovered persisted command history for this runtime.
   - `bool HasRecoveredPersistedHistory { get; set; }`
 - [HasRecoveredPersistedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasrecoveredpersistedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecoveredPersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current process recovered persisted command history for this runtime.
@@ -8676,6 +8817,12 @@ Browse the published API surface by public member.
 - [Idempotent](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioridempotencymode-idempotent): `Fields` on `BehaviorIdempotencyMode` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Idempotent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Replaying the same logical behavior execution is expected to be safe.
   - `const BehaviorIdempotencyMode Idempotent`
+- [IdempotentSafe](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-idempotentsafe): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IdempotentSafe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency currently looks safe for the current retry posture.
+  - `const string IdempotentSafe`
+- [IdempotentSafe](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-idempotentsafe): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IdempotentSafe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency evidence currently looks safe for the current retry posture.
+  - `const string IdempotentSafe`
 - [IdempotentSafe](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-idempotentsafe): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IdempotentSafe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Automatic retry can run because Cephalon has both lease ownership and restart-safe idempotency evidence.
   - `const string IdempotentSafe`
@@ -8916,6 +9063,9 @@ Browse the published API surface by public member.
 - [InMemoryHistoryStore](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-inmemoryhistorystore): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InMemoryHistoryStore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The durability answer was derived primarily from the in-memory shared command history store.
   - `const string InMemoryHistoryStore`
+- [InMemoryJournalOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-inmemoryjournalonly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InMemoryJournalOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Automatic retry still depends on in-memory command history only.
+  - `const string InMemoryJournalOnly`
 - [InMemoryJournalOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-inmemoryjournalonly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InMemoryJournalOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Automatic retry currently depends on in-memory command history only.
   - `const string InMemoryJournalOnly`
@@ -9177,6 +9327,9 @@ Browse the published API surface by public member.
 - [IsDuplicate](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-isduplicate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDuplicate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether replaying the current command would be duplicative.
   - `bool IsDuplicate { get; }`
+- [IsDuplicateLineageRisk](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isduplicatelineagerisk): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDuplicateLineageRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether cross-node idempotency currently remains risky because retained command lineage already looks duplicated.
+  - `bool IsDuplicateLineageRisk { get; }`
 - [IsDurable](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isdurable): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current durability answer already provides restart-safe retained history.
   - `bool IsDurable { get; }`
@@ -9219,6 +9372,9 @@ Browse the published API surface by public member.
 - [IsIdempotencyRisk](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isidempotencyrisk): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsIdempotencyRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether cross-node idempotency evidence currently remains risky for automatic retry.
   - `bool IsIdempotencyRisk { get; }`
+- [IsIdempotentSafe](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isidempotentsafe): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsIdempotentSafe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether cross-node idempotency currently looks safe for the current retry posture.
+  - `bool IsIdempotentSafe { get; }`
 - [IsIdempotentSafe](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isidempotentsafe): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsIdempotentSafe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether Cephalon currently has lease ownership plus restart-safe idempotency evidence.
   - `bool IsIdempotentSafe { get; }`
@@ -9306,6 +9462,9 @@ Browse the published API surface by public member.
 - [IsOperatorOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-isoperatoronly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current retry posture remains operator-owned.
   - `bool IsOperatorOnly { get; }`
+- [IsOperatorOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isoperatoronly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether cross-node idempotency hardening still remains operator-owned.
+  - `bool IsOperatorOnly { get; }`
 - [IsOperatorOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isoperatoronly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether distributed retry still remains operator-owned outside Cephalon.
   - `bool IsOperatorOnly { get; }`
@@ -9360,6 +9519,9 @@ Browse the published API surface by public member.
 - [IsRejected](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-isrejected): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsRejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector has been rejected on the shared issuance lane.
   - `bool IsRejected { get; }`
+- [IsReplayWindowRisk](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isreplaywindowrisk): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsReplayWindowRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether cross-node idempotency currently remains risky because the durable replay window still lacks enough retained evidence.
+  - `bool IsReplayWindowRisk { get; }`
 - [IsResolved](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantresolutionresult-isresolved): `Properties` on `TenantResolutionResult` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsResolved&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets a value indicating whether tenant resolution succeeded.
   - `bool IsResolved { get; }`
@@ -9393,6 +9555,9 @@ Browse the published API surface by public member.
 - [IsSingleNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-issinglenode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsSingleNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether automatic retry can execute on a single node without cross-node lease coordination.
   - `bool IsSingleNode { get; }`
+- [IsStaleOwnerRisk](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isstaleownerrisk): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsStaleOwnerRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether cross-node idempotency currently remains risky because ownership truth still looks stale.
+  - `bool IsStaleOwnerRisk { get; }`
 - [IsStarted](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isstarted): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsStarted&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the module most recently completed startup without a later successful stop.
   - `bool IsStarted { get; }`
@@ -9831,6 +9996,9 @@ Browse the published API surface by public member.
 - [LatestAutomaticRetryAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestautomaticretryattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAutomaticRetryAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable attempt identifier of the latest recorded automatic background retry attempt when one exists.
   - `string LatestAutomaticRetryAttemptId { get; set; }`
+- [LatestAutomaticRetryAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestautomaticretryattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAutomaticRetryAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable latest automatic retry attempt identifier when one exists.
+  - `string LatestAutomaticRetryAttemptId { get; set; }`
 - [LatestAutomaticRetryAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-latestautomaticretryattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAutomaticRetryAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest automatic retry attempt identifier currently associated with distributed retry lease posture.
   - `string LatestAutomaticRetryAttemptId { get; set; }`
@@ -9839,6 +10007,9 @@ Browse the published API surface by public member.
   - `string LatestAutomaticRetryAttemptId { get; set; }`
 - [LatestAutomaticRetryExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestautomaticretryexecutionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAutomaticRetryExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic execution fingerprint of the latest recorded automatic background retry attempt when one exists.
+  - `string LatestAutomaticRetryExecutionFingerprint { get; set; }`
+- [LatestAutomaticRetryExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestautomaticretryexecutionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAutomaticRetryExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic execution fingerprint of the latest automatic retry attempt when one exists.
   - `string LatestAutomaticRetryExecutionFingerprint { get; set; }`
 - [LatestAutomaticRetryExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-latestautomaticretryexecutionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAutomaticRetryExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest automatic retry execution fingerprint currently associated with distributed retry lease posture.
@@ -9866,6 +10037,9 @@ Browse the published API surface by public member.
   - `string LatestCommandExecutionState { get; set; }`
 - [LatestCommandExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestcommandexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest recorded managed-connector command-execution state Cephalon considered for the retry posture.
+  - `string LatestCommandExecutionState { get; set; }`
+- [LatestCommandExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestcommandexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest recorded managed-connector command-execution state visible to cross-node idempotency hardening.
   - `string LatestCommandExecutionState { get; set; }`
 - [LatestCommandExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestcommandexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest recorded managed-connector command-execution state Cephalon considered for retry-execution policy.
@@ -9954,6 +10128,9 @@ Browse the published API surface by public member.
 - [LayeredArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-layeredarchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=LayeredArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the layered-architecture pattern.
   - `PatternDescriptor LayeredArchitecture { get; }`
+- [LeaseConflict](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-leaseconflict): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseConflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node retry lease ownership remains conflicted.
+  - `const string LeaseConflict`
 - [LeaseConflict](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-leaseconflict): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseConflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cross-node lease coordination remains conflicted.
   - `const string LeaseConflict`
@@ -9992,6 +10169,9 @@ Browse the published API surface by public member.
   - `const string LeaseMissing`
 - [LeaseMissing](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-leasemissing): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseMissing&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Automatic background retry cannot run because no active reporter lease is currently visible.
+  - `const string LeaseMissing`
+- [LeaseMissing](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-leasemissing): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseMissing&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node retry lease ownership remains missing.
   - `const string LeaseMissing`
 - [LeaseMissing](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-leasemissing): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseMissing&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - No active retry lease is currently visible for automatic retry.
@@ -10152,6 +10332,9 @@ Browse the published API surface by public member.
 - [ManagedConnectorCommandRetry](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandretry): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorCommandRetry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector command-retry and idempotency posture derived from the shared command lane plus bounded execution history.
   - `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus ManagedConnectorCommandRetry { get; set; }`
+- [ManagedConnectorCrossNodeIdempotencyHardening](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcrossnodeidempotencyhardening): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorCrossNodeIdempotencyHardening&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing managed-connector cross-node idempotency-hardening posture derived from retry coordination, durable journal truth, and retained command lineage evidence.
+  - `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus ManagedConnectorCrossNodeIdempotencyHardening { get; set; }`
 - [ManagedConnectorDistributedRetryLease](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordistributedretrylease): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorDistributedRetryLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector distributed retry lease posture derived from automatic retry coordination, durable command-journal truth, and retained cross-node idempotency evidence.
   - `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus ManagedConnectorDistributedRetryLease { get; set; }`
@@ -10216,6 +10399,9 @@ Browse the published API surface by public member.
   - Gets the declared managed-connector management mode when one is known.
   - `string ManagementMode { get; set; }`
 - [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the declared managed-connector management mode when one is known.
+  - `string ManagementMode { get; set; }`
+- [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared managed-connector management mode when one is known.
   - `string ManagementMode { get; set; }`
 - [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -10395,9 +10581,15 @@ Browse the published API surface by public member.
 - [MatchingAutomaticAttempt](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-matchingautomaticattempt): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingAutomaticAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The bounded command journal already contains one automatic retry attempt that matches the current retry fingerprint.
   - `const string MatchingAutomaticAttempt`
+- [MatchingAutomaticRetryAttempt](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-matchingautomaticretryattempt): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingAutomaticRetryAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Retained history currently contains one automatic retry attempt for the current retry fingerprint.
+  - `const string MatchingAutomaticRetryAttempt`
 - [MatchingAutomaticRetryAttempt](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-matchingautomaticretryattempt): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingAutomaticRetryAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The bounded command journal currently retains one matching automatic retry attempt.
   - `const string MatchingAutomaticRetryAttempt`
+- [MatchingAutomaticRetryAttemptCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-matchingautomaticretryattemptcount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingAutomaticRetryAttemptCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of retained automatic retry attempts that currently match the retry fingerprint.
+  - `int MatchingAutomaticRetryAttemptCount { get; set; }`
 - [MatchingAutomaticRetryAttemptCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-matchingautomaticretryattemptcount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingAutomaticRetryAttemptCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of retained automatic retry attempts that currently match the derived retry fingerprint.
   - `int MatchingAutomaticRetryAttemptCount { get; set; }`
@@ -10407,9 +10599,15 @@ Browse the published API surface by public member.
 - [MatchingCommandFingerprint](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-matchingcommandfingerprint): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingCommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current retry posture matches a recorded command fingerprint.
   - `const string MatchingCommandFingerprint`
+- [MatchingCommandLineageEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-matchingcommandlineageentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingCommandLineageEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of retained command-execution entries that currently match the command lineage fingerprint.
+  - `int MatchingCommandLineageEntryCount { get; set; }`
 - [MatchingIssuanceFingerprint](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-matchingissuancefingerprint): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingIssuanceFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current retry posture matches a recorded issuance fingerprint.
   - `const string MatchingIssuanceFingerprint`
+- [MatchingRetryHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-matchingretryhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingRetryHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Retained history currently contains evidence for the current retry fingerprint.
+  - `const string MatchingRetryHistory`
 - [MatchRule](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-matchrule): `Properties` on `TraefikIngressRouteOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=MatchRule&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the Traefik rule expression such as `Host(`api.example.com`) && PathPrefix(`/orders`)`.
   - `string MatchRule { get; set; }`
@@ -11545,6 +11743,9 @@ Browse the published API surface by public member.
 - [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command-retry posture does not currently apply to the execution runtime.
   - `const string NotApplicable`
+- [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency hardening does not currently apply to the execution runtime.
+  - `const string NotApplicable`
 - [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Distributed retry lease posture does not currently apply to the execution runtime.
   - `const string NotApplicable`
@@ -11887,6 +12088,9 @@ Browse the published API surface by public member.
 - [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable management-operation identifier currently associated with command retry.
   - `string OperationId { get; set; }`
+- [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable management-operation identifier currently associated with cross-node idempotency hardening.
+  - `string OperationId { get; set; }`
 - [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable management-operation identifier currently associated with distributed retry orchestration.
   - `string OperationId { get; set; }`
@@ -11946,6 +12150,12 @@ Browse the published API surface by public member.
   - `const string OperatorOnly`
 - [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth still leaves the command operator-owned outside Cephalon.
+  - `const string OperatorOnly`
+- [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency hardening still remains operator-owned outside Cephalon.
+  - `const string OperatorOnly`
+- [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency hardening still remains operator-owned outside Cephalon.
   - `const string OperatorOnly`
 - [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Distributed retry lease posture still remains operator-owned outside Cephalon.
@@ -12185,6 +12395,9 @@ Browse the published API surface by public member.
 - [OwnerMatch](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-ownermatch): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerMatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current host coordination owner matches the active reporter lease.
   - `const string OwnerMatch`
+- [OwnerMatch](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-ownermatch): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerMatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current host coordination owner matches the active reporter lease.
+  - `const string OwnerMatch`
 - [OwnerMatch](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-ownermatch): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerMatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current host coordination owner matches the active reporter lease.
   - `const string OwnerMatch`
@@ -12192,6 +12405,9 @@ Browse the published API surface by public member.
   - The current host coordination owner matches the active reporter lease.
   - `const string OwnerMatch`
 - [OwnerMismatch](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-ownermismatch): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerMismatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current host coordination owner does not match the active reporter lease.
+  - `const string OwnerMismatch`
+- [OwnerMismatch](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-ownermismatch): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerMismatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current host coordination owner does not match the active reporter lease.
   - `const string OwnerMismatch`
 - [OwnerMismatch](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-ownermismatch): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerMismatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -12518,6 +12734,9 @@ Browse the published API surface by public member.
 - [PersistedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-persistedatutc): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=PersistedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the time at which the audit entry was durably persisted.
   - `DateTimeOffset PersistedAtUtc { get; }`
+- [PersistedHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-persistedhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The durable command journal currently exposes persisted recorded history.
+  - `const string PersistedHistory`
 - [PersistedHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-persistedhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The durable command journal currently exposes persisted recorded history.
   - `const string PersistedHistory`
@@ -13461,6 +13680,9 @@ Browse the published API surface by public member.
 - [RecoveredHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-recoveredhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecoveredHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current runtime recovered command history from the durable journal store after startup.
   - `const string RecoveredHistory`
+- [RecoveredHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-recoveredhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecoveredHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The durable command journal currently exposes recovered recorded history.
+  - `const string RecoveredHistory`
 - [RecoveredHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-recoveredhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecoveredHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The durable command journal currently exposes recovered recorded history.
   - `const string RecoveredHistory`
@@ -13785,6 +14007,12 @@ Browse the published API surface by public member.
 - [ReplaceExplicit](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverridebindingmode-replaceexplicit): `Fields` on `RestEndpointOverrideBindingMode` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplaceExplicit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Replaces the candidate's explicit binding plan with the configured descriptors.
   - `const RestEndpointOverrideBindingMode ReplaceExplicit`
+- [ReplayWindowRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-replaywindowrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplayWindowRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency currently remains risky because the durable replay window still lacks enough retained evidence.
+  - `const string ReplayWindowRisk`
+- [ReplayWindowRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-replaywindowrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplayWindowRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency remains risky because the durable replay window still lacks enough retained evidence.
+  - `const string ReplayWindowRisk`
 - [ReplyAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-system-object-system-threading-cancellationtoken): `Methods` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplyAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Sends a reply message back to the caller through the active transport.
   - `Task ReplyAsync(object reply, CancellationToken cancellationToken)`
@@ -14649,6 +14877,9 @@ Browse the published API surface by public member.
 - [RetainedEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-retainedentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetainedEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of bounded journal entries Cephalon currently retains for the execution runtime.
   - `int RetainedEntryCount { get; set; }`
+- [RetainedEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retainedentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetainedEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of retained bounded journal entries currently visible to cross-node idempotency hardening.
+  - `int RetainedEntryCount { get; set; }`
 - [RetainedEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-retainedentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetainedEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of bounded command-history entries currently retained for the execution runtime.
   - `int RetainedEntryCount { get; set; }`
@@ -14700,6 +14931,9 @@ Browse the published API surface by public member.
 - [RetryExecutionPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalsources-retryexecutionpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal was derived primarily from the shared retry-execution policy lane.
   - `const string RetryExecutionPolicy`
+- [RetryExecutionPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-retryexecutionpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The cross-node idempotency-hardening answer was derived primarily from retry-execution policy truth.
+  - `const string RetryExecutionPolicy`
 - [RetryExecutionPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-retryexecutionpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The distributed retry lease answer was derived primarily from retry-execution policy truth.
   - `const string RetryExecutionPolicy`
@@ -14721,6 +14955,9 @@ Browse the published API surface by public member.
 - [RetryExecutionPolicyState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-retryexecutionpolicystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector retry-execution policy state that informed the command journal.
   - `string RetryExecutionPolicyState { get; set; }`
+- [RetryExecutionPolicyState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retryexecutionpolicystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector retry-execution policy state that informed cross-node idempotency hardening.
+  - `string RetryExecutionPolicyState { get; set; }`
 - [RetryExecutionPolicyState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-retryexecutionpolicystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector retry-execution policy state that informed distributed retry lease posture.
   - `string RetryExecutionPolicyState { get; set; }`
@@ -14735,6 +14972,9 @@ Browse the published API surface by public member.
   - `string RetryFingerprint { get; set; }`
 - [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic retry fingerprint Cephalon currently derives for duplicate and retry checks.
+  - `string RetryFingerprint { get; set; }`
+- [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic retry fingerprint currently associated with cross-node idempotency hardening.
   - `string RetryFingerprint { get; set; }`
 - [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic retry fingerprint currently associated with distributed retry lease posture.
@@ -15534,6 +15774,9 @@ Browse the published API surface by public member.
 - [SingleNodeRuntime](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-singlenoderuntime): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SingleNodeRuntime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime can evaluate automatic retry on a single node without reporter-lease coordination.
   - `const string SingleNodeRuntime`
+- [SingleNodeRuntime](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-singlenoderuntime): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SingleNodeRuntime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The runtime can evaluate automatic retry on a single node without cross-node hardening.
+  - `const string SingleNodeRuntime`
 - [SingleNodeRuntime](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-singlenoderuntime): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SingleNodeRuntime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime can evaluate automatic retry on a single node without lease coordination.
   - `const string SingleNodeRuntime`
@@ -15686,6 +15929,9 @@ Browse the published API surface by public member.
   - `string SourceId { get; set; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-sourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier Cephalon used to derive command retry.
+  - `string SourceId { get; set; }`
+- [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-sourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the primary source identifier Cephalon used to derive cross-node idempotency hardening.
   - `string SourceId { get; set; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-sourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier Cephalon used to derive distributed retry lease posture.
@@ -16021,6 +16267,12 @@ Browse the published API surface by public member.
 - [StaleObservations](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-staleobservations): `Fields` on `CdcCaptureExecutionRuntimeRemediationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StaleObservations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Reported CDC captures currently publish stale runtime observations.
   - `const string StaleObservations`
+- [StaleOwnerRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-staleownerrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StaleOwnerRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency currently remains risky because ownership truth still looks stale.
+  - `const string StaleOwnerRisk`
+- [StaleOwnerRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-staleownerrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StaleOwnerRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Cross-node idempotency remains risky because ownership or reporter-lease truth still looks stale or conflicted.
+  - `const string StaleOwnerRisk`
 - [Standby](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-standby): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Standby&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The reporter is still visible through accepted runtime observations, but does not currently hold the active lease.
   - `const string Standby`
@@ -16131,6 +16383,9 @@ Browse the published API surface by public member.
   - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable managed-connector command-retry state.
+  - `string State { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable managed-connector cross-node idempotency-hardening state.
   - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable managed-connector distributed retry lease state.
@@ -17101,6 +17356,9 @@ Browse the published API surface by public member.
 - [TotalRecordedEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-totalrecordedentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalRecordedEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of command-execution outcomes Cephalon has recorded for the execution runtime.
   - `int TotalRecordedEntryCount { get; set; }`
+- [TotalRecordedEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-totalrecordedentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalRecordedEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of command-execution outcomes currently visible to cross-node idempotency hardening.
+  - `int TotalRecordedEntryCount { get; set; }`
 - [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-totalreports): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of runtime observations visible for the execution runtime.
   - `int TotalReports { get; }`
@@ -17472,6 +17730,9 @@ Browse the published API surface by public member.
   - `const string Unknown`
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrysources-unknown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetrySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The retry posture does not currently resolve to one specific source.
+  - `const string Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-unknown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The cross-node idempotency-hardening answer does not currently resolve to one specific source.
   - `const string Unknown`
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-unknown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The distributed retry lease answer does not currently resolve to one specific source.

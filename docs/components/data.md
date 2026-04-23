@@ -494,7 +494,8 @@ managed-connector command-journal durability, or
 managed-connector distributed retry lease,
 managed-connector automatic background retry execution,
 managed-connector automatic background retry coordination,
-managed-connector distributed retry orchestration, or
+managed-connector distributed retry orchestration,
+managed-connector cross-node idempotency hardening, or
 managed-connector command-execution-history
 index.
 ASP.NET Core maps those same filters through
@@ -610,7 +611,8 @@ back into typed runtime-level operator summaries, provider execution-adapter pos
 managed-connector command-execution outcome/history, additive command-retry/idempotency truth,
 additive retry-execution-policy truth, additive bounded command-journal truth, and additive
 automatic background retry plus automatic-retry-coordination plus distributed retry lease plus
-distributed retry orchestration truth instead of inventing a Debezium-only status registry.
+distributed retry orchestration plus richer cross-node idempotency hardening truth instead of
+inventing a Debezium-only status registry.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

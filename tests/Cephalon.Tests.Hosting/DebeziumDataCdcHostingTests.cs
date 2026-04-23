@@ -3201,6 +3201,10 @@ public sealed class DebeziumDataCdcHostingTests
                 var distributedLeaseByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-leases/categories/cross-node-idempotent-safe");
                 var distributedLeaseByOwner = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-leases/owners/connect-worker-auto");
                 var distributedLease = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/distributed-retry-lease");
+                var hardeningByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/idempotent-safe");
+                var hardeningByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/categories/idempotent-safe");
+                var hardeningByOwner = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/owners/connect-worker-auto");
+                var hardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/cross-node-idempotency-hardening");
                 var orchestrationByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-orchestrations/cooldown");
                 var orchestrationByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-orchestrations/categories/cooldown-window");
                 var orchestrationByOwner = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-orchestrations/owners/connect-worker-auto");
@@ -3295,6 +3299,21 @@ public sealed class DebeziumDataCdcHostingTests
                     distributedLease.State);
                 Assert.True(distributedLease.CanExecuteAutomaticRetryOnCurrentNode);
 
+                Assert.NotNull(hardeningByState);
+                Assert.Equal([automaticRetryRuntimeId], hardeningByState.Select(static runtime => runtime.Id).ToArray());
+
+                Assert.NotNull(hardeningByCategory);
+                Assert.Equal([automaticRetryRuntimeId], hardeningByCategory.Select(static runtime => runtime.Id).ToArray());
+
+                Assert.NotNull(hardeningByOwner);
+                Assert.Equal([automaticRetryRuntimeId], hardeningByOwner.Select(static runtime => runtime.Id).ToArray());
+
+                Assert.NotNull(hardening);
+                Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.IdempotentSafe,
+                    hardening.State);
+                Assert.True(hardening.CanExecuteAutomaticRetryOnCurrentNode);
+
                 Assert.NotNull(orchestrationByState);
                 Assert.Equal([automaticRetryRuntimeId], orchestrationByState.Select(static runtime => runtime.Id).ToArray());
 
@@ -3333,6 +3352,7 @@ public sealed class DebeziumDataCdcHostingTests
                     item.ManagedConnectorAutomaticRetryExecution.State == CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Completed &&
                     item.ManagedConnectorAutomaticRetryCoordination.State == CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld &&
                     item.ManagedConnectorDistributedRetryLease.State == CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.IdempotentSafe &&
+                    item.ManagedConnectorCrossNodeIdempotencyHardening.State == CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.IdempotentSafe &&
                     item.ManagedConnectorDistributedRetryOrchestration.State == CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Cooldown &&
                     item.ManagedConnectorAutomaticRetryExecution.HasMatchingAutomaticRetryAttempt &&
                     item.ManagedConnectorAutomaticRetryExecution.CategoryIds.Contains(
@@ -3445,6 +3465,10 @@ public sealed class DebeziumDataCdcHostingTests
             var distributedLeaseByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-leases/categories/owner-mismatch");
             var distributedLeaseByOwner = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-leases/owners/connect-worker-owner-a");
             var distributedLease = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/distributed-retry-lease");
+            var hardeningByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/stale-owner-risk");
+            var hardeningByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/categories/stale-owner-risk");
+            var hardeningByOwner = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/cross-node-idempotency-hardenings/owners/connect-worker-owner-a");
+            var hardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/cross-node-idempotency-hardening");
             var orchestrationByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-orchestrations/blocked");
             var orchestrationByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-orchestrations/categories/owner-mismatch");
             var orchestrationByOwner = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/distributed-retry-orchestrations/owners/connect-worker-owner-a");
@@ -3470,10 +3494,14 @@ public sealed class DebeziumDataCdcHostingTests
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.LeaseConflicted,
                 runtime.ManagedConnectorDistributedRetryLease.State);
             Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.StaleOwnerRisk,
+                runtime.ManagedConnectorCrossNodeIdempotencyHardening.State);
+            Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Blocked,
                 runtime.ManagedConnectorDistributedRetryOrchestration.State);
             Assert.False(runtime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
             Assert.False(runtime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
+            Assert.False(runtime.ManagedConnectorCrossNodeIdempotencyHardening.CanExecuteAutomaticRetryOnCurrentNode);
             Assert.False(runtime.ManagedConnectorDistributedRetryOrchestration.CanScheduleAutomaticRetryOnCurrentNode);
             Assert.Equal("connect-worker-owner-a", runtime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
             Assert.Equal("connect-worker-owner-b", runtime.ManagedConnectorAutomaticRetryCoordination.ActiveReporterId);
@@ -3486,6 +3514,9 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories.LeaseConflict,
                 runtime.ManagedConnectorDistributedRetryLease.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories.StaleOwnerRisk,
+                runtime.ManagedConnectorCrossNodeIdempotencyHardening.CategoryIds);
 
             Assert.NotNull(coordinationByState);
             Assert.Equal([automaticRetryRuntimeId], coordinationByState.Select(static item => item.Id).ToArray());
@@ -3510,6 +3541,21 @@ public sealed class DebeziumDataCdcHostingTests
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.LeaseConflicted,
                 distributedLease.State);
             Assert.False(distributedLease.CanExecuteAutomaticRetryOnCurrentNode);
+
+            Assert.NotNull(hardeningByState);
+            Assert.Equal([automaticRetryRuntimeId], hardeningByState.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(hardeningByCategory);
+            Assert.Equal([automaticRetryRuntimeId], hardeningByCategory.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(hardeningByOwner);
+            Assert.Equal([automaticRetryRuntimeId], hardeningByOwner.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(hardening);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.StaleOwnerRisk,
+                hardening.State);
+            Assert.False(hardening.CanExecuteAutomaticRetryOnCurrentNode);
 
             Assert.NotNull(orchestrationByState);
             Assert.Equal([automaticRetryRuntimeId], orchestrationByState.Select(static item => item.Id).ToArray());
@@ -3546,6 +3592,9 @@ public sealed class DebeziumDataCdcHostingTests
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.LeaseConflicted,
                 refreshedRuntime.ManagedConnectorDistributedRetryLease.State);
             Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.StaleOwnerRisk,
+                refreshedRuntime.ManagedConnectorCrossNodeIdempotencyHardening.State);
+            Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Blocked,
                 refreshedRuntime.ManagedConnectorDistributedRetryOrchestration.State);
 
@@ -3554,6 +3603,7 @@ public sealed class DebeziumDataCdcHostingTests
                 item.ManagedConnectorAutomaticRetryExecution.State == CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Eligible &&
                 item.ManagedConnectorAutomaticRetryCoordination.State == CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Uncoordinated &&
                 item.ManagedConnectorDistributedRetryLease.State == CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.LeaseConflicted &&
+                item.ManagedConnectorCrossNodeIdempotencyHardening.State == CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.StaleOwnerRisk &&
                 item.ManagedConnectorDistributedRetryOrchestration.State == CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.Blocked &&
                 !item.ManagedConnectorAutomaticRetryExecution.HasAutomaticRetryAttempt);
         }

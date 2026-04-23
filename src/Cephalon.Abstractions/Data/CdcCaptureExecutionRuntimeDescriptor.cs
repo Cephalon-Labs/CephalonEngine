@@ -347,6 +347,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         new(CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates.NotApplicable);
 
     /// <summary>
+    /// Gets the operator-facing managed-connector cross-node idempotency-hardening posture derived from retry coordination, durable journal truth, and retained command lineage evidence.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus ManagedConnectorCrossNodeIdempotencyHardening { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates.NotApplicable);
+
+    /// <summary>
     /// Gets the operator-facing managed-connector distributed retry orchestration posture derived from automatic retry, retry policy, durable journal, and distributed retry lease truth.
     /// </summary>
     public CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus ManagedConnectorDistributedRetryOrchestration { get; init; } =

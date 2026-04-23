@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T22:16:33.5916112+00:00",
+  "GeneratedAtUtc": "2026-04-23T22:50:56.4554229+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 465
+      "TypeCount": 469
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -571,7 +571,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 185
+      "TypeCount": 189
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3210,7 +3210,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 36,
+        "Properties": 37,
         "Methods": 0
       }
     },
@@ -3830,6 +3830,66 @@
       }
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector cross-node idempotency-hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 22,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
+      "Summary": "Defines the stable source identifiers used by managed-connector cross-node idempotency-hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector cross-node idempotency-hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "Summary": "Describes the current operator-facing managed-connector cross-node idempotency-hardening posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 46,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3914,7 +3974,7 @@
       "Summary": "Defines the stable source identifiers used by managed-connector distributed retry orchestration answers.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 5,
+        "Fields": 6,
         "Properties": 0,
         "Methods": 0
       }
@@ -8026,7 +8086,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 61
+        "Methods": 65
       }
     },
     {
@@ -14674,6 +14734,17 @@
       "Summary": "The current host coordination owner holds the active reporter lease."
     },
     {
+      "DisplayName": "ActiveLeaseVisible",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-activeleasevisible",
+      "Signature": "const string ActiveLeaseVisible",
+      "Summary": "The current runtime still exposes one active reporter lease."
+    },
+    {
       "DisplayName": "ActiveReporterCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
@@ -14703,6 +14774,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-activereporterid",
+      "Signature": "string ActiveReporterId { get; set; }",
+      "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
+    },
+    {
+      "DisplayName": "ActiveReporterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-activereporterid",
       "Signature": "string ActiveReporterId { get; set; }",
       "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
     },
@@ -14775,6 +14857,17 @@
     {
       "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-activereporterleaseexpiresatutc",
+      "Signature": "DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when the active reporter lease expires when one is known."
+    },
+    {
+      "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -14815,6 +14908,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-activereportervisible",
       "Signature": "const string ActiveReporterVisible",
       "Summary": "The runtime currently exposes one active reporter owner."
+    },
+    {
+      "DisplayName": "ActiveReporterVisible",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-activereportervisible",
+      "Signature": "const string ActiveReporterVisible",
+      "Summary": "The current runtime still exposes one active reporter identifier."
     },
     {
       "DisplayName": "ActiveTaskIds",
@@ -17800,6 +17904,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19274,6 +19389,17 @@
     {
       "DisplayName": "AutomaticRetryAttemptCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretryattemptcount",
+      "Signature": "int AutomaticRetryAttemptCount { get; set; }",
+      "Summary": "Gets the number of retained automatic retry attempts currently visible for the runtime."
+    },
+    {
+      "DisplayName": "AutomaticRetryAttemptCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19296,6 +19422,17 @@
     {
       "DisplayName": "AutomaticRetryCoordination",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-automaticretrycoordination",
+      "Signature": "const string AutomaticRetryCoordination",
+      "Summary": "The cross-node idempotency-hardening answer was derived primarily from automatic-retry coordination truth."
+    },
+    {
+      "DisplayName": "AutomaticRetryCoordination",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19314,6 +19451,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-automaticretrycoordinationstate",
       "Signature": "string AutomaticRetryCoordinationState { get; set; }",
       "Summary": "Gets the current managed-connector automatic background retry coordination state that informed durability."
+    },
+    {
+      "DisplayName": "AutomaticRetryCoordinationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretrycoordinationstate",
+      "Signature": "string AutomaticRetryCoordinationState { get; set; }",
+      "Summary": "Gets the current managed-connector automatic background retry coordination state that informed cross-node idempotency hardening."
     },
     {
       "DisplayName": "AutomaticRetryCoordinationState",
@@ -19413,6 +19561,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-automaticretryexecutionstate",
       "Signature": "string AutomaticRetryExecutionState { get; set; }",
       "Summary": "Gets the current managed-connector automatic background retry execution state that informed durability."
+    },
+    {
+      "DisplayName": "AutomaticRetryExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-automaticretryexecutionstate",
+      "Signature": "string AutomaticRetryExecutionState { get; set; }",
+      "Summary": "Gets the current managed-connector automatic background retry execution state that informed cross-node idempotency hardening."
     },
     {
       "DisplayName": "AutomaticRetryExecutionState",
@@ -21584,6 +21743,17 @@
     {
       "DisplayName": "CanExecuteAutomaticRetryOnCurrentNode",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-canexecuteautomaticretryoncurrentnode",
+      "Signature": "bool CanExecuteAutomaticRetryOnCurrentNode { get; }",
+      "Summary": "Gets a value indicating whether the current node can execute automatic retry safely for the current cross-node hardening answer."
+    },
+    {
+      "DisplayName": "CanExecuteAutomaticRetryOnCurrentNode",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22288,6 +22458,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active cross-node idempotency-hardening categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22504,6 +22685,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable command-retry categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable cross-node idempotency-hardening categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -22845,6 +23037,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-ctor-system-string-system-string",
       "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus(string state, string description)",
       "Summary": "Creates a new managed-connector command-retry answer."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector cross-node idempotency-hardening answer."
     },
     {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
@@ -23197,6 +23400,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with command retry."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with cross-node idempotency hardening."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -25082,6 +25296,17 @@
     {
       "DisplayName": "CommandExecutionHistory",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-commandexecutionhistory",
+      "Signature": "const string CommandExecutionHistory",
+      "Summary": "The cross-node idempotency-hardening answer was derived primarily from retained command-execution history."
+    },
+    {
+      "DisplayName": "CommandExecutionHistory",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -25155,6 +25380,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-commandfingerprint",
       "Signature": "string CommandFingerprint { get; set; }",
       "Summary": "Gets the deterministic command fingerprint currently associated with the retry posture."
+    },
+    {
+      "DisplayName": "CommandFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandfingerprint",
+      "Signature": "string CommandFingerprint { get; set; }",
+      "Summary": "Gets the deterministic command fingerprint currently associated with cross-node idempotency hardening."
     },
     {
       "DisplayName": "CommandFingerprint",
@@ -25291,6 +25527,17 @@
     {
       "DisplayName": "CommandJournalDurability",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-commandjournaldurability",
+      "Signature": "const string CommandJournalDurability",
+      "Summary": "The cross-node idempotency-hardening answer was derived primarily from durable command-journal truth."
+    },
+    {
+      "DisplayName": "CommandJournalDurability",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -25309,6 +25556,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-commandjournaldurability",
       "Signature": "const string CommandJournalDurability",
       "Summary": "The distributed retry orchestration answer was derived primarily from durable command-journal truth."
+    },
+    {
+      "DisplayName": "CommandJournalDurabilityState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandjournaldurabilitystate",
+      "Signature": "string CommandJournalDurabilityState { get; set; }",
+      "Summary": "Gets the current managed-connector command-journal durability state that informed cross-node idempotency hardening."
     },
     {
       "DisplayName": "CommandJournalDurabilityState",
@@ -25375,6 +25633,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-commandjournalstate",
       "Signature": "string CommandJournalState { get; set; }",
       "Summary": "Gets the current bounded managed-connector command-journal state that informed durability."
+    },
+    {
+      "DisplayName": "CommandJournalState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-commandjournalstate",
+      "Signature": "string CommandJournalState { get; set; }",
+      "Summary": "Gets the current managed-connector command-journal state that informed cross-node idempotency hardening."
     },
     {
       "DisplayName": "CommandJournalState",
@@ -27260,6 +27529,17 @@
     {
       "DisplayName": "CoordinationOwnerId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-coordinationownerid",
+      "Signature": "string CoordinationOwnerId { get; set; }",
+      "Summary": "Gets the host-owned coordination owner identifier when one was configured for automatic retry."
+    },
+    {
+      "DisplayName": "CoordinationOwnerId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27288,6 +27568,17 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-coordinationownermatchesactivereporter",
       "Signature": "bool CoordinationOwnerMatchesActiveReporter { get; }",
+      "Summary": "Gets a value indicating whether the current host coordination owner matches the active reporter identifier."
+    },
+    {
+      "DisplayName": "CoordinationOwnerMatchesActiveReporter",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-coordinationownermatchesactivereporter",
+      "Signature": "bool CoordinationOwnerMatchesActiveReporter { get; set; }",
       "Summary": "Gets a value indicating whether the current host coordination owner matches the active reporter identifier."
     },
     {
@@ -27808,6 +28099,17 @@
       "Summary": "The event indicates a critical condition that usually requires immediate attention."
     },
     {
+      "DisplayName": "CrossNodeIdempotencyHardening",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-crossnodeidempotencyhardening",
+      "Signature": "const string CrossNodeIdempotencyHardening",
+      "Summary": "The distributed retry orchestration answer was derived primarily from cross-node idempotency-hardening truth."
+    },
+    {
       "DisplayName": "CrossNodeIdempotencyRisk",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
@@ -27852,6 +28154,17 @@
       "Summary": "Cross-node idempotency currently looks safe for automatic retry."
     },
     {
+      "DisplayName": "CrossNodeRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-crossnoderuntime",
+      "Signature": "const string CrossNodeRuntime",
+      "Summary": "The runtime depends on cross-node idempotency evidence before automatic retry should execute."
+    },
+    {
       "DisplayName": "Current",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureLagStates",
@@ -27894,6 +28207,17 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-itenantcontextaccessor-current",
       "Signature": "TenantContext Current { get; }",
       "Summary": "Gets the tenant context currently active for the ambient runtime scope."
+    },
+    {
+      "DisplayName": "CurrentNodeExecutable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-currentnodeexecutable",
+      "Signature": "const string CurrentNodeExecutable",
+      "Summary": "The current node can execute automatic retry safely for the current cross-node hardening answer."
     },
     {
       "DisplayName": "CurrentNodeExecutable",
@@ -29948,6 +30272,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing command-retry summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing cross-node idempotency-hardening summary."
     },
     {
       "DisplayName": "Description",
@@ -32163,6 +32498,17 @@
     {
       "DisplayName": "DistributedRetryLease",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-distributedretrylease",
+      "Signature": "const string DistributedRetryLease",
+      "Summary": "The cross-node idempotency-hardening answer was derived primarily from distributed retry lease truth."
+    },
+    {
+      "DisplayName": "DistributedRetryLease",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -32170,6 +32516,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-distributedretrylease",
       "Signature": "const string DistributedRetryLease",
       "Summary": "The distributed retry orchestration answer was derived primarily from distributed retry lease truth."
+    },
+    {
+      "DisplayName": "DistributedRetryLeaseState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-distributedretryleasestate",
+      "Signature": "string DistributedRetryLeaseState { get; set; }",
+      "Summary": "Gets the current managed-connector distributed retry lease state that informed cross-node idempotency hardening."
     },
     {
       "DisplayName": "DistributedRetryLeaseState",
@@ -32680,6 +33037,17 @@
     {
       "DisplayName": "DuplicateAutomaticRetryAttempts",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicateautomaticretryattempts",
+      "Signature": "const string DuplicateAutomaticRetryAttempts",
+      "Summary": "Retained history currently contains duplicated automatic retry attempts for the current retry posture."
+    },
+    {
+      "DisplayName": "DuplicateAutomaticRetryAttempts",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -32722,6 +33090,17 @@
       "Summary": "Replaying the current retry-execution policy would duplicate a previously recorded command."
     },
     {
+      "DisplayName": "DuplicateCommandLineage",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatecommandlineage",
+      "Signature": "const string DuplicateCommandLineage",
+      "Summary": "Retained history currently contains duplicated command lineage for the current retry posture."
+    },
+    {
       "DisplayName": "DuplicateEvidencePresent",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates",
@@ -32731,6 +33110,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-duplicateevidencepresent",
       "Signature": "const string DuplicateEvidencePresent",
       "Summary": "The command journal currently retains matching command evidence showing that replaying the command would be duplicative."
+    },
+    {
+      "DisplayName": "DuplicateLineageRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatelineagerisk",
+      "Signature": "const string DuplicateLineageRisk",
+      "Summary": "Cross-node idempotency currently remains risky because retained command lineage already looks duplicated."
+    },
+    {
+      "DisplayName": "DuplicateLineageRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-duplicatelineagerisk",
+      "Signature": "const string DuplicateLineageRisk",
+      "Summary": "Cross-node idempotency remains risky because retained command lineage already looks duplicated for the current retry posture."
     },
     {
       "DisplayName": "DurableExecutionCompensationAction",
@@ -32819,6 +33220,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutionstates",
       "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E DurableExecutionStates { get; set; }",
       "Summary": "Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "DurableJournalConfigured",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-durablejournalconfigured",
+      "Signature": "const string DurableJournalConfigured",
+      "Summary": "A durable command-journal store is configured for the runtime."
     },
     {
       "DisplayName": "DurableJournalConfigured",
@@ -36640,6 +37052,17 @@
     {
       "DisplayName": "ExecutionOwnership",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executionownership",
+      "Signature": "string ExecutionOwnership { get; set; }",
+      "Summary": "Gets the operator-facing execution-ownership mode that informed cross-node idempotency hardening."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36772,6 +37195,17 @@
     {
       "DisplayName": "ExecutionRuntimeId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with cross-node idempotency hardening."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36856,6 +37290,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-executiontopology",
       "Signature": "string ExecutionTopology { get; set; }",
       "Summary": "Gets the operator-facing execution-topology classification that informed command-journal durability."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets the operator-facing execution-topology classification that informed cross-node idempotency hardening."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -40037,6 +40482,50 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector command-retry answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorCrossNodeIdempotencyHardeningCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningcategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(string hardeningCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningownerid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(string ownerId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer references the requested coordination owner."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningretryfingerprint-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(string retryFingerprint)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer references the requested retry fingerprint."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorCrossNodeIdempotencyHardeningState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcrossnodeidempotencyhardeningstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorCrossNodeIdempotencyHardeningState(string hardeningState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector cross-node idempotency-hardening answer matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorDistributedRetryLeaseCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -42063,6 +42552,17 @@
     {
       "DisplayName": "HasActiveReporterLease",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasactivereporterlease",
+      "Signature": "bool HasActiveReporterLease { get; }",
+      "Summary": "Gets a value indicating whether the runtime currently exposes one active reporter lease."
+    },
+    {
+      "DisplayName": "HasActiveReporterLease",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42261,6 +42761,17 @@
     {
       "DisplayName": "HasDuplicateAutomaticRetryAttempts",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasduplicateautomaticretryattempts",
+      "Signature": "bool HasDuplicateAutomaticRetryAttempts { get; set; }",
+      "Summary": "Gets a value indicating whether retained history currently contains duplicated automatic retry attempts for the current retry posture."
+    },
+    {
+      "DisplayName": "HasDuplicateAutomaticRetryAttempts",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42268,6 +42779,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasduplicateautomaticretryattempts",
       "Signature": "bool HasDuplicateAutomaticRetryAttempts { get; set; }",
       "Summary": "Gets a value indicating whether the bounded command journal currently retains multiple automatic retry attempts for the same retry fingerprint."
+    },
+    {
+      "DisplayName": "HasDuplicateCommandLineage",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasduplicatecommandlineage",
+      "Signature": "bool HasDuplicateCommandLineage { get; set; }",
+      "Summary": "Gets a value indicating whether retained history currently contains duplicated command lineage for the current retry posture."
     },
     {
       "DisplayName": "HasDuplicateEvidence",
@@ -42290,6 +42812,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasdurablestoreconfigured",
       "Signature": "bool HasDurableStoreConfigured { get; set; }",
       "Summary": "Gets a value indicating whether a durable journal store is currently configured."
+    },
+    {
+      "DisplayName": "HasDurableStoreConfigured",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasdurablestoreconfigured",
+      "Signature": "bool HasDurableStoreConfigured { get; set; }",
+      "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
     },
     {
       "DisplayName": "HasDurableStoreConfigured",
@@ -42404,6 +42937,17 @@
     {
       "DisplayName": "HasMatchingAutomaticRetryAttempt",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasmatchingautomaticretryattempt",
+      "Signature": "bool HasMatchingAutomaticRetryAttempt { get; set; }",
+      "Summary": "Gets a value indicating whether retained history currently contains one automatic retry attempt for the current retry fingerprint."
+    },
+    {
+      "DisplayName": "HasMatchingAutomaticRetryAttempt",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42499,6 +43043,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingretryfingerprint",
       "Signature": "bool HasMatchingRetryFingerprint { get; set; }",
       "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived retry fingerprint."
+    },
+    {
+      "DisplayName": "HasMatchingRetryFingerprintHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasmatchingretryfingerprinthistory",
+      "Signature": "bool HasMatchingRetryFingerprintHistory { get; set; }",
+      "Summary": "Gets a value indicating whether retained history currently contains evidence for the current retry fingerprint."
     },
     {
       "DisplayName": "HasMatchingRetryFingerprintHistory",
@@ -42620,6 +43175,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-haspersistedrecordedhistory",
       "Signature": "bool HasPersistedRecordedHistory { get; set; }",
       "Summary": "Gets a value indicating whether the current runtime has recorded command history in the persisted snapshot."
+    },
+    {
+      "DisplayName": "HasPersistedRecordedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-haspersistedrecordedhistory",
+      "Signature": "bool HasPersistedRecordedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the durable command journal currently exposes persisted recorded history."
     },
     {
       "DisplayName": "HasPersistedRecordedHistory",
@@ -42774,6 +43340,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasrecoveredpersistedhistory",
       "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
       "Summary": "Gets a value indicating whether the current process recovered command history for this runtime from durable storage."
+    },
+    {
+      "DisplayName": "HasRecoveredPersistedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-hasrecoveredpersistedhistory",
+      "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the current process recovered persisted command history for this runtime."
     },
     {
       "DisplayName": "HasRecoveredPersistedHistory",
@@ -45759,6 +46336,28 @@
     {
       "DisplayName": "IdempotentSafe",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-idempotentsafe",
+      "Signature": "const string IdempotentSafe",
+      "Summary": "Cross-node idempotency currently looks safe for the current retry posture."
+    },
+    {
+      "DisplayName": "IdempotentSafe",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-idempotentsafe",
+      "Signature": "const string IdempotentSafe",
+      "Summary": "Cross-node idempotency evidence currently looks safe for the current retry posture."
+    },
+    {
+      "DisplayName": "IdempotentSafe",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -46635,6 +47234,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-inmemoryhistorystore",
       "Signature": "const string InMemoryHistoryStore",
       "Summary": "The durability answer was derived primarily from the in-memory shared command history store."
+    },
+    {
+      "DisplayName": "InMemoryJournalOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-inmemoryjournalonly",
+      "Signature": "const string InMemoryJournalOnly",
+      "Summary": "Automatic retry still depends on in-memory command history only."
     },
     {
       "DisplayName": "InMemoryJournalOnly",
@@ -47594,6 +48204,17 @@
       "Summary": "Gets a value indicating whether replaying the current command would be duplicative."
     },
     {
+      "DisplayName": "IsDuplicateLineageRisk",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isduplicatelineagerisk",
+      "Signature": "bool IsDuplicateLineageRisk { get; }",
+      "Summary": "Gets a value indicating whether cross-node idempotency currently remains risky because retained command lineage already looks duplicated."
+    },
+    {
       "DisplayName": "IsDurable",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -47746,6 +48367,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isidempotencyrisk",
       "Signature": "bool IsIdempotencyRisk { get; }",
       "Summary": "Gets a value indicating whether cross-node idempotency evidence currently remains risky for automatic retry."
+    },
+    {
+      "DisplayName": "IsIdempotentSafe",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isidempotentsafe",
+      "Signature": "bool IsIdempotentSafe { get; }",
+      "Summary": "Gets a value indicating whether cross-node idempotency currently looks safe for the current retry posture."
     },
     {
       "DisplayName": "IsIdempotentSafe",
@@ -48069,6 +48701,17 @@
     {
       "DisplayName": "IsOperatorOnly",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether cross-node idempotency hardening still remains operator-owned."
+    },
+    {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48265,6 +48908,17 @@
       "Summary": "Gets a value indicating whether the managed connector has been rejected on the shared issuance lane."
     },
     {
+      "DisplayName": "IsReplayWindowRisk",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isreplaywindowrisk",
+      "Signature": "bool IsReplayWindowRisk { get; }",
+      "Summary": "Gets a value indicating whether cross-node idempotency currently remains risky because the durable replay window still lacks enough retained evidence."
+    },
+    {
       "DisplayName": "IsResolved",
       "Category": "Properties",
       "DeclaringTypeName": "TenantResolutionResult",
@@ -48384,6 +49038,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-issinglenode",
       "Signature": "bool IsSingleNode { get; }",
       "Summary": "Gets a value indicating whether automatic retry can execute on a single node without cross-node lease coordination."
+    },
+    {
+      "DisplayName": "IsStaleOwnerRisk",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-isstaleownerrisk",
+      "Signature": "bool IsStaleOwnerRisk { get; }",
+      "Summary": "Gets a value indicating whether cross-node idempotency currently remains risky because ownership truth still looks stale."
     },
     {
       "DisplayName": "IsStarted",
@@ -49961,6 +50626,17 @@
     {
       "DisplayName": "LatestAutomaticRetryAttemptId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestautomaticretryattemptid",
+      "Signature": "string LatestAutomaticRetryAttemptId { get; set; }",
+      "Summary": "Gets the stable latest automatic retry attempt identifier when one exists."
+    },
+    {
+      "DisplayName": "LatestAutomaticRetryAttemptId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -49990,6 +50666,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestautomaticretryexecutionfingerprint",
       "Signature": "string LatestAutomaticRetryExecutionFingerprint { get; set; }",
       "Summary": "Gets the deterministic execution fingerprint of the latest recorded automatic background retry attempt when one exists."
+    },
+    {
+      "DisplayName": "LatestAutomaticRetryExecutionFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestautomaticretryexecutionfingerprint",
+      "Signature": "string LatestAutomaticRetryExecutionFingerprint { get; set; }",
+      "Summary": "Gets the deterministic execution fingerprint of the latest automatic retry attempt when one exists."
     },
     {
       "DisplayName": "LatestAutomaticRetryExecutionFingerprint",
@@ -50089,6 +50776,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestcommandexecutionstate",
       "Signature": "string LatestCommandExecutionState { get; set; }",
       "Summary": "Gets the latest recorded managed-connector command-execution state Cephalon considered for the retry posture."
+    },
+    {
+      "DisplayName": "LatestCommandExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestcommandexecutionstate",
+      "Signature": "string LatestCommandExecutionState { get; set; }",
+      "Summary": "Gets the latest recorded managed-connector command-execution state visible to cross-node idempotency hardening."
     },
     {
       "DisplayName": "LatestCommandExecutionState",
@@ -50412,6 +51110,17 @@
     {
       "DisplayName": "LeaseConflict",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-leaseconflict",
+      "Signature": "const string LeaseConflict",
+      "Summary": "Cross-node retry lease ownership remains conflicted."
+    },
+    {
+      "DisplayName": "LeaseConflict",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -50551,6 +51260,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-leasemissing",
       "Signature": "const string LeaseMissing",
       "Summary": "Automatic background retry cannot run because no active reporter lease is currently visible."
+    },
+    {
+      "DisplayName": "LeaseMissing",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-leasemissing",
+      "Signature": "const string LeaseMissing",
+      "Summary": "Cross-node retry lease ownership remains missing."
     },
     {
       "DisplayName": "LeaseMissing",
@@ -51125,6 +51845,17 @@
       "Summary": "Gets the operator-facing managed-connector command-retry and idempotency posture derived from the shared command lane plus bounded execution history."
     },
     {
+      "DisplayName": "ManagedConnectorCrossNodeIdempotencyHardening",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcrossnodeidempotencyhardening",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus ManagedConnectorCrossNodeIdempotencyHardening { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector cross-node idempotency-hardening posture derived from retry coordination, durable journal truth, and retained command lineage evidence."
+    },
+    {
       "DisplayName": "ManagedConnectorDistributedRetryLease",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -51363,6 +52094,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -52018,6 +52760,17 @@
     {
       "DisplayName": "MatchingAutomaticRetryAttempt",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-matchingautomaticretryattempt",
+      "Signature": "const string MatchingAutomaticRetryAttempt",
+      "Summary": "Retained history currently contains one automatic retry attempt for the current retry fingerprint."
+    },
+    {
+      "DisplayName": "MatchingAutomaticRetryAttempt",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52025,6 +52778,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-matchingautomaticretryattempt",
       "Signature": "const string MatchingAutomaticRetryAttempt",
       "Summary": "The bounded command journal currently retains one matching automatic retry attempt."
+    },
+    {
+      "DisplayName": "MatchingAutomaticRetryAttemptCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-matchingautomaticretryattemptcount",
+      "Signature": "int MatchingAutomaticRetryAttemptCount { get; set; }",
+      "Summary": "Gets the number of retained automatic retry attempts that currently match the retry fingerprint."
     },
     {
       "DisplayName": "MatchingAutomaticRetryAttemptCount",
@@ -52060,6 +52824,17 @@
       "Summary": "The current retry posture matches a recorded command fingerprint."
     },
     {
+      "DisplayName": "MatchingCommandLineageEntryCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-matchingcommandlineageentrycount",
+      "Signature": "int MatchingCommandLineageEntryCount { get; set; }",
+      "Summary": "Gets the number of retained command-execution entries that currently match the command lineage fingerprint."
+    },
+    {
       "DisplayName": "MatchingIssuanceFingerprint",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories",
@@ -52069,6 +52844,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-matchingissuancefingerprint",
       "Signature": "const string MatchingIssuanceFingerprint",
       "Summary": "The current retry posture matches a recorded issuance fingerprint."
+    },
+    {
+      "DisplayName": "MatchingRetryHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-matchingretryhistory",
+      "Signature": "const string MatchingRetryHistory",
+      "Summary": "Retained history currently contains evidence for the current retry fingerprint."
     },
     {
       "DisplayName": "MatchRule",
@@ -56229,6 +57015,17 @@
     {
       "DisplayName": "NotApplicable",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "Cross-node idempotency hardening does not currently apply to the execution runtime."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -57472,6 +58269,17 @@
     {
       "DisplayName": "OperationId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier currently associated with cross-node idempotency hardening."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -57688,6 +58496,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-operatoronly",
       "Signature": "const string OperatorOnly",
       "Summary": "The current shared runtime truth still leaves the command operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Cross-node idempotency hardening still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Cross-node idempotency hardening still remains operator-owned outside Cephalon."
     },
     {
       "DisplayName": "OperatorOnly",
@@ -58570,6 +59400,17 @@
     {
       "DisplayName": "OwnerMatch",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-ownermatch",
+      "Signature": "const string OwnerMatch",
+      "Summary": "The current host coordination owner matches the active reporter lease."
+    },
+    {
+      "DisplayName": "OwnerMatch",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -58597,6 +59438,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-ownermismatch",
+      "Signature": "const string OwnerMismatch",
+      "Summary": "The current host coordination owner does not match the active reporter lease."
+    },
+    {
+      "DisplayName": "OwnerMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-ownermismatch",
       "Signature": "const string OwnerMismatch",
       "Summary": "The current host coordination owner does not match the active reporter lease."
     },
@@ -59776,6 +60628,17 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-audithistoryentry-persistedatutc",
       "Signature": "DateTimeOffset PersistedAtUtc { get; }",
       "Summary": "Gets the time at which the audit entry was durably persisted."
+    },
+    {
+      "DisplayName": "PersistedHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-persistedhistory",
+      "Signature": "const string PersistedHistory",
+      "Summary": "The durable command journal currently exposes persisted recorded history."
     },
     {
       "DisplayName": "PersistedHistory",
@@ -63221,6 +64084,17 @@
     {
       "DisplayName": "RecoveredHistory",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-recoveredhistory",
+      "Signature": "const string RecoveredHistory",
+      "Summary": "The durable command journal currently exposes recovered recorded history."
+    },
+    {
+      "DisplayName": "RecoveredHistory",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -64405,6 +65279,28 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-restendpointoverridebindingmode-replaceexplicit",
       "Signature": "const RestEndpointOverrideBindingMode ReplaceExplicit",
       "Summary": "Replaces the candidate\u0027s explicit binding plan with the configured descriptors."
+    },
+    {
+      "DisplayName": "ReplayWindowRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-replaywindowrisk",
+      "Signature": "const string ReplayWindowRisk",
+      "Summary": "Cross-node idempotency currently remains risky because the durable replay window still lacks enough retained evidence."
+    },
+    {
+      "DisplayName": "ReplayWindowRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-replaywindowrisk",
+      "Signature": "const string ReplayWindowRisk",
+      "Summary": "Cross-node idempotency remains risky because the durable replay window still lacks enough retained evidence."
     },
     {
       "DisplayName": "ReplyAsync",
@@ -67577,6 +68473,17 @@
     {
       "DisplayName": "RetainedEntryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retainedentrycount",
+      "Signature": "int RetainedEntryCount { get; set; }",
+      "Summary": "Gets the number of retained bounded journal entries currently visible to cross-node idempotency hardening."
+    },
+    {
+      "DisplayName": "RetainedEntryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -67764,6 +68671,17 @@
     {
       "DisplayName": "RetryExecutionPolicy",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-retryexecutionpolicy",
+      "Signature": "const string RetryExecutionPolicy",
+      "Summary": "The cross-node idempotency-hardening answer was derived primarily from retry-execution policy truth."
+    },
+    {
+      "DisplayName": "RetryExecutionPolicy",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -67841,6 +68759,17 @@
     {
       "DisplayName": "RetryExecutionPolicyState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retryexecutionpolicystate",
+      "Signature": "string RetryExecutionPolicyState { get; set; }",
+      "Summary": "Gets the current managed-connector retry-execution policy state that informed cross-node idempotency hardening."
+    },
+    {
+      "DisplayName": "RetryExecutionPolicyState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -67892,6 +68821,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-retryfingerprint",
       "Signature": "string RetryFingerprint { get; set; }",
       "Summary": "Gets the deterministic retry fingerprint Cephalon currently derives for duplicate and retry checks."
+    },
+    {
+      "DisplayName": "RetryFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-retryfingerprint",
+      "Signature": "string RetryFingerprint { get; set; }",
+      "Summary": "Gets the deterministic retry fingerprint currently associated with cross-node idempotency hardening."
     },
     {
       "DisplayName": "RetryFingerprint",
@@ -70811,6 +71751,17 @@
     {
       "DisplayName": "SingleNodeRuntime",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-singlenoderuntime",
+      "Signature": "const string SingleNodeRuntime",
+      "Summary": "The runtime can evaluate automatic retry on a single node without cross-node hardening."
+    },
+    {
+      "DisplayName": "SingleNodeRuntime",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -71368,6 +72319,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-sourceid",
       "Signature": "string SourceId { get; set; }",
       "Summary": "Gets the primary source identifier Cephalon used to derive command retry."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive cross-node idempotency hardening."
     },
     {
       "DisplayName": "SourceId",
@@ -72600,6 +73562,28 @@
       "Summary": "Reported CDC captures currently publish stale runtime observations."
     },
     {
+      "DisplayName": "StaleOwnerRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-staleownerrisk",
+      "Signature": "const string StaleOwnerRisk",
+      "Summary": "Cross-node idempotency currently remains risky because ownership truth still looks stale."
+    },
+    {
+      "DisplayName": "StaleOwnerRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstates-staleownerrisk",
+      "Signature": "const string StaleOwnerRisk",
+      "Summary": "Cross-node idempotency remains risky because ownership or reporter-lease truth still looks stale or conflicted."
+    },
+    {
       "DisplayName": "Standby",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureReporterParticipantRoles",
@@ -73005,6 +73989,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector command-retry state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector cross-node idempotency-hardening state."
     },
     {
       "DisplayName": "State",
@@ -76549,6 +77544,17 @@
       "Summary": "Gets the total number of command-execution outcomes Cephalon has recorded for the execution runtime."
     },
     {
+      "DisplayName": "TotalRecordedEntryCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-totalrecordedentrycount",
+      "Signature": "int TotalRecordedEntryCount { get; set; }",
+      "Summary": "Gets the total number of command-execution outcomes currently visible to cross-node idempotency hardening."
+    },
+    {
       "DisplayName": "TotalReports",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -77900,6 +78906,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrysources-unknown",
       "Signature": "const string Unknown",
       "Summary": "The retry posture does not currently resolve to one specific source."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The cross-node idempotency-hardening answer does not currently resolve to one specific source."
     },
     {
       "DisplayName": "Unknown",

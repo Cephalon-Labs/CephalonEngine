@@ -26,6 +26,11 @@ public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOr
     public const string CommandJournalDurability = "command-journal-durability";
 
     /// <summary>
+    /// The distributed retry orchestration answer was derived primarily from cross-node idempotency-hardening truth.
+    /// </summary>
+    public const string CrossNodeIdempotencyHardening = "cross-node-idempotency-hardening";
+
+    /// <summary>
     /// The distributed retry orchestration answer does not currently resolve to one specific source.
     /// </summary>
     public const string Unknown = "unknown";
