@@ -1,3 +1,4 @@
+using Cephalon.Data.Configuration;
 using Cephalon.Abstractions.Data;
 
 namespace Cephalon.Data.Services;
@@ -5,7 +6,6 @@ namespace Cephalon.Data.Services;
 internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRuntimeCatalog
 {
     private const string ExecutionRuntimeMetadataPrefix = "executionRuntime.";
-    private const bool ManagedConnectorAutomaticRetryEnabled = false;
     private const int ManagedConnectorCommandRetryCooldownSeconds = 30;
     private const string ManagedConnectorManagementModeMetadataKey = "managedConnectorManagementMode";
     private const string ConnectClusterIdMetadataKey = "connectClusterId";
@@ -32,6 +32,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private readonly ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter[] executionAdapters;
     private readonly ManagedConnectorCommandExecutionHistoryStore? commandExecutionHistoryStore;
     private readonly TimeProvider timeProvider;
+    private readonly bool managedConnectorAutomaticRetryEnabled;
 
     public CdcCaptureExecutionRuntimeCatalog(
         CdcCaptureExecutionRuntimeDescriptorCatalog runtimeDescriptorCatalog,
@@ -39,6 +40,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog = null,
         IEnumerable<ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter>? executionAdapters = null,
         ManagedConnectorCommandExecutionHistoryStore? commandExecutionHistoryStore = null,
+        DataRuntimeOptions? options = null,
         TimeProvider? timeProvider = null)
     {
         ArgumentNullException.ThrowIfNull(runtimeDescriptorCatalog);
@@ -49,6 +51,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         this.executionAdapters = executionAdapters?.ToArray() ?? [];
         this.commandExecutionHistoryStore = commandExecutionHistoryStore;
         this.timeProvider = timeProvider ?? TimeProvider.System;
+        managedConnectorAutomaticRetryEnabled = options?.EnableManagedConnectorAutomaticRetryExecution ?? false;
         var runtimes = runtimeDescriptorCatalog.Runtimes;
         index = runtimes.ToDictionary(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase);
     }
@@ -555,6 +558,38 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparer.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionState(string automaticRetryState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(automaticRetryState);
+        var normalizedAutomaticRetryState = automaticRetryState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorAutomaticRetryExecution.State,
+            normalizedAutomaticRetryState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionCategory(string automaticRetryCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(automaticRetryCategory);
+        var normalizedAutomaticRetryCategory = automaticRetryCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorAutomaticRetryExecution.CategoryIds.Contains(
+            normalizedAutomaticRetryCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorAutomaticRetryExecution.OperationId,
+            normalizedOperationId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -743,7 +778,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandIssuance,
             managedConnectorExecutionAdapter,
             managedConnectorCommandExecution,
-            managedConnectorCommandRetry);
+            managedConnectorCommandRetry,
+            managedConnectorAutomaticRetryEnabled);
         var managedConnectorCommandJournal = CreateManagedConnectorCommandJournal(
             runtime.Id,
             captureIds,
@@ -765,6 +801,29 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandRetry,
             managedConnectorRetryExecutionPolicy,
             commandExecutionJournal);
+        var managedConnectorAutomaticRetryExecution = CreateManagedConnectorAutomaticRetryExecution(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionTopology,
+            summary.ReportingCoverage,
+            summary.Remediation,
+            managedConnectorGovernance,
+            managedConnectorDrift,
+            managedConnectorActionPlan,
+            managedConnectorWritePathReadiness,
+            managedConnectorPreflight,
+            managedConnectorDryRun,
+            managedConnectorExecutionIntent,
+            managedConnectorExecutionApproval,
+            managedConnectorCommandEnvelope,
+            managedConnectorCommandIssuance,
+            managedConnectorExecutionAdapter,
+            managedConnectorCommandExecution,
+            managedConnectorCommandRetry,
+            managedConnectorRetryExecutionPolicy,
+            managedConnectorCommandJournal,
+            commandExecutionJournal,
+            managedConnectorAutomaticRetryEnabled);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
@@ -788,7 +847,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorCommandExecution = managedConnectorCommandExecution,
             ManagedConnectorCommandRetry = managedConnectorCommandRetry,
             ManagedConnectorRetryExecutionPolicy = managedConnectorRetryExecutionPolicy,
-            ManagedConnectorCommandJournal = managedConnectorCommandJournal
+            ManagedConnectorCommandJournal = managedConnectorCommandJournal,
+            ManagedConnectorAutomaticRetryExecution = managedConnectorAutomaticRetryExecution
         };
     }
 
@@ -4279,6 +4339,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             SourceProviderId = executionAdapter.SourceProviderId,
             ManagementMode = executionAdapter.ManagementMode,
             SourceId = executionAdapter.SourceId,
+            InvocationSourceId = CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.None,
             CommandFingerprint = executionAdapter.CommandFingerprint,
             IssuanceFingerprint = executionAdapter.IssuanceFingerprint,
             AdapterFingerprint = executionAdapter.AdapterFingerprint,
@@ -4360,6 +4421,14 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                                          hasMatchingCommandFingerprint &&
                                          hasMatchingIssuanceFingerprint &&
                                          hasMatchingAdapterFingerprint;
+        var latestMatchingApprovalApplied = latestMatchingCommand?.ApprovalApplied ?? false;
+        var latestMatchingDestructiveAllowanceApplied = latestMatchingCommand?.DestructiveAllowanceApplied ?? false;
+        var canReuseApprovalFromMatchingHistory =
+            !executionAdapter.RequiresExplicitApproval ||
+            latestMatchingApprovalApplied;
+        var canReuseDestructiveAllowanceFromMatchingHistory =
+            !executionAdapter.IsDestructiveOperation ||
+            latestMatchingDestructiveAllowanceApplied;
         var latestCommandState = latestRecordedCommand?.State ?? commandExecution.State;
         var latestCommandSourceId = latestRecordedCommand?.SourceId ?? commandExecution.SourceId;
         var latestExecutionFingerprint = latestRecordedCommand?.ExecutionFingerprint ?? commandExecution.ExecutionFingerprint;
@@ -4429,7 +4498,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 hasMatchingRetryFingerprint,
                 hasMatchingCommandFingerprint,
                 hasMatchingIssuanceFingerprint,
-                hasMatchingAdapterFingerprint);
+                hasMatchingAdapterFingerprint,
+                latestMatchingApprovalApplied,
+                latestMatchingDestructiveAllowanceApplied,
+                canReuseApprovalFromMatchingHistory,
+                canReuseDestructiveAllowanceFromMatchingHistory);
         }
 
         if (executionAdapter.IsOperatorOnly || commandExecution.IsOperatorOnly)
@@ -4468,7 +4541,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 hasMatchingRetryFingerprint,
                 hasMatchingCommandFingerprint,
                 hasMatchingIssuanceFingerprint,
-                hasMatchingAdapterFingerprint);
+                hasMatchingAdapterFingerprint,
+                latestMatchingApprovalApplied,
+                latestMatchingDestructiveAllowanceApplied,
+                canReuseApprovalFromMatchingHistory,
+                canReuseDestructiveAllowanceFromMatchingHistory);
         }
 
         if (commandIssuance.IsRejected ||
@@ -4511,7 +4588,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 hasMatchingRetryFingerprint,
                 hasMatchingCommandFingerprint,
                 hasMatchingIssuanceFingerprint,
-                hasMatchingAdapterFingerprint);
+                hasMatchingAdapterFingerprint,
+                latestMatchingApprovalApplied,
+                latestMatchingDestructiveAllowanceApplied,
+                canReuseApprovalFromMatchingHistory,
+                canReuseDestructiveAllowanceFromMatchingHistory);
         }
 
         if (latestMatchingCommand is null)
@@ -4551,7 +4632,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 hasMatchingRetryFingerprint,
                 hasMatchingCommandFingerprint,
                 hasMatchingIssuanceFingerprint,
-                hasMatchingAdapterFingerprint);
+                hasMatchingAdapterFingerprint,
+                latestMatchingApprovalApplied,
+                latestMatchingDestructiveAllowanceApplied,
+                canReuseApprovalFromMatchingHistory,
+                canReuseDestructiveAllowanceFromMatchingHistory);
         }
 
         if (cooldownUntilUtc.HasValue &&
@@ -4591,7 +4676,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 hasMatchingRetryFingerprint,
                 hasMatchingCommandFingerprint,
                 hasMatchingIssuanceFingerprint,
-                hasMatchingAdapterFingerprint);
+                hasMatchingAdapterFingerprint,
+                latestMatchingApprovalApplied,
+                latestMatchingDestructiveAllowanceApplied,
+                canReuseApprovalFromMatchingHistory,
+                canReuseDestructiveAllowanceFromMatchingHistory);
         }
 
         if (latestMatchingCommand.IsAdapted)
@@ -4630,14 +4719,20 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 hasMatchingRetryFingerprint,
                 hasMatchingCommandFingerprint,
                 hasMatchingIssuanceFingerprint,
-                hasMatchingAdapterFingerprint);
+                hasMatchingAdapterFingerprint,
+                latestMatchingApprovalApplied,
+                latestMatchingDestructiveAllowanceApplied,
+                canReuseApprovalFromMatchingHistory,
+                canReuseDestructiveAllowanceFromMatchingHistory);
         }
 
         if (executionAdapter.IsBlocked ||
             executionAdapter.IsUnavailable ||
-            executionApproval.IsApprovalRequired ||
-            executionApproval.IsApprovalReady ||
-            executionAdapter.RequiresExplicitApproval)
+            ((executionApproval.IsApprovalRequired ||
+              executionApproval.IsApprovalReady ||
+              executionAdapter.RequiresExplicitApproval ||
+              executionAdapter.IsDestructiveOperation) &&
+             (!canReuseApprovalFromMatchingHistory || !canReuseDestructiveAllowanceFromMatchingHistory)))
         {
             return CreateManagedConnectorCommandRetryStatus(
                 CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.RetryBlocked,
@@ -4674,7 +4769,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 hasMatchingRetryFingerprint,
                 hasMatchingCommandFingerprint,
                 hasMatchingIssuanceFingerprint,
-                hasMatchingAdapterFingerprint);
+                hasMatchingAdapterFingerprint,
+                latestMatchingApprovalApplied,
+                latestMatchingDestructiveAllowanceApplied,
+                canReuseApprovalFromMatchingHistory,
+                canReuseDestructiveAllowanceFromMatchingHistory);
         }
 
         if (latestMatchingCommand.IsFailed ||
@@ -4715,7 +4814,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 hasMatchingRetryFingerprint,
                 hasMatchingCommandFingerprint,
                 hasMatchingIssuanceFingerprint,
-                hasMatchingAdapterFingerprint);
+                hasMatchingAdapterFingerprint,
+                latestMatchingApprovalApplied,
+                latestMatchingDestructiveAllowanceApplied,
+                canReuseApprovalFromMatchingHistory,
+                canReuseDestructiveAllowanceFromMatchingHistory);
         }
 
         return CreateManagedConnectorCommandRetryStatus(
@@ -4753,7 +4856,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             hasMatchingRetryFingerprint,
             hasMatchingCommandFingerprint,
             hasMatchingIssuanceFingerprint,
-            hasMatchingAdapterFingerprint);
+            hasMatchingAdapterFingerprint,
+            latestMatchingApprovalApplied,
+            latestMatchingDestructiveAllowanceApplied,
+            canReuseApprovalFromMatchingHistory,
+            canReuseDestructiveAllowanceFromMatchingHistory);
     }
 
     private static CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus CreateManagedConnectorCommandRetryStatus(
@@ -4787,7 +4894,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         bool hasMatchingRetryFingerprint,
         bool hasMatchingCommandFingerprint,
         bool hasMatchingIssuanceFingerprint,
-        bool hasMatchingAdapterFingerprint)
+        bool hasMatchingAdapterFingerprint,
+        bool latestMatchingApprovalApplied,
+        bool latestMatchingDestructiveAllowanceApplied,
+        bool canReuseApprovalFromMatchingHistory,
+        bool canReuseDestructiveAllowanceFromMatchingHistory)
     {
         var normalizedOperationId = string.IsNullOrWhiteSpace(operationId)
             ? CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.None
@@ -4828,7 +4939,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             PotentialChangeCount = executionAdapter.PotentialChangeCount,
             WouldApplyChanges = executionAdapter.WouldApplyChanges,
             RequiresExplicitApproval = executionAdapter.RequiresExplicitApproval,
+            LatestMatchingApprovalApplied = latestMatchingApprovalApplied,
             IsDestructiveOperation = executionAdapter.IsDestructiveOperation,
+            LatestMatchingDestructiveAllowanceApplied = latestMatchingDestructiveAllowanceApplied,
+            CanReuseApprovalFromMatchingHistory = canReuseApprovalFromMatchingHistory,
+            CanReuseDestructiveAllowanceFromMatchingHistory = canReuseDestructiveAllowanceFromMatchingHistory,
             CommandFingerprint = executionAdapter.CommandFingerprint,
             IssuanceFingerprint = executionAdapter.IssuanceFingerprint,
             AdapterFingerprint = executionAdapter.AdapterFingerprint,
@@ -5286,7 +5401,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
         CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
         CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult commandExecution,
-        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry)
+        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
+        bool automaticRetryEnabled)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
         ArgumentNullException.ThrowIfNull(cdcCaptureIds);
@@ -5313,7 +5429,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             executionTopology,
             commandRetry,
             executionApproval,
-            executionAdapter);
+            executionAdapter,
+            automaticRetryEnabled);
         var sourceId = ResolveManagedConnectorRetryExecutionPolicySource(
             commandRetry,
             executionApproval,
@@ -5347,7 +5464,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 commandRetry,
                 sourceId,
                 executionRuntimeId,
-                cdcCaptureIds);
+                cdcCaptureIds,
+                automaticRetryEnabled);
         }
 
         if (commandRetry.IsOperatorOnly || executionAdapter.IsOperatorOnly)
@@ -5377,7 +5495,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 commandRetry,
                 sourceId,
                 executionRuntimeId,
-                cdcCaptureIds);
+                cdcCaptureIds,
+                automaticRetryEnabled);
         }
 
         if (commandRetry.IsNotNeeded || commandRetry.IsDuplicate)
@@ -5406,7 +5525,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 commandRetry,
                 sourceId,
                 executionRuntimeId,
-                cdcCaptureIds);
+                cdcCaptureIds,
+                automaticRetryEnabled);
         }
 
         if (commandRetry.IsCooldown)
@@ -5435,7 +5555,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 commandRetry,
                 sourceId,
                 executionRuntimeId,
-                cdcCaptureIds);
+                cdcCaptureIds,
+                automaticRetryEnabled);
         }
 
         if (commandRetry.IsRetryBlocked &&
@@ -5468,7 +5589,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 commandRetry,
                 sourceId,
                 executionRuntimeId,
-                cdcCaptureIds);
+                cdcCaptureIds,
+                automaticRetryEnabled);
         }
 
         if (commandRetry.IsRetryBlocked)
@@ -5498,15 +5620,16 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 commandRetry,
                 sourceId,
                 executionRuntimeId,
-                cdcCaptureIds);
+                cdcCaptureIds,
+                automaticRetryEnabled);
         }
 
         if (commandRetry.IsRetryEligible)
         {
-            var policyState = ManagedConnectorAutomaticRetryEnabled
+            var policyState = automaticRetryEnabled
                 ? CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.RetryReady
                 : CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.BackgroundRetryDisabled;
-            var description = ManagedConnectorAutomaticRetryEnabled
+            var description = automaticRetryEnabled
                 ? CreateManagedConnectorRetryReadyDescription(
                     operationId,
                     commandRetry)
@@ -5536,7 +5659,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 commandRetry,
                 sourceId,
                 executionRuntimeId,
-                cdcCaptureIds);
+                cdcCaptureIds,
+                automaticRetryEnabled);
         }
 
         return CreateManagedConnectorRetryExecutionPolicyStatus(
@@ -5563,7 +5687,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             commandRetry,
             sourceId,
             executionRuntimeId,
-            cdcCaptureIds);
+            cdcCaptureIds,
+            automaticRetryEnabled);
     }
 
     private static CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus CreateManagedConnectorRetryExecutionPolicyStatus(
@@ -5588,7 +5713,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
         string sourceId,
         string executionRuntimeId,
-        IReadOnlyList<string> cdcCaptureIds)
+        IReadOnlyList<string> cdcCaptureIds,
+        bool automaticRetryEnabled)
     {
         var normalizedOperationId = string.IsNullOrWhiteSpace(operationId)
             ? CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.None
@@ -5629,8 +5755,12 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             PotentialChangeCount = commandRetry.PotentialChangeCount,
             WouldApplyChanges = commandRetry.WouldApplyChanges,
             RequiresExplicitApproval = commandRetry.RequiresExplicitApproval,
+            LatestMatchingApprovalApplied = commandRetry.LatestMatchingApprovalApplied,
             IsDestructiveOperation = commandRetry.IsDestructiveOperation,
-            IsAutomaticRetryEnabled = ManagedConnectorAutomaticRetryEnabled,
+            LatestMatchingDestructiveAllowanceApplied = commandRetry.LatestMatchingDestructiveAllowanceApplied,
+            CanReuseApprovalFromMatchingHistory = commandRetry.CanReuseApprovalFromMatchingHistory,
+            CanReuseDestructiveAllowanceFromMatchingHistory = commandRetry.CanReuseDestructiveAllowanceFromMatchingHistory,
+            IsAutomaticRetryEnabled = automaticRetryEnabled,
             CommandFingerprint = commandRetry.CommandFingerprint,
             IssuanceFingerprint = commandRetry.IssuanceFingerprint,
             AdapterFingerprint = commandRetry.AdapterFingerprint,
@@ -5650,7 +5780,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         string executionTopology,
         CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
         CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus executionApproval,
-        CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter)
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
+        bool automaticRetryEnabled)
     {
         ArgumentNullException.ThrowIfNull(commandRetry);
         ArgumentNullException.ThrowIfNull(executionApproval);
@@ -5714,7 +5845,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         {
             AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.RetryCandidate);
 
-            if (!ManagedConnectorAutomaticRetryEnabled)
+            if (!automaticRetryEnabled)
             {
                 AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.AutomaticRetryDisabled);
             }
@@ -6435,6 +6566,376 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             CombineManagedConnectorCommandEnvelopeDetail(commandExecutionDescription, commandRetryDescription));
     }
 
+    private static CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus CreateManagedConnectorAutomaticRetryExecution(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string executionTopology,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus writePathReadiness,
+        CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus preflight,
+        CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus dryRun,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus executionIntent,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus executionApproval,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult commandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        ManagedConnectorCommandExecutionJournal commandExecutionHistoryJournal,
+        bool automaticRetryEnabled)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(actionPlan);
+        ArgumentNullException.ThrowIfNull(writePathReadiness);
+        ArgumentNullException.ThrowIfNull(preflight);
+        ArgumentNullException.ThrowIfNull(dryRun);
+        ArgumentNullException.ThrowIfNull(executionIntent);
+        ArgumentNullException.ThrowIfNull(executionApproval);
+        ArgumentNullException.ThrowIfNull(commandEnvelope);
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+        ArgumentNullException.ThrowIfNull(executionAdapter);
+        ArgumentNullException.ThrowIfNull(commandExecution);
+        ArgumentNullException.ThrowIfNull(commandRetry);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(commandExecutionHistoryJournal);
+
+        var operationId = string.IsNullOrWhiteSpace(retryExecutionPolicy.OperationId)
+            ? string.IsNullOrWhiteSpace(commandJournal.OperationId)
+                ? string.IsNullOrWhiteSpace(commandRetry.OperationId)
+                    ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds.None
+                    : commandRetry.OperationId.Trim()
+                : commandJournal.OperationId.Trim()
+            : retryExecutionPolicy.OperationId.Trim();
+        var commandFingerprint = !string.IsNullOrWhiteSpace(retryExecutionPolicy.CommandFingerprint)
+            ? retryExecutionPolicy.CommandFingerprint
+            : commandJournal.CommandFingerprint;
+        var expectedIssuanceFingerprint = !string.IsNullOrWhiteSpace(retryExecutionPolicy.IssuanceFingerprint)
+            ? retryExecutionPolicy.IssuanceFingerprint
+            : commandExecution.IssuanceFingerprint;
+        var expectedAdapterFingerprint = !string.IsNullOrWhiteSpace(retryExecutionPolicy.AdapterFingerprint)
+            ? retryExecutionPolicy.AdapterFingerprint
+            : commandExecution.AdapterFingerprint;
+        var retryFingerprint = !string.IsNullOrWhiteSpace(retryExecutionPolicy.RetryFingerprint)
+            ? retryExecutionPolicy.RetryFingerprint
+            : commandJournal.RetryFingerprint;
+        var latestAutomaticExecution = commandExecutionHistoryJournal.Entries.FirstOrDefault(static entry => entry.IsAutomaticRetryInvocation);
+        var latestMatchingAutomaticExecution = commandExecutionHistoryJournal.Entries.FirstOrDefault(entry =>
+            entry.IsAutomaticRetryInvocation &&
+            (string.Equals(entry.RequestedOperationId, operationId, StringComparison.OrdinalIgnoreCase) ||
+             string.Equals(entry.ResolvedOperationId, operationId, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrWhiteSpace(commandFingerprint) ||
+             string.Equals(entry.CommandFingerprint, commandFingerprint, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrWhiteSpace(expectedIssuanceFingerprint) ||
+             string.Equals(entry.IssuanceFingerprint, expectedIssuanceFingerprint, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrWhiteSpace(expectedAdapterFingerprint) ||
+             string.Equals(entry.AdapterFingerprint, expectedAdapterFingerprint, StringComparison.OrdinalIgnoreCase)));
+
+        var state =
+            !string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) ||
+            executionIntent.IsDeferred ||
+            !retryExecutionPolicy.AppliesToManagedConnector
+                ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.NotApplicable
+                : latestMatchingAutomaticExecution is not null
+                    ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Completed
+                    : !automaticRetryEnabled || retryExecutionPolicy.IsBackgroundRetryDisabled
+                        ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Disabled
+                        : retryExecutionPolicy.CanExecuteRetryThroughPolicy
+                            ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Eligible
+                            : CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Blocked;
+
+        var categories = CreateManagedConnectorAutomaticRetryExecutionCategories(
+            executionTopology,
+            retryExecutionPolicy,
+            commandJournal,
+            latestAutomaticExecution,
+            latestMatchingAutomaticExecution,
+            automaticRetryEnabled);
+        var sourceId =
+            latestMatchingAutomaticExecution is not null || latestAutomaticExecution is not null
+                ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources.AutomaticRetryHistory
+                : retryExecutionPolicy.AppliesToManagedConnector
+                    ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources.RetryExecutionPolicy
+                    : commandJournal.AppliesToManagedConnector
+                        ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources.CommandJournal
+                        : CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources.Unknown;
+        var description = state switch
+        {
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.NotApplicable =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon does not currently expose automatic background retry execution while the shared runtime remains observe-only.",
+                    CombineManagedConnectorCommandEnvelopeDetail(retryExecutionPolicy.Description, commandJournal.Description)),
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Disabled =>
+                !automaticRetryEnabled
+                    ? AppendManagedConnectorCommandEnvelopeDetail(
+                        $"Cephalon identified shared managed-connector retry posture for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but automatic background retry is disabled by the current data runtime options.",
+                        CombineManagedConnectorCommandEnvelopeDetail(retryExecutionPolicy.Description, commandJournal.Description))
+                    : AppendManagedConnectorCommandEnvelopeDetail(
+                        $"Cephalon identified a safe {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} retry candidate, but automatic background retry remains disabled in the current shared retry-execution policy baseline.",
+                        CombineManagedConnectorCommandEnvelopeDetail(retryExecutionPolicy.Description, commandJournal.Description)),
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Eligible =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    $"Cephalon can now run one automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} because the shared retry-execution policy is retry-ready and the bounded journal does not yet contain a matching automatic attempt.",
+                    CombineManagedConnectorCommandEnvelopeDetail(retryExecutionPolicy.Description, commandJournal.Description)),
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Completed =>
+                CreateManagedConnectorCompletedAutomaticRetryExecutionDescription(
+                    operationId,
+                    latestMatchingAutomaticExecution ?? latestAutomaticExecution,
+                    retryExecutionPolicy.Description,
+                    commandJournal.Description),
+            _ => CreateManagedConnectorBlockedAutomaticRetryExecutionDescription(
+                operationId,
+                retryExecutionPolicy,
+                commandJournal)
+        };
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus(state, description)
+        {
+            CategoryIds = categories,
+            OperationId = string.IsNullOrWhiteSpace(operationId)
+                ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds.None
+                : operationId,
+            ManagementMode = retryExecutionPolicy.ManagementMode ?? commandJournal.ManagementMode ?? commandExecution.ManagementMode,
+            ReportingCoverageState = reportingCoverage.State,
+            RemediationState = remediation.State,
+            GovernanceState = governance.State,
+            DriftState = drift.State,
+            ActionPlanState = actionPlan.State,
+            WritePathReadinessState = writePathReadiness.State,
+            PreflightState = preflight.State,
+            DryRunState = dryRun.State,
+            ExecutionIntentState = executionIntent.State,
+            ExecutionApprovalState = executionApproval.State,
+            CommandEnvelopeState = commandEnvelope.State,
+            CommandIssuanceState = commandIssuance.State,
+            ExecutionAdapterState = executionAdapter.State,
+            LatestCommandExecutionState = commandExecution.State,
+            CommandRetryState = commandRetry.State,
+            RetryExecutionPolicyState = retryExecutionPolicy.State,
+            CommandJournalState = commandJournal.State,
+            PrimaryActionId = actionPlan.PrimaryActionId,
+            SourceId = sourceId,
+            RetryExecutionPolicySourceId = retryExecutionPolicy.SourceId,
+            CommandJournalSourceId = commandJournal.SourceId,
+            LatestCommandExecutionInvocationSourceId = commandExecution.InvocationSourceId,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ConnectClusterId = retryExecutionPolicy.ConnectClusterId ?? commandJournal.ConnectClusterId ?? commandExecution.ConnectClusterId,
+            ConnectorClass = retryExecutionPolicy.ConnectorClass ?? commandJournal.ConnectorClass ?? commandExecution.ConnectorClass,
+            SourceProviderId = retryExecutionPolicy.SourceProviderId ?? commandJournal.SourceProviderId ?? commandExecution.SourceProviderId,
+            PotentialChangeCount = Math.Max(retryExecutionPolicy.PotentialChangeCount, commandJournal.PotentialChangeCount),
+            WouldApplyChanges = retryExecutionPolicy.WouldApplyChanges || commandJournal.WouldApplyChanges || commandExecution.WouldApplyChanges,
+            RequiresExplicitApproval = retryExecutionPolicy.RequiresExplicitApproval || commandJournal.RequiresExplicitApproval || commandExecution.RequiresExplicitApproval,
+            LatestMatchingApprovalApplied = retryExecutionPolicy.LatestMatchingApprovalApplied,
+            IsDestructiveOperation = retryExecutionPolicy.IsDestructiveOperation || commandJournal.IsDestructiveOperation || commandExecution.IsDestructiveOperation,
+            LatestMatchingDestructiveAllowanceApplied = retryExecutionPolicy.LatestMatchingDestructiveAllowanceApplied,
+            CanReuseApprovalFromMatchingHistory = retryExecutionPolicy.CanReuseApprovalFromMatchingHistory,
+            CanReuseDestructiveAllowanceFromMatchingHistory = retryExecutionPolicy.CanReuseDestructiveAllowanceFromMatchingHistory,
+            IsAutomaticRetryEnabled = automaticRetryEnabled,
+            CommandFingerprint = commandFingerprint,
+            RetryFingerprint = retryFingerprint,
+            LatestExecutionFingerprint = latestMatchingAutomaticExecution?.ExecutionFingerprint ?? latestAutomaticExecution?.ExecutionFingerprint ?? commandExecution.ExecutionFingerprint,
+            LatestAttemptId = latestMatchingAutomaticExecution?.AttemptId ?? latestAutomaticExecution?.AttemptId ?? string.Empty,
+            LatestRecordedAtUtc = latestMatchingAutomaticExecution?.RecordedAtUtc ?? latestAutomaticExecution?.RecordedAtUtc,
+            CooldownUntilUtc = retryExecutionPolicy.CooldownUntilUtc ?? commandJournal.CooldownUntilUtc,
+            HasAutomaticRetryAttempt = latestAutomaticExecution is not null,
+            HasMatchingAutomaticRetryAttempt = latestMatchingAutomaticExecution is not null,
+            LatestAutomaticRetryState = latestAutomaticExecution?.State ?? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unrecorded,
+            LatestAutomaticRetryAttemptId = latestAutomaticExecution?.AttemptId ?? string.Empty,
+            LatestAutomaticRetryRecordedAtUtc = latestAutomaticExecution?.RecordedAtUtc,
+            LatestAutomaticRetryExecutionFingerprint = latestAutomaticExecution?.ExecutionFingerprint ?? string.Empty
+        };
+    }
+
+    private static string[] CreateManagedConnectorAutomaticRetryExecutionCategories(
+        string executionTopology,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult? latestAutomaticExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult? latestMatchingAutomaticExecution,
+        bool automaticRetryEnabled)
+    {
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+
+        if (!string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase))
+        {
+            return [];
+        }
+
+        var categories = new List<string>();
+
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        if (commandJournal.CategoryIds.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.ObserveOnlyMode,
+                StringComparer.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.ObserveOnlyMode);
+        }
+
+        if (!automaticRetryEnabled)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.FeatureDisabled);
+        }
+
+        if (retryExecutionPolicy.IsBackgroundRetryDisabled)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.PolicyDisabled);
+        }
+
+        if (retryExecutionPolicy.CanExecuteRetryThroughPolicy)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.RetryReady);
+        }
+
+        if (retryExecutionPolicy.IsCooldown || string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.CooldownActive, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.CooldownActive);
+        }
+
+        if (retryExecutionPolicy.RequiresManualApproval)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.ManualApprovalRequired);
+        }
+
+        if (retryExecutionPolicy.IsPolicyBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.PolicyBlocked);
+        }
+
+        if (retryExecutionPolicy.IsOperatorOnly)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.OperatorOnly);
+        }
+
+        if (retryExecutionPolicy.IsNotNeeded)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.NoExecutionNeeded);
+        }
+
+        if (latestAutomaticExecution is not null)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.AutomaticAttemptRecorded);
+        }
+
+        if (latestMatchingAutomaticExecution is not null)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.MatchingAutomaticAttempt);
+        }
+
+        switch (latestMatchingAutomaticExecution?.State)
+        {
+            case CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NoOp:
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.LatestExecutionNoOp);
+                break;
+            case CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted:
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.LatestExecutionAdapted);
+                break;
+            case CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked:
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.LatestExecutionBlocked);
+                break;
+            case CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unavailable:
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.LatestExecutionUnavailable);
+                break;
+            case CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Failed:
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.LatestExecutionFailed);
+                break;
+        }
+
+        return [.. categories];
+    }
+
+    private static string CreateManagedConnectorBlockedAutomaticRetryExecutionDescription(
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal)
+    {
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+
+        string summary;
+        if (retryExecutionPolicy.IsCooldown)
+        {
+            summary = retryExecutionPolicy.CooldownUntilUtc.HasValue
+                ? $"Cephalon is holding automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} until the cooldown window ends at '{retryExecutionPolicy.CooldownUntilUtc.Value:O}'."
+                : $"Cephalon is holding automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} while the current cooldown window remains active.";
+        }
+        else if (retryExecutionPolicy.RequiresManualApproval)
+        {
+            summary = $"Cephalon can evaluate automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but manual approval must clear before it should continue.";
+        }
+        else if (retryExecutionPolicy.IsOperatorOnly)
+        {
+            summary = $"Cephalon can observe retry posture for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but automatic background retry remains operator-owned until a later managed control-plane slice ships.";
+        }
+        else if (retryExecutionPolicy.IsNotNeeded)
+        {
+            summary = $"Cephalon does not currently need an automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} because the shared runtime truth already converged.";
+        }
+        else
+        {
+            summary = $"Cephalon is not currently able to continue automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} because the shared runtime truth still blocks it.";
+        }
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            summary,
+            CombineManagedConnectorCommandEnvelopeDetail(retryExecutionPolicy.Description, commandJournal.Description));
+    }
+
+    private static string CreateManagedConnectorCompletedAutomaticRetryExecutionDescription(
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult? latestAutomaticExecution,
+        string? retryExecutionPolicyDescription,
+        string? commandJournalDescription)
+    {
+        string summary;
+        if (latestAutomaticExecution is null)
+        {
+            summary = $"Cephalon already recorded one automatic background retry attempt for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on the shared command lane.";
+        }
+        else
+        {
+            var attemptId = NormalizeManagedConnectorFingerprintSegment(latestAutomaticExecution.AttemptId);
+            summary = latestAutomaticExecution.State switch
+            {
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NoOp =>
+                    $"Cephalon already ran one automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} and recorded attempt '{attemptId}' as a no-op because no provider command is needed right now.",
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted =>
+                    $"Cephalon already ran one automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} and translated provider command shape during attempt '{attemptId}'.",
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked =>
+                    $"Cephalon already ran one automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} but attempt '{attemptId}' remained blocked by the current provider translation truth.",
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unavailable =>
+                    $"Cephalon already ran one automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} but attempt '{attemptId}' could not resolve a provider execution adapter.",
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Failed =>
+                    $"Cephalon already ran one automatic background retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} but attempt '{attemptId}' failed while translating the provider command.",
+                _ =>
+                    $"Cephalon already recorded one automatic background retry attempt '{attemptId}' for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on the shared command lane."
+            };
+        }
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            summary,
+            CombineManagedConnectorCommandEnvelopeDetail(latestAutomaticExecution?.Description, retryExecutionPolicyDescription, commandJournalDescription));
+    }
+
     private static CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus CreateManagedConnectorExecutionAdapterStatus(
         string state,
         string description,
@@ -7069,6 +7570,16 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return $"{normalizedPrimary} {normalizedSecondary}";
+    }
+
+    private static string? CombineManagedConnectorCommandEnvelopeDetail(
+        string? primary,
+        string? secondary,
+        string? tertiary)
+    {
+        return CombineManagedConnectorCommandEnvelopeDetail(
+            CombineManagedConnectorCommandEnvelopeDetail(primary, secondary),
+            tertiary);
     }
 
     private static string AppendManagedConnectorCommandEnvelopeDetail(

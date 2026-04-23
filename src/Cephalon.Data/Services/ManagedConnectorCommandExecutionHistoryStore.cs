@@ -103,7 +103,7 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
         return result with
         {
             AttemptId = string.IsNullOrWhiteSpace(result.AttemptId)
-                ? CreateAttemptId(result.ExecutionRuntimeId, result.ExecutionFingerprint, normalizedRecordedAtUtc)
+                ? CreateAttemptId(result.ExecutionRuntimeId, result.ExecutionFingerprint, result.InvocationSourceId, normalizedRecordedAtUtc)
                 : result.AttemptId.Trim(),
             RecordedAtUtc = normalizedRecordedAtUtc
         };
@@ -112,6 +112,7 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
     private static string CreateAttemptId(
         string executionRuntimeId,
         string executionFingerprint,
+        string invocationSourceId,
         DateTimeOffset recordedAtUtc)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -122,6 +123,7 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
                 "cephalon-managed-connector-command-execution-attempt/v1",
                 $"runtime={executionRuntimeId.Trim()}",
                 $"fingerprint={NormalizeFingerprintSegment(executionFingerprint)}",
+                $"invocationSource={NormalizeFingerprintSegment(invocationSourceId)}",
                 $"recordedAt={recordedAtUtc:O}"
             ]);
     }

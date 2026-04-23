@@ -8418,6 +8418,16 @@ CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus ManagedConnectorActio
 
 Gets the operator-facing managed-connector action plan derived from remediation, governance, and drift posture.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorautomaticretryexecution"></a>
+
+##### `ManagedConnectorAutomaticRetryExecution`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus ManagedConnectorAutomaticRetryExecution { get; set; }
+```
+
+Gets the operator-facing managed-connector automatic background retry execution posture derived from retry policy, bounded command history, and the latest command-execution outcomes.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandenvelope"></a>
 
 ##### `ManagedConnectorCommandEnvelope`
@@ -9045,6 +9055,997 @@ string State { get; }
 ```
 
 Gets the stable managed-connector action-plan state.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories`
+
+Defines the stable category identifiers used by managed-connector automatic background retry execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-automaticattemptrecorded"></a>
+
+##### `AutomaticAttemptRecorded`
+
+```csharp
+const string AutomaticAttemptRecorded
+```
+
+The bounded command journal already contains one automatic retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-cooldownactive"></a>
+
+##### `CooldownActive`
+
+```csharp
+const string CooldownActive
+```
+
+The runtime currently remains inside an active retry cooldown window.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-featuredisabled"></a>
+
+##### `FeatureDisabled`
+
+```csharp
+const string FeatureDisabled
+```
+
+Automatic background retry execution is disabled by the current host-owned data runtime options.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-latestexecutionadapted"></a>
+
+##### `LatestExecutionAdapted`
+
+```csharp
+const string LatestExecutionAdapted
+```
+
+The latest matching automatic retry attempt translated a provider command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-latestexecutionblocked"></a>
+
+##### `LatestExecutionBlocked`
+
+```csharp
+const string LatestExecutionBlocked
+```
+
+The latest matching automatic retry attempt remained blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-latestexecutionfailed"></a>
+
+##### `LatestExecutionFailed`
+
+```csharp
+const string LatestExecutionFailed
+```
+
+The latest matching automatic retry attempt failed while Cephalon was translating the provider command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-latestexecutionnoop"></a>
+
+##### `LatestExecutionNoOp`
+
+```csharp
+const string LatestExecutionNoOp
+```
+
+The latest matching automatic retry attempt determined that no provider command is required.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-latestexecutionunavailable"></a>
+
+##### `LatestExecutionUnavailable`
+
+```csharp
+const string LatestExecutionUnavailable
+```
+
+The latest matching automatic retry attempt could not resolve a provider execution adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-manualapprovalrequired"></a>
+
+##### `ManualApprovalRequired`
+
+```csharp
+const string ManualApprovalRequired
+```
+
+The runtime still requires manual approval before automatic background retry execution should continue.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-matchingautomaticattempt"></a>
+
+##### `MatchingAutomaticAttempt`
+
+```csharp
+const string MatchingAutomaticAttempt
+```
+
+The bounded command journal already contains one automatic retry attempt that matches the current retry fingerprint.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-noexecutionneeded"></a>
+
+##### `NoExecutionNeeded`
+
+```csharp
+const string NoExecutionNeeded
+```
+
+No additional provider execution is currently needed.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The runtime remains observe-only, so automatic background retry execution does not apply.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Control-plane ownership still remains outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-policyblocked"></a>
+
+##### `PolicyBlocked`
+
+```csharp
+const string PolicyBlocked
+```
+
+Shared runtime truth currently blocks automatic background retry execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-policydisabled"></a>
+
+##### `PolicyDisabled`
+
+```csharp
+const string PolicyDisabled
+```
+
+Automatic background retry execution is disabled by the current shared retry-execution policy.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-retryready"></a>
+
+##### `RetryReady`
+
+```csharp
+const string RetryReady
+```
+
+The runtime currently exposes one retry-ready candidate for automatic background retry execution.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionoperationids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds`
+
+Defines the stable management-operation identifiers used by managed-connector automatic background retry execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionoperationids-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+Automatic background retry execution currently targets a connector delete operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionoperationids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No managed-connector operation is currently associated with automatic background retry execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionoperationids-pause"></a>
+
+##### `Pause`
+
+```csharp
+const string Pause
+```
+
+Automatic background retry execution currently targets a connector pause operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionoperationids-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+Automatic background retry execution currently targets a future connector reconcile operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionoperationids-restart"></a>
+
+##### `Restart`
+
+```csharp
+const string Restart
+```
+
+Automatic background retry execution currently targets a connector restart operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionoperationids-resume"></a>
+
+##### `Resume`
+
+```csharp
+const string Resume
+```
+
+Automatic background retry execution currently targets a connector resume operation.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources`
+
+Defines the stable source identifiers used by managed-connector automatic background retry execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionsources-automaticretryhistory"></a>
+
+##### `AutomaticRetryHistory`
+
+```csharp
+const string AutomaticRetryHistory
+```
+
+The automatic background retry execution answer was derived primarily from recorded automatic retry attempt history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionsources-commandjournal"></a>
+
+##### `CommandJournal`
+
+```csharp
+const string CommandJournal
+```
+
+The automatic background retry execution answer was derived primarily from the bounded command journal.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionsources-retryexecutionpolicy"></a>
+
+##### `RetryExecutionPolicy`
+
+```csharp
+const string RetryExecutionPolicy
+```
+
+The automatic background retry execution answer was derived primarily from the shared retry-execution policy lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The automatic background retry execution answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates`
+
+Defines the stable state identifiers used by managed-connector automatic background retry execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+Automatic background retry execution is currently blocked by shared runtime truth or safety guardrails.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstates-completed"></a>
+
+##### `Completed`
+
+```csharp
+const string Completed
+```
+
+Automatic background retry execution has already recorded one matching shared retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstates-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Automatic background retry execution is currently disabled for the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstates-eligible"></a>
+
+##### `Eligible`
+
+```csharp
+const string Eligible
+```
+
+Automatic background retry execution is currently eligible to run one shared retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Automatic background retry execution does not currently apply to the execution runtime.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus`
+
+Describes the current operator-facing managed-connector automatic background retry execution posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus(string state, string description)
+```
+
+Creates a new managed-connector automatic background retry execution answer.
+
+Parameters:
+- `state`: The stable automatic background retry execution state, such as `not-applicable`, `disabled`, `blocked`, `eligible`, or `completed`.
+- `description`: An optional operator-facing automatic background retry execution summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-canreuseapprovalfrommatchinghistory"></a>
+
+##### `CanReuseApprovalFromMatchingHistory`
+
+```csharp
+bool CanReuseApprovalFromMatchingHistory { get; set; }
+```
+
+Gets a value indicating whether Cephalon can reuse approval context from matching command history for automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-canreusedestructiveallowancefrommatchinghistory"></a>
+
+##### `CanReuseDestructiveAllowanceFromMatchingHistory`
+
+```csharp
+bool CanReuseDestructiveAllowanceFromMatchingHistory { get; set; }
+```
+
+Gets a value indicating whether Cephalon can reuse destructive-operation allowance from matching command history for automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-canreusematchingsafetycontext"></a>
+
+##### `CanReuseMatchingSafetyContext`
+
+```csharp
+bool CanReuseMatchingSafetyContext { get; }
+```
+
+Gets a value indicating whether Cephalon can reuse the full matching safety context for automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active automatic background retry execution categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable automatic background retry execution categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-commandenvelopestate"></a>
+
+##### `CommandEnvelopeState`
+
+```csharp
+string CommandEnvelopeState { get; set; }
+```
+
+Gets the current managed-connector command-envelope state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-commandissuancestate"></a>
+
+##### `CommandIssuanceState`
+
+```csharp
+string CommandIssuanceState { get; set; }
+```
+
+Gets the current managed-connector command-issuance state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-commandjournalsourceid"></a>
+
+##### `CommandJournalSourceId`
+
+```csharp
+string CommandJournalSourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with the command journal.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector command-journal state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-commandretrystate"></a>
+
+##### `CommandRetryState`
+
+```csharp
+string CommandRetryState { get; set; }
+```
+
+Gets the current managed-connector command-retry state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-cooldownuntilutc"></a>
+
+##### `CooldownUntilUtc`
+
+```csharp
+DateTimeOffset? CooldownUntilUtc { get; set; }
+```
+
+Gets the timestamp when the active retry cooldown window ends, when one applies.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing automatic background retry execution summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-dryrunstate"></a>
+
+##### `DryRunState`
+
+```csharp
+string DryRunState { get; set; }
+```
+
+Gets the current managed-connector dry-run state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-executionadapterstate"></a>
+
+##### `ExecutionAdapterState`
+
+```csharp
+string ExecutionAdapterState { get; set; }
+```
+
+Gets the current managed-connector execution-adapter state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-executionapprovalstate"></a>
+
+##### `ExecutionApprovalState`
+
+```csharp
+string ExecutionApprovalState { get; set; }
+```
+
+Gets the current managed-connector execution-approval state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-executionintentstate"></a>
+
+##### `ExecutionIntentState`
+
+```csharp
+string ExecutionIntentState { get; set; }
+```
+
+Gets the current managed-connector execution-intent state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-hasautomaticretryattempt"></a>
+
+##### `HasAutomaticRetryAttempt`
+
+```csharp
+bool HasAutomaticRetryAttempt { get; set; }
+```
+
+Gets a value indicating whether Cephalon has already recorded one automatic background retry attempt.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-hasmatchingautomaticretryattempt"></a>
+
+##### `HasMatchingAutomaticRetryAttempt`
+
+```csharp
+bool HasMatchingAutomaticRetryAttempt { get; set; }
+```
+
+Gets a value indicating whether Cephalon has already recorded one automatic background retry attempt matching the current retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-isautomaticretryenabled"></a>
+
+##### `IsAutomaticRetryEnabled`
+
+```csharp
+bool IsAutomaticRetryEnabled { get; set; }
+```
+
+Gets a value indicating whether automatic background retry execution is enabled for the current runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether automatic background retry execution is currently blocked.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-iscompleted"></a>
+
+##### `IsCompleted`
+
+```csharp
+bool IsCompleted { get; }
+```
+
+Gets a value indicating whether automatic background retry execution already recorded one matching shared retry attempt.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current automatic background retry execution answer targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-isdisabled"></a>
+
+##### `IsDisabled`
+
+```csharp
+bool IsDisabled { get; }
+```
+
+Gets a value indicating whether automatic background retry execution is currently disabled.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-iseligible"></a>
+
+##### `IsEligible`
+
+```csharp
+bool IsEligible { get; }
+```
+
+Gets a value indicating whether automatic background retry execution is currently eligible to run one shared retry attempt.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest recorded command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestautomaticretryattemptid"></a>
+
+##### `LatestAutomaticRetryAttemptId`
+
+```csharp
+string LatestAutomaticRetryAttemptId { get; set; }
+```
+
+Gets the stable attempt identifier of the latest recorded automatic background retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestautomaticretryexecutionfingerprint"></a>
+
+##### `LatestAutomaticRetryExecutionFingerprint`
+
+```csharp
+string LatestAutomaticRetryExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic execution fingerprint of the latest recorded automatic background retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestautomaticretryrecordedatutc"></a>
+
+##### `LatestAutomaticRetryRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest automatic background retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestautomaticretrystate"></a>
+
+##### `LatestAutomaticRetryState`
+
+```csharp
+string LatestAutomaticRetryState { get; set; }
+```
+
+Gets the state of the latest recorded automatic background retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestcommandexecutioninvocationsourceid"></a>
+
+##### `LatestCommandExecutionInvocationSourceId`
+
+```csharp
+string LatestCommandExecutionInvocationSourceId { get; set; }
+```
+
+Gets the invocation source identifier of the latest recorded command-execution outcome.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestexecutionfingerprint"></a>
+
+##### `LatestExecutionFingerprint`
+
+```csharp
+string LatestExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic latest recorded execution fingerprint currently visible to automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestmatchingapprovalapplied"></a>
+
+##### `LatestMatchingApprovalApplied`
+
+```csharp
+bool LatestMatchingApprovalApplied { get; set; }
+```
+
+Gets a value indicating whether matching command history already recorded an explicit approval Cephalon can reuse for automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestmatchingdestructiveallowanceapplied"></a>
+
+##### `LatestMatchingDestructiveAllowanceApplied`
+
+```csharp
+bool LatestMatchingDestructiveAllowanceApplied { get; set; }
+```
+
+Gets a value indicating whether matching command history already recorded an explicit destructive-operation allowance Cephalon can reuse for automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-preflightstate"></a>
+
+##### `PreflightState`
+
+```csharp
+string PreflightState { get; set; }
+```
+
+Gets the current managed-connector preflight state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current automatic background retry execution answer still requires an explicit approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-retryexecutionpolicysourceid"></a>
+
+##### `RetryExecutionPolicySourceId`
+
+```csharp
+string RetryExecutionPolicySourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier currently associated with automatic background retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector automatic background retry execution state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current automatic background retry execution answer would still apply one or more shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-writepathreadinessstate"></a>
+
+##### `WritePathReadinessState`
+
+```csharp
+string WritePathReadinessState { get; set; }
+```
+
+Gets the current managed-connector write-path readiness state that informed automatic background retry execution.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories"></a>
 
@@ -9817,6 +10818,49 @@ string WritePathReadinessState { get; set; }
 
 Gets the current managed-connector write-path readiness state that informed the command envelope.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutioninvocationsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources`
+
+Defines the stable invocation-source identifiers used by managed-connector command-execution results.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutioninvocationsources-automaticretry"></a>
+
+##### `AutomaticRetry`
+
+```csharp
+const string AutomaticRetry
+```
+
+The command-execution result was recorded from the shared automatic background retry lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutioninvocationsources-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No concrete invocation source has been recorded for the command-execution result.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutioninvocationsources-operatorrequest"></a>
+
+##### `OperatorRequest`
+
+```csharp
+const string OperatorRequest
+```
+
+The command-execution result was recorded from an explicit operator-initiated request.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest`
@@ -9911,6 +10955,16 @@ string AdapterId { get; set; }
 
 Gets the current provider execution-adapter identifier that handled the request when one was available.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-approvalapplied"></a>
+
+##### `ApprovalApplied`
+
+```csharp
+bool ApprovalApplied { get; set; }
+```
+
+Gets a value indicating whether the recorded attempt included an explicit approval from the caller.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid"></a>
 
 ##### `AttemptId`
@@ -9991,6 +11045,16 @@ string Description { get; }
 
 Gets an optional operator-facing command-execution summary.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-destructiveallowanceapplied"></a>
+
+##### `DestructiveAllowanceApplied`
+
+```csharp
+bool DestructiveAllowanceApplied { get; set; }
+```
+
+Gets a value indicating whether the recorded attempt included an explicit destructive-operation allowance from the caller.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionadapterstate"></a>
 
 ##### `ExecutionAdapterState`
@@ -10051,6 +11115,16 @@ string HttpMethod { get; set; }
 
 Gets the outbound HTTP method that would be used by the provider execution adapter when one was resolved.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-invocationsourceid"></a>
+
+##### `InvocationSourceId`
+
+```csharp
+string InvocationSourceId { get; set; }
+```
+
+Gets the stable invocation-source identifier that originated the command-execution request.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isadapted"></a>
 
 ##### `IsAdapted`
@@ -10060,6 +11134,16 @@ bool IsAdapted { get; }
 ```
 
 Gets a value indicating whether the request was translated into one provider-facing command shape.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isautomaticretryinvocation"></a>
+
+##### `IsAutomaticRetryInvocation`
+
+```csharp
+bool IsAutomaticRetryInvocation { get; }
+```
+
+Gets a value indicating whether the request was recorded from the shared automatic background retry lane.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isblocked"></a>
 
@@ -10110,6 +11194,16 @@ bool IsOperatorOnly { get; }
 ```
 
 Gets a value indicating whether the request currently remains operator-owned.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isoperatorrequestinvocation"></a>
+
+##### `IsOperatorRequestInvocation`
+
+```csharp
+bool IsOperatorRequestInvocation { get; }
+```
+
+Gets a value indicating whether the request was recorded from an explicit operator-initiated request.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-issuancefingerprint"></a>
 
@@ -12787,6 +13881,36 @@ bool CanRetry { get; }
 
 Gets a value indicating whether the current retry posture can safely retry through the shared command lane.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-canreuseapprovalfrommatchinghistory"></a>
+
+##### `CanReuseApprovalFromMatchingHistory`
+
+```csharp
+bool CanReuseApprovalFromMatchingHistory { get; set; }
+```
+
+Gets a value indicating whether Cephalon can reuse approval context from matching command history for the current retry posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-canreusedestructiveallowancefrommatchinghistory"></a>
+
+##### `CanReuseDestructiveAllowanceFromMatchingHistory`
+
+```csharp
+bool CanReuseDestructiveAllowanceFromMatchingHistory { get; set; }
+```
+
+Gets a value indicating whether Cephalon can reuse destructive-operation allowance from matching command history for the current retry posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-canreusematchingsafetycontext"></a>
+
+##### `CanReuseMatchingSafetyContext`
+
+```csharp
+bool CanReuseMatchingSafetyContext { get; }
+```
+
+Gets a value indicating whether Cephalon can reuse the full matching safety context for the current retry posture.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-categorycount"></a>
 
 ##### `CategoryCount`
@@ -13146,6 +14270,26 @@ string LatestExecutionFingerprint { get; set; }
 ```
 
 Gets the latest recorded command-execution fingerprint Cephalon considered for the retry posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestmatchingapprovalapplied"></a>
+
+##### `LatestMatchingApprovalApplied`
+
+```csharp
+bool LatestMatchingApprovalApplied { get; set; }
+```
+
+Gets a value indicating whether the latest matching command-execution history already recorded an explicit approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestmatchingdestructiveallowanceapplied"></a>
+
+##### `LatestMatchingDestructiveAllowanceApplied`
+
+```csharp
+bool LatestMatchingDestructiveAllowanceApplied { get; set; }
+```
+
+Gets a value indicating whether the latest matching command-execution history already recorded an explicit destructive-operation allowance.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestrecordedatutc"></a>
 
@@ -18016,6 +19160,36 @@ bool CanExecuteRetryThroughPolicy { get; }
 
 Gets a value indicating whether the retry-execution policy currently allows Cephalon to execute one automatic retry.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-canreuseapprovalfrommatchinghistory"></a>
+
+##### `CanReuseApprovalFromMatchingHistory`
+
+```csharp
+bool CanReuseApprovalFromMatchingHistory { get; set; }
+```
+
+Gets a value indicating whether Cephalon can reuse approval context from matching command history for retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-canreusedestructiveallowancefrommatchinghistory"></a>
+
+##### `CanReuseDestructiveAllowanceFromMatchingHistory`
+
+```csharp
+bool CanReuseDestructiveAllowanceFromMatchingHistory { get; set; }
+```
+
+Gets a value indicating whether Cephalon can reuse destructive-operation allowance from matching command history for retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-canreusematchingsafetycontext"></a>
+
+##### `CanReuseMatchingSafetyContext`
+
+```csharp
+bool CanReuseMatchingSafetyContext { get; }
+```
+
+Gets a value indicating whether Cephalon can reuse the full matching safety context for retry execution.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-categorycount"></a>
 
 ##### `CategoryCount`
@@ -18405,6 +19579,26 @@ string LatestExecutionFingerprint { get; set; }
 ```
 
 Gets the latest recorded command-execution fingerprint Cephalon considered for the retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestmatchingapprovalapplied"></a>
+
+##### `LatestMatchingApprovalApplied`
+
+```csharp
+bool LatestMatchingApprovalApplied { get; set; }
+```
+
+Gets a value indicating whether matching command history already recorded an explicit approval Cephalon can reuse for retry execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestmatchingdestructiveallowanceapplied"></a>
+
+##### `LatestMatchingDestructiveAllowanceApplied`
+
+```csharp
+bool LatestMatchingDestructiveAllowanceApplied { get; set; }
+```
+
+Gets a value indicating whether matching command history already recorded an explicit destructive-operation allowance Cephalon can reuse for retry execution.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestrecordedatutc"></a>
 
@@ -24957,6 +26151,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `actionPlanState`: The stable managed-connector action-plan state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorautomaticretryexecutioncategory-system-string"></a>
+
+##### `GetByManagedConnectorAutomaticRetryExecutionCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionCategory(string automaticRetryCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector automatic background retry execution answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that automatic background retry execution category.
+
+Parameters:
+- `automaticRetryCategory`: The stable managed-connector automatic background retry execution category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorautomaticretryexecutionoperationid-system-string"></a>
+
+##### `GetByManagedConnectorAutomaticRetryExecutionOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector automatic background retry execution answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable managed-connector automatic background retry execution operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorautomaticretryexecutionstate-system-string"></a>
+
+##### `GetByManagedConnectorAutomaticRetryExecutionState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionState(string automaticRetryState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector automatic background retry execution answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that automatic background retry execution state.
+
+Parameters:
+- `automaticRetryState`: The stable managed-connector automatic background retry execution state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandenvelopecategory-system-string"></a>
 

@@ -41,4 +41,14 @@ public sealed class DataRuntimeOptions
     /// Gets or sets the polling interval, in seconds, used by the shared CDC hosted execution pump.
     /// </summary>
     public int CdcPollingIntervalSeconds { get; set; } = 30;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the pack should run the shared automatic managed-connector background retry lane.
+    /// </summary>
+    public bool EnableManagedConnectorAutomaticRetryExecution { get; set; }
+
+    /// <summary>
+    /// Gets or sets the polling interval, in seconds, used by the shared automatic managed-connector background retry lane.
+    /// </summary>
+    public int ManagedConnectorAutomaticRetryPollingIntervalSeconds { get; set; } = 30;
 }

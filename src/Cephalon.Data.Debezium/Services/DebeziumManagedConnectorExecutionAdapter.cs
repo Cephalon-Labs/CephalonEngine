@@ -48,6 +48,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NotApplicable,
                 "Managed-connector operation 'none' does not represent a provider-facing Debezium command."));
         }
@@ -58,6 +59,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NotApplicable,
                 executionAdapter.Description ?? "The execution runtime does not currently participate in a Debezium-managed connector execution lane."));
         }
@@ -68,6 +70,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
                 $"Managed connector '{runtime.Id}' currently resolves operation '{executionAdapter.OperationId}', not '{normalizedOperationId}'."));
         }
@@ -78,6 +81,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
                 executionAdapter.Description ?? "The managed connector remains blocked before Debezium command translation can proceed."));
         }
@@ -88,6 +92,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly,
                 executionAdapter.Description ?? "The managed connector still remains operator-owned outside Cephalon."));
         }
@@ -98,6 +103,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unavailable,
                 executionAdapter.Description ?? "No matching Debezium execution adapter is currently available for this managed connector."));
         }
@@ -108,6 +114,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
                 "This managed-connector command requires explicit approval before Cephalon can translate it into a Debezium provider command."));
         }
@@ -118,6 +125,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
                 "This managed-connector command is destructive and requires AllowDestructive=true before Cephalon can translate it."));
         }
@@ -132,6 +140,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NoOp,
                 "The shared managed-connector truth indicates that no outbound Debezium provider command is needed right now."));
         }
@@ -145,6 +154,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                request,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
                 "Debezium reconcile translation still needs a future configuration-payload lane before Cephalon can emit a provider command."));
         }
@@ -157,6 +167,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
             runtime,
             executionAdapter,
             normalizedOperationId,
+            request,
             CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted,
             $"Cephalon translated the managed-connector request into Debezium provider command shape '{httpMethod} {relativePath}'. Provider completion remains later work, while command-execution outcomes now stay visible on the shared runtime surface.",
             httpMethod,
@@ -251,6 +262,7 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
         CdcCaptureExecutionRuntimeDescriptor runtime,
         CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
         string requestedOperationId,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest? request,
         string state,
         string description,
         string? httpMethod = null,
@@ -305,7 +317,9 @@ internal sealed class DebeziumManagedConnectorExecutionAdapter
                 executionAdapter.IsDestructiveOperation,
                 executionAdapter.WouldApplyChanges),
             RequiresExplicitApproval = executionAdapter.RequiresExplicitApproval,
+            ApprovalApplied = request?.Approve == true,
             IsDestructiveOperation = executionAdapter.IsDestructiveOperation,
+            DestructiveAllowanceApplied = request?.AllowDestructive == true,
             WouldApplyChanges = executionAdapter.WouldApplyChanges
         };
     }

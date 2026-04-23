@@ -181,9 +181,29 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatu
     public bool RequiresExplicitApproval { get; init; }
 
     /// <summary>
+    /// Gets a value indicating whether the latest matching command-execution history already recorded an explicit approval.
+    /// </summary>
+    public bool LatestMatchingApprovalApplied { get; init; }
+
+    /// <summary>
     /// Gets a value indicating whether the current retry posture targets a destructive connector operation.
     /// </summary>
     public bool IsDestructiveOperation { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the latest matching command-execution history already recorded an explicit destructive-operation allowance.
+    /// </summary>
+    public bool LatestMatchingDestructiveAllowanceApplied { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether Cephalon can reuse approval context from matching command history for the current retry posture.
+    /// </summary>
+    public bool CanReuseApprovalFromMatchingHistory { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether Cephalon can reuse destructive-operation allowance from matching command history for the current retry posture.
+    /// </summary>
+    public bool CanReuseDestructiveAllowanceFromMatchingHistory { get; init; }
 
     /// <summary>
     /// Gets the deterministic command fingerprint currently associated with the retry posture.
@@ -300,4 +320,11 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatu
     /// Gets a value indicating whether the current retry posture can safely retry through the shared command lane.
     /// </summary>
     public bool CanRetry => IsRetryEligible;
+
+    /// <summary>
+    /// Gets a value indicating whether Cephalon can reuse the full matching safety context for the current retry posture.
+    /// </summary>
+    public bool CanReuseMatchingSafetyContext =>
+        CanReuseApprovalFromMatchingHistory &&
+        CanReuseDestructiveAllowanceFromMatchingHistory;
 }

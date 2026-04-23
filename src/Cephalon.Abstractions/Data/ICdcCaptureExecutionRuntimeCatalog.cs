@@ -333,6 +333,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalCategory(string journalCategory);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector automatic background retry execution answer matches the requested state.
+    /// </summary>
+    /// <param name="automaticRetryState">The stable managed-connector automatic background retry execution state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that automatic background retry execution state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionState(string automaticRetryState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector automatic background retry execution answer includes the requested category.
+    /// </summary>
+    /// <param name="automaticRetryCategory">The stable managed-connector automatic background retry execution category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that automatic background retry execution category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionCategory(string automaticRetryCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector automatic background retry execution answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector automatic background retry execution operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionOperationId(string operationId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

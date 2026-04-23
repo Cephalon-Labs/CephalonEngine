@@ -63,6 +63,7 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
         services.TryAddSingleton<ManagedConnectorCommandExecutor>();
         services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor>(static serviceProvider =>
             serviceProvider.GetRequiredService<ManagedConnectorCommandExecutor>());
+        services.TryAddSingleton<ManagedConnectorAutomaticRetryHostedService>();
 
         if (options.CdcExecutionRuntimes.Count > 0)
         {
@@ -73,6 +74,12 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ICdcCaptureExecutionRuntimeContributor, SharedCdcCaptureExecutionRuntimeContributor>());
             services.AddHostedService<CdcCaptureHostedService>();
+        }
+
+        if (options.EnableManagedConnectorAutomaticRetryExecution)
+        {
+            services.AddHostedService(static serviceProvider =>
+                serviceProvider.GetRequiredService<ManagedConnectorAutomaticRetryHostedService>());
         }
     }
 

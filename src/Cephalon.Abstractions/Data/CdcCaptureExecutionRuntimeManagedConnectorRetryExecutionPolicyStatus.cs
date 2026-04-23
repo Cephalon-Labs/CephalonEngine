@@ -191,9 +191,29 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPol
     public bool RequiresExplicitApproval { get; init; }
 
     /// <summary>
+    /// Gets a value indicating whether matching command history already recorded an explicit approval Cephalon can reuse for retry execution.
+    /// </summary>
+    public bool LatestMatchingApprovalApplied { get; init; }
+
+    /// <summary>
     /// Gets a value indicating whether the current retry-execution policy targets a destructive connector operation.
     /// </summary>
     public bool IsDestructiveOperation { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether matching command history already recorded an explicit destructive-operation allowance Cephalon can reuse for retry execution.
+    /// </summary>
+    public bool LatestMatchingDestructiveAllowanceApplied { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether Cephalon can reuse approval context from matching command history for retry execution.
+    /// </summary>
+    public bool CanReuseApprovalFromMatchingHistory { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether Cephalon can reuse destructive-operation allowance from matching command history for retry execution.
+    /// </summary>
+    public bool CanReuseDestructiveAllowanceFromMatchingHistory { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether automatic background retry execution is enabled for the current policy answer.
@@ -320,4 +340,11 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPol
     /// Gets a value indicating whether the retry-execution policy currently allows Cephalon to execute one automatic retry.
     /// </summary>
     public bool CanExecuteRetryThroughPolicy => IsRetryReady;
+
+    /// <summary>
+    /// Gets a value indicating whether Cephalon can reuse the full matching safety context for retry execution.
+    /// </summary>
+    public bool CanReuseMatchingSafetyContext =>
+        CanReuseApprovalFromMatchingHistory &&
+        CanReuseDestructiveAllowanceFromMatchingHistory;
 }

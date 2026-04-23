@@ -131,6 +131,11 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionR
     public string SourceId { get; init; } = CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources.Unknown;
 
     /// <summary>
+    /// Gets the stable invocation-source identifier that originated the command-execution request.
+    /// </summary>
+    public string InvocationSourceId { get; init; } = CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.None;
+
+    /// <summary>
     /// Gets the deterministic command fingerprint already associated with the current managed connector.
     /// </summary>
     public string CommandFingerprint { get; init; } = string.Empty;
@@ -156,9 +161,19 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionR
     public bool RequiresExplicitApproval { get; init; }
 
     /// <summary>
+    /// Gets a value indicating whether the recorded attempt included an explicit approval from the caller.
+    /// </summary>
+    public bool ApprovalApplied { get; init; }
+
+    /// <summary>
     /// Gets a value indicating whether the request targets a destructive connector operation.
     /// </summary>
     public bool IsDestructiveOperation { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the recorded attempt included an explicit destructive-operation allowance from the caller.
+    /// </summary>
+    public bool DestructiveAllowanceApplied { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether the request would still apply one or more shared write-path changes.
@@ -181,6 +196,16 @@ public sealed record CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionR
     /// Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome.
     /// </summary>
     public bool HasRecordedOutcome => RecordedAtUtc.HasValue;
+
+    /// <summary>
+    /// Gets a value indicating whether the request was recorded from the shared automatic background retry lane.
+    /// </summary>
+    public bool IsAutomaticRetryInvocation => string.Equals(InvocationSourceId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets a value indicating whether the request was recorded from an explicit operator-initiated request.
+    /// </summary>
+    public bool IsOperatorRequestInvocation => string.Equals(InvocationSourceId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.OperatorRequest, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets a value indicating whether the request is currently blocked.

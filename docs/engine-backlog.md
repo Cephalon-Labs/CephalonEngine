@@ -3027,6 +3027,100 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-184 Phase 13 managed-connector automatic background retry execution baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, and `ENG-183`
+  already shipped shared coverage, remediation, governance, desired-versus-observed drift,
+  action-planning, write-path readiness, preflight, dry-run, execution-intent,
+  execution-approval, command-envelope, command-issuance, provider execution-adapter, execution
+  outcome/history, retry/idempotency, retry-execution-policy, and bounded command-journal truth,
+  but operators still lacked one shared execution lane for when an eligible retry should actually
+  run automatically instead of remaining only advisory runtime truth
+- the next follow-through needed to keep automatic background retry execution additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only retry loop,
+  durable distributed scheduler, or second coordinator
+- teams also needed opt-in host policy, bounded polling, operator-versus-automatic invocation
+  source truth, and safe reuse of matching approval or destructive-operation context from prior
+  command history so automatic retry could stay truthful without bypassing the shipped guardrails
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector automatic background retry execution
+  contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`,
+  `disabled`, `blocked`, `eligible`, and `completed` posture together with automatic-retry
+  categories, intended operation id, source
+  coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/
+  execution-intent/execution-approval/command-envelope/command-issuance/execution-adapter/
+  latest-command-execution/command-retry/retry-execution-policy/command-journal state,
+  deterministic command, retry, and execution fingerprints, latest attempt metadata, operator
+  versus automatic invocation source, cooldown windows, and matching approval/destructive-allowance
+  reuse flags
+- the shared execution-runtime catalog now exposes additive automatic-retry-state,
+  automatic-retry-category, and automatic-retry-operation methods while deriving automatic retry
+  posture from the same shared retry-execution-policy, command-journal, command-retry, and
+  command-execution history lane instead of forcing hosts or providers to invent a second retry
+  coordinator
+- the shared data pack now exposes opt-in automatic retry execution through
+  `EnableManagedConnectorAutomaticRetryExecution`,
+  `ManagedConnectorAutomaticRetryPollingIntervalSeconds`, and the bounded
+  `ManagedConnectorAutomaticRetryHostedService`, while the shared command executor records automatic
+  retry attempts through the same command-execution history and safety envelope instead of
+  branching into a provider-local retry journal
+- ASP.NET Core publishes those same automatic-retry filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, and the automatic retry answer stays additive
+  beside the existing retry-policy, command-journal, and command-execution-history surfaces
+  instead of branching into a Debezium-only retry endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later durable distributed retry orchestration, multi-node coordination,
+  or broader idempotency hardening remain separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds`,
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources`,
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorAutomaticRetryExecution`
+- `Cephalon.Data` now derives managed-connector automatic background retry posture from merged
+  retry-execution-policy, command-journal, command-retry, command-execution history,
+  execution-approval, command-envelope, command-issuance, execution-adapter, and broader runtime
+  truth, including matching approval and destructive-allowance reuse flags, cooldown windows,
+  operator-versus-automatic invocation-source truth, latest automatic-attempt metadata, and
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorAutomaticRetryExecutionState(...)`,
+  `GetByManagedConnectorAutomaticRetryExecutionCategory(...)`, and
+  `GetByManagedConnectorAutomaticRetryExecutionOperationId(...)`
+- `Cephalon.Data` now also exposes the bounded shared automatic retry lane through
+  `EnableManagedConnectorAutomaticRetryExecution`,
+  `ManagedConnectorAutomaticRetryPollingIntervalSeconds`, and
+  `ManagedConnectorAutomaticRetryHostedService`, while the shared command executor now records
+  automatic retry attempts through the same execution-history lane with explicit `automatic-retry`
+  invocation-source truth
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/automatic-retries/{automaticRetryState}`,
+  `/engine/cdc-capture-runtimes/automatic-retries/categories/{automaticRetryCategory}`, and
+  `/engine/cdc-capture-runtimes/automatic-retries/operations/{operationId}` so host routes stay
+  aligned with the same shared retry-policy, command-journal, and bounded retry-execution story
+- `Cephalon.Data.Debezium` now participates in that shared automatic background retry lane through
+  the existing managed-connector execution-adapter seam while targeted coverage proves bounded
+  restart retry flow, matching approval reuse, automatic-attempt recording, and completed
+  automatic-retry posture without claiming a durable distributed scheduler or Debezium-only retry
+  coordinator
+- targeted coverage now proves the automatic background retry baseline through composition tests
+  `40/40`, hosting tests `18/18`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-183 Phase 13 managed-connector bounded command-journal hardening baseline
 
 Status: done

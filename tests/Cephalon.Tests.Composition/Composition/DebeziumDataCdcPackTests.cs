@@ -8,6 +8,7 @@ using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Cephalon.Tests.Composition;
 
@@ -3276,6 +3277,290 @@ public sealed class DebeziumDataCdcPackTests
                 .GetByManagedConnectorCommandJournalCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories.HistoryTruncated)
                 .Select(static runtime => runtime.Id)
                 .ToArray());
+    }
+
+    [Fact]
+    public async Task AddDebeziumData_ManagedConnectorAutomaticRetryExecutionCatalogRunsBoundedBackgroundRetryOnEligibleRuntime()
+    {
+        const string automaticRetryRuntimeId = "inventory-automatic-retry-connector";
+        const string automaticRetryCaptureId = "inventory-automatic-retry-cdc";
+
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-24T03:10:30Z", CultureInfo.InvariantCulture));
+        var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
+        services.AddSingleton<ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter>(
+            new AutomaticRetryTestExecutionAdapter(automaticRetryRuntimeId));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableManagedConnectorAutomaticRetryExecution = true;
+                options.ManagedConnectorAutomaticRetryPollingIntervalSeconds = 1;
+            });
+            engine.AddDebeziumData(options =>
+            {
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: automaticRetryRuntimeId,
+                    captureId: automaticRetryCaptureId,
+                    displayName: "Inventory Automatic Retry Connector",
+                    captureDisplayName: "Inventory Automatic Retry CDC",
+                    captureDescription: "Uses bounded shared retry truth to trigger one automatic restart retry after cooldown.",
+                    connectClusterId: "connect-cluster-auto",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-automatic-retry",
+                    managementMode: "restart",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+        var commandExecutor = provider.GetRequiredService<ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor>();
+        var hostedServices = provider.GetServices<IHostedService>().ToArray();
+
+        await reportSink.ReportAsync(
+            automaticRetryRuntimeId,
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: automaticRetryCaptureId,
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-24T03:10:00Z", CultureInfo.InvariantCulture),
+                    reportId: "debezium-report-automatic-retry-001",
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["connectorState"] = "RUNNING",
+                        ["connectClusterId"] = "connect-cluster-auto",
+                        ["connectorClass"] = "io.debezium.connector.postgresql.PostgresConnector",
+                        ["sourceProviderId"] = "postgresql",
+                        ["reportedTaskIds"] = "0",
+                        ["activeTaskIds"] = "0"
+                    },
+                    reporterId: "connect-worker-auto")
+            ]);
+
+        timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-24T03:10:31Z", CultureInfo.InvariantCulture));
+        var blockedCommand = await commandExecutor.ExecuteAsync(
+            automaticRetryRuntimeId,
+            CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Restart,
+            new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest
+            {
+                Approve = true
+            });
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked, blockedCommand.State);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.OperatorRequest,
+            blockedCommand.InvocationSourceId);
+        Assert.True(blockedCommand.ApprovalApplied);
+
+        timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-24T03:11:10Z", CultureInfo.InvariantCulture));
+
+        var eligibleRuntime = runtimeCatalog.GetById(automaticRetryRuntimeId);
+
+        Assert.NotNull(eligibleRuntime);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.RetryReady,
+            eligibleRuntime.ManagedConnectorRetryExecutionPolicy.State);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Eligible,
+            eligibleRuntime.ManagedConnectorAutomaticRetryExecution.State);
+        Assert.True(eligibleRuntime.ManagedConnectorRetryExecutionPolicy.CanReuseApprovalFromMatchingHistory);
+        Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryExecution.CanReuseApprovalFromMatchingHistory);
+        Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryExecution.LatestMatchingApprovalApplied);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.RetryReady,
+            eligibleRuntime.ManagedConnectorAutomaticRetryExecution.CategoryIds);
+
+        try
+        {
+            foreach (var hostedService in hostedServices)
+            {
+                await hostedService.StartAsync(CancellationToken.None);
+            }
+
+            CdcCaptureExecutionRuntimeDescriptor? completedRuntime = null;
+            for (var attempt = 0; attempt < 40; attempt++)
+            {
+                completedRuntime = runtimeCatalog.GetById(automaticRetryRuntimeId);
+                if (completedRuntime?.ManagedConnectorAutomaticRetryExecution.IsCompleted == true)
+                {
+                    break;
+                }
+
+                await Task.Delay(50);
+            }
+
+            Assert.NotNull(completedRuntime);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Completed,
+                completedRuntime.ManagedConnectorAutomaticRetryExecution.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Restart,
+                completedRuntime.ManagedConnectorAutomaticRetryExecution.OperationId);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted,
+                completedRuntime.ManagedConnectorAutomaticRetryExecution.LatestAutomaticRetryState);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
+                completedRuntime.ManagedConnectorAutomaticRetryExecution.LatestCommandExecutionInvocationSourceId);
+            Assert.True(completedRuntime.ManagedConnectorAutomaticRetryExecution.HasAutomaticRetryAttempt);
+            Assert.True(completedRuntime.ManagedConnectorAutomaticRetryExecution.HasMatchingAutomaticRetryAttempt);
+            Assert.True(completedRuntime.ManagedConnectorAutomaticRetryExecution.CanReuseApprovalFromMatchingHistory);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.AutomaticAttemptRecorded,
+                completedRuntime.ManagedConnectorAutomaticRetryExecution.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.LatestExecutionAdapted,
+                completedRuntime.ManagedConnectorAutomaticRetryExecution.CategoryIds);
+            Assert.False(string.IsNullOrWhiteSpace(completedRuntime.ManagedConnectorAutomaticRetryExecution.LatestAutomaticRetryAttemptId));
+
+            var history = runtimeCatalog.GetManagedConnectorCommandExecutionHistory(automaticRetryRuntimeId);
+
+            Assert.Equal(2, history.Count);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
+                history[0].InvocationSourceId);
+            Assert.True(history[0].IsAutomaticRetryInvocation);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted, history[0].State);
+            Assert.True(history[0].ApprovalApplied);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.OperatorRequest,
+                history[1].InvocationSourceId);
+            Assert.True(history[1].IsOperatorRequestInvocation);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked, history[1].State);
+            Assert.True(history[1].ApprovalApplied);
+
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorAutomaticRetryExecutionState(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Completed)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorAutomaticRetryExecutionCategory(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.AutomaticAttemptRecorded)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorAutomaticRetryExecutionOperationId(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds.Restart)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+        }
+        finally
+        {
+            foreach (var hostedService in hostedServices.Reverse())
+            {
+                await hostedService.StopAsync(CancellationToken.None);
+            }
+        }
+    }
+
+    private sealed class AutomaticRetryTestExecutionAdapter(string runtimeId)
+        : ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter
+    {
+        public string AdapterId => "cephalon-test-automatic-retry";
+
+        public bool CanHandle(CdcCaptureExecutionRuntimeDescriptor runtime)
+        {
+            ArgumentNullException.ThrowIfNull(runtime);
+
+            return string.Equals(runtime.Id, runtimeId, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public ValueTask<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> ExecuteAsync(
+            CdcCaptureExecutionRuntimeDescriptor runtime,
+            string operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest? request = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(runtime);
+            ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var normalizedOperationId = operationId.Trim();
+            var executionAdapter = runtime.ManagedConnectorExecutionAdapter;
+            var state = runtime.ManagedConnectorCommandExecution.IsBlocked &&
+                        runtime.ManagedConnectorCommandExecution.IsOperatorRequestInvocation
+                ? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted
+                : CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked;
+            var description = string.Equals(
+                state,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted,
+                StringComparison.OrdinalIgnoreCase)
+                ? "The automatic retry execution lane reused the approved restart intent and translated one provider command after the transient block cleared."
+                : "The provider adapter intentionally simulates one transient restart block so the shared automatic retry lane can recover it after cooldown.";
+            var transportKind = string.Equals(
+                state,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted,
+                StringComparison.OrdinalIgnoreCase)
+                ? "http-rest"
+                : null;
+            var httpMethod = string.Equals(
+                state,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted,
+                StringComparison.OrdinalIgnoreCase)
+                ? "POST"
+                : null;
+            var relativePath = string.Equals(
+                state,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted,
+                StringComparison.OrdinalIgnoreCase)
+                ? $"/connectors/{Uri.EscapeDataString(runtime.Id)}/restart?includeTasks=true&onlyFailed=false"
+                : null;
+
+            return ValueTask.FromResult(new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult(state, description)
+            {
+                ExecutionRuntimeId = runtime.Id,
+                RequestedOperationId = normalizedOperationId,
+                ResolvedOperationId = executionAdapter.OperationId,
+                ExecutionAdapterState = executionAdapter.State,
+                CommandIssuanceState = executionAdapter.CommandIssuanceState,
+                CommandEnvelopeState = executionAdapter.CommandEnvelopeState,
+                AdapterId = AdapterId,
+                ProviderId = runtime.Metadata.TryGetValue("provider", out var providerId) && !string.IsNullOrWhiteSpace(providerId)
+                    ? providerId.Trim()
+                    : DebeziumDataOptions.ProviderId,
+                TransportKind = transportKind,
+                HttpMethod = httpMethod,
+                RelativePath = relativePath,
+                ConnectClusterId = executionAdapter.ConnectClusterId,
+                ConnectorId = runtime.Id,
+                ConnectorClass = executionAdapter.ConnectorClass,
+                SourceProviderId = executionAdapter.SourceProviderId,
+                ManagementMode = executionAdapter.ManagementMode,
+                SourceId = executionAdapter.SourceId,
+                CommandFingerprint = executionAdapter.CommandFingerprint,
+                IssuanceFingerprint = executionAdapter.IssuanceFingerprint,
+                AdapterFingerprint = executionAdapter.AdapterFingerprint,
+                ExecutionFingerprint = string.Join(
+                    "|",
+                    [
+                        "cephalon-test-automatic-retry-execution/v1",
+                        $"runtime={runtime.Id}",
+                        $"operation={normalizedOperationId}",
+                        $"state={state}",
+                        $"approvalApplied={(request?.Approve == true).ToString().ToLowerInvariant()}",
+                        $"destructiveApplied={(request?.AllowDestructive == true).ToString().ToLowerInvariant()}"
+                    ]),
+                RequiresExplicitApproval = executionAdapter.RequiresExplicitApproval,
+                ApprovalApplied = request?.Approve == true,
+                IsDestructiveOperation = executionAdapter.IsDestructiveOperation,
+                DestructiveAllowanceApplied = request?.AllowDestructive == true,
+                WouldApplyChanges = executionAdapter.WouldApplyChanges
+            });
+        }
     }
 
     private static DebeziumConnectorOptions CreateConnector(

@@ -511,9 +511,9 @@ coordinator.
   the shared fingerprint lane, while future-control-plane reconcile paths still surface
   `operator-only` retry truth instead of pretending Cephalon already owns Kafka Connect retry
   orchestration
-- command retry currently remains read-only operator truth; it does not mean Cephalon already owns
-  automatic background retries, durable distributed command journals, or full managed-connector
-  idempotency orchestration
+- command retry currently remains read-only retry evidence on its own; actual automatic background
+  retry execution now stays behind the shared retry-execution-policy, command-journal, and opt-in
+  automatic-retry lane rather than a Debezium-only retry loop
 
 ## Managed-connector retry-execution policy baseline
 
@@ -542,9 +542,9 @@ coordinator.
   `manual-approval` posture after cooldown on the existing provider-translation lane, while
   retry-eligible paths still surface `background-retry-disabled` truth instead of pretending
   Cephalon already owns automatic background retry execution
-- retry-execution policy currently remains read-only operator and governance truth; it does not mean
-  Cephalon already owns automatic background retries, durable distributed command journals, or full
-  managed-connector retry orchestration
+- retry-execution policy currently remains safety and governance truth on its own; actual automatic
+  background retry execution is a separate shared lane and still does not mean Cephalon already
+  owns durable distributed command journals or full managed-connector retry orchestration
 
 ## Managed-connector bounded command-journal baseline
 
@@ -577,9 +577,43 @@ coordinator.
   and future-control-plane reconcile paths still surface `insufficient-for-automation` truth
   instead of pretending Cephalon already owns automatic background retries or a durable
   distributed command journal
-- bounded command-journal posture currently remains read-only operator and automation-readiness
-  truth; it does not mean Cephalon already owns automatic background retries, durable distributed
-  command journals, or full managed-connector idempotency orchestration
+- bounded command-journal posture currently remains automation-readiness truth on its own; actual
+  automatic background retry execution is a separate shared lane and still does not mean Cephalon
+  already owns durable distributed command journals or full managed-connector idempotency
+  orchestration
+
+## Managed-connector automatic background retry execution baseline
+
+The `ENG-184` follow-through keeps shared automatic background retry execution additive over that
+same shared runtime surface instead of introducing a Debezium-only retry loop, durable
+distributed scheduler, or second coordinator.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorAutomaticRetryExecution` now publishes
+  stable `not-applicable`, `disabled`, `blocked`, `eligible`, and `completed` posture for
+  Debezium-managed runtimes together with automatic-retry categories, the intended operation id,
+  source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/
+  execution-intent/execution-approval/command-envelope/command-issuance/execution-adapter/
+  latest-command-execution/command-retry/retry-execution-policy/command-journal state,
+  deterministic command, retry, and execution fingerprints, latest automatic-attempt metadata,
+  operator-versus-automatic invocation-source truth, cooldown windows, and matching approval or
+  destructive-allowance reuse flags
+- the shared execution-runtime catalog now derives that automatic background retry answer from the
+  already shipped retry-execution-policy, command-journal, command-retry, and command-execution
+  history truth, so disabled, blocked, eligible, and already-completed answers surface back on the
+  same merged CDC runtime surface instead of forcing Debezium callers to invent a parallel retry
+  loop or scheduler
+- the shared data pack now exposes that bounded retry lane through
+  `EnableManagedConnectorAutomaticRetryExecution`,
+  `ManagedConnectorAutomaticRetryPollingIntervalSeconds`, and
+  `ManagedConnectorAutomaticRetryHostedService`, so hosts can opt into one shared in-process retry
+  loop without re-implementing provider-specific polling
+- Debezium-managed restart/pause/resume/delete command paths now participate in that shared
+  automatic background retry lane through the existing execution-adapter seam, while targeted
+  coverage proves shared approval reuse, automatic-attempt recording, and completed retry posture
+  on the same runtime surface
+- automatic background retry execution currently remains bounded shared in-process truth; it does
+  not mean Cephalon already owns durable distributed command journals, cross-node retry
+  coordination, or full managed-connector idempotency orchestration
 
 ## Not shipped in these slices
 
@@ -590,7 +624,7 @@ This pack intentionally still does not claim:
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
-- durable distributed command journals, automatic background retries, or full idempotency orchestration beyond the shipped shared bounded command-journal posture
+- durable distributed command journals, cross-node automatic background retry coordination, or full idempotency orchestration beyond the shipped shared bounded command-journal plus bounded automatic background retry posture
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

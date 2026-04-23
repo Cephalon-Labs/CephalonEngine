@@ -322,6 +322,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus ManagedConnectorCommandJournal { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector automatic background retry execution posture derived from retry policy, bounded command history, and the latest command-execution outcomes.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus ManagedConnectorAutomaticRetryExecution { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

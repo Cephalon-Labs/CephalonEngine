@@ -17,11 +17,43 @@ internal sealed class ManagedConnectorCommandExecutor(
         CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest? request = null,
         CancellationToken cancellationToken = default)
     {
+        return await ExecuteCoreAsync(
+                executionRuntimeId,
+                operationId,
+                request,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.OperatorRequest,
+                cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    internal async ValueTask<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> ExecuteAutomaticRetryAsync(
+        string executionRuntimeId,
+        string operationId,
+        CancellationToken cancellationToken = default)
+    {
+        return await ExecuteCoreAsync(
+                executionRuntimeId,
+                operationId,
+                request: null,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
+                cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async ValueTask<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> ExecuteCoreAsync(
+        string executionRuntimeId,
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest? request,
+        string invocationSourceId,
+        CancellationToken cancellationToken)
+    {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
         ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(invocationSourceId);
 
         var normalizedExecutionRuntimeId = executionRuntimeId.Trim();
         var normalizedOperationId = operationId.Trim();
+        var normalizedInvocationSourceId = invocationSourceId.Trim();
         var runtime = runtimeCatalog.GetById(normalizedExecutionRuntimeId);
         if (runtime is null)
         {
@@ -30,6 +62,16 @@ internal sealed class ManagedConnectorCommandExecutor(
         }
 
         var executionAdapter = runtime.ManagedConnectorExecutionAdapter;
+        var effectiveRequest = request;
+        if (effectiveRequest is null &&
+            string.Equals(
+                normalizedInvocationSourceId,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            effectiveRequest = CreateAutomaticRetryRequest(runtime);
+        }
+
         if (string.Equals(
                 normalizedOperationId,
                 CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None,
@@ -39,6 +81,8 @@ internal sealed class ManagedConnectorCommandExecutor(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                normalizedInvocationSourceId,
+                effectiveRequest,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NotApplicable,
                 "Managed-connector operation 'none' does not represent a runnable provider command."));
         }
@@ -54,6 +98,8 @@ internal sealed class ManagedConnectorCommandExecutor(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                normalizedInvocationSourceId,
+                effectiveRequest,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
                 $"Managed connector '{runtime.Id}' currently resolves operation '{executionAdapter.OperationId}', not '{normalizedOperationId}'."));
         }
@@ -64,6 +110,8 @@ internal sealed class ManagedConnectorCommandExecutor(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                normalizedInvocationSourceId,
+                effectiveRequest,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NotApplicable,
                 executionAdapter.Description ?? "The execution runtime does not currently participate in a managed-connector provider execution lane."));
         }
@@ -74,6 +122,8 @@ internal sealed class ManagedConnectorCommandExecutor(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                normalizedInvocationSourceId,
+                effectiveRequest,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked,
                 executionAdapter.Description ?? "The managed connector remains blocked before Cephalon can route a provider command."));
         }
@@ -84,6 +134,8 @@ internal sealed class ManagedConnectorCommandExecutor(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                normalizedInvocationSourceId,
+                effectiveRequest,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly,
                 executionAdapter.Description ?? "The managed connector still remains operator-owned outside Cephalon."));
         }
@@ -95,12 +147,17 @@ internal sealed class ManagedConnectorCommandExecutor(
                 runtime,
                 executionAdapter,
                 normalizedOperationId,
+                normalizedInvocationSourceId,
+                effectiveRequest,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unavailable,
                 executionAdapter.Description ?? "No matching provider execution adapter is currently registered for the managed connector."));
         }
 
-        var result = await providerExecutionAdapter.ExecuteAsync(runtime, normalizedOperationId, request, cancellationToken);
-        return Record(result);
+        var result = await providerExecutionAdapter.ExecuteAsync(runtime, normalizedOperationId, effectiveRequest, cancellationToken);
+        return Record(result with
+        {
+            InvocationSourceId = normalizedInvocationSourceId
+        });
     }
 
     private ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter? ResolveExecutionAdapter(
@@ -134,12 +191,15 @@ internal sealed class ManagedConnectorCommandExecutor(
         CdcCaptureExecutionRuntimeDescriptor runtime,
         CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
         string requestedOperationId,
+        string invocationSourceId,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest? request,
         string state,
         string description)
     {
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(executionAdapter);
         ArgumentException.ThrowIfNullOrWhiteSpace(requestedOperationId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(invocationSourceId);
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentException.ThrowIfNullOrWhiteSpace(description);
 
@@ -171,6 +231,7 @@ internal sealed class ManagedConnectorCommandExecutor(
             SourceProviderId = executionAdapter.SourceProviderId,
             ManagementMode = executionAdapter.ManagementMode,
             SourceId = executionAdapter.SourceId,
+            InvocationSourceId = invocationSourceId.Trim(),
             CommandFingerprint = executionAdapter.CommandFingerprint,
             IssuanceFingerprint = executionAdapter.IssuanceFingerprint,
             AdapterFingerprint = executionAdapter.AdapterFingerprint,
@@ -186,8 +247,29 @@ internal sealed class ManagedConnectorCommandExecutor(
                 executionAdapter.IsDestructiveOperation,
                 executionAdapter.WouldApplyChanges),
             RequiresExplicitApproval = executionAdapter.RequiresExplicitApproval,
+            ApprovalApplied = request?.Approve == true,
             IsDestructiveOperation = executionAdapter.IsDestructiveOperation,
+            DestructiveAllowanceApplied = request?.AllowDestructive == true,
             WouldApplyChanges = executionAdapter.WouldApplyChanges
+        };
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest? CreateAutomaticRetryRequest(
+        CdcCaptureExecutionRuntimeDescriptor runtime)
+    {
+        ArgumentNullException.ThrowIfNull(runtime);
+
+        var automaticRetryExecution = runtime.ManagedConnectorAutomaticRetryExecution;
+        if (!automaticRetryExecution.RequiresExplicitApproval &&
+            !automaticRetryExecution.IsDestructiveOperation)
+        {
+            return null;
+        }
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest
+        {
+            Approve = automaticRetryExecution.CanReuseApprovalFromMatchingHistory,
+            AllowDestructive = automaticRetryExecution.CanReuseDestructiveAllowanceFromMatchingHistory
         };
     }
 

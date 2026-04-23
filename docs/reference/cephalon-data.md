@@ -255,6 +255,26 @@ bool EnableExternalCdcRuntimeReporting { get; set; }
 
 Gets or sets a value indicating whether the pack should accept external CDC execution-runtime reports through the shared runtime-state catalog.
 
+<a id="member-p-cephalon-data-configuration-dataruntimeoptions-enablemanagedconnectorautomaticretryexecution"></a>
+
+##### `EnableManagedConnectorAutomaticRetryExecution`
+
+```csharp
+bool EnableManagedConnectorAutomaticRetryExecution { get; set; }
+```
+
+Gets or sets a value indicating whether the pack should run the shared automatic managed-connector background retry lane.
+
+<a id="member-p-cephalon-data-configuration-dataruntimeoptions-managedconnectorautomaticretrypollingintervalseconds"></a>
+
+##### `ManagedConnectorAutomaticRetryPollingIntervalSeconds`
+
+```csharp
+int ManagedConnectorAutomaticRetryPollingIntervalSeconds { get; set; }
+```
+
+Gets or sets the polling interval, in seconds, used by the shared automatic managed-connector background retry lane.
+
 <a id="member-p-cephalon-data-configuration-dataruntimeoptions-registerreadstore"></a>
 
 ##### `RegisterReadStore`
