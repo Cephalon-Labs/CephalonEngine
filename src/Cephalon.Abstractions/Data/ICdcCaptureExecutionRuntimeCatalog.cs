@@ -58,4 +58,18 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="remediationCategory">The stable remediation-category identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that remediation category.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationCategory(string remediationCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector governance answer matches the requested state.
+    /// </summary>
+    /// <param name="governanceState">The stable governance-state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that governance state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorGovernanceState(string governanceState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector governance answer includes the requested category.
+    /// </summary>
+    /// <param name="governanceCategory">The stable governance-category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that governance category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorGovernanceCategory(string governanceCategory);
 }

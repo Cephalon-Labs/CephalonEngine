@@ -8408,6 +8408,16 @@ string Id { get; }
 
 Gets the stable execution-runtime identifier.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorgovernance"></a>
+
+##### `ManagedConnectorGovernance`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus ManagedConnectorGovernance { get; set; }
+```
+
+Gets the operator-facing managed-connector governance posture for the execution runtime.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-metadata"></a>
 
 ##### `Metadata`
@@ -8467,6 +8477,444 @@ CdcCaptureExecutionRuntimeSummary Summary { get; }
 ```
 
 Gets the latest aggregate runtime summary reported for the execution runtime.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds`
+
+Defines the stable operator-facing action identifiers used by managed-connector governance answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids-completegovernancedeclaration"></a>
+
+##### `CompleteGovernanceDeclaration`
+
+```csharp
+const string CompleteGovernanceDeclaration
+```
+
+Complete the connector declaration so shared governance truth has the minimum required metadata.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids-defercontrolplane"></a>
+
+##### `DeferControlPlane`
+
+```csharp
+const string DeferControlPlane
+```
+
+Defer control-plane ownership until Cephalon ships write-path connector management for the declared mode.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids-keepobserveonly"></a>
+
+##### `KeepObserveOnly`
+
+```csharp
+const string KeepObserveOnly
+```
+
+Keep the connector in observe-only mode and continue using shared runtime reporting truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No operator action is currently required for the execution runtime.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories`
+
+Defines the stable managed-connector governance categories used by CDC execution-runtime descriptors.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories-futurecontrolplanemode"></a>
+
+##### `FutureControlPlaneMode`
+
+```csharp
+const string FutureControlPlaneMode
+```
+
+The execution runtime declares a future control-plane management mode that Cephalon has not adopted yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories-missingconnectclusterid"></a>
+
+##### `MissingConnectClusterId`
+
+```csharp
+const string MissingConnectClusterId
+```
+
+The execution runtime does not currently declare the upstream connector-cluster identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories-missingconnectorclass"></a>
+
+##### `MissingConnectorClass`
+
+```csharp
+const string MissingConnectorClass
+```
+
+The execution runtime does not currently declare the upstream connector class.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories-missingmanagementmode"></a>
+
+##### `MissingManagementMode`
+
+```csharp
+const string MissingManagementMode
+```
+
+The execution runtime does not currently declare a managed-connector management mode.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories-missingsourceproviderid"></a>
+
+##### `MissingSourceProviderId`
+
+```csharp
+const string MissingSourceProviderId
+```
+
+The execution runtime does not currently declare the upstream source-provider identifier.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates`
+
+Defines the stable managed-connector governance states used by CDC execution-runtime descriptors.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-futurecontrolplane"></a>
+
+##### `FutureControlPlane`
+
+```csharp
+const string FutureControlPlane
+```
+
+The execution runtime declares a future write-path or control-plane management mode that Cephalon does not yet own.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently represent a managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-observeonly"></a>
+
+##### `ObserveOnly`
+
+```csharp
+const string ObserveOnly
+```
+
+The execution runtime is currently declared as an observe-only managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-outofpolicy"></a>
+
+##### `OutOfPolicy`
+
+```csharp
+const string OutOfPolicy
+```
+
+The execution runtime is missing required managed-connector governance metadata.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The execution runtime cannot currently determine its managed-connector governance posture.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus`
+
+Describes the current operator-facing managed-connector governance posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus(string state, string description)
+```
+
+Creates a new managed-connector governance answer.
+
+Parameters:
+- `state`: The stable governance state, such as `observe-only`, `future-control-plane`, or `out-of-policy`.
+- `description`: An optional operator-facing governance summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-activetaskids"></a>
+
+##### `ActiveTaskIds`
+
+```csharp
+IReadOnlyList<string> ActiveTaskIds { get; set; }
+```
+
+Gets the latest reported active managed-connector task identifiers when they are known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active governance categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable managed-connector governance categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the upstream connector-cluster identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the upstream connector-class identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-connectorlifecyclestate"></a>
+
+##### `ConnectorLifecycleState`
+
+```csharp
+string ConnectorLifecycleState { get; set; }
+```
+
+Gets the latest reported connector lifecycle state when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-declaredtaskids"></a>
+
+##### `DeclaredTaskIds`
+
+```csharp
+IReadOnlyList<string> DeclaredTaskIds { get; set; }
+```
+
+Gets the declared managed-connector task identifiers when they are known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing governance summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-expectedtaskcount"></a>
+
+##### `ExpectedTaskCount`
+
+```csharp
+int? ExpectedTaskCount { get; set; }
+```
+
+Gets the declared task count when the managed connector reports one.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-isobserveonly"></a>
+
+##### `IsObserveOnly`
+
+```csharp
+bool IsObserveOnly { get; }
+```
+
+Gets a value indicating whether the execution runtime is currently governed in observe-only mode.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-isoutofpolicy"></a>
+
+##### `IsOutOfPolicy`
+
+```csharp
+bool IsOutOfPolicy { get; }
+```
+
+Gets a value indicating whether the execution runtime is currently out of policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-recommendedactionid"></a>
+
+##### `RecommendedActionId`
+
+```csharp
+string RecommendedActionId { get; set; }
+```
+
+Gets the stable recommended action identifier for the current governance posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-reconciliationreason"></a>
+
+##### `ReconciliationReason`
+
+```csharp
+string ReconciliationReason { get; set; }
+```
+
+Gets the latest reported reconciliation summary when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-reconciliationstate"></a>
+
+##### `ReconciliationState`
+
+```csharp
+string ReconciliationState { get; set; }
+```
+
+Gets the latest reported overall reconciliation state when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-reportedtaskcount"></a>
+
+##### `ReportedTaskCount`
+
+```csharp
+int? ReportedTaskCount { get; set; }
+```
+
+Gets the latest reported task count when the managed connector reports one.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-reportedtaskids"></a>
+
+##### `ReportedTaskIds`
+
+```csharp
+IReadOnlyList<string> ReportedTaskIds { get; set; }
+```
+
+Gets the latest reported managed-connector task identifiers when they are known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-requiresattention"></a>
+
+##### `RequiresAttention`
+
+```csharp
+bool RequiresAttention { get; }
+```
+
+Gets a value indicating whether the execution runtime currently requires operator governance attention.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-requirescontrolplanesupport"></a>
+
+##### `RequiresControlPlaneSupport`
+
+```csharp
+bool RequiresControlPlaneSupport { get; }
+```
+
+Gets a value indicating whether the execution runtime currently requires future control-plane support.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the upstream source-provider identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector governance state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-taskreconciliationstate"></a>
+
+##### `TaskReconciliationState`
+
+```csharp
+string TaskReconciliationState { get; set; }
+```
+
+Gets the latest reported task-reconciliation state when one is known.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories"></a>
 
@@ -14474,6 +14922,36 @@ Returns: The matching execution-runtime descriptor, or `null` when none exists.
 
 Parameters:
 - `executionRuntimeId`: The stable execution-runtime identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorgovernancecategory-system-string"></a>
+
+##### `GetByManagedConnectorGovernanceCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorGovernanceCategory(string governanceCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector governance answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that governance category.
+
+Parameters:
+- `governanceCategory`: The stable governance-category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorgovernancestate-system-string"></a>
+
+##### `GetByManagedConnectorGovernanceState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorGovernanceState(string governanceState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector governance answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that governance state.
+
+Parameters:
+- `governanceState`: The stable governance-state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyremediationcategory-system-string"></a>
 

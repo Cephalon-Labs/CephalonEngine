@@ -33,6 +33,9 @@ internal sealed class DebeziumExecutionRuntimeContributor(DebeziumDataOptions op
                 ["provider"] = DebeziumDataOptions.ProviderId,
                 ["surface"] = "debezium-cdc",
                 ["connectorId"] = runtimeId,
+                ["managedConnectorManagementMode"] = NormalizeRequired(
+                    connector.ManagementMode,
+                    $"{nameof(DebeziumConnectorOptions.ManagementMode)} is required for Debezium connector '{runtimeId}'."),
                 ["debeziumManagementMode"] = NormalizeRequired(
                     connector.ManagementMode,
                     $"{nameof(DebeziumConnectorOptions.ManagementMode)} is required for Debezium connector '{runtimeId}'.")
@@ -49,11 +52,13 @@ internal sealed class DebeziumExecutionRuntimeContributor(DebeziumDataOptions op
             AddIfPresent(metadata, "connectorClass", connector.ConnectorClass);
             AddIfPresent(metadata, "sourceProviderId", connector.SourceProviderId);
             AddIfPresent(metadata, "topicPrefix", connector.TopicPrefix);
+            AddIfPresent(metadata, "managedConnectorExpectedTaskCount", expectedTaskCount?.ToString(System.Globalization.CultureInfo.InvariantCulture));
             AddIfPresent(metadata, "debeziumExpectedTaskCount", expectedTaskCount?.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
             if (declaredTaskIds.Length > 0)
             {
                 metadata["taskIds"] = string.Join(",", declaredTaskIds);
+                metadata["managedConnectorDeclaredTaskIds"] = string.Join(",", declaredTaskIds);
                 metadata["debeziumDeclaredTaskIds"] = string.Join(",", declaredTaskIds);
             }
 

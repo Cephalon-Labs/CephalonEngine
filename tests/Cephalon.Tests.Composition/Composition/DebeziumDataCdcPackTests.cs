@@ -15,6 +15,12 @@ public sealed class DebeziumDataCdcPackTests
 {
     private const string RuntimeId = "inventory-debezium-connector";
     private const string CaptureId = "inventory-customers-cdc";
+    private const string ObserveOnlyRuntimeId = "inventory-observe-only-connector";
+    private const string ObserveOnlyCaptureId = "inventory-orders-cdc";
+    private const string FutureControlPlaneRuntimeId = "inventory-managed-connector";
+    private const string FutureControlPlaneCaptureId = "inventory-products-cdc";
+    private const string OutOfPolicyRuntimeId = "inventory-out-of-policy-connector";
+    private const string OutOfPolicyCaptureId = "inventory-suppliers-cdc";
 
     [Fact]
     public async Task AddDebeziumData_ManagedConnectorClaimsCaptureAndAcceptsExternalReportsWithoutBaseOptIn()
@@ -30,39 +36,20 @@ public sealed class DebeziumDataCdcPackTests
             engine.AddData();
             engine.AddDebeziumData(options =>
             {
-                var connector = new DebeziumConnectorOptions
-                {
-                    Id = RuntimeId,
-                    DisplayName = "Inventory Debezium Connector",
-                    Description = "Represents a Debezium-managed PostgreSQL connector that reports through the shared Cephalon CDC runtime story.",
-                    ConnectClusterId = "connect-cluster-a",
-                    ConnectorClass = "io.debezium.connector.postgresql.PostgresConnector",
-                    SourceProviderId = "postgresql",
-                    TopicPrefix = "inventory",
-                    ExecutionOwnership = "external-managed",
-                    ExecutionTopology = "managed-connector",
-                    AcknowledgementMode = "connector-offset-commit",
-                    ManagementMode = "observe-only",
-                    ObservationStaleAfterSeconds = 180,
-                    ReporterLeaseSeconds = 120,
-                    RejectConflictingReporterIds = true,
-                    ExpectedTaskCount = 2
-                };
-                connector.TaskIds.Add("0");
-                connector.TaskIds.Add("1");
-                connector.EdgeNodeIds.Add("edge-bkk-01");
-                connector.CdcCaptures.Add(new DebeziumCaptureOptions
-                {
-                    Id = CaptureId,
-                    DisplayName = "Inventory Customers CDC",
-                    Description = "Projects Debezium customer-change truth through the shared Cephalon CDC catalogs.",
-                    SourceModuleId = "phase8-runtime-catalogs",
-                    OutboxId = "tenant-event-outbox",
-                    TopicName = "inventory.public.customers",
-                    SnapshotMode = "initial"
-                });
-
-                options.Connectors.Add(connector);
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: RuntimeId,
+                    captureId: CaptureId,
+                    displayName: "Inventory Debezium Connector",
+                    captureDisplayName: "Inventory Customers CDC",
+                    captureDescription: "Projects Debezium customer-change truth through the shared Cephalon CDC catalogs.",
+                    connectClusterId: "connect-cluster-a",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory",
+                    managementMode: "observe-only",
+                    expectedTaskCount: 2,
+                    taskIds: ["0", "1"],
+                    edgeNodeIds: ["edge-bkk-01"]));
             });
         });
 
@@ -97,8 +84,11 @@ public sealed class DebeziumDataCdcPackTests
         Assert.True(runtime.RejectConflictingReporterIds);
         Assert.Equal(["edge-bkk-01"], runtime.EdgeNodeIds);
         Assert.Equal([CaptureId], runtime.CdcCaptureIds);
+        Assert.Equal("observe-only", runtime.Metadata["managedConnectorManagementMode"]);
         Assert.Equal("observe-only", runtime.Metadata["debeziumManagementMode"]);
+        Assert.Equal("2", runtime.Metadata["managedConnectorExpectedTaskCount"]);
         Assert.Equal("2", runtime.Metadata["debeziumExpectedTaskCount"]);
+        Assert.Equal("0,1", runtime.Metadata["managedConnectorDeclaredTaskIds"]);
         Assert.Equal("0,1", runtime.Metadata["debeziumDeclaredTaskIds"]);
 
         await reportSink.ReportAsync(
@@ -150,15 +140,22 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal("task-mismatch", state.Metadata["debeziumTaskReconciliationState"]);
         Assert.Equal("task-mismatch", state.Metadata["debeziumReconciliationState"]);
         Assert.Equal("The Debezium connector declared tasks '0,1' but last reported '0,2'.", state.Metadata["debeziumReconciliationReason"]);
+        Assert.Equal("observe-only", state.Metadata["managedConnectorManagementMode"]);
         Assert.Equal("observe-only", state.Metadata["debeziumManagementMode"]);
+        Assert.Equal("2", state.Metadata["managedConnectorExpectedTaskCount"]);
         Assert.Equal("2", state.Metadata["debeziumExpectedTaskCount"]);
+        Assert.Equal("0,1", state.Metadata["managedConnectorDeclaredTaskIds"]);
         Assert.Equal("0,1", state.Metadata["debeziumDeclaredTaskIds"]);
+        Assert.Equal("0,2", state.Metadata["managedConnectorReportedTaskIds"]);
         Assert.Equal("0,2", state.Metadata["debeziumReportedTaskIds"]);
+        Assert.Equal("0,2", state.Metadata["managedConnectorActiveTaskIds"]);
         Assert.Equal("0,2", state.Metadata["debeziumActiveTaskIds"]);
+        Assert.Equal("task-mismatch", state.Metadata["managedConnectorTaskReconciliationState"]);
+        Assert.Equal("task-mismatch", state.Metadata["managedConnectorReconciliationState"]);
+        Assert.Equal("The Debezium connector declared tasks '0,1' but last reported '0,2'.", state.Metadata["managedConnectorReconciliationReason"]);
         Assert.Equal("RUNNING:2", state.Metadata["debeziumTaskStateSummary"]);
         Assert.Equal("42", state.Metadata["debeziumConnectorGeneration"]);
         Assert.Equal("connect-worker-a-1", state.Metadata["debeziumWorkerId"]);
-        Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.Metadata["observationFreshnessState"]);
         Assert.Equal("180", state.Metadata["observationStaleAfterSeconds"]);
         Assert.Equal("2026-04-23T05:02:00.0000000+00:00", state.Metadata["cdcCaptureReporterLeaseExpiresAtUtc"]);
 
@@ -169,24 +166,212 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, runtime.Summary.LastOutcome);
         Assert.Equal("debezium-report-001", runtime.Summary.LastReportId);
         Assert.Equal("connect-worker-a", runtime.Summary.LastReporterId);
-        Assert.Equal("connect-worker-a", runtime.Summary.ActiveReporterId);
-        Assert.Equal(DateTimeOffset.Parse("2026-04-23T05:02:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterLeaseExpiresAtUtc);
         Assert.Equal(["edge-bkk-01"], runtime.Summary.ObservedEdgeNodeIds);
         Assert.Equal("edge-bkk-01", runtime.Summary.LastEdgeNodeId);
         Assert.Equal(3, runtime.Summary.TotalCapturedChangeCount);
         Assert.Equal(3, runtime.Summary.TotalProducedMessageCount);
         Assert.Equal("connector-offset-commit", runtime.Summary.LastAcknowledgement);
-        Assert.Equal(CdcCaptureFreshnessStates.Fresh, runtime.Summary.ObservationFreshness.State);
+        Assert.Equal("observe-only", runtime.ManagedConnectorGovernance.State);
+        Assert.Equal("observe-only", runtime.ManagedConnectorGovernance.ManagementMode);
+        Assert.Equal("connect-cluster-a", runtime.ManagedConnectorGovernance.ConnectClusterId);
+        Assert.Equal("io.debezium.connector.postgresql.PostgresConnector", runtime.ManagedConnectorGovernance.ConnectorClass);
+        Assert.Equal("postgresql", runtime.ManagedConnectorGovernance.SourceProviderId);
+        Assert.Equal(2, runtime.ManagedConnectorGovernance.ExpectedTaskCount);
+        Assert.Equal(2, runtime.ManagedConnectorGovernance.ReportedTaskCount);
+        Assert.Equal(["0", "1"], runtime.ManagedConnectorGovernance.DeclaredTaskIds);
+        Assert.Equal(["0", "2"], runtime.ManagedConnectorGovernance.ReportedTaskIds);
+        Assert.Equal(["0", "2"], runtime.ManagedConnectorGovernance.ActiveTaskIds);
+        Assert.Equal("running", runtime.ManagedConnectorGovernance.ConnectorLifecycleState);
+        Assert.Equal("task-mismatch", runtime.ManagedConnectorGovernance.TaskReconciliationState);
+        Assert.Equal("task-mismatch", runtime.ManagedConnectorGovernance.ReconciliationState);
+        Assert.Equal("The Debezium connector declared tasks '0,1' but last reported '0,2'.", runtime.ManagedConnectorGovernance.ReconciliationReason);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.KeepObserveOnly, runtime.ManagedConnectorGovernance.RecommendedActionId);
+        Assert.True(runtime.ManagedConnectorGovernance.IsObserveOnly);
+        Assert.False(runtime.ManagedConnectorGovernance.RequiresAttention);
         Assert.Equal("running", runtime.Metadata["debeziumConnectorState"]);
         Assert.Equal("running", runtime.Metadata["debeziumConnectorLifecycleState"]);
         Assert.Equal("task-mismatch", runtime.Metadata["debeziumTaskReconciliationState"]);
         Assert.Equal("task-mismatch", runtime.Metadata["debeziumReconciliationState"]);
         Assert.Equal("The Debezium connector declared tasks '0,1' but last reported '0,2'.", runtime.Metadata["debeziumReconciliationReason"]);
-        Assert.Equal("0,1", runtime.Metadata["debeziumDeclaredTaskIds"]);
+        Assert.Equal("observe-only", runtime.Metadata["managedConnectorManagementMode"]);
+        Assert.Equal("2", runtime.Metadata["managedConnectorExpectedTaskCount"]);
+        Assert.Equal("0,1", runtime.Metadata["managedConnectorDeclaredTaskIds"]);
+        Assert.Equal("task-mismatch", runtime.Metadata["managedConnectorTaskReconciliationState"]);
+        Assert.Equal("task-mismatch", runtime.Metadata["managedConnectorReconciliationState"]);
+        Assert.Equal("The Debezium connector declared tasks '0,1' but last reported '0,2'.", runtime.Metadata["managedConnectorReconciliationReason"]);
+        Assert.Equal("0,2", runtime.Metadata["managedConnectorReportedTaskIds"]);
+        Assert.Equal("0,2", runtime.Metadata["managedConnectorActiveTaskIds"]);
         Assert.Equal("0,2", runtime.Metadata["debeziumReportedTaskIds"]);
         Assert.Equal("0,2", runtime.Metadata["debeziumActiveTaskIds"]);
         Assert.Equal("RUNNING:2", runtime.Metadata["debeziumTaskStateSummary"]);
         Assert.Equal("42", runtime.Metadata["debeziumConnectorGeneration"]);
         Assert.Equal("connect-worker-a-1", runtime.Metadata["debeziumWorkerId"]);
+    }
+
+    [Fact]
+    public void AddDebeziumData_ManagedConnectorGovernanceCatalogExposesSharedStateAndCategoryFilters()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData();
+            engine.AddDebeziumData(options =>
+            {
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: ObserveOnlyRuntimeId,
+                    captureId: ObserveOnlyCaptureId,
+                    displayName: "Inventory Observe-Only Connector",
+                    captureDisplayName: "Inventory Orders CDC",
+                    captureDescription: "Projects inventory order CDC truth through the shared Cephalon runtime catalog.",
+                    connectClusterId: "connect-cluster-a",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory",
+                    managementMode: "observe-only",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: FutureControlPlaneRuntimeId,
+                    captureId: FutureControlPlaneCaptureId,
+                    displayName: "Inventory Managed Connector",
+                    captureDisplayName: "Inventory Products CDC",
+                    captureDescription: "Declares a future write-path management mode while still using shared runtime truth.",
+                    connectClusterId: "connect-cluster-b",
+                    connectorClass: "io.debezium.connector.mysql.MySqlConnector",
+                    sourceProviderId: "mysql",
+                    topicPrefix: "inventory-products",
+                    managementMode: "apply-and-reconcile",
+                    expectedTaskCount: 2,
+                    taskIds: ["0", "1"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: OutOfPolicyRuntimeId,
+                    captureId: OutOfPolicyCaptureId,
+                    displayName: "Inventory Out-of-Policy Connector",
+                    captureDisplayName: "Inventory Suppliers CDC",
+                    captureDescription: "Omits connector-cluster identity so governance falls back to an out-of-policy answer.",
+                    connectClusterId: null,
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-suppliers",
+                    managementMode: "observe-only",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+        var observeOnly = runtimeCatalog.GetById(ObserveOnlyRuntimeId);
+        var futureControlPlane = runtimeCatalog.GetById(FutureControlPlaneRuntimeId);
+        var outOfPolicy = runtimeCatalog.GetById(OutOfPolicyRuntimeId);
+
+        Assert.NotNull(observeOnly);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, observeOnly.ManagedConnectorGovernance.State);
+        Assert.Equal("observe-only", observeOnly.ManagedConnectorGovernance.ManagementMode);
+        Assert.Equal(["0"], observeOnly.ManagedConnectorGovernance.DeclaredTaskIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.KeepObserveOnly, observeOnly.ManagedConnectorGovernance.RecommendedActionId);
+        Assert.False(observeOnly.ManagedConnectorGovernance.RequiresAttention);
+
+        Assert.NotNull(futureControlPlane);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.FutureControlPlane, futureControlPlane.ManagedConnectorGovernance.State);
+        Assert.Equal("apply-and-reconcile", futureControlPlane.ManagedConnectorGovernance.ManagementMode);
+        Assert.Equal(["0", "1"], futureControlPlane.ManagedConnectorGovernance.DeclaredTaskIds);
+        Assert.Equal([CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.FutureControlPlaneMode], futureControlPlane.ManagedConnectorGovernance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.DeferControlPlane, futureControlPlane.ManagedConnectorGovernance.RecommendedActionId);
+        Assert.True(futureControlPlane.ManagedConnectorGovernance.RequiresControlPlaneSupport);
+        Assert.True(futureControlPlane.ManagedConnectorGovernance.RequiresAttention);
+
+        Assert.NotNull(outOfPolicy);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.OutOfPolicy, outOfPolicy.ManagedConnectorGovernance.State);
+        Assert.Equal("observe-only", outOfPolicy.ManagedConnectorGovernance.ManagementMode);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectClusterId, outOfPolicy.ManagedConnectorGovernance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.CompleteGovernanceDeclaration, outOfPolicy.ManagedConnectorGovernance.RecommendedActionId);
+        Assert.True(outOfPolicy.ManagedConnectorGovernance.RequiresAttention);
+        Assert.True(outOfPolicy.ManagedConnectorGovernance.IsOutOfPolicy);
+
+        Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorGovernanceState(CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorGovernanceState(CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.FutureControlPlane)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([OutOfPolicyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorGovernanceState(CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.OutOfPolicy)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorGovernanceCategory(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.FutureControlPlaneMode)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([OutOfPolicyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorGovernanceCategory(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectClusterId)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+    }
+
+    private static DebeziumConnectorOptions CreateConnector(
+        string runtimeId,
+        string captureId,
+        string displayName,
+        string captureDisplayName,
+        string captureDescription,
+        string? connectClusterId,
+        string connectorClass,
+        string sourceProviderId,
+        string topicPrefix,
+        string managementMode,
+        int? expectedTaskCount,
+        IReadOnlyList<string> taskIds,
+        IReadOnlyList<string>? edgeNodeIds = null)
+    {
+        var connector = new DebeziumConnectorOptions
+        {
+            Id = runtimeId,
+            DisplayName = displayName,
+            Description = $"Represents Debezium-managed connector '{runtimeId}' and projects its external runtime observations into the shared Cephalon CDC runtime catalog.",
+            ConnectClusterId = connectClusterId ?? string.Empty,
+            ConnectorClass = connectorClass,
+            SourceProviderId = sourceProviderId,
+            TopicPrefix = topicPrefix,
+            ExecutionOwnership = "external-managed",
+            ExecutionTopology = "managed-connector",
+            AcknowledgementMode = "connector-offset-commit",
+            ManagementMode = managementMode,
+            ObservationStaleAfterSeconds = 180,
+            ReporterLeaseSeconds = 120,
+            RejectConflictingReporterIds = true,
+            ExpectedTaskCount = expectedTaskCount
+        };
+
+        foreach (var taskId in taskIds)
+        {
+            connector.TaskIds.Add(taskId);
+        }
+
+        foreach (var edgeNodeId in edgeNodeIds ?? [])
+        {
+            connector.EdgeNodeIds.Add(edgeNodeId);
+        }
+
+        connector.CdcCaptures.Add(new DebeziumCaptureOptions
+        {
+            Id = captureId,
+            DisplayName = captureDisplayName,
+            Description = captureDescription,
+            SourceModuleId = "phase8-runtime-catalogs",
+            OutboxId = "tenant-event-outbox",
+            TopicName = $"inventory.public.{captureId.Replace("-cdc", string.Empty, StringComparison.OrdinalIgnoreCase).Replace("inventory-", string.Empty, StringComparison.OrdinalIgnoreCase)}",
+            SnapshotMode = "initial"
+        });
+
+        return connector;
     }
 }

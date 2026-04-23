@@ -3027,6 +3027,66 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-169 Phase 13 managed-connector governance baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-165` shipped observe-only Debezium lifecycle and reconciliation truth, while `ENG-168`
+  shipped shared execution-runtime remediation posture, but operators still lacked one shared typed
+  answer for whether a managed connector was still deliberately observe-only, already declaring
+  future control-plane intent, or simply out of policy because governance metadata was incomplete
+- that next follow-through needed to keep managed-connector governance additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only governance
+  registry or premature Kafka Connect control-plane
+- teams also needed route-level drill-downs for governance state and category without claiming that
+  Cephalon already owns create, update, pause, restart, or reconcile write paths for Kafka Connect
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector governance contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `observe-only`,
+  `future-control-plane`, and `out-of-policy` posture together with governance categories,
+  recommended action ids, declared-versus-reported task identity, and lifecycle context
+- the shared execution-runtime catalog now derives that governance posture from merged
+  descriptor-plus-report metadata instead of leaving Debezium lifecycle truth as raw metadata only
+- `Cephalon.Data.Debezium` contributes and normalizes shared `managedConnector*` metadata while
+  preserving existing `debezium*` metadata for compatibility
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive governance-state and governance-category
+  drill-down methods, and ASP.NET Core publishes those same filters on the existing
+  `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later Debezium connector-management work remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorGovernance`
+- `Cephalon.Data` now derives runtime-level `observe-only`, `future-control-plane`, and
+  `out-of-policy` governance posture plus stable category ids such as
+  `missing-management-mode`, `missing-connect-cluster-id`, `missing-connector-class`,
+  `missing-source-provider-id`, and `future-control-plane-mode` from merged managed-connector
+  metadata instead of materializing a second operator cache
+- `Cephalon.Data.Debezium` now writes shared `managedConnector*` metadata beside existing
+  `debezium*` metadata, so declared-versus-reported task ids, expected-versus-reported task counts,
+  lifecycle state, and reconciliation detail flow into the shared execution-runtime governance
+  answer without dropping provider-specific compatibility metadata
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorGovernanceState(...)` plus
+  `GetByManagedConnectorGovernanceCategory(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/governance/{governanceState}` and
+  `/engine/cdc-capture-runtimes/governance/categories/{governanceCategory}` so host routes stay
+  aligned with the same shared runtime story
+- targeted coverage now proves the governance baseline through composition tests `32/32`, hosting
+  tests `10/10`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-168 Phase 13 external-runtime remediation summaries and drill-downs
 
 Status: done

@@ -130,6 +130,16 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         UpsertOptional(metadata, "debeziumRebalanceState", rebalanceState);
         UpsertOptional(metadata, "debeziumConnectorGeneration", connectorGeneration);
         UpsertOptional(metadata, "debeziumWorkerId", workerId);
+        UpsertOptional(metadata, "managedConnectorManagementMode", managementMode);
+        UpsertOptionalInt(metadata, "managedConnectorExpectedTaskCount", expectedTaskCount);
+        UpsertOptionalList(metadata, "managedConnectorDeclaredTaskIds", declaredTaskIds);
+        UpsertOptional(metadata, "managedConnectorConnectorLifecycleState", connectorLifecycleState);
+        UpsertOptional(metadata, "managedConnectorTaskReconciliationState", taskReconciliationState);
+        UpsertOptional(metadata, "managedConnectorReconciliationState", reconciliationState);
+        UpsertOptional(metadata, "managedConnectorReconciliationReason", reconciliationReason);
+        UpsertOptionalInt(metadata, "managedConnectorReportedTaskCount", reportedTaskCount);
+        UpsertOptionalList(metadata, "managedConnectorReportedTaskIds", reportedTaskIds);
+        UpsertOptionalList(metadata, "managedConnectorActiveTaskIds", activeTaskIds);
 
         UpsertExecutionRuntimeMetadata(metadata, "debeziumManagementMode", managementMode);
         UpsertExecutionRuntimeMetadata(metadata, "debeziumExpectedTaskCount", expectedTaskCount?.ToString(CultureInfo.InvariantCulture));
@@ -149,6 +159,16 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         UpsertExecutionRuntimeMetadata(metadata, "debeziumRebalanceState", rebalanceState);
         UpsertExecutionRuntimeMetadata(metadata, "debeziumConnectorGeneration", connectorGeneration);
         UpsertExecutionRuntimeMetadata(metadata, "debeziumWorkerId", workerId);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorManagementMode", managementMode);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorExpectedTaskCount", expectedTaskCount?.ToString(CultureInfo.InvariantCulture));
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorDeclaredTaskIds", JoinValues(declaredTaskIds));
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorConnectorLifecycleState", connectorLifecycleState);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorTaskReconciliationState", taskReconciliationState);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReconciliationState", reconciliationState);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReconciliationReason", reconciliationReason);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReportedTaskCount", reportedTaskCount?.ToString(CultureInfo.InvariantCulture));
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReportedTaskIds", JoinValues(reportedTaskIds));
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorActiveTaskIds", JoinValues(activeTaskIds));
 
         return new CdcCaptureRuntimeObservation(
             cdcCaptureId: observation.CdcCaptureId,

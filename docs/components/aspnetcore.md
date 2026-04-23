@@ -23,7 +23,7 @@
 - `/engine/cdc-captures` when the engine-owned CDC capture catalog is active
 - `/engine/cdc-captures/runtime` when the shared CDC runtime-state catalog is active, including typed freshness, lag, and publication posture
 - `/engine/cdc-capture-runtimes` when the shared CDC execution-runtime catalog is active
-- reporter-, edge-, coordination-, and remediation-aware CDC drill-downs under the existing `/engine/cdc-captures/runtime/*` and `/engine/cdc-capture-runtimes/*` route families when the shared external CDC operator-story catalog is active
+- reporter-, edge-, coordination-, remediation-, and governance-aware CDC drill-downs under the existing `/engine/cdc-captures/runtime/*` and `/engine/cdc-capture-runtimes/*` route families when the shared external CDC operator-story catalog is active
 - `/engine/cdc-capture-runtimes/{executionRuntimeId}/reports` when the opt-in external CDC runtime report sink is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
@@ -175,9 +175,11 @@ That same runtime-first route family now also maps
 narrow execution-runtime summaries by active or rejected reporter provenance, observed edge node,
 coordination posture, or degraded reason on the same shared catalog path. The same route family
 now also maps `/engine/cdc-capture-runtimes/remediation/{remediationState}` and
-`/engine/cdc-capture-runtimes/remediation/categories/{remediationCategory}` so operator flows can
-query the shared execution-runtime remediation summary directly instead of rebuilding a second
-HTTP-local remediation index.
+`/engine/cdc-capture-runtimes/remediation/categories/{remediationCategory}` plus
+`/engine/cdc-capture-runtimes/governance/{governanceState}` and
+`/engine/cdc-capture-runtimes/governance/categories/{governanceCategory}` so operator flows can
+query the shared execution-runtime remediation summary and managed-connector governance posture
+directly instead of rebuilding a second HTTP-local remediation or governance index.
 
 When `ICdcCaptureExecutionRuntimeReportSink` is active, the same host also maps
 `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports`. That route is intentionally

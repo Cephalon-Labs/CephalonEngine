@@ -1,13 +1,13 @@
 # Cephalon.Data.Debezium
 
-`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
+`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
 
 ## What it owns
 
 - contributes Debezium-managed capture descriptors through `DebeziumCaptureOptions` and keeps those descriptors on the shared `/engine/cdc-captures*` catalog with `provider = "debezium"` and `mode = "managed-connector"`
 - contributes external execution runtimes through `DebeziumConnectorOptions` and keeps those runtimes on the shared `/engine/cdc-capture-runtimes*` catalog with `executionOwnership = external-managed`, `executionTopology = managed-connector`, and `acknowledgementMode = connector-offset-commit`
 - wires the shared external-reporting sink automatically when Debezium connectors are configured, so hosts that already add `Cephalon.Data` do not also need to remember `EnableExternalCdcRuntimeReporting = true` just to accept managed connector reports
-- normalizes connector, task, and reconciliation metadata from external Debezium reports into stable `debezium*` metadata on the existing shared capture and execution-runtime surfaces instead of inventing a Debezium-only lifecycle registry
+- normalizes connector, task, reconciliation, and managed-connector governance metadata from external Debezium reports into stable `debezium*` plus shared `managedConnector*` metadata on the existing capture and execution-runtime surfaces instead of inventing a Debezium-only lifecycle or governance registry
 - preserves authored capture ownership through `CdcCaptureDescriptor.SourceModuleId` while surfacing `metadata.contributorModuleId = "debezium-data"` when the Debezium pack contributes descriptors on behalf of another module
 
 ## Main surfaces
@@ -24,9 +24,9 @@
 
 This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the shared CDC descriptor catalog, capture-side execution binding, runtime-state catalog, execution-runtime catalog, operator drill-down routes, runtime story, and snapshot surfaces. `Cephalon.Data.Debezium` adds the managed-connector contribution layer that declares Debezium-owned captures and external execution runtimes on those shared surfaces without inventing a Debezium-specific registry.
 
-That keeps the runtime honest. `Cephalon.Data.Debezium` does not pretend Cephalon runs Kafka Connect tasks or connector worker loops itself, so it does not contribute a fake execution graph or hosted execution. The actual managed connector stays out of process and reports observations back into the shared runtime story through `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports`, while this pack normalizes connector or task lifecycle and reconciliation detail into additive shared metadata instead of inventing a second Debezium operator catalog.
+That keeps the runtime honest. `Cephalon.Data.Debezium` does not pretend Cephalon runs Kafka Connect tasks or connector worker loops itself, so it does not contribute a fake execution graph or hosted execution. The actual managed connector stays out of process and reports observations back into the shared runtime story through `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports`, while this pack normalizes connector or task lifecycle, reconciliation detail, and managed-connector governance inputs into additive shared metadata instead of inventing a second Debezium operator catalog.
 
-The slice also stays intentionally scoped. This pack does not claim Kafka Connect provisioning, Debezium REST management, connector lifecycle orchestration, schema-registry management, or provider-native read/write persistence. It exists to project truthful Debezium-managed capture and runtime topology onto the shared Cephalon CDC surfaces.
+The slice also stays intentionally scoped. This pack does not claim Kafka Connect provisioning, Debezium REST management, connector lifecycle orchestration, schema-registry management, or provider-native read/write persistence. It exists to project truthful Debezium-managed capture and runtime topology onto the shared Cephalon CDC surfaces, with non-`observe-only` management declarations remaining governance truth about future intent rather than a shipped write-path controller.
 
 ## Registration
 
@@ -177,12 +177,24 @@ The `ENG-165` follow-through keeps lifecycle truth additive over the shared repo
 - the shared execution-runtime catalog now also promotes runtime-scoped Debezium reconciliation metadata back onto `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes`, so operators do not need to re-open one capture payload just to understand the connector's latest reported lifecycle posture
 - that same shared execution-runtime catalog now also derives `ReporterCoordinationRollup` on `CdcCaptureExecutionRuntimeSummary`, so Debezium-managed runtimes can answer active versus standby versus rejected reporter posture, degraded-capture ids, and coordination-state or degraded-reason breakdowns directly through `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` without a second Debezium rollup surface
 
+## Managed-connector governance baseline
+
+The `ENG-169` follow-through keeps managed-connector governance additive over the same shared
+runtime surface instead of introducing a Debezium-only control-plane catalog.
+
+- connector declarations and runtime reports now normalize shared `managedConnector*` metadata beside the existing `debezium*` metadata, including management mode, declared versus reported task ids, expected versus reported task counts, and connector reconciliation context
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorGovernance` now publishes stable `observe-only`, `future-control-plane`, and `out-of-policy` posture for Debezium-managed runtimes together with governance categories, recommended action ids, and the latest lifecycle or reconciliation context
+- the shared execution-runtime catalog now derives that governance answer from merged runtime metadata, so missing `ManagementMode`, `ConnectClusterId`, `ConnectorClass`, or `SourceProviderId` becomes truthful `out-of-policy` posture on the existing `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` surfaces
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/governance/{governanceState}` plus `/engine/cdc-capture-runtimes/governance/categories/{governanceCategory}` on the same shared runtime route family, so operator drill-down stays aligned with the engine-owned catalog instead of a Debezium-only endpoint family
+- non-`observe-only` values such as `apply-and-reconcile` currently surface as `future-control-plane` governance truth only; they do not mean Cephalon already owns Kafka Connect write paths
+
 ## Not shipped in this slice
 
 This pack intentionally still does not claim:
 
 - Kafka Connect or Debezium REST API provisioning and reconciliation
 - connector restart or pause management
+- managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - per-task execution graphs or hosted executions inside Cephalon
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation

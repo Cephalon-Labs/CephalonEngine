@@ -67,6 +67,10 @@
 - `Data/CdcCaptureRuntimeState.cs`
 - `Data/ICdcCaptureRuntimeStateCatalog.cs`
 - `Data/CdcCaptureExecutionRuntimeDescriptor.cs`
+- `Data/CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.cs`
+- `Data/CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.cs`
+- `Data/CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.cs`
+- `Data/CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus.cs`
 - `Data/CdcCaptureExecutionRuntimeRemediationCategories.cs`
 - `Data/CdcCaptureExecutionRuntimeRemediationStates.cs`
 - `Data/CdcCaptureExecutionRuntimeRemediationStatus.cs`
@@ -258,6 +262,19 @@ through `CdcCaptureExecutionRuntimeRemediationStates`,
 one runtime is currently `ready`, needs operator `attention`, or is `blocked` by failed captures
 while still seeing the active remediation categories plus affected capture ids on the same shared
 contract instead of inventing a second external-runtime remediation registry.
+
+That same shared execution-runtime contract now also publishes managed-connector governance
+posture through `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds`,
+`CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorGovernance`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorGovernanceState(...)` /
+`GetByManagedConnectorGovernanceCategory(...)` filters. That keeps `managed-connector` runtimes
+queryable as shared `not-applicable`, `observe-only`, `future-control-plane`, or
+`out-of-policy` answers together with governance categories, recommended action ids, declared
+versus reported task identity, and connector lifecycle or reconciliation context instead of
+inventing a Debezium-only governance contract.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

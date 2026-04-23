@@ -232,6 +232,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     /// </summary>
     public CdcCaptureExecutionRuntimeSummary Summary { get; }
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector governance posture for the execution runtime.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus ManagedConnectorGovernance { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.Unknown);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

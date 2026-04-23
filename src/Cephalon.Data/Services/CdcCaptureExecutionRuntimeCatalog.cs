@@ -5,6 +5,19 @@ namespace Cephalon.Data.Services;
 internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRuntimeCatalog
 {
     private const string ExecutionRuntimeMetadataPrefix = "executionRuntime.";
+    private const string ManagedConnectorManagementModeMetadataKey = "managedConnectorManagementMode";
+    private const string ConnectClusterIdMetadataKey = "connectClusterId";
+    private const string ConnectorClassMetadataKey = "connectorClass";
+    private const string SourceProviderIdMetadataKey = "sourceProviderId";
+    private const string ManagedConnectorExpectedTaskCountMetadataKey = "managedConnectorExpectedTaskCount";
+    private const string ManagedConnectorDeclaredTaskIdsMetadataKey = "managedConnectorDeclaredTaskIds";
+    private const string ManagedConnectorReportedTaskCountMetadataKey = "managedConnectorReportedTaskCount";
+    private const string ManagedConnectorReportedTaskIdsMetadataKey = "managedConnectorReportedTaskIds";
+    private const string ManagedConnectorActiveTaskIdsMetadataKey = "managedConnectorActiveTaskIds";
+    private const string ManagedConnectorConnectorLifecycleStateMetadataKey = "managedConnectorConnectorLifecycleState";
+    private const string ManagedConnectorTaskReconciliationStateMetadataKey = "managedConnectorTaskReconciliationState";
+    private const string ManagedConnectorReconciliationStateMetadataKey = "managedConnectorReconciliationState";
+    private const string ManagedConnectorReconciliationReasonMetadataKey = "managedConnectorReconciliationReason";
     private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> index;
     private readonly ICdcCaptureCatalog captureCatalog;
     private readonly ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog;
@@ -103,6 +116,27 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparer.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorGovernanceState(string governanceState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(governanceState);
+        var normalizedGovernanceState = governanceState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorGovernance.State,
+            normalizedGovernanceState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorGovernanceCategory(string governanceCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(governanceCategory);
+        var normalizedGovernanceCategory = governanceCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorGovernance.CategoryIds.Contains(
+            normalizedGovernanceCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
     private CdcCaptureExecutionRuntimeDescriptor[] FilterRuntimes(
         Func<CdcCaptureExecutionRuntimeDescriptor, bool> predicate)
     {
@@ -119,16 +153,21 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     {
         var captureIds = ResolveCaptureIds(runtime.Id);
         var matchingStates = runtimeStateCatalog?.GetByExecutionRuntimeId(runtime.Id) ?? [];
+        var mergedMetadata = MergeRuntimeMetadata(runtime.Metadata, matchingStates);
         var summary = matchingStates.Count == 0
             ? CreateEmptySummary(runtime, captureIds)
             : CreateSummary(runtime, captureIds, matchingStates);
+        var managedConnectorGovernance = CreateManagedConnectorGovernance(runtime.ExecutionTopology, mergedMetadata);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
             description: runtime.Description,
-            metadata: MergeRuntimeMetadata(runtime.Metadata, matchingStates),
+            metadata: mergedMetadata,
             cdcCaptureIds: captureIds,
-            summary: summary);
+            summary: summary)
+        {
+            ManagedConnectorGovernance = managedConnectorGovernance
+        };
     }
 
     private static CdcCaptureExecutionRuntimeSummary CreateEmptySummary(
@@ -366,6 +405,193 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return merged;
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus CreateManagedConnectorGovernance(
+        string executionTopology,
+        IReadOnlyDictionary<string, string> metadata)
+    {
+        if (!string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase))
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.NotApplicable,
+                "The execution runtime does not currently represent a managed connector.")
+            {
+                RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.None
+            };
+        }
+
+        var managementMode = ResolveMetadata(metadata, ManagedConnectorManagementModeMetadataKey, "debeziumManagementMode");
+        var connectClusterId = ResolveMetadata(metadata, ConnectClusterIdMetadataKey);
+        var connectorClass = ResolveMetadata(metadata, ConnectorClassMetadataKey);
+        var sourceProviderId = ResolveMetadata(metadata, SourceProviderIdMetadataKey);
+        var expectedTaskCount = ResolveNullableIntMetadata(metadata, ManagedConnectorExpectedTaskCountMetadataKey, "debeziumExpectedTaskCount");
+        var reportedTaskCount = ResolveNullableIntMetadata(metadata, ManagedConnectorReportedTaskCountMetadataKey, "debeziumReportedTaskCount");
+        var declaredTaskIds = ResolveDelimitedMetadata(metadata, ManagedConnectorDeclaredTaskIdsMetadataKey, "debeziumDeclaredTaskIds", "taskIds");
+        var reportedTaskIds = ResolveDelimitedMetadata(metadata, ManagedConnectorReportedTaskIdsMetadataKey, "debeziumReportedTaskIds");
+        var activeTaskIds = ResolveDelimitedMetadata(metadata, ManagedConnectorActiveTaskIdsMetadataKey, "debeziumActiveTaskIds");
+        var connectorLifecycleState = ResolveMetadata(metadata, ManagedConnectorConnectorLifecycleStateMetadataKey, "debeziumConnectorLifecycleState");
+        var taskReconciliationState = ResolveMetadata(metadata, ManagedConnectorTaskReconciliationStateMetadataKey, "debeziumTaskReconciliationState");
+        var reconciliationState = ResolveMetadata(metadata, ManagedConnectorReconciliationStateMetadataKey, "debeziumReconciliationState");
+        var reconciliationReason = ResolveMetadata(metadata, ManagedConnectorReconciliationReasonMetadataKey, "debeziumReconciliationReason");
+        var categories = new List<string>(capacity: 5);
+
+        if (string.IsNullOrWhiteSpace(managementMode))
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingManagementMode);
+        }
+
+        if (string.IsNullOrWhiteSpace(connectClusterId))
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectClusterId);
+        }
+
+        if (string.IsNullOrWhiteSpace(connectorClass))
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectorClass);
+        }
+
+        if (string.IsNullOrWhiteSpace(sourceProviderId))
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingSourceProviderId);
+        }
+
+        if (!string.IsNullOrWhiteSpace(managementMode) &&
+            !string.Equals(managementMode, CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.FutureControlPlaneMode);
+        }
+
+        if (categories.Any(category => category.StartsWith("missing-", StringComparison.OrdinalIgnoreCase)))
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.OutOfPolicy,
+                CreateManagedConnectorOutOfPolicyDescription(categories, managementMode))
+            {
+                CategoryIds = categories,
+                ManagementMode = managementMode,
+                ConnectClusterId = connectClusterId,
+                ConnectorClass = connectorClass,
+                SourceProviderId = sourceProviderId,
+                ExpectedTaskCount = expectedTaskCount,
+                ReportedTaskCount = reportedTaskCount,
+                DeclaredTaskIds = declaredTaskIds,
+                ReportedTaskIds = reportedTaskIds,
+                ActiveTaskIds = activeTaskIds,
+                ConnectorLifecycleState = connectorLifecycleState,
+                TaskReconciliationState = taskReconciliationState,
+                ReconciliationState = reconciliationState,
+                ReconciliationReason = reconciliationReason,
+                RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.CompleteGovernanceDeclaration
+            };
+        }
+
+        if (!string.IsNullOrWhiteSpace(managementMode) &&
+            !string.Equals(managementMode, CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.FutureControlPlane,
+                $"The managed connector declares management mode '{managementMode}', but Cephalon currently exposes governance truth only and does not own connector write actions yet.")
+            {
+                CategoryIds = [CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.FutureControlPlaneMode],
+                ManagementMode = managementMode,
+                ConnectClusterId = connectClusterId,
+                ConnectorClass = connectorClass,
+                SourceProviderId = sourceProviderId,
+                ExpectedTaskCount = expectedTaskCount,
+                ReportedTaskCount = reportedTaskCount,
+                DeclaredTaskIds = declaredTaskIds,
+                ReportedTaskIds = reportedTaskIds,
+                ActiveTaskIds = activeTaskIds,
+                ConnectorLifecycleState = connectorLifecycleState,
+                TaskReconciliationState = taskReconciliationState,
+                ReconciliationState = reconciliationState,
+                ReconciliationReason = reconciliationReason,
+                RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.DeferControlPlane
+            };
+        }
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus(
+            CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly,
+            CreateManagedConnectorObserveOnlyDescription(reconciliationState, reconciliationReason))
+        {
+            ManagementMode = managementMode,
+            ConnectClusterId = connectClusterId,
+            ConnectorClass = connectorClass,
+            SourceProviderId = sourceProviderId,
+            ExpectedTaskCount = expectedTaskCount,
+            ReportedTaskCount = reportedTaskCount,
+            DeclaredTaskIds = declaredTaskIds,
+            ReportedTaskIds = reportedTaskIds,
+            ActiveTaskIds = activeTaskIds,
+            ConnectorLifecycleState = connectorLifecycleState,
+            TaskReconciliationState = taskReconciliationState,
+            ReconciliationState = reconciliationState,
+            ReconciliationReason = reconciliationReason,
+            RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.KeepObserveOnly
+        };
+    }
+
+    private static string CreateManagedConnectorObserveOnlyDescription(
+        string? reconciliationState,
+        string? reconciliationReason)
+    {
+        if (string.IsNullOrWhiteSpace(reconciliationState) ||
+            string.Equals(reconciliationState, "current", StringComparison.OrdinalIgnoreCase))
+        {
+            return "The managed connector is currently governed in observe-only mode.";
+        }
+
+        if (!string.IsNullOrWhiteSpace(reconciliationReason))
+        {
+            return $"The managed connector is currently governed in observe-only mode. {reconciliationReason}";
+        }
+
+        return $"The managed connector is currently governed in observe-only mode and last reported reconciliation state '{reconciliationState}'.";
+    }
+
+    private static string CreateManagedConnectorOutOfPolicyDescription(
+        IReadOnlyCollection<string> categories,
+        string? managementMode)
+    {
+        ArgumentNullException.ThrowIfNull(categories);
+
+        var missingMessages = new List<string>(capacity: 4);
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingManagementMode, StringComparer.OrdinalIgnoreCase))
+        {
+            missingMessages.Add("management mode");
+        }
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectClusterId, StringComparer.OrdinalIgnoreCase))
+        {
+            missingMessages.Add("connector cluster id");
+        }
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectorClass, StringComparer.OrdinalIgnoreCase))
+        {
+            missingMessages.Add("connector class");
+        }
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingSourceProviderId, StringComparer.OrdinalIgnoreCase))
+        {
+            missingMessages.Add("source provider id");
+        }
+
+        var description = missingMessages.Count switch
+        {
+            0 => "The managed connector is currently out of policy.",
+            1 => $"The managed connector is currently out of policy because it does not declare {missingMessages[0]}.",
+            2 => $"The managed connector is currently out of policy because it does not declare {missingMessages[0]} or {missingMessages[1]}.",
+            _ => $"The managed connector is currently out of policy because it does not declare {string.Join(", ", missingMessages.Take(missingMessages.Count - 1))}, or {missingMessages[^1]}."
+        };
+
+        if (!string.IsNullOrWhiteSpace(managementMode) &&
+            !string.Equals(managementMode, CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{description} It also declares future management mode '{managementMode}', which remains a later control-plane slice.";
+        }
+
+        return description;
     }
 
     private static CdcCaptureReporterCoordinationStatus CreateReporterCoordination(
@@ -624,5 +850,65 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     {
         return !reporterLeaseExpiresAtUtc.HasValue ||
                reporterLeaseExpiresAtUtc.Value >= now;
+    }
+
+    private static string[] ResolveDelimitedMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        params string[] keys)
+    {
+        foreach (var key in keys)
+        {
+            if (!metadata.TryGetValue(key, out var value) ||
+                string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            return value
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(static item => !string.IsNullOrWhiteSpace(item))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static item => item, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+
+        return [];
+    }
+
+    private static string? ResolveMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        params string[] keys)
+    {
+        foreach (var key in keys)
+        {
+            if (metadata.TryGetValue(key, out var value) &&
+                !string.IsNullOrWhiteSpace(value))
+            {
+                return value.Trim();
+            }
+        }
+
+        return null;
+    }
+
+    private static int? ResolveNullableIntMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        params string[] keys)
+    {
+        foreach (var key in keys)
+        {
+            if (!metadata.TryGetValue(key, out var value) ||
+                string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            if (int.TryParse(value.Trim(), out var parsed))
+            {
+                return parsed;
+            }
+        }
+
+        return null;
     }
 }

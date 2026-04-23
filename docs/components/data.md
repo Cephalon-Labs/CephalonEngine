@@ -154,14 +154,27 @@ coverage and remediation stay truthful even when capture ownership comes from au
 `/engine/cdc-capture-runtimes*` plus `snapshot.CdcCaptureExecutionRuntimes` instead of inventing a
 second external-runtime remediation registry.
 
+That same shared execution-runtime story now also keeps managed-connector governance explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorGovernance` publishes stable
+`not-applicable` / `observe-only` / `future-control-plane` / `out-of-policy` posture together with
+governance categories such as `missing-management-mode`, `missing-connect-cluster-id`,
+`missing-connector-class`, `missing-source-provider-id`, and `future-control-plane-mode`, plus the
+recommended action id, declared-versus-reported task ids, and latest connector lifecycle or
+reconciliation context. The shared execution-runtime catalog derives that answer from merged
+runtime metadata, so external managed connectors can stay on the existing `/engine/cdc-*`,
+`/engine/runtime-story`, and `snapshot` surfaces instead of inventing a Debezium-only governance
+registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
-state, degraded reason, remediation state, and remediation category as well.
+state, degraded reason, remediation state, remediation category, managed-connector governance
+state, and managed-connector governance category as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
-`GetByRemediationCategory(...)`, so host code, provider packs, and tooling can narrow the shared
-CDC runtime story without rebuilding a second coordination or remediation index. ASP.NET Core maps
-those same filters through
+`GetByRemediationCategory(...)`, `GetByManagedConnectorGovernanceState(...)`, and
+`GetByManagedConnectorGovernanceCategory(...)`, so host code, provider packs, and tooling can
+narrow the shared CDC runtime story without rebuilding a second coordination, remediation, or
+managed-connector governance index. ASP.NET Core maps those same filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
 `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
 `/engine/cdc-captures/runtime/reporter-coordination/{coordinationState}`,
@@ -171,7 +184,9 @@ those same filters through
 `/engine/cdc-capture-runtimes/reporter-coordination/{coordinationState}`, and
 `/engine/cdc-capture-runtimes/reporter-coordination/issues/{degradedReason}` together with
 `/engine/cdc-capture-runtimes/remediation/{remediationState}` and
-`/engine/cdc-capture-runtimes/remediation/categories/{remediationCategory}` so the live host
+`/engine/cdc-capture-runtimes/remediation/categories/{remediationCategory}` plus
+`/engine/cdc-capture-runtimes/governance/{governanceState}` and
+`/engine/cdc-capture-runtimes/governance/categories/{governanceCategory}` so the live host
 surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
@@ -213,8 +228,9 @@ logical-streaming, binlog, and redo-log families without inventing a second cont
 connectors without faking a Cephalon-hosted execution loop. Its managed-connector descriptors plus
 shared report-sink bridge keep Debezium or Kafka Connect style lifecycle, reconciliation, and
 reporter-coordination truth on the same `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot`
-surfaces, while the shared execution-runtime catalog now rolls that connector posture back into
-typed runtime-level operator summaries instead of inventing a Debezium-only status registry.
+surfaces, while the shared execution-runtime catalog now rolls that connector posture plus
+managed-connector governance back into typed runtime-level operator summaries instead of inventing
+a Debezium-only status registry.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
