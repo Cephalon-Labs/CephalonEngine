@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T12:49:45.9830762+00:00",
+  "GeneratedAtUtc": "2026-04-23T13:26:20.7444458+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 417
+      "TypeCount": 428
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -571,7 +571,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 137
+      "TypeCount": 148
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3210,7 +3210,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 26,
+        "Properties": 27,
         "Methods": 0
       }
     },
@@ -3346,6 +3346,51 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 38,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest",
+      "Summary": "Describes optional operator intent supplied when Cephalon evaluates one managed-connector command-execution request.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "Summary": "Describes the immediate result of one managed-connector command-execution request evaluated by Cephalon.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 33,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector command-execution results.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
         "Methods": 0
       }
     },
@@ -3541,6 +3586,96 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 26,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector execution-adapter answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 16,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterids",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds",
+      "Summary": "Defines the stable provider execution-adapter identifiers used by managed-connector execution-adapter answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 2,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds",
+      "Summary": "Defines the stable operation identifiers used by managed-connector execution-adapter answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources",
+      "Summary": "Defines the stable source identifiers used by managed-connector execution-adapter answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector execution-adapter answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "Summary": "Describes the current operator-facing managed-connector provider execution-adapter posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 45,
         "Methods": 0
       }
     },
@@ -7336,7 +7471,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 33
+        "Methods": 36
       }
     },
     {
@@ -7352,6 +7487,36 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorcommandexecutor",
+      "Declaration": "public interface ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor",
+      "Summary": "Evaluates one shared managed-connector command request against the active provider execution-adapter set.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter",
+      "Declaration": "public interface ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter",
+      "Summary": "Translates one shared managed-connector command request into a provider-facing execution shape.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
       }
     },
     {
@@ -13780,6 +13945,17 @@
     {
       "DisplayName": "ActionPlanState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-actionplanstate",
+      "Signature": "string ActionPlanState { get; set; }",
+      "Summary": "Gets the current managed-connector action-plan state that informed the execution adapter."
+    },
+    {
+      "DisplayName": "ActionPlanState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -14117,6 +14293,94 @@
       "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-actualversion",
       "Signature": "long ActualVersion { get; }",
       "Summary": "Gets the version that currently exists in the store."
+    },
+    {
+      "DisplayName": "Adapted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-adapted",
+      "Signature": "const string Adapted",
+      "Summary": "The requested command was translated into a provider-facing command shape."
+    },
+    {
+      "DisplayName": "AdapterFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-adapterfingerprint",
+      "Signature": "string AdapterFingerprint { get; set; }",
+      "Summary": "Gets the deterministic execution-adapter fingerprint already associated with the current managed connector."
+    },
+    {
+      "DisplayName": "AdapterFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-adapterfingerprint",
+      "Signature": "string AdapterFingerprint { get; set; }",
+      "Summary": "Gets the deterministic execution-adapter fingerprint Cephalon currently derives for the managed connector."
+    },
+    {
+      "DisplayName": "AdapterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-adapterid",
+      "Signature": "string AdapterId { get; set; }",
+      "Summary": "Gets the current provider execution-adapter identifier that handled the request when one was available."
+    },
+    {
+      "DisplayName": "AdapterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-adapterid",
+      "Signature": "string AdapterId { get; set; }",
+      "Summary": "Gets the stable provider execution-adapter identifier currently associated with the execution runtime."
+    },
+    {
+      "DisplayName": "AdapterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-adapterid",
+      "Signature": "string AdapterId { get; }",
+      "Summary": "Gets the stable provider execution-adapter identifier exposed on shared runtime surfaces."
+    },
+    {
+      "DisplayName": "AdapterReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-adapterready",
+      "Signature": "const string AdapterReady",
+      "Summary": "The execution adapter is currently ready to translate provider-facing commands."
+    },
+    {
+      "DisplayName": "AdapterUnavailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-adapterunavailable",
+      "Signature": "const string AdapterUnavailable",
+      "Summary": "The execution adapter is currently unavailable for the active managed connector."
     },
     {
       "DisplayName": "Add",
@@ -16242,6 +16506,17 @@
       "Summary": "Gets a value indicating whether raw assembly-path packages are allowed."
     },
     {
+      "DisplayName": "AllowDestructive",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-allowdestructive",
+      "Signature": "bool AllowDestructive { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the caller explicitly allows destructive operations such as connector deletion."
+    },
+    {
       "DisplayName": "Allowed",
       "Category": "Fields",
       "DeclaringTypeName": "CapabilityAccess",
@@ -16783,6 +17058,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -17091,6 +17377,17 @@
     {
       "DisplayName": "ApprovalReady",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-approvalready",
+      "Signature": "const string ApprovalReady",
+      "Summary": "The execution adapter is currently approval-ready on the shared execution lane."
+    },
+    {
+      "DisplayName": "ApprovalReady",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -17135,6 +17432,17 @@
     {
       "DisplayName": "ApprovalRequired",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-approvalrequired",
+      "Signature": "const string ApprovalRequired",
+      "Summary": "The execution adapter still reflects a higher-risk approval requirement."
+    },
+    {
+      "DisplayName": "ApprovalRequired",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -17164,6 +17472,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-approvalrequired",
       "Signature": "const string ApprovalRequired",
       "Summary": "The next intended follow-through would still require an approval or safety gate before engine execution."
+    },
+    {
+      "DisplayName": "Approve",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-approve",
+      "Signature": "bool Approve { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the caller is intentionally approving an approval-gated provider command."
     },
     {
       "DisplayName": "AppUrl",
@@ -19434,6 +19753,17 @@
     {
       "DisplayName": "Blocked",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-blocked",
+      "Signature": "const string Blocked",
+      "Summary": "The requested command remains blocked before Cephalon can safely route it."
+    },
+    {
+      "DisplayName": "Blocked",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19452,6 +19782,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-blocked",
       "Signature": "const string Blocked",
       "Summary": "The managed connector cannot currently progress to a dry-run answer because prerequisite runtime truth is incomplete or blocked."
+    },
+    {
+      "DisplayName": "Blocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-blocked",
+      "Signature": "const string Blocked",
+      "Summary": "The managed connector still has one or more blockers before Cephalon can trust a provider execution adapter."
     },
     {
       "DisplayName": "Blocked",
@@ -19551,6 +19892,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-blockingremediation",
       "Signature": "const string BlockingRemediation",
       "Summary": "The managed connector is blocked by failed or otherwise blocking runtime remediation work."
+    },
+    {
+      "DisplayName": "BlockingRemediation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-blockingremediation",
+      "Signature": "const string BlockingRemediation",
+      "Summary": "The execution adapter is blocked by remediation that still needs to clear first."
     },
     {
       "DisplayName": "BlockingRemediation",
@@ -20114,6 +20466,17 @@
       "Summary": "Gets a value indicating whether the next intended follow-through currently sits inside the future engine-execution lane."
     },
     {
+      "DisplayName": "CanHandle",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-canhandle-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor",
+      "Signature": "bool CanHandle(CdcCaptureExecutionRuntimeDescriptor runtime)",
+      "Summary": "Gets a value indicating whether the adapter can currently handle the supplied execution runtime."
+    },
+    {
       "DisplayName": "CanMaterialize",
       "Category": "Methods",
       "DeclaringTypeName": "ICellTrafficAutomationEdgeMaterializer",
@@ -20178,6 +20541,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimefailureinfo-canrestart",
       "Signature": "bool CanRestart { get; set; }",
       "Summary": "Whether the current policy allows a manual restart after this failure."
+    },
+    {
+      "DisplayName": "CanUseProviderExecutionAdapter",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-canuseproviderexecutionadapter",
+      "Signature": "bool CanUseProviderExecutionAdapter { get; }",
+      "Summary": "Gets a value indicating whether the current provider execution-adapter lane can be used by a matching provider pack."
     },
     {
       "DisplayName": "Capabilities",
@@ -20611,6 +20985,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active execution-adapter categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20728,6 +21113,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable dry-run categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable execution-adapter categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -20917,6 +21313,28 @@
       "Summary": "Creates a new managed-connector command-envelope answer."
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-ctor",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest()",
+      "Summary": "Creates a new managed-connector command-execution request."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult(string state, string description)",
+      "Summary": "Creates a new managed-connector command-execution result."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
@@ -20948,6 +21366,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-ctor-system-string-system-string",
       "Signature": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus(string state, string description)",
       "Summary": "Creates a new managed-connector dry-run answer."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector execution-adapter answer."
     },
     {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
@@ -21179,6 +21608,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with command issuance."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with the execution adapter."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -21729,6 +22169,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-changeplanned",
       "Signature": "const string ChangePlanned",
       "Summary": "The managed connector currently reports at least one potential shared write-path change for the intended management operation."
+    },
+    {
+      "DisplayName": "ChangePlanned",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-changeplanned",
+      "Signature": "const string ChangePlanned",
+      "Summary": "The execution adapter still reflects one or more shared write-path changes."
     },
     {
       "DisplayName": "ChangePlanned",
@@ -22842,6 +23293,17 @@
       "Summary": "The command issuance is primarily grounded in shared command-envelope truth."
     },
     {
+      "DisplayName": "CommandEnvelope",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-commandenvelope",
+      "Signature": "const string CommandEnvelope",
+      "Summary": "The execution adapter is primarily grounded in shared command-envelope truth."
+    },
+    {
       "DisplayName": "CommandEnvelopeSourceId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
@@ -22853,6 +23315,28 @@
       "Summary": "Gets the primary source identifier already associated with managed-connector command envelopes."
     },
     {
+      "DisplayName": "CommandEnvelopeSourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandenvelopesourceid",
+      "Signature": "string CommandEnvelopeSourceId { get; set; }",
+      "Summary": "Gets the primary source identifier already associated with managed-connector command envelopes."
+    },
+    {
+      "DisplayName": "CommandEnvelopeState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-commandenvelopestate",
+      "Signature": "string CommandEnvelopeState { get; set; }",
+      "Summary": "Gets the current command-envelope state that informed the request result."
+    },
+    {
       "DisplayName": "CommandEnvelopeState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
@@ -22862,6 +23346,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-commandenvelopestate",
       "Signature": "string CommandEnvelopeState { get; set; }",
       "Summary": "Gets the current managed-connector command-envelope state that informed command issuance."
+    },
+    {
+      "DisplayName": "CommandEnvelopeState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandenvelopestate",
+      "Signature": "string CommandEnvelopeState { get; set; }",
+      "Summary": "Gets the current managed-connector command-envelope state that informed the execution adapter."
     },
     {
       "DisplayName": "CommandFingerprint",
@@ -22877,11 +23372,33 @@
     {
       "DisplayName": "CommandFingerprint",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-commandfingerprint",
+      "Signature": "string CommandFingerprint { get; set; }",
+      "Summary": "Gets the deterministic command fingerprint already associated with the current managed connector."
+    },
+    {
+      "DisplayName": "CommandFingerprint",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-commandfingerprint",
+      "Signature": "string CommandFingerprint { get; set; }",
+      "Summary": "Gets the deterministic command fingerprint already associated with the current managed connector."
+    },
+    {
+      "DisplayName": "CommandFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandfingerprint",
       "Signature": "string CommandFingerprint { get; set; }",
       "Summary": "Gets the deterministic command fingerprint already associated with the current managed connector."
     },
@@ -22895,6 +23412,50 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-commandids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CommandIds { get; }",
       "Summary": "Gets the stable command identifiers represented in this batch, in encounter order."
+    },
+    {
+      "DisplayName": "CommandIssuance",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-commandissuance",
+      "Signature": "const string CommandIssuance",
+      "Summary": "The execution adapter is primarily grounded in shared command-issuance truth."
+    },
+    {
+      "DisplayName": "CommandIssuanceSourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandissuancesourceid",
+      "Signature": "string CommandIssuanceSourceId { get; set; }",
+      "Summary": "Gets the primary source identifier already associated with managed-connector command issuance."
+    },
+    {
+      "DisplayName": "CommandIssuanceState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-commandissuancestate",
+      "Signature": "string CommandIssuanceState { get; set; }",
+      "Summary": "Gets the current command-issuance state that informed the request result."
+    },
+    {
+      "DisplayName": "CommandIssuanceState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandissuancestate",
+      "Signature": "string CommandIssuanceState { get; set; }",
+      "Summary": "Gets the current managed-connector command-issuance state that informed the execution adapter."
     },
     {
       "DisplayName": "Commands",
@@ -23460,6 +24021,17 @@
     {
       "DisplayName": "ConnectClusterId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-connectclusterid",
+      "Signature": "string ConnectClusterId { get; set; }",
+      "Summary": "Gets the connector-cluster identifier targeted by the provider command when one was available."
+    },
+    {
+      "DisplayName": "ConnectClusterId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -23467,6 +24039,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-connectclusterid",
       "Signature": "string ConnectClusterId { get; set; }",
       "Summary": "Gets the best available connector-cluster identifier Cephalon would target for command issuance."
+    },
+    {
+      "DisplayName": "ConnectClusterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-connectclusterid",
+      "Signature": "string ConnectClusterId { get; set; }",
+      "Summary": "Gets the best available connector-cluster identifier Cephalon would target through the execution adapter."
     },
     {
       "DisplayName": "ConnectClusterId",
@@ -23779,6 +24362,17 @@
     {
       "DisplayName": "ConnectorClass",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-connectorclass",
+      "Signature": "string ConnectorClass { get; set; }",
+      "Summary": "Gets the provider-facing connector-class identifier targeted by the provider command when one was available."
+    },
+    {
+      "DisplayName": "ConnectorClass",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -23786,6 +24380,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-connectorclass",
       "Signature": "string ConnectorClass { get; set; }",
       "Summary": "Gets the best available connector-class identifier Cephalon would target for command issuance."
+    },
+    {
+      "DisplayName": "ConnectorClass",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-connectorclass",
+      "Signature": "string ConnectorClass { get; set; }",
+      "Summary": "Gets the best available connector-class identifier Cephalon would target through the execution adapter."
     },
     {
       "DisplayName": "ConnectorClass",
@@ -23830,6 +24435,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-connectorclassmismatch",
       "Signature": "const string ConnectorClassMismatch",
       "Summary": "The latest reported connector class differs from the declared managed-connector baseline."
+    },
+    {
+      "DisplayName": "ConnectorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-connectorid",
+      "Signature": "string ConnectorId { get; set; }",
+      "Summary": "Gets the provider-facing connector identifier targeted by the provider command when one was available."
     },
     {
       "DisplayName": "ConnectorLifecycleState",
@@ -24182,6 +24798,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancecategories-controlplaneownershipgap",
       "Signature": "const string ControlPlaneOwnershipGap",
       "Summary": "The command issuance is constrained because control-plane ownership still remains outside Cephalon."
+    },
+    {
+      "DisplayName": "ControlPlaneOwnershipGap",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-controlplaneownershipgap",
+      "Signature": "const string ControlPlaneOwnershipGap",
+      "Summary": "The execution adapter is constrained because control-plane ownership still remains outside Cephalon."
     },
     {
       "DisplayName": "ControlPlaneOwnershipGap",
@@ -25578,6 +26205,17 @@
       "Signature": "DebeziumDataOptions()"
     },
     {
+      "DisplayName": "DebeziumKafkaConnectRest",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterids-debeziumkafkaconnectrest",
+      "Signature": "const string DebeziumKafkaConnectRest",
+      "Summary": "The Debezium or Kafka Connect REST management adapter currently applies."
+    },
+    {
       "DisplayName": "Debug",
       "Category": "Fields",
       "DeclaringTypeName": "DiagnosticSeverity",
@@ -26218,6 +26856,17 @@
     {
       "DisplayName": "Delete",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-delete",
+      "Signature": "const string Delete",
+      "Summary": "Delete the managed connector."
+    },
+    {
+      "DisplayName": "Delete",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26658,6 +27307,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing command-execution summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26687,6 +27347,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing dry-run summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing execution-adapter summary."
     },
     {
       "DisplayName": "Description",
@@ -27611,6 +28282,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancecategories-destructiveoperation",
       "Signature": "const string DestructiveOperation",
       "Summary": "The command issuance still reflects a destructive write-path such as connector deletion."
+    },
+    {
+      "DisplayName": "DestructiveOperation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-destructiveoperation",
+      "Signature": "const string DestructiveOperation",
+      "Summary": "The execution adapter still reflects a destructive write-path such as connector deletion."
     },
     {
       "DisplayName": "DestructiveOperation",
@@ -28979,6 +29661,17 @@
     {
       "DisplayName": "DriftState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-driftstate",
+      "Signature": "string DriftState { get; set; }",
+      "Summary": "Gets the current managed-connector drift state that informed the execution adapter."
+    },
+    {
+      "DisplayName": "DriftState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -29096,6 +29789,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-dryrunstate",
       "Signature": "string DryRunState { get; set; }",
       "Summary": "Gets the current managed-connector dry-run state that informed command issuance."
+    },
+    {
+      "DisplayName": "DryRunState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-dryrunstate",
+      "Signature": "string DryRunState { get; set; }",
+      "Summary": "Gets the current managed-connector dry-run state that informed the execution adapter."
     },
     {
       "DisplayName": "DryRunState",
@@ -32147,6 +32851,28 @@
     {
       "DisplayName": "ExecuteAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorcommandexecutor-executeasync-system-string-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CCdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult\u003E ExecuteAsync(string executionRuntimeId, string operationId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest request, CancellationToken cancellationToken)",
+      "Summary": "Evaluates one managed-connector command request for the supplied execution runtime."
+    },
+    {
+      "DisplayName": "ExecuteAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-executeasync-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CCdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult\u003E ExecuteAsync(CdcCaptureExecutionRuntimeDescriptor runtime, string operationId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest request, CancellationToken cancellationToken)",
+      "Summary": "Translates one shared managed-connector command request into a provider-facing command shape."
+    },
+    {
+      "DisplayName": "ExecuteAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "IReadStore",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -32178,6 +32904,17 @@
       "Summary": "Executes the supplied command on the write side and returns the resulting value."
     },
     {
+      "DisplayName": "ExecutionAdapterState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionadapterstate",
+      "Signature": "string ExecutionAdapterState { get; set; }",
+      "Summary": "Gets the current execution-adapter state that informed the request result."
+    },
+    {
       "DisplayName": "ExecutionApproval",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources",
@@ -32198,6 +32935,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancesources-executionapproval",
       "Signature": "const string ExecutionApproval",
       "Summary": "The command issuance is primarily grounded in shared execution-approval truth."
+    },
+    {
+      "DisplayName": "ExecutionApproval",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-executionapproval",
+      "Signature": "const string ExecutionApproval",
+      "Summary": "The execution adapter is primarily grounded in shared execution-approval truth."
     },
     {
       "DisplayName": "ExecutionApprovalSourceId",
@@ -32222,6 +32970,17 @@
       "Summary": "Gets the primary safety-gating source identifier already associated with managed-connector execution approval."
     },
     {
+      "DisplayName": "ExecutionApprovalSourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionapprovalsourceid",
+      "Signature": "string ExecutionApprovalSourceId { get; set; }",
+      "Summary": "Gets the primary safety-gating source identifier already associated with managed-connector execution approval."
+    },
+    {
       "DisplayName": "ExecutionApprovalState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus",
@@ -32242,6 +33001,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-executionapprovalstate",
       "Signature": "string ExecutionApprovalState { get; set; }",
       "Summary": "Gets the current managed-connector execution-approval state that informed command issuance."
+    },
+    {
+      "DisplayName": "ExecutionApprovalState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionapprovalstate",
+      "Signature": "string ExecutionApprovalState { get; set; }",
+      "Summary": "Gets the current managed-connector execution-approval state that informed the execution adapter."
     },
     {
       "DisplayName": "ExecutionBinding",
@@ -32275,6 +33045,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-executioncategory",
       "Signature": "string ExecutionCategory { get; }",
       "Summary": "Gets the execution category when the provider can distinguish deploy-time, manual, or other command paths."
+    },
+    {
+      "DisplayName": "ExecutionFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionfingerprint",
+      "Signature": "string ExecutionFingerprint { get; set; }",
+      "Summary": "Gets the deterministic command-execution fingerprint Cephalon currently derives for the request result."
     },
     {
       "DisplayName": "ExecutionGraph",
@@ -32455,6 +33236,17 @@
     {
       "DisplayName": "ExecutionIntent",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-executionintent",
+      "Signature": "const string ExecutionIntent",
+      "Summary": "The execution adapter is primarily grounded in shared execution-intent truth."
+    },
+    {
+      "DisplayName": "ExecutionIntent",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -32482,6 +33274,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-executionintentconfidencesourceid",
+      "Signature": "string ExecutionIntentConfidenceSourceId { get; set; }",
+      "Summary": "Gets the primary confidence-source identifier already associated with managed-connector execution intent."
+    },
+    {
+      "DisplayName": "ExecutionIntentConfidenceSourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionintentconfidencesourceid",
       "Signature": "string ExecutionIntentConfidenceSourceId { get; set; }",
       "Summary": "Gets the primary confidence-source identifier already associated with managed-connector execution intent."
     },
@@ -32517,6 +33320,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-executionintentstate",
       "Signature": "string ExecutionIntentState { get; set; }",
       "Summary": "Gets the current managed-connector execution-intent state that informed command issuance."
+    },
+    {
+      "DisplayName": "ExecutionIntentState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionintentstate",
+      "Signature": "string ExecutionIntentState { get; set; }",
+      "Summary": "Gets the current managed-connector execution-intent state that informed the execution adapter."
     },
     {
       "DisplayName": "ExecutionIntentState",
@@ -32653,6 +33467,17 @@
     {
       "DisplayName": "ExecutionRuntimeId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with the request."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -32660,6 +33485,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-executionruntimeid",
       "Signature": "string ExecutionRuntimeId { get; set; }",
       "Summary": "Gets the stable execution-runtime identifier currently associated with command issuance."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with the execution adapter."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -32913,6 +33749,17 @@
       "AnchorId": "member-f-cephalon-abstractions-audit-auditoutcome-failed",
       "Signature": "const AuditOutcome Failed",
       "Summary": "Indicates the operation failed."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-failed",
+      "Signature": "const string Failed",
+      "Summary": "The requested command could not be translated successfully."
     },
     {
       "DisplayName": "Failed",
@@ -35709,6 +36556,39 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector dry-run answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorExecutionAdapterCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionadaptercategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorExecutionAdapterCategory(string executionAdapterCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector execution adapter includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorExecutionAdapterOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionadapteroperationid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorExecutionAdapterOperationId(string operationId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector execution adapter currently targets the requested operation."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorExecutionAdapterState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionadapterstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorExecutionAdapterState(string executionAdapterState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector execution adapter matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorExecutionApprovalCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -36965,6 +37845,17 @@
     {
       "DisplayName": "GovernanceOutOfPolicy",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-governanceoutofpolicy",
+      "Signature": "const string GovernanceOutOfPolicy",
+      "Summary": "The execution adapter is constrained by governance that is currently out of policy."
+    },
+    {
+      "DisplayName": "GovernanceOutOfPolicy",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -37093,6 +37984,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-governancestate",
       "Signature": "string GovernanceState { get; set; }",
       "Summary": "Gets the current managed-connector governance state that informed the dry-run answer."
+    },
+    {
+      "DisplayName": "GovernanceState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-governancestate",
+      "Signature": "string GovernanceState { get; set; }",
+      "Summary": "Gets the current managed-connector governance state that informed the execution adapter."
     },
     {
       "DisplayName": "GovernanceState",
@@ -37447,6 +38349,17 @@
       "Summary": "Gets a value indicating whether the capture\u0027s execution runtime currently has one active reporter owner."
     },
     {
+      "DisplayName": "HasAdaptableCommand",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-hasadaptablecommand",
+      "Signature": "bool HasAdaptableCommand { get; }",
+      "Summary": "Gets a value indicating whether the execution adapter currently targets a concrete managed-connector operation."
+    },
+    {
       "DisplayName": "HasBlockingRemediation",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -37720,6 +38633,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasproductionrecommendedcommandsforalltargets",
       "Signature": "bool HasProductionRecommendedCommandsForAllTargets { get; }",
       "Summary": "Gets a value indicating whether every target in this group publishes a production-recommended command."
+    },
+    {
+      "DisplayName": "HasProviderCommand",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasprovidercommand",
+      "Signature": "bool HasProviderCommand { get; }",
+      "Summary": "Gets a value indicating whether the request currently carries one translated provider command."
     },
     {
       "DisplayName": "HasRejectedReporters",
@@ -39559,6 +40483,17 @@
       "Summary": "Initializes a new instance of the \u0060HttpDependencyHealthOptions\u0060 class."
     },
     {
+      "DisplayName": "HttpMethod",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-httpmethod",
+      "Signature": "string HttpMethod { get; set; }",
+      "Summary": "Gets the outbound HTTP method that would be used by the provider execution adapter when one was resolved."
+    },
+    {
       "DisplayName": "HttpRequestResponseLoggingOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
@@ -41167,6 +42102,17 @@
     {
       "DisplayName": "IncompleteReportingCoverage",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-incompletereportingcoverage",
+      "Signature": "const string IncompleteReportingCoverage",
+      "Summary": "The execution adapter is constrained by incomplete reporting coverage."
+    },
+    {
+      "DisplayName": "IncompleteReportingCoverage",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41627,6 +42573,17 @@
       "Summary": "Gets a value indicating whether the hosted execution is currently active with the runtime host."
     },
     {
+      "DisplayName": "IsAdapted",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isadapted",
+      "Signature": "bool IsAdapted { get; }",
+      "Summary": "Gets a value indicating whether the request was translated into one provider-facing command shape."
+    },
+    {
       "DisplayName": "IsAllowed",
       "Category": "Properties",
       "DeclaringTypeName": "AuthorizationDecision",
@@ -41772,6 +42729,17 @@
     {
       "DisplayName": "IsBlocked",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isblocked",
+      "Signature": "bool IsBlocked { get; }",
+      "Summary": "Gets a value indicating whether the request is currently blocked."
+    },
+    {
+      "DisplayName": "IsBlocked",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41790,6 +42758,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-isblocked",
       "Signature": "bool IsBlocked { get; }",
       "Summary": "Gets a value indicating whether the managed connector is currently blocked before a dry-run answer can be trusted."
+    },
+    {
+      "DisplayName": "IsBlocked",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isblocked",
+      "Signature": "bool IsBlocked { get; }",
+      "Summary": "Gets a value indicating whether the managed connector currently remains blocked before Cephalon can trust the provider execution adapter."
     },
     {
       "DisplayName": "IsBlocked",
@@ -42003,6 +42982,17 @@
     {
       "DisplayName": "IsDestructiveOperation",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isdestructiveoperation",
+      "Signature": "bool IsDestructiveOperation { get; set; }",
+      "Summary": "Gets a value indicating whether the request targets a destructive connector operation."
+    },
+    {
+      "DisplayName": "IsDestructiveOperation",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42010,6 +43000,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-isdestructiveoperation",
       "Signature": "bool IsDestructiveOperation { get; set; }",
       "Summary": "Gets a value indicating whether the current command issuance targets a destructive connector operation."
+    },
+    {
+      "DisplayName": "IsDestructiveOperation",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isdestructiveoperation",
+      "Signature": "bool IsDestructiveOperation { get; set; }",
+      "Summary": "Gets a value indicating whether the current execution adapter targets a destructive connector operation."
     },
     {
       "DisplayName": "IsDrifted",
@@ -42065,6 +43066,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-isengineready",
       "Signature": "bool IsEngineReady { get; }",
       "Summary": "Gets a value indicating whether the managed connector currently sits on an engine-ready execution lane."
+    },
+    {
+      "DisplayName": "IsFailed",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isfailed",
+      "Signature": "bool IsFailed { get; }",
+      "Summary": "Gets a value indicating whether the request failed while Cephalon was translating it."
     },
     {
       "DisplayName": "IsFailed",
@@ -42212,6 +43224,17 @@
     {
       "DisplayName": "IsNoOp",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isnoop",
+      "Signature": "bool IsNoOp { get; }",
+      "Summary": "Gets a value indicating whether the request currently resolves to no provider work."
+    },
+    {
+      "DisplayName": "IsNoOp",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42278,11 +43301,33 @@
     {
       "DisplayName": "IsOperatorOnly",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether the request currently remains operator-owned."
+    },
+    {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether the managed connector currently remains operator-owned."
+    },
+    {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isoperatoronly",
       "Signature": "bool IsOperatorOnly { get; }",
       "Summary": "Gets a value indicating whether the managed connector currently remains operator-owned."
     },
@@ -42318,6 +43363,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-ispolicyblocked",
       "Signature": "bool IsPolicyBlocked { get; }",
       "Summary": "Gets a value indicating whether the managed connector is currently blocked by governance or control-plane policy."
+    },
+    {
+      "DisplayName": "IsReady",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isready",
+      "Signature": "bool IsReady { get; }",
+      "Summary": "Gets a value indicating whether a matching provider execution adapter is ready for the current managed connector."
     },
     {
       "DisplayName": "IsReady",
@@ -42443,6 +43499,17 @@
     {
       "DisplayName": "IssuanceFingerprint",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-issuancefingerprint",
+      "Signature": "string IssuanceFingerprint { get; set; }",
+      "Summary": "Gets the deterministic issuance fingerprint already associated with the current managed connector."
+    },
+    {
+      "DisplayName": "IssuanceFingerprint",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42450,6 +43517,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-issuancefingerprint",
       "Signature": "string IssuanceFingerprint { get; set; }",
       "Summary": "Gets the deterministic issuance fingerprint Cephalon currently derives for the shared issuance lane."
+    },
+    {
+      "DisplayName": "IssuanceFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-issuancefingerprint",
+      "Signature": "string IssuanceFingerprint { get; set; }",
+      "Summary": "Gets the deterministic issuance fingerprint already associated with the current managed connector."
     },
     {
       "DisplayName": "IsSuccess",
@@ -42538,6 +43616,28 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-istrusted",
       "Signature": "bool IsTrusted { get; set; }",
       "Summary": "Whether the package is trusted by the active runtime trust policy."
+    },
+    {
+      "DisplayName": "IsUnavailable",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isunavailable",
+      "Signature": "bool IsUnavailable { get; }",
+      "Summary": "Gets a value indicating whether no provider execution adapter is currently available for the request."
+    },
+    {
+      "DisplayName": "IsUnavailable",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isunavailable",
+      "Signature": "bool IsUnavailable { get; }",
+      "Summary": "Gets a value indicating whether no provider execution adapter is currently registered for the runtime."
     },
     {
       "DisplayName": "IsVerified",
@@ -43928,6 +45028,17 @@
     {
       "DisplayName": "LifecycleChange",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-lifecyclechange",
+      "Signature": "const string LifecycleChange",
+      "Summary": "The execution adapter still reflects a lifecycle transition such as pause, resume, restart, or delete."
+    },
+    {
+      "DisplayName": "LifecycleChange",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44267,6 +45378,17 @@
       "Summary": "Gets the operator-facing managed-connector dry-run posture derived from coverage, remediation, governance, drift, action planning, write-path readiness, and preflight truth."
     },
     {
+      "DisplayName": "ManagedConnectorExecutionAdapter",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorexecutionadapter",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus ManagedConnectorExecutionAdapter { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector provider execution-adapter posture derived from command issuance, command envelopes, execution approval, execution intent, and the broader shared runtime truth."
+    },
+    {
       "DisplayName": "ManagedConnectorExecutionApproval",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -44368,6 +45490,17 @@
     {
       "DisplayName": "ManagementMode",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44395,6 +45528,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -48579,6 +49723,17 @@
     {
       "DisplayName": "NoExecutionNeeded",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-noexecutionneeded",
+      "Signature": "const string NoExecutionNeeded",
+      "Summary": "The current provider execution lane does not require an outbound provider command."
+    },
+    {
+      "DisplayName": "NoExecutionNeeded",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48652,6 +49807,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-none",
       "Signature": "const string None",
       "Summary": "No management operation is currently intended for the execution runtime."
+    },
+    {
+      "DisplayName": "None",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterids-none",
+      "Signature": "const string None",
+      "Summary": "No provider execution adapter currently applies."
+    },
+    {
+      "DisplayName": "None",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-none",
+      "Signature": "const string None",
+      "Summary": "No managed-connector operation currently applies."
     },
     {
       "DisplayName": "None",
@@ -48733,6 +49910,17 @@
     {
       "DisplayName": "NoOp",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-noop",
+      "Signature": "const string NoOp",
+      "Summary": "The requested command does not require an outbound provider command."
+    },
+    {
+      "DisplayName": "NoOp",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48777,6 +49965,17 @@
     {
       "DisplayName": "NotApplicable",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "The requested command does not currently apply to the execution runtime."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48806,6 +50005,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-notapplicable",
       "Signature": "const string NotApplicable",
       "Summary": "The execution runtime does not currently represent a managed connector."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "The execution runtime does not currently produce a managed-connector execution-adapter answer."
     },
     {
       "DisplayName": "NotApplicable",
@@ -49301,6 +50511,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-observeonlymode",
       "Signature": "const string ObserveOnlyMode",
       "Summary": "The managed connector currently stays in observe-only mode."
+    },
+    {
+      "DisplayName": "ObserveOnlyMode",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-observeonlymode",
+      "Signature": "const string ObserveOnlyMode",
+      "Summary": "The execution adapter is not currently applicable because the runtime remains observe-only."
     },
     {
       "DisplayName": "ObserveOnlyMode",
@@ -49855,6 +51076,17 @@
     {
       "DisplayName": "OperationId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier currently associated with the execution adapter."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -49932,6 +51164,17 @@
     {
       "DisplayName": "OperatorOnly",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "The requested command still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -49950,6 +51193,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestates-operatoronly",
       "Signature": "const string OperatorOnly",
       "Summary": "Cephalon can describe command issuance posture, but the write-path still remains operator-owned."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "The execution adapter remains operator-owned."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Cephalon can describe the provider execution lane, but the write-path remains operator-owned."
     },
     {
       "DisplayName": "OperatorOnly",
@@ -51536,6 +52801,17 @@
     {
       "DisplayName": "Pause",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-pause",
+      "Signature": "const string Pause",
+      "Summary": "Pause the managed connector."
+    },
+    {
+      "DisplayName": "Pause",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52403,6 +53679,17 @@
     {
       "DisplayName": "PotentialChangeCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-potentialchangecount",
+      "Signature": "int PotentialChangeCount { get; set; }",
+      "Summary": "Gets the number of visible potential shared write-path changes currently associated with the execution adapter."
+    },
+    {
+      "DisplayName": "PotentialChangeCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52590,6 +53877,17 @@
     {
       "DisplayName": "PreflightState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-preflightstate",
+      "Signature": "string PreflightState { get; set; }",
+      "Summary": "Gets the current managed-connector preflight state that informed the execution adapter."
+    },
+    {
+      "DisplayName": "PreflightState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52716,6 +54014,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-primaryactionid",
+      "Signature": "string PrimaryActionId { get; set; }",
+      "Summary": "Gets the primary action identifier currently associated with the runtime\u0027s managed-connector action plan."
+    },
+    {
+      "DisplayName": "PrimaryActionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-primaryactionid",
       "Signature": "string PrimaryActionId { get; set; }",
       "Summary": "Gets the primary action identifier currently associated with the runtime\u0027s managed-connector action plan."
     },
@@ -53499,6 +54808,17 @@
       "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-providerfeatureid",
       "Signature": "string ProviderFeatureId { get; set; }",
       "Summary": "The provider-side feature identifier."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-providerid",
+      "Signature": "string ProviderId { get; set; }",
+      "Summary": "Gets the provider identifier associated with the command when one was available."
     },
     {
       "DisplayName": "ProviderId",
@@ -54372,6 +55692,17 @@
     {
       "DisplayName": "Ready",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-ready",
+      "Signature": "const string Ready",
+      "Summary": "Cephalon can route the shared issuance lane through a matching provider execution adapter."
+    },
+    {
+      "DisplayName": "Ready",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -54632,6 +55963,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-reconcile",
       "Signature": "const string Reconcile",
       "Summary": "Cephalon would reconcile the managed connector toward its declared baseline."
+    },
+    {
+      "DisplayName": "Reconcile",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-reconcile",
+      "Signature": "const string Reconcile",
+      "Summary": "Reconcile the connector\u0027s declared-versus-observed topology."
     },
     {
       "DisplayName": "Reconcile",
@@ -55536,6 +56878,17 @@
       "Summary": "Gets or sets a value indicating whether the connector rejects out-of-order external reports."
     },
     {
+      "DisplayName": "RelativePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-relativepath",
+      "Signature": "string RelativePath { get; set; }",
+      "Summary": "Gets the outbound relative request path that would be used by the provider execution adapter when one was resolved."
+    },
+    {
       "DisplayName": "RelativePattern",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointCandidateProjectionDescriptor",
@@ -55666,6 +57019,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-remediationstate",
       "Signature": "string RemediationState { get; set; }",
       "Summary": "Gets the current runtime-level remediation state that informed the dry-run answer."
+    },
+    {
+      "DisplayName": "RemediationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-remediationstate",
+      "Signature": "string RemediationState { get; set; }",
+      "Summary": "Gets the current runtime-level remediation state that informed the execution adapter."
     },
     {
       "DisplayName": "RemediationState",
@@ -56275,6 +57639,17 @@
     {
       "DisplayName": "ReportingCoverageState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-reportingcoveragestate",
+      "Signature": "string ReportingCoverageState { get; set; }",
+      "Summary": "Gets the current runtime-level reporting-coverage state that informed the execution adapter."
+    },
+    {
+      "DisplayName": "ReportingCoverageState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -56414,6 +57789,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-requestedmethod",
       "Signature": "string RequestedMethod { get; set; }",
       "Summary": "The normalized request method that was evaluated."
+    },
+    {
+      "DisplayName": "RequestedOperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-requestedoperationid",
+      "Signature": "string RequestedOperationId { get; set; }",
+      "Summary": "Gets the operation identifier originally requested by the caller."
     },
     {
       "DisplayName": "RequestedPath",
@@ -57034,6 +58420,17 @@
     {
       "DisplayName": "RequiresAttention",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-requiresattention",
+      "Signature": "bool RequiresAttention { get; }",
+      "Summary": "Gets a value indicating whether the managed connector currently requires additional execution-adapter attention."
+    },
+    {
+      "DisplayName": "RequiresAttention",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -57122,6 +58519,17 @@
     {
       "DisplayName": "RequiresExplicitApproval",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-requiresexplicitapproval",
+      "Signature": "bool RequiresExplicitApproval { get; set; }",
+      "Summary": "Gets a value indicating whether the request still requires explicit approval."
+    },
+    {
+      "DisplayName": "RequiresExplicitApproval",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -57129,6 +58537,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-requiresexplicitapproval",
       "Signature": "bool RequiresExplicitApproval { get; set; }",
       "Summary": "Gets a value indicating whether the current command issuance still requires an explicit approval gate."
+    },
+    {
+      "DisplayName": "RequiresExplicitApproval",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-requiresexplicitapproval",
+      "Signature": "bool RequiresExplicitApproval { get; set; }",
+      "Summary": "Gets a value indicating whether the current execution adapter still requires an explicit approval gate."
     },
     {
       "DisplayName": "RequiresExplicitApproval",
@@ -57549,6 +58968,17 @@
       "Summary": "Gets the culture actually resolved for the snapshot."
     },
     {
+      "DisplayName": "ResolvedOperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-resolvedoperationid",
+      "Signature": "string ResolvedOperationId { get; set; }",
+      "Summary": "Gets the operation identifier Cephalon resolved for the provider command."
+    },
+    {
       "DisplayName": "ResolvedRoleId",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationDescriptor",
@@ -57965,6 +59395,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-restart",
       "Signature": "const string Restart",
       "Summary": "Cephalon would restart the managed connector."
+    },
+    {
+      "DisplayName": "Restart",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-restart",
+      "Signature": "const string Restart",
+      "Summary": "Restart the managed connector."
     },
     {
       "DisplayName": "Restart",
@@ -58581,6 +60022,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-resume",
       "Signature": "const string Resume",
       "Summary": "Cephalon would resume the managed connector."
+    },
+    {
+      "DisplayName": "Resume",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-resume",
+      "Signature": "const string Resume",
+      "Summary": "Resume the managed connector."
     },
     {
       "DisplayName": "Resume",
@@ -60066,6 +61518,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-runtimetruthincomplete",
       "Signature": "const string RuntimeTruthIncomplete",
       "Summary": "The managed connector does not yet report enough runtime truth to trust a dry-run answer."
+    },
+    {
+      "DisplayName": "RuntimeTruthIncomplete",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-runtimetruthincomplete",
+      "Signature": "const string RuntimeTruthIncomplete",
+      "Summary": "The execution adapter is constrained by incomplete runtime truth."
     },
     {
       "DisplayName": "RuntimeTruthIncomplete",
@@ -61940,6 +63403,17 @@
     {
       "DisplayName": "SourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive the request result."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61947,6 +63421,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-sourceid",
       "Signature": "string SourceId { get; set; }",
       "Summary": "Gets the primary source identifier Cephalon used to derive command issuance."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive the execution adapter."
     },
     {
       "DisplayName": "SourceId",
@@ -62743,6 +64228,17 @@
     {
       "DisplayName": "SourceProviderId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-sourceproviderid",
+      "Signature": "string SourceProviderId { get; set; }",
+      "Summary": "Gets the provider-facing source-provider identifier targeted by the provider command when one was available."
+    },
+    {
+      "DisplayName": "SourceProviderId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -62750,6 +64246,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-sourceproviderid",
       "Signature": "string SourceProviderId { get; set; }",
       "Summary": "Gets the best available source-provider identifier Cephalon would target for command issuance."
+    },
+    {
+      "DisplayName": "SourceProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-sourceproviderid",
+      "Signature": "string SourceProviderId { get; set; }",
+      "Summary": "Gets the best available source-provider identifier Cephalon would target through the execution adapter."
     },
     {
       "DisplayName": "SourceProviderId",
@@ -63012,6 +64519,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancecategories-staleobservation",
       "Signature": "const string StaleObservation",
       "Summary": "The command issuance is constrained by stale observation posture."
+    },
+    {
+      "DisplayName": "StaleObservation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-staleobservation",
+      "Signature": "const string StaleObservation",
+      "Summary": "The execution adapter is constrained by stale observation posture."
     },
     {
       "DisplayName": "StaleObservation",
@@ -63368,6 +64886,17 @@
     {
       "DisplayName": "State",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector command-execution state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -63397,6 +64926,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector dry-run state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector execution-adapter state."
     },
     {
       "DisplayName": "State",
@@ -67304,6 +68844,17 @@
       "Summary": "Gets the transport identifiers that expose the choreography."
     },
     {
+      "DisplayName": "TransportKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-transportkind",
+      "Signature": "string TransportKind { get; set; }",
+      "Summary": "Gets the transport kind used by the provider execution adapter when one was resolved."
+    },
+    {
       "DisplayName": "Transports",
       "Category": "Properties",
       "DeclaringTypeName": "AppProfile",
@@ -67944,6 +69495,28 @@
     {
       "DisplayName": "Unavailable",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-unavailable",
+      "Signature": "const string Unavailable",
+      "Summary": "No matching provider execution adapter is currently available for the requested command."
+    },
+    {
+      "DisplayName": "Unavailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-unavailable",
+      "Signature": "const string Unavailable",
+      "Summary": "Cephalon can describe the provider execution lane, but no matching provider execution adapter is currently registered."
+    },
+    {
+      "DisplayName": "Unavailable",
+      "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationMaterializationStates",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -68094,6 +69667,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates-unknown",
       "Signature": "const string Unknown",
       "Summary": "The drift posture could not be determined from the current managed-connector declaration and report data."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The execution adapter does not currently have a more specific primary source."
     },
     {
       "DisplayName": "Unknown",
@@ -69638,6 +71222,17 @@
     {
       "DisplayName": "WouldApplyChanges",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-wouldapplychanges",
+      "Signature": "bool WouldApplyChanges { get; set; }",
+      "Summary": "Gets a value indicating whether the request would still apply one or more shared write-path changes."
+    },
+    {
+      "DisplayName": "WouldApplyChanges",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -69656,6 +71251,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-wouldapplychanges",
       "Signature": "bool WouldApplyChanges { get; set; }",
       "Summary": "Gets a value indicating whether the current dry-run answer includes one or more shared write-path changes."
+    },
+    {
+      "DisplayName": "WouldApplyChanges",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-wouldapplychanges",
+      "Signature": "bool WouldApplyChanges { get; set; }",
+      "Summary": "Gets a value indicating whether the current execution adapter would still apply one or more shared write-path changes."
     },
     {
       "DisplayName": "WouldApplyChanges",
@@ -69810,6 +71416,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-writepathreadinessstate",
       "Signature": "string WritePathReadinessState { get; set; }",
       "Summary": "Gets the current managed-connector write-path readiness state that informed the dry-run answer."
+    },
+    {
+      "DisplayName": "WritePathReadinessState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-writepathreadinessstate",
+      "Signature": "string WritePathReadinessState { get; set; }",
+      "Summary": "Gets the current managed-connector write-path readiness state that informed the execution adapter."
     },
     {
       "DisplayName": "WritePathReadinessState",

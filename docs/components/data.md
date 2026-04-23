@@ -271,6 +271,19 @@ desired-versus-observed drift, governance, remediation, and coverage truth, so l
 transport or execution-adapter work can stay on the existing `/engine/cdc-*`, `/engine/runtime-story`,
 and `snapshot` surfaces instead of inventing a Debezium-only issuance registry.
 
+That same shared execution-runtime story now also keeps managed-connector provider execution
+adapters explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorExecutionAdapter`
+publishes stable `not-applicable` / `blocked` / `operator-only` / `unavailable` / `ready`
+posture together with execution-adapter categories, the intended operation id,
+source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/
+execution-intent/execution-approval/command-envelope/command-issuance state, adapter identity,
+deterministic adapter fingerprints, and provider-ready safety flags. The shared execution-runtime
+catalog derives that answer from the already shipped command-issuance, command-envelope,
+execution-approval, execution-intent, dry-run, preflight, write-path-readiness,
+desired-versus-observed drift, governance, remediation, and coverage truth, so provider execution
+translation can stay on the existing `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot`
+surfaces instead of inventing a Debezium-only transport registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -283,8 +296,10 @@ managed-connector execution-intent category, managed-connector execution-intent 
 managed-connector execution-approval state, managed-connector execution-approval category,
 managed-connector execution-approval operation, managed-connector command-envelope state,
 managed-connector command-envelope category, managed-connector command-envelope operation,
-managed-connector command-issuance state, managed-connector command-issuance category, and
-managed-connector command-issuance operation as well.
+managed-connector command-issuance state, managed-connector command-issuance category,
+managed-connector command-issuance operation, managed-connector execution-adapter state,
+managed-connector execution-adapter category, and managed-connector execution-adapter operation as
+well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -308,13 +323,16 @@ managed-connector command-issuance operation as well.
 `GetByManagedConnectorCommandEnvelopeOperationId(...)`,
 `GetByManagedConnectorCommandIssuanceState(...)`,
 `GetByManagedConnectorCommandIssuanceCategory(...)`, and
-`GetByManagedConnectorCommandIssuanceOperationId(...)`, so host code, provider packs, and
-tooling can
+`GetByManagedConnectorCommandIssuanceOperationId(...)`,
+`GetByManagedConnectorExecutionAdapterState(...)`,
+`GetByManagedConnectorExecutionAdapterCategory(...)`, and
+`GetByManagedConnectorExecutionAdapterOperationId(...)`, so host code, provider packs, and tooling can
 narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
 managed-connector governance, managed-connector drift, managed-connector action-planning,
 managed-connector readiness, managed-connector preflight, managed-connector dry-run,
-managed-connector execution-intent, managed-connector execution-approval, or managed-connector
-command-envelope or command-issuance index.
+managed-connector execution-intent, managed-connector execution-approval, managed-connector
+command-envelope, managed-connector command-issuance, or managed-connector execution-adapter
+index.
 ASP.NET Core maps those same filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
 `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,

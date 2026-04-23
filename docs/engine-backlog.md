@@ -3027,6 +3027,91 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-179 Phase 13 managed-connector provider write-path execution-adapter baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, and `ENG-178` shipped shared coverage, remediation, governance,
+  desired-versus-observed drift, action-planning, write-path readiness, preflight, dry-run,
+  execution-intent, execution-approval, command-envelope, and command-issuance truth, but
+  operators still lacked one typed answer for whether a provider adapter was actually ready to
+  translate the shared command on the same runtime surface
+- that next follow-through needed to keep provider execution-adapter truth additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only transport
+  registry or prematurely claiming Kafka Connect control-plane ownership
+- teams also needed one additive execution request/result seam so the shared managed-connector story
+  could start proving provider command translation without introducing a second coordinator or a new
+  top-level API family
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector execution-adapter contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `blocked`,
+  `operator-only`, `unavailable`, and `ready` posture together with execution-adapter categories,
+  the intended operation id, source coverage/remediation/governance/drift/action-plan/
+  write-path-readiness/preflight/dry-run/execution-intent/execution-approval/command-envelope/
+  command-issuance state, adapter identity, deterministic adapter fingerprints, and provider-ready
+  safety flags
+- the shared execution-runtime catalog now derives that execution-adapter answer from merged
+  command-issuance, command-envelope, execution-approval, execution-intent, dry-run, preflight,
+  write-path-readiness, action-planning, drift, governance, remediation, and coverage truth instead
+  of forcing hosts or providers to rebuild a second provider transport registry
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive execution-adapter-state,
+  execution-adapter-category, and execution-adapter-operation drill-down methods, ASP.NET Core
+  publishes those same filters on the existing `/engine/cdc-capture-runtimes*` route family, and
+  the shared command-execution request/result seam stays on that same surface instead of branching
+  into a Debezium-only control-plane endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the
+  shipped slice while later managed-connector execution outcome/history or retry/idempotency
+  hardening remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult`,
+  `ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter`, and
+  `ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorExecutionAdapter`
+- `Cephalon.Data` now derives runtime-level `not-applicable`, `blocked`, `operator-only`,
+  `unavailable`, and `ready` posture plus stable category ids such as `observe-only-mode`,
+  `blocking-remediation`, `runtime-truth-incomplete`, `governance-out-of-policy`,
+  `control-plane-ownership-gap`, `change-planned`, `approval-ready`, `approval-required`,
+  `destructive-operation`, `adapter-ready`, `adapter-unavailable`, and `no-execution-needed`,
+  together with intended operation ids such as `none`, `reconcile`, `pause`, `resume`, `restart`,
+  and `delete`, adapter identity, deterministic command fingerprints, deterministic issuance
+  fingerprints, deterministic adapter fingerprints, and provider-ready safety flags from merged
+  command-issuance, command-envelope, execution-approval, execution-intent, dry-run, preflight,
+  write-path-readiness, action-plan, drift, governance, remediation, and coverage truth
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorExecutionAdapterState(...)`,
+  `GetByManagedConnectorExecutionAdapterCategory(...)`, and
+  `GetByManagedConnectorExecutionAdapterOperationId(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/execution-adapters/{executionAdapterState}`,
+  `/engine/cdc-capture-runtimes/execution-adapters/categories/{executionAdapterCategory}`,
+  `/engine/cdc-capture-runtimes/execution-adapters/operations/{operationId}`, and additive
+  `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}` so host routes
+  stay aligned with the same shared runtime story
+- `Cephalon.Data.Debezium` now proves the first provider adapter through
+  `DebeziumManagedConnectorExecutionAdapter`, which translates shared pause/resume/restart/delete
+  intent into Debezium or Kafka Connect REST command shape and truthfully keeps reconcile blocked
+  until a later configuration-payload lane exists
+- targeted coverage now proves the provider execution-adapter baseline through composition tests
+  `37/37`, hosting tests `15/15`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-178 Phase 13 managed-connector command-issuance baseline
 
 Status: done

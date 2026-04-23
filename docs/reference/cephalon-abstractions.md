@@ -8458,6 +8458,16 @@ CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus ManagedConnectorDryRun { 
 
 Gets the operator-facing managed-connector dry-run posture derived from coverage, remediation, governance, drift, action planning, write-path readiness, and preflight truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorexecutionadapter"></a>
+
+##### `ManagedConnectorExecutionAdapter`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus ManagedConnectorExecutionAdapter { get; set; }
+```
+
+Gets the operator-facing managed-connector provider execution-adapter posture derived from command issuance, command envelopes, execution approval, execution intent, and the broader shared runtime truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorexecutionapproval"></a>
 
 ##### `ManagedConnectorExecutionApproval`
@@ -9766,6 +9776,493 @@ string WritePathReadinessState { get; set; }
 ```
 
 Gets the current managed-connector write-path readiness state that informed the command envelope.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest`
+
+Describes optional operator intent supplied when Cephalon evaluates one managed-connector command-execution request.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-ctor"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest()
+```
+
+Creates a new managed-connector command-execution request.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-allowdestructive"></a>
+
+##### `AllowDestructive`
+
+```csharp
+bool AllowDestructive { get; set; }
+```
+
+Gets or sets a value indicating whether the caller explicitly allows destructive operations such as connector deletion.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-approve"></a>
+
+##### `Approve`
+
+```csharp
+bool Approve { get; set; }
+```
+
+Gets or sets a value indicating whether the caller is intentionally approving an approval-gated provider command.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult`
+
+Describes the immediate result of one managed-connector command-execution request evaluated by Cephalon.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult(string state, string description)
+```
+
+Creates a new managed-connector command-execution result.
+
+Parameters:
+- `state`: The stable command-execution state, such as `blocked`, `operator-only`, `unavailable`, `no-op`, `adapted`, `failed`, or `not-applicable`.
+- `description`: An optional operator-facing command-execution summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-adapterfingerprint"></a>
+
+##### `AdapterFingerprint`
+
+```csharp
+string AdapterFingerprint { get; set; }
+```
+
+Gets the deterministic execution-adapter fingerprint already associated with the current managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-adapterid"></a>
+
+##### `AdapterId`
+
+```csharp
+string AdapterId { get; set; }
+```
+
+Gets the current provider execution-adapter identifier that handled the request when one was available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-commandenvelopestate"></a>
+
+##### `CommandEnvelopeState`
+
+```csharp
+string CommandEnvelopeState { get; set; }
+```
+
+Gets the current command-envelope state that informed the request result.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint already associated with the current managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-commandissuancestate"></a>
+
+##### `CommandIssuanceState`
+
+```csharp
+string CommandIssuanceState { get; set; }
+```
+
+Gets the current command-issuance state that informed the request result.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the connector-cluster identifier targeted by the provider command when one was available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the provider-facing connector-class identifier targeted by the provider command when one was available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-connectorid"></a>
+
+##### `ConnectorId`
+
+```csharp
+string ConnectorId { get; set; }
+```
+
+Gets the provider-facing connector identifier targeted by the provider command when one was available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing command-execution summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionadapterstate"></a>
+
+##### `ExecutionAdapterState`
+
+```csharp
+string ExecutionAdapterState { get; set; }
+```
+
+Gets the current execution-adapter state that informed the request result.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionfingerprint"></a>
+
+##### `ExecutionFingerprint`
+
+```csharp
+string ExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic command-execution fingerprint Cephalon currently derives for the request result.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with the request.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasprovidercommand"></a>
+
+##### `HasProviderCommand`
+
+```csharp
+bool HasProviderCommand { get; }
+```
+
+Gets a value indicating whether the request currently carries one translated provider command.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-httpmethod"></a>
+
+##### `HttpMethod`
+
+```csharp
+string HttpMethod { get; set; }
+```
+
+Gets the outbound HTTP method that would be used by the provider execution adapter when one was resolved.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isadapted"></a>
+
+##### `IsAdapted`
+
+```csharp
+bool IsAdapted { get; }
+```
+
+Gets a value indicating whether the request was translated into one provider-facing command shape.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether the request is currently blocked.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the request targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isfailed"></a>
+
+##### `IsFailed`
+
+```csharp
+bool IsFailed { get; }
+```
+
+Gets a value indicating whether the request failed while Cephalon was translating it.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isnoop"></a>
+
+##### `IsNoOp`
+
+```csharp
+bool IsNoOp { get; }
+```
+
+Gets a value indicating whether the request currently resolves to no provider work.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether the request currently remains operator-owned.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-issuancefingerprint"></a>
+
+##### `IssuanceFingerprint`
+
+```csharp
+string IssuanceFingerprint { get; set; }
+```
+
+Gets the deterministic issuance fingerprint already associated with the current managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isunavailable"></a>
+
+##### `IsUnavailable`
+
+```csharp
+bool IsUnavailable { get; }
+```
+
+Gets a value indicating whether no provider execution adapter is currently available for the request.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; set; }
+```
+
+Gets the provider identifier associated with the command when one was available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-relativepath"></a>
+
+##### `RelativePath`
+
+```csharp
+string RelativePath { get; set; }
+```
+
+Gets the outbound relative request path that would be used by the provider execution adapter when one was resolved.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-requestedoperationid"></a>
+
+##### `RequestedOperationId`
+
+```csharp
+string RequestedOperationId { get; set; }
+```
+
+Gets the operation identifier originally requested by the caller.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the request still requires explicit approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-resolvedoperationid"></a>
+
+##### `ResolvedOperationId`
+
+```csharp
+string ResolvedOperationId { get; set; }
+```
+
+Gets the operation identifier Cephalon resolved for the provider command.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive the request result.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the provider-facing source-provider identifier targeted by the provider command when one was available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector command-execution state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-transportkind"></a>
+
+##### `TransportKind`
+
+```csharp
+string TransportKind { get; set; }
+```
+
+Gets the transport kind used by the provider execution adapter when one was resolved.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the request would still apply one or more shared write-path changes.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates`
+
+Defines the stable state identifiers used by managed-connector command-execution results.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-adapted"></a>
+
+##### `Adapted`
+
+```csharp
+const string Adapted
+```
+
+The requested command was translated into a provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+The requested command remains blocked before Cephalon can safely route it.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-failed"></a>
+
+##### `Failed`
+
+```csharp
+const string Failed
+```
+
+The requested command could not be translated successfully.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-noop"></a>
+
+##### `NoOp`
+
+```csharp
+const string NoOp
+```
+
+The requested command does not require an outbound provider command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The requested command does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+The requested command still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionstates-unavailable"></a>
+
+##### `Unavailable`
+
+```csharp
+const string Unavailable
+```
+
+No matching provider execution adapter is currently available for the requested command.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancecategories"></a>
 
@@ -11693,6 +12190,890 @@ string WritePathReadinessState { get; set; }
 ```
 
 Gets the current managed-connector write-path readiness state that informed the dry-run answer.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories`
+
+Defines the stable category identifiers used by managed-connector execution-adapter answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-adapterready"></a>
+
+##### `AdapterReady`
+
+```csharp
+const string AdapterReady
+```
+
+The execution adapter is currently ready to translate provider-facing commands.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-adapterunavailable"></a>
+
+##### `AdapterUnavailable`
+
+```csharp
+const string AdapterUnavailable
+```
+
+The execution adapter is currently unavailable for the active managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-approvalready"></a>
+
+##### `ApprovalReady`
+
+```csharp
+const string ApprovalReady
+```
+
+The execution adapter is currently approval-ready on the shared execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The execution adapter still reflects a higher-risk approval requirement.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-blockingremediation"></a>
+
+##### `BlockingRemediation`
+
+```csharp
+const string BlockingRemediation
+```
+
+The execution adapter is blocked by remediation that still needs to clear first.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-changeplanned"></a>
+
+##### `ChangePlanned`
+
+```csharp
+const string ChangePlanned
+```
+
+The execution adapter still reflects one or more shared write-path changes.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-controlplaneownershipgap"></a>
+
+##### `ControlPlaneOwnershipGap`
+
+```csharp
+const string ControlPlaneOwnershipGap
+```
+
+The execution adapter is constrained because control-plane ownership still remains outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The execution adapter still reflects a destructive write-path such as connector deletion.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The execution adapter is constrained by governance that is currently out of policy.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-incompletereportingcoverage"></a>
+
+##### `IncompleteReportingCoverage`
+
+```csharp
+const string IncompleteReportingCoverage
+```
+
+The execution adapter is constrained by incomplete reporting coverage.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-lifecyclechange"></a>
+
+##### `LifecycleChange`
+
+```csharp
+const string LifecycleChange
+```
+
+The execution adapter still reflects a lifecycle transition such as pause, resume, restart, or delete.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-noexecutionneeded"></a>
+
+##### `NoExecutionNeeded`
+
+```csharp
+const string NoExecutionNeeded
+```
+
+The current provider execution lane does not require an outbound provider command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The execution adapter is not currently applicable because the runtime remains observe-only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+The execution adapter remains operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-runtimetruthincomplete"></a>
+
+##### `RuntimeTruthIncomplete`
+
+```csharp
+const string RuntimeTruthIncomplete
+```
+
+The execution adapter is constrained by incomplete runtime truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories-staleobservation"></a>
+
+##### `StaleObservation`
+
+```csharp
+const string StaleObservation
+```
+
+The execution adapter is constrained by stale observation posture.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds`
+
+Defines the stable provider execution-adapter identifiers used by managed-connector execution-adapter answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterids-debeziumkafkaconnectrest"></a>
+
+##### `DebeziumKafkaConnectRest`
+
+```csharp
+const string DebeziumKafkaConnectRest
+```
+
+The Debezium or Kafka Connect REST management adapter currently applies.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No provider execution adapter currently applies.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds`
+
+Defines the stable operation identifiers used by managed-connector execution-adapter answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+Delete the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No managed-connector operation currently applies.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-pause"></a>
+
+##### `Pause`
+
+```csharp
+const string Pause
+```
+
+Pause the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+Reconcile the connector's declared-versus-observed topology.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-restart"></a>
+
+##### `Restart`
+
+```csharp
+const string Restart
+```
+
+Restart the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapteroperationids-resume"></a>
+
+##### `Resume`
+
+```csharp
+const string Resume
+```
+
+Resume the managed connector.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources`
+
+Defines the stable source identifiers used by managed-connector execution-adapter answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-commandenvelope"></a>
+
+##### `CommandEnvelope`
+
+```csharp
+const string CommandEnvelope
+```
+
+The execution adapter is primarily grounded in shared command-envelope truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-commandissuance"></a>
+
+##### `CommandIssuance`
+
+```csharp
+const string CommandIssuance
+```
+
+The execution adapter is primarily grounded in shared command-issuance truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-executionapproval"></a>
+
+##### `ExecutionApproval`
+
+```csharp
+const string ExecutionApproval
+```
+
+The execution adapter is primarily grounded in shared execution-approval truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-executionintent"></a>
+
+##### `ExecutionIntent`
+
+```csharp
+const string ExecutionIntent
+```
+
+The execution adapter is primarily grounded in shared execution-intent truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The execution adapter does not currently have a more specific primary source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates`
+
+Defines the stable state identifiers used by managed-connector execution-adapter answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+The managed connector still has one or more blockers before Cephalon can trust a provider execution adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently produce a managed-connector execution-adapter answer.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Cephalon can describe the provider execution lane, but the write-path remains operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-ready"></a>
+
+##### `Ready`
+
+```csharp
+const string Ready
+```
+
+Cephalon can route the shared issuance lane through a matching provider execution adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstates-unavailable"></a>
+
+##### `Unavailable`
+
+```csharp
+const string Unavailable
+```
+
+Cephalon can describe the provider execution lane, but no matching provider execution adapter is currently registered.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus`
+
+Describes the current operator-facing managed-connector provider execution-adapter posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus(string state, string description)
+```
+
+Creates a new managed-connector execution-adapter answer.
+
+Parameters:
+- `state`: The stable execution-adapter state, such as `blocked`, `operator-only`, `unavailable`, `ready`, or `not-applicable`.
+- `description`: An optional operator-facing execution-adapter summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-adapterfingerprint"></a>
+
+##### `AdapterFingerprint`
+
+```csharp
+string AdapterFingerprint { get; set; }
+```
+
+Gets the deterministic execution-adapter fingerprint Cephalon currently derives for the managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-adapterid"></a>
+
+##### `AdapterId`
+
+```csharp
+string AdapterId { get; set; }
+```
+
+Gets the stable provider execution-adapter identifier currently associated with the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-canuseproviderexecutionadapter"></a>
+
+##### `CanUseProviderExecutionAdapter`
+
+```csharp
+bool CanUseProviderExecutionAdapter { get; }
+```
+
+Gets a value indicating whether the current provider execution-adapter lane can be used by a matching provider pack.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active execution-adapter categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable execution-adapter categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandenvelopesourceid"></a>
+
+##### `CommandEnvelopeSourceId`
+
+```csharp
+string CommandEnvelopeSourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with managed-connector command envelopes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandenvelopestate"></a>
+
+##### `CommandEnvelopeState`
+
+```csharp
+string CommandEnvelopeState { get; set; }
+```
+
+Gets the current managed-connector command-envelope state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint already associated with the current managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandissuancesourceid"></a>
+
+##### `CommandIssuanceSourceId`
+
+```csharp
+string CommandIssuanceSourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with managed-connector command issuance.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandissuancestate"></a>
+
+##### `CommandIssuanceState`
+
+```csharp
+string CommandIssuanceState { get; set; }
+```
+
+Gets the current managed-connector command-issuance state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier Cephalon would target through the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier Cephalon would target through the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing execution-adapter summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-dryrunstate"></a>
+
+##### `DryRunState`
+
+```csharp
+string DryRunState { get; set; }
+```
+
+Gets the current managed-connector dry-run state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionapprovalsourceid"></a>
+
+##### `ExecutionApprovalSourceId`
+
+```csharp
+string ExecutionApprovalSourceId { get; set; }
+```
+
+Gets the primary safety-gating source identifier already associated with managed-connector execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionapprovalstate"></a>
+
+##### `ExecutionApprovalState`
+
+```csharp
+string ExecutionApprovalState { get; set; }
+```
+
+Gets the current managed-connector execution-approval state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionintentconfidencesourceid"></a>
+
+##### `ExecutionIntentConfidenceSourceId`
+
+```csharp
+string ExecutionIntentConfidenceSourceId { get; set; }
+```
+
+Gets the primary confidence-source identifier already associated with managed-connector execution intent.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionintentstate"></a>
+
+##### `ExecutionIntentState`
+
+```csharp
+string ExecutionIntentState { get; set; }
+```
+
+Gets the current managed-connector execution-intent state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-hasadaptablecommand"></a>
+
+##### `HasAdaptableCommand`
+
+```csharp
+bool HasAdaptableCommand { get; }
+```
+
+Gets a value indicating whether the execution adapter currently targets a concrete managed-connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether the managed connector currently remains blocked before Cephalon can trust the provider execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current execution adapter targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether the managed connector currently remains operator-owned.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isready"></a>
+
+##### `IsReady`
+
+```csharp
+bool IsReady { get; }
+```
+
+Gets a value indicating whether a matching provider execution adapter is ready for the current managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-issuancefingerprint"></a>
+
+##### `IssuanceFingerprint`
+
+```csharp
+string IssuanceFingerprint { get; set; }
+```
+
+Gets the deterministic issuance fingerprint already associated with the current managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isunavailable"></a>
+
+##### `IsUnavailable`
+
+```csharp
+bool IsUnavailable { get; }
+```
+
+Gets a value indicating whether no provider execution adapter is currently registered for the runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-preflightstate"></a>
+
+##### `PreflightState`
+
+```csharp
+string PreflightState { get; set; }
+```
+
+Gets the current managed-connector preflight state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-requiresattention"></a>
+
+##### `RequiresAttention`
+
+```csharp
+bool RequiresAttention { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires additional execution-adapter attention.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current execution adapter still requires an explicit approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier Cephalon would target through the execution adapter.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector execution-adapter state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current execution adapter would still apply one or more shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-writepathreadinessstate"></a>
+
+##### `WritePathReadinessState`
+
+```csharp
+string WritePathReadinessState { get; set; }
+```
+
+Gets the current managed-connector write-path readiness state that informed the execution adapter.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories"></a>
 
@@ -20489,6 +21870,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 Parameters:
 - `dryRunState`: The stable managed-connector dry-run state identifier to filter by.
 
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionadaptercategory-system-string"></a>
+
+##### `GetByManagedConnectorExecutionAdapterCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterCategory(string executionAdapterCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector execution adapter includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-adapter category.
+
+Parameters:
+- `executionAdapterCategory`: The stable managed-connector execution-adapter category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionadapteroperationid-system-string"></a>
+
+##### `GetByManagedConnectorExecutionAdapterOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector execution adapter currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable managed-connector execution-adapter operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionadapterstate-system-string"></a>
+
+##### `GetByManagedConnectorExecutionAdapterState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterState(string executionAdapterState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector execution adapter matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-adapter state.
+
+Parameters:
+- `executionAdapterState`: The stable managed-connector execution-adapter state identifier to filter by.
+
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionapprovalcategory-system-string"></a>
 
 ##### `GetByManagedConnectorExecutionApprovalCategory`
@@ -20758,6 +22184,95 @@ Returns: The matching execution-runtime descriptors, or an empty list when the r
 
 Parameters:
 - `reporterId`: The reporter identifier to filter by.
+
+<a id="type-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorcommandexecutor"></a>
+
+### `ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor`
+
+Evaluates one shared managed-connector command request against the active provider execution-adapter set.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorcommandexecutor-executeasync-system-string-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-system-threading-cancellationtoken"></a>
+
+##### `ExecuteAsync`
+
+```csharp
+ValueTask<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> ExecuteAsync(string executionRuntimeId, string operationId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest request, CancellationToken cancellationToken)
+```
+
+Evaluates one managed-connector command request for the supplied execution runtime.
+
+Returns: The typed command-execution result describing how Cephalon handled the request.
+
+Parameters:
+- `executionRuntimeId`: The stable execution-runtime identifier that owns the managed connector.
+- `operationId`: The stable managed-connector operation identifier to evaluate.
+- `request`: Optional operator intent supplied with the execution request.
+- `cancellationToken`: The token used to observe cancellation.
+
+<a id="type-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter"></a>
+
+### `ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter`
+
+Translates one shared managed-connector command request into a provider-facing execution shape.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-adapterid"></a>
+
+##### `AdapterId`
+
+```csharp
+string AdapterId { get; }
+```
+
+Gets the stable provider execution-adapter identifier exposed on shared runtime surfaces.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-canhandle-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor"></a>
+
+##### `CanHandle`
+
+```csharp
+bool CanHandle(CdcCaptureExecutionRuntimeDescriptor runtime)
+```
+
+Gets a value indicating whether the adapter can currently handle the supplied execution runtime.
+
+Returns: `true` when the adapter can translate commands for the runtime; otherwise, `false`.
+
+Parameters:
+- `runtime`: The execution runtime being evaluated.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-executeasync-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-system-threading-cancellationtoken"></a>
+
+##### `ExecuteAsync`
+
+```csharp
+ValueTask<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> ExecuteAsync(CdcCaptureExecutionRuntimeDescriptor runtime, string operationId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest request, CancellationToken cancellationToken)
+```
+
+Translates one shared managed-connector command request into a provider-facing command shape.
+
+Returns: The typed command-execution result describing how the provider adapter handled the request.
+
+Parameters:
+- `runtime`: The execution runtime that owns the managed connector.
+- `operationId`: The stable managed-connector operation identifier to translate.
+- `request`: Optional operator intent supplied with the execution request.
+- `cancellationToken`: The token used to observe cancellation.
 
 <a id="type-cephalon-abstractions-data-icdccaptureexecutionruntimereportsink"></a>
 

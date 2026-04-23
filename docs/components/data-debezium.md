@@ -428,6 +428,36 @@ shared runtime surface instead of introducing a Debezium-only issuance registry.
   already owns Kafka Connect write-path execution, automatic connector mutation, or
   managed-connector control-plane orchestration
 
+## Managed-connector provider execution-adapter baseline
+
+The `ENG-179` follow-through keeps provider execution-adapter truth additive over that same shared
+runtime surface instead of introducing a Debezium-only transport registry or second coordinator.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorExecutionAdapter` now publishes stable
+  `not-applicable`, `blocked`, `operator-only`, `unavailable`, and `ready` posture for
+  Debezium-managed runtimes together with execution-adapter categories, the intended operation id,
+  source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/
+  execution-intent/execution-approval/command-envelope/command-issuance state, adapter identity,
+  deterministic adapter fingerprints, and provider-ready safety flags
+- the shared execution-runtime catalog now derives that execution-adapter answer from the already
+  shipped command-issuance, command-envelope, execution-approval, execution-intent, dry-run,
+  preflight, write-path-readiness, governance, drift, remediation, and coverage truth, so
+  observe-only, out-of-policy, blocking-remediation, future-control-plane, approval-gated, and
+  no-op declarations can surface one consistent provider-readiness answer before Cephalon ever
+  claims Kafka Connect ownership
+- `DebeziumManagedConnectorExecutionAdapter` now proves the first provider lane by translating
+  shared pause/resume/restart/delete intent into Debezium or Kafka Connect REST command shape,
+  while reconcile truthfully remains blocked until a later configuration-payload lane exists
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/execution-adapters/{executionAdapterState}`,
+  `/engine/cdc-capture-runtimes/execution-adapters/categories/{executionAdapterCategory}`, and
+  `/engine/cdc-capture-runtimes/execution-adapters/operations/{operationId}` on the same shared
+  runtime route family, and additive
+  `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}` now returns a
+  typed shared command-execution result instead of branching into a Debezium-only endpoint family
+- provider command translation currently remains a bounded adapter seam; it does not mean Cephalon
+  already owns Kafka Connect execution outcomes, automatic reconcile loops, retries, idempotency,
+  or broader managed-connector control-plane orchestration
+
 ## Not shipped in this slice
 
 This pack intentionally still does not claim:

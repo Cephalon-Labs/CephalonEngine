@@ -27,12 +27,14 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> index;
     private readonly ICdcCaptureCatalog captureCatalog;
     private readonly ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog;
+    private readonly ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter[] executionAdapters;
     private readonly TimeProvider timeProvider;
 
     public CdcCaptureExecutionRuntimeCatalog(
         CdcCaptureExecutionRuntimeDescriptorCatalog runtimeDescriptorCatalog,
         ICdcCaptureCatalog captureCatalog,
         ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog = null,
+        IEnumerable<ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter>? executionAdapters = null,
         TimeProvider? timeProvider = null)
     {
         ArgumentNullException.ThrowIfNull(runtimeDescriptorCatalog);
@@ -40,6 +42,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
 
         this.captureCatalog = captureCatalog;
         this.runtimeStateCatalog = runtimeStateCatalog;
+        this.executionAdapters = executionAdapters?.ToArray() ?? [];
         this.timeProvider = timeProvider ?? TimeProvider.System;
         var runtimes = runtimeDescriptorCatalog.Runtimes;
         index = runtimes.ToDictionary(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase);
@@ -403,6 +406,38 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterState(string executionAdapterState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionAdapterState);
+        var normalizedExecutionAdapterState = executionAdapterState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorExecutionAdapter.State,
+            normalizedExecutionAdapterState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterCategory(string executionAdapterCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionAdapterCategory);
+        var normalizedExecutionAdapterCategory = executionAdapterCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorExecutionAdapter.CategoryIds.Contains(
+            normalizedExecutionAdapterCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorExecutionAdapter.OperationId,
+            normalizedOperationId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     private CdcCaptureExecutionRuntimeDescriptor[] FilterRuntimes(
         Func<CdcCaptureExecutionRuntimeDescriptor, bool> predicate)
     {
@@ -506,7 +541,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorExecutionIntent,
             managedConnectorExecutionApproval,
             managedConnectorCommandEnvelope);
-        return new CdcCaptureExecutionRuntimeDescriptor(
+        var provisionalRuntime = new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
             description: runtime.Description,
@@ -524,6 +559,42 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorExecutionApproval = managedConnectorExecutionApproval,
             ManagedConnectorCommandEnvelope = managedConnectorCommandEnvelope,
             ManagedConnectorCommandIssuance = managedConnectorCommandIssuance
+        };
+        var managedConnectorExecutionAdapter = CreateManagedConnectorExecutionAdapter(
+            provisionalRuntime,
+            summary.ReportingCoverage,
+            summary.Remediation,
+            managedConnectorGovernance,
+            managedConnectorDrift,
+            managedConnectorActionPlan,
+            managedConnectorWritePathReadiness,
+            managedConnectorPreflight,
+            managedConnectorDryRun,
+            managedConnectorExecutionIntent,
+            managedConnectorExecutionApproval,
+            managedConnectorCommandEnvelope,
+            managedConnectorCommandIssuance,
+            managedConnectorMetadata);
+
+        return new CdcCaptureExecutionRuntimeDescriptor(
+            id: runtime.Id,
+            displayName: runtime.DisplayName,
+            description: runtime.Description,
+            metadata: mergedMetadata,
+            cdcCaptureIds: captureIds,
+            summary: summary)
+        {
+            ManagedConnectorGovernance = managedConnectorGovernance,
+            ManagedConnectorDrift = managedConnectorDrift,
+            ManagedConnectorActionPlan = managedConnectorActionPlan,
+            ManagedConnectorWritePathReadiness = managedConnectorWritePathReadiness,
+            ManagedConnectorPreflight = managedConnectorPreflight,
+            ManagedConnectorDryRun = managedConnectorDryRun,
+            ManagedConnectorExecutionIntent = managedConnectorExecutionIntent,
+            ManagedConnectorExecutionApproval = managedConnectorExecutionApproval,
+            ManagedConnectorCommandEnvelope = managedConnectorCommandEnvelope,
+            ManagedConnectorCommandIssuance = managedConnectorCommandIssuance,
+            ManagedConnectorExecutionAdapter = managedConnectorExecutionAdapter
         };
     }
 
@@ -3820,6 +3891,618 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 $"wouldApplyChanges={wouldApplyChanges.ToString().ToLowerInvariant()}",
                 $"destructive={isDestructiveOperation.ToString().ToLowerInvariant()}"
             ]);
+    }
+
+    private CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus CreateManagedConnectorExecutionAdapter(
+        CdcCaptureExecutionRuntimeDescriptor runtime,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus writePathReadiness,
+        CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus preflight,
+        CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus dryRun,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus executionIntent,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus executionApproval,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        ManagedConnectorMetadataSnapshot metadataSnapshot)
+    {
+        ArgumentNullException.ThrowIfNull(runtime);
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(actionPlan);
+        ArgumentNullException.ThrowIfNull(writePathReadiness);
+        ArgumentNullException.ThrowIfNull(preflight);
+        ArgumentNullException.ThrowIfNull(dryRun);
+        ArgumentNullException.ThrowIfNull(executionIntent);
+        ArgumentNullException.ThrowIfNull(executionApproval);
+        ArgumentNullException.ThrowIfNull(commandEnvelope);
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+        ArgumentNullException.ThrowIfNull(metadataSnapshot);
+
+        var candidateExecutionAdapter = ResolveManagedConnectorExecutionAdapter(runtime);
+        var adapterId = candidateExecutionAdapter?.AdapterId ?? CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.None;
+        var operationId = ResolveManagedConnectorExecutionAdapterOperationId(
+            commandIssuance.OperationId,
+            commandEnvelope.OperationId,
+            executionApproval.OperationId,
+            executionIntent.OperationId);
+        var sourceId = ResolveManagedConnectorExecutionAdapterSource(
+            commandIssuance,
+            commandEnvelope,
+            executionApproval,
+            executionIntent);
+        string state;
+        string description;
+
+        if (!string.Equals(runtime.ExecutionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(
+                commandIssuance.State,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.NotApplicable,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            state = CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.NotApplicable;
+            description = CreateManagedConnectorNotApplicableExecutionAdapterDescription(
+                commandIssuance.Description,
+                governance.Description);
+        }
+        else if (commandIssuance.IsOperatorOnly)
+        {
+            state = CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.OperatorOnly;
+            description = CreateManagedConnectorOperatorOnlyExecutionAdapterDescription(
+                operationId,
+                adapterId,
+                commandIssuance.Description,
+                executionApproval.Description);
+        }
+        else if (commandIssuance.IsBlocked)
+        {
+            state = CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Blocked;
+            description = CreateManagedConnectorBlockedExecutionAdapterDescription(
+                operationId,
+                adapterId,
+                commandIssuance.Description,
+                executionApproval.Description);
+        }
+        else if (candidateExecutionAdapter is null)
+        {
+            state = CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Unavailable;
+            description = CreateManagedConnectorUnavailableExecutionAdapterDescription(
+                operationId,
+                commandIssuance.Description);
+        }
+        else
+        {
+            state = CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready;
+            description = CreateManagedConnectorReadyExecutionAdapterDescription(
+                operationId,
+                adapterId,
+                commandIssuance);
+        }
+
+        var categories = CreateManagedConnectorExecutionAdapterCategories(
+            runtime.ExecutionTopology,
+            state,
+            reportingCoverage,
+            remediation,
+            governance,
+            drift,
+            actionPlan,
+            writePathReadiness,
+            preflight,
+            dryRun,
+            executionIntent,
+            executionApproval,
+            commandEnvelope,
+            commandIssuance,
+            operationId);
+
+        return CreateManagedConnectorExecutionAdapterStatus(
+            state,
+            description,
+            categories,
+            operationId,
+            governance,
+            reportingCoverage,
+            remediation,
+            drift,
+            actionPlan,
+            writePathReadiness,
+            preflight,
+            dryRun,
+            executionIntent,
+            executionApproval,
+            commandEnvelope,
+            commandIssuance,
+            sourceId,
+            adapterId,
+            runtime.Id,
+            runtime.CdcCaptureIds,
+            metadataSnapshot);
+    }
+
+    private ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter? ResolveManagedConnectorExecutionAdapter(
+        CdcCaptureExecutionRuntimeDescriptor runtime)
+    {
+        ArgumentNullException.ThrowIfNull(runtime);
+
+        foreach (var executionAdapter in executionAdapters)
+        {
+            if (executionAdapter.CanHandle(runtime))
+            {
+                return executionAdapter;
+            }
+        }
+
+        return null;
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus CreateManagedConnectorExecutionAdapterStatus(
+        string state,
+        string description,
+        IReadOnlyList<string> categoryIds,
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus writePathReadiness,
+        CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus preflight,
+        CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus dryRun,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus executionIntent,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus executionApproval,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        string sourceId,
+        string adapterId,
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        ManagedConnectorMetadataSnapshot metadataSnapshot)
+    {
+        var normalizedOperationId = string.IsNullOrWhiteSpace(operationId)
+            ? CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None
+            : operationId.Trim();
+        var normalizedAdapterId = string.IsNullOrWhiteSpace(adapterId)
+            ? CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.None
+            : adapterId.Trim();
+        var connectClusterId = commandIssuance.ConnectClusterId ?? ResolveManagedConnectorCommandTargetValue(
+            metadataSnapshot.DeclaredConnectClusterId,
+            metadataSnapshot.ReportedConnectClusterId);
+        var connectorClass = commandIssuance.ConnectorClass ?? ResolveManagedConnectorCommandTargetValue(
+            metadataSnapshot.DeclaredConnectorClass,
+            metadataSnapshot.ReportedConnectorClass);
+        var sourceProviderId = commandIssuance.SourceProviderId ?? ResolveManagedConnectorCommandTargetValue(
+            metadataSnapshot.DeclaredSourceProviderId,
+            metadataSnapshot.ReportedSourceProviderId);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus(state, description)
+        {
+            CategoryIds = categoryIds,
+            OperationId = normalizedOperationId,
+            ManagementMode = governance.ManagementMode,
+            ReportingCoverageState = reportingCoverage.State,
+            RemediationState = remediation.State,
+            GovernanceState = governance.State,
+            DriftState = drift.State,
+            ActionPlanState = actionPlan.State,
+            WritePathReadinessState = writePathReadiness.State,
+            PreflightState = preflight.State,
+            DryRunState = dryRun.State,
+            ExecutionIntentState = executionIntent.State,
+            ExecutionApprovalState = executionApproval.State,
+            CommandEnvelopeState = commandEnvelope.State,
+            CommandIssuanceState = commandIssuance.State,
+            PrimaryActionId = actionPlan.PrimaryActionId,
+            SourceId = sourceId,
+            CommandIssuanceSourceId = commandIssuance.SourceId,
+            CommandEnvelopeSourceId = commandEnvelope.SourceId,
+            ExecutionIntentConfidenceSourceId = executionIntent.ConfidenceSourceId,
+            ExecutionApprovalSourceId = executionApproval.SourceId,
+            AdapterId = normalizedAdapterId,
+            PotentialChangeCount = commandIssuance.PotentialChangeCount,
+            WouldApplyChanges = commandIssuance.WouldApplyChanges,
+            RequiresExplicitApproval = commandIssuance.RequiresExplicitApproval,
+            IsDestructiveOperation = commandIssuance.IsDestructiveOperation,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ConnectClusterId = connectClusterId,
+            ConnectorClass = connectorClass,
+            SourceProviderId = sourceProviderId,
+            CommandFingerprint = commandIssuance.CommandFingerprint,
+            IssuanceFingerprint = commandIssuance.IssuanceFingerprint,
+            AdapterFingerprint = CreateManagedConnectorExecutionAdapterFingerprint(
+                state,
+                normalizedOperationId,
+                sourceId,
+                normalizedAdapterId,
+                commandIssuance.State,
+                commandEnvelope.State,
+                executionApproval.State,
+                executionIntent.State,
+                commandIssuance.CommandFingerprint,
+                commandIssuance.IssuanceFingerprint,
+                commandIssuance.RequiresExplicitApproval,
+                commandIssuance.WouldApplyChanges,
+                commandIssuance.IsDestructiveOperation)
+        };
+    }
+
+    private static string[] CreateManagedConnectorExecutionAdapterCategories(
+        string executionTopology,
+        string state,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus writePathReadiness,
+        CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus preflight,
+        CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus dryRun,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus executionIntent,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus executionApproval,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(actionPlan);
+        ArgumentNullException.ThrowIfNull(writePathReadiness);
+        ArgumentNullException.ThrowIfNull(preflight);
+        ArgumentNullException.ThrowIfNull(dryRun);
+        ArgumentNullException.ThrowIfNull(executionIntent);
+        ArgumentNullException.ThrowIfNull(executionApproval);
+        ArgumentNullException.ThrowIfNull(commandEnvelope);
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+
+        if (!string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase))
+        {
+            return [];
+        }
+
+        var categories = new List<string>(capacity: 18);
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        if (!commandIssuance.AppliesToManagedConnector || executionIntent.IsDeferred)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.ObserveOnlyMode);
+        }
+
+        if (remediation.IsBlocked ||
+            commandIssuance.CategoryIds.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.BlockingRemediation,
+                StringComparer.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.BlockingRemediation);
+        }
+
+        if (commandIssuance.CategoryIds.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.StaleObservation,
+            StringComparer.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.StaleObservation);
+        }
+
+        if (!reportingCoverage.HasFullCoverage ||
+            commandIssuance.CategoryIds.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.IncompleteReportingCoverage,
+                StringComparer.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.IncompleteReportingCoverage);
+        }
+
+        if (actionPlan.IsWaiting ||
+            commandIssuance.CategoryIds.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.RuntimeTruthIncomplete,
+                StringComparer.OrdinalIgnoreCase) ||
+            preflight.CategoryIds.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.RuntimeTruthIncomplete,
+                StringComparer.OrdinalIgnoreCase) ||
+            writePathReadiness.CategoryIds.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories.RuntimeTruthIncomplete,
+                StringComparer.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.RuntimeTruthIncomplete);
+        }
+
+        if (governance.IsOutOfPolicy)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.GovernanceOutOfPolicy);
+        }
+
+        if (commandIssuance.IsOperatorOnly)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.ControlPlaneOwnershipGap);
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.OperatorOnly);
+        }
+
+        if (commandIssuance.WouldApplyChanges || dryRun.WouldApplyChanges)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.ChangePlanned);
+        }
+
+        if (WouldManagedConnectorDryRunRequireLifecycleChange(operationId, commandIssuance.WouldApplyChanges || dryRun.WouldApplyChanges))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.LifecycleChange);
+        }
+
+        if (commandIssuance.IsDestructiveOperation)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.DestructiveOperation);
+        }
+
+        if (executionApproval.IsApprovalRequired)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.ApprovalRequired);
+        }
+        else if (executionApproval.IsApprovalReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.ApprovalReady);
+        }
+
+        if (commandIssuance.IsRejected ||
+            commandIssuance.CategoryIds.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.NoExecutionNeeded,
+                StringComparer.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.NoExecutionNeeded);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.AdapterReady);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Unavailable, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.AdapterUnavailable);
+        }
+
+        return [.. categories];
+    }
+
+    private static string ResolveManagedConnectorExecutionAdapterSource(
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus executionApproval,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus executionIntent)
+    {
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+        ArgumentNullException.ThrowIfNull(commandEnvelope);
+        ArgumentNullException.ThrowIfNull(executionApproval);
+        ArgumentNullException.ThrowIfNull(executionIntent);
+
+        if (commandIssuance.AppliesToManagedConnector ||
+            string.Equals(
+                commandIssuance.State,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.NotApplicable,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources.CommandIssuance;
+        }
+
+        if (commandEnvelope.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources.CommandEnvelope;
+        }
+
+        if (executionApproval.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources.ExecutionApproval;
+        }
+
+        if (executionIntent.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources.ExecutionIntent;
+        }
+
+        return CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources.Unknown;
+    }
+
+    private static string ResolveManagedConnectorExecutionAdapterOperationId(
+        string? commandIssuanceOperationId,
+        string? commandEnvelopeOperationId,
+        string? executionApprovalOperationId,
+        string? executionIntentOperationId)
+    {
+        if (!string.IsNullOrWhiteSpace(commandIssuanceOperationId))
+        {
+            return commandIssuanceOperationId.Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(commandEnvelopeOperationId))
+        {
+            return commandEnvelopeOperationId.Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(executionApprovalOperationId))
+        {
+            return executionApprovalOperationId.Trim();
+        }
+
+        return string.IsNullOrWhiteSpace(executionIntentOperationId)
+            ? CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None
+            : executionIntentOperationId.Trim();
+    }
+
+    private static string CreateManagedConnectorExecutionAdapterFingerprint(
+        string state,
+        string operationId,
+        string sourceId,
+        string adapterId,
+        string commandIssuanceState,
+        string commandEnvelopeState,
+        string executionApprovalState,
+        string executionIntentState,
+        string commandFingerprint,
+        string issuanceFingerprint,
+        bool requiresExplicitApproval,
+        bool wouldApplyChanges,
+        bool isDestructiveOperation)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(adapterId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(commandIssuanceState);
+        ArgumentException.ThrowIfNullOrWhiteSpace(commandEnvelopeState);
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionApprovalState);
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionIntentState);
+        ArgumentException.ThrowIfNullOrWhiteSpace(commandFingerprint);
+        ArgumentException.ThrowIfNullOrWhiteSpace(issuanceFingerprint);
+
+        return string.Join(
+            "|",
+            [
+                "cephalon-managed-connector-execution-adapter/v1",
+                $"state={state.Trim()}",
+                $"operation={operationId.Trim()}",
+                $"source={sourceId.Trim()}",
+                $"adapter={adapterId.Trim()}",
+                $"commandIssuance={commandIssuanceState.Trim()}",
+                $"commandEnvelope={commandEnvelopeState.Trim()}",
+                $"executionApproval={executionApprovalState.Trim()}",
+                $"executionIntent={executionIntentState.Trim()}",
+                $"commandFingerprint={commandFingerprint.Trim()}",
+                $"issuanceFingerprint={issuanceFingerprint.Trim()}",
+                $"requiresExplicitApproval={requiresExplicitApproval.ToString().ToLowerInvariant()}",
+                $"wouldApplyChanges={wouldApplyChanges.ToString().ToLowerInvariant()}",
+                $"destructive={isDestructiveOperation.ToString().ToLowerInvariant()}"
+            ]);
+    }
+
+    private static string CreateManagedConnectorNotApplicableExecutionAdapterDescription(
+        string? issuanceDescription,
+        string? governanceDescription)
+    {
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            "Cephalon does not currently route provider execution adapters while the shared runtime remains observe-only.",
+            string.IsNullOrWhiteSpace(issuanceDescription)
+                ? governanceDescription
+                : issuanceDescription);
+    }
+
+    private static string CreateManagedConnectorOperatorOnlyExecutionAdapterDescription(
+        string operationId,
+        string adapterId,
+        string? issuanceDescription,
+        string? executionApprovalDescription)
+    {
+        var detail = string.IsNullOrWhiteSpace(issuanceDescription)
+            ? executionApprovalDescription
+            : issuanceDescription;
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"Cephalon can identify provider execution adapter '{NormalizeManagedConnectorFingerprintSegment(adapterId)}', but {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} still remains operator-owned on the shared runtime surface.",
+            detail);
+    }
+
+    private static string CreateManagedConnectorBlockedExecutionAdapterDescription(
+        string operationId,
+        string adapterId,
+        string? issuanceDescription,
+        string? executionApprovalDescription)
+    {
+        var detail = string.IsNullOrWhiteSpace(issuanceDescription)
+            ? executionApprovalDescription
+            : issuanceDescription;
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"Cephalon cannot yet trust provider execution adapter '{NormalizeManagedConnectorFingerprintSegment(adapterId)}' for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}.",
+            detail);
+    }
+
+    private static string CreateManagedConnectorUnavailableExecutionAdapterDescription(
+        string operationId,
+        string? issuanceDescription)
+    {
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"The managed connector is otherwise ready for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but no matching provider execution adapter is currently registered.",
+            issuanceDescription);
+    }
+
+    private static string CreateManagedConnectorReadyExecutionAdapterDescription(
+        string operationId,
+        string adapterId,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance)
+    {
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+
+        if (commandIssuance.IsRejected || !commandIssuance.WouldApplyChanges)
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can route {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} through provider execution adapter '{NormalizeManagedConnectorFingerprintSegment(adapterId)}', but the current shared runtime truth indicates no outbound provider command is needed.",
+                commandIssuance.Description);
+        }
+
+        if (commandIssuance.IsAccepted)
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can route {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} through provider execution adapter '{NormalizeManagedConnectorFingerprintSegment(adapterId)}' once the required approval gates are satisfied.",
+                commandIssuance.Description);
+        }
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"Cephalon can route {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} through provider execution adapter '{NormalizeManagedConnectorFingerprintSegment(adapterId)}'. Provider completion and execution-outcome history remain later work.",
+            commandIssuance.Description);
+    }
+
+    private static string CreateManagedConnectorExecutionAdapterOperationLabel(string operationId)
+    {
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future reconcile follow-through";
+        }
+
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Pause,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future pause follow-through";
+        }
+
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Resume,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future resume follow-through";
+        }
+
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Restart,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future restart follow-through";
+        }
+
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Delete,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future delete follow-through";
+        }
+
+        return "future managed-connector follow-through";
     }
 
     private static string CreateManagedConnectorNotApplicableCommandIssuanceDescription(

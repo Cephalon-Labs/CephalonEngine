@@ -1255,7 +1255,7 @@ public sealed class DebeziumDataCdcHostingTests
     }
 
     [Fact]
-    public async Task MapCephalonExposesManagedConnectorDryRunExecutionIntentApprovalCommandEnvelopeAndCommandIssuanceRoutesOnSharedCdcRuntimeSurface()
+    public async Task MapCephalonExposesManagedConnectorDryRunExecutionIntentApprovalCommandEnvelopeCommandIssuanceExecutionAdapterAndCommandExecutionRoutesOnSharedCdcRuntimeSurface()
     {
         var builder = CreateBuilder(
             options =>
@@ -1621,7 +1621,59 @@ public sealed class DebeziumDataCdcHostingTests
             var commandIssuancePauseOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/operations/pause");
             var commandIssuanceDeleteOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/operations/delete");
             var commandIssuanceReconcileOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/operations/reconcile");
+            var notApplicableExecutionAdapter = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/not-applicable");
+            var blockedExecutionAdapter = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/blocked");
+            var operatorOnlyExecutionAdapter = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/operator-only");
+            var unavailableExecutionAdapter = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/unavailable");
+            var readyExecutionAdapter = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/ready");
+            var observeOnlyExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/observe-only-mode");
+            var controlPlaneExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/control-plane-ownership-gap");
+            var governanceExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/governance-out-of-policy");
+            var blockingRemediationExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/blocking-remediation");
+            var adapterReadyExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/adapter-ready");
+            var adapterUnavailableExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/adapter-unavailable");
+            var noExecutionNeededExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/no-execution-needed");
+            var approvalReadyExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/approval-ready");
+            var approvalRequiredExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/approval-required");
+            var destructiveExecutionAdapterCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/categories/destructive-operation");
+            var executionAdapterPauseOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/operations/pause");
+            var executionAdapterDeleteOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/operations/delete");
+            var executionAdapterReconcileOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-adapters/operations/reconcile");
+            var readyReconcileCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{ReadyRuntimeId}/commands/reconcile",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest());
+            var pauseRequiredBlockedCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{PauseRequiredRuntimeId}/commands/pause",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest());
+            var pauseRequiredApprovedCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{PauseRequiredRuntimeId}/commands/pause",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest
+                {
+                    Approve = true
+                });
+            var deleteRequiredApprovalOnlyCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{DeleteRequiredRuntimeId}/commands/delete",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest
+                {
+                    Approve = true
+                });
+            var deleteRequiredApprovedCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{DeleteRequiredRuntimeId}/commands/delete",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest
+                {
+                    Approve = true,
+                    AllowDestructive = true
+                });
+            var futureControlPlaneCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{FutureControlPlaneRuntimeId}/commands/reconcile",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest());
             var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+            var readyReconcileCommand = await readyReconcileCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
+            var pauseRequiredBlockedCommand = await pauseRequiredBlockedCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
+            var pauseRequiredApprovedCommand = await pauseRequiredApprovedCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
+            var deleteRequiredApprovalOnlyCommand = await deleteRequiredApprovalOnlyCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
+            var deleteRequiredApprovedCommand = await deleteRequiredApprovedCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
+            var futureControlPlaneCommand = await futureControlPlaneCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
 
             Assert.NotNull(deferred);
             Assert.Equal([ObserveOnlyRuntimeId], deferred.Select(static runtime => runtime.Id).ToArray());
@@ -1976,6 +2028,129 @@ public sealed class DebeziumDataCdcHostingTests
                 [FutureControlPlaneRuntimeId, ReadyRuntimeId],
                 commandIssuanceReconcileOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
 
+            Assert.NotNull(notApplicableExecutionAdapter);
+            Assert.Equal([ObserveOnlyRuntimeId], notApplicableExecutionAdapter.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.NotApplicable, notApplicableExecutionAdapter[0].ManagedConnectorExecutionAdapter.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest, notApplicableExecutionAdapter[0].ManagedConnectorExecutionAdapter.AdapterId);
+
+            Assert.NotNull(blockedExecutionAdapter);
+            Assert.Equal(
+                [BlockedRuntimeId, OutOfPolicyRuntimeId, WaitingRuntimeId],
+                blockedExecutionAdapter.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(operatorOnlyExecutionAdapter);
+            Assert.Equal([FutureControlPlaneRuntimeId], operatorOnlyExecutionAdapter.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile, operatorOnlyExecutionAdapter[0].ManagedConnectorExecutionAdapter.OperationId);
+
+            Assert.NotNull(unavailableExecutionAdapter);
+            Assert.Empty(unavailableExecutionAdapter);
+
+            Assert.NotNull(readyExecutionAdapter);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId, PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                readyExecutionAdapter.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(observeOnlyExecutionAdapterCategory);
+            Assert.Equal([ObserveOnlyRuntimeId], observeOnlyExecutionAdapterCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(controlPlaneExecutionAdapterCategory);
+            Assert.Equal([FutureControlPlaneRuntimeId], controlPlaneExecutionAdapterCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(governanceExecutionAdapterCategory);
+            Assert.Equal([OutOfPolicyRuntimeId], governanceExecutionAdapterCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(blockingRemediationExecutionAdapterCategory);
+            Assert.Equal([BlockedRuntimeId], blockingRemediationExecutionAdapterCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(adapterReadyExecutionAdapterCategory);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId, PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                adapterReadyExecutionAdapterCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(adapterUnavailableExecutionAdapterCategory);
+            Assert.Empty(adapterUnavailableExecutionAdapterCategory);
+
+            Assert.NotNull(noExecutionNeededExecutionAdapterCategory);
+            Assert.Equal(
+                [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                noExecutionNeededExecutionAdapterCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(approvalReadyExecutionAdapterCategory);
+            Assert.Equal([PauseRequiredRuntimeId], approvalReadyExecutionAdapterCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(approvalRequiredExecutionAdapterCategory);
+            Assert.Equal([DeleteRequiredRuntimeId], approvalRequiredExecutionAdapterCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(destructiveExecutionAdapterCategory);
+            Assert.Equal([DeleteRequiredRuntimeId], destructiveExecutionAdapterCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(executionAdapterPauseOperation);
+            Assert.Equal(
+                [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId],
+                executionAdapterPauseOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(executionAdapterDeleteOperation);
+            Assert.Equal([DeleteRequiredRuntimeId], executionAdapterDeleteOperation.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(executionAdapterReconcileOperation);
+            Assert.Equal(
+                [FutureControlPlaneRuntimeId, ReadyRuntimeId],
+                executionAdapterReconcileOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            readyReconcileCommandResponse.EnsureSuccessStatusCode();
+            Assert.NotNull(readyReconcileCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NoOp, readyReconcileCommand.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready, readyReconcileCommand.ExecutionAdapterState);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile, readyReconcileCommand.ResolvedOperationId);
+            Assert.True(readyReconcileCommand.IsNoOp);
+            Assert.False(readyReconcileCommand.HasProviderCommand);
+
+            pauseRequiredBlockedCommandResponse.EnsureSuccessStatusCode();
+            Assert.NotNull(pauseRequiredBlockedCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked, pauseRequiredBlockedCommand.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready, pauseRequiredBlockedCommand.ExecutionAdapterState);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Pause, pauseRequiredBlockedCommand.ResolvedOperationId);
+            Assert.True(pauseRequiredBlockedCommand.IsBlocked);
+            Assert.True(pauseRequiredBlockedCommand.RequiresExplicitApproval);
+            Assert.False(pauseRequiredBlockedCommand.HasProviderCommand);
+
+            pauseRequiredApprovedCommandResponse.EnsureSuccessStatusCode();
+            Assert.NotNull(pauseRequiredApprovedCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted, pauseRequiredApprovedCommand.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready, pauseRequiredApprovedCommand.ExecutionAdapterState);
+            Assert.Equal("http-rest", pauseRequiredApprovedCommand.TransportKind);
+            Assert.Equal("PUT", pauseRequiredApprovedCommand.HttpMethod);
+            Assert.Equal($"/connectors/{PauseRequiredRuntimeId}/pause", pauseRequiredApprovedCommand.RelativePath);
+            Assert.True(pauseRequiredApprovedCommand.HasProviderCommand);
+            Assert.True(pauseRequiredApprovedCommand.IsAdapted);
+
+            deleteRequiredApprovalOnlyCommandResponse.EnsureSuccessStatusCode();
+            Assert.NotNull(deleteRequiredApprovalOnlyCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked, deleteRequiredApprovalOnlyCommand.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Delete, deleteRequiredApprovalOnlyCommand.ResolvedOperationId);
+            Assert.True(deleteRequiredApprovalOnlyCommand.IsBlocked);
+            Assert.True(deleteRequiredApprovalOnlyCommand.IsDestructiveOperation);
+            Assert.False(deleteRequiredApprovalOnlyCommand.HasProviderCommand);
+
+            deleteRequiredApprovedCommandResponse.EnsureSuccessStatusCode();
+            Assert.NotNull(deleteRequiredApprovedCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted, deleteRequiredApprovedCommand.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready, deleteRequiredApprovedCommand.ExecutionAdapterState);
+            Assert.Equal("http-rest", deleteRequiredApprovedCommand.TransportKind);
+            Assert.Equal("DELETE", deleteRequiredApprovedCommand.HttpMethod);
+            Assert.Equal($"/connectors/{DeleteRequiredRuntimeId}", deleteRequiredApprovedCommand.RelativePath);
+            Assert.True(deleteRequiredApprovedCommand.IsAdapted);
+            Assert.True(deleteRequiredApprovedCommand.IsDestructiveOperation);
+            Assert.True(deleteRequiredApprovedCommand.HasProviderCommand);
+
+            futureControlPlaneCommandResponse.EnsureSuccessStatusCode();
+            Assert.NotNull(futureControlPlaneCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly, futureControlPlaneCommand.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.OperatorOnly, futureControlPlaneCommand.ExecutionAdapterState);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile, futureControlPlaneCommand.ResolvedOperationId);
+            Assert.True(futureControlPlaneCommand.IsOperatorOnly);
+            Assert.False(futureControlPlaneCommand.HasProviderCommand);
+
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
                 item.ManagedConnectorDryRun.State == CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred &&
@@ -2085,6 +2260,33 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseSatisfiedRuntimeId &&
                 item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Rejected &&
                 item.ManagedConnectorCommandIssuance.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Pause);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
+                item.ManagedConnectorExecutionAdapter.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.NotApplicable &&
+                item.ManagedConnectorExecutionAdapter.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.ObserveOnlyMode, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == FutureControlPlaneRuntimeId &&
+                item.ManagedConnectorExecutionAdapter.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.OperatorOnly &&
+                item.ManagedConnectorExecutionAdapter.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == OutOfPolicyRuntimeId &&
+                item.ManagedConnectorExecutionAdapter.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Blocked &&
+                item.ManagedConnectorExecutionAdapter.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.GovernanceOutOfPolicy, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == BlockedRuntimeId &&
+                item.ManagedConnectorExecutionAdapter.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Blocked &&
+                item.ManagedConnectorExecutionAdapter.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.BlockingRemediation, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ReadyRuntimeId &&
+                item.ManagedConnectorExecutionAdapter.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready &&
+                item.ManagedConnectorExecutionAdapter.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile &&
+                item.ManagedConnectorExecutionAdapter.ConnectClusterId == "connect-cluster-e");
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseRequiredRuntimeId &&
+                item.ManagedConnectorExecutionAdapter.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready &&
+                item.ManagedConnectorExecutionAdapter.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Pause);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == DeleteRequiredRuntimeId &&
+                item.ManagedConnectorExecutionAdapter.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready &&
+                item.ManagedConnectorExecutionAdapter.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Delete &&
+                item.ManagedConnectorExecutionAdapter.IsDestructiveOperation);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseSatisfiedRuntimeId &&
+                item.ManagedConnectorExecutionAdapter.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.Ready &&
+                item.ManagedConnectorExecutionAdapter.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Pause &&
+                item.ManagedConnectorExecutionAdapter.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterCategories.NoExecutionNeeded, StringComparer.OrdinalIgnoreCase));
         }
         finally
         {

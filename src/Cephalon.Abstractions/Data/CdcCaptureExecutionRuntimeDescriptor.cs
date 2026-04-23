@@ -292,6 +292,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus ManagedConnectorCommandIssuance { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector provider execution-adapter posture derived from command issuance, command envelopes, execution approval, execution intent, and the broader shared runtime truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus ManagedConnectorExecutionAdapter { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

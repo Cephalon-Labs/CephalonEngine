@@ -240,4 +240,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable managed-connector command-issuance operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandIssuanceOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution adapter matches the requested state.
+    /// </summary>
+    /// <param name="executionAdapterState">The stable managed-connector execution-adapter state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-adapter state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterState(string executionAdapterState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution adapter includes the requested category.
+    /// </summary>
+    /// <param name="executionAdapterCategory">The stable managed-connector execution-adapter category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-adapter category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterCategory(string executionAdapterCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution adapter currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector execution-adapter operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionAdapterOperationId(string operationId);
 }

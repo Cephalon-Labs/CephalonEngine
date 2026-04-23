@@ -39,6 +39,7 @@ internal sealed class DebeziumDataModule(DebeziumDataOptions options)
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ICdcCaptureExecutionRuntimeContributor, DebeziumExecutionRuntimeContributor>());
             services.TryAddSingleton<ICdcCaptureExecutionRuntimeReportSink, DebeziumExecutionRuntimeReportSink>();
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter, DebeziumManagedConnectorExecutionAdapter>());
         }
     }
 
