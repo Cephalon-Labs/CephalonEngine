@@ -204,7 +204,11 @@ now ships through `Cephalon.Data.MongoDB` with `mongodb-change-stream-capture-pu
 contract can preserve authored module ownership by keeping `sourceModuleId` authoritative while
 surfacing a separate contributing-pack identity in metadata when needed. Broader provider
 federation, self-serve data infrastructure, and out-of-process or edge-aware CDC automation remain
-later work over those same catalogs.
+later work over those same catalogs. That same snapshot projection now also keeps shared
+execution-runtime coverage and remediation posture explicit through `ReportingCoverage` plus
+`Remediation`, so one operator payload can answer declared-versus-reported ownership, active
+remediation categories, and blocking-versus-attention posture without rebuilding a second
+external-runtime registry beside `snapshot.CdcCaptureExecutionRuntimes`.
 
 Just as importantly, this package exists to lower ceremony for consumer apps. The engine should absorb repetitive composition, configuration binding, runtime wiring, introspection, and companion-pack coordination so Cephalon-based apps spend less code on plumbing and declarations, emit less boilerplate, and stay focused on project-specific business logic.
 

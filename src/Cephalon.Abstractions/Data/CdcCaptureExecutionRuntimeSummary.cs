@@ -71,6 +71,12 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
         new(CdcCaptureExecutionRuntimeReportingCoverageStates.Unknown);
 
     /// <summary>
+    /// Gets the aggregate remediation posture currently visible for the execution runtime.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeRemediationStatus Remediation { get; init; } =
+        new(CdcCaptureExecutionRuntimeRemediationStates.Unknown);
+
+    /// <summary>
     /// Gets the grouped reporter-coordination rollup currently visible across the execution runtime's reported CDC captures.
     /// </summary>
     public CdcCaptureExecutionRuntimeReporterCoordinationRollup ReporterCoordinationRollup { get; init; } =
@@ -127,6 +133,11 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
     public bool HasFullCaptureCoverage => ReportingCoverage.HasFullCoverage;
 
     /// <summary>
+    /// Gets a value indicating whether the execution runtime currently requires operator remediation.
+    /// </summary>
+    public bool RequiresRemediation => Remediation.RequiresRemediation;
+
+    /// <summary>
     /// Gets a value indicating whether at least one reported capture observation is now stale.
     /// </summary>
     public bool HasStaleObservations => string.Equals(ObservationFreshness.State, CdcCaptureFreshnessStates.Stale, StringComparison.OrdinalIgnoreCase);
@@ -140,4 +151,9 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
     /// Gets a value indicating whether the execution runtime currently reports degraded reporter ownership.
     /// </summary>
     public bool HasReporterCoordinationIssue => ReporterCoordination.IsDegraded;
+
+    /// <summary>
+    /// Gets a value indicating whether the execution runtime is currently blocked by failed CDC captures.
+    /// </summary>
+    public bool HasBlockingRemediation => Remediation.IsBlocked;
 }

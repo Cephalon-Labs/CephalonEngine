@@ -82,6 +82,27 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationState(string remediationState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(remediationState);
+        var normalizedRemediationState = remediationState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.Summary.Remediation.State,
+            normalizedRemediationState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationCategory(string remediationCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(remediationCategory);
+        var normalizedRemediationCategory = remediationCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.Summary.Remediation.CategoryIds.Contains(
+            normalizedRemediationCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
     private CdcCaptureExecutionRuntimeDescriptor[] FilterRuntimes(
         Func<CdcCaptureExecutionRuntimeDescriptor, bool> predicate)
     {
@@ -99,8 +120,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         var captureIds = ResolveCaptureIds(runtime.Id);
         var matchingStates = runtimeStateCatalog?.GetByExecutionRuntimeId(runtime.Id) ?? [];
         var summary = matchingStates.Count == 0
-            ? CreateEmptySummary(runtime)
-            : CreateSummary(runtime, matchingStates);
+            ? CreateEmptySummary(runtime, captureIds)
+            : CreateSummary(runtime, captureIds, matchingStates);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
@@ -110,17 +131,24 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             summary: summary);
     }
 
-    private static CdcCaptureExecutionRuntimeSummary CreateEmptySummary(CdcCaptureExecutionRuntimeDescriptor runtime)
+    private static CdcCaptureExecutionRuntimeSummary CreateEmptySummary(
+        CdcCaptureExecutionRuntimeDescriptor runtime,
+        IReadOnlyList<string> captureIds)
     {
+        var reporterCoordination = CreateReporterCoordination(runtime);
+        var reportingCoverage = CreateReportingCoverage(captureIds, []);
+
         return CdcCaptureExecutionRuntimeSummary.Empty with
         {
-            ReporterCoordination = CreateReporterCoordination(runtime),
-            ReportingCoverage = CreateReportingCoverage(runtime.CdcCaptureIds, [])
+            ReporterCoordination = reporterCoordination,
+            ReportingCoverage = reportingCoverage,
+            Remediation = CreateRemediation(reportingCoverage, [])
         };
     }
 
     private CdcCaptureExecutionRuntimeSummary CreateSummary(
         CdcCaptureExecutionRuntimeDescriptor runtime,
+        IReadOnlyList<string> captureIds,
         IReadOnlyList<CdcCaptureRuntimeState> matchingStates)
     {
         var reportedCaptureIds = matchingStates
@@ -136,6 +164,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             .First();
         latestState.Metadata.TryGetValue("acknowledgement", out var lastAcknowledgement);
         var activeReporterId = ResolveActiveReporterId(matchingStates, timeProvider.GetUtcNow());
+        var reportingCoverage = CreateReportingCoverage(captureIds, matchingStates);
+        var remediation = CreateRemediation(reportingCoverage, matchingStates);
 
         return new CdcCaptureExecutionRuntimeSummary(
             ReportedCdcCaptureIds: reportedCaptureIds,
@@ -156,7 +186,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ObservationFreshness: AggregateObservationFreshness(matchingStates))
         {
             ReporterCoordination = latestState.ReporterCoordination,
-            ReportingCoverage = CreateReportingCoverage(runtime.CdcCaptureIds, matchingStates),
+            ReportingCoverage = reportingCoverage,
+            Remediation = remediation,
             ReporterCoordinationRollup = CreateReporterCoordinationRollup(matchingStates),
             LastReporterId = latestState.LastReporterId,
             ActiveReporterId = activeReporterId,
@@ -170,6 +201,131 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 .ToArray(),
             LastEdgeNodeId = latestState.LastEdgeNodeId
         };
+    }
+
+    private static CdcCaptureExecutionRuntimeRemediationStatus CreateRemediation(
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates)
+    {
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+        ArgumentNullException.ThrowIfNull(matchingStates);
+
+        var unreportedCaptureIds = reportingCoverage.UnreportedCdcCaptureIds
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var staleCaptureIds = matchingStates
+            .Where(static state => state.HasReports && state.IsObservationStale)
+            .Select(static state => state.CdcCaptureId)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var failedCaptureIds = matchingStates
+            .Where(static state => state.HasReports && state.IsFailed)
+            .Select(static state => state.CdcCaptureId)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var reporterCoordinationIssueCaptureIds = matchingStates
+            .Where(static state => state.HasReports && state.HasReporterCoordinationIssue)
+            .Select(static state => state.CdcCaptureId)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var categories = new List<string>(capacity: 4);
+
+        if (failedCaptureIds.Length > 0)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeRemediationCategories.FailedCdcCaptures);
+        }
+
+        if (reporterCoordinationIssueCaptureIds.Length > 0)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeRemediationCategories.ReporterCoordinationIssues);
+        }
+
+        if (staleCaptureIds.Length > 0)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeRemediationCategories.StaleObservations);
+        }
+
+        if (unreportedCaptureIds.Length > 0)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeRemediationCategories.UnreportedCdcCaptures);
+        }
+
+        if (categories.Count == 0)
+        {
+            return new CdcCaptureExecutionRuntimeRemediationStatus(
+                CdcCaptureExecutionRuntimeRemediationStates.Ready,
+                reportingCoverage.DeclaredCaptureCount == 0
+                    ? "The execution runtime does not currently require remediation because it does not resolve to any CDC captures."
+                    : "The execution runtime does not currently require remediation.");
+        }
+
+        var affectedCaptureIds = failedCaptureIds
+            .Concat(reporterCoordinationIssueCaptureIds)
+            .Concat(staleCaptureIds)
+            .Concat(unreportedCaptureIds)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return new CdcCaptureExecutionRuntimeRemediationStatus(
+            failedCaptureIds.Length > 0
+                ? CdcCaptureExecutionRuntimeRemediationStates.Blocked
+                : CdcCaptureExecutionRuntimeRemediationStates.Attention,
+            CreateRemediationDescription(
+                failedCaptureIds,
+                reporterCoordinationIssueCaptureIds,
+                staleCaptureIds,
+                unreportedCaptureIds))
+        {
+            CategoryIds = categories,
+            AffectedCdcCaptureIds = affectedCaptureIds,
+            UnreportedCdcCaptureIds = unreportedCaptureIds,
+            StaleCdcCaptureIds = staleCaptureIds,
+            FailedCdcCaptureIds = failedCaptureIds,
+            ReporterCoordinationIssueCdcCaptureIds = reporterCoordinationIssueCaptureIds
+        };
+    }
+
+    private static string CreateRemediationDescription(
+        string[] failedCaptureIds,
+        string[] reporterCoordinationIssueCaptureIds,
+        string[] staleCaptureIds,
+        string[] unreportedCaptureIds)
+    {
+        var messages = new List<string>(capacity: 4);
+
+        if (failedCaptureIds.Length > 0)
+        {
+            messages.Add(failedCaptureIds.Length == 1
+                ? $"CDC capture '{failedCaptureIds[0]}' currently reports a failed external runtime outcome."
+                : $"{failedCaptureIds.Length} CDC captures currently report failed external runtime outcomes.");
+        }
+
+        if (reporterCoordinationIssueCaptureIds.Length > 0)
+        {
+            messages.Add(reporterCoordinationIssueCaptureIds.Length == 1
+                ? $"CDC capture '{reporterCoordinationIssueCaptureIds[0]}' currently reports degraded reporter coordination."
+                : $"{reporterCoordinationIssueCaptureIds.Length} CDC captures currently report degraded reporter coordination.");
+        }
+
+        if (staleCaptureIds.Length > 0)
+        {
+            messages.Add(staleCaptureIds.Length == 1
+                ? $"CDC capture '{staleCaptureIds[0]}' currently reports a stale observation."
+                : $"{staleCaptureIds.Length} CDC captures currently report stale observations.");
+        }
+
+        if (unreportedCaptureIds.Length > 0)
+        {
+            messages.Add(unreportedCaptureIds.Length == 1
+                ? $"Declared CDC capture '{unreportedCaptureIds[0]}' has not reported runtime state yet."
+                : $"{unreportedCaptureIds.Length} declared CDC captures have not reported runtime state yet.");
+        }
+
+        return string.Join(" ", messages);
     }
 
     private static Dictionary<string, string> MergeRuntimeMetadata(

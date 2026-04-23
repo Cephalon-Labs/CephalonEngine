@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T21:06:06.6859343+00:00",
+  "GeneratedAtUtc": "2026-04-23T07:12:37.3535703+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 371
+      "TypeCount": 374
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -571,7 +571,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 91
+      "TypeCount": 94
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3230,6 +3230,51 @@
       }
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeRemediationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeRemediationCategories",
+      "Summary": "Defines the stable remediation-category identifiers used by CDC execution-runtime summaries.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeRemediationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeRemediationStates",
+      "Summary": "Defines the stable remediation-state identifiers used by CDC execution-runtime summaries.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeRemediationStatus",
+      "Summary": "Describes the current operator-facing remediation posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3285,7 +3330,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 33,
+        "Properties": 36,
         "Methods": 0
       }
     },
@@ -6646,7 +6691,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 5
+        "Methods": 7
       }
     },
     {
@@ -15101,6 +15146,28 @@
       "Summary": "The violation is informational only."
     },
     {
+      "DisplayName": "AffectedCaptureCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-affectedcapturecount",
+      "Signature": "int AffectedCaptureCount { get; }",
+      "Summary": "Gets the number of CDC captures currently affected by active remediation work."
+    },
+    {
+      "DisplayName": "AffectedCdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-affectedcdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E AffectedCdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently affected by active remediation work."
+    },
+    {
       "DisplayName": "AgenticRuntimeOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "AgenticRuntimeOptions",
@@ -16265,6 +16332,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-timeoutsettings-attempttimeoutseconds",
       "Signature": "int? AttemptTimeoutSeconds { get; }",
       "Summary": "Gets the per-attempt timeout in seconds requested for an execution."
+    },
+    {
+      "DisplayName": "Attention",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-attention",
+      "Signature": "const string Attention",
+      "Summary": "The execution runtime currently requires operator attention, but it is not blocked by a failed capture."
     },
     {
       "DisplayName": "AttentionActionCount",
@@ -18247,6 +18325,17 @@
       "Summary": "Gets the operator-facing blast-radius posture for this cell."
     },
     {
+      "DisplayName": "Blocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-blocked",
+      "Signature": "const string Blocked",
+      "Summary": "The execution runtime currently requires remediation for one or more failed CDC captures."
+    },
+    {
       "DisplayName": "BlockingActionCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalActionPlan",
@@ -19149,6 +19238,28 @@
       "Summary": "Gets the stable machine-readable remediation category."
     },
     {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active remediation categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable remediation categories currently active for the execution runtime."
+    },
+    {
       "DisplayName": "CdcCaptureDescriptor",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureDescriptor",
@@ -19257,6 +19368,17 @@
       "AnchorId": "member-m-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-ctor",
       "Signature": "CdcCaptureExecutionRuntimeOptions()",
       "Summary": "Creates CDC execution runtime options with empty identity fields and a declared-runtime topology."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeRemediationStatus(string state, string description)",
+      "Summary": "Creates a new execution-runtime remediation answer."
     },
     {
       "DisplayName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
@@ -24336,6 +24458,17 @@
       "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-description",
       "Signature": "string Description { get; set; }",
       "Summary": "Gets or sets the human-readable execution-runtime description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing remediation summary."
     },
     {
       "DisplayName": "Description",
@@ -30069,6 +30202,28 @@
       "Summary": "The runtime captured a lifecycle failure."
     },
     {
+      "DisplayName": "FailedCdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-failedcdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E FailedCdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers whose latest reported runtime outcome is failed."
+    },
+    {
+      "DisplayName": "FailedCdcCaptures",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-failedcdccaptures",
+      "Signature": "const string FailedCdcCaptures",
+      "Summary": "One or more reported CDC captures currently publish failed runtime outcomes."
+    },
+    {
       "DisplayName": "FailedCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -32764,6 +32919,28 @@
       "Summary": "Gets all outboxes backed by the requested provider identifier."
     },
     {
+      "DisplayName": "GetByRemediationCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyremediationcategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByRemediationCategory(string remediationCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current remediation posture includes the requested category."
+    },
+    {
+      "DisplayName": "GetByRemediationState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyremediationstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByRemediationState(string remediationState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current remediation posture matches the requested state."
+    },
+    {
       "DisplayName": "GetByReporterCoordinationIssueReason",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -33950,6 +34127,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasactivereporterowner",
       "Signature": "bool HasActiveReporterOwner { get; }",
       "Summary": "Gets a value indicating whether the capture\u0027s execution runtime currently has one active reporter owner."
+    },
+    {
+      "DisplayName": "HasBlockingRemediation",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasblockingremediation",
+      "Signature": "bool HasBlockingRemediation { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime is currently blocked by failed CDC captures."
     },
     {
       "DisplayName": "HasCephalonRateLimiting",
@@ -38020,6 +38208,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-technologyselection-isavailable-system-string",
       "Signature": "bool IsAvailable(string value)",
       "Summary": "Determines whether a technology is available in the runtime catalog."
+    },
+    {
+      "DisplayName": "IsBlocked",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-isblocked",
+      "Signature": "bool IsBlocked { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime is currently blocked by failed CDC captures."
     },
     {
       "DisplayName": "IsBound",
@@ -49027,6 +49226,17 @@
       "Summary": "Gets a value indicating whether distinct read and write paths were explicitly selected."
     },
     {
+      "DisplayName": "Ready",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-ready",
+      "Signature": "const string Ready",
+      "Summary": "The execution runtime does not currently require operator remediation."
+    },
+    {
       "DisplayName": "ReadyActionCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalActionPlan",
@@ -50039,6 +50249,17 @@
       "Summary": "Gets the shorthand relative route patterns targeted by this suppression rule before override actions are applied."
     },
     {
+      "DisplayName": "Remediation",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-remediation",
+      "Signature": "CdcCaptureExecutionRuntimeRemediationStatus Remediation { get; set; }",
+      "Summary": "Gets the aggregate remediation posture currently visible for the execution runtime."
+    },
+    {
       "DisplayName": "RemoveBindingProperties",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
@@ -50301,6 +50522,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-reportercoordination",
       "Signature": "CdcCaptureReporterCoordinationStatus ReporterCoordination { get; set; }",
       "Summary": "Gets the reporter-coordination posture currently visible for the capture\u0027s execution runtime."
+    },
+    {
+      "DisplayName": "ReporterCoordinationIssueCdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-reportercoordinationissuecdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ReporterCoordinationIssueCdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers whose latest runtime story reports degraded reporter coordination."
+    },
+    {
+      "DisplayName": "ReporterCoordinationIssues",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-reportercoordinationissues",
+      "Signature": "const string ReporterCoordinationIssues",
+      "Summary": "One or more reported CDC captures currently publish degraded reporter-coordination posture."
     },
     {
       "DisplayName": "ReporterCoordinationRollup",
@@ -51181,6 +51424,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationoperationalstep-requiresphysicaltargetcoordination",
       "Signature": "bool RequiresPhysicalTargetCoordination { get; }",
       "Summary": "Gets a value indicating whether this step needs shared-physical-target coordination."
+    },
+    {
+      "DisplayName": "RequiresRemediation",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-requiresremediation",
+      "Signature": "bool RequiresRemediation { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently requires operator remediation."
+    },
+    {
+      "DisplayName": "RequiresRemediation",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-requiresremediation",
+      "Signature": "bool RequiresRemediation { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently requires operator remediation."
     },
     {
       "DisplayName": "RequiresTakeover",
@@ -56560,6 +56825,28 @@
       "Summary": "Gets or sets the freshness window, in seconds, that observed status should advertise to operators."
     },
     {
+      "DisplayName": "StaleCdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-stalecdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E StaleCdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers whose latest reported runtime observation is stale."
+    },
+    {
+      "DisplayName": "StaleObservations",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-staleobservations",
+      "Signature": "const string StaleObservations",
+      "Summary": "Reported CDC captures currently publish stale runtime observations."
+    },
+    {
       "DisplayName": "Standby",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureReporterParticipantRoles",
@@ -56866,6 +57153,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay",
       "Signature": "TimeSpan StartupReadinessDelay { get; }",
       "Summary": "Gets the readiness warmup window that applies after startup succeeds."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable remediation state."
     },
     {
       "DisplayName": "State",
@@ -61391,6 +61689,17 @@
     {
       "DisplayName": "Unknown",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The execution runtime cannot currently determine whether remediation is required."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61534,6 +61843,17 @@
     {
       "DisplayName": "UnreportedCdcCaptureIds",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-unreportedcdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E UnreportedCdcCaptureIds { get; set; }",
+      "Summary": "Gets the declared CDC capture identifiers that have not reported runtime state yet."
+    },
+    {
+      "DisplayName": "UnreportedCdcCaptureIds",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61541,6 +61861,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-unreportedcdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E UnreportedCdcCaptureIds { get; set; }",
       "Summary": "Gets the declared CDC capture identifiers that have not reported runtime state yet."
+    },
+    {
+      "DisplayName": "UnreportedCdcCaptures",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-unreportedcdccaptures",
+      "Signature": "const string UnreportedCdcCaptures",
+      "Summary": "Declared CDC captures have not reported runtime state yet."
     },
     {
       "DisplayName": "Unspecified",

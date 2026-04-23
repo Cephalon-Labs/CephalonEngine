@@ -3027,6 +3027,59 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-168 Phase 13 external-runtime remediation summaries and drill-downs
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-167` made declared-versus-reported coverage truthful on the shared external CDC
+  execution-runtime surface, but operators still had to manually combine coverage, stale
+  observation, failed capture, and degraded reporter-coordination signals to decide whether one
+  runtime actually needed remediation
+- execution-runtime coverage truth could also still drift when capture ownership resolved through
+  authored `ExecutionBinding` intent instead of the raw authored
+  `CdcCaptureExecutionRuntimeOptions.CdcCaptureIds` list
+- the next shared follow-through needed to keep one additive remediation answer on the existing
+  `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of
+  inventing a second remediation registry or a Debezium-only operator taxonomy
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable execution-runtime remediation contract that can publish
+  `ready`, `attention`, and `blocked` posture together with active remediation categories and
+  affected capture ids on `CdcCaptureExecutionRuntimeSummary`
+- the shared execution-runtime catalog now derives coverage and remediation from resolved runtime
+  capture ownership plus current runtime-state truth instead of only the raw authored runtime
+  descriptor ids
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive remediation-state and remediation-category
+  drill-down methods, and ASP.NET Core publishes those same filters on the existing
+  `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later Debezium connector-management work remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionRuntimeRemediationStates`,
+  `CdcCaptureExecutionRuntimeRemediationCategories`, and
+  `CdcCaptureExecutionRuntimeRemediationStatus`, while `CdcCaptureExecutionRuntimeSummary` now
+  carries additive `Remediation` plus derived `RequiresRemediation` /
+  `HasBlockingRemediation` helpers
+- `Cephalon.Data` now derives execution-runtime `ReportingCoverage` and `Remediation` from
+  resolved runtime capture ownership, keeps active remediation categories such as
+  `failed-cdc-captures`, `reporter-coordination-issues`, `stale-observations`, and
+  `unreported-cdc-captures` explicit, and publishes affected capture ids back onto the same shared
+  execution-runtime summary instead of materializing a second operator cache
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes `GetByRemediationState(...)` plus
+  `GetByRemediationCategory(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/remediation/{remediationState}` and
+  `/engine/cdc-capture-runtimes/remediation/categories/{remediationCategory}` so host routes stay
+  aligned with the same shared runtime story
+- targeted coverage now proves the remediation baseline through composition tests `30/30`, hosting
+  tests `16/16`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-167 Phase 13 broader external-runtime reporting-coverage hardening
 
 Status: done

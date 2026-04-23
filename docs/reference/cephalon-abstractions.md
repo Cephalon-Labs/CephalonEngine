@@ -8468,6 +8468,261 @@ CdcCaptureExecutionRuntimeSummary Summary { get; }
 
 Gets the latest aggregate runtime summary reported for the execution runtime.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories"></a>
+
+### `CdcCaptureExecutionRuntimeRemediationCategories`
+
+Defines the stable remediation-category identifiers used by CDC execution-runtime summaries.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeRemediationCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-failedcdccaptures"></a>
+
+##### `FailedCdcCaptures`
+
+```csharp
+const string FailedCdcCaptures
+```
+
+One or more reported CDC captures currently publish failed runtime outcomes.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-reportercoordinationissues"></a>
+
+##### `ReporterCoordinationIssues`
+
+```csharp
+const string ReporterCoordinationIssues
+```
+
+One or more reported CDC captures currently publish degraded reporter-coordination posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-staleobservations"></a>
+
+##### `StaleObservations`
+
+```csharp
+const string StaleObservations
+```
+
+Reported CDC captures currently publish stale runtime observations.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-unreportedcdccaptures"></a>
+
+##### `UnreportedCdcCaptures`
+
+```csharp
+const string UnreportedCdcCaptures
+```
+
+Declared CDC captures have not reported runtime state yet.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates"></a>
+
+### `CdcCaptureExecutionRuntimeRemediationStates`
+
+Defines the stable remediation-state identifiers used by CDC execution-runtime summaries.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeRemediationStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-attention"></a>
+
+##### `Attention`
+
+```csharp
+const string Attention
+```
+
+The execution runtime currently requires operator attention, but it is not blocked by a failed capture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+The execution runtime currently requires remediation for one or more failed CDC captures.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-ready"></a>
+
+##### `Ready`
+
+```csharp
+const string Ready
+```
+
+The execution runtime does not currently require operator remediation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The execution runtime cannot currently determine whether remediation is required.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus"></a>
+
+### `CdcCaptureExecutionRuntimeRemediationStatus`
+
+Describes the current operator-facing remediation posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeRemediationStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeRemediationStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeRemediationStatus(string state, string description)
+```
+
+Creates a new execution-runtime remediation answer.
+
+Parameters:
+- `state`: The stable remediation state, such as `ready`, `attention`, or `blocked`.
+- `description`: An optional operator-facing remediation summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-affectedcapturecount"></a>
+
+##### `AffectedCaptureCount`
+
+```csharp
+int AffectedCaptureCount { get; }
+```
+
+Gets the number of CDC captures currently affected by active remediation work.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-affectedcdccaptureids"></a>
+
+##### `AffectedCdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> AffectedCdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently affected by active remediation work.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active remediation categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable remediation categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing remediation summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-failedcdccaptureids"></a>
+
+##### `FailedCdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> FailedCdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers whose latest reported runtime outcome is failed.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether the execution runtime is currently blocked by failed CDC captures.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-reportercoordinationissuecdccaptureids"></a>
+
+##### `ReporterCoordinationIssueCdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> ReporterCoordinationIssueCdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers whose latest runtime story reports degraded reporter coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-requiresremediation"></a>
+
+##### `RequiresRemediation`
+
+```csharp
+bool RequiresRemediation { get; }
+```
+
+Gets a value indicating whether the execution runtime currently requires operator remediation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-stalecdccaptureids"></a>
+
+##### `StaleCdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> StaleCdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers whose latest reported runtime observation is stale.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable remediation state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-unreportedcdccaptureids"></a>
+
+##### `UnreportedCdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> UnreportedCdcCaptureIds { get; set; }
+```
+
+Gets the declared CDC capture identifiers that have not reported runtime state yet.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup"></a>
 
 ### `CdcCaptureExecutionRuntimeReporterCoordinationRollup`
@@ -8902,6 +9157,16 @@ bool HasActiveReporterLease { get; }
 
 Gets a value indicating whether the execution runtime currently has an active reporter lease.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasblockingremediation"></a>
+
+##### `HasBlockingRemediation`
+
+```csharp
+bool HasBlockingRemediation { get; }
+```
+
+Gets a value indicating whether the execution runtime is currently blocked by failed CDC captures.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasfullcapturecoverage"></a>
 
 ##### `HasFullCaptureCoverage`
@@ -9082,6 +9347,16 @@ IReadOnlyList<string> ObservedEdgeNodeIds { get; set; }
 
 Gets the declared or observed edge-node identifiers that most recently reported runtime state for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-remediation"></a>
+
+##### `Remediation`
+
+```csharp
+CdcCaptureExecutionRuntimeRemediationStatus Remediation { get; set; }
+```
+
+Gets the aggregate remediation posture currently visible for the execution runtime.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportedcapturecount"></a>
 
 ##### `ReportedCaptureCount`
@@ -9141,6 +9416,16 @@ CdcCaptureExecutionRuntimeReportingCoverageStatus ReportingCoverage { get; set; 
 ```
 
 Gets the declared-versus-reported coverage currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-requiresremediation"></a>
+
+##### `RequiresRemediation`
+
+```csharp
+bool RequiresRemediation { get; }
+```
+
+Gets a value indicating whether the execution runtime currently requires operator remediation.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-startedcount"></a>
 
@@ -14189,6 +14474,36 @@ Returns: The matching execution-runtime descriptor, or `null` when none exists.
 
 Parameters:
 - `executionRuntimeId`: The stable execution-runtime identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyremediationcategory-system-string"></a>
+
+##### `GetByRemediationCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationCategory(string remediationCategory)
+```
+
+Gets the CDC capture execution runtimes whose current remediation posture includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that remediation category.
+
+Parameters:
+- `remediationCategory`: The stable remediation-category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyremediationstate-system-string"></a>
+
+##### `GetByRemediationState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationState(string remediationState)
+```
+
+Gets the CDC capture execution runtimes whose current remediation posture matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that remediation state.
+
+Parameters:
+- `remediationState`: The stable remediation-state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreportercoordinationissuereason-system-string"></a>
 

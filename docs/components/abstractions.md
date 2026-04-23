@@ -67,6 +67,9 @@
 - `Data/CdcCaptureRuntimeState.cs`
 - `Data/ICdcCaptureRuntimeStateCatalog.cs`
 - `Data/CdcCaptureExecutionRuntimeDescriptor.cs`
+- `Data/CdcCaptureExecutionRuntimeRemediationCategories.cs`
+- `Data/CdcCaptureExecutionRuntimeRemediationStates.cs`
+- `Data/CdcCaptureExecutionRuntimeRemediationStatus.cs`
 - `Data/CdcCaptureExecutionRuntimeReportingCoverageStates.cs`
 - `Data/CdcCaptureExecutionRuntimeReportingCoverageStatus.cs`
 - `Data/CdcCaptureExecutionRuntimeSummary.cs`
@@ -245,6 +248,16 @@ through `CdcCaptureExecutionRuntimeReportingCoverageStates`,
 `HasUnreportedDeclaredCaptures` / `HasFullCaptureCoverage` helpers, so hosts and tooling can tell
 whether one runtime is `not-bound`, `unreported`, `partially-reported`, or `fully-reported`
 without inventing a second external-runtime coverage vocabulary.
+
+That same shared execution-runtime contract now also publishes aggregate remediation posture
+through `CdcCaptureExecutionRuntimeRemediationStates`,
+`CdcCaptureExecutionRuntimeRemediationCategories`,
+`CdcCaptureExecutionRuntimeRemediationStatus`,
+`CdcCaptureExecutionRuntimeSummary.Remediation`, and the derived
+`RequiresRemediation` / `HasBlockingRemediation` helpers, so hosts and tooling can tell whether
+one runtime is currently `ready`, needs operator `attention`, or is `blocked` by failed captures
+while still seeing the active remediation categories plus affected capture ids on the same shared
+contract instead of inventing a second external-runtime remediation registry.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

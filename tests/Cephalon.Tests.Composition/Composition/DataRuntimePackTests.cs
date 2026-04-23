@@ -1024,6 +1024,189 @@ public sealed class DataRuntimePackTests
     }
 
     [Fact]
+    public async Task AddDataTracksExternalExecutionRuntimeRemediationAcrossResolvedCaptureBindings()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new BoundMultiCaptureExecutionRuntimeCdcModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = false
+                });
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+        var snapshotProvider = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
+
+        var initialRuntime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(initialRuntime);
+        Assert.Equal(["bound-multi-capture-cdc-a", "bound-multi-capture-cdc-b"], initialRuntime.CdcCaptureIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.Unreported, initialRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(2, initialRuntime.Summary.ReportingCoverage.DeclaredCaptureCount);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeRemediationStates.Attention,
+            initialRuntime.Summary.Remediation.State);
+        Assert.Equal(
+            [CdcCaptureExecutionRuntimeRemediationCategories.UnreportedCdcCaptures],
+            initialRuntime.Summary.Remediation.CategoryIds);
+        Assert.Equal(
+            ["bound-multi-capture-cdc-a", "bound-multi-capture-cdc-b"],
+            initialRuntime.Summary.Remediation.UnreportedCdcCaptureIds);
+        Assert.Equal(
+            ["bound-multi-capture-cdc-a", "bound-multi-capture-cdc-b"],
+            initialRuntime.Summary.Remediation.AffectedCdcCaptureIds);
+        Assert.True(initialRuntime.Summary.RequiresRemediation);
+        Assert.False(initialRuntime.Summary.HasBlockingRemediation);
+        Assert.Single(runtimeCatalog.GetByRemediationState(CdcCaptureExecutionRuntimeRemediationStates.Attention));
+        Assert.Single(runtimeCatalog.GetByRemediationCategory(CdcCaptureExecutionRuntimeRemediationCategories.UnreportedCdcCaptures));
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "bound-multi-capture-cdc-a",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T08:20:00Z", CultureInfo.InvariantCulture),
+                    reportId: "bound-multi-report-a",
+                    reporterId: "edge-agent-a")
+            ]);
+
+        var partiallyReportedRuntime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(partiallyReportedRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.PartiallyReported, partiallyReportedRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeRemediationStates.Attention,
+            partiallyReportedRuntime.Summary.Remediation.State);
+        Assert.Equal(
+            [CdcCaptureExecutionRuntimeRemediationCategories.UnreportedCdcCaptures],
+            partiallyReportedRuntime.Summary.Remediation.CategoryIds);
+        Assert.Equal(["bound-multi-capture-cdc-b"], partiallyReportedRuntime.Summary.Remediation.UnreportedCdcCaptureIds);
+        Assert.Equal(["bound-multi-capture-cdc-b"], partiallyReportedRuntime.Summary.Remediation.AffectedCdcCaptureIds);
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "bound-multi-capture-cdc-b",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T08:20:30Z", CultureInfo.InvariantCulture),
+                    reportId: "bound-multi-report-b",
+                    reporterId: "edge-agent-a")
+            ]);
+
+        var fullyReportedRuntime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(fullyReportedRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.FullyReported, fullyReportedRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeRemediationStates.Ready,
+            fullyReportedRuntime.Summary.Remediation.State);
+        Assert.Empty(fullyReportedRuntime.Summary.Remediation.CategoryIds);
+        Assert.Empty(fullyReportedRuntime.Summary.Remediation.AffectedCdcCaptureIds);
+        Assert.False(fullyReportedRuntime.Summary.RequiresRemediation);
+        Assert.False(fullyReportedRuntime.Summary.HasBlockingRemediation);
+        Assert.Single(runtimeCatalog.GetByRemediationState(CdcCaptureExecutionRuntimeRemediationStates.Ready));
+        Assert.Empty(runtimeCatalog.GetByRemediationCategory(CdcCaptureExecutionRuntimeRemediationCategories.UnreportedCdcCaptures));
+
+        var snapshot = snapshotProvider.CreateSnapshot();
+        var snapshotRuntime = snapshot.CdcCaptureExecutionRuntimes.Single(item => item.Id == "external-cdc-runtime");
+        Assert.Equal(CdcCaptureExecutionRuntimeRemediationStates.Ready, snapshotRuntime.Summary.Remediation.State);
+        Assert.Empty(snapshotRuntime.Summary.Remediation.CategoryIds);
+        Assert.False(snapshotRuntime.Summary.RequiresRemediation);
+    }
+
+    [Fact]
+    public async Task AddDataAggregatesExternalExecutionRuntimeRemediationCategoriesAcrossCurrentCaptureIssues()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T09:02:31Z", CultureInfo.InvariantCulture));
+        var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new BoundMultiCaptureExecutionRuntimeCdcModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ObservationStaleAfterSeconds = 60,
+                    ReporterLeaseSeconds = 300,
+                    RejectConflictingReporterIds = false
+                });
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "bound-multi-capture-cdc-a",
+                    outcome: CdcCaptureRuntimeOutcomes.Failed,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T09:00:00Z", CultureInfo.InvariantCulture),
+                    reportId: "bound-multi-remediation-a",
+                    reporterId: "edge-agent-a",
+                    error: "Primary edge reporter failed to publish the latest checkpoint."),
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "bound-multi-capture-cdc-b",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T09:00:30Z", CultureInfo.InvariantCulture),
+                    reportId: "bound-multi-remediation-b",
+                    reporterId: "edge-agent-b")
+            ]);
+
+        var runtime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(runtime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.FullyReported, runtime.Summary.ReportingCoverage.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeRemediationStates.Blocked, runtime.Summary.Remediation.State);
+        Assert.Equal(
+            [
+                CdcCaptureExecutionRuntimeRemediationCategories.FailedCdcCaptures,
+                CdcCaptureExecutionRuntimeRemediationCategories.ReporterCoordinationIssues,
+                CdcCaptureExecutionRuntimeRemediationCategories.StaleObservations
+            ],
+            runtime.Summary.Remediation.CategoryIds);
+        Assert.Equal(["bound-multi-capture-cdc-a", "bound-multi-capture-cdc-b"], runtime.Summary.Remediation.AffectedCdcCaptureIds);
+        Assert.Equal(["bound-multi-capture-cdc-a"], runtime.Summary.Remediation.FailedCdcCaptureIds);
+        Assert.Equal(["bound-multi-capture-cdc-a", "bound-multi-capture-cdc-b"], runtime.Summary.Remediation.ReporterCoordinationIssueCdcCaptureIds);
+        Assert.Equal(["bound-multi-capture-cdc-a", "bound-multi-capture-cdc-b"], runtime.Summary.Remediation.StaleCdcCaptureIds);
+        Assert.True(runtime.Summary.RequiresRemediation);
+        Assert.True(runtime.Summary.HasBlockingRemediation);
+        Assert.Single(runtimeCatalog.GetByRemediationState(CdcCaptureExecutionRuntimeRemediationStates.Blocked));
+        Assert.Single(runtimeCatalog.GetByRemediationCategory(CdcCaptureExecutionRuntimeRemediationCategories.FailedCdcCaptures));
+        Assert.Single(runtimeCatalog.GetByRemediationCategory(CdcCaptureExecutionRuntimeRemediationCategories.ReporterCoordinationIssues));
+        Assert.Single(runtimeCatalog.GetByRemediationCategory(CdcCaptureExecutionRuntimeRemediationCategories.StaleObservations));
+    }
+
+    [Fact]
     public async Task AddDataMarksExternalExecutionRuntimeAsConflictedWhenMultipleCaptureReportersHoldActiveLeases()
     {
         var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T02:45:00Z", CultureInfo.InvariantCulture));
@@ -2265,6 +2448,66 @@ public sealed class DataRuntimePackTests
                 id: "multi-capture-outbox-b",
                 displayName: "Multi Capture Outbox B",
                 description: "Outbox for the second multi-capture CDC stream.",
+                sourceModuleId: Descriptor.Id,
+                provider: "relational"));
+        }
+    }
+
+    private sealed class BoundMultiCaptureExecutionRuntimeCdcModule : ModuleBase, ICdcCaptureContributor, IOutboxContributor
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "bound-multi-capture-execution-runtime-cdc",
+            displayName: "Bound Multi-Capture Execution Runtime CDC",
+            description: "Contributes two CDC captures that both bind to the same external execution runtime.",
+            version: "1.0.0",
+            tags: ["cdc", "execution-runtime", "multi-capture", "bound"]);
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void RegisterCapabilities(Cephalon.Abstractions.Capabilities.ICapabilityRegistry capabilities)
+        {
+        }
+
+        public void RegisterCdcCaptures(ICdcCaptureRegistry cdcCaptures)
+        {
+            cdcCaptures.Add(new CdcCaptureDescriptor(
+                id: "bound-multi-capture-cdc-a",
+                displayName: "Bound Multi Capture CDC A",
+                description: "First CDC capture used to exercise resolved execution-runtime ownership.",
+                sourceModuleId: Descriptor.Id,
+                provider: "postgresql",
+                sourceId: "bound-multi-capture-db-a",
+                outboxId: "bound-multi-capture-outbox-a",
+                executionBinding: new CdcCaptureExecutionBindingDescriptor(
+                    cdcCaptureId: "bound-multi-capture-cdc-a",
+                    authoredExecutionRuntimeId: "external-cdc-runtime"),
+                resourceIds: ["public.bound_multi_capture_a"]));
+            cdcCaptures.Add(new CdcCaptureDescriptor(
+                id: "bound-multi-capture-cdc-b",
+                displayName: "Bound Multi Capture CDC B",
+                description: "Second CDC capture used to exercise resolved execution-runtime ownership.",
+                sourceModuleId: Descriptor.Id,
+                provider: "postgresql",
+                sourceId: "bound-multi-capture-db-b",
+                outboxId: "bound-multi-capture-outbox-b",
+                executionBinding: new CdcCaptureExecutionBindingDescriptor(
+                    cdcCaptureId: "bound-multi-capture-cdc-b",
+                    authoredExecutionRuntimeId: "external-cdc-runtime"),
+                resourceIds: ["public.bound_multi_capture_b"]));
+        }
+
+        public void RegisterOutboxes(IOutboxRegistry outboxes)
+        {
+            outboxes.Add(new OutboxDescriptor(
+                id: "bound-multi-capture-outbox-a",
+                displayName: "Bound Multi Capture Outbox A",
+                description: "Outbox for the first bound multi-capture CDC stream.",
+                sourceModuleId: Descriptor.Id,
+                provider: "relational"));
+            outboxes.Add(new OutboxDescriptor(
+                id: "bound-multi-capture-outbox-b",
+                displayName: "Bound Multi Capture Outbox B",
+                description: "Outbox for the second bound multi-capture CDC stream.",
                 sourceModuleId: Descriptor.Id,
                 provider: "relational"));
         }

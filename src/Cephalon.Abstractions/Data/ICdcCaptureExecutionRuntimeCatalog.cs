@@ -44,4 +44,18 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="degradedReason">The stable degraded-reason identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that degraded reason.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterCoordinationIssueReason(string degradedReason);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current remediation posture matches the requested state.
+    /// </summary>
+    /// <param name="remediationState">The stable remediation-state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that remediation state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationState(string remediationState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current remediation posture includes the requested category.
+    /// </summary>
+    /// <param name="remediationCategory">The stable remediation-category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that remediation category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationCategory(string remediationCategory);
 }
