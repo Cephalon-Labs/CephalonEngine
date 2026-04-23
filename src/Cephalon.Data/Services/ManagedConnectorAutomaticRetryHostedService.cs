@@ -84,7 +84,7 @@ internal sealed class ManagedConnectorAutomaticRetryHostedService(
         var eligibleRuntimes = runtimeCatalog.Runtimes
             .Where(static runtime =>
                 runtime.ManagedConnectorAutomaticRetryExecution.IsEligible &&
-                runtime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode)
+                runtime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode)
             .OrderBy(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 

@@ -638,9 +638,17 @@ distributed scheduler, or second coordinator.
   `ManagedConnectorCommandJournalPersistencePath`, so `ManagedConnectorCommandExecutionHistoryStore`
   can persist and recover bounded retry evidence across host restart while the existing Debezium
   managed-connector route family continues to publish truth through the shared CDC runtime surface
+- the `ENG-187` follow-through keeps that same bounded retry lane honest in multi-node topology:
+  `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDistributedRetryLease` now publishes stable
+  `not-applicable`, `single-node`, `lease-held`, `lease-missing`, `lease-conflicted`,
+  `idempotent-safe`, `idempotency-risk`, and `operator-only` posture together with coordination
+  owner, active reporter, retry fingerprint, retained-attempt, duplicate-attempt, and durable
+  journal evidence so the shared execution-runtime catalog can block automatic retry when
+  cross-node idempotency is still in-memory-only or duplicated even though raw coordination remains
+  lease-held
 - automatic background retry execution currently remains bounded shared in-process truth; it does
-  not mean Cephalon already owns durable distributed command journals, cross-node retry
-  coordination, or full managed-connector idempotency orchestration
+  not mean Cephalon already owns durable distributed command journals, distributed retry
+  schedulers, or full managed-connector idempotency orchestration
 
 ## Not shipped in these slices
 
@@ -651,7 +659,7 @@ This pack intentionally still does not claim:
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
-- durable distributed command journals, distributed retry lease orchestration, or full idempotency orchestration beyond the shipped shared bounded command-journal plus durable journal posture plus bounded automatic background retry plus coordination posture
+- durable distributed command journals, durable distributed retry schedulers, or full idempotency orchestration beyond the shipped shared bounded command-journal plus durable journal posture plus bounded automatic background retry plus coordination posture plus distributed retry lease truth
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

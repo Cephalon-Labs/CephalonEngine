@@ -8498,6 +8498,16 @@ CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus ManagedConnectorCom
 
 Gets the operator-facing managed-connector command-retry and idempotency posture derived from the shared command lane plus bounded execution history.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordistributedretrylease"></a>
+
+##### `ManagedConnectorDistributedRetryLease`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus ManagedConnectorDistributedRetryLease { get; set; }
+```
+
+Gets the operator-facing managed-connector distributed retry lease posture derived from automatic retry coordination, durable command-journal truth, and retained cross-node idempotency evidence.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordrift"></a>
 
 ##### `ManagedConnectorDrift`
@@ -15716,6 +15726,844 @@ string WritePathReadinessState { get; set; }
 ```
 
 Gets the current managed-connector write-path readiness state that informed command retry.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories`
+
+Defines the stable category identifiers used by managed-connector distributed retry lease answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-coordinationownerconfigured"></a>
+
+##### `CoordinationOwnerConfigured`
+
+```csharp
+const string CoordinationOwnerConfigured
+```
+
+The current host declared a local coordination owner identifier for distributed retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-coordinationownermissing"></a>
+
+##### `CoordinationOwnerMissing`
+
+```csharp
+const string CoordinationOwnerMissing
+```
+
+The current host did not declare a local coordination owner identifier for distributed retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-crossnodeidempotencyrisk"></a>
+
+##### `CrossNodeIdempotencyRisk`
+
+```csharp
+const string CrossNodeIdempotencyRisk
+```
+
+Cross-node idempotency currently remains risky for automatic retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-crossnodeidempotentsafe"></a>
+
+##### `CrossNodeIdempotentSafe`
+
+```csharp
+const string CrossNodeIdempotentSafe
+```
+
+Cross-node idempotency currently looks safe for automatic retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current host can execute automatic retry safely on this node.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-duplicateautomaticretryattempts"></a>
+
+##### `DuplicateAutomaticRetryAttempts`
+
+```csharp
+const string DuplicateAutomaticRetryAttempts
+```
+
+The bounded command journal currently retains multiple automatic retry attempts for the same retry fingerprint.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-durablejournalconfigured"></a>
+
+##### `DurableJournalConfigured`
+
+```csharp
+const string DurableJournalConfigured
+```
+
+A durable command-journal store is configured for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-durablejournalhealthy"></a>
+
+##### `DurableJournalHealthy`
+
+```csharp
+const string DurableJournalHealthy
+```
+
+The durable command journal currently looks healthy for cross-node retry decisions.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-inmemoryjournalonly"></a>
+
+##### `InMemoryJournalOnly`
+
+```csharp
+const string InMemoryJournalOnly
+```
+
+Automatic retry currently depends on in-memory command history only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-journalfailure"></a>
+
+##### `JournalFailure`
+
+```csharp
+const string JournalFailure
+```
+
+The durable command journal currently reports a recovery or persistence failure.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-leaseconflict"></a>
+
+##### `LeaseConflict`
+
+```csharp
+const string LeaseConflict
+```
+
+Cross-node lease coordination remains conflicted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-leasecoordinatedruntime"></a>
+
+##### `LeaseCoordinatedRuntime`
+
+```csharp
+const string LeaseCoordinatedRuntime
+```
+
+The runtime depends on cross-node lease coordination before automatic retry should execute.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-leaseheld"></a>
+
+##### `LeaseHeld`
+
+```csharp
+const string LeaseHeld
+```
+
+The current host currently holds the active retry lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-leasemissing"></a>
+
+##### `LeaseMissing`
+
+```csharp
+const string LeaseMissing
+```
+
+No active retry lease is currently visible for automatic retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-matchingautomaticretryattempt"></a>
+
+##### `MatchingAutomaticRetryAttempt`
+
+```csharp
+const string MatchingAutomaticRetryAttempt
+```
+
+The bounded command journal currently retains one matching automatic retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Distributed retry lease posture still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-ownermatch"></a>
+
+##### `OwnerMatch`
+
+```csharp
+const string OwnerMatch
+```
+
+The current host coordination owner matches the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-ownermismatch"></a>
+
+##### `OwnerMismatch`
+
+```csharp
+const string OwnerMismatch
+```
+
+The current host coordination owner does not match the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-persistedhistory"></a>
+
+##### `PersistedHistory`
+
+```csharp
+const string PersistedHistory
+```
+
+The durable command journal currently exposes persisted recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The durable command journal currently exposes recovered recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-retryhistorypresent"></a>
+
+##### `RetryHistoryPresent`
+
+```csharp
+const string RetryHistoryPresent
+```
+
+The bounded command journal currently retains matching retry history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-singlenoderuntime"></a>
+
+##### `SingleNodeRuntime`
+
+```csharp
+const string SingleNodeRuntime
+```
+
+The runtime can evaluate automatic retry on a single node without lease coordination.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources`
+
+Defines the stable source identifiers used by managed-connector distributed retry lease answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-automaticretrycoordination"></a>
+
+##### `AutomaticRetryCoordination`
+
+```csharp
+const string AutomaticRetryCoordination
+```
+
+The distributed retry lease answer was derived primarily from automatic-retry coordination truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-commandexecutionhistory"></a>
+
+##### `CommandExecutionHistory`
+
+```csharp
+const string CommandExecutionHistory
+```
+
+The distributed retry lease answer was derived primarily from retained command-execution history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-commandjournaldurability"></a>
+
+##### `CommandJournalDurability`
+
+```csharp
+const string CommandJournalDurability
+```
+
+The distributed retry lease answer was derived primarily from durable command-journal truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-retryexecutionpolicy"></a>
+
+##### `RetryExecutionPolicy`
+
+```csharp
+const string RetryExecutionPolicy
+```
+
+The distributed retry lease answer was derived primarily from retry-execution policy truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasesources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The distributed retry lease answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates`
+
+Defines the stable state identifiers used by managed-connector distributed retry lease answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-idempotencyrisk"></a>
+
+##### `IdempotencyRisk`
+
+```csharp
+const string IdempotencyRisk
+```
+
+Automatic retry cannot run because cross-node idempotency evidence is incomplete or unsafe.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-idempotentsafe"></a>
+
+##### `IdempotentSafe`
+
+```csharp
+const string IdempotentSafe
+```
+
+Automatic retry can run because Cephalon has both lease ownership and restart-safe idempotency evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-leaseconflicted"></a>
+
+##### `LeaseConflicted`
+
+```csharp
+const string LeaseConflicted
+```
+
+Automatic retry cannot run because lease ownership or multi-node coordination remains conflicted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-leaseheld"></a>
+
+##### `LeaseHeld`
+
+```csharp
+const string LeaseHeld
+```
+
+The current node holds the active retry lease, but Cephalon has not yet proven cross-node idempotency from retained history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-leasemissing"></a>
+
+##### `LeaseMissing`
+
+```csharp
+const string LeaseMissing
+```
+
+Automatic retry cannot run because no active retry lease is currently visible.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Distributed retry lease posture does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Distributed retry lease posture still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-singlenode"></a>
+
+##### `SingleNode`
+
+```csharp
+const string SingleNode
+```
+
+Automatic retry can run on the current node without cross-node coordination.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus`
+
+Describes the current operator-facing managed-connector distributed retry lease and cross-node idempotency posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus(string state, string description)
+```
+
+Creates a new managed-connector distributed retry lease answer.
+
+Parameters:
+- `state`: The stable distributed retry lease state, such as `not-applicable`, `single-node`, `lease-held`, `lease-missing`, `lease-conflicted`, `idempotent-safe`, `idempotency-risk`, or `operator-only`.
+- `description`: An optional operator-facing distributed retry lease summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-automaticretryattemptcount"></a>
+
+##### `AutomaticRetryAttemptCount`
+
+```csharp
+int AutomaticRetryAttemptCount { get; set; }
+```
+
+Gets the number of retained automatic retry attempts currently visible to distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-automaticretrycoordinationstate"></a>
+
+##### `AutomaticRetryCoordinationState`
+
+```csharp
+string AutomaticRetryCoordinationState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry coordination state that informed distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-automaticretryexecutionstate"></a>
+
+##### `AutomaticRetryExecutionState`
+
+```csharp
+string AutomaticRetryExecutionState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry execution state that informed distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-canexecuteautomaticretryoncurrentnode"></a>
+
+##### `CanExecuteAutomaticRetryOnCurrentNode`
+
+```csharp
+bool CanExecuteAutomaticRetryOnCurrentNode { get; }
+```
+
+Gets a value indicating whether automatic retry can safely execute on the current node.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active distributed retry lease categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable distributed retry lease categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-commandjournaldurabilitystate"></a>
+
+##### `CommandJournalDurabilityState`
+
+```csharp
+string CommandJournalDurabilityState { get; set; }
+```
+
+Gets the current managed-connector command-journal durability state that informed distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector bounded command-journal state that informed distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one was configured for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-coordinationownermatchesactivereporter"></a>
+
+##### `CoordinationOwnerMatchesActiveReporter`
+
+```csharp
+bool CoordinationOwnerMatchesActiveReporter { get; }
+```
+
+Gets a value indicating whether the current host coordination owner matches the active reporter identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing distributed retry lease summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the execution runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hascoordinationowner"></a>
+
+##### `HasCoordinationOwner`
+
+```csharp
+bool HasCoordinationOwner { get; }
+```
+
+Gets a value indicating whether the current host declared a coordination owner identifier for distributed retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasduplicateautomaticretryattempts"></a>
+
+##### `HasDuplicateAutomaticRetryAttempts`
+
+```csharp
+bool HasDuplicateAutomaticRetryAttempts { get; set; }
+```
+
+Gets a value indicating whether the bounded command journal currently retains multiple automatic retry attempts for the same retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasmatchingautomaticretryattempt"></a>
+
+##### `HasMatchingAutomaticRetryAttempt`
+
+```csharp
+bool HasMatchingAutomaticRetryAttempt { get; set; }
+```
+
+Gets a value indicating whether the bounded command journal currently retains one matching automatic retry attempt.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasmatchingretryfingerprinthistory"></a>
+
+##### `HasMatchingRetryFingerprintHistory`
+
+```csharp
+bool HasMatchingRetryFingerprintHistory { get; set; }
+```
+
+Gets a value indicating whether the bounded command journal currently retains one matching retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isidempotencyrisk"></a>
+
+##### `IsIdempotencyRisk`
+
+```csharp
+bool IsIdempotencyRisk { get; }
+```
+
+Gets a value indicating whether cross-node idempotency evidence currently remains risky for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isidempotentsafe"></a>
+
+##### `IsIdempotentSafe`
+
+```csharp
+bool IsIdempotentSafe { get; }
+```
+
+Gets a value indicating whether Cephalon currently has lease ownership plus restart-safe idempotency evidence.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isleaseconflicted"></a>
+
+##### `IsLeaseConflicted`
+
+```csharp
+bool IsLeaseConflicted { get; }
+```
+
+Gets a value indicating whether cross-node lease ownership or coordination remains conflicted.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isleaseheld"></a>
+
+##### `IsLeaseHeld`
+
+```csharp
+bool IsLeaseHeld { get; }
+```
+
+Gets a value indicating whether the current node holds the active retry lease but retained idempotency evidence remains incomplete.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isleasemissing"></a>
+
+##### `IsLeaseMissing`
+
+```csharp
+bool IsLeaseMissing { get; }
+```
+
+Gets a value indicating whether no active retry lease is currently visible.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether distributed retry still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-issinglenode"></a>
+
+##### `IsSingleNode`
+
+```csharp
+bool IsSingleNode { get; }
+```
+
+Gets a value indicating whether automatic retry can execute on a single node without cross-node lease coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-latestautomaticretryattemptid"></a>
+
+##### `LatestAutomaticRetryAttemptId`
+
+```csharp
+string LatestAutomaticRetryAttemptId { get; set; }
+```
+
+Gets the latest automatic retry attempt identifier currently associated with distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-latestautomaticretryexecutionfingerprint"></a>
+
+##### `LatestAutomaticRetryExecutionFingerprint`
+
+```csharp
+string LatestAutomaticRetryExecutionFingerprint { get; set; }
+```
+
+Gets the latest automatic retry execution fingerprint currently associated with distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-matchingautomaticretryattemptcount"></a>
+
+##### `MatchingAutomaticRetryAttemptCount`
+
+```csharp
+int MatchingAutomaticRetryAttemptCount { get; set; }
+```
+
+Gets the number of retained automatic retry attempts that currently match the derived retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-retainedentrycount"></a>
+
+##### `RetainedEntryCount`
+
+```csharp
+int RetainedEntryCount { get; set; }
+```
+
+Gets the number of bounded command-history entries currently retained for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive distributed retry lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector distributed retry lease state.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids"></a>
 
@@ -27742,6 +28590,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `retryState`: The stable managed-connector command-retry state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryleasecategory-system-string"></a>
+
+##### `GetByManagedConnectorDistributedRetryLeaseCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseCategory(string leaseCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector distributed retry lease answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that distributed retry lease category.
+
+Parameters:
+- `leaseCategory`: The stable managed-connector distributed retry lease category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryleaseownerid-system-string"></a>
+
+##### `GetByManagedConnectorDistributedRetryLeaseOwnerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseOwnerId(string ownerId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector distributed retry lease answer references the requested local coordination owner identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.
+
+Parameters:
+- `ownerId`: The stable local coordination owner identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordistributedretryleasestate-system-string"></a>
+
+##### `GetByManagedConnectorDistributedRetryLeaseState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseState(string leaseState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector distributed retry lease answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that distributed retry lease state.
+
+Parameters:
+- `leaseState`: The stable managed-connector distributed retry lease state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordriftcategory-system-string"></a>
 

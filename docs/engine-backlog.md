@@ -3027,6 +3027,89 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-187 Phase 13 managed-connector distributed retry lease / cross-node idempotency hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, `ENG-185`, and `ENG-186` already shipped shared coverage, remediation, governance,
+  desired-versus-observed drift, action-planning, write-path readiness, preflight, dry-run,
+  execution-intent, execution-approval, command-envelope, command-issuance, provider
+  execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry execution, automatic background retry
+  coordination, and durable command-journal truth, but operators still lacked one shared answer
+  for whether a multi-node automatic retry lane was both lease-owned and cross-node idempotent-safe
+- the next follow-through needed to keep distributed retry lease posture additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only
+  multi-node retry coordinator, retry registry, or second command lane
+- teams also needed one shared truth that joined coordination-owner identity, active reporter lease,
+  durable journal health, retained retry fingerprint history, and duplicate automatic-attempt
+  evidence so later distributed retry orchestration can build on restart-safe facts instead of
+  assuming every lease-held runtime is automatically safe to execute
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector distributed retry lease contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `single-node`,
+  `lease-held`, `lease-missing`, `lease-conflicted`, `idempotent-safe`, `idempotency-risk`, and
+  `operator-only` posture together with lease categories, source truth, coordination-owner and
+  active-reporter identity, retry fingerprint and attempt metadata, retained-history counts, and
+  durable journal evidence
+- the shared execution-runtime catalog now exposes additive distributed-retry-lease state,
+  category, and owner filters while deriving that posture from the same shared automatic-retry,
+  coordination, retry-policy, command-journal, and durable-journal truth instead of forcing hosts
+  or providers to invent a second multi-node retry index
+- the shared data pack now gates `ManagedConnectorAutomaticRetryHostedService` and automatic command
+  execution through the richer distributed retry lease answer so cross-node idempotency risk can
+  block automatic retry even when raw coordination still says `lease-held`
+- ASP.NET Core publishes those same distributed-retry-lease filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down, and the lease
+  answer stays additive beside the existing command-journal, durability, automatic-retry, and
+  coordination surfaces instead of branching into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later durable distributed retry orchestration, richer cross-node
+  idempotency hardening, or broader multi-node lease execution remain separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorDistributedRetryLease`
+- `Cephalon.Data` now derives managed-connector distributed retry lease posture from merged
+  automatic-retry coordination, automatic-retry execution, retry-execution policy, bounded
+  command-journal, durable journal, and retained command history truth, including
+  `single-node`, `lease-held`, `lease-missing`, `lease-conflicted`, `idempotent-safe`, and
+  `idempotency-risk` answers, and `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorDistributedRetryLeaseState(...)`,
+  `GetByManagedConnectorDistributedRetryLeaseCategory(...)`, and
+  `GetByManagedConnectorDistributedRetryLeaseOwnerId(...)`
+- `Cephalon.Data` now also gates `ManagedConnectorAutomaticRetryHostedService` and automatic
+  invocations in `ManagedConnectorCommandExecutor` through that richer shared answer so
+  in-memory-only or duplicate-attempt multi-node retry evidence cannot claim current-node
+  executability just because raw coordination remains lease-held
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/distributed-retry-leases/{leaseState}`,
+  `/engine/cdc-capture-runtimes/distributed-retry-leases/categories/{leaseCategory}`,
+  `/engine/cdc-capture-runtimes/distributed-retry-leases/owners/{ownerId}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-lease` so host routes stay
+  aligned with the same shared automatic-retry, coordination, journal, and durability story
+- `Cephalon.Data.Debezium` now participates in that shared distributed retry lease lane through the
+  existing managed-connector runtime and command surface while targeted coverage proves both
+  `idempotent-safe` and `idempotency-risk` posture without claiming a Debezium-only retry
+  coordinator or distributed scheduler
+- targeted coverage now proves the distributed retry lease baseline through composition tests
+  `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-186 Phase 13 managed-connector durable retry journal baseline
 
 Status: done
@@ -3072,8 +3155,8 @@ Acceptance:
   the existing command-journal, automatic-retry, coordination, and command-execution-history
   surfaces instead of branching into a Debezium-only endpoint set
 - docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
-  the shipped slice while later distributed retry lease execution, cross-node idempotency
-  hardening, or durable shared scheduler orchestration remain separate follow-through
+  the shipped slice while later durable distributed retry orchestration, richer cross-node
+  idempotency hardening, or durable shared scheduler orchestration remain separate follow-through
 
 Delivered:
 

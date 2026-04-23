@@ -389,6 +389,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationOwnerId(string ownerId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector distributed retry lease answer matches the requested state.
+    /// </summary>
+    /// <param name="leaseState">The stable managed-connector distributed retry lease state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that distributed retry lease state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseState(string leaseState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector distributed retry lease answer includes the requested category.
+    /// </summary>
+    /// <param name="leaseCategory">The stable managed-connector distributed retry lease category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that distributed retry lease category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseCategory(string leaseCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector distributed retry lease answer references the requested local coordination owner identifier.
+    /// </summary>
+    /// <param name="ownerId">The stable local coordination owner identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryLeaseOwnerId(string ownerId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

@@ -244,6 +244,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseSources),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories),
@@ -2851,6 +2855,12 @@ public sealed class PackageSurfaceTests
             .GetMethod("GetByManagedConnectorAutomaticRetryCoordinationCategory", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
             .GetMethod("GetByManagedConnectorAutomaticRetryCoordinationOwnerId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorDistributedRetryLeaseState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorDistributedRetryLeaseCategory", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorDistributedRetryLeaseOwnerId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor)
             .GetMethod("ExecuteAsync", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter)
@@ -2907,6 +2917,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("ManagedConnectorAutomaticRetryExecution", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
             .GetProperty("ManagedConnectorAutomaticRetryCoordination", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("ManagedConnectorDistributedRetryLease", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
             .GetProperty("ReportedCdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
@@ -3975,6 +3987,22 @@ public sealed class PackageSurfaceTests
             .GetField("Conflicted", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates)
             .GetField("OperatorOnly", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates)
+            .GetField("NotApplicable", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates)
+            .GetField("SingleNode", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates)
+            .GetField("LeaseHeld", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates)
+            .GetField("LeaseMissing", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates)
+            .GetField("LeaseConflicted", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates)
+            .GetField("IdempotentSafe", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates)
+            .GetField("IdempotencyRisk", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates)
+            .GetField("OperatorOnly", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
             .GetField("Unrecorded", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
@@ -4185,6 +4213,20 @@ public sealed class PackageSurfaceTests
             .GetProperty("ActiveReporterId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus)
             .GetProperty("CanExecuteOnCurrentNode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus)
+            .GetProperty("CategoryIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus)
+            .GetProperty("CoordinationOwnerId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus)
+            .GetProperty("ActiveReporterId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus)
+            .GetProperty("HasDurableStoreConfigured", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus)
+            .GetProperty("HasMatchingRetryFingerprintHistory", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus)
+            .GetProperty("HasDuplicateAutomaticRetryAttempts", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus)
+            .GetProperty("CanExecuteAutomaticRetryOnCurrentNode", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
             .GetProperty("OutboxDispatchState", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)

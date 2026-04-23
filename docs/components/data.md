@@ -377,6 +377,19 @@ store, and the shared data pack can optionally persist that same bounded retry e
 command history after restart without inventing a Debezium-only persistence registry or second
 command journal.
 
+That same shared execution-runtime story now also keeps managed-connector distributed retry lease
+and cross-node idempotency posture explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDistributedRetryLease` publishes stable
+`not-applicable` / `single-node` / `lease-held` / `lease-missing` / `lease-conflicted` /
+`idempotent-safe` / `idempotency-risk` / `operator-only` posture together with lease categories,
+coordination-owner and active-reporter identity, retry fingerprint and attempt counts, durable
+journal evidence, and `CanExecuteAutomaticRetryOnCurrentNode`. The shared execution-runtime catalog
+derives that answer from the existing automatic-retry coordination, automatic-retry execution,
+retry-execution-policy, command-journal, command-journal durability, and retained command history
+truth, and the shared data pack now gates both `ManagedConnectorAutomaticRetryHostedService` and
+automatic command invocations through that richer cross-node answer instead of inventing a second
+distributed retry coordinator.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -441,6 +454,9 @@ category, and managed-connector automatic-retry-coordination owner id as well.
 `GetByManagedConnectorCommandJournalCategory(...)`,
 `GetByManagedConnectorCommandJournalDurabilityState(...)`, and
 `GetByManagedConnectorCommandJournalDurabilityCategory(...)`,
+`GetByManagedConnectorDistributedRetryLeaseState(...)`,
+`GetByManagedConnectorDistributedRetryLeaseCategory(...)`, and
+`GetByManagedConnectorDistributedRetryLeaseOwnerId(...)`,
 `GetByManagedConnectorAutomaticRetryExecutionState(...)`,
 `GetByManagedConnectorAutomaticRetryExecutionCategory(...)`, and
 `GetByManagedConnectorAutomaticRetryExecutionOperationId(...)`,
@@ -457,6 +473,7 @@ managed-connector command-execution, managed-connector command-retry,
 managed-connector retry-execution-policy,
 managed-connector command-journal,
 managed-connector command-journal durability, or
+managed-connector distributed retry lease,
 managed-connector automatic background retry execution,
 managed-connector automatic background retry coordination, or
 managed-connector command-execution-history
@@ -513,6 +530,10 @@ ASP.NET Core maps those same filters through
 `/engine/cdc-capture-runtimes/command-journal-durability/{durabilityState}`,
 `/engine/cdc-capture-runtimes/command-journal-durability/categories/{durabilityCategory}`, and
 `/engine/cdc-capture-runtimes/{executionRuntimeId}/command-journal-durability` plus
+`/engine/cdc-capture-runtimes/distributed-retry-leases/{leaseState}`,
+`/engine/cdc-capture-runtimes/distributed-retry-leases/categories/{leaseCategory}`,
+`/engine/cdc-capture-runtimes/distributed-retry-leases/owners/{ownerId}`, and
+`/engine/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-lease` plus
 `/engine/cdc-capture-runtimes/automatic-retries/{automaticRetryState}`,
 `/engine/cdc-capture-runtimes/automatic-retries/categories/{automaticRetryCategory}`, and
 `/engine/cdc-capture-runtimes/automatic-retries/operations/{operationId}` plus
