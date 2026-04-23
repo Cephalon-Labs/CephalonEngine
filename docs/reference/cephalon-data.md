@@ -265,6 +265,16 @@ bool EnableManagedConnectorAutomaticRetryExecution { get; set; }
 
 Gets or sets a value indicating whether the pack should run the shared automatic managed-connector background retry lane.
 
+<a id="member-p-cephalon-data-configuration-dataruntimeoptions-managedconnectorautomaticretrycoordinationownerid"></a>
+
+##### `ManagedConnectorAutomaticRetryCoordinationOwnerId`
+
+```csharp
+string ManagedConnectorAutomaticRetryCoordinationOwnerId { get; set; }
+```
+
+Gets or sets the host-owned local coordination owner identifier used to decide whether the current node can run automatic managed-connector retries.
+
 <a id="member-p-cephalon-data-configuration-dataruntimeoptions-managedconnectorautomaticretrypollingintervalseconds"></a>
 
 ##### `ManagedConnectorAutomaticRetryPollingIntervalSeconds`

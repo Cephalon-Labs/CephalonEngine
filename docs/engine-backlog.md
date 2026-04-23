@@ -3027,6 +3027,93 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-185 Phase 13 managed-connector automatic background retry coordination baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`, and
+  `ENG-184` already shipped shared coverage, remediation, governance, desired-versus-observed
+  drift, action-planning, write-path readiness, preflight, dry-run, execution-intent,
+  execution-approval, command-envelope, command-issuance, provider execution-adapter, execution
+  outcome/history, retry/idempotency, retry-execution-policy, bounded command-journal, and
+  automatic background retry execution truth, but operators still lacked one shared answer for
+  whether the current host should actually execute an eligible automatic retry or yield to another
+  owner
+- the next follow-through needed to keep automatic retry coordination additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a durable distributed
+  scheduler, Debezium-only multi-node retry loop, or second coordination registry
+- teams also needed one host-level owner identity plus truthful lease-held versus owner-mismatch
+  versus reporter-conflict posture so bounded automatic retry would not record duplicate background
+  attempts when reporter lease ownership and host retry ownership diverged
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector automatic background retry coordination
+  contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`,
+  `single-node`, `uncoordinated`, `lease-held`, `lease-missing`, `conflicted`, and
+  `operator-only` posture together with coordination categories, source truth, coordination-owner
+  id, active-reporter id, reporter-lease timing, and `CanExecuteOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive automatic-retry-coordination-state,
+  automatic-retry-coordination-category, and automatic-retry-coordination-owner methods while
+  deriving coordination posture from the same shared execution ownership, execution topology,
+  reporter coordination, automatic-retry execution, retry-execution policy, and command-journal
+  lane instead of forcing hosts or providers to invent a second retry coordinator
+- the shared data pack now exposes host-level automatic retry ownership through
+  `ManagedConnectorAutomaticRetryCoordinationOwnerId`, and both the bounded
+  `ManagedConnectorAutomaticRetryHostedService` and automatic invocations in
+  `ManagedConnectorCommandExecutor` honor the shared `CanExecuteOnCurrentNode` answer instead of
+  bypassing the shipped guardrails
+- ASP.NET Core publishes those same automatic-retry-coordination filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, and the coordination answer stays additive beside
+  the existing automatic-retry, retry-policy, command-journal, and command-execution-history
+  surfaces instead of branching into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later durable distributed retry orchestration, richer cross-node
+  idempotency hardening, durable shared retry journals, or broader provider-owned write-path
+  orchestration remain separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorAutomaticRetryCoordination`
+- `Cephalon.Data` now derives managed-connector automatic background retry coordination from merged
+  execution ownership, execution topology, reporter coordination, active reporter lease truth,
+  automatic-retry execution, retry-execution policy, and command-journal posture, including
+  `single-node`, `lease-held`, `lease-missing`, `uncoordinated`, `conflicted`, and
+  `operator-only` answers, and `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorAutomaticRetryCoordinationState(...)`,
+  `GetByManagedConnectorAutomaticRetryCoordinationCategory(...)`, and
+  `GetByManagedConnectorAutomaticRetryCoordinationOwnerId(...)`
+- `Cephalon.Data` now also exposes the host-level
+  `ManagedConnectorAutomaticRetryCoordinationOwnerId` option, the bounded automatic retry hosted
+  service now runs only when `ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode`
+  stays true, and the shared command executor now re-checks that same coordination truth for
+  automatic invocations so owner-mismatch or lease-missing runtimes remain eligible-but-not-run
+  without recording duplicate automatic attempts
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/automatic-retry-coordinations/{coordinationState}`,
+  `/engine/cdc-capture-runtimes/automatic-retry-coordinations/categories/{coordinationCategory}`,
+  and `/engine/cdc-capture-runtimes/automatic-retry-coordinations/owners/{ownerId}` so host routes
+  stay aligned with the same shared automatic-retry execution and coordination story
+- `Cephalon.Data.Debezium` now participates in that shared automatic background retry coordination
+  lane through the existing managed-connector execution-adapter seam while targeted coverage proves
+  both lease-held automatic execution and owner-mismatch uncoordinated posture without claiming a
+  durable distributed scheduler or Debezium-only retry coordinator
+- targeted coverage now proves the automatic background retry coordination baseline through
+  composition tests `40/40`, hosting tests `19/19`, tooling tests `207/207`, and the reference
+  docs publish script
+
 ### ENG-184 Phase 13 managed-connector automatic background retry execution baseline
 
 Status: done

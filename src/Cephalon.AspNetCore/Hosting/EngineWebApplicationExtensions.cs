@@ -874,6 +874,33 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryExecutionOperation");
+        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retry-coordinations/{coordinationState}", (string coordinationState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorAutomaticRetryCoordinationState(coordinationState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationState");
+        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retry-coordinations/categories/{coordinationCategory}", (string coordinationCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorAutomaticRetryCoordinationCategory(coordinationCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retry-coordinations/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorAutomaticRetryCoordinationOwnerId(ownerId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationOwner");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();

@@ -8418,6 +8418,16 @@ CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus ManagedConnectorActio
 
 Gets the operator-facing managed-connector action plan derived from remediation, governance, and drift posture.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorautomaticretrycoordination"></a>
+
+##### `ManagedConnectorAutomaticRetryCoordination`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus ManagedConnectorAutomaticRetryCoordination { get; set; }
+```
+
+Gets the operator-facing managed-connector automatic background retry coordination posture derived from reporter coordination, execution ownership, and the current host-owned coordination owner id.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorautomaticretryexecution"></a>
 
 ##### `ManagedConnectorAutomaticRetryExecution`
@@ -9055,6 +9065,614 @@ string State { get; }
 ```
 
 Gets the stable managed-connector action-plan state.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories`
+
+Defines the stable category identifiers used by managed-connector automatic background retry coordination answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-activeleaseheld"></a>
+
+##### `ActiveLeaseHeld`
+
+```csharp
+const string ActiveLeaseHeld
+```
+
+The current host coordination owner holds the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-activereportervisible"></a>
+
+##### `ActiveReporterVisible`
+
+```csharp
+const string ActiveReporterVisible
+```
+
+The runtime currently exposes one active reporter owner.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-coordinationownerconfigured"></a>
+
+##### `CoordinationOwnerConfigured`
+
+```csharp
+const string CoordinationOwnerConfigured
+```
+
+The current host declared a local coordination owner identifier for automatic retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-coordinationownermissing"></a>
+
+##### `CoordinationOwnerMissing`
+
+```csharp
+const string CoordinationOwnerMissing
+```
+
+The current host did not declare a local coordination owner identifier for automatic retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-leasecoordinatedruntime"></a>
+
+##### `LeaseCoordinatedRuntime`
+
+```csharp
+const string LeaseCoordinatedRuntime
+```
+
+The runtime depends on reporter-lease coordination before automatic retry should execute.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-leasemissing"></a>
+
+##### `LeaseMissing`
+
+```csharp
+const string LeaseMissing
+```
+
+No active reporter lease is currently visible for automatic retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Automatic retry still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-ownermatch"></a>
+
+##### `OwnerMatch`
+
+```csharp
+const string OwnerMatch
+```
+
+The current host coordination owner matches the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-ownermismatch"></a>
+
+##### `OwnerMismatch`
+
+```csharp
+const string OwnerMismatch
+```
+
+The current host coordination owner does not match the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-reporterconflict"></a>
+
+##### `ReporterConflict`
+
+```csharp
+const string ReporterConflict
+```
+
+Reporter coordination currently remains conflicted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-singlenoderuntime"></a>
+
+##### `SingleNodeRuntime`
+
+```csharp
+const string SingleNodeRuntime
+```
+
+The runtime can evaluate automatic retry on a single node without reporter-lease coordination.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources`
+
+Defines the stable source identifiers used by managed-connector automatic background retry coordination answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationsources-automaticretryexecution"></a>
+
+##### `AutomaticRetryExecution`
+
+```csharp
+const string AutomaticRetryExecution
+```
+
+The automatic background retry coordination answer was derived primarily from automatic retry posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationsources-coordinationowner"></a>
+
+##### `CoordinationOwner`
+
+```csharp
+const string CoordinationOwner
+```
+
+The automatic background retry coordination answer was derived primarily from the host-owned coordination owner id.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationsources-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+const string ExecutionOwnership
+```
+
+The automatic background retry coordination answer was derived primarily from execution-ownership semantics.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationsources-reportercoordination"></a>
+
+##### `ReporterCoordination`
+
+```csharp
+const string ReporterCoordination
+```
+
+The automatic background retry coordination answer was derived primarily from reporter-coordination truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The automatic background retry coordination answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates`
+
+Defines the stable state identifiers used by managed-connector automatic background retry coordination answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-conflicted"></a>
+
+##### `Conflicted`
+
+```csharp
+const string Conflicted
+```
+
+Automatic background retry cannot run because reporter coordination is currently conflicted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-leaseheld"></a>
+
+##### `LeaseHeld`
+
+```csharp
+const string LeaseHeld
+```
+
+The current node holds the active reporter lease for automatic background retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-leasemissing"></a>
+
+##### `LeaseMissing`
+
+```csharp
+const string LeaseMissing
+```
+
+Automatic background retry cannot run because no active reporter lease is currently visible.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Automatic background retry coordination does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Automatic background retry still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-singlenode"></a>
+
+##### `SingleNode`
+
+```csharp
+const string SingleNode
+```
+
+Automatic background retry can run on the current node without reporter-lease coordination.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstates-uncoordinated"></a>
+
+##### `Uncoordinated`
+
+```csharp
+const string Uncoordinated
+```
+
+Automatic background retry remains uncoordinated on the current node.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus`
+
+Describes the current operator-facing managed-connector automatic background retry coordination posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus(string state, string description)
+```
+
+Creates a new managed-connector automatic background retry coordination answer.
+
+Parameters:
+- `state`: The stable automatic background retry coordination state, such as `not-applicable`, `single-node`, `uncoordinated`, `lease-held`, `lease-missing`, `conflicted`, or `operator-only`.
+- `description`: An optional operator-facing automatic background retry coordination summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-automaticretryexecutionstate"></a>
+
+##### `AutomaticRetryExecutionState`
+
+```csharp
+string AutomaticRetryExecutionState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry execution state that informed coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-canexecuteoncurrentnode"></a>
+
+##### `CanExecuteOnCurrentNode`
+
+```csharp
+bool CanExecuteOnCurrentNode { get; }
+```
+
+Gets a value indicating whether automatic background retry can safely execute on the current node.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active automatic background retry coordination categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable automatic background retry coordination categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with automatic background retry coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector command-journal state that informed coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one was configured for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-coordinationownermatchesactivereporter"></a>
+
+##### `CoordinationOwnerMatchesActiveReporter`
+
+```csharp
+bool CoordinationOwnerMatchesActiveReporter { get; }
+```
+
+Gets a value indicating whether the current host coordination owner matches the active reporter identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing automatic background retry coordination summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed automatic background retry coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with automatic background retry coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed automatic background retry coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the execution runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-hascoordinationowner"></a>
+
+##### `HasCoordinationOwner`
+
+```csharp
+bool HasCoordinationOwner { get; }
+```
+
+Gets a value indicating whether the current host declared a coordination owner identifier for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-isconflicted"></a>
+
+##### `IsConflicted`
+
+```csharp
+bool IsConflicted { get; }
+```
+
+Gets a value indicating whether reporter coordination currently remains conflicted.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-isleaseheld"></a>
+
+##### `IsLeaseHeld`
+
+```csharp
+bool IsLeaseHeld { get; }
+```
+
+Gets a value indicating whether the current node currently holds the active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-isleasemissing"></a>
+
+##### `IsLeaseMissing`
+
+```csharp
+bool IsLeaseMissing { get; }
+```
+
+Gets a value indicating whether no active reporter lease is currently visible for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether automatic background retry still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-issinglenode"></a>
+
+##### `IsSingleNode`
+
+```csharp
+bool IsSingleNode { get; }
+```
+
+Gets a value indicating whether automatic background retry can execute without reporter-lease coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-isuncoordinated"></a>
+
+##### `IsUncoordinated`
+
+```csharp
+bool IsUncoordinated { get; }
+```
+
+Gets a value indicating whether automatic background retry currently remains uncoordinated on the current node.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-observededgenodeids"></a>
+
+##### `ObservedEdgeNodeIds`
+
+```csharp
+IReadOnlyList<string> ObservedEdgeNodeIds { get; set; }
+```
+
+Gets the declared or observed edge-node identifiers currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-reportercoordinationissuereason"></a>
+
+##### `ReporterCoordinationIssueReason`
+
+```csharp
+string ReporterCoordinationIssueReason { get; set; }
+```
+
+Gets the current reporter-coordination degraded-reason identifier when one applies.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-reportercoordinationstate"></a>
+
+##### `ReporterCoordinationState`
+
+```csharp
+string ReporterCoordinationState { get; set; }
+```
+
+Gets the current reporter-coordination state that informed automatic background retry coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-reportertakeoverstate"></a>
+
+##### `ReporterTakeoverState`
+
+```csharp
+string ReporterTakeoverState { get; set; }
+```
+
+Gets the current reporter takeover state when one applies.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive automatic background retry coordination.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector automatic background retry coordination state.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories"></a>
 
@@ -26151,6 +26769,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `actionPlanState`: The stable managed-connector action-plan state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorautomaticretrycoordinationcategory-system-string"></a>
+
+##### `GetByManagedConnectorAutomaticRetryCoordinationCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationCategory(string coordinationCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector automatic background retry coordination answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that coordination category.
+
+Parameters:
+- `coordinationCategory`: The stable managed-connector automatic background retry coordination category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorautomaticretrycoordinationownerid-system-string"></a>
+
+##### `GetByManagedConnectorAutomaticRetryCoordinationOwnerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationOwnerId(string ownerId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector automatic background retry coordination answer references the requested local coordination owner identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.
+
+Parameters:
+- `ownerId`: The stable local coordination owner identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorautomaticretrycoordinationstate-system-string"></a>
+
+##### `GetByManagedConnectorAutomaticRetryCoordinationState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationState(string coordinationState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector automatic background retry coordination answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that coordination state.
+
+Parameters:
+- `coordinationState`: The stable managed-connector automatic background retry coordination state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorautomaticretryexecutioncategory-system-string"></a>
 

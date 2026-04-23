@@ -33,6 +33,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private readonly ManagedConnectorCommandExecutionHistoryStore? commandExecutionHistoryStore;
     private readonly TimeProvider timeProvider;
     private readonly bool managedConnectorAutomaticRetryEnabled;
+    private readonly string? managedConnectorAutomaticRetryCoordinationOwnerId;
 
     public CdcCaptureExecutionRuntimeCatalog(
         CdcCaptureExecutionRuntimeDescriptorCatalog runtimeDescriptorCatalog,
@@ -52,6 +53,9 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         this.commandExecutionHistoryStore = commandExecutionHistoryStore;
         this.timeProvider = timeProvider ?? TimeProvider.System;
         managedConnectorAutomaticRetryEnabled = options?.EnableManagedConnectorAutomaticRetryExecution ?? false;
+        managedConnectorAutomaticRetryCoordinationOwnerId = string.IsNullOrWhiteSpace(options?.ManagedConnectorAutomaticRetryCoordinationOwnerId)
+            ? null
+            : options!.ManagedConnectorAutomaticRetryCoordinationOwnerId!.Trim();
         var runtimes = runtimeDescriptorCatalog.Runtimes;
         index = runtimes.ToDictionary(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase);
     }
@@ -590,6 +594,38 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationState(string coordinationState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(coordinationState);
+        var normalizedCoordinationState = coordinationState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorAutomaticRetryCoordination.State,
+            normalizedCoordinationState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationCategory(string coordinationCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(coordinationCategory);
+        var normalizedCoordinationCategory = coordinationCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorAutomaticRetryCoordination.CategoryIds.Contains(
+            normalizedCoordinationCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationOwnerId(string ownerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ownerId);
+        var normalizedOwnerId = ownerId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId,
+            normalizedOwnerId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -824,6 +860,17 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandJournal,
             commandExecutionJournal,
             managedConnectorAutomaticRetryEnabled);
+        var managedConnectorAutomaticRetryCoordination = CreateManagedConnectorAutomaticRetryCoordination(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionOwnership,
+            runtime.ExecutionTopology,
+            managedConnectorRetryExecutionPolicy.ManagementMode ?? managedConnectorAutomaticRetryExecution.ManagementMode,
+            summary,
+            managedConnectorAutomaticRetryExecution,
+            managedConnectorRetryExecutionPolicy,
+            managedConnectorCommandJournal,
+            managedConnectorAutomaticRetryCoordinationOwnerId);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
@@ -848,7 +895,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorCommandRetry = managedConnectorCommandRetry,
             ManagedConnectorRetryExecutionPolicy = managedConnectorRetryExecutionPolicy,
             ManagedConnectorCommandJournal = managedConnectorCommandJournal,
-            ManagedConnectorAutomaticRetryExecution = managedConnectorAutomaticRetryExecution
+            ManagedConnectorAutomaticRetryExecution = managedConnectorAutomaticRetryExecution,
+            ManagedConnectorAutomaticRetryCoordination = managedConnectorAutomaticRetryCoordination
         };
     }
 
@@ -6861,6 +6909,289 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return [.. categories];
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus CreateManagedConnectorAutomaticRetryCoordination(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string executionOwnership,
+        string executionTopology,
+        string? managementMode,
+        CdcCaptureExecutionRuntimeSummary summary,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus automaticRetryExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        string? coordinationOwnerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(summary);
+        ArgumentNullException.ThrowIfNull(automaticRetryExecution);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+
+        var normalizedExecutionOwnership = string.IsNullOrWhiteSpace(executionOwnership)
+            ? "runtime-managed"
+            : executionOwnership.Trim();
+        var normalizedExecutionTopology = string.IsNullOrWhiteSpace(executionTopology)
+            ? "not-configured"
+            : executionTopology.Trim();
+        var normalizedCoordinationOwnerId = string.IsNullOrWhiteSpace(coordinationOwnerId)
+            ? null
+            : coordinationOwnerId.Trim();
+        var reporterCoordination = summary.ReporterCoordination;
+        var hasCoordinationOwner = !string.IsNullOrWhiteSpace(normalizedCoordinationOwnerId);
+        var hasActiveReporterLease =
+            !string.IsNullOrWhiteSpace(summary.ActiveReporterId) &&
+            summary.ReporterLeaseExpiresAtUtc.HasValue;
+        var usesReporterLeaseCoordination =
+            string.Equals(normalizedExecutionOwnership, "external-managed", StringComparison.OrdinalIgnoreCase) ||
+            !string.Equals(
+                reporterCoordination.State,
+                CdcCaptureReporterCoordinationStates.NotConfigured,
+                StringComparison.OrdinalIgnoreCase);
+
+        var state =
+            !string.Equals(normalizedExecutionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) ||
+            !automaticRetryExecution.AppliesToManagedConnector
+                ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.NotApplicable
+                : retryExecutionPolicy.IsOperatorOnly
+                    ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.OperatorOnly
+                    : string.Equals(
+                            reporterCoordination.State,
+                            CdcCaptureReporterCoordinationStates.Conflicted,
+                            StringComparison.OrdinalIgnoreCase) ||
+                      reporterCoordination.HasMultipleActiveReporters ||
+                      string.Equals(
+                            reporterCoordination.DegradedReason,
+                            CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters,
+                            StringComparison.OrdinalIgnoreCase) ||
+                      string.Equals(
+                            reporterCoordination.DegradedReason,
+                            CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict,
+                            StringComparison.OrdinalIgnoreCase)
+                        ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Conflicted
+                        : usesReporterLeaseCoordination
+                            ? !hasActiveReporterLease ||
+                              string.Equals(
+                                  reporterCoordination.State,
+                                  CdcCaptureReporterCoordinationStates.LeaseExpired,
+                                  StringComparison.OrdinalIgnoreCase) ||
+                              reporterCoordination.RequiresTakeover
+                                ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseMissing
+                                : !hasCoordinationOwner
+                                    ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Uncoordinated
+                                    : string.Equals(
+                                            normalizedCoordinationOwnerId,
+                                            summary.ActiveReporterId,
+                                            StringComparison.OrdinalIgnoreCase)
+                                        ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld
+                                        : CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Uncoordinated
+                            : CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.SingleNode;
+
+        var categories = CreateManagedConnectorAutomaticRetryCoordinationCategories(
+            state,
+            usesReporterLeaseCoordination,
+            hasCoordinationOwner,
+            hasActiveReporterLease,
+            normalizedCoordinationOwnerId,
+            summary.ActiveReporterId,
+            retryExecutionPolicy);
+        var description = CreateManagedConnectorAutomaticRetryCoordinationDescription(
+            state,
+            normalizedCoordinationOwnerId,
+            summary.ActiveReporterId,
+            reporterCoordination,
+            automaticRetryExecution,
+            retryExecutionPolicy);
+        var sourceId = ResolveManagedConnectorAutomaticRetryCoordinationSourceId(
+            state,
+            hasCoordinationOwner);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus(state, description)
+        {
+            CategoryIds = categories,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ExecutionOwnership = normalizedExecutionOwnership,
+            ExecutionTopology = normalizedExecutionTopology,
+            ManagementMode = managementMode,
+            CoordinationOwnerId = automaticRetryExecution.AppliesToManagedConnector ? normalizedCoordinationOwnerId : null,
+            ActiveReporterId = summary.ActiveReporterId,
+            ActiveReporterLeaseExpiresAtUtc = summary.ReporterLeaseExpiresAtUtc,
+            ReporterCoordinationState = reporterCoordination.State,
+            ReporterCoordinationIssueReason = reporterCoordination.DegradedReason,
+            ReporterTakeoverState = reporterCoordination.TakeoverState,
+            AutomaticRetryExecutionState = automaticRetryExecution.State,
+            RetryExecutionPolicyState = retryExecutionPolicy.State,
+            CommandJournalState = commandJournal.State,
+            SourceId = sourceId,
+            ObservedEdgeNodeIds = summary.ObservedEdgeNodeIds
+        };
+    }
+
+    private static string[] CreateManagedConnectorAutomaticRetryCoordinationCategories(
+        string state,
+        bool usesReporterLeaseCoordination,
+        bool hasCoordinationOwner,
+        bool hasActiveReporterLease,
+        string? coordinationOwnerId,
+        string? activeReporterId,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return [];
+        }
+
+        var categories = new List<string>();
+
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        AddCategory(
+            categories,
+            usesReporterLeaseCoordination
+                ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.LeaseCoordinatedRuntime
+                : CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.SingleNodeRuntime);
+
+        AddCategory(
+            categories,
+            hasCoordinationOwner
+                ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.CoordinationOwnerConfigured
+                : CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.CoordinationOwnerMissing);
+
+        if (retryExecutionPolicy.IsOperatorOnly)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OperatorOnly);
+        }
+
+        if (hasActiveReporterLease)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.ActiveReporterVisible);
+        }
+        else if (usesReporterLeaseCoordination)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.LeaseMissing);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Conflicted, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.ReporterConflict);
+        }
+
+        if (!string.IsNullOrWhiteSpace(coordinationOwnerId) &&
+            !string.IsNullOrWhiteSpace(activeReporterId))
+        {
+            AddCategory(
+                categories,
+                string.Equals(coordinationOwnerId, activeReporterId, StringComparison.OrdinalIgnoreCase)
+                    ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMatch
+                    : CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMismatch);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.ActiveLeaseHeld);
+        }
+
+        return [.. categories];
+    }
+
+    private static string CreateManagedConnectorAutomaticRetryCoordinationDescription(
+        string state,
+        string? coordinationOwnerId,
+        string? activeReporterId,
+        CdcCaptureReporterCoordinationStatus reporterCoordination,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus automaticRetryExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(reporterCoordination);
+        ArgumentNullException.ThrowIfNull(automaticRetryExecution);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+
+        var detail = string.Equals(
+            state,
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.OperatorOnly,
+            StringComparison.OrdinalIgnoreCase)
+            ? CombineManagedConnectorCommandEnvelopeDetail(retryExecutionPolicy.Description, automaticRetryExecution.Description)
+            : CombineManagedConnectorCommandEnvelopeDetail(reporterCoordination.Description, automaticRetryExecution.Description);
+
+        return state switch
+        {
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.NotApplicable =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon does not currently require automatic background retry coordination for this execution runtime.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.SingleNode =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon can evaluate automatic background retry on the current node without reporter-lease coordination.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    $"Reporter '{NormalizeManagedConnectorFingerprintSegment(activeReporterId)}' currently holds the active reporter lease for this execution runtime, so the current node can evaluate automatic background retry safely.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseMissing =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon cannot safely run automatic background retry on the current node because no active reporter lease is currently visible for the execution runtime.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Conflicted =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon cannot safely run automatic background retry while reporter coordination remains conflicted for the execution runtime.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.OperatorOnly =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon can observe automatic retry posture for this managed connector, but control-plane ownership still remains operator-owned outside Cephalon.",
+                    detail),
+            _ => string.IsNullOrWhiteSpace(coordinationOwnerId)
+                ? AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon identified automatic retry posture for this managed connector, but the current host did not declare a local coordination owner id, so background retry remains uncoordinated on this node.",
+                    detail)
+                : AppendManagedConnectorCommandEnvelopeDetail(
+                    $"Reporter '{NormalizeManagedConnectorFingerprintSegment(activeReporterId)}' currently holds the active reporter lease, but the current host declares coordination owner '{NormalizeManagedConnectorFingerprintSegment(coordinationOwnerId)}', so automatic background retry remains uncoordinated on this node.",
+                    detail)
+        };
+    }
+
+    private static string ResolveManagedConnectorAutomaticRetryCoordinationSourceId(
+        string state,
+        bool hasCoordinationOwner)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.NotApplicable, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources.AutomaticRetryExecution;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.SingleNode, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources.ExecutionOwnership;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Conflicted, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseMissing, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources.ReporterCoordination;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld, StringComparison.OrdinalIgnoreCase) ||
+            (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Uncoordinated, StringComparison.OrdinalIgnoreCase) && hasCoordinationOwner))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources.CoordinationOwner;
+        }
+
+        return CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources.Unknown;
     }
 
     private static string CreateManagedConnectorBlockedAutomaticRetryExecutionDescription(

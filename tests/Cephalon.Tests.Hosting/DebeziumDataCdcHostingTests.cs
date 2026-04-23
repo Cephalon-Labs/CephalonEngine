@@ -2940,6 +2940,7 @@ public sealed class DebeziumDataCdcHostingTests
             {
                 dataOptions.EnableManagedConnectorAutomaticRetryExecution = true;
                 dataOptions.ManagedConnectorAutomaticRetryPollingIntervalSeconds = 1;
+                dataOptions.ManagedConnectorAutomaticRetryCoordinationOwnerId = "connect-worker-auto";
             },
             services => services.AddSingleton<ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter>(
                 new AutomaticRetryTestExecutionAdapter(automaticRetryRuntimeId)));
@@ -3009,6 +3010,9 @@ public sealed class DebeziumDataCdcHostingTests
             var completedByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retries/completed");
             var automaticAttemptRecorded = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retries/categories/automatic-attempt-recorded");
             var restartOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retries/operations/restart");
+            var coordinationByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retry-coordinations/lease-held");
+            var coordinationByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retry-coordinations/categories/owner-match");
+            var coordinationByOwner = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retry-coordinations/owners/connect-worker-auto");
             var commandHistory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/command-executions");
             var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
@@ -3019,6 +3023,9 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Completed,
                 completedRuntime.ManagedConnectorAutomaticRetryExecution.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld,
+                completedRuntime.ManagedConnectorAutomaticRetryCoordination.State);
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds.Restart,
                 completedRuntime.ManagedConnectorAutomaticRetryExecution.OperationId);
@@ -3037,6 +3044,14 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.LatestExecutionAdapted,
                 completedRuntime.ManagedConnectorAutomaticRetryExecution.CategoryIds);
+            Assert.True(completedRuntime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
+            Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMatch,
+                completedRuntime.ManagedConnectorAutomaticRetryCoordination.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.ActiveLeaseHeld,
+                completedRuntime.ManagedConnectorAutomaticRetryCoordination.CategoryIds);
 
             Assert.NotNull(completedByState);
             Assert.Equal([automaticRetryRuntimeId], completedByState.Select(static runtime => runtime.Id).ToArray());
@@ -3046,6 +3061,15 @@ public sealed class DebeziumDataCdcHostingTests
 
             Assert.NotNull(restartOperation);
             Assert.Equal([automaticRetryRuntimeId], restartOperation.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(coordinationByState);
+            Assert.Equal([automaticRetryRuntimeId], coordinationByState.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(coordinationByCategory);
+            Assert.Equal([automaticRetryRuntimeId], coordinationByCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(coordinationByOwner);
+            Assert.Equal([automaticRetryRuntimeId], coordinationByOwner.Select(static runtime => runtime.Id).ToArray());
 
             Assert.NotNull(commandHistory);
             Assert.Equal(2, commandHistory.Length);
@@ -3065,10 +3089,164 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == automaticRetryRuntimeId &&
                 item.ManagedConnectorAutomaticRetryExecution.State == CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Completed &&
+                item.ManagedConnectorAutomaticRetryCoordination.State == CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld &&
                 item.ManagedConnectorAutomaticRetryExecution.HasMatchingAutomaticRetryAttempt &&
                 item.ManagedConnectorAutomaticRetryExecution.CategoryIds.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.AutomaticAttemptRecorded,
                     StringComparer.OrdinalIgnoreCase));
+        }
+        finally
+        {
+            await app.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task MapCephalonKeepsManagedConnectorAutomaticRetryUncoordinatedWhenCoordinationOwnerDoesNotMatchActiveReporter()
+    {
+        const string automaticRetryRuntimeId = "inventory-automatic-retry-mismatch-connector";
+        const string automaticRetryCaptureId = "inventory-automatic-retry-mismatch-cdc";
+
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-24T03:20:30Z", CultureInfo.InvariantCulture));
+        var builder = CreateBuilder(
+            options =>
+            {
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: automaticRetryRuntimeId,
+                    captureId: automaticRetryCaptureId,
+                    displayName: "Inventory Automatic Retry Mismatch Connector",
+                    captureDisplayName: "Inventory Automatic Retry Mismatch CDC",
+                    captureDescription: "Keeps automatic retry retry-ready but prevents background execution when the local coordination owner does not hold the active reporter lease.",
+                    connectClusterId: "connect-cluster-auto-mismatch",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-automatic-retry-mismatch",
+                    managementMode: "restart",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+            },
+            timeProvider,
+            dataOptions =>
+            {
+                dataOptions.EnableManagedConnectorAutomaticRetryExecution = true;
+                dataOptions.ManagedConnectorAutomaticRetryPollingIntervalSeconds = 1;
+                dataOptions.ManagedConnectorAutomaticRetryCoordinationOwnerId = "connect-worker-owner-a";
+            },
+            services => services.AddSingleton<ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter>(
+                new AutomaticRetryTestExecutionAdapter(automaticRetryRuntimeId)));
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+
+        try
+        {
+            var client = app.GetTestClient();
+
+            var reportResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/reports",
+                new[]
+                {
+                    new CdcCaptureRuntimeObservation(
+                        cdcCaptureId: automaticRetryCaptureId,
+                        outcome: CdcCaptureRuntimeOutcomes.Captured,
+                        observedAtUtc: DateTimeOffset.Parse("2026-04-24T03:20:00Z", CultureInfo.InvariantCulture),
+                        reportId: "debezium-report-automatic-retry-mismatch-001",
+                        metadata: new Dictionary<string, string>
+                        {
+                            ["connectorState"] = "RUNNING",
+                            ["connectClusterId"] = "connect-cluster-auto-mismatch",
+                            ["connectorClass"] = "io.debezium.connector.postgresql.PostgresConnector",
+                            ["sourceProviderId"] = "postgresql",
+                            ["reportedTaskIds"] = "0",
+                            ["activeTaskIds"] = "0"
+                        },
+                        reporterId: "connect-worker-owner-b")
+                });
+            reportResponse.EnsureSuccessStatusCode();
+
+            timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-24T03:20:31Z", CultureInfo.InvariantCulture));
+            var blockedCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/commands/restart",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest
+                {
+                    Approve = true
+                });
+            blockedCommandResponse.EnsureSuccessStatusCode();
+
+            var blockedCommand = await blockedCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
+
+            Assert.NotNull(blockedCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked, blockedCommand.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.OperatorRequest,
+                blockedCommand.InvocationSourceId);
+            Assert.True(blockedCommand.ApprovalApplied);
+
+            timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-24T03:21:10Z", CultureInfo.InvariantCulture));
+
+            var runtime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}");
+            var coordinationByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retry-coordinations/uncoordinated");
+            var coordinationByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retry-coordinations/categories/owner-mismatch");
+            var coordinationByOwner = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/automatic-retry-coordinations/owners/connect-worker-owner-a");
+
+            await Task.Delay(1400);
+
+            var commandHistory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/command-executions");
+            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+            var refreshedRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}");
+
+            Assert.NotNull(runtime);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.RetryReady,
+                runtime.ManagedConnectorRetryExecutionPolicy.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Eligible,
+                runtime.ManagedConnectorAutomaticRetryExecution.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Uncoordinated,
+                runtime.ManagedConnectorAutomaticRetryCoordination.State);
+            Assert.False(runtime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
+            Assert.Equal("connect-worker-owner-a", runtime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
+            Assert.Equal("connect-worker-owner-b", runtime.ManagedConnectorAutomaticRetryCoordination.ActiveReporterId);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMismatch,
+                runtime.ManagedConnectorAutomaticRetryCoordination.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.ActiveReporterVisible,
+                runtime.ManagedConnectorAutomaticRetryCoordination.CategoryIds);
+
+            Assert.NotNull(coordinationByState);
+            Assert.Equal([automaticRetryRuntimeId], coordinationByState.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(coordinationByCategory);
+            Assert.Equal([automaticRetryRuntimeId], coordinationByCategory.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(coordinationByOwner);
+            Assert.Equal([automaticRetryRuntimeId], coordinationByOwner.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(commandHistory);
+            Assert.Single(commandHistory);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.OperatorRequest,
+                commandHistory[0].InvocationSourceId);
+            Assert.True(commandHistory[0].IsOperatorRequestInvocation);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked, commandHistory[0].State);
+
+            Assert.NotNull(refreshedRuntime);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Eligible,
+                refreshedRuntime.ManagedConnectorAutomaticRetryExecution.State);
+            Assert.False(refreshedRuntime.ManagedConnectorAutomaticRetryExecution.HasAutomaticRetryAttempt);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Uncoordinated,
+                refreshedRuntime.ManagedConnectorAutomaticRetryCoordination.State);
+
+            Assert.NotNull(snapshot);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == automaticRetryRuntimeId &&
+                item.ManagedConnectorAutomaticRetryExecution.State == CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Eligible &&
+                item.ManagedConnectorAutomaticRetryCoordination.State == CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.Uncoordinated &&
+                !item.ManagedConnectorAutomaticRetryExecution.HasAutomaticRetryAttempt);
         }
         finally
         {

@@ -611,6 +611,20 @@ distributed scheduler, or second coordinator.
   automatic background retry lane through the existing execution-adapter seam, while targeted
   coverage proves shared approval reuse, automatic-attempt recording, and completed retry posture
   on the same runtime surface
+- the `ENG-185` follow-through keeps that same bounded retry lane coordination-aware:
+  `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorAutomaticRetryCoordination` now publishes
+  stable `not-applicable`, `single-node`, `uncoordinated`, `lease-held`, `lease-missing`,
+  `conflicted`, and `operator-only` posture together with coordination categories,
+  coordination-owner id, active-reporter id, reporter-lease timing, and
+  `CanExecuteOnCurrentNode`, and the shared execution-runtime catalog derives that answer from the
+  already shipped execution ownership, execution topology, reporter-coordination, automatic-retry,
+  retry-execution-policy, and command-journal truth instead of forcing Debezium callers to invent
+  a parallel cross-node retry coordinator
+- the shared data pack now scopes that bounded retry lane through
+  `ManagedConnectorAutomaticRetryCoordinationOwnerId`, so `ManagedConnectorAutomaticRetryHostedService`
+  and automatic invocations in `ManagedConnectorCommandExecutor` only run on the host that
+  truthfully owns the active retry lease; owner-mismatch or lease-missing runtimes stay
+  eligible-but-uncoordinated without recording duplicate automatic attempts
 - automatic background retry execution currently remains bounded shared in-process truth; it does
   not mean Cephalon already owns durable distributed command journals, cross-node retry
   coordination, or full managed-connector idempotency orchestration
@@ -624,7 +638,7 @@ This pack intentionally still does not claim:
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
-- durable distributed command journals, cross-node automatic background retry coordination, or full idempotency orchestration beyond the shipped shared bounded command-journal plus bounded automatic background retry posture
+- durable distributed command journals, distributed retry lease orchestration, or full idempotency orchestration beyond the shipped shared bounded command-journal plus bounded automatic background retry plus coordination posture
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

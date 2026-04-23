@@ -3301,6 +3301,7 @@ public sealed class DebeziumDataCdcPackTests
             {
                 options.EnableManagedConnectorAutomaticRetryExecution = true;
                 options.ManagedConnectorAutomaticRetryPollingIntervalSeconds = 1;
+                options.ManagedConnectorAutomaticRetryCoordinationOwnerId = "connect-worker-auto";
             });
             engine.AddDebeziumData(options =>
             {
@@ -3372,9 +3373,19 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(
             CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.Eligible,
             eligibleRuntime.ManagedConnectorAutomaticRetryExecution.State);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld,
+            eligibleRuntime.ManagedConnectorAutomaticRetryCoordination.State);
         Assert.True(eligibleRuntime.ManagedConnectorRetryExecutionPolicy.CanReuseApprovalFromMatchingHistory);
         Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryExecution.CanReuseApprovalFromMatchingHistory);
         Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryExecution.LatestMatchingApprovalApplied);
+        Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMatch,
+            eligibleRuntime.ManagedConnectorAutomaticRetryCoordination.CategoryIds);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.ActiveLeaseHeld,
+            eligibleRuntime.ManagedConnectorAutomaticRetryCoordination.CategoryIds);
         Assert.Contains(
             CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.RetryReady,
             eligibleRuntime.ManagedConnectorAutomaticRetryExecution.CategoryIds);
@@ -3421,6 +3432,11 @@ public sealed class DebeziumDataCdcPackTests
                 CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.LatestExecutionAdapted,
                 completedRuntime.ManagedConnectorAutomaticRetryExecution.CategoryIds);
             Assert.False(string.IsNullOrWhiteSpace(completedRuntime.ManagedConnectorAutomaticRetryExecution.LatestAutomaticRetryAttemptId));
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld,
+                completedRuntime.ManagedConnectorAutomaticRetryCoordination.State);
+            Assert.True(completedRuntime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
+            Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
 
             var history = runtimeCatalog.GetManagedConnectorCommandExecutionHistory(automaticRetryRuntimeId);
 
@@ -3454,6 +3470,24 @@ public sealed class DebeziumDataCdcPackTests
                 [automaticRetryRuntimeId],
                 runtimeCatalog
                     .GetByManagedConnectorAutomaticRetryExecutionOperationId(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds.Restart)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorAutomaticRetryCoordinationState(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.LeaseHeld)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorAutomaticRetryCoordinationCategory(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMatch)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorAutomaticRetryCoordinationOwnerId("connect-worker-auto")
                     .Select(static runtime => runtime.Id)
                     .ToArray());
         }

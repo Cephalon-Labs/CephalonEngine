@@ -82,7 +82,9 @@ internal sealed class ManagedConnectorAutomaticRetryHostedService(
         var runtimeCatalog = scope.ServiceProvider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
         var commandExecutor = scope.ServiceProvider.GetRequiredService<ManagedConnectorCommandExecutor>();
         var eligibleRuntimes = runtimeCatalog.Runtimes
-            .Where(static runtime => runtime.ManagedConnectorAutomaticRetryExecution.IsEligible)
+            .Where(static runtime =>
+                runtime.ManagedConnectorAutomaticRetryExecution.IsEligible &&
+                runtime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode)
             .OrderBy(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 

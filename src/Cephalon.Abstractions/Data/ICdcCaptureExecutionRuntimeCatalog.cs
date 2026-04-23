@@ -354,6 +354,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionOperationId(string operationId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector automatic background retry coordination answer matches the requested state.
+    /// </summary>
+    /// <param name="coordinationState">The stable managed-connector automatic background retry coordination state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that coordination state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationState(string coordinationState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector automatic background retry coordination answer includes the requested category.
+    /// </summary>
+    /// <param name="coordinationCategory">The stable managed-connector automatic background retry coordination category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that coordination category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationCategory(string coordinationCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector automatic background retry coordination answer references the requested local coordination owner identifier.
+    /// </summary>
+    /// <param name="ownerId">The stable local coordination owner identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryCoordinationOwnerId(string ownerId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

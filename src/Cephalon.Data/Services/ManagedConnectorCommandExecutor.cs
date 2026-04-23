@@ -87,6 +87,30 @@ internal sealed class ManagedConnectorCommandExecutor(
                 "Managed-connector operation 'none' does not represent a runnable provider command."));
         }
 
+        if (string.Equals(
+                normalizedInvocationSourceId,
+                CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
+                StringComparison.OrdinalIgnoreCase) &&
+            !runtime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode)
+        {
+            var automaticRetryCoordination = runtime.ManagedConnectorAutomaticRetryCoordination;
+            var coordinationState = automaticRetryCoordination.IsOperatorOnly
+                ? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly
+                : CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked;
+            var coordinationDescription = string.IsNullOrWhiteSpace(automaticRetryCoordination.Description)
+                ? "Automatic background retry is not currently allowed to execute on this node."
+                : automaticRetryCoordination.Description;
+
+            return CreateResult(
+                runtime,
+                executionAdapter,
+                normalizedOperationId,
+                normalizedInvocationSourceId,
+                effectiveRequest,
+                coordinationState,
+                coordinationDescription);
+        }
+
         if (executionAdapter.AppliesToManagedConnector &&
             executionAdapter.HasAdaptableCommand &&
             !string.Equals(

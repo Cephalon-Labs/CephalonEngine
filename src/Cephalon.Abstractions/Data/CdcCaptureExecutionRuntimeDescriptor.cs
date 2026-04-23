@@ -328,6 +328,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus ManagedConnectorAutomaticRetryExecution { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector automatic background retry coordination posture derived from reporter coordination, execution ownership, and the current host-owned coordination owner id.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus ManagedConnectorAutomaticRetryCoordination { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

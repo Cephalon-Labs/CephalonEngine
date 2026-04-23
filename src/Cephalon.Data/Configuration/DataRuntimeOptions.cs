@@ -51,4 +51,9 @@ public sealed class DataRuntimeOptions
     /// Gets or sets the polling interval, in seconds, used by the shared automatic managed-connector background retry lane.
     /// </summary>
     public int ManagedConnectorAutomaticRetryPollingIntervalSeconds { get; set; } = 30;
+
+    /// <summary>
+    /// Gets or sets the host-owned local coordination owner identifier used to decide whether the current node can run automatic managed-connector retries.
+    /// </summary>
+    public string? ManagedConnectorAutomaticRetryCoordinationOwnerId { get; set; }
 }
