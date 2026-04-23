@@ -802,6 +802,33 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandRetryOperation");
+        engineGroup.MapGet("/cdc-capture-runtimes/retry-execution-policies/{policyState}", (string policyState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorRetryExecutionPolicyState(policyState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyState");
+        engineGroup.MapGet("/cdc-capture-runtimes/retry-execution-policies/categories/{policyCategory}", (string policyCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorRetryExecutionPolicyCategory(policyCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/retry-execution-policies/operations/{operationId}", (string operationId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorRetryExecutionPolicyOperationId(operationId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyOperation");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();

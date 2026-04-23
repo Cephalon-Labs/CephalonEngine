@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T15:27:02.4418706+00:00",
+  "GeneratedAtUtc": "2026-04-23T16:34:41.9546993+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 433
+      "TypeCount": 438
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -571,7 +571,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 153
+      "TypeCount": 158
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3210,7 +3210,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 29,
+        "Properties": 30,
         "Methods": 0
       }
     },
@@ -4021,6 +4021,81 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 18,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector retry-execution policy answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 21,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds",
+      "Summary": "Defines the stable management-operation identifiers used by managed-connector retry-execution policy answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources",
+      "Summary": "Defines the stable source identifiers used by managed-connector retry-execution policy answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector retry-execution policy answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 8,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "Summary": "Describes the current operator-facing managed-connector retry-execution policy posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 59,
         "Methods": 0
       }
     },
@@ -7546,7 +7621,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 42
+        "Methods": 45
       }
     },
     {
@@ -14075,6 +14150,17 @@
     {
       "DisplayName": "ActionPlanState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-actionplanstate",
+      "Signature": "string ActionPlanState { get; set; }",
+      "Summary": "Gets the current managed-connector action-plan state that informed retry-execution policy."
+    },
+    {
+      "DisplayName": "ActionPlanState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -14423,6 +14509,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-adapterfingerprint",
       "Signature": "string AdapterFingerprint { get; set; }",
       "Summary": "Gets the deterministic execution-adapter fingerprint Cephalon currently derives for the managed connector."
+    },
+    {
+      "DisplayName": "AdapterFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-adapterfingerprint",
+      "Signature": "string AdapterFingerprint { get; set; }",
+      "Summary": "Gets the deterministic execution-adapter fingerprint currently associated with the retry-execution policy."
     },
     {
       "DisplayName": "AdapterId",
@@ -17221,6 +17318,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18550,6 +18658,17 @@
       "Summary": "The managed connector currently fits a future auto-execution lane without requiring an additional approval workflow."
     },
     {
+      "DisplayName": "AutomaticRetryDisabled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-automaticretrydisabled",
+      "Signature": "const string AutomaticRetryDisabled",
+      "Summary": "Automatic background retry remains disabled for the current retry candidate."
+    },
+    {
       "DisplayName": "AutomationMode",
       "Category": "Properties",
       "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
@@ -18878,6 +18997,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturelagstates-backfilling",
       "Signature": "const string Backfilling",
       "Summary": "Indicates that the provider reports the capture as intentionally backfilling older changes."
+    },
+    {
+      "DisplayName": "BackgroundRetryDisabled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-backgroundretrydisabled",
+      "Signature": "const string BackgroundRetryDisabled",
+      "Summary": "The current shared runtime truth allows one safe retry, but background retry execution is not enabled yet."
     },
     {
       "DisplayName": "Backoff",
@@ -20092,6 +20222,17 @@
     {
       "DisplayName": "BlockingRemediation",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-blockingremediation",
+      "Signature": "const string BlockingRemediation",
+      "Summary": "The retry-execution policy remains blocked by remediation that still needs to clear first."
+    },
+    {
+      "DisplayName": "BlockingRemediation",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20605,6 +20746,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-canevaluatedrift",
       "Signature": "bool CanEvaluateDrift { get; }",
       "Summary": "Gets a value indicating whether the current drift posture can be evaluated from the available baseline and report data."
+    },
+    {
+      "DisplayName": "CanExecuteRetryThroughPolicy",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-canexecuteretrythroughpolicy",
+      "Signature": "bool CanExecuteRetryThroughPolicy { get; }",
+      "Summary": "Gets a value indicating whether the retry-execution policy currently allows Cephalon to execute one automatic retry."
     },
     {
       "DisplayName": "CanExecuteThroughEngine",
@@ -21214,6 +21366,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active retry-execution policy categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21353,6 +21516,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable preflight categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable retry-execution policy categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -21619,6 +21793,17 @@
       "Summary": "Creates a new managed-connector preflight answer."
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector retry-execution policy answer."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
@@ -21826,6 +22011,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with the execution adapter."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with retry-execution policy."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -22409,6 +22605,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-changeplanned",
       "Signature": "const string ChangePlanned",
       "Summary": "The current intended operation would still change managed-connector posture."
+    },
+    {
+      "DisplayName": "ChangePlanned",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-changeplanned",
+      "Signature": "const string ChangePlanned",
+      "Summary": "The retry-execution policy still reflects one or more shared write-path changes."
     },
     {
       "DisplayName": "Changes",
@@ -23588,6 +23795,17 @@
       "Summary": "Gets the current managed-connector command-envelope state that informed the execution adapter."
     },
     {
+      "DisplayName": "CommandEnvelopeState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandenvelopestate",
+      "Signature": "string CommandEnvelopeState { get; set; }",
+      "Summary": "Gets the current managed-connector command-envelope state that informed retry-execution policy."
+    },
+    {
       "DisplayName": "CommandExecution",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetrySources",
@@ -23665,6 +23883,17 @@
       "Summary": "Gets the deterministic command fingerprint already associated with the current managed connector."
     },
     {
+      "DisplayName": "CommandFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandfingerprint",
+      "Signature": "string CommandFingerprint { get; set; }",
+      "Summary": "Gets the deterministic command fingerprint currently associated with the retry-execution policy."
+    },
+    {
       "DisplayName": "CommandIds",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalExecutionGroupCommandBatch",
@@ -23729,6 +23958,50 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandissuancestate",
       "Signature": "string CommandIssuanceState { get; set; }",
       "Summary": "Gets the current managed-connector command-issuance state that informed the execution adapter."
+    },
+    {
+      "DisplayName": "CommandIssuanceState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandissuancestate",
+      "Signature": "string CommandIssuanceState { get; set; }",
+      "Summary": "Gets the current managed-connector command-issuance state that informed retry-execution policy."
+    },
+    {
+      "DisplayName": "CommandRetry",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-commandretry",
+      "Signature": "const string CommandRetry",
+      "Summary": "The retry-execution policy was derived primarily from the shared command-retry lane."
+    },
+    {
+      "DisplayName": "CommandRetrySourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandretrysourceid",
+      "Signature": "string CommandRetrySourceId { get; set; }",
+      "Summary": "Gets the primary source identifier already associated with the command-retry lane."
+    },
+    {
+      "DisplayName": "CommandRetryState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandretrystate",
+      "Signature": "string CommandRetryState { get; set; }",
+      "Summary": "Gets the current managed-connector command-retry state that informed retry-execution policy."
     },
     {
       "DisplayName": "Commands",
@@ -24349,6 +24622,17 @@
     {
       "DisplayName": "ConnectClusterId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-connectclusterid",
+      "Signature": "string ConnectClusterId { get; set; }",
+      "Summary": "Gets the best available connector-cluster identifier Cephalon would target for the current retry-execution policy."
+    },
+    {
+      "DisplayName": "ConnectClusterId",
+      "Category": "Properties",
       "DeclaringTypeName": "DebeziumConnectorOptions",
       "NamespaceName": "Cephalon.Data.Debezium.Configuration",
       "AssemblyName": "Cephalon.Data.Debezium",
@@ -24697,6 +24981,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-connectorclass",
       "Signature": "string ConnectorClass { get; set; }",
       "Summary": "Gets the upstream connector-class identifier when one is known."
+    },
+    {
+      "DisplayName": "ConnectorClass",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-connectorclass",
+      "Signature": "string ConnectorClass { get; set; }",
+      "Summary": "Gets the best available connector-class identifier Cephalon would target for the current retry-execution policy."
     },
     {
       "DisplayName": "ConnectorClass",
@@ -25128,6 +25423,17 @@
       "Summary": "The managed connector currently declares a control plane that Cephalon does not yet own for execution."
     },
     {
+      "DisplayName": "ControlPlaneOwnershipGap",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-controlplaneownershipgap",
+      "Signature": "const string ControlPlaneOwnershipGap",
+      "Summary": "The retry-execution policy is constrained because control-plane ownership still remains outside Cephalon."
+    },
+    {
       "DisplayName": "Conventions",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -25183,6 +25489,17 @@
       "Summary": "The current shared runtime truth matches a recently-recorded command and should wait for a short cooldown window before retrying."
     },
     {
+      "DisplayName": "Cooldown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-cooldown",
+      "Signature": "const string Cooldown",
+      "Summary": "The current retry-execution policy is waiting for a cooldown window to elapse."
+    },
+    {
       "DisplayName": "CooldownActive",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories",
@@ -25194,6 +25511,17 @@
       "Summary": "The current retry posture is waiting for the active cooldown window to elapse."
     },
     {
+      "DisplayName": "CooldownActive",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-cooldownactive",
+      "Signature": "const string CooldownActive",
+      "Summary": "The current retry-execution policy is waiting for the active cooldown window to elapse."
+    },
+    {
       "DisplayName": "CooldownUntilUtc",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus",
@@ -25201,6 +25529,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-cooldownuntilutc",
+      "Signature": "DateTimeOffset? CooldownUntilUtc { get; set; }",
+      "Summary": "Gets the timestamp when the active retry cooldown window ends, when one applies."
+    },
+    {
+      "DisplayName": "CooldownUntilUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-cooldownuntilutc",
       "Signature": "DateTimeOffset? CooldownUntilUtc { get; set; }",
       "Summary": "Gets the timestamp when the active retry cooldown window ends, when one applies."
     },
@@ -27250,6 +27589,17 @@
     {
       "DisplayName": "Delete",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-delete",
+      "Signature": "const string Delete",
+      "Summary": "The retry-execution policy currently targets a connector delete operation."
+    },
+    {
+      "DisplayName": "Delete",
+      "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27763,6 +28113,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing preflight summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing retry-execution policy summary."
     },
     {
       "DisplayName": "Description",
@@ -28676,6 +29037,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-destructiveoperation",
       "Signature": "const string DestructiveOperation",
       "Summary": "The current intended follow-through would still perform a destructive operation such as delete."
+    },
+    {
+      "DisplayName": "DestructiveOperation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-destructiveoperation",
+      "Signature": "const string DestructiveOperation",
+      "Summary": "The retry-execution policy still reflects a destructive write-path such as connector deletion."
     },
     {
       "DisplayName": "Detail",
@@ -30088,6 +30460,17 @@
     {
       "DisplayName": "DriftState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-driftstate",
+      "Signature": "string DriftState { get; set; }",
+      "Summary": "Gets the current managed-connector drift state that informed retry-execution policy."
+    },
+    {
+      "DisplayName": "DriftState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -30218,6 +30601,17 @@
       "Summary": "Gets the current managed-connector dry-run state that informed execution intent."
     },
     {
+      "DisplayName": "DryRunState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-dryrunstate",
+      "Signature": "string DryRunState { get; set; }",
+      "Summary": "Gets the current managed-connector dry-run state that informed retry-execution policy."
+    },
+    {
       "DisplayName": "DueAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionPendingTimer",
@@ -30260,6 +30654,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-duplicatecommand",
       "Signature": "const string DuplicateCommand",
       "Summary": "Replaying the current retry posture would duplicate a previously recorded command."
+    },
+    {
+      "DisplayName": "DuplicateCommand",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-duplicatecommand",
+      "Signature": "const string DuplicateCommand",
+      "Summary": "Replaying the current retry-execution policy would duplicate a previously recorded command."
     },
     {
       "DisplayName": "DurableExecutionCompensationAction",
@@ -33331,6 +33736,17 @@
       "Summary": "The retry posture was derived from the shared execution-adapter lane."
     },
     {
+      "DisplayName": "ExecutionAdapter",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-executionadapter",
+      "Signature": "const string ExecutionAdapter",
+      "Summary": "The retry-execution policy was derived primarily from the shared execution-adapter lane."
+    },
+    {
       "DisplayName": "ExecutionAdapterSourceId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus",
@@ -33338,6 +33754,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-executionadaptersourceid",
+      "Signature": "string ExecutionAdapterSourceId { get; set; }",
+      "Summary": "Gets the primary source identifier already associated with the execution-adapter lane."
+    },
+    {
+      "DisplayName": "ExecutionAdapterSourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionadaptersourceid",
       "Signature": "string ExecutionAdapterSourceId { get; set; }",
       "Summary": "Gets the primary source identifier already associated with the execution-adapter lane."
     },
@@ -33362,6 +33789,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-executionadapterstate",
       "Signature": "string ExecutionAdapterState { get; set; }",
       "Summary": "Gets the current managed-connector execution-adapter state that informed command retry."
+    },
+    {
+      "DisplayName": "ExecutionAdapterState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionadapterstate",
+      "Signature": "string ExecutionAdapterState { get; set; }",
+      "Summary": "Gets the current managed-connector execution-adapter state that informed retry-execution policy."
     },
     {
       "DisplayName": "ExecutionApproval",
@@ -33397,6 +33835,17 @@
       "Summary": "The execution adapter is primarily grounded in shared execution-approval truth."
     },
     {
+      "DisplayName": "ExecutionApproval",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-executionapproval",
+      "Signature": "const string ExecutionApproval",
+      "Summary": "The retry-execution policy was derived primarily from the shared execution-approval lane."
+    },
+    {
       "DisplayName": "ExecutionApprovalSourceId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus",
@@ -33428,6 +33877,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionapprovalsourceid",
       "Signature": "string ExecutionApprovalSourceId { get; set; }",
       "Summary": "Gets the primary safety-gating source identifier already associated with managed-connector execution approval."
+    },
+    {
+      "DisplayName": "ExecutionApprovalSourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionapprovalsourceid",
+      "Signature": "string ExecutionApprovalSourceId { get; set; }",
+      "Summary": "Gets the primary source identifier already associated with the execution-approval lane."
     },
     {
       "DisplayName": "ExecutionApprovalState",
@@ -33472,6 +33932,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionapprovalstate",
       "Signature": "string ExecutionApprovalState { get; set; }",
       "Summary": "Gets the current managed-connector execution-approval state that informed the execution adapter."
+    },
+    {
+      "DisplayName": "ExecutionApprovalState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionapprovalstate",
+      "Signature": "string ExecutionApprovalState { get; set; }",
+      "Summary": "Gets the current managed-connector execution-approval state that informed retry-execution policy."
     },
     {
       "DisplayName": "ExecutionBinding",
@@ -33815,6 +34286,17 @@
       "Summary": "Gets the current managed-connector execution-intent state that informed execution approval."
     },
     {
+      "DisplayName": "ExecutionIntentState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionintentstate",
+      "Signature": "string ExecutionIntentState { get; set; }",
+      "Summary": "Gets the current managed-connector execution-intent state that informed retry-execution policy."
+    },
+    {
       "DisplayName": "ExecutionMode",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
@@ -33978,6 +34460,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionruntimeid",
       "Signature": "string ExecutionRuntimeId { get; set; }",
       "Summary": "Gets the stable execution-runtime identifier currently associated with the execution adapter."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with retry-execution policy."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -37247,6 +37740,39 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector preflight answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorRetryExecutionPolicyCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicycategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorRetryExecutionPolicyCategory(string policyCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorRetryExecutionPolicyOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicyoperationid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorRetryExecutionPolicyOperationId(string operationId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer currently targets the requested operation."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorRetryExecutionPolicyState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicystate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorRetryExecutionPolicyState(string policyState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorWritePathReadinessCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -38448,6 +38974,17 @@
     {
       "DisplayName": "GovernanceOutOfPolicy",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-governanceoutofpolicy",
+      "Signature": "const string GovernanceOutOfPolicy",
+      "Summary": "The retry-execution policy is constrained by governance that remains out of policy."
+    },
+    {
+      "DisplayName": "GovernanceOutOfPolicy",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -38598,6 +39135,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-governancestate",
       "Signature": "string GovernanceState { get; set; }",
       "Summary": "Gets the current managed-connector governance state that informed connector-management preflight."
+    },
+    {
+      "DisplayName": "GovernanceState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-governancestate",
+      "Signature": "string GovernanceState { get; set; }",
+      "Summary": "Gets the current managed-connector governance state that informed retry-execution policy."
     },
     {
       "DisplayName": "GovernanceState",
@@ -38996,6 +39544,17 @@
       "Summary": "Gets a value indicating whether the retry posture currently exposes an active cooldown window."
     },
     {
+      "DisplayName": "HasCooldownWindow",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hascooldownwindow",
+      "Signature": "bool HasCooldownWindow { get; }",
+      "Summary": "Gets a value indicating whether the retry-execution policy currently exposes an active cooldown window."
+    },
+    {
       "DisplayName": "HasDefaultValues",
       "Category": "Properties",
       "DeclaringTypeName": "CellTrafficAutomationSettings",
@@ -39095,6 +39654,17 @@
       "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived execution-adapter fingerprint."
     },
     {
+      "DisplayName": "HasMatchingAdapterFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingadapterfingerprint",
+      "Signature": "bool HasMatchingAdapterFingerprint { get; set; }",
+      "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived execution-adapter fingerprint."
+    },
+    {
       "DisplayName": "HasMatchingCommandFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus",
@@ -39102,6 +39672,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasmatchingcommandfingerprint",
+      "Signature": "bool HasMatchingCommandFingerprint { get; set; }",
+      "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived command fingerprint."
+    },
+    {
+      "DisplayName": "HasMatchingCommandFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingcommandfingerprint",
       "Signature": "bool HasMatchingCommandFingerprint { get; set; }",
       "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived command fingerprint."
     },
@@ -39117,6 +39698,17 @@
       "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived issuance fingerprint."
     },
     {
+      "DisplayName": "HasMatchingIssuanceFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingissuancefingerprint",
+      "Signature": "bool HasMatchingIssuanceFingerprint { get; set; }",
+      "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived issuance fingerprint."
+    },
+    {
       "DisplayName": "HasMatchingRetryFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus",
@@ -39124,6 +39716,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasmatchingretryfingerprint",
+      "Signature": "bool HasMatchingRetryFingerprint { get; set; }",
+      "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived retry fingerprint."
+    },
+    {
+      "DisplayName": "HasMatchingRetryFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingretryfingerprint",
       "Signature": "bool HasMatchingRetryFingerprint { get; set; }",
       "Summary": "Gets a value indicating whether the latest recorded command currently matches the derived retry fingerprint."
     },
@@ -39280,6 +39883,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasrecordedcommandhistory",
       "Signature": "bool HasRecordedCommandHistory { get; }",
       "Summary": "Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome for the retry posture."
+    },
+    {
+      "DisplayName": "HasRecordedCommandHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasrecordedcommandhistory",
+      "Signature": "bool HasRecordedCommandHistory { get; }",
+      "Summary": "Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome for the retry-execution policy."
     },
     {
       "DisplayName": "HasRecordedOutcome",
@@ -42804,6 +43418,17 @@
     {
       "DisplayName": "IncompleteReportingCoverage",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-incompletereportingcoverage",
+      "Signature": "const string IncompleteReportingCoverage",
+      "Summary": "The retry-execution policy is constrained by incomplete reporting coverage."
+    },
+    {
+      "DisplayName": "IncompleteReportingCoverage",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -43352,6 +43977,17 @@
       "Summary": "Gets a value indicating whether the managed connector currently fits a future auto-execution lane."
     },
     {
+      "DisplayName": "IsAutomaticRetryEnabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isautomaticretryenabled",
+      "Signature": "bool IsAutomaticRetryEnabled { get; set; }",
+      "Summary": "Gets a value indicating whether automatic background retry execution is enabled for the current policy answer."
+    },
+    {
       "DisplayName": "IsAvailable",
       "Category": "Methods",
       "DeclaringTypeName": "TechnologySelection",
@@ -43361,6 +43997,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-technologyselection-isavailable-system-string",
       "Signature": "bool IsAvailable(string value)",
       "Summary": "Determines whether a technology is available in the runtime catalog."
+    },
+    {
+      "DisplayName": "IsBackgroundRetryDisabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isbackgroundretrydisabled",
+      "Signature": "bool IsBackgroundRetryDisabled { get; }",
+      "Summary": "Gets a value indicating whether one safe retry candidate exists but automatic retry is still disabled."
     },
     {
       "DisplayName": "IsBlocked",
@@ -43539,6 +44186,17 @@
       "Summary": "Gets a value indicating whether the current retry posture is waiting for a cooldown window to elapse."
     },
     {
+      "DisplayName": "IsCooldown",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-iscooldown",
+      "Signature": "bool IsCooldown { get; }",
+      "Summary": "Gets a value indicating whether the retry-execution policy is waiting for a cooldown window to elapse."
+    },
+    {
       "DisplayName": "IsDeactivated",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
@@ -43691,6 +44349,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isdestructiveoperation",
       "Signature": "bool IsDestructiveOperation { get; set; }",
       "Summary": "Gets a value indicating whether the current execution adapter targets a destructive connector operation."
+    },
+    {
+      "DisplayName": "IsDestructiveOperation",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isdestructiveoperation",
+      "Signature": "bool IsDestructiveOperation { get; set; }",
+      "Summary": "Gets a value indicating whether the current retry-execution policy targets a destructive connector operation."
     },
     {
       "DisplayName": "IsDrifted",
@@ -43946,6 +44615,17 @@
       "Summary": "Gets a value indicating whether retry is not currently needed."
     },
     {
+      "DisplayName": "IsNotNeeded",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isnotneeded",
+      "Signature": "bool IsNotNeeded { get; }",
+      "Summary": "Gets a value indicating whether no retry action is currently needed."
+    },
+    {
       "DisplayName": "IsObservationStale",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
@@ -44056,6 +44736,17 @@
       "Summary": "Gets a value indicating whether the next intended follow-through still belongs to an operator-owned lane."
     },
     {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether retry remains operator-owned outside Cephalon."
+    },
+    {
       "DisplayName": "IsOutOfPolicy",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus",
@@ -44076,6 +44767,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-ispolicyblocked",
       "Signature": "bool IsPolicyBlocked { get; }",
       "Summary": "Gets a value indicating whether the managed connector is currently blocked by governance or control-plane policy."
+    },
+    {
+      "DisplayName": "IsPolicyBlocked",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-ispolicyblocked",
+      "Signature": "bool IsPolicyBlocked { get; }",
+      "Summary": "Gets a value indicating whether the retry-execution policy remains blocked by shared runtime truth or safety guardrails."
     },
     {
       "DisplayName": "IsReady",
@@ -44164,6 +44866,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-isretryeligible",
       "Signature": "bool IsRetryEligible { get; }",
       "Summary": "Gets a value indicating whether the current retry posture allows one safe retry."
+    },
+    {
+      "DisplayName": "IsRetryReady",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isretryready",
+      "Signature": "bool IsRetryReady { get; }",
+      "Summary": "Gets a value indicating whether the retry-execution policy allows one automatic retry."
     },
     {
       "DisplayName": "IsReusable",
@@ -44274,6 +44987,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-issuancefingerprint",
       "Signature": "string IssuanceFingerprint { get; set; }",
       "Summary": "Gets the deterministic issuance fingerprint already associated with the current managed connector."
+    },
+    {
+      "DisplayName": "IssuanceFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-issuancefingerprint",
+      "Signature": "string IssuanceFingerprint { get; set; }",
+      "Summary": "Gets the deterministic issuance fingerprint currently associated with the retry-execution policy."
     },
     {
       "DisplayName": "IsSuccess",
@@ -45651,6 +46375,17 @@
       "Summary": "Gets the stable latest recorded command-execution attempt identifier when one exists."
     },
     {
+      "DisplayName": "LatestAttemptId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestattemptid",
+      "Signature": "string LatestAttemptId { get; set; }",
+      "Summary": "Gets the stable latest recorded command-execution attempt identifier when one exists."
+    },
+    {
       "DisplayName": "LatestCommandExecutionSourceId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus",
@@ -45671,6 +46406,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestcommandexecutionstate",
       "Signature": "string LatestCommandExecutionState { get; set; }",
       "Summary": "Gets the latest recorded managed-connector command-execution state Cephalon considered for the retry posture."
+    },
+    {
+      "DisplayName": "LatestCommandExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestcommandexecutionstate",
+      "Signature": "string LatestCommandExecutionState { get; set; }",
+      "Summary": "Gets the latest recorded managed-connector command-execution state Cephalon considered for retry-execution policy."
     },
     {
       "DisplayName": "LatestExecutionAdapted",
@@ -45717,6 +46463,17 @@
       "Summary": "Gets the latest recorded command-execution fingerprint Cephalon considered for the retry posture."
     },
     {
+      "DisplayName": "LatestExecutionFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestexecutionfingerprint",
+      "Signature": "string LatestExecutionFingerprint { get; set; }",
+      "Summary": "Gets the latest recorded command-execution fingerprint Cephalon considered for the retry-execution policy."
+    },
+    {
       "DisplayName": "LatestExecutionUnavailable",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories",
@@ -45737,6 +46494,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestrecordedatutc",
       "Signature": "DateTimeOffset? LatestRecordedAtUtc { get; set; }",
       "Summary": "Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed the retry posture."
+    },
+    {
+      "DisplayName": "LatestRecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestrecordedatutc",
+      "Signature": "DateTimeOffset? LatestRecordedAtUtc { get; set; }",
+      "Summary": "Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed the retry-execution policy."
     },
     {
       "DisplayName": "LayeredArchitecture",
@@ -45924,6 +46692,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-lifecyclechange",
       "Signature": "const string LifecycleChange",
       "Summary": "The current intended operation would still require a lifecycle change such as pause, resume, restart, or delete."
+    },
+    {
+      "DisplayName": "LifecycleChange",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-lifecyclechange",
+      "Signature": "const string LifecycleChange",
+      "Summary": "The retry-execution policy still reflects a lifecycle transition such as pause, resume, restart, or delete."
     },
     {
       "DisplayName": "Limit",
@@ -46322,6 +47101,17 @@
       "Summary": "Gets the operator-facing managed-connector preflight posture derived from coverage, remediation, governance, drift, action planning, and write-path readiness."
     },
     {
+      "DisplayName": "ManagedConnectorRetryExecutionPolicy",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorretryexecutionpolicy",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus ManagedConnectorRetryExecutionPolicy { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector retry-execution policy derived from command retry, execution approval, execution adapter, and the broader shared runtime truth."
+    },
+    {
       "DisplayName": "ManagedConnectorWritePathReadiness",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -46489,6 +47279,17 @@
     {
       "DisplayName": "ManagementMode",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -46595,6 +47396,39 @@
       "AnchorId": "member-p-cephalon-engine-manifest-runtimemanifest-manifestversion",
       "Signature": "string ManifestVersion { get; }",
       "Summary": "Gets the manifest schema version."
+    },
+    {
+      "DisplayName": "ManualApproval",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-manualapproval",
+      "Signature": "const string ManualApproval",
+      "Summary": "The current retry-execution policy still needs a human approval gate to clear first."
+    },
+    {
+      "DisplayName": "ManualApprovalReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-manualapprovalready",
+      "Signature": "const string ManualApprovalReady",
+      "Summary": "The retry-execution policy is approval-ready but still waiting for a manual approval gate to clear."
+    },
+    {
+      "DisplayName": "ManualApprovalRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-manualapprovalrequired",
+      "Signature": "const string ManualApprovalRequired",
+      "Summary": "The retry-execution policy still requires explicit manual approval."
     },
     {
       "DisplayName": "ManualCommand",
@@ -50698,6 +51532,17 @@
       "Summary": "The current intended operation would not require additional managed-connector changes."
     },
     {
+      "DisplayName": "NoExecutionNeeded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-noexecutionneeded",
+      "Signature": "const string NoExecutionNeeded",
+      "Summary": "The current shared runtime truth indicates that no additional provider command is needed."
+    },
+    {
       "DisplayName": "NoMatchingCommandHistory",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories",
@@ -50839,6 +51684,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-none",
       "Signature": "const string None",
       "Summary": "No management operation is currently intended for the execution runtime."
+    },
+    {
+      "DisplayName": "None",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-none",
+      "Signature": "const string None",
+      "Summary": "No managed-connector operation is currently associated with the retry-execution policy."
     },
     {
       "DisplayName": "None",
@@ -51052,6 +51908,17 @@
     {
       "DisplayName": "NotApplicable",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "The retry-execution policy does not currently apply to the execution runtime."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -51180,6 +52047,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-notneeded",
       "Signature": "const string NotNeeded",
       "Summary": "The current shared runtime truth indicates that a retry is not currently needed."
+    },
+    {
+      "DisplayName": "NotNeeded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-notneeded",
+      "Signature": "const string NotNeeded",
+      "Summary": "The current shared runtime truth indicates that no further retry action is currently needed."
     },
     {
       "DisplayName": "NotReady",
@@ -51565,6 +52443,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-observeonlymode",
       "Signature": "const string ObserveOnlyMode",
       "Summary": "The managed connector currently stays in observe-only mode."
+    },
+    {
+      "DisplayName": "ObserveOnlyMode",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-observeonlymode",
+      "Signature": "const string ObserveOnlyMode",
+      "Summary": "The retry-execution policy is not currently applicable because the runtime remains observe-only."
     },
     {
       "DisplayName": "ObserveOnlyMode",
@@ -52139,6 +53028,17 @@
       "Summary": "Gets the stable management-operation identifier Cephalon would currently preflight first."
     },
     {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier currently associated with retry-execution policy."
+    },
+    {
       "DisplayName": "OperationPath",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorApiSurfaceDescriptor",
@@ -52269,6 +53169,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-operatoronly",
       "Signature": "const string OperatorOnly",
       "Summary": "The next intended follow-through currently remains operator-owned rather than engine-executable."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "The retry-execution policy currently remains operator-owned."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "The current retry-execution policy remains operator-owned outside Cephalon."
     },
     {
       "DisplayName": "Options",
@@ -53897,6 +54819,17 @@
       "Summary": "Cephalon would preflight pause follow-through for the managed connector."
     },
     {
+      "DisplayName": "Pause",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-pause",
+      "Signature": "const string Pause",
+      "Summary": "The retry-execution policy currently targets a connector pause operation."
+    },
+    {
       "DisplayName": "Payload",
       "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkEventEntry",
@@ -54381,6 +55314,17 @@
       "Summary": "The managed connector is currently blocked by governance or control-plane policy rather than runtime readiness alone."
     },
     {
+      "DisplayName": "PolicyBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-policyblocked",
+      "Signature": "const string PolicyBlocked",
+      "Summary": "The current retry-execution policy remains blocked by shared runtime truth or safety guardrails."
+    },
+    {
       "DisplayName": "PolicyId",
       "Category": "Properties",
       "DeclaringTypeName": "AuthorizationContext",
@@ -54775,6 +55719,17 @@
       "Summary": "Gets the number of visible potential shared write-path changes in the current execution intent."
     },
     {
+      "DisplayName": "PotentialChangeCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-potentialchangecount",
+      "Signature": "int PotentialChangeCount { get; set; }",
+      "Summary": "Gets the number of visible potential shared write-path changes currently associated with retry-execution policy."
+    },
+    {
       "DisplayName": "PrecedenceRank",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointCandidateRuntimeDescriptor",
@@ -54984,6 +55939,17 @@
       "Summary": "Gets the current managed-connector preflight state that informed execution intent."
     },
     {
+      "DisplayName": "PreflightState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-preflightstate",
+      "Signature": "string PreflightState { get; set; }",
+      "Summary": "Gets the current managed-connector preflight state that informed retry-execution policy."
+    },
+    {
       "DisplayName": "PreserveImplicitQueryFallback",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
@@ -55145,6 +56111,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-primaryactionid",
+      "Signature": "string PrimaryActionId { get; set; }",
+      "Summary": "Gets the primary action identifier currently associated with the runtime\u0027s managed-connector action plan."
+    },
+    {
+      "DisplayName": "PrimaryActionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-primaryactionid",
       "Signature": "string PrimaryActionId { get; set; }",
       "Summary": "Gets the primary action identifier currently associated with the runtime\u0027s managed-connector action plan."
     },
@@ -55862,6 +56839,39 @@
       "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-providerbindings",
       "Signature": "IReadOnlyList\u003CFeatureFlagProviderBindingSettings\u003E ProviderBindings { get; }",
       "Summary": "Gets the optional external provider bindings attached to the feature flag."
+    },
+    {
+      "DisplayName": "ProviderExecutionBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionblocked",
+      "Signature": "const string ProviderExecutionBlocked",
+      "Summary": "The latest matching command-execution outcome remained blocked."
+    },
+    {
+      "DisplayName": "ProviderExecutionFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionfailed",
+      "Signature": "const string ProviderExecutionFailed",
+      "Summary": "The latest matching command-execution outcome failed while Cephalon was translating the command."
+    },
+    {
+      "DisplayName": "ProviderExecutionUnavailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionunavailable",
+      "Signature": "const string ProviderExecutionUnavailable",
+      "Summary": "The latest matching command-execution outcome could not resolve a provider execution adapter."
     },
     {
       "DisplayName": "ProviderFeatureId",
@@ -57109,6 +58119,17 @@
     {
       "DisplayName": "Reconcile",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-reconcile",
+      "Signature": "const string Reconcile",
+      "Summary": "The retry-execution policy currently targets a future connector reconcile operation."
+    },
+    {
+      "DisplayName": "Reconcile",
+      "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -58187,6 +59208,17 @@
     {
       "DisplayName": "RemediationState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-remediationstate",
+      "Signature": "string RemediationState { get; set; }",
+      "Summary": "Gets the current runtime-level remediation state that informed retry-execution policy."
+    },
+    {
+      "DisplayName": "RemediationState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -58810,6 +59842,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-reportingcoveragestate",
       "Signature": "string ReportingCoverageState { get; set; }",
       "Summary": "Gets the current runtime-level reporting-coverage state that informed connector-management preflight."
+    },
+    {
+      "DisplayName": "ReportingCoverageState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-reportingcoveragestate",
+      "Signature": "string ReportingCoverageState { get; set; }",
+      "Summary": "Gets the current runtime-level reporting-coverage state that informed retry-execution policy."
     },
     {
       "DisplayName": "ReportingCoverageState",
@@ -59703,6 +60746,17 @@
       "Summary": "Gets a value indicating whether the current intended follow-through would require an explicit approval gate."
     },
     {
+      "DisplayName": "RequiresExplicitApproval",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-requiresexplicitapproval",
+      "Signature": "bool RequiresExplicitApproval { get; set; }",
+      "Summary": "Gets a value indicating whether the current retry-execution policy still requires an explicit approval gate."
+    },
+    {
       "DisplayName": "RequireSignatureFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "PackagePolicy",
@@ -59745,6 +60799,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-packagepolicy-requiresignatureverification",
       "Signature": "bool RequireSignatureVerification { get; }",
       "Summary": "Gets a value indicating whether package signatures must verify against a trusted public key."
+    },
+    {
+      "DisplayName": "RequiresManualApproval",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-requiresmanualapproval",
+      "Signature": "bool RequiresManualApproval { get; }",
+      "Summary": "Gets a value indicating whether the retry-execution policy still needs a manual approval gate."
     },
     {
       "DisplayName": "RequiresPatterns",
@@ -60594,6 +61659,17 @@
       "Summary": "Cephalon would preflight restart follow-through for the managed connector."
     },
     {
+      "DisplayName": "Restart",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-restart",
+      "Signature": "const string Restart",
+      "Summary": "The retry-execution policy currently targets a connector restart operation."
+    },
+    {
       "DisplayName": "RestartAsync",
       "Category": "Methods",
       "DeclaringTypeName": "EngineRuntime",
@@ -61232,6 +62308,17 @@
       "Summary": "Cephalon would preflight resume follow-through for the managed connector."
     },
     {
+      "DisplayName": "Resume",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-resume",
+      "Signature": "const string Resume",
+      "Summary": "The retry-execution policy currently targets a connector resume operation."
+    },
+    {
       "DisplayName": "ResumeFromEarliestAvailableScnIfCheckpointUnavailable",
       "Category": "Properties",
       "DeclaringTypeName": "OracleLogMinerCaptureOptions",
@@ -61375,6 +62462,17 @@
       "Summary": "The current shared runtime truth still blocks a safe retry."
     },
     {
+      "DisplayName": "RetryCandidate",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-retrycandidate",
+      "Signature": "const string RetryCandidate",
+      "Summary": "The current shared runtime truth exposes one safe retry candidate."
+    },
+    {
       "DisplayName": "RetryDelaySeconds",
       "Category": "Properties",
       "DeclaringTypeName": "WolverineEventingOptions",
@@ -61419,6 +62517,17 @@
       "Summary": "Gets the deterministic retry fingerprint Cephalon currently derives for duplicate and retry checks."
     },
     {
+      "DisplayName": "RetryFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-retryfingerprint",
+      "Signature": "string RetryFingerprint { get; set; }",
+      "Summary": "Gets the deterministic retry fingerprint currently associated with the retry-execution policy."
+    },
+    {
       "DisplayName": "RetryPending",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
@@ -61450,6 +62559,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount",
       "Signature": "int RetryPendingCount { get; }",
       "Summary": "Gets the number of owned outboxes whose latest report still says another retry is pending."
+    },
+    {
+      "DisplayName": "RetryReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-retryready",
+      "Signature": "const string RetryReady",
+      "Summary": "The current retry-execution policy allows Cephalon to execute one safe retry automatically."
     },
     {
       "DisplayName": "RetryScheduled",
@@ -62781,6 +63901,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-runtimetruthincomplete",
       "Signature": "const string RuntimeTruthIncomplete",
       "Summary": "The managed connector does not yet report enough runtime truth to preflight the intended management operation."
+    },
+    {
+      "DisplayName": "RuntimeTruthIncomplete",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-runtimetruthincomplete",
+      "Signature": "const string RuntimeTruthIncomplete",
+      "Summary": "The retry-execution policy is constrained by incomplete runtime truth."
     },
     {
       "DisplayName": "RuntimeTruthIncomplete",
@@ -64677,6 +65808,17 @@
     {
       "DisplayName": "SourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive retry-execution policy."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -65513,6 +66655,17 @@
     {
       "DisplayName": "SourceProviderId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-sourceproviderid",
+      "Signature": "string SourceProviderId { get; set; }",
+      "Summary": "Gets the best available source-provider identifier Cephalon would target for the current retry-execution policy."
+    },
+    {
+      "DisplayName": "SourceProviderId",
+      "Category": "Properties",
       "DeclaringTypeName": "DebeziumConnectorOptions",
       "NamespaceName": "Cephalon.Data.Debezium.Configuration",
       "AssemblyName": "Cephalon.Data.Debezium",
@@ -65793,6 +66946,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-staleobservation",
       "Signature": "const string StaleObservation",
       "Summary": "The managed connector currently reports stale observations that make safety-gating less trustworthy."
+    },
+    {
+      "DisplayName": "StaleObservation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-staleobservation",
+      "Signature": "const string StaleObservation",
+      "Summary": "The retry-execution policy is constrained by stale observation posture."
     },
     {
       "DisplayName": "StaleObservations",
@@ -66244,6 +67408,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector preflight state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector retry-execution policy state."
     },
     {
       "DisplayName": "State",
@@ -70989,6 +72164,17 @@
     {
       "DisplayName": "Unknown",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The retry-execution policy does not currently resolve to one specific source."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeRemediationStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -72582,6 +73768,17 @@
       "Summary": "Gets a value indicating whether the current execution intent would still apply one or more shared write-path changes."
     },
     {
+      "DisplayName": "WouldApplyChanges",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-wouldapplychanges",
+      "Signature": "bool WouldApplyChanges { get; set; }",
+      "Summary": "Gets a value indicating whether the current retry-execution policy would still apply one or more shared write-path changes."
+    },
+    {
       "DisplayName": "WouldChange",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
@@ -72767,6 +73964,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-writepathreadinessstate",
       "Signature": "string WritePathReadinessState { get; set; }",
       "Summary": "Gets the current managed-connector write-path readiness state that informed connector-management preflight."
+    },
+    {
+      "DisplayName": "WritePathReadinessState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-writepathreadinessstate",
+      "Signature": "string WritePathReadinessState { get; set; }",
+      "Summary": "Gets the current managed-connector write-path readiness state that informed retry-execution policy."
     },
     {
       "DisplayName": "WritePathReady",

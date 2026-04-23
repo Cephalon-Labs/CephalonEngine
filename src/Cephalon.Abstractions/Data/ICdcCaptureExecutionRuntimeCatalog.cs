@@ -298,6 +298,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandRetryOperationId(string operationId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer matches the requested state.
+    /// </summary>
+    /// <param name="policyState">The stable managed-connector retry-execution policy state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that policy state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyState(string policyState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer includes the requested category.
+    /// </summary>
+    /// <param name="policyCategory">The stable managed-connector retry-execution policy category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that policy category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyCategory(string policyCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector retry-execution policy operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyOperationId(string operationId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

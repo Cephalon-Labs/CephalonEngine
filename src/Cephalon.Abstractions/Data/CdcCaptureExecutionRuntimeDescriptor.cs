@@ -310,6 +310,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus ManagedConnectorCommandRetry { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector retry-execution policy derived from command retry, execution approval, execution adapter, and the broader shared runtime truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus ManagedConnectorRetryExecutionPolicy { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

@@ -144,6 +144,9 @@ Browse the published API surface by public member.
 - [ActionPlanState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-actionplanstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionPlanState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector action-plan state that informed connector-management preflight.
   - `string ActionPlanState { get; set; }`
+- [ActionPlanState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-actionplanstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionPlanState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector action-plan state that informed retry-execution policy.
+  - `string ActionPlanState { get; set; }`
 - [ActionPlanState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-actionplanstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionPlanState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector action-plan state that informed write-path readiness.
   - `string ActionPlanState { get; set; }`
@@ -239,6 +242,9 @@ Browse the published API surface by public member.
   - `string AdapterFingerprint { get; set; }`
 - [AdapterFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-adapterfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AdapterFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic execution-adapter fingerprint Cephalon currently derives for the managed connector.
+  - `string AdapterFingerprint { get; set; }`
+- [AdapterFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-adapterfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AdapterFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic execution-adapter fingerprint currently associated with the retry-execution policy.
   - `string AdapterFingerprint { get; set; }`
 - [AdapterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-adapterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AdapterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current provider execution-adapter identifier that handled the request when one was available.
@@ -1002,6 +1008,9 @@ Browse the published API surface by public member.
 - [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently represents a managed connector.
   - `bool AppliesToManagedConnector { get; }`
+- [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the execution runtime currently represents a managed connector.
+  - `bool AppliesToManagedConnector { get; }`
 - [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently represents a managed connector.
   - `bool AppliesToManagedConnector { get; }`
@@ -1365,6 +1374,9 @@ Browse the published API surface by public member.
 - [AutoEligible](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-autoeligible): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutoEligible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently fits a future auto-execution lane without requiring an additional approval workflow.
   - `const string AutoEligible`
+- [AutomaticRetryDisabled](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-automaticretrydisabled): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomaticRetryDisabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Automatic background retry remains disabled for the current retry candidate.
+  - `const string AutomaticRetryDisabled`
 - [AutomationMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-automationmode): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AutomationMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the optional normalized automation posture for this route.
   - `string AutomationMode { get; }`
@@ -1458,6 +1470,9 @@ Browse the published API surface by public member.
 - [Backfilling](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturelagstates-backfilling): `Fields` on `CdcCaptureLagStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Backfilling&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the provider reports the capture as intentionally backfilling older changes.
   - `const string Backfilling`
+- [BackgroundRetryDisabled](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-backgroundretrydisabled): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=BackgroundRetryDisabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current shared runtime truth allows one safe retry, but background retry execution is not enabled yet.
+  - `const string BackgroundRetryDisabled`
 - [Backoff](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-backoff): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Backoff&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the requested backoff mode, such as `Exponential` or `Linear`.
   - `string Backoff { get; }`
@@ -1788,6 +1803,9 @@ Browse the published API surface by public member.
 - [BlockingRemediation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-blockingremediation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlockingRemediation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector is blocked by failed or otherwise blocking runtime remediation work.
   - `const string BlockingRemediation`
+- [BlockingRemediation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-blockingremediation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlockingRemediation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy remains blocked by remediation that still needs to clear first.
+  - `const string BlockingRemediation`
 - [BlockingRemediation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-blockingremediation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlockingRemediation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector is blocked by failed or otherwise blocking runtime remediation work.
   - `const string BlockingRemediation`
@@ -1932,6 +1950,9 @@ Browse the published API surface by public member.
 - [CanEvaluateDrift](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-canevaluatedrift): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanEvaluateDrift&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current drift posture can be evaluated from the available baseline and report data.
   - `bool CanEvaluateDrift { get; }`
+- [CanExecuteRetryThroughPolicy](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-canexecuteretrythroughpolicy): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanExecuteRetryThroughPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the retry-execution policy currently allows Cephalon to execute one automatic retry.
+  - `bool CanExecuteRetryThroughPolicy { get; }`
 - [CanExecuteThroughEngine](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-canexecutethroughengine): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanExecuteThroughEngine&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the next intended follow-through currently sits inside the future engine-execution lane.
   - `bool CanExecuteThroughEngine { get; }`
@@ -2097,6 +2118,9 @@ Browse the published API surface by public member.
 - [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active preflight categories currently visible for the execution runtime.
   - `int CategoryCount { get; }`
+- [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of active retry-execution policy categories currently visible for the execution runtime.
+  - `int CategoryCount { get; }`
 - [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active readiness categories currently visible for the execution runtime.
   - `int CategoryCount { get; }`
@@ -2135,6 +2159,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable preflight categories currently active for the execution runtime.
+  - `IReadOnlyList<string> CategoryIds { get; set; }`
+- [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable retry-execution policy categories currently active for the execution runtime.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable readiness categories currently active for the execution runtime.
@@ -2208,6 +2235,9 @@ Browse the published API surface by public member.
 - [CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new managed-connector preflight answer.
   - `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus(string state, string description)`
+- [CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new managed-connector retry-execution policy answer.
+  - `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus(string state, string description)`
 - [CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new managed-connector write-path readiness answer.
   - `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus(string state, string description)`
@@ -2264,6 +2294,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
 - [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture identifiers currently associated with the execution adapter.
+  - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
+- [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture identifiers currently associated with retry-execution policy.
   - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
 - [CdcCaptureIds](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets the CDC capture identifiers explicitly owned by the runtime when ownership is bounded to a known capture set.
@@ -2423,6 +2456,9 @@ Browse the published API surface by public member.
   - `const string ChangePlanned`
 - [ChangePlanned](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-changeplanned): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChangePlanned&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current intended operation would still change managed-connector posture.
+  - `const string ChangePlanned`
+- [ChangePlanned](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-changeplanned): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChangePlanned&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy still reflects one or more shared write-path changes.
   - `const string ChangePlanned`
 - [Changes](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-changes): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Changes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the field-level changes captured for the operation.
@@ -2745,6 +2781,9 @@ Browse the published API surface by public member.
 - [CommandEnvelopeState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandenvelopestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-envelope state that informed the execution adapter.
   - `string CommandEnvelopeState { get; set; }`
+- [CommandEnvelopeState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandenvelopestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-envelope state that informed retry-execution policy.
+  - `string CommandEnvelopeState { get; set; }`
 - [CommandExecution](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrysources-commandexecution): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetrySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The retry posture was derived from the latest shared command-execution outcome.
   - `const string CommandExecution`
@@ -2766,6 +2805,9 @@ Browse the published API surface by public member.
 - [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic command fingerprint already associated with the current managed connector.
   - `string CommandFingerprint { get; set; }`
+- [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic command fingerprint currently associated with the retry-execution policy.
+  - `string CommandFingerprint { get; set; }`
 - [CommandIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-commandids): `Properties` on `DatabaseMigrationOperationalExecutionGroupCommandBatch` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable command identifiers represented in this batch, in encounter order.
   - `IReadOnlyList<string> CommandIds { get; }`
@@ -2784,6 +2826,18 @@ Browse the published API surface by public member.
 - [CommandIssuanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandissuancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-issuance state that informed the execution adapter.
   - `string CommandIssuanceState { get; set; }`
+- [CommandIssuanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandissuancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-issuance state that informed retry-execution policy.
+  - `string CommandIssuanceState { get; set; }`
+- [CommandRetry](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-commandretry): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy was derived primarily from the shared command-retry lane.
+  - `const string CommandRetry`
+- [CommandRetrySourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandretrysourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetrySourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the primary source identifier already associated with the command-retry lane.
+  - `string CommandRetrySourceId { get; set; }`
+- [CommandRetryState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandretrystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetryState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-retry state that informed retry-execution policy.
+  - `string CommandRetryState { get; set; }`
 - [Commands](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-commands): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Commands&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional operator-facing command templates for executing this target outside startup apply.
   - `IReadOnlyList<DatabaseMigrationCommandDescriptor> Commands { get; }`
@@ -2952,6 +3006,9 @@ Browse the published API surface by public member.
 - [ConnectClusterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-connectclusterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectClusterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the upstream connector-cluster identifier when one is known.
   - `string ConnectClusterId { get; set; }`
+- [ConnectClusterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-connectclusterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectClusterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the best available connector-cluster identifier Cephalon would target for the current retry-execution policy.
+  - `string ConnectClusterId { get; set; }`
 - [ConnectClusterId](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-connectclusterid): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ConnectClusterId&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the operator-facing Kafka Connect or Debezium cluster identifier that owns the connector.
   - `string ConnectClusterId { get; set; }`
@@ -3047,6 +3104,9 @@ Browse the published API surface by public member.
   - `string ConnectorClass { get; set; }`
 - [ConnectorClass](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-connectorclass): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectorClass&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the upstream connector-class identifier when one is known.
+  - `string ConnectorClass { get; set; }`
+- [ConnectorClass](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-connectorclass): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectorClass&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the best available connector-class identifier Cephalon would target for the current retry-execution policy.
   - `string ConnectorClass { get; set; }`
 - [ConnectorClass](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-connectorclass): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ConnectorClass&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the Debezium connector-class identifier when the runtime should publish it on shared operator surfaces.
@@ -3165,6 +3225,9 @@ Browse the published API surface by public member.
 - [ControlPlaneOwnershipGap](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-controlplaneownershipgap): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ControlPlaneOwnershipGap&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently declares a control plane that Cephalon does not yet own for execution.
   - `const string ControlPlaneOwnershipGap`
+- [ControlPlaneOwnershipGap](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-controlplaneownershipgap): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ControlPlaneOwnershipGap&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy is constrained because control-plane ownership still remains outside Cephalon.
+  - `const string ControlPlaneOwnershipGap`
 - [Conventions](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-conventions): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Conventions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The published diagnostics conventions and event-id catalogs visible to the current host.
   - `IReadOnlyList<DiagnosticsConvention> Conventions { get; set; }`
@@ -3180,10 +3243,19 @@ Browse the published API surface by public member.
 - [Cooldown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-cooldown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Cooldown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth matches a recently-recorded command and should wait for a short cooldown window before retrying.
   - `const string Cooldown`
+- [Cooldown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-cooldown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Cooldown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current retry-execution policy is waiting for a cooldown window to elapse.
+  - `const string Cooldown`
 - [CooldownActive](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-cooldownactive): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CooldownActive&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current retry posture is waiting for the active cooldown window to elapse.
   - `const string CooldownActive`
+- [CooldownActive](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-cooldownactive): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CooldownActive&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current retry-execution policy is waiting for the active cooldown window to elapse.
+  - `const string CooldownActive`
 - [CooldownUntilUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-cooldownuntilutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CooldownUntilUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the timestamp when the active retry cooldown window ends, when one applies.
+  - `DateTimeOffset? CooldownUntilUtc { get; set; }`
+- [CooldownUntilUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-cooldownuntilutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CooldownUntilUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the timestamp when the active retry cooldown window ends, when one applies.
   - `DateTimeOffset? CooldownUntilUtc { get; set; }`
 - [CoordinatedMigrationIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalstep-coordinatedmigrationids): `Properties` on `DatabaseMigrationOperationalStep` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinatedMigrationIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -3744,6 +3816,9 @@ Browse the published API surface by public member.
 - [Delete](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-delete): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Delete&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cephalon would preflight delete follow-through for the managed connector.
   - `const string Delete`
+- [Delete](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-delete): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Delete&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy currently targets a connector delete operation.
+  - `const string Delete`
 - [Delete](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-delete): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Delete&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer deleted an owned control-plane resource.
   - `const string Delete`
@@ -3884,6 +3959,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing preflight summary.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing retry-execution policy summary.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing readiness summary.
@@ -4133,6 +4211,9 @@ Browse the published API surface by public member.
   - `const string DestructiveOperation`
 - [DestructiveOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-destructiveoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current intended follow-through would still perform a destructive operation such as delete.
+  - `const string DestructiveOperation`
+- [DestructiveOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-destructiveoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy still reflects a destructive write-path such as connector deletion.
   - `const string DestructiveOperation`
 - [Detail](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalaction-detail): `Properties` on `DatabaseTopologyOperationalAction` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Detail&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing action detail.
@@ -4518,6 +4599,9 @@ Browse the published API surface by public member.
 - [DriftState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-driftstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DriftState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector drift state that informed connector-management preflight.
   - `string DriftState { get; set; }`
+- [DriftState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-driftstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DriftState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector drift state that informed retry-execution policy.
+  - `string DriftState { get; set; }`
 - [DriftState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-driftstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DriftState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector drift state that informed write-path readiness.
   - `string DriftState { get; set; }`
@@ -4554,6 +4638,9 @@ Browse the published API surface by public member.
 - [DryRunState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-dryrunstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DryRunState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector dry-run state that informed execution intent.
   - `string DryRunState { get; set; }`
+- [DryRunState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-dryrunstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DryRunState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector dry-run state that informed retry-execution policy.
+  - `string DryRunState { get; set; }`
 - [DueAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-dueatutc): `Properties` on `DurableExecutionPendingTimer` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DueAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the UTC timestamp when the timer is next due.
   - `DateTimeOffset DueAtUtc { get; }`
@@ -4565,6 +4652,9 @@ Browse the published API surface by public member.
   - `const string Duplicate`
 - [DuplicateCommand](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-duplicatecommand): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Replaying the current retry posture would duplicate a previously recorded command.
+  - `const string DuplicateCommand`
+- [DuplicateCommand](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-duplicatecommand): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Replaying the current retry-execution policy would duplicate a previously recorded command.
   - `const string DuplicateCommand`
 - [DurableExecutionCompensationAction](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutioncompensationaction-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionCompensationAction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Initializes a new instance of the `DurableExecutionCompensationAction` class.
@@ -5406,7 +5496,13 @@ Browse the published API surface by public member.
 - [ExecutionAdapter](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrysources-executionadapter): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetrySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionAdapter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The retry posture was derived from the shared execution-adapter lane.
   - `const string ExecutionAdapter`
+- [ExecutionAdapter](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-executionadapter): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionAdapter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy was derived primarily from the shared execution-adapter lane.
+  - `const string ExecutionAdapter`
 - [ExecutionAdapterSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-executionadaptersourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionAdapterSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the primary source identifier already associated with the execution-adapter lane.
+  - `string ExecutionAdapterSourceId { get; set; }`
+- [ExecutionAdapterSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionadaptersourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionAdapterSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier already associated with the execution-adapter lane.
   - `string ExecutionAdapterSourceId { get; set; }`
 - [ExecutionAdapterState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionadapterstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionAdapterState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -5414,6 +5510,9 @@ Browse the published API surface by public member.
   - `string ExecutionAdapterState { get; set; }`
 - [ExecutionAdapterState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-executionadapterstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionAdapterState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector execution-adapter state that informed command retry.
+  - `string ExecutionAdapterState { get; set; }`
+- [ExecutionAdapterState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionadapterstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionAdapterState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector execution-adapter state that informed retry-execution policy.
   - `string ExecutionAdapterState { get; set; }`
 - [ExecutionApproval](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopesources-executionapproval): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command envelope is primarily grounded in shared execution-approval truth.
@@ -5424,6 +5523,9 @@ Browse the published API surface by public member.
 - [ExecutionApproval](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptersources-executionapproval): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution adapter is primarily grounded in shared execution-approval truth.
   - `const string ExecutionApproval`
+- [ExecutionApproval](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-executionapproval): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy was derived primarily from the shared execution-approval lane.
+  - `const string ExecutionApproval`
 - [ExecutionApprovalSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-executionapprovalsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApprovalSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary safety-gating source identifier already associated with managed-connector execution approval.
   - `string ExecutionApprovalSourceId { get; set; }`
@@ -5432,6 +5534,9 @@ Browse the published API surface by public member.
   - `string ExecutionApprovalSourceId { get; set; }`
 - [ExecutionApprovalSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionapprovalsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApprovalSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary safety-gating source identifier already associated with managed-connector execution approval.
+  - `string ExecutionApprovalSourceId { get; set; }`
+- [ExecutionApprovalSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionapprovalsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApprovalSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the primary source identifier already associated with the execution-approval lane.
   - `string ExecutionApprovalSourceId { get; set; }`
 - [ExecutionApprovalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-executionapprovalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApprovalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector execution-approval state that informed the command envelope.
@@ -5444,6 +5549,9 @@ Browse the published API surface by public member.
   - `string ExecutionApprovalState { get; set; }`
 - [ExecutionApprovalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionapprovalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApprovalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector execution-approval state that informed the execution adapter.
+  - `string ExecutionApprovalState { get; set; }`
+- [ExecutionApprovalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionapprovalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionApprovalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector execution-approval state that informed retry-execution policy.
   - `string ExecutionApprovalState { get; set; }`
 - [ExecutionBinding](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-executionbinding): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionBinding&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the authored or effective execution-binding answer for the CDC capture.
@@ -5538,6 +5646,9 @@ Browse the published API surface by public member.
 - [ExecutionIntentState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-executionintentstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionIntentState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector execution-intent state that informed execution approval.
   - `string ExecutionIntentState { get; set; }`
+- [ExecutionIntentState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionintentstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionIntentState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector execution-intent state that informed retry-execution policy.
+  - `string ExecutionIntentState { get; set; }`
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-executionmode): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The enforcement mode used by the active runtime, such as `behavior-dispatch-middleware` or `contract-only`.
   - `string ExecutionMode { get; set; }`
@@ -5582,6 +5693,9 @@ Browse the published API surface by public member.
   - `string ExecutionRuntimeId { get; set; }`
 - [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable execution-runtime identifier currently associated with the execution adapter.
+  - `string ExecutionRuntimeId { get; set; }`
+- [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable execution-runtime identifier currently associated with retry-execution policy.
   - `string ExecutionRuntimeId { get; set; }`
 - [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executiontopology): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing topology classification for the effective execution runtime.
@@ -6480,6 +6594,15 @@ Browse the published API surface by public member.
 - [GetByManagedConnectorPreflightState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorpreflightstate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorPreflightState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector preflight answer matches the requested state.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightState(string preflightState)`
+- [GetByManagedConnectorRetryExecutionPolicyCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicycategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorRetryExecutionPolicyCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer includes the requested category.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyCategory(string policyCategory)`
+- [GetByManagedConnectorRetryExecutionPolicyOperationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicyoperationid-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorRetryExecutionPolicyOperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer currently targets the requested operation.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyOperationId(string operationId)`
+- [GetByManagedConnectorRetryExecutionPolicyState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicystate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorRetryExecutionPolicyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer matches the requested state.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyState(string policyState)`
 - [GetByManagedConnectorWritePathReadinessCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorwritepathreadinesscategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorWritePathReadinessCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector write-path readiness answer includes the requested category.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorWritePathReadinessCategory(string readinessCategory)`
@@ -6807,6 +6930,9 @@ Browse the published API surface by public member.
 - [GovernanceOutOfPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-governanceoutofpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceOutOfPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector is currently out of policy for future management follow-through.
   - `const string GovernanceOutOfPolicy`
+- [GovernanceOutOfPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-governanceoutofpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceOutOfPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy is constrained by governance that remains out of policy.
+  - `const string GovernanceOutOfPolicy`
 - [GovernanceOutOfPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-governanceoutofpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceOutOfPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector is currently out of policy for future write-path follow-through.
   - `const string GovernanceOutOfPolicy`
@@ -6848,6 +6974,9 @@ Browse the published API surface by public member.
   - `string GovernanceState { get; set; }`
 - [GovernanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-governancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector governance state that informed connector-management preflight.
+  - `string GovernanceState { get; set; }`
+- [GovernanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-governancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector governance state that informed retry-execution policy.
   - `string GovernanceState { get; set; }`
 - [GovernanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-governancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector governance state that informed write-path readiness.
@@ -6960,6 +7089,9 @@ Browse the published API surface by public member.
 - [HasCooldownWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hascooldownwindow): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCooldownWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the retry posture currently exposes an active cooldown window.
   - `bool HasCooldownWindow { get; }`
+- [HasCooldownWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hascooldownwindow): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCooldownWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the retry-execution policy currently exposes an active cooldown window.
+  - `bool HasCooldownWindow { get; }`
 - [HasDefaultValues](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasdefaultvalues): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasDefaultValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any default traffic-automation values were explicitly supplied.
   - `bool HasDefaultValues { get; }`
@@ -6987,13 +7119,25 @@ Browse the published API surface by public member.
 - [HasMatchingAdapterFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasmatchingadapterfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingAdapterFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest recorded command currently matches the derived execution-adapter fingerprint.
   - `bool HasMatchingAdapterFingerprint { get; set; }`
+- [HasMatchingAdapterFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingadapterfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingAdapterFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the latest recorded command currently matches the derived execution-adapter fingerprint.
+  - `bool HasMatchingAdapterFingerprint { get; set; }`
 - [HasMatchingCommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasmatchingcommandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingCommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the latest recorded command currently matches the derived command fingerprint.
+  - `bool HasMatchingCommandFingerprint { get; set; }`
+- [HasMatchingCommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingcommandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingCommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest recorded command currently matches the derived command fingerprint.
   - `bool HasMatchingCommandFingerprint { get; set; }`
 - [HasMatchingIssuanceFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasmatchingissuancefingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingIssuanceFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest recorded command currently matches the derived issuance fingerprint.
   - `bool HasMatchingIssuanceFingerprint { get; set; }`
+- [HasMatchingIssuanceFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingissuancefingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingIssuanceFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the latest recorded command currently matches the derived issuance fingerprint.
+  - `bool HasMatchingIssuanceFingerprint { get; set; }`
 - [HasMatchingRetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasmatchingretryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingRetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the latest recorded command currently matches the derived retry fingerprint.
+  - `bool HasMatchingRetryFingerprint { get; set; }`
+- [HasMatchingRetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingretryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingRetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest recorded command currently matches the derived retry fingerprint.
   - `bool HasMatchingRetryFingerprint { get; set; }`
 - [HasMore](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
@@ -7037,6 +7181,9 @@ Browse the published API surface by public member.
   - `bool HasProviderCommand { get; }`
 - [HasRecordedCommandHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasrecordedcommandhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecordedCommandHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome for the retry posture.
+  - `bool HasRecordedCommandHistory { get; }`
+- [HasRecordedCommandHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasrecordedcommandhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecordedCommandHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome for the retry-execution policy.
   - `bool HasRecordedCommandHistory { get; }`
 - [HasRecordedOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasrecordedoutcome): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecordedOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome.
@@ -8001,6 +8148,9 @@ Browse the published API surface by public member.
 - [IncompleteReportingCoverage](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-incompletereportingcoverage): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncompleteReportingCoverage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector does not yet have full declared-versus-reported coverage on the shared runtime surface.
   - `const string IncompleteReportingCoverage`
+- [IncompleteReportingCoverage](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-incompletereportingcoverage): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncompleteReportingCoverage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy is constrained by incomplete reporting coverage.
+  - `const string IncompleteReportingCoverage`
 - [IncompleteReportingCoverage](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-incompletereportingcoverage): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncompleteReportingCoverage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector does not yet have full declared-versus-reported coverage on the shared runtime surface.
   - `const string IncompleteReportingCoverage`
@@ -8151,9 +8301,15 @@ Browse the published API surface by public member.
 - [IsAutoEligible](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-isautoeligible): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsAutoEligible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector currently fits a future auto-execution lane.
   - `bool IsAutoEligible { get; }`
+- [IsAutomaticRetryEnabled](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isautomaticretryenabled): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsAutomaticRetryEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether automatic background retry execution is enabled for the current policy answer.
+  - `bool IsAutomaticRetryEnabled { get; set; }`
 - [IsAvailable](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-isavailable-system-string): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsAvailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Determines whether a technology is available in the runtime catalog.
   - `bool IsAvailable(string value)`
+- [IsBackgroundRetryDisabled](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isbackgroundretrydisabled): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsBackgroundRetryDisabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether one safe retry candidate exists but automatic retry is still disabled.
+  - `bool IsBackgroundRetryDisabled { get; }`
 - [IsBlocked](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-isblocked): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector is currently blocked by runtime remediation work.
   - `bool IsBlocked { get; }`
@@ -8202,6 +8358,9 @@ Browse the published API surface by public member.
 - [IsCooldown](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-iscooldown): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsCooldown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current retry posture is waiting for a cooldown window to elapse.
   - `bool IsCooldown { get; }`
+- [IsCooldown](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-iscooldown): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsCooldown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the retry-execution policy is waiting for a cooldown window to elapse.
+  - `bool IsCooldown { get; }`
 - [IsDeactivated](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isdeactivated): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsDeactivated&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the execution graph most recently observed a deactivation event.
   - `bool IsDeactivated { get; }`
@@ -8243,6 +8402,9 @@ Browse the published API surface by public member.
   - `bool IsDestructiveOperation { get; set; }`
 - [IsDestructiveOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isdestructiveoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current execution adapter targets a destructive connector operation.
+  - `bool IsDestructiveOperation { get; set; }`
+- [IsDestructiveOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isdestructiveoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current retry-execution policy targets a destructive connector operation.
   - `bool IsDestructiveOperation { get; set; }`
 - [IsDrifted](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-isdrifted): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDrifted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector currently reports declared-versus-observed drift.
@@ -8313,6 +8475,9 @@ Browse the published API surface by public member.
 - [IsNotNeeded](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-isnotneeded): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsNotNeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether retry is not currently needed.
   - `bool IsNotNeeded { get; }`
+- [IsNotNeeded](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isnotneeded): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsNotNeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether no retry action is currently needed.
+  - `bool IsNotNeeded { get; }`
 - [IsObservationStale](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-isobservationstale): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsObservationStale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest report is now stale according to the execution-runtime reporting policy.
   - `bool IsObservationStale { get; }`
@@ -8343,11 +8508,17 @@ Browse the published API surface by public member.
 - [IsOperatorOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-isoperatoronly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the next intended follow-through still belongs to an operator-owned lane.
   - `bool IsOperatorOnly { get; }`
+- [IsOperatorOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isoperatoronly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether retry remains operator-owned outside Cephalon.
+  - `bool IsOperatorOnly { get; }`
 - [IsOutOfPolicy](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-isoutofpolicy): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOutOfPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime is currently out of policy.
   - `bool IsOutOfPolicy { get; }`
 - [IsPolicyBlocked](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-ispolicyblocked): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsPolicyBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector is currently blocked by governance or control-plane policy.
+  - `bool IsPolicyBlocked { get; }`
+- [IsPolicyBlocked](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-ispolicyblocked): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsPolicyBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the retry-execution policy remains blocked by shared runtime truth or safety guardrails.
   - `bool IsPolicyBlocked { get; }`
 - [IsReady](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isready): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether a matching provider execution adapter is ready for the current managed connector.
@@ -8373,6 +8544,9 @@ Browse the published API surface by public member.
 - [IsRetryEligible](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-isretryeligible): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsRetryEligible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current retry posture allows one safe retry.
   - `bool IsRetryEligible { get; }`
+- [IsRetryReady](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isretryready): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsRetryReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the retry-execution policy allows one automatic retry.
+  - `bool IsRetryReady { get; }`
 - [IsReusable](cephalon-identity-aspnetcore.md#member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-isreusable): `Properties` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=IsReusable&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Gets a value indicating whether the MVC filter instance can be reused across requests.
   - `bool IsReusable { get; }`
@@ -8402,6 +8576,9 @@ Browse the published API surface by public member.
   - `string IssuanceFingerprint { get; set; }`
 - [IssuanceFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-issuancefingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IssuanceFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic issuance fingerprint already associated with the current managed connector.
+  - `string IssuanceFingerprint { get; set; }`
+- [IssuanceFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-issuancefingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IssuanceFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic issuance fingerprint currently associated with the retry-execution policy.
   - `string IssuanceFingerprint { get; set; }`
 - [IsSuccess](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-issuccess): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsSuccess&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets a value indicating whether the result represents a successful outcome.
@@ -8787,11 +8964,17 @@ Browse the published API surface by public member.
 - [LatestAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable latest recorded command-execution attempt identifier when one exists.
   - `string LatestAttemptId { get; set; }`
+- [LatestAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable latest recorded command-execution attempt identifier when one exists.
+  - `string LatestAttemptId { get; set; }`
 - [LatestCommandExecutionSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestcommandexecutionsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier already associated with the latest command-execution lane.
   - `string LatestCommandExecutionSourceId { get; set; }`
 - [LatestCommandExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestcommandexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest recorded managed-connector command-execution state Cephalon considered for the retry posture.
+  - `string LatestCommandExecutionState { get; set; }`
+- [LatestCommandExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestcommandexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest recorded managed-connector command-execution state Cephalon considered for retry-execution policy.
   - `string LatestCommandExecutionState { get; set; }`
 - [LatestExecutionAdapted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-latestexecutionadapted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestExecutionAdapted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest matching command-execution outcome already translated the provider command shape.
@@ -8805,11 +8988,17 @@ Browse the published API surface by public member.
 - [LatestExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestexecutionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest recorded command-execution fingerprint Cephalon considered for the retry posture.
   - `string LatestExecutionFingerprint { get; set; }`
+- [LatestExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestexecutionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest recorded command-execution fingerprint Cephalon considered for the retry-execution policy.
+  - `string LatestExecutionFingerprint { get; set; }`
 - [LatestExecutionUnavailable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-latestexecutionunavailable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestExecutionUnavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest matching command-execution outcome could not resolve a provider execution adapter.
   - `const string LatestExecutionUnavailable`
 - [LatestRecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestrecordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed the retry posture.
+  - `DateTimeOffset? LatestRecordedAtUtc { get; set; }`
+- [LatestRecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestrecordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed the retry-execution policy.
   - `DateTimeOffset? LatestRecordedAtUtc { get; set; }`
 - [LayeredArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-layeredarchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=LayeredArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the layered-architecture pattern.
@@ -8861,6 +9050,9 @@ Browse the published API surface by public member.
   - `const string LifecycleChange`
 - [LifecycleChange](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-lifecyclechange): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LifecycleChange&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current intended operation would still require a lifecycle change such as pause, resume, restart, or delete.
+  - `const string LifecycleChange`
+- [LifecycleChange](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-lifecyclechange): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LifecycleChange&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy still reflects a lifecycle transition such as pause, resume, restart, or delete.
   - `const string LifecycleChange`
 - [Limit](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-limit): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Limit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the requested page size after it has been normalized to the supported range.
@@ -8973,6 +9165,9 @@ Browse the published API surface by public member.
 - [ManagedConnectorPreflight](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorpreflight): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorPreflight&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector preflight posture derived from coverage, remediation, governance, drift, action planning, and write-path readiness.
   - `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus ManagedConnectorPreflight { get; set; }`
+- [ManagedConnectorRetryExecutionPolicy](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorretryexecutionpolicy): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorRetryExecutionPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing managed-connector retry-execution policy derived from command retry, execution approval, execution adapter, and the broader shared runtime truth.
+  - `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus ManagedConnectorRetryExecutionPolicy { get; set; }`
 - [ManagedConnectorWritePathReadiness](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorwritepathreadiness): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorWritePathReadiness&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector write-path readiness posture derived from coverage, remediation, governance, drift, and action planning.
   - `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus ManagedConnectorWritePathReadiness { get; set; }`
@@ -9018,6 +9213,9 @@ Browse the published API surface by public member.
 - [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared managed-connector management mode when one is known.
   - `string ManagementMode { get; set; }`
+- [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the declared managed-connector management mode when one is known.
+  - `string ManagementMode { get; set; }`
 - [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared managed-connector management mode when one is known.
   - `string ManagementMode { get; set; }`
@@ -9048,6 +9246,15 @@ Browse the published API surface by public member.
 - [ManifestVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-manifestversion): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ManifestVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the manifest schema version.
   - `string ManifestVersion { get; }`
+- [ManualApproval](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-manualapproval): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManualApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current retry-execution policy still needs a human approval gate to clear first.
+  - `const string ManualApproval`
+- [ManualApprovalReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-manualapprovalready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManualApprovalReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy is approval-ready but still waiting for a manual approval gate to clear.
+  - `const string ManualApprovalReady`
+- [ManualApprovalRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-manualapprovalrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManualApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy still requires explicit manual approval.
+  - `const string ManualApprovalRequired`
 - [ManualCommand](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalstep-manualcommand): `Properties` on `DatabaseMigrationOperationalStep` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManualCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary direct or manual command selected for this step when available.
   - `DatabaseMigrationCommandDescriptor ManualCommand { get; }`
@@ -10168,6 +10375,9 @@ Browse the published API surface by public member.
 - [NoExecutionNeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-noexecutionneeded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoExecutionNeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current intended operation would not require additional managed-connector changes.
   - `const string NoExecutionNeeded`
+- [NoExecutionNeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-noexecutionneeded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoExecutionNeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current shared runtime truth indicates that no additional provider command is needed.
+  - `const string NoExecutionNeeded`
 - [NoMatchingCommandHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-nomatchingcommandhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoMatchingCommandHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current retry posture does not currently match any recorded command outcome.
   - `const string NoMatchingCommandHistory`
@@ -10206,6 +10416,9 @@ Browse the published API surface by public member.
   - `const string None`
 - [None](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-none): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - No management operation is currently intended for the execution runtime.
+  - `const string None`
+- [None](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-none): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - No managed-connector operation is currently associated with the retry-execution policy.
   - `const string None`
 - [None](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-none): `Fields` on `CdcCaptureReporterCoordinationIssueReasons` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Reporter coordination is not currently degraded.
@@ -10264,6 +10477,9 @@ Browse the published API surface by public member.
 - [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime does not currently represent a managed connector.
   - `const string NotApplicable`
+- [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy does not currently apply to the execution runtime.
+  - `const string NotApplicable`
 - [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime does not currently represent a managed connector.
   - `const string NotApplicable`
@@ -10299,6 +10515,9 @@ Browse the published API surface by public member.
   - `Result<T> NotFound<T>(string code, string message, BehaviorFault fault)`
 - [NotNeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-notneeded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotNeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth indicates that a retry is not currently needed.
+  - `const string NotNeeded`
+- [NotNeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-notneeded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotNeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current shared runtime truth indicates that no further retry action is currently needed.
   - `const string NotNeeded`
 - [NotReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates-notready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector is not yet ready for Cephalon to preflight the currently intended management operation.
@@ -10407,6 +10626,9 @@ Browse the published API surface by public member.
   - `const string ObserveOnlyMode`
 - [ObserveOnlyMode](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-observeonlymode): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObserveOnlyMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently stays in observe-only mode.
+  - `const string ObserveOnlyMode`
+- [ObserveOnlyMode](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-observeonlymode): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObserveOnlyMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy is not currently applicable because the runtime remains observe-only.
   - `const string ObserveOnlyMode`
 - [ObserveOnlyMode](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-observeonlymode): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObserveOnlyMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently stays in observe-only mode.
@@ -10564,6 +10786,9 @@ Browse the published API surface by public member.
 - [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable management-operation identifier Cephalon would currently preflight first.
   - `string OperationId { get; set; }`
+- [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable management-operation identifier currently associated with retry-execution policy.
+  - `string OperationId { get; set; }`
 - [OperationPath](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-operationpath): `Properties` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationPath&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the logical operation path shared by transport-specific projections.
   - `string OperationPath { get; }`
@@ -10599,6 +10824,12 @@ Browse the published API surface by public member.
   - `const string OperatorOnly`
 - [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The next intended follow-through currently remains operator-owned rather than engine-executable.
+  - `const string OperatorOnly`
+- [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy currently remains operator-owned.
+  - `const string OperatorOnly`
+- [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current retry-execution policy remains operator-owned outside Cephalon.
   - `const string OperatorOnly`
 - [Options](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-options): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Options&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets module and capability option overrides.
@@ -11045,6 +11276,9 @@ Browse the published API surface by public member.
 - [Pause](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-pause): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Pause&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cephalon would preflight pause follow-through for the managed connector.
   - `const string Pause`
+- [Pause](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-pause): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Pause&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy currently targets a connector pause operation.
+  - `const string Pause`
 - [Payload](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-payload): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=Payload&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
   - Gets or sets the serialized event payload.
   - `string Payload { get; set; }`
@@ -11177,6 +11411,9 @@ Browse the published API surface by public member.
 - [PolicyBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-policyblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PolicyBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector is currently blocked by governance or control-plane policy rather than runtime readiness alone.
   - `const string PolicyBlocked`
+- [PolicyBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-policyblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PolicyBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current retry-execution policy remains blocked by shared runtime truth or safety guardrails.
+  - `const string PolicyBlocked`
 - [PolicyId](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationcontext-policyid): `Properties` on `AuthorizationContext` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=PolicyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the explicit policy identifier requested by the caller when one is known.
   - `string PolicyId { get; }`
@@ -11283,6 +11520,9 @@ Browse the published API surface by public member.
 - [PotentialChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-potentialchangecount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PotentialChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of visible potential shared write-path changes in the current execution intent.
   - `int PotentialChangeCount { get; set; }`
+- [PotentialChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-potentialchangecount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PotentialChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of visible potential shared write-path changes currently associated with retry-execution policy.
+  - `int PotentialChangeCount { get; set; }`
 - [PrecedenceRank](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-precedencerank): `Properties` on `RestEndpointCandidateRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=PrecedenceRank&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the precedence rank used during publication resolution. Lower values win.
   - `int PrecedenceRank { get; }`
@@ -11340,6 +11580,9 @@ Browse the published API surface by public member.
 - [PreflightState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-preflightstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PreflightState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector preflight state that informed execution intent.
   - `string PreflightState { get; set; }`
+- [PreflightState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-preflightstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PreflightState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector preflight state that informed retry-execution policy.
+  - `string PreflightState { get; set; }`
 - [PreserveImplicitQueryFallback](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-preserveimplicitqueryfallback): `Fields` on `RestEndpointOverrideActionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=PreserveImplicitQueryFallback&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback.
   - `const RestEndpointOverrideActionKind PreserveImplicitQueryFallback`
@@ -11383,6 +11626,9 @@ Browse the published API surface by public member.
   - Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
   - `string PrimaryActionId { get; set; }`
 - [PrimaryActionId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-primaryactionid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PrimaryActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+  - `string PrimaryActionId { get; set; }`
+- [PrimaryActionId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-primaryactionid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PrimaryActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
   - `string PrimaryActionId { get; set; }`
 - [PrimaryActionId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-primaryactionid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PrimaryActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -11580,6 +11826,15 @@ Browse the published API surface by public member.
 - [ProviderBindings](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-providerbindings): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ProviderBindings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the optional external provider bindings attached to the feature flag.
   - `IReadOnlyList<FeatureFlagProviderBindingSettings> ProviderBindings { get; }`
+- [ProviderExecutionBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest matching command-execution outcome remained blocked.
+  - `const string ProviderExecutionBlocked`
+- [ProviderExecutionFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionfailed): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest matching command-execution outcome failed while Cephalon was translating the command.
+  - `const string ProviderExecutionFailed`
+- [ProviderExecutionUnavailable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionunavailable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionUnavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest matching command-execution outcome could not resolve a provider execution adapter.
+  - `const string ProviderExecutionUnavailable`
 - [ProviderFeatureId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagproviderbindingdescriptor-providerfeatureid): `Properties` on `FeatureFlagProviderBindingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderFeatureId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the provider-specific feature identifier when one was supplied.
   - `string ProviderFeatureId { get; }`
@@ -11925,6 +12180,9 @@ Browse the published API surface by public member.
 - [Reconcile](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-reconcile): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reconcile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cephalon would preflight reconcile-style apply-and-reconcile follow-through for the managed connector.
   - `const string Reconcile`
+- [Reconcile](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-reconcile): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reconcile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy currently targets a future connector reconcile operation.
+  - `const string Reconcile`
 - [Reconcile](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-reconcile): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reconcile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer is reconciling the desired and actual control-plane posture.
   - `const string Reconcile`
@@ -12219,6 +12477,9 @@ Browse the published API surface by public member.
 - [RemediationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-remediationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RemediationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current runtime-level remediation state that informed connector-management preflight.
   - `string RemediationState { get; set; }`
+- [RemediationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-remediationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RemediationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current runtime-level remediation state that informed retry-execution policy.
+  - `string RemediationState { get; set; }`
 - [RemediationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-remediationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RemediationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current runtime-level remediation state that informed write-path readiness.
   - `string RemediationState { get; set; }`
@@ -12389,6 +12650,9 @@ Browse the published API surface by public member.
   - `string ReportingCoverageState { get; set; }`
 - [ReportingCoverageState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-reportingcoveragestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportingCoverageState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current runtime-level reporting-coverage state that informed connector-management preflight.
+  - `string ReportingCoverageState { get; set; }`
+- [ReportingCoverageState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-reportingcoveragestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportingCoverageState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current runtime-level reporting-coverage state that informed retry-execution policy.
   - `string ReportingCoverageState { get; set; }`
 - [ReportingCoverageState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-reportingcoveragestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportingCoverageState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current runtime-level reporting-coverage state that informed write-path readiness.
@@ -12633,6 +12897,9 @@ Browse the published API surface by public member.
 - [RequiresExplicitApproval](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-requiresexplicitapproval): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresExplicitApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current intended follow-through would require an explicit approval gate.
   - `bool RequiresExplicitApproval { get; set; }`
+- [RequiresExplicitApproval](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-requiresexplicitapproval): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresExplicitApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current retry-execution policy still requires an explicit approval gate.
+  - `bool RequiresExplicitApproval { get; set; }`
 - [RequireSignatureFingerprint](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requiresignaturefingerprint): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireSignatureFingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package manifests must declare a signer fingerprint on at least one signature entry.
   - `bool RequireSignatureFingerprint { get; }`
@@ -12645,6 +12912,9 @@ Browse the published API surface by public member.
 - [RequireSignatureVerification](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requiresignatureverification): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireSignatureVerification&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package signatures must verify against a trusted public key.
   - `bool RequireSignatureVerification { get; }`
+- [RequiresManualApproval](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-requiresmanualapproval): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresManualApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the retry-execution policy still needs a manual approval gate.
+  - `bool RequiresManualApproval { get; }`
 - [RequiresPatterns](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-requirespatterns): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresPatterns&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the pattern identifiers required by the technology.
   - `IReadOnlyList<string> RequiresPatterns { get; }`
@@ -12876,6 +13146,9 @@ Browse the published API surface by public member.
 - [Restart](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-restart): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Restart&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cephalon would preflight restart follow-through for the managed connector.
   - `const string Restart`
+- [Restart](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-restart): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Restart&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy currently targets a connector restart operation.
+  - `const string Restart`
 - [RestartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-restartasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Restarts the runtime when the current failure policy allows it.
   - `Task RestartAsync(IServiceProvider services, CancellationToken cancellationToken)`
@@ -13050,6 +13323,9 @@ Browse the published API surface by public member.
 - [Resume](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-resume): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Resume&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cephalon would preflight resume follow-through for the managed connector.
   - `const string Resume`
+- [Resume](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-resume): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Resume&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy currently targets a connector resume operation.
+  - `const string Resume`
 - [ResumeFromEarliestAvailableScnIfCheckpointUnavailable](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-resumefromearliestavailablescnifcheckpointunavailable): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ResumeFromEarliestAvailableScnIfCheckpointUnavailable&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets or sets a value indicating whether the provider-native runner should reseed from the earliest retained SCN when a durable checkpoint is older than the retained archive-log window.
   - `bool ResumeFromEarliestAvailableScnIfCheckpointUnavailable { get; set; }`
@@ -13089,6 +13365,9 @@ Browse the published API surface by public member.
 - [RetryBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-retryblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth still blocks a safe retry.
   - `const string RetryBlocked`
+- [RetryCandidate](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-retrycandidate): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryCandidate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current shared runtime truth exposes one safe retry candidate.
+  - `const string RetryCandidate`
 - [RetryDelaySeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-retrydelayseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=RetryDelaySeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
   - `int RetryDelaySeconds { get; set; }`
@@ -13101,6 +13380,9 @@ Browse the published API surface by public member.
 - [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic retry fingerprint Cephalon currently derives for duplicate and retry checks.
   - `string RetryFingerprint { get; set; }`
+- [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic retry fingerprint currently associated with the retry-execution policy.
+  - `string RetryFingerprint { get; set; }`
 - [RetryPending](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-retrypending): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest report says another retry attempt is pending.
   - `bool RetryPending { get; }`
@@ -13110,6 +13392,9 @@ Browse the published API surface by public member.
 - [RetryPendingCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPendingCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of owned outboxes whose latest report still says another retry is pending.
   - `int RetryPendingCount { get; }`
+- [RetryReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-retryready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current retry-execution policy allows Cephalon to execute one safe retry automatically.
+  - `const string RetryReady`
 - [RetryScheduled](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-retryscheduled): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduled&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch schedules or expects another retry attempt.
   - `const string RetryScheduled`
@@ -13472,6 +13757,9 @@ Browse the published API surface by public member.
   - `const string RuntimeTruthIncomplete`
 - [RuntimeTruthIncomplete](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-runtimetruthincomplete): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeTruthIncomplete&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector does not yet report enough runtime truth to preflight the intended management operation.
+  - `const string RuntimeTruthIncomplete`
+- [RuntimeTruthIncomplete](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-runtimetruthincomplete): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeTruthIncomplete&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy is constrained by incomplete runtime truth.
   - `const string RuntimeTruthIncomplete`
 - [RuntimeTruthIncomplete](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-runtimetruthincomplete): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeTruthIncomplete&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector does not yet report enough runtime truth to prove future write-path readiness.
@@ -13992,6 +14280,9 @@ Browse the published API surface by public member.
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-sourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier Cephalon used to derive execution approval.
   - `string SourceId { get; set; }`
+- [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-sourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the primary source identifier Cephalon used to derive retry-execution policy.
+  - `string SourceId { get; set; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourceid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The logical source stream, database, or feed identifier.
   - `string SourceId { get; set; }`
@@ -14220,6 +14511,9 @@ Browse the published API surface by public member.
 - [SourceProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-sourceproviderid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the upstream source-provider identifier when one is known.
   - `string SourceProviderId { get; set; }`
+- [SourceProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-sourceproviderid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the best available source-provider identifier Cephalon would target for the current retry-execution policy.
+  - `string SourceProviderId { get; set; }`
 - [SourceProviderId](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-sourceproviderid): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=SourceProviderId&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the upstream provider identifier behind the managed connector, such as `postgresql` or `sqlserver`.
   - `string SourceProviderId { get; set; }`
@@ -14295,6 +14589,9 @@ Browse the published API surface by public member.
   - `const string StaleObservation`
 - [StaleObservation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-staleobservation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StaleObservation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently reports stale observations that make safety-gating less trustworthy.
+  - `const string StaleObservation`
+- [StaleObservation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-staleobservation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StaleObservation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy is constrained by stale observation posture.
   - `const string StaleObservation`
 - [StaleObservations](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-staleobservations): `Fields` on `CdcCaptureExecutionRuntimeRemediationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StaleObservations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Reported CDC captures currently publish stale runtime observations.
@@ -14418,6 +14715,9 @@ Browse the published API surface by public member.
   - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable managed-connector preflight state.
+  - `string State { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable managed-connector retry-execution policy state.
   - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable managed-connector write-path readiness state.
@@ -15718,6 +16018,9 @@ Browse the published API surface by public member.
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-unknown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime cannot currently determine its managed-connector governance posture.
   - `const string Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-unknown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The retry-execution policy does not currently resolve to one specific source.
+  - `const string Unknown`
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-unknown): `Fields` on `CdcCaptureExecutionRuntimeRemediationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime cannot currently determine whether remediation is required.
   - `const string Unknown`
@@ -16159,6 +16462,9 @@ Browse the published API surface by public member.
 - [WouldApplyChanges](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-wouldapplychanges): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WouldApplyChanges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current execution intent would still apply one or more shared write-path changes.
   - `bool WouldApplyChanges { get; set; }`
+- [WouldApplyChanges](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-wouldapplychanges): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WouldApplyChanges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current retry-execution policy would still apply one or more shared write-path changes.
+  - `bool WouldApplyChanges { get; set; }`
 - [WouldChange](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-wouldchange): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDryRunStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WouldChange&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently reports one or more shared write-path changes for the intended management operation.
   - `const string WouldChange`
@@ -16209,6 +16515,9 @@ Browse the published API surface by public member.
   - `string WritePathReadinessState { get; set; }`
 - [WritePathReadinessState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-writepathreadinessstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WritePathReadinessState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector write-path readiness state that informed connector-management preflight.
+  - `string WritePathReadinessState { get; set; }`
+- [WritePathReadinessState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-writepathreadinessstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WritePathReadinessState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector write-path readiness state that informed retry-execution policy.
   - `string WritePathReadinessState { get; set; }`
 - [WritePathReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-writepathready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WritePathReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently satisfies the shared baseline for future write-path follow-through.

@@ -8528,6 +8528,16 @@ CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus ManagedConnectorPrefli
 
 Gets the operator-facing managed-connector preflight posture derived from coverage, remediation, governance, drift, action planning, and write-path readiness.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorretryexecutionpolicy"></a>
+
+##### `ManagedConnectorRetryExecutionPolicy`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus ManagedConnectorRetryExecutionPolicy { get; set; }
+```
+
+Gets the operator-facing managed-connector retry-execution policy derived from command retry, execution approval, execution adapter, and the broader shared runtime truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorwritepathreadiness"></a>
 
 ##### `ManagedConnectorWritePathReadiness`
@@ -16444,6 +16454,1067 @@ string WritePathReadinessState { get; set; }
 
 Gets the current managed-connector write-path readiness state that informed connector-management preflight.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories`
+
+Defines the stable category identifiers used by managed-connector retry-execution policy answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-automaticretrydisabled"></a>
+
+##### `AutomaticRetryDisabled`
+
+```csharp
+const string AutomaticRetryDisabled
+```
+
+Automatic background retry remains disabled for the current retry candidate.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-blockingremediation"></a>
+
+##### `BlockingRemediation`
+
+```csharp
+const string BlockingRemediation
+```
+
+The retry-execution policy remains blocked by remediation that still needs to clear first.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-changeplanned"></a>
+
+##### `ChangePlanned`
+
+```csharp
+const string ChangePlanned
+```
+
+The retry-execution policy still reflects one or more shared write-path changes.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-controlplaneownershipgap"></a>
+
+##### `ControlPlaneOwnershipGap`
+
+```csharp
+const string ControlPlaneOwnershipGap
+```
+
+The retry-execution policy is constrained because control-plane ownership still remains outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-cooldownactive"></a>
+
+##### `CooldownActive`
+
+```csharp
+const string CooldownActive
+```
+
+The current retry-execution policy is waiting for the active cooldown window to elapse.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The retry-execution policy still reflects a destructive write-path such as connector deletion.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-duplicatecommand"></a>
+
+##### `DuplicateCommand`
+
+```csharp
+const string DuplicateCommand
+```
+
+Replaying the current retry-execution policy would duplicate a previously recorded command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The retry-execution policy is constrained by governance that remains out of policy.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-incompletereportingcoverage"></a>
+
+##### `IncompleteReportingCoverage`
+
+```csharp
+const string IncompleteReportingCoverage
+```
+
+The retry-execution policy is constrained by incomplete reporting coverage.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-lifecyclechange"></a>
+
+##### `LifecycleChange`
+
+```csharp
+const string LifecycleChange
+```
+
+The retry-execution policy still reflects a lifecycle transition such as pause, resume, restart, or delete.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-manualapprovalready"></a>
+
+##### `ManualApprovalReady`
+
+```csharp
+const string ManualApprovalReady
+```
+
+The retry-execution policy is approval-ready but still waiting for a manual approval gate to clear.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-manualapprovalrequired"></a>
+
+##### `ManualApprovalRequired`
+
+```csharp
+const string ManualApprovalRequired
+```
+
+The retry-execution policy still requires explicit manual approval.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-noexecutionneeded"></a>
+
+##### `NoExecutionNeeded`
+
+```csharp
+const string NoExecutionNeeded
+```
+
+The current shared runtime truth indicates that no additional provider command is needed.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The retry-execution policy is not currently applicable because the runtime remains observe-only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+The retry-execution policy currently remains operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionblocked"></a>
+
+##### `ProviderExecutionBlocked`
+
+```csharp
+const string ProviderExecutionBlocked
+```
+
+The latest matching command-execution outcome remained blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionfailed"></a>
+
+##### `ProviderExecutionFailed`
+
+```csharp
+const string ProviderExecutionFailed
+```
+
+The latest matching command-execution outcome failed while Cephalon was translating the command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionunavailable"></a>
+
+##### `ProviderExecutionUnavailable`
+
+```csharp
+const string ProviderExecutionUnavailable
+```
+
+The latest matching command-execution outcome could not resolve a provider execution adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-retrycandidate"></a>
+
+##### `RetryCandidate`
+
+```csharp
+const string RetryCandidate
+```
+
+The current shared runtime truth exposes one safe retry candidate.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-runtimetruthincomplete"></a>
+
+##### `RuntimeTruthIncomplete`
+
+```csharp
+const string RuntimeTruthIncomplete
+```
+
+The retry-execution policy is constrained by incomplete runtime truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-staleobservation"></a>
+
+##### `StaleObservation`
+
+```csharp
+const string StaleObservation
+```
+
+The retry-execution policy is constrained by stale observation posture.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds`
+
+Defines the stable management-operation identifiers used by managed-connector retry-execution policy answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+The retry-execution policy currently targets a connector delete operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No managed-connector operation is currently associated with the retry-execution policy.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-pause"></a>
+
+##### `Pause`
+
+```csharp
+const string Pause
+```
+
+The retry-execution policy currently targets a connector pause operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+The retry-execution policy currently targets a future connector reconcile operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-restart"></a>
+
+##### `Restart`
+
+```csharp
+const string Restart
+```
+
+The retry-execution policy currently targets a connector restart operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicyoperationids-resume"></a>
+
+##### `Resume`
+
+```csharp
+const string Resume
+```
+
+The retry-execution policy currently targets a connector resume operation.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources`
+
+Defines the stable source identifiers used by managed-connector retry-execution policy answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-commandretry"></a>
+
+##### `CommandRetry`
+
+```csharp
+const string CommandRetry
+```
+
+The retry-execution policy was derived primarily from the shared command-retry lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-executionadapter"></a>
+
+##### `ExecutionAdapter`
+
+```csharp
+const string ExecutionAdapter
+```
+
+The retry-execution policy was derived primarily from the shared execution-adapter lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-executionapproval"></a>
+
+##### `ExecutionApproval`
+
+```csharp
+const string ExecutionApproval
+```
+
+The retry-execution policy was derived primarily from the shared execution-approval lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The retry-execution policy does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates`
+
+Defines the stable state identifiers used by managed-connector retry-execution policy answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-backgroundretrydisabled"></a>
+
+##### `BackgroundRetryDisabled`
+
+```csharp
+const string BackgroundRetryDisabled
+```
+
+The current shared runtime truth allows one safe retry, but background retry execution is not enabled yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-cooldown"></a>
+
+##### `Cooldown`
+
+```csharp
+const string Cooldown
+```
+
+The current retry-execution policy is waiting for a cooldown window to elapse.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-manualapproval"></a>
+
+##### `ManualApproval`
+
+```csharp
+const string ManualApproval
+```
+
+The current retry-execution policy still needs a human approval gate to clear first.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The retry-execution policy does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-notneeded"></a>
+
+##### `NotNeeded`
+
+```csharp
+const string NotNeeded
+```
+
+The current shared runtime truth indicates that no further retry action is currently needed.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+The current retry-execution policy remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-policyblocked"></a>
+
+##### `PolicyBlocked`
+
+```csharp
+const string PolicyBlocked
+```
+
+The current retry-execution policy remains blocked by shared runtime truth or safety guardrails.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-retryready"></a>
+
+##### `RetryReady`
+
+```csharp
+const string RetryReady
+```
+
+The current retry-execution policy allows Cephalon to execute one safe retry automatically.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus`
+
+Describes the current operator-facing managed-connector retry-execution policy posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus(string state, string description)
+```
+
+Creates a new managed-connector retry-execution policy answer.
+
+Parameters:
+- `state`: The stable retry-execution policy state, such as `not-needed`, `cooldown`, `manual-approval`, `policy-blocked`, `background-retry-disabled`, `retry-ready`, `operator-only`, or `not-applicable`.
+- `description`: An optional operator-facing retry-execution policy summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-adapterfingerprint"></a>
+
+##### `AdapterFingerprint`
+
+```csharp
+string AdapterFingerprint { get; set; }
+```
+
+Gets the deterministic execution-adapter fingerprint currently associated with the retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-canexecuteretrythroughpolicy"></a>
+
+##### `CanExecuteRetryThroughPolicy`
+
+```csharp
+bool CanExecuteRetryThroughPolicy { get; }
+```
+
+Gets a value indicating whether the retry-execution policy currently allows Cephalon to execute one automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active retry-execution policy categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable retry-execution policy categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandenvelopestate"></a>
+
+##### `CommandEnvelopeState`
+
+```csharp
+string CommandEnvelopeState { get; set; }
+```
+
+Gets the current managed-connector command-envelope state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint currently associated with the retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandissuancestate"></a>
+
+##### `CommandIssuanceState`
+
+```csharp
+string CommandIssuanceState { get; set; }
+```
+
+Gets the current managed-connector command-issuance state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandretrysourceid"></a>
+
+##### `CommandRetrySourceId`
+
+```csharp
+string CommandRetrySourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with the command-retry lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandretrystate"></a>
+
+##### `CommandRetryState`
+
+```csharp
+string CommandRetryState { get; set; }
+```
+
+Gets the current managed-connector command-retry state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier Cephalon would target for the current retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier Cephalon would target for the current retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-cooldownuntilutc"></a>
+
+##### `CooldownUntilUtc`
+
+```csharp
+DateTimeOffset? CooldownUntilUtc { get; set; }
+```
+
+Gets the timestamp when the active retry cooldown window ends, when one applies.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing retry-execution policy summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-dryrunstate"></a>
+
+##### `DryRunState`
+
+```csharp
+string DryRunState { get; set; }
+```
+
+Gets the current managed-connector dry-run state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionadaptersourceid"></a>
+
+##### `ExecutionAdapterSourceId`
+
+```csharp
+string ExecutionAdapterSourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with the execution-adapter lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionadapterstate"></a>
+
+##### `ExecutionAdapterState`
+
+```csharp
+string ExecutionAdapterState { get; set; }
+```
+
+Gets the current managed-connector execution-adapter state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionapprovalsourceid"></a>
+
+##### `ExecutionApprovalSourceId`
+
+```csharp
+string ExecutionApprovalSourceId { get; set; }
+```
+
+Gets the primary source identifier already associated with the execution-approval lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionapprovalstate"></a>
+
+##### `ExecutionApprovalState`
+
+```csharp
+string ExecutionApprovalState { get; set; }
+```
+
+Gets the current managed-connector execution-approval state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionintentstate"></a>
+
+##### `ExecutionIntentState`
+
+```csharp
+string ExecutionIntentState { get; set; }
+```
+
+Gets the current managed-connector execution-intent state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hascooldownwindow"></a>
+
+##### `HasCooldownWindow`
+
+```csharp
+bool HasCooldownWindow { get; }
+```
+
+Gets a value indicating whether the retry-execution policy currently exposes an active cooldown window.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingadapterfingerprint"></a>
+
+##### `HasMatchingAdapterFingerprint`
+
+```csharp
+bool HasMatchingAdapterFingerprint { get; set; }
+```
+
+Gets a value indicating whether the latest recorded command currently matches the derived execution-adapter fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingcommandfingerprint"></a>
+
+##### `HasMatchingCommandFingerprint`
+
+```csharp
+bool HasMatchingCommandFingerprint { get; set; }
+```
+
+Gets a value indicating whether the latest recorded command currently matches the derived command fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingissuancefingerprint"></a>
+
+##### `HasMatchingIssuanceFingerprint`
+
+```csharp
+bool HasMatchingIssuanceFingerprint { get; set; }
+```
+
+Gets a value indicating whether the latest recorded command currently matches the derived issuance fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasmatchingretryfingerprint"></a>
+
+##### `HasMatchingRetryFingerprint`
+
+```csharp
+bool HasMatchingRetryFingerprint { get; set; }
+```
+
+Gets a value indicating whether the latest recorded command currently matches the derived retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-hasrecordedcommandhistory"></a>
+
+##### `HasRecordedCommandHistory`
+
+```csharp
+bool HasRecordedCommandHistory { get; }
+```
+
+Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome for the retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isautomaticretryenabled"></a>
+
+##### `IsAutomaticRetryEnabled`
+
+```csharp
+bool IsAutomaticRetryEnabled { get; set; }
+```
+
+Gets a value indicating whether automatic background retry execution is enabled for the current policy answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isbackgroundretrydisabled"></a>
+
+##### `IsBackgroundRetryDisabled`
+
+```csharp
+bool IsBackgroundRetryDisabled { get; }
+```
+
+Gets a value indicating whether one safe retry candidate exists but automatic retry is still disabled.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-iscooldown"></a>
+
+##### `IsCooldown`
+
+```csharp
+bool IsCooldown { get; }
+```
+
+Gets a value indicating whether the retry-execution policy is waiting for a cooldown window to elapse.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current retry-execution policy targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isnotneeded"></a>
+
+##### `IsNotNeeded`
+
+```csharp
+bool IsNotNeeded { get; }
+```
+
+Gets a value indicating whether no retry action is currently needed.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether retry remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-ispolicyblocked"></a>
+
+##### `IsPolicyBlocked`
+
+```csharp
+bool IsPolicyBlocked { get; }
+```
+
+Gets a value indicating whether the retry-execution policy remains blocked by shared runtime truth or safety guardrails.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-isretryready"></a>
+
+##### `IsRetryReady`
+
+```csharp
+bool IsRetryReady { get; }
+```
+
+Gets a value indicating whether the retry-execution policy allows one automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-issuancefingerprint"></a>
+
+##### `IssuanceFingerprint`
+
+```csharp
+string IssuanceFingerprint { get; set; }
+```
+
+Gets the deterministic issuance fingerprint currently associated with the retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest recorded command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state Cephalon considered for retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestexecutionfingerprint"></a>
+
+##### `LatestExecutionFingerprint`
+
+```csharp
+string LatestExecutionFingerprint { get; set; }
+```
+
+Gets the latest recorded command-execution fingerprint Cephalon considered for the retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed the retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-preflightstate"></a>
+
+##### `PreflightState`
+
+```csharp
+string PreflightState { get; set; }
+```
+
+Gets the current managed-connector preflight state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current retry-execution policy still requires an explicit approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-requiresmanualapproval"></a>
+
+##### `RequiresManualApproval`
+
+```csharp
+bool RequiresManualApproval { get; }
+```
+
+Gets a value indicating whether the retry-execution policy still needs a manual approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with the retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier Cephalon would target for the current retry-execution policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector retry-execution policy state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current retry-execution policy would still apply one or more shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-writepathreadinessstate"></a>
+
+##### `WritePathReadinessState`
+
+```csharp
+string WritePathReadinessState { get; set; }
+```
+
+Gets the current managed-connector write-path readiness state that informed retry-execution policy.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories`
@@ -23285,6 +24356,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `preflightState`: The stable managed-connector preflight state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicycategory-system-string"></a>
+
+##### `GetByManagedConnectorRetryExecutionPolicyCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyCategory(string policyCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that policy category.
+
+Parameters:
+- `policyCategory`: The stable managed-connector retry-execution policy category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicyoperationid-system-string"></a>
+
+##### `GetByManagedConnectorRetryExecutionPolicyOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable managed-connector retry-execution policy operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicystate-system-string"></a>
+
+##### `GetByManagedConnectorRetryExecutionPolicyState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorRetryExecutionPolicyState(string policyState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that policy state.
+
+Parameters:
+- `policyState`: The stable managed-connector retry-execution policy state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorwritepathreadinesscategory-system-string"></a>
 

@@ -552,8 +552,8 @@ public sealed class DebeziumDataCdcHostingTests
                     sourceProviderId: "postgresql",
                     topicPrefix: "inventory-suppliers",
                     managementMode: "observe-only",
-                    expectedTaskCount: 1,
-                    taskIds: ["0"]));
+                    expectedTaskCount: 2,
+                    taskIds: ["0", "1"]));
                 options.Connectors.Add(CreateConnector(
                     runtimeId: WaitingRuntimeId,
                     captureId: WaitingCaptureId,
@@ -1690,6 +1690,14 @@ public sealed class DebeziumDataCdcHostingTests
             var controlPlaneCommandRetryCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/categories/control-plane-ownership-gap");
             var pauseCommandRetryOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/operations/pause");
             var deleteCommandRetryOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/operations/delete");
+            var notApplicableRetryExecutionPolicy = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/not-applicable");
+            var notNeededRetryExecutionPolicy = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/not-needed");
+            var cooldownRetryExecutionPolicy = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/cooldown");
+            var operatorOnlyRetryExecutionPolicy = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/operator-only");
+            var cooldownRetryExecutionPolicyCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/categories/cooldown-active");
+            var controlPlaneRetryExecutionPolicyCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/categories/control-plane-ownership-gap");
+            var pauseRetryExecutionPolicyOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/operations/pause");
+            var deleteRetryExecutionPolicyOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/operations/delete");
             var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
             var readyReconcileCommand = await readyReconcileCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
             var pauseRequiredBlockedCommand = await pauseRequiredBlockedCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
@@ -2291,6 +2299,45 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.NotNull(deleteCommandRetryOperation);
             Assert.Equal([DeleteRequiredRuntimeId], deleteCommandRetryOperation.Select(static runtime => runtime.Id).ToArray());
 
+            Assert.NotNull(notApplicableRetryExecutionPolicy);
+            Assert.Equal([ObserveOnlyRuntimeId], notApplicableRetryExecutionPolicy.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.NotApplicable, notApplicableRetryExecutionPolicy[0].ManagedConnectorRetryExecutionPolicy.State);
+
+            Assert.NotNull(notNeededRetryExecutionPolicy);
+            Assert.Equal(
+                [BlockedRuntimeId, OutOfPolicyRuntimeId, PauseSatisfiedRuntimeId, ReadyRuntimeId, WaitingRuntimeId],
+                notNeededRetryExecutionPolicy.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(cooldownRetryExecutionPolicy);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                cooldownRetryExecutionPolicy.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+            Assert.Contains(cooldownRetryExecutionPolicy, runtime => runtime.Id == PauseRequiredRuntimeId &&
+                runtime.ManagedConnectorRetryExecutionPolicy.OperationId == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.Pause);
+            Assert.Contains(cooldownRetryExecutionPolicy, runtime => runtime.Id == DeleteRequiredRuntimeId &&
+                runtime.ManagedConnectorRetryExecutionPolicy.OperationId == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.Delete &&
+                runtime.ManagedConnectorRetryExecutionPolicy.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.DestructiveOperation, StringComparer.OrdinalIgnoreCase));
+
+            Assert.NotNull(operatorOnlyRetryExecutionPolicy);
+            Assert.Equal([FutureControlPlaneRuntimeId], operatorOnlyRetryExecutionPolicy.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.Reconcile, operatorOnlyRetryExecutionPolicy[0].ManagedConnectorRetryExecutionPolicy.OperationId);
+
+            Assert.NotNull(cooldownRetryExecutionPolicyCategory);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                cooldownRetryExecutionPolicyCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(controlPlaneRetryExecutionPolicyCategory);
+            Assert.Equal([FutureControlPlaneRuntimeId], controlPlaneRetryExecutionPolicyCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(pauseRetryExecutionPolicyOperation);
+            Assert.Equal(
+                [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId],
+                pauseRetryExecutionPolicyOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(deleteRetryExecutionPolicyOperation);
+            Assert.Equal([DeleteRequiredRuntimeId], deleteRetryExecutionPolicyOperation.Select(static runtime => runtime.Id).ToArray());
+
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
                 item.ManagedConnectorDryRun.State == CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred &&
@@ -2449,10 +2496,25 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseSatisfiedRuntimeId &&
                 item.ManagedConnectorCommandExecution.State == CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unrecorded &&
                 !item.ManagedConnectorCommandExecution.HasRecordedOutcome);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.NotApplicable);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ReadyRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.NotNeeded &&
+                !item.ManagedConnectorRetryExecutionPolicy.CanExecuteRetryThroughPolicy);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseRequiredRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.Cooldown &&
+                item.ManagedConnectorRetryExecutionPolicy.OperationId == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.Pause);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == DeleteRequiredRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.Cooldown &&
+                item.ManagedConnectorRetryExecutionPolicy.OperationId == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.Delete);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == FutureControlPlaneRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.OperatorOnly &&
+                item.ManagedConnectorRetryExecutionPolicy.OperationId == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyOperationIds.Reconcile);
 
             timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-23T06:11:10Z", CultureInfo.InvariantCulture));
             var duplicateCommandRetry = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/duplicate");
             var duplicateCommandRetryCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/categories/duplicate-command");
+            var duplicateRetryExecutionPolicyCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/categories/duplicate-command");
             var snapshotAfterRetryCooldown = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
             Assert.NotNull(duplicateCommandRetry);
@@ -2465,6 +2527,11 @@ public sealed class DebeziumDataCdcHostingTests
                 [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
                 duplicateCommandRetryCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
 
+            Assert.NotNull(duplicateRetryExecutionPolicyCategory);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                duplicateRetryExecutionPolicyCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
             Assert.NotNull(snapshotAfterRetryCooldown);
             Assert.Contains(snapshotAfterRetryCooldown.CdcCaptureExecutionRuntimes, item => item.Id == PauseRequiredRuntimeId &&
                 item.ManagedConnectorCommandRetry.State == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Duplicate &&
@@ -2472,6 +2539,179 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Contains(snapshotAfterRetryCooldown.CdcCaptureExecutionRuntimes, item => item.Id == DeleteRequiredRuntimeId &&
                 item.ManagedConnectorCommandRetry.State == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Duplicate &&
                 item.ManagedConnectorCommandRetry.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.Delete);
+            Assert.Contains(snapshotAfterRetryCooldown.CdcCaptureExecutionRuntimes, item => item.Id == PauseRequiredRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.NotNeeded &&
+                item.ManagedConnectorRetryExecutionPolicy.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.DuplicateCommand, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshotAfterRetryCooldown.CdcCaptureExecutionRuntimes, item => item.Id == DeleteRequiredRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.NotNeeded &&
+                item.ManagedConnectorRetryExecutionPolicy.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.DuplicateCommand, StringComparer.OrdinalIgnoreCase));
+        }
+        finally
+        {
+            await app.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesManagedConnectorRetryExecutionPolicyRoutesForManualApprovalAndPolicyBlockedPostCooldown()
+    {
+        const string policyBlockedRuntimeId = "inventory-policy-blocked-connector";
+        const string policyBlockedCaptureId = "inventory-policy-blocked-cdc";
+
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T06:10:30Z", CultureInfo.InvariantCulture));
+        var builder = CreateBuilder(
+            options =>
+            {
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: policyBlockedRuntimeId,
+                    captureId: policyBlockedCaptureId,
+                    displayName: "Inventory Policy-Blocked Connector",
+                    captureDisplayName: "Inventory Policy-Blocked CDC",
+                    captureDescription: "Declares a drifted write-path mode while omitting connect-cluster governance truth so retry remains policy-blocked.",
+                    connectClusterId: null,
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-policy-blocked",
+                    managementMode: "apply-and-reconcile",
+                    expectedTaskCount: 2,
+                    taskIds: ["0", "1"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: PauseRequiredRuntimeId,
+                    captureId: PauseRequiredCaptureId,
+                    displayName: "Inventory Pause-Required Connector",
+                    captureDisplayName: "Inventory Returns CDC",
+                    captureDescription: "Needs a shared pause action because the connector is still running.",
+                    connectClusterId: "connect-cluster-f",
+                    connectorClass: "io.debezium.connector.mysql.MySqlConnector",
+                    sourceProviderId: "mysql",
+                    topicPrefix: "inventory-returns",
+                    managementMode: "pause",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+            },
+            timeProvider);
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+
+        try
+        {
+            var client = app.GetTestClient();
+
+            var policyBlockedReport = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{policyBlockedRuntimeId}/reports",
+                new[]
+                {
+                    new CdcCaptureRuntimeObservation(
+                        cdcCaptureId: policyBlockedCaptureId,
+                        outcome: CdcCaptureRuntimeOutcomes.Captured,
+                        observedAtUtc: DateTimeOffset.Parse("2026-04-23T06:10:00Z", CultureInfo.InvariantCulture),
+                        reportId: "debezium-report-policy-blocked-001",
+                        metadata: new Dictionary<string, string>
+                        {
+                            ["connectorState"] = "RUNNING",
+                            ["connectClusterId"] = "connect-cluster-policy",
+                            ["connectorClass"] = "io.debezium.connector.postgresql.PostgresConnector",
+                            ["sourceProviderId"] = "postgresql",
+                            ["reportedTaskIds"] = "0",
+                            ["activeTaskIds"] = "0"
+                        },
+                        reporterId: "connect-worker-policy")
+                });
+            policyBlockedReport.EnsureSuccessStatusCode();
+
+            var pauseRequiredReport = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{PauseRequiredRuntimeId}/reports",
+                new[]
+                {
+                    new CdcCaptureRuntimeObservation(
+                        cdcCaptureId: PauseRequiredCaptureId,
+                        outcome: CdcCaptureRuntimeOutcomes.Captured,
+                        observedAtUtc: DateTimeOffset.Parse("2026-04-23T06:09:50Z", CultureInfo.InvariantCulture),
+                        reportId: "debezium-report-pause-required-001",
+                        metadata: new Dictionary<string, string>
+                        {
+                            ["connectorState"] = "RUNNING",
+                            ["connectClusterId"] = "connect-cluster-f",
+                            ["connectorClass"] = "io.debezium.connector.mysql.MySqlConnector",
+                            ["sourceProviderId"] = "mysql",
+                            ["reportedTaskIds"] = "0",
+                            ["activeTaskIds"] = "0"
+                        },
+                        reporterId: "connect-worker-f")
+                });
+            pauseRequiredReport.EnsureSuccessStatusCode();
+
+            timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-23T06:10:31Z", CultureInfo.InvariantCulture));
+            var policyBlockedCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{policyBlockedRuntimeId}/commands/reconcile",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest());
+
+            timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-23T06:10:32Z", CultureInfo.InvariantCulture));
+            var pauseBlockedCommandResponse = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{PauseRequiredRuntimeId}/commands/pause",
+                new CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest());
+
+            policyBlockedCommandResponse.EnsureSuccessStatusCode();
+            pauseBlockedCommandResponse.EnsureSuccessStatusCode();
+
+            var policyBlockedCommand = await policyBlockedCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
+            var pauseBlockedCommand = await pauseBlockedCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
+
+            Assert.NotNull(policyBlockedCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked, policyBlockedCommand.State);
+            Assert.NotNull(pauseBlockedCommand);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked, pauseBlockedCommand.State);
+
+            var cooldownPolicies = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/cooldown");
+
+            Assert.NotNull(cooldownPolicies);
+            Assert.Equal(
+                [PauseRequiredRuntimeId, policyBlockedRuntimeId],
+                cooldownPolicies.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-23T06:11:10Z", CultureInfo.InvariantCulture));
+            var policyBlocked = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/policy-blocked");
+            var manualApproval = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/manual-approval");
+            var governanceOutOfPolicyCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/categories/governance-out-of-policy");
+            var manualApprovalReadyCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/categories/manual-approval-ready");
+            var reconcilePolicyOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/operations/reconcile");
+            var pausePolicyOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/retry-execution-policies/operations/pause");
+            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+            Assert.NotNull(policyBlocked);
+            Assert.Equal([policyBlockedRuntimeId], policyBlocked.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.PolicyBlocked, policyBlocked[0].ManagedConnectorRetryExecutionPolicy.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources.CommandRetry, policyBlocked[0].ManagedConnectorRetryExecutionPolicy.SourceId);
+            Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.ProviderExecutionBlocked, policyBlocked[0].ManagedConnectorRetryExecutionPolicy.CategoryIds);
+            Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.GovernanceOutOfPolicy, policyBlocked[0].ManagedConnectorRetryExecutionPolicy.CategoryIds);
+
+            Assert.NotNull(manualApproval);
+            Assert.Equal([PauseRequiredRuntimeId], manualApproval.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.ManualApproval, manualApproval[0].ManagedConnectorRetryExecutionPolicy.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources.ExecutionApproval, manualApproval[0].ManagedConnectorRetryExecutionPolicy.SourceId);
+            Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.ManualApprovalReady, manualApproval[0].ManagedConnectorRetryExecutionPolicy.CategoryIds);
+
+            Assert.NotNull(governanceOutOfPolicyCategory);
+            Assert.Equal([policyBlockedRuntimeId], governanceOutOfPolicyCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(manualApprovalReadyCategory);
+            Assert.Equal([PauseRequiredRuntimeId], manualApprovalReadyCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(reconcilePolicyOperation);
+            Assert.Equal([policyBlockedRuntimeId], reconcilePolicyOperation.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(pausePolicyOperation);
+            Assert.Equal([PauseRequiredRuntimeId], pausePolicyOperation.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(snapshot);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == policyBlockedRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.PolicyBlocked &&
+                item.ManagedConnectorRetryExecutionPolicy.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.GovernanceOutOfPolicy, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseRequiredRuntimeId &&
+                item.ManagedConnectorRetryExecutionPolicy.State == CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates.ManualApproval &&
+                item.ManagedConnectorRetryExecutionPolicy.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories.ManualApprovalReady, StringComparer.OrdinalIgnoreCase));
         }
         finally
         {
