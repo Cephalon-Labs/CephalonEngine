@@ -67,6 +67,10 @@
 - `Data/CdcCaptureRuntimeState.cs`
 - `Data/ICdcCaptureRuntimeStateCatalog.cs`
 - `Data/CdcCaptureExecutionRuntimeDescriptor.cs`
+- `Data/CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.cs`
+- `Data/CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.cs`
+- `Data/CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.cs`
+- `Data/CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus.cs`
 - `Data/CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.cs`
 - `Data/CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.cs`
 - `Data/CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.cs`
@@ -289,6 +293,18 @@ queryable as shared `not-applicable`, `unknown`, `in-sync`, or `drifted` answers
 task-topology and connector-identity drift categories, recommended action ids, declared versus
 reported connector identity, and reconciliation context instead of inventing a Debezium-only
 drift contract.
+
+That same shared execution-runtime contract now also publishes managed-connector action-planning
+posture through `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds`,
+`CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorActionPlan`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorActionPlanState(...)` /
+`GetByManagedConnectorActionId(...)` filters. That keeps `managed-connector` runtimes queryable as
+shared `not-applicable`, `observe`, `waiting`, `action-required`, or `blocked` answers together
+with ordered action ids, operator-facing action-plan categories, and the source remediation,
+governance, plus drift state instead of inventing a Debezium-only action-planning contract.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

@@ -66,6 +66,12 @@ Browse the published API surface by public member.
 - [Action](cephalon-identity-aspnetcore.md#member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-action): `Properties` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=Action&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets the optional action to evaluate.
   - `string Action { get; set; }`
+- [ActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-actioncount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of active action identifiers currently visible for the execution runtime.
+  - `int ActionCount { get; }`
+- [ActionIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-actionids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the ordered action identifiers currently active for the execution runtime.
+  - `IReadOnlyList<string> ActionIds { get; set; }`
 - [ActionKind](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-actionkind): `Properties` on `RestEndpointGovernanceOverrideActionKindSummaryDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the override action dimension represented by this grouped bucket.
   - `RestEndpointOverrideActionKind ActionKind { get; }`
@@ -105,6 +111,9 @@ Browse the published API surface by public member.
 - [ActionPlan](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsnapshot-actionplan): `Properties` on `DatabaseTopologyOperationalSnapshot` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the ordered engine-owned operator action plan derived from the current topology state.
   - `DatabaseTopologyOperationalActionPlan ActionPlan { get; }`
+- [ActionRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-actionrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector currently requires operator action.
+  - `const string ActionRequired`
 - [Actions](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-actions): `Properties` on `DatabaseTopologyOperationalActionPlan` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Actions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the ordered operator actions derived from the current topology posture.
   - `IReadOnlyList<DatabaseTopologyOperationalAction> Actions { get; }`
@@ -894,6 +903,9 @@ Browse the published API surface by public member.
 - [AppliedOverrideId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-appliedoverrideid): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliedOverrideId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the host-level override identifier when runtime governance actually changes the published endpoint answer.
   - `string AppliedOverrideId { get; }`
+- [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the execution runtime currently represents a managed connector.
+  - `bool AppliesToManagedConnector { get; }`
 - [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently represents a managed connector.
   - `bool AppliesToManagedConnector { get; }`
@@ -1560,12 +1572,18 @@ Browse the published API surface by public member.
 - [BlastRadius](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-blastradius): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlastRadius&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the operator-facing blast-radius posture for this cell.
   - `string BlastRadius { get; }`
+- [Blocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-blocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Blocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector is currently blocked by higher-priority remediation work.
+  - `const string Blocked`
 - [Blocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-blocked): `Fields` on `CdcCaptureExecutionRuntimeRemediationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Blocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime currently requires remediation for one or more failed CDC captures.
   - `const string Blocked`
 - [BlockingActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-blockingactioncount): `Properties` on `DatabaseTopologyOperationalActionPlan` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlockingActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of blocking actions in the plan.
   - `int BlockingActionCount { get; }`
+- [BlockingRemediation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-blockingremediation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlockingRemediation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector is currently blocked by active runtime remediation work.
+  - `const string BlockingRemediation`
 - [Blueprint](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-blueprint): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Blueprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected blueprint identifier.
   - `string Blueprint { get; }`
@@ -1815,6 +1833,9 @@ Browse the published API surface by public member.
 - [Category](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalaction-category): `Properties` on `DatabaseTopologyOperationalAction` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Category&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable machine-readable remediation category.
   - `string Category { get; }`
+- [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of active action-plan categories currently visible for the execution runtime.
+  - `int CategoryCount { get; }`
 - [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active drift categories currently visible for the execution runtime.
   - `int CategoryCount { get; }`
@@ -1824,6 +1845,9 @@ Browse the published API surface by public member.
 - [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeRemediationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active remediation categories currently visible for the execution runtime.
   - `int CategoryCount { get; }`
+- [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable action-plan categories currently active for the execution runtime.
+  - `IReadOnlyList<string> CategoryIds { get; set; }`
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable managed-connector drift categories currently active for the execution runtime.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
@@ -1860,6 +1884,9 @@ Browse the published API surface by public member.
 - [CdcCaptureExecutionRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-system-nullable-system-int32-system-boolean-system-collections-generic-ireadonlylist-system-string): `Constructors` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC capture execution runtime descriptor with first-class ownership and topology semantics.
   - `CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, string executionOwnership, string executionTopology, string acknowledgementMode, string hostedExecutionId, string executionGraphId, int? observationStaleAfterSeconds, bool rejectOutOfOrderReports, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary, int? reporterLeaseSeconds, bool rejectConflictingReporterIds, IReadOnlyList<string> edgeNodeIds)`
+- [CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new managed-connector action-plan answer.
+  - `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus(string state, string description)`
 - [CdcCaptureExecutionRuntimeManagedConnectorDriftStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorDriftStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new managed-connector drift answer.
   - `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(string state, string description)`
@@ -2379,9 +2406,15 @@ Browse the published API surface by public member.
 - [CompletedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-completedcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `completed` observations reported so far.
   - `int CompletedCount { get; set; }`
+- [CompleteGovernanceDeclaration](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-completegovernancedeclaration): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompleteGovernanceDeclaration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Complete the connector declaration so shared governance truth has the minimum required metadata.
+  - `const string CompleteGovernanceDeclaration`
 - [CompleteGovernanceDeclaration](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids-completegovernancedeclaration): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompleteGovernanceDeclaration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Complete the connector declaration so shared governance truth has the minimum required metadata.
   - `const string CompleteGovernanceDeclaration`
+- [CompleteTaskBaseline](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-completetaskbaseline): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompleteTaskBaseline&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Complete the declared task baseline before relying on desired-versus-observed drift posture.
+  - `const string CompleteTaskBaseline`
 - [CompleteTaskBaseline](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-completetaskbaseline): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompleteTaskBaseline&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Complete the declared task baseline before relying on desired-versus-observed drift posture.
   - `const string CompleteTaskBaseline`
@@ -3168,6 +3201,9 @@ Browse the published API surface by public member.
 - [DefaultTriggerMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaulttriggermode): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultTriggerMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default normalized trigger posture for active governed routes.
   - `string DefaultTriggerMode { get; }`
+- [DeferControlPlane](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-defercontrolplane): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DeferControlPlane&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Defer control-plane ownership until Cephalon ships write-path connector management for the declared mode.
+  - `const string DeferControlPlane`
 - [DeferControlPlane](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids-defercontrolplane): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DeferControlPlane&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Defer control-plane ownership until Cephalon ships write-path connector management for the declared mode.
   - `const string DeferControlPlane`
@@ -3296,6 +3332,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-description): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable execution-runtime description.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing action-plan summary.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing drift summary.
@@ -3870,12 +3909,21 @@ Browse the published API surface by public member.
 - [Drift](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-drift): `Fields` on `CellTrafficAutomationMaterializationConditionCategories` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Drift&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - A condition that describes drift posture between authored Cephalon intent and the observed control-plane state.
   - `const string Drift`
+- [DriftBaselineIncomplete](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-driftbaselineincomplete): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DriftBaselineIncomplete&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector does not yet declare the task baseline required for drift evaluation.
+  - `const string DriftBaselineIncomplete`
+- [DriftDetected](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-driftdetected): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DriftDetected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector currently reports declared-versus-observed drift that needs investigation.
+  - `const string DriftDetected`
 - [Drifted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates-drifted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Drifted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently reports declared-versus-observed drift.
   - `const string Drifted`
 - [Drifted](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-drifted): `Fields` on `CellTrafficAutomationDriftStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Drifted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer observed drift between desired and actual control-plane posture.
   - `const string Drifted`
+- [DriftState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-driftstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DriftState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector drift state that informed the action plan.
+  - `string DriftState { get; set; }`
 - [DropletId](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-dropletid): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=DropletId&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the Droplet identifier to stamp onto exported resources.
   - `string DropletId { get; set; }`
@@ -5325,6 +5373,9 @@ Browse the published API surface by public member.
 - [FutureControlPlane](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-futurecontrolplane): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FutureControlPlane&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime declares a future write-path or control-plane management mode that Cephalon does not yet own.
   - `const string FutureControlPlane`
+- [FutureControlPlaneDeferred](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-futurecontrolplanedeferred): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FutureControlPlaneDeferred&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector declares a future write-path management mode that Cephalon does not own yet.
+  - `const string FutureControlPlaneDeferred`
 - [FutureControlPlaneMode](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories-futurecontrolplanemode): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FutureControlPlaneMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime declares a future control-plane management mode that Cephalon has not adopted yet.
   - `const string FutureControlPlaneMode`
@@ -5583,6 +5634,12 @@ Browse the published API surface by public member.
 - [GetByIdAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryreader-getbyidasync-system-string-system-threading-cancellationtoken): `Methods` on `IAuditHistoryReader` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByIdAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Resolves one audit-history entry by its stable identifier.
   - `ValueTask<AuditHistoryEntry> GetByIdAsync(string auditEntryId, CancellationToken cancellationToken)`
+- [GetByManagedConnectorActionId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectoractionid-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector action plan includes the requested action identifier.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorActionId(string actionId)`
+- [GetByManagedConnectorActionPlanState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectoractionplanstate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorActionPlanState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current managed-connector action plan matches the requested state.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorActionPlanState(string actionPlanState)`
 - [GetByManagedConnectorDriftCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordriftcategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorDriftCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector drift answer includes the requested category.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDriftCategory(string driftCategory)`
@@ -5883,6 +5940,9 @@ Browse the published API surface by public member.
 - [GovernanceMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-governancemode): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the governance posture inherited from the governed route.
   - `string GovernanceMode { get; }`
+- [GovernanceOutOfPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-governanceoutofpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceOutOfPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector declaration is currently out of policy.
+  - `const string GovernanceOutOfPolicy`
 - [GovernanceOverrideSummaries](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-governanceoverridesummaries): `Properties` on `RestEndpointAuthoringPolicyAuthoringStyleDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceOverrideSummaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the grouped host-governance override-rule outcomes summarized by rule for this authoring style.
   - `IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }`
@@ -5895,6 +5955,9 @@ Browse the published API surface by public member.
 - [GovernanceOverrideSummaries](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-governanceoverridesummaries): `Properties` on `RestEndpointPublicationGroupDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceOverrideSummaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the grouped host-governance override-rule outcomes summarized by rule.
   - `IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }`
+- [GovernanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-governancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector governance state that informed the action plan.
+  - `string GovernanceState { get; set; }`
 - [GovernanceSuppressedCandidateIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-governancesuppressedcandidateids): `Properties` on `RestEndpointAuthoringPolicyAuthoringStyleDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceSuppressedCandidateIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered candidate identifiers that survived authoring policy but were later suppressed by host governance for this authoring style.
   - `IReadOnlyList<string> GovernanceSuppressedCandidateIds { get; }`
@@ -7077,6 +7140,9 @@ Browse the published API surface by public member.
 - [Invalid](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-invalid-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an invalid-request result for the specified payload type.
   - `Result<T> Invalid<T>(string code, string message, BehaviorFault fault)`
+- [InvestigateDrift](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-investigatedrift): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InvestigateDrift&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Investigate the reported desired-versus-observed managed-connector drift.
+  - `const string InvestigateDrift`
 - [InvestigateDrift](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-investigatedrift): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InvestigateDrift&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Investigate the reported desired-versus-observed managed-connector drift.
   - `const string InvestigateDrift`
@@ -7104,6 +7170,9 @@ Browse the published API surface by public member.
 - [IsAvailable](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-isavailable-system-string): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsAvailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Determines whether a technology is available in the runtime catalog.
   - `bool IsAvailable(string value)`
+- [IsBlocked](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-isblocked): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the managed connector is currently blocked by runtime remediation work.
+  - `bool IsBlocked { get; }`
 - [IsBlocked](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-isblocked): `Properties` on `CdcCaptureExecutionRuntimeRemediationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime is currently blocked by failed CDC captures.
   - `bool IsBlocked { get; }`
@@ -7188,6 +7257,9 @@ Browse the published API surface by public member.
 - [IsObservationStale](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-isobservationstale): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsObservationStale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest report is now stale according to the execution-runtime reporting policy.
   - `bool IsObservationStale { get; }`
+- [IsObserve](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-isobserve): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsObserve&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the managed connector can currently remain in observe mode.
+  - `bool IsObserve { get; }`
 - [IsObserveOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-isobserveonly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsObserveOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime is currently governed in observe-only mode.
   - `bool IsObserveOnly { get; }`
@@ -7239,6 +7311,9 @@ Browse the published API surface by public member.
 - [IsVerified](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-isverified): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=IsVerified&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Whether this signature verified successfully against a trusted public key or trusted signing certificate.
   - `bool IsVerified { get; set; }`
+- [IsWaiting](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-iswaiting): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsWaiting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the managed connector is currently waiting for more runtime truth.
+  - `bool IsWaiting { get; }`
 
 ## J
 
@@ -7260,6 +7335,9 @@ Browse the published API surface by public member.
 - [KeepAliveSeconds](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-keepaliveseconds): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=KeepAliveSeconds&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
   - Gets or sets the MQTT keep-alive interval, in seconds, advertised through the `CONNECT` packet.
   - `int KeepAliveSeconds { get; set; }`
+- [KeepObserveOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-keepobserveonly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=KeepObserveOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Keep the connector in observe-only mode and continue using shared runtime reporting truth.
+  - `const string KeepObserveOnly`
 - [KeepObserveOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids-keepobserveonly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=KeepObserveOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Keep the connector in observe-only mode and continue using shared runtime reporting truth.
   - `const string KeepObserveOnly`
@@ -7677,6 +7755,9 @@ Browse the published API surface by public member.
 
 ## M
 
+- [ManagedConnectorActionPlan](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectoractionplan): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorActionPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing managed-connector action plan derived from remediation, governance, and drift posture.
+  - `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus ManagedConnectorActionPlan { get; set; }`
 - [ManagedConnectorDrift](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordrift): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorDrift&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing desired-versus-observed managed-connector drift posture for the execution runtime.
   - `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus ManagedConnectorDrift { get; set; }`
@@ -8812,6 +8893,9 @@ Browse the published API surface by public member.
 - [Nodes](cephalon-edge.md#member-p-cephalon-edge-services-iedgenodecatalog-nodes): `Properties` on `IEdgeNodeCatalog` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Nodes&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the effective node set after host options and module contributors have both been applied.
   - `IReadOnlyList<EdgeNodeDescriptor> Nodes { get; }`
+- [None](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-none): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - No operator action is currently required for the execution runtime.
+  - `const string None`
 - [None](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-none): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - No operator action is currently required for the execution runtime.
   - `const string None`
@@ -8830,6 +8914,9 @@ Browse the published API surface by public member.
 - [NotAllowedAuthoringStyle](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-notallowedauthoringstyle): `Fields` on `RestEndpointAuthoringPolicySuppressionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotAllowedAuthoringStyle&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The candidate authoring style is outside the explicitly allowed authoring-style set.
   - `const RestEndpointAuthoringPolicySuppressionKind NotAllowedAuthoringStyle`
+- [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The execution runtime does not currently represent a managed connector.
+  - `const string NotApplicable`
 - [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime does not currently represent a managed connector.
   - `const string NotApplicable`
@@ -8902,6 +8989,9 @@ Browse the published API surface by public member.
 - [ObservationStaleAfterSeconds](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-observationstaleafterseconds): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ObservationStaleAfterSeconds&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the report-freshness window, in seconds, used to mark connector observations stale.
   - `int? ObservationStaleAfterSeconds { get; set; }`
+- [Observe](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-observe): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Observe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector can stay in steady-state observe mode.
+  - `const string Observe`
 - [Observe](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-observe): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Observe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer is observing control-plane truth without writing changes.
   - `const string Observe`
@@ -8941,6 +9031,9 @@ Browse the published API surface by public member.
 - [ObserveOnly](cephalon-edge-traefik.md#member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-observeonly): `Fields` on `TraefikTrafficObservationModes` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=ObserveOnly&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Reads live Traefik Kubernetes CRD resources and projects the observed posture back into the shared runtime catalog.
   - `const string ObserveOnly`
+- [ObserveOnlySteadyState](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-observeonlysteadystate): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObserveOnlySteadyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector can continue in steady-state observe-only posture.
+  - `const string ObserveOnlySteadyState`
 - [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-occurredatutc): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the time at which the audited operation occurred.
   - `DateTimeOffset OccurredAtUtc { get; }`
@@ -9753,6 +9846,9 @@ Browse the published API surface by public member.
 - [PreviousReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-previousreporterid): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PreviousReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the previous active reporter identity when the current reporter took over after lease expiry.
   - `string PreviousReporterId { get; set; }`
+- [PrimaryActionId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-primaryactionid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PrimaryActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the primary action identifier for the current action plan.
+  - `string PrimaryActionId { get; }`
 - [PrimaryToolId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-primarytoolid): `Properties` on `DatabaseMigrationOperationalExecutionGroupCommandBatch` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PrimaryToolId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the single stable operator tool identifier when the batch uses only one tool.
   - `string PrimaryToolId { get; }`
@@ -10497,6 +10593,9 @@ Browse the published API surface by public member.
 - [Remediation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-remediation): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Remediation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the aggregate remediation posture currently visible for the execution runtime.
   - `CdcCaptureExecutionRuntimeRemediationStatus Remediation { get; set; }`
+- [RemediationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-remediationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RemediationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current runtime-level remediation state that informed the action plan.
+  - `string RemediationState { get; set; }`
 - [RemoveBindingProperties](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-removebindingproperties): `Fields` on `RestEndpointOverrideActionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RemoveBindingProperties&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The rule removes explicit request-binding properties from the source plan.
   - `const RestEndpointOverrideActionKind RemoveBindingProperties`
@@ -10818,6 +10917,9 @@ Browse the published API surface by public member.
 - [Requires](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-requires): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requires&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the pattern identifiers required by this pattern.
   - `IReadOnlyList<string> Requires { get; }`
+- [RequiresAction](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-requiresaction): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresAction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the managed connector currently requires operator action.
+  - `bool RequiresAction { get; }`
 - [RequiresAttention](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-requiresattention): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresAttention&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector currently requires operator drift attention.
   - `bool RequiresAttention { get; }`
@@ -10977,6 +11079,9 @@ Browse the published API surface by public member.
 - [ResolveRole](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolverole-system-iserviceprovider-system-string): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveRole&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Resolves an arbitrary supported database role from `Engine:Databases`.
   - `EntityFrameworkDatabaseRoleContext ResolveRole(IServiceProvider serviceProvider, string requestedRoleId)`
+- [ResolveRuntimeRemediation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-resolveruntimeremediation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolveRuntimeRemediation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Resolve runtime remediation work before relying on deeper managed-connector follow-through.
+  - `const string ResolveRuntimeRemediation`
 - [ResolveSharedWrite](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolvesharedwrite-system-iserviceprovider): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveSharedWrite&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Resolves the shared write role used when one `DbContext` type serves both reads and writes.
   - `EntityFrameworkDatabaseRoleContext ResolveSharedWrite(IServiceProvider serviceProvider)`
@@ -11544,6 +11649,9 @@ Browse the published API surface by public member.
 - [RuntimeOperationalStory](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeoperationalstory-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimemodulelifecyclestate-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimelifecycleevent): `Constructors` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeOperationalStory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why.
   - `RuntimeOperationalStory(DateTimeOffset GeneratedAtUtc, RuntimeStatusSnapshot Status, IReadOnlyList<PackageManifest> LoadedPackages, IReadOnlyList<RuntimeModuleLifecycleState> Modules, IReadOnlyList<RuntimeLifecycleEvent> Timeline)`
+- [RuntimeRemediation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-runtimeremediation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeRemediation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector currently needs non-blocking runtime remediation work.
+  - `const string RuntimeRemediation`
 - [RuntimeRestartCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-runtimerestartcountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeRestartCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the counter name for runtime restart attempts.
   - `const string RuntimeRestartCounterName`
@@ -12421,6 +12529,9 @@ Browse the published API surface by public member.
 - [StartupReadinessDelay](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=StartupReadinessDelay&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the readiness warmup window that applies after startup succeeds.
   - `TimeSpan StartupReadinessDelay { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable managed-connector action-plan state.
+  - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable managed-connector drift state.
   - `string State { get; }`
@@ -14026,9 +14137,18 @@ Browse the published API surface by public member.
 
 ## W
 
+- [WaitForRuntimeReport](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-waitforruntimereport): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WaitForRuntimeReport&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Wait for the managed connector to report task topology before evaluating desired-versus-observed drift.
+  - `const string WaitForRuntimeReport`
 - [WaitForRuntimeReport](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-waitforruntimereport): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WaitForRuntimeReport&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Wait for the managed connector to report task topology before evaluating desired-versus-observed drift.
   - `const string WaitForRuntimeReport`
+- [Waiting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-waiting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Waiting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector is currently waiting for more runtime truth before deeper follow-through.
+  - `const string Waiting`
+- [WaitingForRuntimeTruth](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-waitingforruntimetruth): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WaitingForRuntimeTruth&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The managed connector is waiting for additional runtime truth before drift can be evaluated.
+  - `const string WaitingForRuntimeTruth`
 - [Warning](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-warning): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Warning&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Warning — review recommended.
   - `const BehaviorAdvisorySeverity Warning`

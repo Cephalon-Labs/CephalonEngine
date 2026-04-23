@@ -178,18 +178,30 @@ managed connectors can keep desired-versus-observed drift on the existing `/engi
 `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a Debezium-only drift
 registry.
 
+That same shared execution-runtime story now also keeps managed-connector action planning
+explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorActionPlan` publishes stable
+`not-applicable` / `observe` / `waiting` / `action-required` / `blocked` posture together with
+action-plan categories, ordered action ids, and the source remediation, governance, plus drift
+state. The shared execution-runtime catalog derives that answer from the merged remediation,
+governance, and desired-versus-observed drift truth, so operator follow-through can stay on the
+existing `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a
+Debezium-only action-planning registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
-state, managed-connector governance category, managed-connector drift state, and
-managed-connector drift category as well.
+state, managed-connector governance category, managed-connector drift state,
+managed-connector drift category, managed-connector action-plan state, and managed-connector
+action id as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
 `GetByRemediationCategory(...)`, `GetByManagedConnectorGovernanceState(...)`,
 `GetByManagedConnectorGovernanceCategory(...)`, `GetByManagedConnectorDriftState(...)`, and
-`GetByManagedConnectorDriftCategory(...)`, so host code, provider packs, and tooling can narrow
-the shared CDC runtime story without rebuilding a second coordination, remediation,
-managed-connector governance, or managed-connector drift index. ASP.NET Core maps those same
+`GetByManagedConnectorDriftCategory(...)`, `GetByManagedConnectorActionPlanState(...)`, and
+`GetByManagedConnectorActionId(...)`, so host code, provider packs, and tooling can narrow the
+shared CDC runtime story without rebuilding a second coordination, remediation,
+managed-connector governance, managed-connector drift, or managed-connector action-planning
+index. ASP.NET Core maps those same
 filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
 `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
@@ -204,8 +216,10 @@ filters through
 `/engine/cdc-capture-runtimes/governance/{governanceState}` and
 `/engine/cdc-capture-runtimes/governance/categories/{governanceCategory}` plus
 `/engine/cdc-capture-runtimes/drift/{driftState}` and
-`/engine/cdc-capture-runtimes/drift/categories/{driftCategory}` so the live host surface stays
-aligned with the same shared runtime-state and execution-runtime catalogs.
+`/engine/cdc-capture-runtimes/drift/categories/{driftCategory}` plus
+`/engine/cdc-capture-runtimes/action-plans/{actionPlanState}` and
+`/engine/cdc-capture-runtimes/actions/{actionId}` so the live host surface stays aligned with the
+same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,
@@ -244,11 +258,12 @@ logical-streaming, binlog, and redo-log families without inventing a second cont
 
 `Cephalon.Data.Debezium` now proves that the same runtime story also fits external managed
 connectors without faking a Cephalon-hosted execution loop. Its managed-connector descriptors plus
-shared report-sink bridge keep Debezium or Kafka Connect style lifecycle, reconciliation, and
-reporter-coordination truth on the same `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot`
-surfaces, while the shared execution-runtime catalog now rolls that connector posture plus
-managed-connector governance and desired-versus-observed drift back into typed runtime-level
-operator summaries instead of inventing a Debezium-only status registry.
+shared report-sink bridge keep Debezium or Kafka Connect style lifecycle, reconciliation,
+reporter-coordination truth, governance posture, desired-versus-observed drift posture, and
+operator action-planning truth on the same `/engine/cdc-*`, `/engine/runtime-story`, and
+`snapshot` surfaces, while the shared execution-runtime catalog now rolls that connector posture
+back into typed runtime-level operator summaries instead of inventing a Debezium-only status
+registry.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

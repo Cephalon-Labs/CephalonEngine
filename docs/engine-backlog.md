@@ -3027,6 +3027,64 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-171 Phase 13 managed-connector action-planning baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, and `ENG-170` shipped shared remediation, governance, and
+  desired-versus-observed drift truth, but operators still had to read those three answers and
+  manually decide what action Cephalon should recommend next on the same shared runtime surface
+- that next follow-through needed to keep managed-connector action planning additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only operator
+  planner or prematurely claiming Kafka Connect write-path ownership
+- teams also needed route-level drill-downs for action-plan state and action id without losing the
+  underlying remediation, governance, and drift truth that already shipped
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector action-plan contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `observe`, `waiting`,
+  `action-required`, and `blocked` posture together with action-plan categories, ordered action
+  ids, and source remediation, governance, plus drift state
+- the shared execution-runtime catalog now derives that action plan from merged remediation,
+  governance, and drift truth instead of forcing hosts or providers to rebuild a second operator
+  planner
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive action-plan-state and action-id
+  drill-down methods, and ASP.NET Core publishes those same filters on the existing
+  `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later Debezium connector-management or broader write-path readiness
+  work remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorActionPlan`
+- `Cephalon.Data` now derives runtime-level `observe`, `waiting`, `action-required`, and
+  `blocked` posture plus stable category ids such as `blocking-remediation`,
+  `runtime-remediation`, `governance-out-of-policy`, `future-control-plane-deferred`,
+  `drift-baseline-incomplete`, `waiting-for-runtime-truth`, `drift-detected`, and
+  `observe-only-steady-state`, along with ordered action ids such as
+  `resolve-runtime-remediation`, `complete-governance-declaration`, `defer-control-plane`,
+  `complete-task-baseline`, `wait-for-runtime-report`, `investigate-drift`, and
+  `keep-observe-only` from merged remediation, governance, and drift truth instead of
+  materializing a second operator planner
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes `GetByManagedConnectorActionPlanState(...)`
+  plus `GetByManagedConnectorActionId(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/action-plans/{actionPlanState}` and
+  `/engine/cdc-capture-runtimes/actions/{actionId}` so host routes stay aligned with the same
+  shared runtime story
+- targeted coverage now proves the action-planning baseline through composition tests `34/34`,
+  hosting tests `12/12`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-170 Phase 13 managed-connector desired-versus-observed drift baseline
 
 Status: done

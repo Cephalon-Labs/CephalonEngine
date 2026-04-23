@@ -261,6 +261,8 @@ public sealed class DataRuntimePackTests
         Assert.Equal("data-cdc-capture-flow", runtimeDescriptor.ExecutionGraphId);
         Assert.Equal("data-cdc-capture-pump", runtimeDescriptor.HostedExecutionId);
         Assert.False(runtimeDescriptor.Summary.HasReports);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.NotApplicable, runtimeDescriptor.ManagedConnectorActionPlan.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.None, runtimeDescriptor.ManagedConnectorActionPlan.PrimaryActionId);
         var cdcCapture = cdcCaptureCatalog.GetById("tenant-profile-cdc");
         Assert.NotNull(cdcCapture);
         Assert.True(cdcCapture.ExecutionBinding.IsBound);

@@ -8408,6 +8408,16 @@ string Id { get; }
 
 Gets the stable execution-runtime identifier.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectoractionplan"></a>
+
+##### `ManagedConnectorActionPlan`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus ManagedConnectorActionPlan { get; set; }
+```
+
+Gets the operator-facing managed-connector action plan derived from remediation, governance, and drift posture.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordrift"></a>
 
 ##### `ManagedConnectorDrift`
@@ -8487,6 +8497,434 @@ CdcCaptureExecutionRuntimeSummary Summary { get; }
 ```
 
 Gets the latest aggregate runtime summary reported for the execution runtime.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds`
+
+Defines the stable operator-facing action identifiers used by managed-connector action plans.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-completegovernancedeclaration"></a>
+
+##### `CompleteGovernanceDeclaration`
+
+```csharp
+const string CompleteGovernanceDeclaration
+```
+
+Complete the connector declaration so shared governance truth has the minimum required metadata.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-completetaskbaseline"></a>
+
+##### `CompleteTaskBaseline`
+
+```csharp
+const string CompleteTaskBaseline
+```
+
+Complete the declared task baseline before relying on desired-versus-observed drift posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-defercontrolplane"></a>
+
+##### `DeferControlPlane`
+
+```csharp
+const string DeferControlPlane
+```
+
+Defer control-plane ownership until Cephalon ships write-path connector management for the declared mode.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-investigatedrift"></a>
+
+##### `InvestigateDrift`
+
+```csharp
+const string InvestigateDrift
+```
+
+Investigate the reported desired-versus-observed managed-connector drift.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-keepobserveonly"></a>
+
+##### `KeepObserveOnly`
+
+```csharp
+const string KeepObserveOnly
+```
+
+Keep the connector in observe-only mode and continue using shared runtime reporting truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No operator action is currently required for the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-resolveruntimeremediation"></a>
+
+##### `ResolveRuntimeRemediation`
+
+```csharp
+const string ResolveRuntimeRemediation
+```
+
+Resolve runtime remediation work before relying on deeper managed-connector follow-through.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-waitforruntimereport"></a>
+
+##### `WaitForRuntimeReport`
+
+```csharp
+const string WaitForRuntimeReport
+```
+
+Wait for the managed connector to report task topology before evaluating desired-versus-observed drift.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories`
+
+Defines the stable action-plan category identifiers used by managed-connector execution-runtime answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-blockingremediation"></a>
+
+##### `BlockingRemediation`
+
+```csharp
+const string BlockingRemediation
+```
+
+The managed connector is currently blocked by active runtime remediation work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-driftbaselineincomplete"></a>
+
+##### `DriftBaselineIncomplete`
+
+```csharp
+const string DriftBaselineIncomplete
+```
+
+The managed connector does not yet declare the task baseline required for drift evaluation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-driftdetected"></a>
+
+##### `DriftDetected`
+
+```csharp
+const string DriftDetected
+```
+
+The managed connector currently reports declared-versus-observed drift that needs investigation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-futurecontrolplanedeferred"></a>
+
+##### `FutureControlPlaneDeferred`
+
+```csharp
+const string FutureControlPlaneDeferred
+```
+
+The managed connector declares a future write-path management mode that Cephalon does not own yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The managed connector declaration is currently out of policy.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-observeonlysteadystate"></a>
+
+##### `ObserveOnlySteadyState`
+
+```csharp
+const string ObserveOnlySteadyState
+```
+
+The managed connector can continue in steady-state observe-only posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-runtimeremediation"></a>
+
+##### `RuntimeRemediation`
+
+```csharp
+const string RuntimeRemediation
+```
+
+The managed connector currently needs non-blocking runtime remediation work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-waitingforruntimetruth"></a>
+
+##### `WaitingForRuntimeTruth`
+
+```csharp
+const string WaitingForRuntimeTruth
+```
+
+The managed connector is waiting for additional runtime truth before drift can be evaluated.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates`
+
+Defines the stable action-plan state identifiers used by managed-connector execution-runtime answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-actionrequired"></a>
+
+##### `ActionRequired`
+
+```csharp
+const string ActionRequired
+```
+
+The managed connector currently requires operator action.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+The managed connector is currently blocked by higher-priority remediation work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently represent a managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-observe"></a>
+
+##### `Observe`
+
+```csharp
+const string Observe
+```
+
+The managed connector can stay in steady-state observe mode.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstates-waiting"></a>
+
+##### `Waiting`
+
+```csharp
+const string Waiting
+```
+
+The managed connector is currently waiting for more runtime truth before deeper follow-through.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus`
+
+Describes the current operator-facing managed-connector action plan for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus(string state, string description)
+```
+
+Creates a new managed-connector action-plan answer.
+
+Parameters:
+- `state`: The stable action-plan state, such as `observe`, `waiting`, `action-required`, `blocked`, or `not-applicable`.
+- `description`: An optional operator-facing action-plan summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-actioncount"></a>
+
+##### `ActionCount`
+
+```csharp
+int ActionCount { get; }
+```
+
+Gets the number of active action identifiers currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-actionids"></a>
+
+##### `ActionIds`
+
+```csharp
+IReadOnlyList<string> ActionIds { get; set; }
+```
+
+Gets the ordered action identifiers currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active action-plan categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable action-plan categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing action-plan summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed the action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed the action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether the managed connector is currently blocked by runtime remediation work.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-isobserve"></a>
+
+##### `IsObserve`
+
+```csharp
+bool IsObserve { get; }
+```
+
+Gets a value indicating whether the managed connector can currently remain in observe mode.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-iswaiting"></a>
+
+##### `IsWaiting`
+
+```csharp
+bool IsWaiting { get; }
+```
+
+Gets a value indicating whether the managed connector is currently waiting for more runtime truth.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; }
+```
+
+Gets the primary action identifier for the current action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed the action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-requiresaction"></a>
+
+##### `RequiresAction`
+
+```csharp
+bool RequiresAction { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires operator action.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector action-plan state.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids"></a>
 
@@ -15450,6 +15888,36 @@ Returns: The matching execution-runtime descriptor, or `null` when none exists.
 
 Parameters:
 - `executionRuntimeId`: The stable execution-runtime identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectoractionid-system-string"></a>
+
+##### `GetByManagedConnectorActionId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorActionId(string actionId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector action plan includes the requested action identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that action identifier.
+
+Parameters:
+- `actionId`: The stable managed-connector action identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectoractionplanstate-system-string"></a>
+
+##### `GetByManagedConnectorActionPlanState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorActionPlanState(string actionPlanState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector action plan matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that action-plan state.
+
+Parameters:
+- `actionPlanState`: The stable managed-connector action-plan state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordriftcategory-system-string"></a>
 

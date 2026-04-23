@@ -244,6 +244,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorDriftStatus ManagedConnectorDrift { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Unknown);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector action plan derived from remediation, governance, and drift posture.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus ManagedConnectorActionPlan { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

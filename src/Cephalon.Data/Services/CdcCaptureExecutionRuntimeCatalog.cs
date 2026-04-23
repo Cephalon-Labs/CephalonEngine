@@ -164,6 +164,32 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparer.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorActionPlanState(string actionPlanState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(actionPlanState);
+        var normalizedActionPlanState = actionPlanState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorActionPlan.State,
+            normalizedActionPlanState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorActionId(string actionId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(actionId);
+        var normalizedActionId = actionId.Trim();
+
+        return FilterRuntimes(runtime =>
+            string.Equals(
+                runtime.ManagedConnectorActionPlan.PrimaryActionId,
+                normalizedActionId,
+                StringComparison.OrdinalIgnoreCase) ||
+            runtime.ManagedConnectorActionPlan.ActionIds.Contains(
+                normalizedActionId,
+                StringComparer.OrdinalIgnoreCase));
+    }
+
     private CdcCaptureExecutionRuntimeDescriptor[] FilterRuntimes(
         Func<CdcCaptureExecutionRuntimeDescriptor, bool> predicate)
     {
@@ -186,6 +212,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             : CreateSummary(runtime, captureIds, matchingStates);
         var managedConnectorGovernance = CreateManagedConnectorGovernance(runtime.ExecutionTopology, mergedMetadata);
         var managedConnectorDrift = CreateManagedConnectorDrift(runtime.ExecutionTopology, mergedMetadata);
+        var managedConnectorActionPlan = CreateManagedConnectorActionPlan(
+            runtime.ExecutionTopology,
+            summary.Remediation,
+            managedConnectorGovernance,
+            managedConnectorDrift);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
@@ -195,7 +226,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             summary: summary)
         {
             ManagedConnectorGovernance = managedConnectorGovernance,
-            ManagedConnectorDrift = managedConnectorDrift
+            ManagedConnectorDrift = managedConnectorDrift,
+            ManagedConnectorActionPlan = managedConnectorActionPlan
         };
     }
 
@@ -757,6 +789,196 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         };
     }
 
+    private static CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus CreateManagedConnectorActionPlan(
+        string executionTopology,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift)
+    {
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+
+        if (!string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase))
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.NotApplicable,
+                "The execution runtime does not currently represent a managed connector.")
+            {
+                RemediationState = remediation.State,
+                GovernanceState = governance.State,
+                DriftState = drift.State
+            };
+        }
+
+        var hasRuntimeRemediationAttention =
+            remediation.CategoryIds.Contains(CdcCaptureExecutionRuntimeRemediationCategories.StaleObservations, StringComparer.OrdinalIgnoreCase) ||
+            remediation.CategoryIds.Contains(CdcCaptureExecutionRuntimeRemediationCategories.ReporterCoordinationIssues, StringComparer.OrdinalIgnoreCase);
+        var isDriftBaselineIncomplete = drift.CategoryIds.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingTaskBaseline,
+            StringComparer.OrdinalIgnoreCase);
+        var isWaitingForRuntimeTruth =
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ReportedTaskTopologyUnavailable, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ReportedTaskIdentityUnavailable, StringComparer.OrdinalIgnoreCase);
+
+        var categories = CreateManagedConnectorActionPlanCategories(
+            remediation,
+            governance,
+            drift,
+            hasRuntimeRemediationAttention,
+            isDriftBaselineIncomplete,
+            isWaitingForRuntimeTruth);
+
+        if (remediation.IsBlocked)
+        {
+            return CreateManagedConnectorActionPlanStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.Blocked,
+                CreateManagedConnectorBlockedActionPlanDescription(remediation.Description),
+                categories,
+                CreateManagedConnectorActionIds(
+                    CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.ResolveRuntimeRemediation,
+                    remediation,
+                    governance,
+                    drift,
+                    hasRuntimeRemediationAttention,
+                    isDriftBaselineIncomplete,
+                    isWaitingForRuntimeTruth),
+                remediation,
+                governance,
+                drift);
+        }
+
+        if (hasRuntimeRemediationAttention)
+        {
+            return CreateManagedConnectorActionPlanStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.ActionRequired,
+                CreateManagedConnectorRuntimeRemediationActionPlanDescription(remediation.Description),
+                categories,
+                CreateManagedConnectorActionIds(
+                    CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.ResolveRuntimeRemediation,
+                    remediation,
+                    governance,
+                    drift,
+                    hasRuntimeRemediationAttention,
+                    isDriftBaselineIncomplete,
+                    isWaitingForRuntimeTruth),
+                remediation,
+                governance,
+                drift);
+        }
+
+        if (governance.IsOutOfPolicy)
+        {
+            return CreateManagedConnectorActionPlanStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.ActionRequired,
+                CreateManagedConnectorGovernanceActionPlanDescription(governance.Description),
+                categories,
+                CreateManagedConnectorActionIds(
+                    CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.CompleteGovernanceDeclaration,
+                    remediation,
+                    governance,
+                    drift,
+                    hasRuntimeRemediationAttention,
+                    isDriftBaselineIncomplete,
+                    isWaitingForRuntimeTruth),
+                remediation,
+                governance,
+                drift);
+        }
+
+        if (isDriftBaselineIncomplete)
+        {
+            return CreateManagedConnectorActionPlanStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.ActionRequired,
+                CreateManagedConnectorTaskBaselineActionPlanDescription(drift.Description),
+                categories,
+                CreateManagedConnectorActionIds(
+                    CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.CompleteTaskBaseline,
+                    remediation,
+                    governance,
+                    drift,
+                    hasRuntimeRemediationAttention,
+                    isDriftBaselineIncomplete,
+                    isWaitingForRuntimeTruth),
+                remediation,
+                governance,
+                drift);
+        }
+
+        if (isWaitingForRuntimeTruth)
+        {
+            return CreateManagedConnectorActionPlanStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.Waiting,
+                CreateManagedConnectorWaitForRuntimeTruthActionPlanDescription(drift.Description),
+                categories,
+                CreateManagedConnectorActionIds(
+                    CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.WaitForRuntimeReport,
+                    remediation,
+                    governance,
+                    drift,
+                    hasRuntimeRemediationAttention,
+                    isDriftBaselineIncomplete,
+                    isWaitingForRuntimeTruth),
+                remediation,
+                governance,
+                drift);
+        }
+
+        if (drift.IsDrifted)
+        {
+            return CreateManagedConnectorActionPlanStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.ActionRequired,
+                CreateManagedConnectorDriftActionPlanDescription(drift.Description),
+                categories,
+                CreateManagedConnectorActionIds(
+                    CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.InvestigateDrift,
+                    remediation,
+                    governance,
+                    drift,
+                    hasRuntimeRemediationAttention,
+                    isDriftBaselineIncomplete,
+                    isWaitingForRuntimeTruth),
+                remediation,
+                governance,
+                drift);
+        }
+
+        if (governance.RequiresControlPlaneSupport)
+        {
+            return CreateManagedConnectorActionPlanStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.Observe,
+                CreateManagedConnectorDeferredControlPlaneActionPlanDescription(governance.Description),
+                categories,
+                CreateManagedConnectorActionIds(
+                    CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.DeferControlPlane,
+                    remediation,
+                    governance,
+                    drift,
+                    hasRuntimeRemediationAttention,
+                    isDriftBaselineIncomplete,
+                    isWaitingForRuntimeTruth),
+                remediation,
+                governance,
+                drift);
+        }
+
+        return CreateManagedConnectorActionPlanStatus(
+            CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.Observe,
+            CreateManagedConnectorObserveActionPlanDescription(governance.Description),
+            categories,
+            CreateManagedConnectorActionIds(
+                CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.KeepObserveOnly,
+                remediation,
+                governance,
+                drift,
+                hasRuntimeRemediationAttention,
+                isDriftBaselineIncomplete,
+                isWaitingForRuntimeTruth),
+            remediation,
+            governance,
+            drift);
+    }
+
     private static ManagedConnectorMetadataSnapshot ResolveManagedConnectorMetadata(
         IReadOnlyDictionary<string, string> metadata)
     {
@@ -798,6 +1020,211 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             TaskReconciliationState: ResolveMetadata(metadata, ManagedConnectorTaskReconciliationStateMetadataKey, "debeziumTaskReconciliationState"),
             ReconciliationState: ResolveMetadata(metadata, ManagedConnectorReconciliationStateMetadataKey, "debeziumReconciliationState"),
             ReconciliationReason: ResolveMetadata(metadata, ManagedConnectorReconciliationReasonMetadataKey, "debeziumReconciliationReason"));
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus CreateManagedConnectorActionPlanStatus(
+        string state,
+        string description,
+        IReadOnlyList<string> categoryIds,
+        IReadOnlyList<string> actionIds,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift)
+    {
+        return new CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus(state, description)
+        {
+            CategoryIds = categoryIds,
+            ActionIds = actionIds,
+            RemediationState = remediation.State,
+            GovernanceState = governance.State,
+            DriftState = drift.State
+        };
+    }
+
+    private static string[] CreateManagedConnectorActionPlanCategories(
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        bool hasRuntimeRemediationAttention,
+        bool isDriftBaselineIncomplete,
+        bool isWaitingForRuntimeTruth)
+    {
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+
+        var categories = new List<string>(capacity: 4);
+        if (remediation.IsBlocked)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.BlockingRemediation);
+        }
+        else if (hasRuntimeRemediationAttention)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.RuntimeRemediation);
+        }
+
+        if (governance.IsOutOfPolicy)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.GovernanceOutOfPolicy);
+        }
+        else if (governance.RequiresControlPlaneSupport)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.FutureControlPlaneDeferred);
+        }
+
+        if (isDriftBaselineIncomplete)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.DriftBaselineIncomplete);
+        }
+        else if (isWaitingForRuntimeTruth)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.WaitingForRuntimeTruth);
+        }
+        else if (drift.IsDrifted)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.DriftDetected);
+        }
+
+        if (categories.Count == 0)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.ObserveOnlySteadyState);
+        }
+
+        return [.. categories];
+    }
+
+    private static string[] CreateManagedConnectorActionIds(
+        string primaryActionId,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        bool hasRuntimeRemediationAttention,
+        bool isDriftBaselineIncomplete,
+        bool isWaitingForRuntimeTruth)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(primaryActionId);
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+
+        var actions = new List<string>(capacity: 4);
+        AddManagedConnectorAction(actions, primaryActionId);
+
+        if (remediation.IsBlocked || hasRuntimeRemediationAttention)
+        {
+            AddManagedConnectorAction(actions, CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.ResolveRuntimeRemediation);
+        }
+
+        if (governance.IsOutOfPolicy)
+        {
+            AddManagedConnectorAction(actions, CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.CompleteGovernanceDeclaration);
+        }
+        else if (governance.RequiresControlPlaneSupport)
+        {
+            AddManagedConnectorAction(actions, CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.DeferControlPlane);
+        }
+
+        if (isDriftBaselineIncomplete)
+        {
+            AddManagedConnectorAction(actions, CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.CompleteTaskBaseline);
+        }
+        else if (isWaitingForRuntimeTruth)
+        {
+            AddManagedConnectorAction(actions, CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.WaitForRuntimeReport);
+        }
+        else if (drift.IsDrifted)
+        {
+            AddManagedConnectorAction(actions, CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.InvestigateDrift);
+        }
+
+        if (actions.Count == 0)
+        {
+            AddManagedConnectorAction(actions, CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.KeepObserveOnly);
+        }
+
+        return [.. actions];
+    }
+
+    private static void AddManagedConnectorAction(
+        List<string> actions,
+        string actionId)
+    {
+        ArgumentNullException.ThrowIfNull(actions);
+        if (string.IsNullOrWhiteSpace(actionId) ||
+            string.Equals(actionId, CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.None, StringComparison.OrdinalIgnoreCase) ||
+            actions.Contains(actionId, StringComparer.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        actions.Add(actionId.Trim());
+    }
+
+    private static string CreateManagedConnectorBlockedActionPlanDescription(string? remediationDescription)
+    {
+        return AppendManagedConnectorActionPlanDetail(
+            "The managed connector is currently blocked by runtime remediation work before deeper managed-connector follow-through.",
+            remediationDescription);
+    }
+
+    private static string CreateManagedConnectorRuntimeRemediationActionPlanDescription(string? remediationDescription)
+    {
+        return AppendManagedConnectorActionPlanDetail(
+            "The managed connector currently needs runtime remediation before deeper managed-connector follow-through.",
+            remediationDescription);
+    }
+
+    private static string CreateManagedConnectorGovernanceActionPlanDescription(string? governanceDescription)
+    {
+        return AppendManagedConnectorActionPlanDetail(
+            "The managed connector should complete governance policy declarations before relying on deeper managed-connector follow-through.",
+            governanceDescription);
+    }
+
+    private static string CreateManagedConnectorTaskBaselineActionPlanDescription(string? driftDescription)
+    {
+        return AppendManagedConnectorActionPlanDetail(
+            "The managed connector should complete its declared task baseline before relying on desired-versus-observed drift follow-through.",
+            driftDescription);
+    }
+
+    private static string CreateManagedConnectorWaitForRuntimeTruthActionPlanDescription(string? driftDescription)
+    {
+        return AppendManagedConnectorActionPlanDetail(
+            "The managed connector should wait for more runtime truth before Cephalon can recommend deeper drift follow-through.",
+            driftDescription);
+    }
+
+    private static string CreateManagedConnectorDriftActionPlanDescription(string? driftDescription)
+    {
+        return AppendManagedConnectorActionPlanDetail(
+            "The managed connector should investigate desired-versus-observed drift before taking on deeper managed-connector follow-through.",
+            driftDescription);
+    }
+
+    private static string CreateManagedConnectorDeferredControlPlaneActionPlanDescription(string? governanceDescription)
+    {
+        return AppendManagedConnectorActionPlanDetail(
+            "The managed connector can keep surfacing shared runtime truth while Cephalon defers write-path control-plane ownership for the declared management mode.",
+            governanceDescription);
+    }
+
+    private static string CreateManagedConnectorObserveActionPlanDescription(string? governanceDescription)
+    {
+        return AppendManagedConnectorActionPlanDetail(
+            "The managed connector can continue in observe-only mode on the shared runtime surface.",
+            governanceDescription);
+    }
+
+    private static string AppendManagedConnectorActionPlanDetail(
+        string summary,
+        string? detail)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(summary);
+
+        return string.IsNullOrWhiteSpace(detail)
+            ? summary.Trim()
+            : $"{summary.Trim()} {detail.Trim()}";
     }
 
     private static string CreateManagedConnectorInSyncDescription(string? reconciliationState)
