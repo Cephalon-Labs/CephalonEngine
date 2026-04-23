@@ -3027,6 +3027,68 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-170 Phase 13 managed-connector desired-versus-observed drift baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-169` shipped shared managed-connector governance posture, but operators still lacked one
+  typed answer for whether the declared connector baseline actually matched the latest reported
+  connector topology, connector identity, and task identity on the same shared runtime surface
+- that next follow-through needed to keep desired-versus-observed drift additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only drift
+  registry or prematurely claiming Kafka Connect write-path ownership
+- teams also needed route-level drill-downs for drift state and drift category without turning
+  missing task baselines or missing runtime reports into silent "healthy" answers
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector drift contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `unknown`,
+  `in-sync`, and `drifted` posture together with drift categories, recommended action ids,
+  declared-versus-reported connector identity, declared-versus-reported task identity, and
+  reconciliation context
+- the shared execution-runtime catalog now derives that drift posture from merged
+  descriptor-plus-report metadata instead of leaving declared-versus-reported connector truth as
+  raw metadata only
+- `Cephalon.Data.Debezium` contributes and normalizes shared declared and reported
+  `managedConnector*` identity metadata while preserving existing `debezium*` metadata for
+  compatibility
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive drift-state and drift-category
+  drill-down methods, and ASP.NET Core publishes those same filters on the existing
+  `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later Debezium connector-management work remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionRuntimeManagedConnectorDriftStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDriftCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorDrift`
+- `Cephalon.Data` now derives runtime-level `unknown`, `in-sync`, and `drifted` posture plus
+  stable category ids such as `missing-task-baseline`,
+  `reported-task-topology-unavailable`, `reported-task-identity-unavailable`,
+  `task-count-mismatch`, `missing-declared-task-reports`, `unexpected-reported-tasks`,
+  `connect-cluster-mismatch`, `connector-class-mismatch`, and `source-provider-mismatch` from
+  merged managed-connector metadata instead of materializing a second operator cache
+- `Cephalon.Data.Debezium` now writes shared declared-versus-reported
+  `managedConnector{Declared|Reported}*` identity metadata beside existing `debezium*` metadata,
+  so connector cluster, connector class, source-provider, and task topology truth flow into the
+  shared execution-runtime drift answer without dropping provider-specific compatibility metadata
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes `GetByManagedConnectorDriftState(...)` plus
+  `GetByManagedConnectorDriftCategory(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/drift/{driftState}` and
+  `/engine/cdc-capture-runtimes/drift/categories/{driftCategory}` so host routes stay aligned
+  with the same shared runtime story
+- targeted coverage now proves the drift baseline through composition tests `33/33`, hosting tests
+  `11/11`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-169 Phase 13 managed-connector governance baseline
 
 Status: done

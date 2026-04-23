@@ -8408,6 +8408,16 @@ string Id { get; }
 
 Gets the stable execution-runtime identifier.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordrift"></a>
+
+##### `ManagedConnectorDrift`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDriftStatus ManagedConnectorDrift { get; set; }
+```
+
+Gets the operator-facing desired-versus-observed managed-connector drift posture for the execution runtime.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorgovernance"></a>
 
 ##### `ManagedConnectorGovernance`
@@ -8477,6 +8487,524 @@ CdcCaptureExecutionRuntimeSummary Summary { get; }
 ```
 
 Gets the latest aggregate runtime summary reported for the execution runtime.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds`
+
+Defines the stable operator-facing action identifiers used by managed-connector drift answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-completetaskbaseline"></a>
+
+##### `CompleteTaskBaseline`
+
+```csharp
+const string CompleteTaskBaseline
+```
+
+Complete the declared task baseline before relying on desired-versus-observed drift posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-investigatedrift"></a>
+
+##### `InvestigateDrift`
+
+```csharp
+const string InvestigateDrift
+```
+
+Investigate the reported desired-versus-observed managed-connector drift.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No operator action is currently required for the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-waitforruntimereport"></a>
+
+##### `WaitForRuntimeReport`
+
+```csharp
+const string WaitForRuntimeReport
+```
+
+Wait for the managed connector to report task topology before evaluating desired-versus-observed drift.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDriftCategories`
+
+Defines the stable desired-versus-observed drift categories used by managed-connector CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDriftCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-connectclustermismatch"></a>
+
+##### `ConnectClusterMismatch`
+
+```csharp
+const string ConnectClusterMismatch
+```
+
+The latest reported connector-cluster identifier differs from the declared managed-connector baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-connectorclassmismatch"></a>
+
+##### `ConnectorClassMismatch`
+
+```csharp
+const string ConnectorClassMismatch
+```
+
+The latest reported connector class differs from the declared managed-connector baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-missingdeclaredtaskreports"></a>
+
+##### `MissingDeclaredTaskReports`
+
+```csharp
+const string MissingDeclaredTaskReports
+```
+
+One or more declared task ids are missing from the latest reported task ids.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-missingtaskbaseline"></a>
+
+##### `MissingTaskBaseline`
+
+```csharp
+const string MissingTaskBaseline
+```
+
+The managed connector does not currently declare task ids or an expected task count.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-reportedtaskidentityunavailable"></a>
+
+##### `ReportedTaskIdentityUnavailable`
+
+```csharp
+const string ReportedTaskIdentityUnavailable
+```
+
+The managed connector reports task counts, but not the task identities needed to compare declared task ids.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-reportedtasktopologyunavailable"></a>
+
+##### `ReportedTaskTopologyUnavailable`
+
+```csharp
+const string ReportedTaskTopologyUnavailable
+```
+
+The managed connector has not yet reported task ids or a reported task count.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-sourceprovidermismatch"></a>
+
+##### `SourceProviderMismatch`
+
+```csharp
+const string SourceProviderMismatch
+```
+
+The latest reported source-provider identifier differs from the declared managed-connector baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-taskcountmismatch"></a>
+
+##### `TaskCountMismatch`
+
+```csharp
+const string TaskCountMismatch
+```
+
+The managed connector reports a different task count than the declared task baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-unexpectedreportedtasks"></a>
+
+##### `UnexpectedReportedTasks`
+
+```csharp
+const string UnexpectedReportedTasks
+```
+
+One or more reported task ids were not part of the declared task baseline.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDriftStates`
+
+Defines the stable desired-versus-observed drift states used by managed-connector CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDriftStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates-drifted"></a>
+
+##### `Drifted`
+
+```csharp
+const string Drifted
+```
+
+The managed connector currently reports declared-versus-observed drift.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates-insync"></a>
+
+##### `InSync`
+
+```csharp
+const string InSync
+```
+
+The managed connector currently reports no declared-versus-observed drift.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently represent a managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The drift posture could not be determined from the current managed-connector declaration and report data.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus`
+
+Describes the current desired-versus-observed drift posture for one managed-connector CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorDriftStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(string state, string description)
+```
+
+Creates a new managed-connector drift answer.
+
+Parameters:
+- `state`: The stable drift state, such as `in-sync`, `drifted`, `unknown`, or `not-applicable`.
+- `description`: An optional operator-facing drift summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-activetaskids"></a>
+
+##### `ActiveTaskIds`
+
+```csharp
+IReadOnlyList<string> ActiveTaskIds { get; set; }
+```
+
+Gets the latest reported active managed-connector task identifiers when they are known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-canevaluatedrift"></a>
+
+##### `CanEvaluateDrift`
+
+```csharp
+bool CanEvaluateDrift { get; }
+```
+
+Gets a value indicating whether the current drift posture can be evaluated from the available baseline and report data.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active drift categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable managed-connector drift categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-connectorlifecyclestate"></a>
+
+##### `ConnectorLifecycleState`
+
+```csharp
+string ConnectorLifecycleState { get; set; }
+```
+
+Gets the latest reported connector lifecycle state when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-declaredconnectclusterid"></a>
+
+##### `DeclaredConnectClusterId`
+
+```csharp
+string DeclaredConnectClusterId { get; set; }
+```
+
+Gets the declared connector-cluster identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-declaredconnectorclass"></a>
+
+##### `DeclaredConnectorClass`
+
+```csharp
+string DeclaredConnectorClass { get; set; }
+```
+
+Gets the declared connector-class identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-declaredsourceproviderid"></a>
+
+##### `DeclaredSourceProviderId`
+
+```csharp
+string DeclaredSourceProviderId { get; set; }
+```
+
+Gets the declared source-provider identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-declaredtaskids"></a>
+
+##### `DeclaredTaskIds`
+
+```csharp
+IReadOnlyList<string> DeclaredTaskIds { get; set; }
+```
+
+Gets the declared managed-connector task identifiers when they are known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing drift summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-expectedtaskcount"></a>
+
+##### `ExpectedTaskCount`
+
+```csharp
+int? ExpectedTaskCount { get; set; }
+```
+
+Gets the declared task count when the managed connector reports one.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-isdrifted"></a>
+
+##### `IsDrifted`
+
+```csharp
+bool IsDrifted { get; }
+```
+
+Gets a value indicating whether the managed connector currently reports declared-versus-observed drift.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-isinsync"></a>
+
+##### `IsInSync`
+
+```csharp
+bool IsInSync { get; }
+```
+
+Gets a value indicating whether the managed connector currently reports no declared-versus-observed drift.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-missingdeclaredtaskids"></a>
+
+##### `MissingDeclaredTaskIds`
+
+```csharp
+IReadOnlyList<string> MissingDeclaredTaskIds { get; set; }
+```
+
+Gets the declared task ids that are missing from the latest reported task set.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-recommendedactionid"></a>
+
+##### `RecommendedActionId`
+
+```csharp
+string RecommendedActionId { get; set; }
+```
+
+Gets the stable recommended action identifier for the current drift posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reconciliationreason"></a>
+
+##### `ReconciliationReason`
+
+```csharp
+string ReconciliationReason { get; set; }
+```
+
+Gets the latest reported reconciliation summary when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reconciliationstate"></a>
+
+##### `ReconciliationState`
+
+```csharp
+string ReconciliationState { get; set; }
+```
+
+Gets the latest reported overall reconciliation state when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reportedconnectclusterid"></a>
+
+##### `ReportedConnectClusterId`
+
+```csharp
+string ReportedConnectClusterId { get; set; }
+```
+
+Gets the latest reported connector-cluster identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reportedconnectorclass"></a>
+
+##### `ReportedConnectorClass`
+
+```csharp
+string ReportedConnectorClass { get; set; }
+```
+
+Gets the latest reported connector-class identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reportedsourceproviderid"></a>
+
+##### `ReportedSourceProviderId`
+
+```csharp
+string ReportedSourceProviderId { get; set; }
+```
+
+Gets the latest reported source-provider identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reportedtaskcount"></a>
+
+##### `ReportedTaskCount`
+
+```csharp
+int? ReportedTaskCount { get; set; }
+```
+
+Gets the latest reported task count when the managed connector reports one.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reportedtaskids"></a>
+
+##### `ReportedTaskIds`
+
+```csharp
+IReadOnlyList<string> ReportedTaskIds { get; set; }
+```
+
+Gets the latest reported managed-connector task identifiers when they are known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-requiresattention"></a>
+
+##### `RequiresAttention`
+
+```csharp
+bool RequiresAttention { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires operator drift attention.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector drift state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-taskreconciliationstate"></a>
+
+##### `TaskReconciliationState`
+
+```csharp
+string TaskReconciliationState { get; set; }
+```
+
+Gets the latest reported task-reconciliation state when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-unexpectedreportedtaskids"></a>
+
+##### `UnexpectedReportedTaskIds`
+
+```csharp
+IReadOnlyList<string> UnexpectedReportedTaskIds { get; set; }
+```
+
+Gets the reported task ids that were not part of the declared task baseline.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids"></a>
 
@@ -14922,6 +15450,36 @@ Returns: The matching execution-runtime descriptor, or `null` when none exists.
 
 Parameters:
 - `executionRuntimeId`: The stable execution-runtime identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordriftcategory-system-string"></a>
+
+##### `GetByManagedConnectorDriftCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDriftCategory(string driftCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector drift answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that drift category.
+
+Parameters:
+- `driftCategory`: The stable drift-category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordriftstate-system-string"></a>
+
+##### `GetByManagedConnectorDriftState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDriftState(string driftState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector drift answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that drift state.
+
+Parameters:
+- `driftState`: The stable drift-state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorgovernancecategory-system-string"></a>
 

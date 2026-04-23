@@ -72,4 +72,18 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="governanceCategory">The stable governance-category identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that governance category.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorGovernanceCategory(string governanceCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector drift answer matches the requested state.
+    /// </summary>
+    /// <param name="driftState">The stable drift-state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that drift state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDriftState(string driftState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector drift answer includes the requested category.
+    /// </summary>
+    /// <param name="driftCategory">The stable drift-category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that drift category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDriftCategory(string driftCategory);
 }

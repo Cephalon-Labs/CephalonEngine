@@ -51,6 +51,12 @@ internal sealed class DebeziumExecutionRuntimeContributor(DebeziumDataOptions op
             AddIfPresent(metadata, "connectClusterId", connector.ConnectClusterId);
             AddIfPresent(metadata, "connectorClass", connector.ConnectorClass);
             AddIfPresent(metadata, "sourceProviderId", connector.SourceProviderId);
+            AddIfPresent(metadata, "managedConnectorDeclaredConnectClusterId", connector.ConnectClusterId);
+            AddIfPresent(metadata, "managedConnectorDeclaredConnectorClass", connector.ConnectorClass);
+            AddIfPresent(metadata, "managedConnectorDeclaredSourceProviderId", connector.SourceProviderId);
+            AddIfPresent(metadata, "debeziumDeclaredConnectClusterId", connector.ConnectClusterId);
+            AddIfPresent(metadata, "debeziumDeclaredConnectorClass", connector.ConnectorClass);
+            AddIfPresent(metadata, "debeziumDeclaredSourceProviderId", connector.SourceProviderId);
             AddIfPresent(metadata, "topicPrefix", connector.TopicPrefix);
             AddIfPresent(metadata, "managedConnectorExpectedTaskCount", expectedTaskCount?.ToString(System.Globalization.CultureInfo.InvariantCulture));
             AddIfPresent(metadata, "debeziumExpectedTaskCount", expectedTaskCount?.ToString(System.Globalization.CultureInfo.InvariantCulture));

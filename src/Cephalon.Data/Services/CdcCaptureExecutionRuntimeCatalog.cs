@@ -9,6 +9,12 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private const string ConnectClusterIdMetadataKey = "connectClusterId";
     private const string ConnectorClassMetadataKey = "connectorClass";
     private const string SourceProviderIdMetadataKey = "sourceProviderId";
+    private const string ManagedConnectorDeclaredConnectClusterIdMetadataKey = "managedConnectorDeclaredConnectClusterId";
+    private const string ManagedConnectorDeclaredConnectorClassMetadataKey = "managedConnectorDeclaredConnectorClass";
+    private const string ManagedConnectorDeclaredSourceProviderIdMetadataKey = "managedConnectorDeclaredSourceProviderId";
+    private const string ManagedConnectorReportedConnectClusterIdMetadataKey = "managedConnectorReportedConnectClusterId";
+    private const string ManagedConnectorReportedConnectorClassMetadataKey = "managedConnectorReportedConnectorClass";
+    private const string ManagedConnectorReportedSourceProviderIdMetadataKey = "managedConnectorReportedSourceProviderId";
     private const string ManagedConnectorExpectedTaskCountMetadataKey = "managedConnectorExpectedTaskCount";
     private const string ManagedConnectorDeclaredTaskIdsMetadataKey = "managedConnectorDeclaredTaskIds";
     private const string ManagedConnectorReportedTaskCountMetadataKey = "managedConnectorReportedTaskCount";
@@ -137,6 +143,27 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparer.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDriftState(string driftState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(driftState);
+        var normalizedDriftState = driftState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorDrift.State,
+            normalizedDriftState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDriftCategory(string driftCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(driftCategory);
+        var normalizedDriftCategory = driftCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorDrift.CategoryIds.Contains(
+            normalizedDriftCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
     private CdcCaptureExecutionRuntimeDescriptor[] FilterRuntimes(
         Func<CdcCaptureExecutionRuntimeDescriptor, bool> predicate)
     {
@@ -158,6 +185,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ? CreateEmptySummary(runtime, captureIds)
             : CreateSummary(runtime, captureIds, matchingStates);
         var managedConnectorGovernance = CreateManagedConnectorGovernance(runtime.ExecutionTopology, mergedMetadata);
+        var managedConnectorDrift = CreateManagedConnectorDrift(runtime.ExecutionTopology, mergedMetadata);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
@@ -166,7 +194,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             cdcCaptureIds: captureIds,
             summary: summary)
         {
-            ManagedConnectorGovernance = managedConnectorGovernance
+            ManagedConnectorGovernance = managedConnectorGovernance,
+            ManagedConnectorDrift = managedConnectorDrift
         };
     }
 
@@ -421,43 +450,31 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             };
         }
 
-        var managementMode = ResolveMetadata(metadata, ManagedConnectorManagementModeMetadataKey, "debeziumManagementMode");
-        var connectClusterId = ResolveMetadata(metadata, ConnectClusterIdMetadataKey);
-        var connectorClass = ResolveMetadata(metadata, ConnectorClassMetadataKey);
-        var sourceProviderId = ResolveMetadata(metadata, SourceProviderIdMetadataKey);
-        var expectedTaskCount = ResolveNullableIntMetadata(metadata, ManagedConnectorExpectedTaskCountMetadataKey, "debeziumExpectedTaskCount");
-        var reportedTaskCount = ResolveNullableIntMetadata(metadata, ManagedConnectorReportedTaskCountMetadataKey, "debeziumReportedTaskCount");
-        var declaredTaskIds = ResolveDelimitedMetadata(metadata, ManagedConnectorDeclaredTaskIdsMetadataKey, "debeziumDeclaredTaskIds", "taskIds");
-        var reportedTaskIds = ResolveDelimitedMetadata(metadata, ManagedConnectorReportedTaskIdsMetadataKey, "debeziumReportedTaskIds");
-        var activeTaskIds = ResolveDelimitedMetadata(metadata, ManagedConnectorActiveTaskIdsMetadataKey, "debeziumActiveTaskIds");
-        var connectorLifecycleState = ResolveMetadata(metadata, ManagedConnectorConnectorLifecycleStateMetadataKey, "debeziumConnectorLifecycleState");
-        var taskReconciliationState = ResolveMetadata(metadata, ManagedConnectorTaskReconciliationStateMetadataKey, "debeziumTaskReconciliationState");
-        var reconciliationState = ResolveMetadata(metadata, ManagedConnectorReconciliationStateMetadataKey, "debeziumReconciliationState");
-        var reconciliationReason = ResolveMetadata(metadata, ManagedConnectorReconciliationReasonMetadataKey, "debeziumReconciliationReason");
+        var snapshot = ResolveManagedConnectorMetadata(metadata);
         var categories = new List<string>(capacity: 5);
 
-        if (string.IsNullOrWhiteSpace(managementMode))
+        if (string.IsNullOrWhiteSpace(snapshot.ManagementMode))
         {
             categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingManagementMode);
         }
 
-        if (string.IsNullOrWhiteSpace(connectClusterId))
+        if (string.IsNullOrWhiteSpace(snapshot.DeclaredConnectClusterId))
         {
             categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectClusterId);
         }
 
-        if (string.IsNullOrWhiteSpace(connectorClass))
+        if (string.IsNullOrWhiteSpace(snapshot.DeclaredConnectorClass))
         {
             categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectorClass);
         }
 
-        if (string.IsNullOrWhiteSpace(sourceProviderId))
+        if (string.IsNullOrWhiteSpace(snapshot.DeclaredSourceProviderId))
         {
             categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingSourceProviderId);
         }
 
-        if (!string.IsNullOrWhiteSpace(managementMode) &&
-            !string.Equals(managementMode, CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrWhiteSpace(snapshot.ManagementMode) &&
+            !string.Equals(snapshot.ManagementMode, CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, StringComparison.OrdinalIgnoreCase))
         {
             categories.Add(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.FutureControlPlaneMode);
         }
@@ -466,70 +483,392 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         {
             return new CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus(
                 CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.OutOfPolicy,
-                CreateManagedConnectorOutOfPolicyDescription(categories, managementMode))
+                CreateManagedConnectorOutOfPolicyDescription(categories, snapshot.ManagementMode))
             {
                 CategoryIds = categories,
-                ManagementMode = managementMode,
-                ConnectClusterId = connectClusterId,
-                ConnectorClass = connectorClass,
-                SourceProviderId = sourceProviderId,
-                ExpectedTaskCount = expectedTaskCount,
-                ReportedTaskCount = reportedTaskCount,
-                DeclaredTaskIds = declaredTaskIds,
-                ReportedTaskIds = reportedTaskIds,
-                ActiveTaskIds = activeTaskIds,
-                ConnectorLifecycleState = connectorLifecycleState,
-                TaskReconciliationState = taskReconciliationState,
-                ReconciliationState = reconciliationState,
-                ReconciliationReason = reconciliationReason,
+                ManagementMode = snapshot.ManagementMode,
+                ConnectClusterId = snapshot.DeclaredConnectClusterId,
+                ConnectorClass = snapshot.DeclaredConnectorClass,
+                SourceProviderId = snapshot.DeclaredSourceProviderId,
+                ExpectedTaskCount = snapshot.ExpectedTaskCount,
+                ReportedTaskCount = snapshot.ReportedTaskCount,
+                DeclaredTaskIds = snapshot.DeclaredTaskIds,
+                ReportedTaskIds = snapshot.ReportedTaskIds,
+                ActiveTaskIds = snapshot.ActiveTaskIds,
+                ConnectorLifecycleState = snapshot.ConnectorLifecycleState,
+                TaskReconciliationState = snapshot.TaskReconciliationState,
+                ReconciliationState = snapshot.ReconciliationState,
+                ReconciliationReason = snapshot.ReconciliationReason,
                 RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.CompleteGovernanceDeclaration
             };
         }
 
-        if (!string.IsNullOrWhiteSpace(managementMode) &&
-            !string.Equals(managementMode, CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrWhiteSpace(snapshot.ManagementMode) &&
+            !string.Equals(snapshot.ManagementMode, CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, StringComparison.OrdinalIgnoreCase))
         {
             return new CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus(
                 CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.FutureControlPlane,
-                $"The managed connector declares management mode '{managementMode}', but Cephalon currently exposes governance truth only and does not own connector write actions yet.")
+                $"The managed connector declares management mode '{snapshot.ManagementMode}', but Cephalon currently exposes governance truth only and does not own connector write actions yet.")
             {
                 CategoryIds = [CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.FutureControlPlaneMode],
-                ManagementMode = managementMode,
-                ConnectClusterId = connectClusterId,
-                ConnectorClass = connectorClass,
-                SourceProviderId = sourceProviderId,
-                ExpectedTaskCount = expectedTaskCount,
-                ReportedTaskCount = reportedTaskCount,
-                DeclaredTaskIds = declaredTaskIds,
-                ReportedTaskIds = reportedTaskIds,
-                ActiveTaskIds = activeTaskIds,
-                ConnectorLifecycleState = connectorLifecycleState,
-                TaskReconciliationState = taskReconciliationState,
-                ReconciliationState = reconciliationState,
-                ReconciliationReason = reconciliationReason,
+                ManagementMode = snapshot.ManagementMode,
+                ConnectClusterId = snapshot.DeclaredConnectClusterId,
+                ConnectorClass = snapshot.DeclaredConnectorClass,
+                SourceProviderId = snapshot.DeclaredSourceProviderId,
+                ExpectedTaskCount = snapshot.ExpectedTaskCount,
+                ReportedTaskCount = snapshot.ReportedTaskCount,
+                DeclaredTaskIds = snapshot.DeclaredTaskIds,
+                ReportedTaskIds = snapshot.ReportedTaskIds,
+                ActiveTaskIds = snapshot.ActiveTaskIds,
+                ConnectorLifecycleState = snapshot.ConnectorLifecycleState,
+                TaskReconciliationState = snapshot.TaskReconciliationState,
+                ReconciliationState = snapshot.ReconciliationState,
+                ReconciliationReason = snapshot.ReconciliationReason,
                 RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.DeferControlPlane
             };
         }
 
         return new CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus(
             CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly,
-            CreateManagedConnectorObserveOnlyDescription(reconciliationState, reconciliationReason))
+            CreateManagedConnectorObserveOnlyDescription(snapshot.ReconciliationState, snapshot.ReconciliationReason))
         {
-            ManagementMode = managementMode,
-            ConnectClusterId = connectClusterId,
-            ConnectorClass = connectorClass,
-            SourceProviderId = sourceProviderId,
-            ExpectedTaskCount = expectedTaskCount,
-            ReportedTaskCount = reportedTaskCount,
-            DeclaredTaskIds = declaredTaskIds,
-            ReportedTaskIds = reportedTaskIds,
-            ActiveTaskIds = activeTaskIds,
-            ConnectorLifecycleState = connectorLifecycleState,
-            TaskReconciliationState = taskReconciliationState,
-            ReconciliationState = reconciliationState,
-            ReconciliationReason = reconciliationReason,
+            ManagementMode = snapshot.ManagementMode,
+            ConnectClusterId = snapshot.DeclaredConnectClusterId,
+            ConnectorClass = snapshot.DeclaredConnectorClass,
+            SourceProviderId = snapshot.DeclaredSourceProviderId,
+            ExpectedTaskCount = snapshot.ExpectedTaskCount,
+            ReportedTaskCount = snapshot.ReportedTaskCount,
+            DeclaredTaskIds = snapshot.DeclaredTaskIds,
+            ReportedTaskIds = snapshot.ReportedTaskIds,
+            ActiveTaskIds = snapshot.ActiveTaskIds,
+            ConnectorLifecycleState = snapshot.ConnectorLifecycleState,
+            TaskReconciliationState = snapshot.TaskReconciliationState,
+            ReconciliationState = snapshot.ReconciliationState,
+            ReconciliationReason = snapshot.ReconciliationReason,
             RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds.KeepObserveOnly
         };
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorDriftStatus CreateManagedConnectorDrift(
+        string executionTopology,
+        IReadOnlyDictionary<string, string> metadata)
+    {
+        if (!string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase))
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDriftStates.NotApplicable,
+                "The execution runtime does not currently represent a managed connector.")
+            {
+                RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds.None
+            };
+        }
+
+        var snapshot = ResolveManagedConnectorMetadata(metadata);
+        var hasTaskBaseline = snapshot.DeclaredTaskIds.Length > 0 || snapshot.ExpectedTaskCount.HasValue;
+        if (!hasTaskBaseline)
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Unknown,
+                "The managed connector does not yet declare task ids or an expected task count, so desired-versus-observed drift cannot be evaluated.")
+            {
+                CategoryIds = [CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingTaskBaseline],
+                ManagementMode = snapshot.ManagementMode,
+                DeclaredConnectClusterId = snapshot.DeclaredConnectClusterId,
+                ReportedConnectClusterId = snapshot.ReportedConnectClusterId,
+                DeclaredConnectorClass = snapshot.DeclaredConnectorClass,
+                ReportedConnectorClass = snapshot.ReportedConnectorClass,
+                DeclaredSourceProviderId = snapshot.DeclaredSourceProviderId,
+                ReportedSourceProviderId = snapshot.ReportedSourceProviderId,
+                ExpectedTaskCount = snapshot.ExpectedTaskCount,
+                ReportedTaskCount = snapshot.ReportedTaskCount,
+                DeclaredTaskIds = snapshot.DeclaredTaskIds,
+                ReportedTaskIds = snapshot.ReportedTaskIds,
+                ActiveTaskIds = snapshot.ActiveTaskIds,
+                ConnectorLifecycleState = snapshot.ConnectorLifecycleState,
+                TaskReconciliationState = snapshot.TaskReconciliationState,
+                ReconciliationState = snapshot.ReconciliationState,
+                ReconciliationReason = snapshot.ReconciliationReason,
+                RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds.CompleteTaskBaseline
+            };
+        }
+
+        var hasReportedTaskTopology = snapshot.ReportedTaskIds.Length > 0 || snapshot.ReportedTaskCount.HasValue;
+        if (!hasReportedTaskTopology)
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Unknown,
+                "The managed connector has not yet reported task ids or a reported task count, so desired-versus-observed drift cannot be evaluated.")
+            {
+                CategoryIds = [CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ReportedTaskTopologyUnavailable],
+                ManagementMode = snapshot.ManagementMode,
+                DeclaredConnectClusterId = snapshot.DeclaredConnectClusterId,
+                ReportedConnectClusterId = snapshot.ReportedConnectClusterId,
+                DeclaredConnectorClass = snapshot.DeclaredConnectorClass,
+                ReportedConnectorClass = snapshot.ReportedConnectorClass,
+                DeclaredSourceProviderId = snapshot.DeclaredSourceProviderId,
+                ReportedSourceProviderId = snapshot.ReportedSourceProviderId,
+                ExpectedTaskCount = snapshot.ExpectedTaskCount,
+                ReportedTaskCount = snapshot.ReportedTaskCount,
+                DeclaredTaskIds = snapshot.DeclaredTaskIds,
+                ReportedTaskIds = snapshot.ReportedTaskIds,
+                ActiveTaskIds = snapshot.ActiveTaskIds,
+                ConnectorLifecycleState = snapshot.ConnectorLifecycleState,
+                TaskReconciliationState = snapshot.TaskReconciliationState,
+                ReconciliationState = snapshot.ReconciliationState,
+                ReconciliationReason = snapshot.ReconciliationReason,
+                RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds.WaitForRuntimeReport
+            };
+        }
+
+        if (snapshot.DeclaredTaskIds.Length > 0 && snapshot.ReportedTaskIds.Length == 0)
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Unknown,
+                "The managed connector reports task counts, but not the task identities needed to compare declared task ids.")
+            {
+                CategoryIds = [CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ReportedTaskIdentityUnavailable],
+                ManagementMode = snapshot.ManagementMode,
+                DeclaredConnectClusterId = snapshot.DeclaredConnectClusterId,
+                ReportedConnectClusterId = snapshot.ReportedConnectClusterId,
+                DeclaredConnectorClass = snapshot.DeclaredConnectorClass,
+                ReportedConnectorClass = snapshot.ReportedConnectorClass,
+                DeclaredSourceProviderId = snapshot.DeclaredSourceProviderId,
+                ReportedSourceProviderId = snapshot.ReportedSourceProviderId,
+                ExpectedTaskCount = snapshot.ExpectedTaskCount,
+                ReportedTaskCount = snapshot.ReportedTaskCount,
+                DeclaredTaskIds = snapshot.DeclaredTaskIds,
+                ReportedTaskIds = snapshot.ReportedTaskIds,
+                ActiveTaskIds = snapshot.ActiveTaskIds,
+                ConnectorLifecycleState = snapshot.ConnectorLifecycleState,
+                TaskReconciliationState = snapshot.TaskReconciliationState,
+                ReconciliationState = snapshot.ReconciliationState,
+                ReconciliationReason = snapshot.ReconciliationReason,
+                RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds.WaitForRuntimeReport
+            };
+        }
+
+        var categories = new List<string>(capacity: 6);
+        if (snapshot.ExpectedTaskCount.HasValue &&
+            snapshot.ReportedTaskCount.HasValue &&
+            snapshot.ExpectedTaskCount.Value != snapshot.ReportedTaskCount.Value)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.TaskCountMismatch);
+        }
+
+        string[] missingDeclaredTaskIds = [];
+        string[] unexpectedReportedTaskIds = [];
+        if (snapshot.DeclaredTaskIds.Length > 0 && snapshot.ReportedTaskIds.Length > 0)
+        {
+            missingDeclaredTaskIds = snapshot.DeclaredTaskIds
+                .Except(snapshot.ReportedTaskIds, StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static taskId => taskId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            unexpectedReportedTaskIds = snapshot.ReportedTaskIds
+                .Except(snapshot.DeclaredTaskIds, StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static taskId => taskId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (missingDeclaredTaskIds.Length > 0)
+            {
+                categories.Add(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingDeclaredTaskReports);
+            }
+
+            if (unexpectedReportedTaskIds.Length > 0)
+            {
+                categories.Add(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.UnexpectedReportedTasks);
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(snapshot.DeclaredConnectClusterId) &&
+            !string.IsNullOrWhiteSpace(snapshot.ReportedConnectClusterId) &&
+            !string.Equals(snapshot.DeclaredConnectClusterId, snapshot.ReportedConnectClusterId, StringComparison.OrdinalIgnoreCase))
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectClusterMismatch);
+        }
+
+        if (!string.IsNullOrWhiteSpace(snapshot.DeclaredConnectorClass) &&
+            !string.IsNullOrWhiteSpace(snapshot.ReportedConnectorClass) &&
+            !string.Equals(snapshot.DeclaredConnectorClass, snapshot.ReportedConnectorClass, StringComparison.OrdinalIgnoreCase))
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectorClassMismatch);
+        }
+
+        if (!string.IsNullOrWhiteSpace(snapshot.DeclaredSourceProviderId) &&
+            !string.IsNullOrWhiteSpace(snapshot.ReportedSourceProviderId) &&
+            !string.Equals(snapshot.DeclaredSourceProviderId, snapshot.ReportedSourceProviderId, StringComparison.OrdinalIgnoreCase))
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.SourceProviderMismatch);
+        }
+
+        if (categories.Count == 0)
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDriftStates.InSync,
+                CreateManagedConnectorInSyncDescription(snapshot.ReconciliationState))
+            {
+                ManagementMode = snapshot.ManagementMode,
+                DeclaredConnectClusterId = snapshot.DeclaredConnectClusterId,
+                ReportedConnectClusterId = snapshot.ReportedConnectClusterId,
+                DeclaredConnectorClass = snapshot.DeclaredConnectorClass,
+                ReportedConnectorClass = snapshot.ReportedConnectorClass,
+                DeclaredSourceProviderId = snapshot.DeclaredSourceProviderId,
+                ReportedSourceProviderId = snapshot.ReportedSourceProviderId,
+                ExpectedTaskCount = snapshot.ExpectedTaskCount,
+                ReportedTaskCount = snapshot.ReportedTaskCount,
+                DeclaredTaskIds = snapshot.DeclaredTaskIds,
+                ReportedTaskIds = snapshot.ReportedTaskIds,
+                ActiveTaskIds = snapshot.ActiveTaskIds,
+                ConnectorLifecycleState = snapshot.ConnectorLifecycleState,
+                TaskReconciliationState = snapshot.TaskReconciliationState,
+                ReconciliationState = snapshot.ReconciliationState,
+                ReconciliationReason = snapshot.ReconciliationReason,
+                RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds.None
+            };
+        }
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(
+            CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Drifted,
+            CreateManagedConnectorDriftDescription(
+                categories,
+                snapshot,
+                missingDeclaredTaskIds,
+                unexpectedReportedTaskIds))
+        {
+            CategoryIds = categories,
+            ManagementMode = snapshot.ManagementMode,
+            DeclaredConnectClusterId = snapshot.DeclaredConnectClusterId,
+            ReportedConnectClusterId = snapshot.ReportedConnectClusterId,
+            DeclaredConnectorClass = snapshot.DeclaredConnectorClass,
+            ReportedConnectorClass = snapshot.ReportedConnectorClass,
+            DeclaredSourceProviderId = snapshot.DeclaredSourceProviderId,
+            ReportedSourceProviderId = snapshot.ReportedSourceProviderId,
+            ExpectedTaskCount = snapshot.ExpectedTaskCount,
+            ReportedTaskCount = snapshot.ReportedTaskCount,
+            DeclaredTaskIds = snapshot.DeclaredTaskIds,
+            ReportedTaskIds = snapshot.ReportedTaskIds,
+            ActiveTaskIds = snapshot.ActiveTaskIds,
+            MissingDeclaredTaskIds = missingDeclaredTaskIds,
+            UnexpectedReportedTaskIds = unexpectedReportedTaskIds,
+            ConnectorLifecycleState = snapshot.ConnectorLifecycleState,
+            TaskReconciliationState = snapshot.TaskReconciliationState,
+            ReconciliationState = snapshot.ReconciliationState,
+            ReconciliationReason = snapshot.ReconciliationReason,
+            RecommendedActionId = CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds.InvestigateDrift
+        };
+    }
+
+    private static ManagedConnectorMetadataSnapshot ResolveManagedConnectorMetadata(
+        IReadOnlyDictionary<string, string> metadata)
+    {
+        return new ManagedConnectorMetadataSnapshot(
+            ManagementMode: ResolveMetadata(metadata, ManagedConnectorManagementModeMetadataKey, "debeziumManagementMode"),
+            DeclaredConnectClusterId: ResolveMetadata(
+                metadata,
+                ManagedConnectorDeclaredConnectClusterIdMetadataKey,
+                "debeziumDeclaredConnectClusterId",
+                ConnectClusterIdMetadataKey),
+            ReportedConnectClusterId: ResolveMetadata(
+                metadata,
+                ManagedConnectorReportedConnectClusterIdMetadataKey,
+                "debeziumReportedConnectClusterId"),
+            DeclaredConnectorClass: ResolveMetadata(
+                metadata,
+                ManagedConnectorDeclaredConnectorClassMetadataKey,
+                "debeziumDeclaredConnectorClass",
+                ConnectorClassMetadataKey),
+            ReportedConnectorClass: ResolveMetadata(
+                metadata,
+                ManagedConnectorReportedConnectorClassMetadataKey,
+                "debeziumReportedConnectorClass"),
+            DeclaredSourceProviderId: ResolveMetadata(
+                metadata,
+                ManagedConnectorDeclaredSourceProviderIdMetadataKey,
+                "debeziumDeclaredSourceProviderId",
+                SourceProviderIdMetadataKey),
+            ReportedSourceProviderId: ResolveMetadata(
+                metadata,
+                ManagedConnectorReportedSourceProviderIdMetadataKey,
+                "debeziumReportedSourceProviderId"),
+            ExpectedTaskCount: ResolveNullableIntMetadata(metadata, ManagedConnectorExpectedTaskCountMetadataKey, "debeziumExpectedTaskCount"),
+            ReportedTaskCount: ResolveNullableIntMetadata(metadata, ManagedConnectorReportedTaskCountMetadataKey, "debeziumReportedTaskCount"),
+            DeclaredTaskIds: ResolveDelimitedMetadata(metadata, ManagedConnectorDeclaredTaskIdsMetadataKey, "debeziumDeclaredTaskIds", "taskIds"),
+            ReportedTaskIds: ResolveDelimitedMetadata(metadata, ManagedConnectorReportedTaskIdsMetadataKey, "debeziumReportedTaskIds"),
+            ActiveTaskIds: ResolveDelimitedMetadata(metadata, ManagedConnectorActiveTaskIdsMetadataKey, "debeziumActiveTaskIds"),
+            ConnectorLifecycleState: ResolveMetadata(metadata, ManagedConnectorConnectorLifecycleStateMetadataKey, "debeziumConnectorLifecycleState"),
+            TaskReconciliationState: ResolveMetadata(metadata, ManagedConnectorTaskReconciliationStateMetadataKey, "debeziumTaskReconciliationState"),
+            ReconciliationState: ResolveMetadata(metadata, ManagedConnectorReconciliationStateMetadataKey, "debeziumReconciliationState"),
+            ReconciliationReason: ResolveMetadata(metadata, ManagedConnectorReconciliationReasonMetadataKey, "debeziumReconciliationReason"));
+    }
+
+    private static string CreateManagedConnectorInSyncDescription(string? reconciliationState)
+    {
+        if (string.IsNullOrWhiteSpace(reconciliationState) ||
+            string.Equals(reconciliationState, "current", StringComparison.OrdinalIgnoreCase))
+        {
+            return "The managed connector currently reports no declared-versus-observed drift.";
+        }
+
+        return $"The managed connector currently reports no declared-versus-observed drift. Last reported reconciliation state '{reconciliationState}'.";
+    }
+
+    private static string CreateManagedConnectorDriftDescription(
+        IReadOnlyCollection<string> categories,
+        ManagedConnectorMetadataSnapshot snapshot,
+        string[] missingDeclaredTaskIds,
+        string[] unexpectedReportedTaskIds)
+    {
+        ArgumentNullException.ThrowIfNull(categories);
+        ArgumentNullException.ThrowIfNull(snapshot);
+
+        var messages = new List<string>(capacity: 6);
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.TaskCountMismatch, StringComparer.OrdinalIgnoreCase) &&
+            snapshot.ExpectedTaskCount.HasValue &&
+            snapshot.ReportedTaskCount.HasValue)
+        {
+            messages.Add($"Declared task count '{snapshot.ExpectedTaskCount.Value}' but last reported '{snapshot.ReportedTaskCount.Value}'.");
+        }
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingDeclaredTaskReports, StringComparer.OrdinalIgnoreCase) &&
+            missingDeclaredTaskIds.Length > 0)
+        {
+            messages.Add(missingDeclaredTaskIds.Length == 1
+                ? $"Declared task '{missingDeclaredTaskIds[0]}' was not reported."
+                : $"Declared tasks '{string.Join(",", missingDeclaredTaskIds)}' were not reported.");
+        }
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.UnexpectedReportedTasks, StringComparer.OrdinalIgnoreCase) &&
+            unexpectedReportedTaskIds.Length > 0)
+        {
+            messages.Add(unexpectedReportedTaskIds.Length == 1
+                ? $"Reported task '{unexpectedReportedTaskIds[0]}' was not declared."
+                : $"Reported tasks '{string.Join(",", unexpectedReportedTaskIds)}' were not declared.");
+        }
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectClusterMismatch, StringComparer.OrdinalIgnoreCase) &&
+            !string.IsNullOrWhiteSpace(snapshot.DeclaredConnectClusterId) &&
+            !string.IsNullOrWhiteSpace(snapshot.ReportedConnectClusterId))
+        {
+            messages.Add($"Declared connector cluster '{snapshot.DeclaredConnectClusterId}' but last reported '{snapshot.ReportedConnectClusterId}'.");
+        }
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectorClassMismatch, StringComparer.OrdinalIgnoreCase) &&
+            !string.IsNullOrWhiteSpace(snapshot.DeclaredConnectorClass) &&
+            !string.IsNullOrWhiteSpace(snapshot.ReportedConnectorClass))
+        {
+            messages.Add($"Declared connector class '{snapshot.DeclaredConnectorClass}' but last reported '{snapshot.ReportedConnectorClass}'.");
+        }
+
+        if (categories.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.SourceProviderMismatch, StringComparer.OrdinalIgnoreCase) &&
+            !string.IsNullOrWhiteSpace(snapshot.DeclaredSourceProviderId) &&
+            !string.IsNullOrWhiteSpace(snapshot.ReportedSourceProviderId))
+        {
+            messages.Add($"Declared source provider '{snapshot.DeclaredSourceProviderId}' but last reported '{snapshot.ReportedSourceProviderId}'.");
+        }
+
+        return messages.Count == 0
+            ? "The managed connector currently reports declared-versus-observed drift."
+            : string.Join(" ", messages);
     }
 
     private static string CreateManagedConnectorObserveOnlyDescription(
@@ -911,4 +1250,22 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
 
         return null;
     }
+
+    private sealed record ManagedConnectorMetadataSnapshot(
+        string? ManagementMode,
+        string? DeclaredConnectClusterId,
+        string? ReportedConnectClusterId,
+        string? DeclaredConnectorClass,
+        string? ReportedConnectorClass,
+        string? DeclaredSourceProviderId,
+        string? ReportedSourceProviderId,
+        int? ExpectedTaskCount,
+        int? ReportedTaskCount,
+        string[] DeclaredTaskIds,
+        string[] ReportedTaskIds,
+        string[] ActiveTaskIds,
+        string? ConnectorLifecycleState,
+        string? TaskReconciliationState,
+        string? ReconciliationState,
+        string? ReconciliationReason);
 }

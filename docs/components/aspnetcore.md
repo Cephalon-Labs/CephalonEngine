@@ -177,9 +177,12 @@ coordination posture, or degraded reason on the same shared catalog path. The sa
 now also maps `/engine/cdc-capture-runtimes/remediation/{remediationState}` and
 `/engine/cdc-capture-runtimes/remediation/categories/{remediationCategory}` plus
 `/engine/cdc-capture-runtimes/governance/{governanceState}` and
-`/engine/cdc-capture-runtimes/governance/categories/{governanceCategory}` so operator flows can
-query the shared execution-runtime remediation summary and managed-connector governance posture
-directly instead of rebuilding a second HTTP-local remediation or governance index.
+`/engine/cdc-capture-runtimes/governance/categories/{governanceCategory}` plus
+`/engine/cdc-capture-runtimes/drift/{driftState}` and
+`/engine/cdc-capture-runtimes/drift/categories/{driftCategory}` so operator flows can query the
+shared execution-runtime remediation summary, managed-connector governance posture, and
+desired-versus-observed managed-connector drift posture directly instead of rebuilding a second
+HTTP-local remediation, governance, or drift index.
 
 When `ICdcCaptureExecutionRuntimeReportSink` is active, the same host also maps
 `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports`. That route is intentionally

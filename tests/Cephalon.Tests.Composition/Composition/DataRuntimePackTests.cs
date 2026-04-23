@@ -1026,7 +1026,9 @@ public sealed class DataRuntimePackTests
     [Fact]
     public async Task AddDataTracksExternalExecutionRuntimeRemediationAcrossResolvedCaptureBindings()
     {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T08:21:31Z", CultureInfo.InvariantCulture));
         var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
         services.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(

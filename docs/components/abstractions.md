@@ -276,6 +276,20 @@ queryable as shared `not-applicable`, `observe-only`, `future-control-plane`, or
 versus reported task identity, and connector lifecycle or reconciliation context instead of
 inventing a Debezium-only governance contract.
 
+That same shared execution-runtime contract now also publishes managed-connector
+desired-versus-observed drift posture through
+`CdcCaptureExecutionRuntimeManagedConnectorDriftStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorDriftCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds`,
+`CdcCaptureExecutionRuntimeManagedConnectorDriftStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDrift`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorDriftState(...)` /
+`GetByManagedConnectorDriftCategory(...)` filters. That keeps `managed-connector` runtimes
+queryable as shared `not-applicable`, `unknown`, `in-sync`, or `drifted` answers together with
+task-topology and connector-identity drift categories, recommended action ids, declared versus
+reported connector identity, and reconciliation context instead of inventing a Debezium-only
+drift contract.
+
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
 `BulkheadSelection`, and `RateLimitingSelection`. `RateLimitingSelection` now also carries additive

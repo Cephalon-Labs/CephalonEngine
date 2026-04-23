@@ -1,13 +1,13 @@
 # Cephalon.Data.Debezium
 
-`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
+`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
 
 ## What it owns
 
 - contributes Debezium-managed capture descriptors through `DebeziumCaptureOptions` and keeps those descriptors on the shared `/engine/cdc-captures*` catalog with `provider = "debezium"` and `mode = "managed-connector"`
 - contributes external execution runtimes through `DebeziumConnectorOptions` and keeps those runtimes on the shared `/engine/cdc-capture-runtimes*` catalog with `executionOwnership = external-managed`, `executionTopology = managed-connector`, and `acknowledgementMode = connector-offset-commit`
 - wires the shared external-reporting sink automatically when Debezium connectors are configured, so hosts that already add `Cephalon.Data` do not also need to remember `EnableExternalCdcRuntimeReporting = true` just to accept managed connector reports
-- normalizes connector, task, reconciliation, and managed-connector governance metadata from external Debezium reports into stable `debezium*` plus shared `managedConnector*` metadata on the existing capture and execution-runtime surfaces instead of inventing a Debezium-only lifecycle or governance registry
+- normalizes connector, task, reconciliation, managed-connector governance, and desired-versus-observed drift metadata from external Debezium reports into stable `debezium*` plus shared `managedConnector*` metadata on the existing capture and execution-runtime surfaces instead of inventing a Debezium-only lifecycle, governance, or drift registry
 - preserves authored capture ownership through `CdcCaptureDescriptor.SourceModuleId` while surfacing `metadata.contributorModuleId = "debezium-data"` when the Debezium pack contributes descriptors on behalf of another module
 
 ## Main surfaces
@@ -188,6 +188,31 @@ runtime surface instead of introducing a Debezium-only control-plane catalog.
 - ASP.NET Core now maps `/engine/cdc-capture-runtimes/governance/{governanceState}` plus `/engine/cdc-capture-runtimes/governance/categories/{governanceCategory}` on the same shared runtime route family, so operator drill-down stays aligned with the engine-owned catalog instead of a Debezium-only endpoint family
 - non-`observe-only` values such as `apply-and-reconcile` currently surface as `future-control-plane` governance truth only; they do not mean Cephalon already owns Kafka Connect write paths
 
+## Managed-connector drift baseline
+
+The `ENG-170` follow-through keeps desired-versus-observed managed-connector drift additive over
+that same shared runtime surface instead of introducing a Debezium-only drift registry.
+
+- connector declarations and runtime reports now normalize shared declared-versus-reported
+  `managedConnector*` identity metadata beside the existing `debezium*` metadata, including
+  connector cluster, connector class, source provider, expected task count, declared task ids, and
+  reported task topology
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDrift` now publishes stable
+  `not-applicable`, `unknown`, `in-sync`, and `drifted` posture for Debezium-managed runtimes
+  together with drift categories, recommended action ids, declared-versus-reported connector
+  identity, declared-versus-reported task ids, and the latest lifecycle or reconciliation context
+- the shared execution-runtime catalog now derives that drift answer from merged runtime metadata,
+  so missing task baselines, missing reported task topology, task-count mismatches, missing
+  declared task ids, unexpected reported task ids, and connector-identity mismatches become
+  truthful operator posture on the existing `/engine/cdc-capture-runtimes*` and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/drift/{driftState}` plus
+  `/engine/cdc-capture-runtimes/drift/categories/{driftCategory}` on the same shared runtime route
+  family, so operator drill-down stays aligned with the engine-owned catalog instead of a
+  Debezium-only endpoint family
+- drift posture currently remains read-only operator truth; it does not mean Cephalon already owns
+  Kafka Connect write paths or automatic connector mutation
+
 ## Not shipped in this slice
 
 This pack intentionally still does not claim:
@@ -195,6 +220,7 @@ This pack intentionally still does not claim:
 - Kafka Connect or Debezium REST API provisioning and reconciliation
 - connector restart or pause management
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
+- automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation

@@ -60,9 +60,15 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         var declaredTaskIds = NormalizeList(connector.TaskIds);
         var expectedTaskCount = ResolveExpectedTaskCount(connector, declaredTaskIds);
         var managementMode = NormalizeConfiguredValue(connector.ManagementMode, "observe-only");
+        var declaredConnectClusterId = NormalizeOptional(connector.ConnectClusterId);
+        var declaredConnectorClass = NormalizeOptional(connector.ConnectorClass);
+        var declaredSourceProviderId = NormalizeOptional(connector.SourceProviderId);
         var connectorState = NormalizeToken(ResolveMetadata(metadata, "connectorState"));
         var connectorLifecycleState = ResolveConnectorLifecycleState(connectorState);
         var rebalanceState = NormalizeToken(ResolveMetadata(metadata, "rebalanceState"));
+        var reportedConnectClusterId = NormalizeOptional(ResolveMetadata(metadata, "reportedConnectClusterId", "connectClusterId"));
+        var reportedConnectorClass = NormalizeOptional(ResolveMetadata(metadata, "reportedConnectorClass", "connectorClass"));
+        var reportedSourceProviderId = NormalizeOptional(ResolveMetadata(metadata, "reportedSourceProviderId", "sourceProviderId"));
         var reportedTaskIds = ResolveTaskIds(metadata, "reportedTaskIds", "taskIds");
         var activeTaskIds = ResolveTaskIds(metadata, "activeTaskIds");
         var failedTaskIds = ResolveTaskIds(metadata, "failedTaskIds");
@@ -113,6 +119,12 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
             restartingTaskIds);
 
         UpsertOptional(metadata, "debeziumManagementMode", managementMode);
+        UpsertOptional(metadata, "debeziumDeclaredConnectClusterId", declaredConnectClusterId);
+        UpsertOptional(metadata, "debeziumDeclaredConnectorClass", declaredConnectorClass);
+        UpsertOptional(metadata, "debeziumDeclaredSourceProviderId", declaredSourceProviderId);
+        UpsertOptional(metadata, "debeziumReportedConnectClusterId", reportedConnectClusterId);
+        UpsertOptional(metadata, "debeziumReportedConnectorClass", reportedConnectorClass);
+        UpsertOptional(metadata, "debeziumReportedSourceProviderId", reportedSourceProviderId);
         UpsertOptionalInt(metadata, "debeziumExpectedTaskCount", expectedTaskCount);
         UpsertOptionalList(metadata, "debeziumDeclaredTaskIds", declaredTaskIds);
         UpsertOptional(metadata, "debeziumConnectorState", connectorState);
@@ -131,6 +143,12 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         UpsertOptional(metadata, "debeziumConnectorGeneration", connectorGeneration);
         UpsertOptional(metadata, "debeziumWorkerId", workerId);
         UpsertOptional(metadata, "managedConnectorManagementMode", managementMode);
+        UpsertOptional(metadata, "managedConnectorDeclaredConnectClusterId", declaredConnectClusterId);
+        UpsertOptional(metadata, "managedConnectorDeclaredConnectorClass", declaredConnectorClass);
+        UpsertOptional(metadata, "managedConnectorDeclaredSourceProviderId", declaredSourceProviderId);
+        UpsertOptional(metadata, "managedConnectorReportedConnectClusterId", reportedConnectClusterId);
+        UpsertOptional(metadata, "managedConnectorReportedConnectorClass", reportedConnectorClass);
+        UpsertOptional(metadata, "managedConnectorReportedSourceProviderId", reportedSourceProviderId);
         UpsertOptionalInt(metadata, "managedConnectorExpectedTaskCount", expectedTaskCount);
         UpsertOptionalList(metadata, "managedConnectorDeclaredTaskIds", declaredTaskIds);
         UpsertOptional(metadata, "managedConnectorConnectorLifecycleState", connectorLifecycleState);
@@ -142,6 +160,12 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         UpsertOptionalList(metadata, "managedConnectorActiveTaskIds", activeTaskIds);
 
         UpsertExecutionRuntimeMetadata(metadata, "debeziumManagementMode", managementMode);
+        UpsertExecutionRuntimeMetadata(metadata, "debeziumDeclaredConnectClusterId", declaredConnectClusterId);
+        UpsertExecutionRuntimeMetadata(metadata, "debeziumDeclaredConnectorClass", declaredConnectorClass);
+        UpsertExecutionRuntimeMetadata(metadata, "debeziumDeclaredSourceProviderId", declaredSourceProviderId);
+        UpsertExecutionRuntimeMetadata(metadata, "debeziumReportedConnectClusterId", reportedConnectClusterId);
+        UpsertExecutionRuntimeMetadata(metadata, "debeziumReportedConnectorClass", reportedConnectorClass);
+        UpsertExecutionRuntimeMetadata(metadata, "debeziumReportedSourceProviderId", reportedSourceProviderId);
         UpsertExecutionRuntimeMetadata(metadata, "debeziumExpectedTaskCount", expectedTaskCount?.ToString(CultureInfo.InvariantCulture));
         UpsertExecutionRuntimeMetadata(metadata, "debeziumDeclaredTaskIds", JoinValues(declaredTaskIds));
         UpsertExecutionRuntimeMetadata(metadata, "debeziumConnectorState", connectorState);
@@ -160,6 +184,12 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         UpsertExecutionRuntimeMetadata(metadata, "debeziumConnectorGeneration", connectorGeneration);
         UpsertExecutionRuntimeMetadata(metadata, "debeziumWorkerId", workerId);
         UpsertExecutionRuntimeMetadata(metadata, "managedConnectorManagementMode", managementMode);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorDeclaredConnectClusterId", declaredConnectClusterId);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorDeclaredConnectorClass", declaredConnectorClass);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorDeclaredSourceProviderId", declaredSourceProviderId);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReportedConnectClusterId", reportedConnectClusterId);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReportedConnectorClass", reportedConnectorClass);
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReportedSourceProviderId", reportedSourceProviderId);
         UpsertExecutionRuntimeMetadata(metadata, "managedConnectorExpectedTaskCount", expectedTaskCount?.ToString(CultureInfo.InvariantCulture));
         UpsertExecutionRuntimeMetadata(metadata, "managedConnectorDeclaredTaskIds", JoinValues(declaredTaskIds));
         UpsertExecutionRuntimeMetadata(metadata, "managedConnectorConnectorLifecycleState", connectorLifecycleState);
