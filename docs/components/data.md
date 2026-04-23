@@ -294,6 +294,19 @@ The shared execution-runtime catalog now keeps that latest-outcome answer plus b
 history on the same `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of
 inventing a Debezium-only command journal.
 
+That same shared execution-runtime story now also keeps managed-connector command-retry and
+idempotency posture explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandRetry`
+publishes stable `not-applicable` / `not-needed` / `duplicate` / `cooldown` / `retry-blocked` /
+`operator-only` / `retry-eligible` posture together with retry categories, the intended operation
+id, source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/
+dry-run/execution-intent/execution-approval/command-envelope/command-issuance/execution-adapter/
+latest-command-execution state, deterministic retry fingerprints, cooldown windows, and latest
+attempt metadata. The shared execution-runtime catalog derives that answer from the existing
+command-execution history plus the current command-issuance, execution-adapter, and safety posture,
+so hosts can answer retry versus duplicate versus cooldown truth on the same `/engine/cdc-*`,
+`/engine/runtime-story`, and `snapshot` surfaces instead of inventing a Debezium-only retry
+registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -308,8 +321,10 @@ managed-connector execution-approval operation, managed-connector command-envelo
 managed-connector command-envelope category, managed-connector command-envelope operation,
 managed-connector command-issuance state, managed-connector command-issuance category,
 managed-connector command-issuance operation, managed-connector execution-adapter state,
-managed-connector execution-adapter category, and managed-connector execution-adapter operation as
-well.
+managed-connector execution-adapter category, managed-connector execution-adapter operation,
+managed-connector command-execution state, managed-connector command-execution operation,
+managed-connector command-retry state, managed-connector command-retry category, and
+managed-connector command-retry operation as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -339,12 +354,16 @@ well.
 `GetByManagedConnectorExecutionAdapterOperationId(...)`,
 `GetByManagedConnectorCommandExecutionState(...)`,
 `GetByManagedConnectorCommandExecutionOperationId(...)`, and
+`GetByManagedConnectorCommandRetryState(...)`,
+`GetByManagedConnectorCommandRetryCategory(...)`, and
+`GetByManagedConnectorCommandRetryOperationId(...)`, plus
 `GetManagedConnectorCommandExecutionHistory(...)`, so host code, provider packs, and tooling can
 narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
 managed-connector governance, managed-connector drift, managed-connector action-planning,
 managed-connector readiness, managed-connector preflight, managed-connector dry-run,
 managed-connector execution-intent, managed-connector execution-approval, managed-connector
-command-envelope, managed-connector command-issuance, managed-connector execution-adapter, or
+command-envelope, managed-connector command-issuance, managed-connector execution-adapter,
+managed-connector command-execution, managed-connector command-retry, or
 managed-connector command-execution-history
 index.
 ASP.NET Core maps those same filters through
@@ -386,7 +405,10 @@ ASP.NET Core maps those same filters through
 `/engine/cdc-capture-runtimes/command-issuances/operations/{operationId}` plus
 `/engine/cdc-capture-runtimes/command-executions/{executionState}`,
 `/engine/cdc-capture-runtimes/command-executions/operations/{operationId}`, and
-`/engine/cdc-capture-runtimes/{executionRuntimeId}/command-executions` so the live host surface
+`/engine/cdc-capture-runtimes/{executionRuntimeId}/command-executions` plus
+`/engine/cdc-capture-runtimes/command-retries/{retryState}`,
+`/engine/cdc-capture-runtimes/command-retries/categories/{retryCategory}`, and
+`/engine/cdc-capture-runtimes/command-retries/operations/{operationId}` so the live host surface
 stays aligned with the same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
@@ -430,9 +452,9 @@ shared report-sink bridge keep Debezium or Kafka Connect style lifecycle, reconc
 reporter-coordination truth, governance posture, desired-versus-observed drift posture, and
 operator action-planning truth on the same `/engine/cdc-*`, `/engine/runtime-story`, and
 `snapshot` surfaces, while the shared execution-runtime catalog now rolls that connector posture
-back into typed runtime-level operator summaries, provider execution-adapter posture, and latest
-managed-connector command-execution outcome/history instead of inventing a Debezium-only status
-registry.
+back into typed runtime-level operator summaries, provider execution-adapter posture, latest
+managed-connector command-execution outcome/history, and additive command-retry/idempotency truth
+instead of inventing a Debezium-only status registry.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

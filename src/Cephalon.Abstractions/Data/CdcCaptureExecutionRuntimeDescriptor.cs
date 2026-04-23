@@ -304,6 +304,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult ManagedConnectorCommandExecution { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector command-retry and idempotency posture derived from the shared command lane plus bounded execution history.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus ManagedConnectorCommandRetry { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

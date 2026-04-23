@@ -277,6 +277,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandExecutionOperationId(string operationId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector command-retry answer matches the requested state.
+    /// </summary>
+    /// <param name="retryState">The stable managed-connector command-retry state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that retry state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandRetryState(string retryState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector command-retry answer includes the requested category.
+    /// </summary>
+    /// <param name="retryCategory">The stable managed-connector command-retry category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that retry category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandRetryCategory(string retryCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector command-retry answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector command-retry operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandRetryOperationId(string operationId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

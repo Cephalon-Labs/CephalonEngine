@@ -1,6 +1,6 @@
 # Cephalon.Data.Debezium
 
-`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, managed-connector execution-intent posture, managed-connector execution-approval posture, managed-connector command-envelope posture, managed-connector command-issuance posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
+`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, managed-connector execution-intent posture, managed-connector execution-approval posture, managed-connector command-envelope posture, managed-connector command-issuance posture, managed-connector execution-adapter posture, managed-connector command-execution outcome/history, managed-connector command-retry posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
 
 ## What it owns
 
@@ -485,6 +485,36 @@ journal or second coordinator.
   configuration-payload lane exists, and the new history surface records those typed outcomes
   without claiming automatic retries or durable provider completion tracking
 
+## Managed-connector retry/idempotency hardening baseline
+
+The `ENG-181` follow-through keeps shared retry and idempotency posture additive over that same
+shared runtime surface instead of introducing a Debezium-only retry registry or second
+coordinator.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandRetry` now publishes stable
+  `not-applicable`, `not-needed`, `duplicate`, `cooldown`, `retry-blocked`, `operator-only`, and
+  `retry-eligible` posture for Debezium-managed runtimes together with retry categories, the
+  intended operation id, source coverage/remediation/governance/drift/action-plan/
+  write-path-readiness/preflight/dry-run/execution-intent/execution-approval/command-envelope/
+  command-issuance/execution-adapter/latest-command-execution state, deterministic retry
+  fingerprints, cooldown windows, and latest attempt metadata
+- the shared execution-runtime catalog now derives that command-retry answer from the already
+  shipped command-execution history, command-issuance, execution-adapter, and approval posture, so
+  cooldown, duplicate, no-op, operator-only, and retry-eligible answers surface back on the same
+  merged CDC runtime surface instead of forcing Debezium callers to invent a parallel retry cache
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/command-retries/{retryState}`,
+  `/engine/cdc-capture-runtimes/command-retries/categories/{retryCategory}`, and
+  `/engine/cdc-capture-runtimes/command-retries/operations/{operationId}` on the same shared route
+  family, so operator drill-down stays aligned with the engine-owned catalog instead of a
+  Debezium-only endpoint family
+- Debezium pause/delete command history now proves bounded cooldown and duplicate posture through
+  the shared fingerprint lane, while future-control-plane reconcile paths still surface
+  `operator-only` retry truth instead of pretending Cephalon already owns Kafka Connect retry
+  orchestration
+- command retry currently remains read-only operator truth; it does not mean Cephalon already owns
+  automatic background retries, durable distributed command journals, or full managed-connector
+  idempotency orchestration
+
 ## Not shipped in these slices
 
 This pack intentionally still does not claim:
@@ -494,7 +524,7 @@ This pack intentionally still does not claim:
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
-- durable distributed command journals, automatic retries, or idempotency orchestration
+- durable distributed command journals, automatic background retries, or full idempotency orchestration
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

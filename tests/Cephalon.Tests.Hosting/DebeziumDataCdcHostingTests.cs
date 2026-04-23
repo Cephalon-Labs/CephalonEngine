@@ -1257,6 +1257,7 @@ public sealed class DebeziumDataCdcHostingTests
     [Fact]
     public async Task MapCephalonExposesManagedConnectorDryRunExecutionIntentApprovalCommandEnvelopeCommandIssuanceExecutionAdapterAndCommandExecutionRoutesOnSharedCdcRuntimeSurface()
     {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T06:10:30Z", CultureInfo.InvariantCulture));
         var builder = CreateBuilder(
             options =>
             {
@@ -1378,7 +1379,7 @@ public sealed class DebeziumDataCdcHostingTests
                     expectedTaskCount: 1,
                     taskIds: ["0"]));
             },
-            new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T06:10:30Z", CultureInfo.InvariantCulture)));
+            timeProvider);
 
         await using var app = builder.Build();
         app.MapCephalon();
@@ -1681,6 +1682,14 @@ public sealed class DebeziumDataCdcHostingTests
             var pauseRequiredCommandExecutionHistory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]>($"/engine/cdc-capture-runtimes/{PauseRequiredRuntimeId}/command-executions");
             var deleteRequiredCommandExecutionHistory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]>($"/engine/cdc-capture-runtimes/{DeleteRequiredRuntimeId}/command-executions");
             var futureControlPlaneCommandExecutionHistory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]>($"/engine/cdc-capture-runtimes/{FutureControlPlaneRuntimeId}/command-executions");
+            var notApplicableCommandRetry = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/not-applicable");
+            var notNeededCommandRetry = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/not-needed");
+            var cooldownCommandRetry = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/cooldown");
+            var operatorOnlyCommandRetry = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/operator-only");
+            var cooldownCommandRetryCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/categories/cooldown-active");
+            var controlPlaneCommandRetryCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/categories/control-plane-ownership-gap");
+            var pauseCommandRetryOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/operations/pause");
+            var deleteCommandRetryOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/operations/delete");
             var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
             var readyReconcileCommand = await readyReconcileCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
             var pauseRequiredBlockedCommand = await pauseRequiredBlockedCommandResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult>();
@@ -2243,6 +2252,45 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly, futureControlPlaneCommandExecutionHistory[0].State);
             Assert.Equal(futureControlPlaneCommand.AttemptId, futureControlPlaneCommandExecutionHistory[0].AttemptId);
 
+            Assert.NotNull(notApplicableCommandRetry);
+            Assert.Equal([ObserveOnlyRuntimeId], notApplicableCommandRetry.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.NotApplicable, notApplicableCommandRetry[0].ManagedConnectorCommandRetry.State);
+
+            Assert.NotNull(notNeededCommandRetry);
+            Assert.Equal(
+                [BlockedRuntimeId, OutOfPolicyRuntimeId, PauseSatisfiedRuntimeId, ReadyRuntimeId, WaitingRuntimeId],
+                notNeededCommandRetry.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(cooldownCommandRetry);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                cooldownCommandRetry.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+            Assert.Contains(cooldownCommandRetry, runtime => runtime.Id == PauseRequiredRuntimeId &&
+                runtime.ManagedConnectorCommandRetry.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.Pause);
+            Assert.Contains(cooldownCommandRetry, runtime => runtime.Id == DeleteRequiredRuntimeId &&
+                runtime.ManagedConnectorCommandRetry.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.Delete &&
+                runtime.ManagedConnectorCommandRetry.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.DestructiveOperation, StringComparer.OrdinalIgnoreCase));
+
+            Assert.NotNull(operatorOnlyCommandRetry);
+            Assert.Equal([FutureControlPlaneRuntimeId], operatorOnlyCommandRetry.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.Reconcile, operatorOnlyCommandRetry[0].ManagedConnectorCommandRetry.OperationId);
+
+            Assert.NotNull(cooldownCommandRetryCategory);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                cooldownCommandRetryCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(controlPlaneCommandRetryCategory);
+            Assert.Equal([FutureControlPlaneRuntimeId], controlPlaneCommandRetryCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(pauseCommandRetryOperation);
+            Assert.Equal(
+                [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId],
+                pauseCommandRetryOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(deleteCommandRetryOperation);
+            Assert.Equal([DeleteRequiredRuntimeId], deleteCommandRetryOperation.Select(static runtime => runtime.Id).ToArray());
+
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
                 item.ManagedConnectorDryRun.State == CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred &&
@@ -2401,6 +2449,29 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseSatisfiedRuntimeId &&
                 item.ManagedConnectorCommandExecution.State == CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Unrecorded &&
                 !item.ManagedConnectorCommandExecution.HasRecordedOutcome);
+
+            timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-23T06:11:10Z", CultureInfo.InvariantCulture));
+            var duplicateCommandRetry = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/duplicate");
+            var duplicateCommandRetryCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-retries/categories/duplicate-command");
+            var snapshotAfterRetryCooldown = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+            Assert.NotNull(duplicateCommandRetry);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                duplicateCommandRetry.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(duplicateCommandRetryCategory);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                duplicateCommandRetryCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(snapshotAfterRetryCooldown);
+            Assert.Contains(snapshotAfterRetryCooldown.CdcCaptureExecutionRuntimes, item => item.Id == PauseRequiredRuntimeId &&
+                item.ManagedConnectorCommandRetry.State == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Duplicate &&
+                item.ManagedConnectorCommandRetry.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.Pause);
+            Assert.Contains(snapshotAfterRetryCooldown.CdcCaptureExecutionRuntimes, item => item.Id == DeleteRequiredRuntimeId &&
+                item.ManagedConnectorCommandRetry.State == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Duplicate &&
+                item.ManagedConnectorCommandRetry.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.Delete);
         }
         finally
         {

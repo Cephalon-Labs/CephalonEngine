@@ -2761,6 +2761,94 @@ public sealed class DebeziumDataCdcPackTests
                 .Select(static runtime => runtime.Id)
                 .OrderBy(static id => id, StringComparer.Ordinal)
                 .ToArray());
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.NotApplicable, observeOnly.ManagedConnectorCommandRetry.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.NotNeeded, ready.ManagedConnectorCommandRetry.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Cooldown, pauseRequired.ManagedConnectorCommandRetry.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Cooldown, deleteRequired.ManagedConnectorCommandRetry.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.OperatorOnly, futureControlPlane.ManagedConnectorCommandRetry.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile, ready.ManagedConnectorCommandRetry.OperationId);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Pause, pauseRequired.ManagedConnectorCommandRetry.OperationId);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Delete, deleteRequired.ManagedConnectorCommandRetry.OperationId);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile, futureControlPlane.ManagedConnectorCommandRetry.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.CooldownActive, pauseRequired.ManagedConnectorCommandRetry.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.CooldownActive, deleteRequired.ManagedConnectorCommandRetry.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.ControlPlaneOwnershipGap, futureControlPlane.ManagedConnectorCommandRetry.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.NoExecutionNeeded, ready.ManagedConnectorCommandRetry.CategoryIds);
+        Assert.True(pauseRequired.ManagedConnectorCommandRetry.HasMatchingRetryFingerprint);
+        Assert.True(deleteRequired.ManagedConnectorCommandRetry.HasMatchingRetryFingerprint);
+        Assert.True(futureControlPlane.ManagedConnectorCommandRetry.IsOperatorOnly);
+        Assert.True(ready.ManagedConnectorCommandRetry.IsNotNeeded);
+        Assert.False(ready.ManagedConnectorCommandRetry.CanRetry);
+        Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandRetryState(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.NotApplicable)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandRetryState(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Cooldown)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandRetryState(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.OperatorOnly)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [BlockedRuntimeId, OutOfPolicyRuntimeId, PauseSatisfiedRuntimeId, ReadyRuntimeId, WaitingRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandRetryState(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.NotNeeded)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandRetryCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.CooldownActive)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandRetryCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.ControlPlaneOwnershipGap)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandRetryOperationId(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.Pause)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandRetryOperationId(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryOperationIds.Delete)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+
+        timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-23T06:11:10Z", CultureInfo.InvariantCulture));
+        pauseRequired = runtimeCatalog.GetById(PauseRequiredRuntimeId);
+        deleteRequired = runtimeCatalog.GetById(DeleteRequiredRuntimeId);
+
+        Assert.NotNull(pauseRequired);
+        Assert.NotNull(deleteRequired);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Duplicate, pauseRequired.ManagedConnectorCommandRetry.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Duplicate, deleteRequired.ManagedConnectorCommandRetry.State);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.DuplicateCommand, pauseRequired.ManagedConnectorCommandRetry.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.DuplicateCommand, deleteRequired.ManagedConnectorCommandRetry.CategoryIds);
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandRetryState(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates.Duplicate)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandRetryCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories.DuplicateCommand)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
     }
 
     private static DebeziumConnectorOptions CreateConnector(
