@@ -3027,6 +3027,78 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-176 Phase 13 managed-connector execution-approval and safety-gating baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, and `ENG-175`
+  shipped shared coverage, remediation, governance, desired-versus-observed drift,
+  action-planning, write-path readiness, preflight, dry-run, and execution-intent truth, but
+  operators still lacked one typed answer for whether Cephalon should currently auto-block,
+  policy-block, queue for approval, or auto-allow the intended managed-connector follow-through on
+  the same shared runtime surface
+- that next follow-through needed to keep connector-management execution approval additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only approval
+  registry or prematurely claiming Kafka Connect write-path ownership
+- teams also needed route-level drill-downs for execution-approval state, execution-approval
+  category, and intended operation without losing the underlying coverage, remediation,
+  governance, drift, action-plan, write-path-readiness, preflight, dry-run, and execution-intent
+  truth that already shipped
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector execution-approval contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `auto-blocked`,
+  `policy-blocked`, `approval-required`, `approval-ready`, and `auto-eligible` posture together
+  with execution-approval categories, the intended operation id, source
+  coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/execution-intent
+  state, the current primary action id, the safety-gating source id, and explicit-approval detail
+- the shared execution-runtime catalog now derives that execution-approval answer from merged
+  coverage, remediation, governance, drift, action-planning, write-path-readiness, preflight,
+  dry-run, and execution-intent truth instead of forcing hosts or providers to rebuild a second
+  approval registry
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive execution-approval-state,
+  execution-approval-category, and execution-approval-operation drill-down methods, and ASP.NET
+  Core publishes those same filters on the existing `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later managed-connector write-path command-envelope or execution work
+  remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorExecutionApproval`
+- `Cephalon.Data` now derives runtime-level `not-applicable`, `auto-blocked`, `policy-blocked`,
+  `approval-required`, `approval-ready`, and `auto-eligible` posture plus stable category ids such
+  as `observe-only-mode`, `blocking-remediation`, `incomplete-reporting-coverage`,
+  `runtime-truth-incomplete`, `governance-out-of-policy`, `control-plane-ownership-gap`,
+  `destructive-operation`, `approval-required`, `approval-ready`, `auto-eligible`, and
+  `no-execution-needed`, together with intended operation ids such as `none`, `reconcile`,
+  `pause`, and `delete`, from merged dry-run, execution-intent, preflight, write-path-readiness,
+  action-plan, drift, governance, remediation, and coverage truth; destructive or drift-sensitive
+  follow-through now surfaces as explicit approval-required truth without materializing a second
+  safety-gating coordinator
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorExecutionApprovalState(...)`,
+  `GetByManagedConnectorExecutionApprovalCategory(...)`, and
+  `GetByManagedConnectorExecutionApprovalOperationId(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/execution-approvals/{executionApprovalState}`,
+  `/engine/cdc-capture-runtimes/execution-approvals/categories/{executionApprovalCategory}`, and
+  `/engine/cdc-capture-runtimes/execution-approvals/operations/{operationId}` so host routes stay
+  aligned with the same shared runtime story
+- targeted coverage now proves the execution-approval baseline through composition tests `37/37`,
+  hosting tests `15/15`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-175 Phase 13 managed-connector execution-intent baseline
 
 Status: done

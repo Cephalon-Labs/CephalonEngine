@@ -274,6 +274,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus ManagedConnectorExecutionIntent { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector execution-approval and safety-gating posture derived from execution intent, dry-run, preflight, write-path readiness, governance, remediation, and runtime coverage truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus ManagedConnectorExecutionApproval { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

@@ -31,6 +31,8 @@ public sealed class DebeziumDataCdcPackTests
     private const string PauseRequiredCaptureId = "inventory-returns-cdc";
     private const string PauseSatisfiedRuntimeId = "inventory-pause-satisfied-connector";
     private const string PauseSatisfiedCaptureId = "inventory-refunds-cdc";
+    private const string DeleteRequiredRuntimeId = "inventory-delete-required-connector";
+    private const string DeleteRequiredCaptureId = "inventory-archives-cdc";
 
     [Fact]
     public async Task AddDebeziumData_ManagedConnectorClaimsCaptureAndAcceptsExternalReportsWithoutBaseOptIn()
@@ -1462,6 +1464,19 @@ public sealed class DebeziumDataCdcPackTests
                     managementMode: "pause",
                     expectedTaskCount: 1,
                     taskIds: ["0"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: DeleteRequiredRuntimeId,
+                    captureId: DeleteRequiredCaptureId,
+                    displayName: "Inventory Delete Required Connector",
+                    captureDisplayName: "Inventory Archives CDC",
+                    captureDescription: "Declares a delete operation so execution approval must surface destructive follow-through truth.",
+                    connectClusterId: "connect-cluster-h",
+                    connectorClass: "io.debezium.connector.mysql.MySqlConnector",
+                    sourceProviderId: "mysql",
+                    topicPrefix: "inventory-archives",
+                    managementMode: "delete",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
             });
         });
 
@@ -1587,6 +1602,26 @@ public sealed class DebeziumDataCdcPackTests
                     reporterId: "connect-worker-g")
             ]);
 
+        await reportSink.ReportAsync(
+            DeleteRequiredRuntimeId,
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: DeleteRequiredCaptureId,
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T06:09:58Z", CultureInfo.InvariantCulture),
+                    reportId: "debezium-report-delete-required-001",
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["connectorState"] = "RUNNING",
+                        ["connectClusterId"] = "connect-cluster-h",
+                        ["connectorClass"] = "io.debezium.connector.mysql.MySqlConnector",
+                        ["sourceProviderId"] = "mysql",
+                        ["reportedTaskIds"] = "0",
+                        ["activeTaskIds"] = "0"
+                    },
+                    reporterId: "connect-worker-h")
+            ]);
+
         var observeOnly = runtimeCatalog.GetById(ObserveOnlyRuntimeId);
         var futureControlPlane = runtimeCatalog.GetById(FutureControlPlaneRuntimeId);
         var outOfPolicy = runtimeCatalog.GetById(OutOfPolicyRuntimeId);
@@ -1595,6 +1630,7 @@ public sealed class DebeziumDataCdcPackTests
         var ready = runtimeCatalog.GetById(ReadyRuntimeId);
         var pauseRequired = runtimeCatalog.GetById(PauseRequiredRuntimeId);
         var pauseSatisfied = runtimeCatalog.GetById(PauseSatisfiedRuntimeId);
+        var deleteRequired = runtimeCatalog.GetById(DeleteRequiredRuntimeId);
 
         Assert.NotNull(observeOnly);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred, observeOnly.ManagedConnectorDryRun.State);
@@ -1608,6 +1644,11 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentSources.DryRun, observeOnly.ManagedConnectorExecutionIntent.ConfidenceSourceId);
         Assert.True(observeOnly.ManagedConnectorExecutionIntent.IsDeferred);
         Assert.False(observeOnly.ManagedConnectorExecutionIntent.CanExecuteThroughEngine);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.NotApplicable, observeOnly.ManagedConnectorExecutionApproval.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.None, observeOnly.ManagedConnectorExecutionApproval.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ObserveOnlyMode, observeOnly.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources.Governance, observeOnly.ManagedConnectorExecutionApproval.SourceId);
+        Assert.False(observeOnly.ManagedConnectorExecutionApproval.HasSafetyGateClearance);
 
         Assert.NotNull(futureControlPlane);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Blocked, futureControlPlane.ManagedConnectorDryRun.State);
@@ -1626,6 +1667,11 @@ public sealed class DebeziumDataCdcPackTests
         Assert.True(futureControlPlane.ManagedConnectorExecutionIntent.IsOperatorOnly);
         Assert.True(futureControlPlane.ManagedConnectorExecutionIntent.WouldApplyChanges);
         Assert.Equal(1, futureControlPlane.ManagedConnectorExecutionIntent.PotentialChangeCount);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.PolicyBlocked, futureControlPlane.ManagedConnectorExecutionApproval.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.Reconcile, futureControlPlane.ManagedConnectorExecutionApproval.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ControlPlaneOwnershipGap, futureControlPlane.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources.Governance, futureControlPlane.ManagedConnectorExecutionApproval.SourceId);
+        Assert.True(futureControlPlane.ManagedConnectorExecutionApproval.IsPolicyBlocked);
 
         Assert.NotNull(outOfPolicy);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Blocked, outOfPolicy.ManagedConnectorDryRun.State);
@@ -1636,6 +1682,10 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.None, outOfPolicy.ManagedConnectorExecutionIntent.OperationId);
         Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.GovernanceOutOfPolicy, outOfPolicy.ManagedConnectorExecutionIntent.CategoryIds);
         Assert.True(outOfPolicy.ManagedConnectorExecutionIntent.IsBlocked);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.PolicyBlocked, outOfPolicy.ManagedConnectorExecutionApproval.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.None, outOfPolicy.ManagedConnectorExecutionApproval.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.GovernanceOutOfPolicy, outOfPolicy.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources.Governance, outOfPolicy.ManagedConnectorExecutionApproval.SourceId);
 
         Assert.NotNull(waiting);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Blocked, waiting.ManagedConnectorDryRun.State);
@@ -1644,6 +1694,10 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.Blocked, waiting.ManagedConnectorExecutionIntent.State);
         Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.IncompleteReportingCoverage, waiting.ManagedConnectorExecutionIntent.CategoryIds);
         Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.RuntimeTruthIncomplete, waiting.ManagedConnectorExecutionIntent.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.AutoBlocked, waiting.ManagedConnectorExecutionApproval.State);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.IncompleteReportingCoverage, waiting.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.RuntimeTruthIncomplete, waiting.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources.ExecutionIntent, waiting.ManagedConnectorExecutionApproval.SourceId);
 
         Assert.NotNull(blocked);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Blocked, blocked.ManagedConnectorDryRun.State);
@@ -1652,6 +1706,10 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.Blocked, blocked.ManagedConnectorExecutionIntent.State);
         Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.BlockingRemediation, blocked.ManagedConnectorExecutionIntent.CategoryIds);
         Assert.True(blocked.ManagedConnectorExecutionIntent.IsBlocked);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.AutoBlocked, blocked.ManagedConnectorExecutionApproval.State);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.BlockingRemediation, blocked.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources.Remediation, blocked.ManagedConnectorExecutionApproval.SourceId);
+        Assert.True(blocked.ManagedConnectorExecutionApproval.IsAutoBlocked);
 
         Assert.NotNull(ready);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.NoOp, ready.ManagedConnectorDryRun.State);
@@ -1665,6 +1723,13 @@ public sealed class DebeziumDataCdcPackTests
         Assert.True(ready.ManagedConnectorExecutionIntent.IsReadyToExecute);
         Assert.True(ready.ManagedConnectorExecutionIntent.CanExecuteThroughEngine);
         Assert.False(ready.ManagedConnectorExecutionIntent.IsApprovalRequired);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.AutoEligible, ready.ManagedConnectorExecutionApproval.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.Reconcile, ready.ManagedConnectorExecutionApproval.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.AutoEligible, ready.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.NoExecutionNeeded, ready.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources.ExecutionIntent, ready.ManagedConnectorExecutionApproval.SourceId);
+        Assert.True(ready.ManagedConnectorExecutionApproval.IsAutoEligible);
+        Assert.True(ready.ManagedConnectorExecutionApproval.CanAutoExecuteThroughEngine);
 
         Assert.NotNull(pauseRequired);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.WouldChange, pauseRequired.ManagedConnectorDryRun.State);
@@ -1684,6 +1749,16 @@ public sealed class DebeziumDataCdcPackTests
         Assert.True(pauseRequired.ManagedConnectorExecutionIntent.CanExecuteThroughEngine);
         Assert.True(pauseRequired.ManagedConnectorExecutionIntent.WouldApplyChanges);
         Assert.Equal(1, pauseRequired.ManagedConnectorExecutionIntent.PotentialChangeCount);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.ApprovalReady, pauseRequired.ManagedConnectorExecutionApproval.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.Pause, pauseRequired.ManagedConnectorExecutionApproval.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ApprovalRequired, pauseRequired.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ApprovalReady, pauseRequired.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.LifecycleChange, pauseRequired.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources.ExecutionIntent, pauseRequired.ManagedConnectorExecutionApproval.SourceId);
+        Assert.True(pauseRequired.ManagedConnectorExecutionApproval.IsApprovalReady);
+        Assert.True(pauseRequired.ManagedConnectorExecutionApproval.RequiresExplicitApproval);
+        Assert.True(pauseRequired.ManagedConnectorExecutionApproval.CanRequestApproval);
+        Assert.True(pauseRequired.ManagedConnectorExecutionApproval.HasSafetyGateClearance);
 
         Assert.NotNull(pauseSatisfied);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.NoOp, pauseSatisfied.ManagedConnectorDryRun.State);
@@ -1696,6 +1771,35 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.NoExecutionNeeded, pauseSatisfied.ManagedConnectorExecutionIntent.CategoryIds);
         Assert.True(pauseSatisfied.ManagedConnectorExecutionIntent.IsReadyToExecute);
         Assert.True(pauseSatisfied.ManagedConnectorExecutionIntent.CanExecuteThroughEngine);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.AutoEligible, pauseSatisfied.ManagedConnectorExecutionApproval.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.Pause, pauseSatisfied.ManagedConnectorExecutionApproval.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.AutoEligible, pauseSatisfied.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.NoExecutionNeeded, pauseSatisfied.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.True(pauseSatisfied.ManagedConnectorExecutionApproval.IsAutoEligible);
+
+        Assert.NotNull(deleteRequired);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.WouldChange, deleteRequired.ManagedConnectorDryRun.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Delete, deleteRequired.ManagedConnectorDryRun.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.ChangePlanned, deleteRequired.ManagedConnectorDryRun.CategoryIds);
+        Assert.True(deleteRequired.ManagedConnectorDryRun.IsWouldChange);
+        Assert.True(deleteRequired.ManagedConnectorDryRun.WouldApplyChanges);
+        Assert.Equal(1, deleteRequired.ManagedConnectorDryRun.PotentialChangeCount);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.RequiresApproval, deleteRequired.ManagedConnectorExecutionIntent.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Delete, deleteRequired.ManagedConnectorExecutionIntent.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.EngineExecutionCandidate, deleteRequired.ManagedConnectorExecutionIntent.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.ApprovalRequired, deleteRequired.ManagedConnectorExecutionIntent.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.ChangePlanned, deleteRequired.ManagedConnectorExecutionIntent.CategoryIds);
+        Assert.True(deleteRequired.ManagedConnectorExecutionIntent.IsApprovalRequired);
+        Assert.True(deleteRequired.ManagedConnectorExecutionIntent.CanExecuteThroughEngine);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.ApprovalRequired, deleteRequired.ManagedConnectorExecutionApproval.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.Delete, deleteRequired.ManagedConnectorExecutionApproval.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.DestructiveOperation, deleteRequired.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ApprovalRequired, deleteRequired.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.LifecycleChange, deleteRequired.ManagedConnectorExecutionApproval.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources.ExecutionIntent, deleteRequired.ManagedConnectorExecutionApproval.SourceId);
+        Assert.True(deleteRequired.ManagedConnectorExecutionApproval.IsApprovalRequired);
+        Assert.True(deleteRequired.ManagedConnectorExecutionApproval.RequiresExplicitApproval);
+        Assert.False(deleteRequired.ManagedConnectorExecutionApproval.HasSafetyGateClearance);
 
         Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
             .GetByManagedConnectorDryRunState(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred)
@@ -1715,12 +1819,15 @@ public sealed class DebeziumDataCdcPackTests
                 .Select(static runtime => runtime.Id)
                 .OrderBy(static id => id, StringComparer.Ordinal)
                 .ToArray());
-        Assert.Equal([PauseRequiredRuntimeId], runtimeCatalog
-            .GetByManagedConnectorDryRunState(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.WouldChange)
-            .Select(static runtime => runtime.Id)
-            .ToArray());
         Assert.Equal(
-            [FutureControlPlaneRuntimeId, PauseRequiredRuntimeId],
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorDryRunState(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.WouldChange)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, FutureControlPlaneRuntimeId, PauseRequiredRuntimeId],
             runtimeCatalog
                 .GetByManagedConnectorDryRunCategory(CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.ChangePlanned)
                 .Select(static runtime => runtime.Id)
@@ -1744,6 +1851,10 @@ public sealed class DebeziumDataCdcPackTests
                 .Select(static runtime => runtime.Id)
                 .OrderBy(static id => id, StringComparer.Ordinal)
                 .ToArray());
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorDryRunOperationId(CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Delete)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
         Assert.Equal(
             [FutureControlPlaneRuntimeId, ReadyRuntimeId],
             runtimeCatalog
@@ -1766,10 +1877,13 @@ public sealed class DebeziumDataCdcPackTests
             .GetByManagedConnectorExecutionIntentState(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.OperatorAction)
             .Select(static runtime => runtime.Id)
             .ToArray());
-        Assert.Equal([PauseRequiredRuntimeId], runtimeCatalog
-            .GetByManagedConnectorExecutionIntentState(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.RequiresApproval)
-            .Select(static runtime => runtime.Id)
-            .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionIntentState(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.RequiresApproval)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
         Assert.Equal(
             [PauseSatisfiedRuntimeId, ReadyRuntimeId],
             runtimeCatalog
@@ -1777,16 +1891,19 @@ public sealed class DebeziumDataCdcPackTests
                 .Select(static runtime => runtime.Id)
                 .OrderBy(static id => id, StringComparer.Ordinal)
                 .ToArray());
-        Assert.Equal([PauseRequiredRuntimeId], runtimeCatalog
-            .GetByManagedConnectorExecutionIntentCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.ApprovalRequired)
-            .Select(static runtime => runtime.Id)
-            .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionIntentCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.ApprovalRequired)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
         Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
             .GetByManagedConnectorExecutionIntentCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.OperatorOnly)
             .Select(static runtime => runtime.Id)
             .ToArray());
         Assert.Equal(
-            [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId, ReadyRuntimeId],
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId, PauseSatisfiedRuntimeId, ReadyRuntimeId],
             runtimeCatalog
                 .GetByManagedConnectorExecutionIntentCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.EngineExecutionCandidate)
                 .Select(static runtime => runtime.Id)
@@ -1806,10 +1923,110 @@ public sealed class DebeziumDataCdcPackTests
                 .Select(static runtime => runtime.Id)
                 .OrderBy(static id => id, StringComparer.Ordinal)
                 .ToArray());
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionIntentOperationId(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Delete)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
         Assert.Equal(
             [FutureControlPlaneRuntimeId, ReadyRuntimeId],
             runtimeCatalog
                 .GetByManagedConnectorExecutionIntentOperationId(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Reconcile)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalState(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.NotApplicable)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [BlockedRuntimeId, WaitingRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionApprovalState(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.AutoBlocked)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [FutureControlPlaneRuntimeId, OutOfPolicyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionApprovalState(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.PolicyBlocked)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalState(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.ApprovalRequired)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([PauseRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalState(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.ApprovalReady)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionApprovalState(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.AutoEligible)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ObserveOnlyMode)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([BlockedRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.BlockingRemediation)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([OutOfPolicyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.GovernanceOutOfPolicy)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ControlPlaneOwnershipGap)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.DestructiveOperation)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ApprovalRequired)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([PauseRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.ApprovalReady)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.AutoEligible)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionApprovalCategory(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories.NoExecutionNeeded)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionApprovalOperationId(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.Pause)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorExecutionApprovalOperationId(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.Delete)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [FutureControlPlaneRuntimeId, ReadyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorExecutionApprovalOperationId(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds.Reconcile)
                 .Select(static runtime => runtime.Id)
                 .OrderBy(static id => id, StringComparer.Ordinal)
                 .ToArray());

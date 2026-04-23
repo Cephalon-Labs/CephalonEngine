@@ -1,6 +1,6 @@
 # Cephalon.Data.Debezium
 
-`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
+`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, managed-connector execution-intent posture, managed-connector execution-approval posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
 
 ## What it owns
 
@@ -335,6 +335,37 @@ shared runtime surface instead of introducing a Debezium-only execution planner.
 - execution intent currently remains read-only operator truth; it does not mean Cephalon already
   owns Kafka Connect write-path execution, automatic connector mutation, or managed-connector
   control-plane orchestration
+
+## Managed-connector execution-approval baseline
+
+The `ENG-176` follow-through keeps managed-connector execution approval and safety-gating
+additive over that same shared runtime surface instead of introducing a Debezium-only approval
+registry.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorExecutionApproval` now publishes stable
+  `not-applicable`, `auto-blocked`, `policy-blocked`, `approval-required`, `approval-ready`, and
+  `auto-eligible` posture for Debezium-managed runtimes together with execution-approval
+  categories, the intended operation id, source
+  coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/execution-intent
+  state, the current primary action id, the safety-gating source id, and explicit-approval detail
+- the shared execution-runtime catalog now derives that execution-approval answer from the
+  already-shipped coverage, remediation, governance, drift, action-planning, write-path
+  readiness, preflight, dry-run, and execution-intent truth, so observe-only,
+  out-of-policy, incomplete-reporting, blocking-remediation, lifecycle-specific, and destructive
+  declarations can surface one consistent connector-management execution-approval answer without
+  claiming Kafka Connect write paths or automatic connector mutation
+- reconcile paths that still depend on a future control plane remain policy-blocked on the shared
+  surface, lifecycle operations such as `pause` can now surface approval-ready truth, and
+  destructive operations such as `delete` surface explicit approval-required truth before any
+  future engine execution lane
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/execution-approvals/{executionApprovalState}`,
+  `/engine/cdc-capture-runtimes/execution-approvals/categories/{executionApprovalCategory}`, and
+  `/engine/cdc-capture-runtimes/execution-approvals/operations/{operationId}` on the same shared
+  runtime route family, so operator drill-down stays aligned with the engine-owned catalog
+  instead of a Debezium-only endpoint family
+- execution approval currently remains read-only operator truth; it does not mean Cephalon
+  already owns Kafka Connect write-path execution, automatic connector mutation, or
+  managed-connector control-plane orchestration
 
 ## Not shipped in this slice
 

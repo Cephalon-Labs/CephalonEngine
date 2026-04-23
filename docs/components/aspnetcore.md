@@ -191,14 +191,18 @@ now also maps `/engine/cdc-capture-runtimes/remediation/{remediationState}` and
 `/engine/cdc-capture-runtimes/dry-runs/categories/{dryRunCategory}`, and
 `/engine/cdc-capture-runtimes/dry-runs/operations/{operationId}` plus
 `/engine/cdc-capture-runtimes/execution-intents/{executionIntentState}`,
-`/engine/cdc-capture-runtimes/execution-intents/categories/{executionIntentCategory}`, and
-`/engine/cdc-capture-runtimes/execution-intents/operations/{operationId}` so operator flows can query the
+`/engine/cdc-capture-runtimes/execution-intents/categories/{executionIntentCategory}`,
+`/engine/cdc-capture-runtimes/execution-intents/operations/{operationId}` plus
+`/engine/cdc-capture-runtimes/execution-approvals/{executionApprovalState}`,
+`/engine/cdc-capture-runtimes/execution-approvals/categories/{executionApprovalCategory}`, and
+`/engine/cdc-capture-runtimes/execution-approvals/operations/{operationId}` so operator flows can query the
 shared execution-runtime remediation summary, managed-connector governance posture,
 desired-versus-observed managed-connector drift posture, managed-connector action-planning
-posture, managed-connector write-path readiness posture, managed-connector preflight posture, and
-managed-connector dry-run posture, and managed-connector execution-intent posture directly
+posture, managed-connector write-path readiness posture, managed-connector preflight posture,
+managed-connector dry-run posture, managed-connector execution-intent posture, and
+managed-connector execution-approval posture directly
 instead of rebuilding a second HTTP-local remediation, governance, drift, action-planning,
-readiness, preflight, dry-run, or execution-intent index.
+readiness, preflight, dry-run, execution-intent, or execution-approval index.
 
 When `ICdcCaptureExecutionRuntimeReportSink` is active, the same host also maps
 `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports`. That route is intentionally

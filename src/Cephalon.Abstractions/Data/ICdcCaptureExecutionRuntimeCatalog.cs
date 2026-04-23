@@ -177,4 +177,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable managed-connector execution-intent operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionIntentOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution-approval answer matches the requested state.
+    /// </summary>
+    /// <param name="executionApprovalState">The stable managed-connector execution-approval state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-approval state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionApprovalState(string executionApprovalState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution-approval answer includes the requested category.
+    /// </summary>
+    /// <param name="executionApprovalCategory">The stable managed-connector execution-approval category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-approval category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionApprovalCategory(string executionApprovalCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution-approval answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector execution-approval operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionApprovalOperationId(string operationId);
 }

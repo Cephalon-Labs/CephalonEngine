@@ -8438,6 +8438,16 @@ CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus ManagedConnectorDryRun { 
 
 Gets the operator-facing managed-connector dry-run posture derived from coverage, remediation, governance, drift, action planning, write-path readiness, and preflight truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorexecutionapproval"></a>
+
+##### `ManagedConnectorExecutionApproval`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus ManagedConnectorExecutionApproval { get; set; }
+```
+
+Gets the operator-facing managed-connector execution-approval and safety-gating posture derived from execution intent, dry-run, preflight, write-path readiness, governance, remediation, and runtime coverage truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorexecutionintent"></a>
 
 ##### `ManagedConnectorExecutionIntent`
@@ -10051,6 +10061,707 @@ string WritePathReadinessState { get; set; }
 ```
 
 Gets the current managed-connector write-path readiness state that informed the dry-run answer.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories`
+
+Defines the stable managed-connector execution-approval and safety-gating category identifiers used by CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-approvalready"></a>
+
+##### `ApprovalReady`
+
+```csharp
+const string ApprovalReady
+```
+
+The current intended follow-through is ready to enter a future approval workflow.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The current intended follow-through still requires an explicit approval gate.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-autoeligible"></a>
+
+##### `AutoEligible`
+
+```csharp
+const string AutoEligible
+```
+
+The current intended follow-through is currently eligible for a future auto-execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-blockingremediation"></a>
+
+##### `BlockingRemediation`
+
+```csharp
+const string BlockingRemediation
+```
+
+The managed connector is blocked by failed or otherwise blocking runtime remediation work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-controlplaneownershipgap"></a>
+
+##### `ControlPlaneOwnershipGap`
+
+```csharp
+const string ControlPlaneOwnershipGap
+```
+
+The managed connector currently declares a control plane that Cephalon does not yet own for execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The current intended follow-through would still perform a destructive operation such as delete.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-driftrisk"></a>
+
+##### `DriftRisk`
+
+```csharp
+const string DriftRisk
+```
+
+The managed connector currently reports drift that increases execution risk.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The managed connector is currently out of policy for shared execution follow-through.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-incompletereportingcoverage"></a>
+
+##### `IncompleteReportingCoverage`
+
+```csharp
+const string IncompleteReportingCoverage
+```
+
+The managed connector does not yet have full declared-versus-reported coverage on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-lifecyclechange"></a>
+
+##### `LifecycleChange`
+
+```csharp
+const string LifecycleChange
+```
+
+The current intended follow-through would still require a lifecycle change such as pause, resume, restart, or delete.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-noexecutionneeded"></a>
+
+##### `NoExecutionNeeded`
+
+```csharp
+const string NoExecutionNeeded
+```
+
+The current intended follow-through would not require additional managed-connector changes.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The managed connector currently remains observe-only, so execution approval is not applicable on the shared surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-runtimetruthincomplete"></a>
+
+##### `RuntimeTruthIncomplete`
+
+```csharp
+const string RuntimeTruthIncomplete
+```
+
+The managed connector does not yet report enough runtime truth for Cephalon to trust execution approval.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-staleobservation"></a>
+
+##### `StaleObservation`
+
+```csharp
+const string StaleObservation
+```
+
+The managed connector currently reports stale observations that make safety-gating less trustworthy.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovaloperationids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds`
+
+Defines the stable managed-connector operation identifiers used by connector-management execution-approval answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovaloperationids-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+Cephalon intends to delete the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovaloperationids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No management operation is currently intended for the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovaloperationids-pause"></a>
+
+##### `Pause`
+
+```csharp
+const string Pause
+```
+
+Cephalon intends to pause the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovaloperationids-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+Cephalon intends to reconcile the managed connector toward its declared baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovaloperationids-restart"></a>
+
+##### `Restart`
+
+```csharp
+const string Restart
+```
+
+Cephalon intends to restart the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovaloperationids-resume"></a>
+
+##### `Resume`
+
+```csharp
+const string Resume
+```
+
+Cephalon intends to resume the managed connector.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources`
+
+Defines the stable source identifiers used by managed-connector execution-approval answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalsources-dryrun"></a>
+
+##### `DryRun`
+
+```csharp
+const string DryRun
+```
+
+The execution-approval answer is primarily grounded in shared managed-connector dry-run truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalsources-executionintent"></a>
+
+##### `ExecutionIntent`
+
+```csharp
+const string ExecutionIntent
+```
+
+The execution-approval answer is primarily grounded in shared managed-connector execution intent.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalsources-governance"></a>
+
+##### `Governance`
+
+```csharp
+const string Governance
+```
+
+The execution-approval answer is primarily grounded in managed-connector governance posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalsources-remediation"></a>
+
+##### `Remediation`
+
+```csharp
+const string Remediation
+```
+
+The execution-approval answer is primarily grounded in runtime remediation posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The execution-approval answer does not currently have a more specific primary source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates`
+
+Defines the stable managed-connector execution-approval state identifiers used by CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-approvalready"></a>
+
+##### `ApprovalReady`
+
+```csharp
+const string ApprovalReady
+```
+
+The managed connector is currently ready to enter a future approval workflow before engine execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The managed connector would still require an elevated explicit approval gate because the intended follow-through remains safety-sensitive.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-autoblocked"></a>
+
+##### `AutoBlocked`
+
+```csharp
+const string AutoBlocked
+```
+
+The managed connector is currently blocked by incomplete runtime truth or runtime remediation posture before approval can be considered.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-autoeligible"></a>
+
+##### `AutoEligible`
+
+```csharp
+const string AutoEligible
+```
+
+The managed connector currently fits a future auto-execution lane without requiring an additional approval workflow.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently require managed-connector execution approval on the shared surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-policyblocked"></a>
+
+##### `PolicyBlocked`
+
+```csharp
+const string PolicyBlocked
+```
+
+The managed connector is currently blocked by governance or control-plane policy rather than runtime readiness alone.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus`
+
+Describes the current operator-facing managed-connector execution-approval and safety-gating posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus(string state, string description)
+```
+
+Creates a new managed-connector execution-approval answer.
+
+Parameters:
+- `state`: The stable execution-approval state, such as `auto-blocked`, `policy-blocked`, `approval-required`, `approval-ready`, `auto-eligible`, or `not-applicable`.
+- `description`: An optional operator-facing execution-approval summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-canautoexecutethroughengine"></a>
+
+##### `CanAutoExecuteThroughEngine`
+
+```csharp
+bool CanAutoExecuteThroughEngine { get; }
+```
+
+Gets a value indicating whether the managed connector currently satisfies the shared auto-execution gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-canrequestapproval"></a>
+
+##### `CanRequestApproval`
+
+```csharp
+bool CanRequestApproval { get; }
+```
+
+Gets a value indicating whether the managed connector can currently enter a future approval workflow.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active execution-approval categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable execution-approval categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing execution-approval summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-dryrunstate"></a>
+
+##### `DryRunState`
+
+```csharp
+string DryRunState { get; set; }
+```
+
+Gets the current managed-connector dry-run state that informed execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-executionintentconfidencesourceid"></a>
+
+##### `ExecutionIntentConfidenceSourceId`
+
+```csharp
+string ExecutionIntentConfidenceSourceId { get; set; }
+```
+
+Gets the primary confidence-source identifier already associated with managed-connector execution intent.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-executionintentstate"></a>
+
+##### `ExecutionIntentState`
+
+```csharp
+string ExecutionIntentState { get; set; }
+```
+
+Gets the current managed-connector execution-intent state that informed execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-hassafetygateclearance"></a>
+
+##### `HasSafetyGateClearance`
+
+```csharp
+bool HasSafetyGateClearance { get; }
+```
+
+Gets a value indicating whether the managed connector currently satisfies the shared safety-gating baseline.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-isapprovalready"></a>
+
+##### `IsApprovalReady`
+
+```csharp
+bool IsApprovalReady { get; }
+```
+
+Gets a value indicating whether the managed connector is currently ready to enter a future approval workflow.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-isapprovalrequired"></a>
+
+##### `IsApprovalRequired`
+
+```csharp
+bool IsApprovalRequired { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires an elevated explicit approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-isautoblocked"></a>
+
+##### `IsAutoBlocked`
+
+```csharp
+bool IsAutoBlocked { get; }
+```
+
+Gets a value indicating whether the managed connector is currently blocked by runtime truth or remediation before approval can be considered.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-isautoeligible"></a>
+
+##### `IsAutoEligible`
+
+```csharp
+bool IsAutoEligible { get; }
+```
+
+Gets a value indicating whether the managed connector currently fits a future auto-execution lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-ispolicyblocked"></a>
+
+##### `IsPolicyBlocked`
+
+```csharp
+bool IsPolicyBlocked { get; }
+```
+
+Gets a value indicating whether the managed connector is currently blocked by governance or control-plane policy.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-preflightstate"></a>
+
+##### `PreflightState`
+
+```csharp
+string PreflightState { get; set; }
+```
+
+Gets the current managed-connector preflight state that informed execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-requiresattention"></a>
+
+##### `RequiresAttention`
+
+```csharp
+bool RequiresAttention { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires additional execution-approval attention.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current intended follow-through would require an explicit approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector execution-approval state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current intended follow-through would still apply one or more shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-writepathreadinessstate"></a>
+
+##### `WritePathReadinessState`
+
+```csharp
+string WritePathReadinessState { get; set; }
+```
+
+Gets the current managed-connector write-path readiness state that informed execution approval.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories"></a>
 
@@ -18055,6 +18766,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `dryRunState`: The stable managed-connector dry-run state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionapprovalcategory-system-string"></a>
+
+##### `GetByManagedConnectorExecutionApprovalCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionApprovalCategory(string executionApprovalCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector execution-approval answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-approval category.
+
+Parameters:
+- `executionApprovalCategory`: The stable managed-connector execution-approval category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionapprovaloperationid-system-string"></a>
+
+##### `GetByManagedConnectorExecutionApprovalOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionApprovalOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector execution-approval answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable managed-connector execution-approval operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionapprovalstate-system-string"></a>
+
+##### `GetByManagedConnectorExecutionApprovalState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionApprovalState(string executionApprovalState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector execution-approval answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-approval state.
+
+Parameters:
+- `executionApprovalState`: The stable managed-connector execution-approval state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionintentcategory-system-string"></a>
 
