@@ -1,6 +1,6 @@
 # Cephalon.Data.Debezium
 
-`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
+`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
 
 ## What it owns
 
@@ -257,6 +257,30 @@ shared runtime surface instead of introducing a Debezium-only readiness planner.
 - write-path readiness currently remains read-only operator truth; it does not mean Cephalon
   already owns Kafka Connect write-path execution, automatic connector mutation, or
   managed-connector control-plane orchestration
+
+## Managed-connector preflight baseline
+
+The `ENG-173` follow-through keeps managed-connector preflight additive over that same shared
+runtime surface instead of introducing a Debezium-only preflight planner.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorPreflight` now publishes stable
+  `not-applicable`, `deferred`, `not-ready`, `ready`, and `blocked` posture for
+  Debezium-managed runtimes together with preflight categories, the intended operation id, source
+  coverage/remediation/governance/drift/action-plan/write-path-readiness state, and the current
+  primary action id
+- the shared execution-runtime catalog now derives that preflight answer from the already-shipped
+  coverage, remediation, governance, drift, action-planning, and write-path-readiness truth, so
+  observe-only, out-of-policy, incomplete-reporting, drifted, blocked, and future-control-plane
+  declarations can surface one consistent connector-management preflight answer without claiming
+  Kafka Connect write paths or automatic connector mutation
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/preflight/{preflightState}`,
+  `/engine/cdc-capture-runtimes/preflight/categories/{preflightCategory}`, and
+  `/engine/cdc-capture-runtimes/preflight/operations/{operationId}` on the same shared runtime
+  route family, so operator drill-down stays aligned with the engine-owned catalog instead of a
+  Debezium-only endpoint family
+- preflight currently remains read-only operator truth; it does not mean Cephalon already owns
+  Kafka Connect write-path execution, automatic connector mutation, or managed-connector
+  control-plane orchestration
 
 ## Not shipped in this slice
 

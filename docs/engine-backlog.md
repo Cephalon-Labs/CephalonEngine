@@ -3027,6 +3027,68 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-173 Phase 13 managed-connector preflight baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, and `ENG-172` shipped shared coverage,
+  remediation, governance, desired-versus-observed drift, action-planning, and write-path
+  readiness truth, but operators still lacked one typed answer for which future managed-connector
+  operation Cephalon would preflight first and whether that preflight was blocked, deferred, not
+  ready, or ready on the same shared runtime surface
+- that next follow-through needed to keep connector-management preflight additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only preflight
+  planner or prematurely claiming Kafka Connect write-path ownership
+- teams also needed route-level drill-downs for preflight state, preflight category, and intended
+  operation without losing the underlying coverage, remediation, governance, drift, action-plan,
+  and write-path-readiness truth that already shipped
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector preflight contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `deferred`,
+  `not-ready`, `ready`, and `blocked` posture together with preflight categories, the intended
+  operation id, source coverage/remediation/governance/drift/action-plan/write-path-readiness
+  state, and the current primary action id
+- the shared execution-runtime catalog now derives that preflight answer from merged coverage,
+  remediation, governance, drift, action-planning, and write-path-readiness truth instead of
+  forcing hosts or providers to rebuild a second preflight planner
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive preflight-state, preflight-category, and
+  preflight-operation drill-down methods, and ASP.NET Core publishes those same filters on the
+  existing `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later Debezium connector-management dry-run or broader write-path
+  execution work remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionRuntimeManagedConnectorPreflightStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorPreflight`
+- `Cephalon.Data` now derives runtime-level `not-applicable`, `deferred`, `not-ready`, `ready`,
+  and `blocked` posture plus stable category ids such as `blocking-remediation`,
+  `runtime-remediation`, `incomplete-reporting-coverage`, `governance-out-of-policy`,
+  `runtime-truth-incomplete`, `drift-detected`, `observe-only-mode`, `reconcile-intent`, and
+  `preflight-ready`, together with intended operation ids such as `none` and `reconcile`, from
+  merged coverage, remediation, governance, drift, action-planning, and write-path-readiness
+  truth instead of materializing a second preflight registry
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes `GetByManagedConnectorPreflightState(...)`,
+  `GetByManagedConnectorPreflightCategory(...)`, and
+  `GetByManagedConnectorPreflightOperationId(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/preflight/{preflightState}`,
+  `/engine/cdc-capture-runtimes/preflight/categories/{preflightCategory}`, and
+  `/engine/cdc-capture-runtimes/preflight/operations/{operationId}` so host routes stay aligned
+  with the same shared runtime story
+- targeted coverage now proves the preflight baseline through composition tests `36/36`, hosting
+  tests `14/14`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-172 Phase 13 managed-connector write-path readiness baseline
 
 Status: done
@@ -3059,8 +3121,8 @@ Acceptance:
   drill-down methods, and ASP.NET Core publishes those same filters on the existing
   `/engine/cdc-capture-runtimes*` route family
 - docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
-  the shipped slice while later Debezium connector-management intent/preflight or broader
-  write-path execution-readiness work remains separate follow-through
+  the shipped slice while later Debezium connector-management dry-run or broader write-path
+  execution work remains separate follow-through
 
 Delivered:
 

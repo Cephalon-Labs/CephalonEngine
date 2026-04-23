@@ -197,12 +197,24 @@ truth, so future write-path follow-through can stay on the existing `/engine/cdc
 `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a Debezium-only readiness
 registry.
 
+That same shared execution-runtime story now also keeps managed-connector preflight explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorPreflight` publishes stable
+`not-applicable` / `deferred` / `not-ready` / `ready` / `blocked` posture together with
+preflight categories, the intended operation id, source
+coverage/remediation/governance/drift/action-plan/write-path-readiness state, and the current
+primary action id. The shared execution-runtime catalog derives that answer from the already
+shipped coverage, remediation, governance, desired-versus-observed drift, action-planning, and
+write-path-readiness truth, so future connector-management preflight can stay on the existing
+`/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a
+Debezium-only preflight registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
 managed-connector drift category, managed-connector action-plan state, managed-connector action
-id, managed-connector write-path-readiness state, and managed-connector write-path-readiness
-category as well.
+id, managed-connector write-path-readiness state, managed-connector write-path-readiness
+category, managed-connector preflight state, managed-connector preflight category, and
+managed-connector preflight operation as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -210,10 +222,12 @@ category as well.
 `GetByManagedConnectorGovernanceCategory(...)`, `GetByManagedConnectorDriftState(...)`, and
 `GetByManagedConnectorDriftCategory(...)`, `GetByManagedConnectorActionPlanState(...)`, and
 `GetByManagedConnectorActionId(...)`, `GetByManagedConnectorWritePathReadinessState(...)`, and
-`GetByManagedConnectorWritePathReadinessCategory(...)`, so host code, provider packs, and tooling
-can narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
-managed-connector governance, managed-connector drift, managed-connector action-planning, or
-managed-connector readiness index. ASP.NET Core maps those same
+`GetByManagedConnectorWritePathReadinessCategory(...)`,
+`GetByManagedConnectorPreflightState(...)`, `GetByManagedConnectorPreflightCategory(...)`, and
+`GetByManagedConnectorPreflightOperationId(...)`, so host code, provider packs, and tooling can
+narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
+managed-connector governance, managed-connector drift, managed-connector action-planning,
+managed-connector readiness, or managed-connector preflight index. ASP.NET Core maps those same
 filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
 `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,

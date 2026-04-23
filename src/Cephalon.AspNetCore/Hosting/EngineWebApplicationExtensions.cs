@@ -568,6 +568,33 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorWritePathReadinessCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/preflight/{preflightState}", (string preflightState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorPreflightState(preflightState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightState");
+        engineGroup.MapGet("/cdc-capture-runtimes/preflight/categories/{preflightCategory}", (string preflightCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorPreflightCategory(preflightCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/preflight/operations/{operationId}", (string operationId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorPreflightOperationId(operationId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightOperation");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

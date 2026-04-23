@@ -211,6 +211,38 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparer.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightState(string preflightState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(preflightState);
+        var normalizedPreflightState = preflightState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorPreflight.State,
+            normalizedPreflightState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightCategory(string preflightCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(preflightCategory);
+        var normalizedPreflightCategory = preflightCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorPreflight.CategoryIds.Contains(
+            normalizedPreflightCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorPreflight.OperationId,
+            normalizedOperationId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     private CdcCaptureExecutionRuntimeDescriptor[] FilterRuntimes(
         Func<CdcCaptureExecutionRuntimeDescriptor, bool> predicate)
     {
@@ -245,6 +277,14 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorGovernance,
             managedConnectorDrift,
             managedConnectorActionPlan);
+        var managedConnectorPreflight = CreateManagedConnectorPreflight(
+            runtime.ExecutionTopology,
+            summary.ReportingCoverage,
+            summary.Remediation,
+            managedConnectorGovernance,
+            managedConnectorDrift,
+            managedConnectorActionPlan,
+            managedConnectorWritePathReadiness);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
@@ -256,7 +296,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorGovernance = managedConnectorGovernance,
             ManagedConnectorDrift = managedConnectorDrift,
             ManagedConnectorActionPlan = managedConnectorActionPlan,
-            ManagedConnectorWritePathReadiness = managedConnectorWritePathReadiness
+            ManagedConnectorWritePathReadiness = managedConnectorWritePathReadiness,
+            ManagedConnectorPreflight = managedConnectorPreflight
         };
     }
 
@@ -1162,6 +1203,184 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             actionPlan);
     }
 
+    private static CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus CreateManagedConnectorPreflight(
+        string executionTopology,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus writePathReadiness)
+    {
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(actionPlan);
+        ArgumentNullException.ThrowIfNull(writePathReadiness);
+
+        if (!string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase))
+        {
+            return new CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.NotApplicable,
+                "The execution runtime does not currently represent a managed connector.")
+            {
+                OperationId = CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds.None,
+                ReportingCoverageState = reportingCoverage.State,
+                RemediationState = remediation.State,
+                GovernanceState = governance.State,
+                DriftState = drift.State,
+                ActionPlanState = actionPlan.State,
+                WritePathReadinessState = writePathReadiness.State,
+                PrimaryActionId = actionPlan.PrimaryActionId
+            };
+        }
+
+        var hasRuntimeRemediationAttention =
+            remediation.CategoryIds.Contains(CdcCaptureExecutionRuntimeRemediationCategories.StaleObservations, StringComparer.OrdinalIgnoreCase) ||
+            remediation.CategoryIds.Contains(CdcCaptureExecutionRuntimeRemediationCategories.ReporterCoordinationIssues, StringComparer.OrdinalIgnoreCase);
+        var hasIncompleteReportingCoverage = !reportingCoverage.HasFullCoverage;
+        var isRuntimeTruthIncomplete =
+            actionPlan.IsWaiting ||
+            string.Equals(drift.State, CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Unknown, StringComparison.OrdinalIgnoreCase);
+        var isObserveOnlyMode = string.Equals(governance.ManagementMode, "observe-only", StringComparison.OrdinalIgnoreCase);
+        var isWritePathRequested = !string.IsNullOrWhiteSpace(governance.ManagementMode) && !isObserveOnlyMode;
+        var operationId = isWritePathRequested
+            ? CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds.Reconcile
+            : CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds.None;
+
+        var categories = CreateManagedConnectorPreflightCategories(
+            remediation,
+            governance,
+            drift,
+            hasRuntimeRemediationAttention,
+            hasIncompleteReportingCoverage,
+            isRuntimeTruthIncomplete,
+            isObserveOnlyMode,
+            isWritePathRequested,
+            writePathReadiness.IsReady);
+
+        if (remediation.IsBlocked)
+        {
+            return CreateManagedConnectorPreflightStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.Blocked,
+                CreateManagedConnectorBlockedPreflightDescription(remediation.Description, operationId),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness);
+        }
+
+        if (hasRuntimeRemediationAttention)
+        {
+            return CreateManagedConnectorPreflightStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.NotReady,
+                CreateManagedConnectorRuntimeRemediationPreflightDescription(remediation.Description, operationId),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness);
+        }
+
+        if (hasIncompleteReportingCoverage)
+        {
+            return CreateManagedConnectorPreflightStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.NotReady,
+                CreateManagedConnectorReportingCoveragePreflightDescription(reportingCoverage.Description, operationId),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness);
+        }
+
+        if (governance.IsOutOfPolicy)
+        {
+            return CreateManagedConnectorPreflightStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.NotReady,
+                CreateManagedConnectorGovernancePreflightDescription(governance.Description, operationId),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness);
+        }
+
+        if (isRuntimeTruthIncomplete)
+        {
+            return CreateManagedConnectorPreflightStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.NotReady,
+                CreateManagedConnectorRuntimeTruthPreflightDescription(
+                    actionPlan.Description,
+                    drift.Description,
+                    operationId),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness);
+        }
+
+        if (drift.IsDrifted)
+        {
+            return CreateManagedConnectorPreflightStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.NotReady,
+                CreateManagedConnectorDriftPreflightDescription(drift.Description, operationId),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness);
+        }
+
+        if (isWritePathRequested)
+        {
+            return CreateManagedConnectorPreflightStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.Ready,
+                CreateManagedConnectorReadyPreflightDescription(governance.Description, operationId),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness);
+        }
+
+        return CreateManagedConnectorPreflightStatus(
+            CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.Deferred,
+            CreateManagedConnectorDeferredPreflightDescription(governance.Description),
+            categories,
+            operationId,
+            governance,
+            reportingCoverage,
+            remediation,
+            drift,
+            actionPlan,
+            writePathReadiness);
+    }
+
     private static ManagedConnectorMetadataSnapshot ResolveManagedConnectorMetadata(
         IReadOnlyDictionary<string, string> metadata)
     {
@@ -1571,6 +1790,226 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         return string.IsNullOrWhiteSpace(detail)
             ? summary.Trim()
             : $"{summary.Trim()} {detail.Trim()}";
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus CreateManagedConnectorPreflightStatus(
+        string state,
+        string description,
+        IReadOnlyList<string> categoryIds,
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus writePathReadiness)
+    {
+        return new CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus(state, description)
+        {
+            CategoryIds = categoryIds,
+            OperationId = operationId,
+            ManagementMode = governance.ManagementMode,
+            ReportingCoverageState = reportingCoverage.State,
+            RemediationState = remediation.State,
+            GovernanceState = governance.State,
+            DriftState = drift.State,
+            ActionPlanState = actionPlan.State,
+            WritePathReadinessState = writePathReadiness.State,
+            PrimaryActionId = actionPlan.PrimaryActionId
+        };
+    }
+
+    private static string[] CreateManagedConnectorPreflightCategories(
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        bool hasRuntimeRemediationAttention,
+        bool hasIncompleteReportingCoverage,
+        bool isRuntimeTruthIncomplete,
+        bool isObserveOnlyMode,
+        bool isWritePathRequested,
+        bool isReady)
+    {
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+
+        var categories = new List<string>(capacity: 6);
+        if (remediation.IsBlocked)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.BlockingRemediation);
+        }
+        else if (hasRuntimeRemediationAttention)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.RuntimeRemediation);
+        }
+
+        if (hasIncompleteReportingCoverage)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.IncompleteReportingCoverage);
+        }
+
+        if (governance.IsOutOfPolicy)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.GovernanceOutOfPolicy);
+        }
+
+        if (isRuntimeTruthIncomplete)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.RuntimeTruthIncomplete);
+        }
+
+        if (drift.IsDrifted)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.DriftDetected);
+        }
+
+        if (isWritePathRequested)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.ReconcileIntent);
+        }
+        else if (isObserveOnlyMode)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.ObserveOnlyMode);
+        }
+
+        if (isReady)
+        {
+            categories.Add(CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories.PreflightReady);
+        }
+
+        return [.. categories];
+    }
+
+    private static string CreateManagedConnectorBlockedPreflightDescription(
+        string? remediationDescription,
+        string operationId)
+    {
+        return AppendManagedConnectorPreflightDetail(
+            $"The managed connector is currently blocked by runtime remediation before Cephalon can preflight {CreateManagedConnectorPreflightOperationLabel(operationId)}.",
+            remediationDescription);
+    }
+
+    private static string CreateManagedConnectorRuntimeRemediationPreflightDescription(
+        string? remediationDescription,
+        string operationId)
+    {
+        return AppendManagedConnectorPreflightDetail(
+            $"The managed connector still needs runtime remediation attention before Cephalon can preflight {CreateManagedConnectorPreflightOperationLabel(operationId)}.",
+            remediationDescription);
+    }
+
+    private static string CreateManagedConnectorReportingCoveragePreflightDescription(
+        string? reportingCoverageDescription,
+        string operationId)
+    {
+        return AppendManagedConnectorPreflightDetail(
+            $"The managed connector does not yet report full declared-versus-reported coverage, so Cephalon cannot preflight {CreateManagedConnectorPreflightOperationLabel(operationId)} yet.",
+            reportingCoverageDescription);
+    }
+
+    private static string CreateManagedConnectorGovernancePreflightDescription(
+        string? governanceDescription,
+        string operationId)
+    {
+        return AppendManagedConnectorPreflightDetail(
+            $"The managed connector is still out of policy for future {CreateManagedConnectorPreflightOperationLabel(operationId)} on the shared runtime surface.",
+            governanceDescription);
+    }
+
+    private static string CreateManagedConnectorRuntimeTruthPreflightDescription(
+        string? actionPlanDescription,
+        string? driftDescription,
+        string operationId)
+    {
+        var detail = string.IsNullOrWhiteSpace(actionPlanDescription)
+            ? driftDescription
+            : actionPlanDescription;
+
+        return AppendManagedConnectorPreflightDetail(
+            $"The managed connector does not yet report enough runtime truth for Cephalon to preflight {CreateManagedConnectorPreflightOperationLabel(operationId)}.",
+            detail);
+    }
+
+    private static string CreateManagedConnectorDriftPreflightDescription(
+        string? driftDescription,
+        string operationId)
+    {
+        return AppendManagedConnectorPreflightDetail(
+            $"The managed connector still reports desired-versus-observed drift, so Cephalon cannot preflight {CreateManagedConnectorPreflightOperationLabel(operationId)} yet.",
+            driftDescription);
+    }
+
+    private static string CreateManagedConnectorReadyPreflightDescription(
+        string? governanceDescription,
+        string operationId)
+    {
+        return AppendManagedConnectorPreflightDetail(
+            $"The managed connector currently satisfies the shared baseline Cephalon would use to preflight {CreateManagedConnectorPreflightOperationLabel(operationId)}. Actual write-path execution remains deferred until a future control plane ships.",
+            governanceDescription);
+    }
+
+    private static string CreateManagedConnectorDeferredPreflightDescription(string? governanceDescription)
+    {
+        return AppendManagedConnectorPreflightDetail(
+            "The managed connector remains healthy on the shared runtime surface, but connector-management preflight is deferred while it stays observe-only.",
+            governanceDescription);
+    }
+
+    private static string AppendManagedConnectorPreflightDetail(
+        string summary,
+        string? detail)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(summary);
+
+        return string.IsNullOrWhiteSpace(detail)
+            ? summary.Trim()
+            : $"{summary.Trim()} {detail.Trim()}";
+    }
+
+    private static string CreateManagedConnectorPreflightOperationLabel(string operationId)
+    {
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds.Reconcile,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future reconcile follow-through";
+        }
+
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds.Pause,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future pause follow-through";
+        }
+
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds.Resume,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future resume follow-through";
+        }
+
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds.Restart,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future restart follow-through";
+        }
+
+        if (string.Equals(
+            operationId,
+            CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds.Delete,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "future delete follow-through";
+        }
+
+        return "future managed-connector follow-through";
     }
 
     private static string CreateManagedConnectorInSyncDescription(string? reconciliationState)

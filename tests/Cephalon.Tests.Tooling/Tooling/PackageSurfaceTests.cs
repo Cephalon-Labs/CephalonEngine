@@ -179,6 +179,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStates),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates),
@@ -2715,6 +2719,12 @@ public sealed class PackageSurfaceTests
             .GetMethod("GetByManagedConnectorWritePathReadinessState", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
             .GetMethod("GetByManagedConnectorWritePathReadinessCategory", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorPreflightState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorPreflightCategory", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorPreflightOperationId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
             .GetProperty("ExecutionOwnership", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
@@ -2741,6 +2751,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("ManagedConnectorActionPlan", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
             .GetProperty("ManagedConnectorWritePathReadiness", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("ManagedConnectorPreflight", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
             .GetProperty("ReportedCdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
@@ -3140,6 +3152,78 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus)
             .GetProperty("IsBlocked", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus)
+            .GetProperty("RequiresAttention", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("BlockingRemediation", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("RuntimeRemediation", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("IncompleteReportingCoverage", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("GovernanceOutOfPolicy", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("RuntimeTruthIncomplete", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("DriftDetected", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("ObserveOnlyMode", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("ReconcileIntent", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories)
+            .GetField("PreflightReady", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds)
+            .GetField("None", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds)
+            .GetField("Reconcile", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds)
+            .GetField("Pause", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds)
+            .GetField("Resume", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds)
+            .GetField("Restart", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds)
+            .GetField("Delete", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStates)
+            .GetField("NotApplicable", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStates)
+            .GetField("Deferred", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStates)
+            .GetField("NotReady", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStates)
+            .GetField("Ready", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStates)
+            .GetField("Blocked", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("CategoryIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("OperationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("ManagementMode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("ReportingCoverageState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("RemediationState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("GovernanceState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("DriftState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("ActionPlanState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("WritePathReadinessState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("PrimaryActionId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("CategoryCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("AppliesToManagedConnector", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("IsDeferred", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("IsReady", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
+            .GetProperty("IsBlocked", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus)
             .GetProperty("RequiresAttention", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
             .GetProperty("OutboxDispatchState", BindingFlags.Instance | BindingFlags.Public));

@@ -114,4 +114,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="readinessCategory">The stable managed-connector write-path readiness category identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that readiness category.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorWritePathReadinessCategory(string readinessCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector preflight answer matches the requested state.
+    /// </summary>
+    /// <param name="preflightState">The stable managed-connector preflight state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that preflight state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightState(string preflightState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector preflight answer includes the requested category.
+    /// </summary>
+    /// <param name="preflightCategory">The stable managed-connector preflight category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that preflight category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightCategory(string preflightCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector preflight answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightOperationId(string operationId);
 }

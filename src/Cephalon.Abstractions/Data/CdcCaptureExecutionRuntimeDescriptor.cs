@@ -256,6 +256,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus ManagedConnectorWritePathReadiness { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector preflight posture derived from coverage, remediation, governance, drift, action planning, and write-path readiness.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus ManagedConnectorPreflight { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

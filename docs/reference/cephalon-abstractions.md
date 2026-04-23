@@ -8438,6 +8438,16 @@ CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus ManagedConnectorGover
 
 Gets the operator-facing managed-connector governance posture for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorpreflight"></a>
+
+##### `ManagedConnectorPreflight`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus ManagedConnectorPreflight { get; set; }
+```
+
+Gets the operator-facing managed-connector preflight posture derived from coverage, remediation, governance, drift, action planning, and write-path readiness.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorwritepathreadiness"></a>
 
 ##### `ManagedConnectorWritePathReadiness`
@@ -9891,6 +9901,454 @@ string TaskReconciliationState { get; set; }
 ```
 
 Gets the latest reported task-reconciliation state when one is known.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories`
+
+Defines the stable managed-connector preflight category identifiers used by CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-blockingremediation"></a>
+
+##### `BlockingRemediation`
+
+```csharp
+const string BlockingRemediation
+```
+
+The managed connector is blocked by failed or otherwise blocking runtime remediation work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-driftdetected"></a>
+
+##### `DriftDetected`
+
+```csharp
+const string DriftDetected
+```
+
+The managed connector still reports desired-versus-observed drift.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The managed connector is currently out of policy for future management follow-through.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-incompletereportingcoverage"></a>
+
+##### `IncompleteReportingCoverage`
+
+```csharp
+const string IncompleteReportingCoverage
+```
+
+The managed connector does not yet have full declared-versus-reported coverage on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The managed connector currently stays in observe-only mode.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-preflightready"></a>
+
+##### `PreflightReady`
+
+```csharp
+const string PreflightReady
+```
+
+The managed connector currently satisfies the shared baseline Cephalon would use to preflight the intended management operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-reconcileintent"></a>
+
+##### `ReconcileIntent`
+
+```csharp
+const string ReconcileIntent
+```
+
+The managed connector currently expresses reconcile-style management intent.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-runtimeremediation"></a>
+
+##### `RuntimeRemediation`
+
+```csharp
+const string RuntimeRemediation
+```
+
+The managed connector still needs runtime remediation attention before Cephalon can preflight management operations.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-runtimetruthincomplete"></a>
+
+##### `RuntimeTruthIncomplete`
+
+```csharp
+const string RuntimeTruthIncomplete
+```
+
+The managed connector does not yet report enough runtime truth to preflight the intended management operation.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds`
+
+Defines the stable managed-connector management-operation identifiers used by connector-management preflight answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+Cephalon would preflight delete follow-through for the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No management operation is currently intended for the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-pause"></a>
+
+##### `Pause`
+
+```csharp
+const string Pause
+```
+
+Cephalon would preflight pause follow-through for the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+Cephalon would preflight reconcile-style apply-and-reconcile follow-through for the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-restart"></a>
+
+##### `Restart`
+
+```csharp
+const string Restart
+```
+
+Cephalon would preflight restart follow-through for the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightoperationids-resume"></a>
+
+##### `Resume`
+
+```csharp
+const string Resume
+```
+
+Cephalon would preflight resume follow-through for the managed connector.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorPreflightStates`
+
+Defines the stable managed-connector preflight state identifiers used by CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorPreflightStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+The managed connector is currently blocked by runtime remediation before connector-management preflight can proceed.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates-deferred"></a>
+
+##### `Deferred`
+
+```csharp
+const string Deferred
+```
+
+The managed connector currently stays in observe-only mode, so connector-management preflight is deferred.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently represent a managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates-notready"></a>
+
+##### `NotReady`
+
+```csharp
+const string NotReady
+```
+
+The managed connector is not yet ready for Cephalon to preflight the currently intended management operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates-ready"></a>
+
+##### `Ready`
+
+```csharp
+const string Ready
+```
+
+The managed connector currently satisfies the shared baseline Cephalon would use to preflight the intended management operation.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus`
+
+Describes the current operator-facing managed-connector preflight posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus(string state, string description)
+```
+
+Creates a new managed-connector preflight answer.
+
+Parameters:
+- `state`: The stable preflight state, such as `deferred`, `not-ready`, `ready`, `blocked`, or `not-applicable`.
+- `description`: An optional operator-facing preflight summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed connector-management preflight.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active preflight categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable preflight categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing preflight summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed connector-management preflight.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed connector-management preflight.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether the managed connector is currently blocked before connector-management preflight can be considered.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-isdeferred"></a>
+
+##### `IsDeferred`
+
+```csharp
+bool IsDeferred { get; }
+```
+
+Gets a value indicating whether connector-management preflight is currently deferred because the runtime remains observe-only.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-isready"></a>
+
+##### `IsReady`
+
+```csharp
+bool IsReady { get; }
+```
+
+Gets a value indicating whether the managed connector currently satisfies the shared connector-management preflight baseline.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier Cephalon would currently preflight first.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed connector-management preflight.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed connector-management preflight.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-requiresattention"></a>
+
+##### `RequiresAttention`
+
+```csharp
+bool RequiresAttention { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires additional preflight follow-through.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector preflight state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-writepathreadinessstate"></a>
+
+##### `WritePathReadinessState`
+
+```csharp
+string WritePathReadinessState { get; set; }
+```
+
+Gets the current managed-connector write-path readiness state that informed connector-management preflight.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories"></a>
 
@@ -16343,6 +16801,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `governanceState`: The stable governance-state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorpreflightcategory-system-string"></a>
+
+##### `GetByManagedConnectorPreflightCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightCategory(string preflightCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector preflight answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that preflight category.
+
+Parameters:
+- `preflightCategory`: The stable managed-connector preflight category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorpreflightoperationid-system-string"></a>
+
+##### `GetByManagedConnectorPreflightOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector preflight answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable managed-connector operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorpreflightstate-system-string"></a>
+
+##### `GetByManagedConnectorPreflightState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightState(string preflightState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector preflight answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that preflight state.
+
+Parameters:
+- `preflightState`: The stable managed-connector preflight state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorwritepathreadinesscategory-system-string"></a>
 
