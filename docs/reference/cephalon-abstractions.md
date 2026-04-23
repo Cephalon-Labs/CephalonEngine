@@ -8438,6 +8438,16 @@ CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus ManagedConnectorGover
 
 Gets the operator-facing managed-connector governance posture for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorwritepathreadiness"></a>
+
+##### `ManagedConnectorWritePathReadiness`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus ManagedConnectorWritePathReadiness { get; set; }
+```
+
+Gets the operator-facing managed-connector write-path readiness posture derived from coverage, remediation, governance, drift, and action planning.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-metadata"></a>
 
 ##### `Metadata`
@@ -9881,6 +9891,361 @@ string TaskReconciliationState { get; set; }
 ```
 
 Gets the latest reported task-reconciliation state when one is known.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories`
+
+Defines the stable managed-connector write-path readiness category identifiers used by CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-blockingremediation"></a>
+
+##### `BlockingRemediation`
+
+```csharp
+const string BlockingRemediation
+```
+
+The managed connector is blocked by failed or otherwise blocking runtime remediation work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-driftdetected"></a>
+
+##### `DriftDetected`
+
+```csharp
+const string DriftDetected
+```
+
+The managed connector still reports desired-versus-observed drift.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The managed connector is currently out of policy for future write-path follow-through.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-incompletereportingcoverage"></a>
+
+##### `IncompleteReportingCoverage`
+
+```csharp
+const string IncompleteReportingCoverage
+```
+
+The managed connector does not yet have full declared-versus-reported coverage on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The managed connector currently stays in observe-only mode.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-runtimeremediation"></a>
+
+##### `RuntimeRemediation`
+
+```csharp
+const string RuntimeRemediation
+```
+
+The managed connector still needs runtime remediation attention before future write-path work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-runtimetruthincomplete"></a>
+
+##### `RuntimeTruthIncomplete`
+
+```csharp
+const string RuntimeTruthIncomplete
+```
+
+The managed connector does not yet report enough runtime truth to prove future write-path readiness.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-writepathready"></a>
+
+##### `WritePathReady`
+
+```csharp
+const string WritePathReady
+```
+
+The managed connector currently satisfies the shared baseline for future write-path follow-through.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories-writepathrequested"></a>
+
+##### `WritePathRequested`
+
+```csharp
+const string WritePathRequested
+```
+
+The managed connector has declared a future write-path management mode.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates`
+
+Defines the stable managed-connector write-path readiness state identifiers used by CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+The managed connector is currently blocked by runtime remediation before write-path readiness can be considered.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstates-deferred"></a>
+
+##### `Deferred`
+
+```csharp
+const string Deferred
+```
+
+The managed connector currently stays in observe-only mode, so write-path readiness is deferred.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently represent a managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstates-notready"></a>
+
+##### `NotReady`
+
+```csharp
+const string NotReady
+```
+
+The managed connector is not yet ready for future write-path follow-through.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstates-ready"></a>
+
+##### `Ready`
+
+```csharp
+const string Ready
+```
+
+The managed connector currently has enough runtime truth to support future write-path follow-through.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus`
+
+Describes the current operator-facing managed-connector write-path readiness posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus(string state, string description)
+```
+
+Creates a new managed-connector write-path readiness answer.
+
+Parameters:
+- `state`: The stable readiness state, such as `deferred`, `not-ready`, `ready`, `blocked`, or `not-applicable`.
+- `description`: An optional operator-facing readiness summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed write-path readiness.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active readiness categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable readiness categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing readiness summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed write-path readiness.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed write-path readiness.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether the managed connector is currently blocked before write-path readiness can be considered.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-isdeferred"></a>
+
+##### `IsDeferred`
+
+```csharp
+bool IsDeferred { get; }
+```
+
+Gets a value indicating whether write-path readiness is currently deferred because the runtime remains observe-only.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-isready"></a>
+
+##### `IsReady`
+
+```csharp
+bool IsReady { get; }
+```
+
+Gets a value indicating whether the managed connector currently satisfies the shared write-path readiness baseline.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed write-path readiness.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed write-path readiness.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-requiresattention"></a>
+
+##### `RequiresAttention`
+
+```csharp
+bool RequiresAttention { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires additional readiness follow-through.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector write-path readiness state.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories"></a>
 
@@ -15978,6 +16343,36 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `governanceState`: The stable governance-state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorwritepathreadinesscategory-system-string"></a>
+
+##### `GetByManagedConnectorWritePathReadinessCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorWritePathReadinessCategory(string readinessCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector write-path readiness answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that readiness category.
+
+Parameters:
+- `readinessCategory`: The stable managed-connector write-path readiness category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorwritepathreadinessstate-system-string"></a>
+
+##### `GetByManagedConnectorWritePathReadinessState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorWritePathReadinessState(string readinessState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector write-path readiness answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that readiness state.
+
+Parameters:
+- `readinessState`: The stable managed-connector write-path readiness state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyremediationcategory-system-string"></a>
 

@@ -29,6 +29,8 @@ public sealed class DebeziumDataCdcHostingTests
     private const string WaitingCaptureId = "inventory-shipments-cdc";
     private const string BlockedRuntimeId = "inventory-blocked-connector";
     private const string BlockedCaptureId = "inventory-payments-cdc";
+    private const string ReadyRuntimeId = "inventory-ready-connector";
+    private const string ReadyCaptureId = "inventory-invoices-cdc";
 
     [Fact]
     public async Task MapCephalonExposesDebeziumManagedConnectorReportingRouteWithoutBaseOptInFlag()
@@ -144,6 +146,17 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Drifted, runtime.ManagedConnectorActionPlan.DriftState);
             Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories.DriftDetected, runtime.ManagedConnectorActionPlan.CategoryIds);
             Assert.True(runtime.ManagedConnectorActionPlan.RequiresAction);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.NotReady, runtime.ManagedConnectorWritePathReadiness.State);
+            Assert.Equal("observe-only", runtime.ManagedConnectorWritePathReadiness.ManagementMode);
+            Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.FullyReported, runtime.ManagedConnectorWritePathReadiness.ReportingCoverageState);
+            Assert.Equal(CdcCaptureExecutionRuntimeRemediationStates.Ready, runtime.ManagedConnectorWritePathReadiness.RemediationState);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly, runtime.ManagedConnectorWritePathReadiness.GovernanceState);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Drifted, runtime.ManagedConnectorWritePathReadiness.DriftState);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.ActionRequired, runtime.ManagedConnectorWritePathReadiness.ActionPlanState);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.InvestigateDrift, runtime.ManagedConnectorWritePathReadiness.PrimaryActionId);
+            Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories.DriftDetected, runtime.ManagedConnectorWritePathReadiness.CategoryIds);
+            Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories.ObserveOnlyMode, runtime.ManagedConnectorWritePathReadiness.CategoryIds);
+            Assert.True(runtime.ManagedConnectorWritePathReadiness.RequiresAttention);
 
             Assert.NotNull(capture);
             Assert.Equal(CaptureId, capture.Id);
@@ -246,6 +259,7 @@ public sealed class DebeziumDataCdcHostingTests
                 item.ManagedConnectorGovernance.State == CdcCaptureExecutionRuntimeManagedConnectorGovernanceStates.ObserveOnly &&
                 item.ManagedConnectorDrift.State == CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Drifted &&
                 item.ManagedConnectorActionPlan.State == CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.ActionRequired &&
+                item.ManagedConnectorWritePathReadiness.State == CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.NotReady &&
                 item.ManagedConnectorGovernance.ReconciliationState == "task-mismatch" &&
                 item.Metadata["debeziumReconciliationState"] == "task-mismatch");
         }
@@ -693,6 +707,267 @@ public sealed class DebeziumDataCdcHostingTests
                 item.ManagedConnectorActionPlan.State == CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.Waiting);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == BlockedRuntimeId &&
                 item.ManagedConnectorActionPlan.State == CdcCaptureExecutionRuntimeManagedConnectorActionPlanStates.Blocked);
+        }
+        finally
+        {
+            await app.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesManagedConnectorWritePathReadinessRoutesOnSharedCdcRuntimeSurface()
+    {
+        var builder = CreateBuilder(
+            options =>
+            {
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: ObserveOnlyRuntimeId,
+                    captureId: ObserveOnlyCaptureId,
+                    displayName: "Inventory Observe-Only Connector",
+                    captureDisplayName: "Inventory Orders CDC",
+                    captureDescription: "Projects inventory order CDC truth through the shared Cephalon runtime catalog.",
+                    connectClusterId: "connect-cluster-a",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory",
+                    managementMode: "observe-only",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: FutureControlPlaneRuntimeId,
+                    captureId: FutureControlPlaneCaptureId,
+                    displayName: "Inventory Managed Connector",
+                    captureDisplayName: "Inventory Products CDC",
+                    captureDescription: "Declares a future write-path management mode while still using shared runtime truth.",
+                    connectClusterId: "connect-cluster-b",
+                    connectorClass: "io.debezium.connector.mysql.MySqlConnector",
+                    sourceProviderId: "mysql",
+                    topicPrefix: "inventory-products",
+                    managementMode: "apply-and-reconcile",
+                    expectedTaskCount: 2,
+                    taskIds: ["0", "1"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: OutOfPolicyRuntimeId,
+                    captureId: OutOfPolicyCaptureId,
+                    displayName: "Inventory Out-of-Policy Connector",
+                    captureDisplayName: "Inventory Suppliers CDC",
+                    captureDescription: "Omits connector-cluster identity so governance falls back to an out-of-policy answer.",
+                    connectClusterId: null,
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-suppliers",
+                    managementMode: "observe-only",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: WaitingRuntimeId,
+                    captureId: WaitingCaptureId,
+                    displayName: "Inventory Waiting Connector",
+                    captureDisplayName: "Inventory Shipments CDC",
+                    captureDescription: "Declares a healthy observe-only baseline but has not reported task topology yet.",
+                    connectClusterId: "connect-cluster-c",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-shipments",
+                    managementMode: "observe-only",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: BlockedRuntimeId,
+                    captureId: BlockedCaptureId,
+                    displayName: "Inventory Blocked Connector",
+                    captureDisplayName: "Inventory Payments CDC",
+                    captureDescription: "Reports a failed runtime outcome so remediation blocks deeper connector follow-through.",
+                    connectClusterId: "connect-cluster-d",
+                    connectorClass: "io.debezium.connector.mysql.MySqlConnector",
+                    sourceProviderId: "mysql",
+                    topicPrefix: "inventory-payments",
+                    managementMode: "observe-only",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: ReadyRuntimeId,
+                    captureId: ReadyCaptureId,
+                    displayName: "Inventory Ready Connector",
+                    captureDisplayName: "Inventory Invoices CDC",
+                    captureDescription: "Declares a future write-path management mode with healthy shared runtime truth.",
+                    connectClusterId: "connect-cluster-e",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-invoices",
+                    managementMode: "apply-and-reconcile",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+            },
+            new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T06:10:30Z", CultureInfo.InvariantCulture)));
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+
+        try
+        {
+            var client = app.GetTestClient();
+
+            var observeOnlyReport = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{ObserveOnlyRuntimeId}/reports",
+                new[]
+                {
+                    new CdcCaptureRuntimeObservation(
+                        cdcCaptureId: ObserveOnlyCaptureId,
+                        outcome: CdcCaptureRuntimeOutcomes.Captured,
+                        observedAtUtc: DateTimeOffset.Parse("2026-04-23T06:09:00Z", CultureInfo.InvariantCulture),
+                        reportId: "debezium-report-observe-001",
+                        metadata: new Dictionary<string, string>
+                        {
+                            ["connectorState"] = "RUNNING",
+                            ["connectClusterId"] = "connect-cluster-a",
+                            ["connectorClass"] = "io.debezium.connector.postgresql.PostgresConnector",
+                            ["sourceProviderId"] = "postgresql",
+                            ["reportedTaskIds"] = "0",
+                            ["activeTaskIds"] = "0"
+                        },
+                        reporterId: "connect-worker-a")
+                });
+            observeOnlyReport.EnsureSuccessStatusCode();
+
+            var futureControlPlaneReport = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{FutureControlPlaneRuntimeId}/reports",
+                new[]
+                {
+                    new CdcCaptureRuntimeObservation(
+                        cdcCaptureId: FutureControlPlaneCaptureId,
+                        outcome: CdcCaptureRuntimeOutcomes.Captured,
+                        observedAtUtc: DateTimeOffset.Parse("2026-04-23T06:09:30Z", CultureInfo.InvariantCulture),
+                        reportId: "debezium-report-managed-001",
+                        metadata: new Dictionary<string, string>
+                        {
+                            ["connectorState"] = "RUNNING",
+                            ["connectClusterId"] = "connect-cluster-b",
+                            ["connectorClass"] = "io.debezium.connector.mysql.MySqlConnector",
+                            ["sourceProviderId"] = "mysql",
+                            ["reportedTaskIds"] = "0",
+                            ["activeTaskIds"] = "0"
+                        },
+                        reporterId: "connect-worker-b")
+                });
+            futureControlPlaneReport.EnsureSuccessStatusCode();
+
+            var blockedReport = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{BlockedRuntimeId}/reports",
+                new[]
+                {
+                    new CdcCaptureRuntimeObservation(
+                        cdcCaptureId: BlockedCaptureId,
+                        outcome: CdcCaptureRuntimeOutcomes.Failed,
+                        observedAtUtc: DateTimeOffset.Parse("2026-04-23T06:10:00Z", CultureInfo.InvariantCulture),
+                        reportId: "debezium-report-blocked-001",
+                        metadata: new Dictionary<string, string>
+                        {
+                            ["connectorState"] = "FAILED",
+                            ["connectClusterId"] = "connect-cluster-d",
+                            ["connectorClass"] = "io.debezium.connector.mysql.MySqlConnector",
+                            ["sourceProviderId"] = "mysql",
+                            ["reportedTaskIds"] = "0"
+                        },
+                        reporterId: "connect-worker-d")
+                });
+            blockedReport.EnsureSuccessStatusCode();
+
+            var readyReport = await client.PostAsJsonAsync(
+                $"/engine/cdc-capture-runtimes/{ReadyRuntimeId}/reports",
+                new[]
+                {
+                    new CdcCaptureRuntimeObservation(
+                        cdcCaptureId: ReadyCaptureId,
+                        outcome: CdcCaptureRuntimeOutcomes.Captured,
+                        observedAtUtc: DateTimeOffset.Parse("2026-04-23T06:09:45Z", CultureInfo.InvariantCulture),
+                        reportId: "debezium-report-ready-001",
+                        metadata: new Dictionary<string, string>
+                        {
+                            ["connectorState"] = "RUNNING",
+                            ["connectClusterId"] = "connect-cluster-e",
+                            ["connectorClass"] = "io.debezium.connector.postgresql.PostgresConnector",
+                            ["sourceProviderId"] = "postgresql",
+                            ["reportedTaskIds"] = "0",
+                            ["activeTaskIds"] = "0"
+                        },
+                        reporterId: "connect-worker-e")
+                });
+            readyReport.EnsureSuccessStatusCode();
+
+            var deferred = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/deferred");
+            var ready = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/ready");
+            var notReady = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/not-ready");
+            var blocked = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/blocked");
+            var observeOnlyMode = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/categories/observe-only-mode");
+            var writePathRequested = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/categories/write-path-requested");
+            var writePathReady = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/categories/write-path-ready");
+            var governanceOutOfPolicy = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/categories/governance-out-of-policy");
+            var runtimeTruthIncomplete = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/categories/runtime-truth-incomplete");
+            var blockingRemediation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/write-path-readiness/categories/blocking-remediation");
+            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+            Assert.NotNull(deferred);
+            Assert.Equal([ObserveOnlyRuntimeId], deferred.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.Deferred, deferred[0].ManagedConnectorWritePathReadiness.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.KeepObserveOnly, deferred[0].ManagedConnectorWritePathReadiness.PrimaryActionId);
+
+            Assert.NotNull(ready);
+            Assert.Equal([ReadyRuntimeId], ready.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.Ready, ready[0].ManagedConnectorWritePathReadiness.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorActionPlanActionIds.DeferControlPlane, ready[0].ManagedConnectorWritePathReadiness.PrimaryActionId);
+            Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories.WritePathReady, ready[0].ManagedConnectorWritePathReadiness.CategoryIds);
+
+            Assert.NotNull(notReady);
+            Assert.Equal(
+                [FutureControlPlaneRuntimeId, OutOfPolicyRuntimeId, WaitingRuntimeId],
+                notReady.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(blocked);
+            Assert.Equal([BlockedRuntimeId], blocked.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.Blocked, blocked[0].ManagedConnectorWritePathReadiness.State);
+
+            Assert.NotNull(observeOnlyMode);
+            Assert.Equal(
+                [BlockedRuntimeId, ObserveOnlyRuntimeId, OutOfPolicyRuntimeId, WaitingRuntimeId],
+                observeOnlyMode.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(writePathRequested);
+            Assert.Equal(
+                [FutureControlPlaneRuntimeId, ReadyRuntimeId],
+                writePathRequested.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(writePathReady);
+            Assert.Equal([ReadyRuntimeId], writePathReady.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(governanceOutOfPolicy);
+            Assert.Equal([OutOfPolicyRuntimeId], governanceOutOfPolicy.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(runtimeTruthIncomplete);
+            Assert.Equal(
+                [OutOfPolicyRuntimeId, WaitingRuntimeId],
+                runtimeTruthIncomplete.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(blockingRemediation);
+            Assert.Equal([BlockedRuntimeId], blockingRemediation.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(snapshot);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
+                item.ManagedConnectorWritePathReadiness.State == CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.Deferred &&
+                item.ManagedConnectorWritePathReadiness.IsDeferred);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == FutureControlPlaneRuntimeId &&
+                item.ManagedConnectorWritePathReadiness.State == CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.NotReady &&
+                item.ManagedConnectorWritePathReadiness.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories.DriftDetected, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == OutOfPolicyRuntimeId &&
+                item.ManagedConnectorWritePathReadiness.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories.GovernanceOutOfPolicy, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == WaitingRuntimeId &&
+                item.ManagedConnectorWritePathReadiness.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories.RuntimeTruthIncomplete, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == BlockedRuntimeId &&
+                item.ManagedConnectorWritePathReadiness.State == CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.Blocked);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ReadyRuntimeId &&
+                item.ManagedConnectorWritePathReadiness.State == CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates.Ready &&
+                item.ManagedConnectorWritePathReadiness.IsReady);
         }
         finally
         {

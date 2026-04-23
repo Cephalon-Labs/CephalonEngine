@@ -306,6 +306,18 @@ shared `not-applicable`, `observe`, `waiting`, `action-required`, or `blocked` a
 with ordered action ids, operator-facing action-plan categories, and the source remediation,
 governance, plus drift state instead of inventing a Debezium-only action-planning contract.
 
+The same host-agnostic CDC runtime surface now also carries
+`CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorWritePathReadiness`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorWritePathReadinessState(...)` /
+`GetByManagedConnectorWritePathReadinessCategory(...)` filters. That keeps managed connectors
+queryable as shared `not-applicable`, `deferred`, `not-ready`, `ready`, or `blocked` answers
+together with stable readiness categories, source coverage/remediation/governance/drift/action-plan
+state, and the current primary action id instead of inventing a Debezium-only write-path
+readiness contract.
+
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
 `BulkheadSelection`, and `RateLimitingSelection`. `RateLimitingSelection` now also carries additive

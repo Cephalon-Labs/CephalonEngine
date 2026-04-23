@@ -235,6 +235,29 @@ runtime surface instead of introducing a Debezium-only operator planner.
   owns Kafka Connect write paths, automatic connector mutation, or managed-connector control-plane
   orchestration
 
+## Managed-connector write-path readiness baseline
+
+The `ENG-172` follow-through keeps managed-connector write-path readiness additive over that same
+shared runtime surface instead of introducing a Debezium-only readiness planner.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorWritePathReadiness` now publishes stable
+  `not-applicable`, `deferred`, `not-ready`, `ready`, and `blocked` posture for
+  Debezium-managed runtimes together with readiness categories, source
+  coverage/remediation/governance/drift/action-plan state, and the current primary action id
+- the shared execution-runtime catalog now derives that readiness answer from the already-shipped
+  coverage, remediation, governance, drift, and action-planning truth, so observe-only,
+  out-of-policy, incomplete-reporting, drifted, blocked, and future-control-plane declarations can
+  collapse into one operator-facing answer on the existing `/engine/cdc-capture-runtimes*` and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces
+- ASP.NET Core now maps
+  `/engine/cdc-capture-runtimes/write-path-readiness/{readinessState}` plus
+  `/engine/cdc-capture-runtimes/write-path-readiness/categories/{readinessCategory}` on the same
+  shared runtime route family, so operator drill-down stays aligned with the engine-owned catalog
+  instead of a Debezium-only endpoint family
+- write-path readiness currently remains read-only operator truth; it does not mean Cephalon
+  already owns Kafka Connect write-path execution, automatic connector mutation, or
+  managed-connector control-plane orchestration
+
 ## Not shipped in this slice
 
 This pack intentionally still does not claim:

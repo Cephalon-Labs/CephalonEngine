@@ -187,21 +187,33 @@ governance, and desired-versus-observed drift truth, so operator follow-through 
 existing `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a
 Debezium-only action-planning registry.
 
+That same shared execution-runtime story now also keeps managed-connector write-path readiness
+explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorWritePathReadiness` publishes
+stable `not-applicable` / `deferred` / `not-ready` / `ready` / `blocked` posture together with
+readiness categories, source coverage/remediation/governance/drift/action-plan state, and the
+current primary action id. The shared execution-runtime catalog derives that answer from merged
+reporting coverage, remediation, governance, desired-versus-observed drift, and action-planning
+truth, so future write-path follow-through can stay on the existing `/engine/cdc-*`,
+`/engine/runtime-story`, and `snapshot` surfaces instead of inventing a Debezium-only readiness
+registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
-managed-connector drift category, managed-connector action-plan state, and managed-connector
-action id as well.
+managed-connector drift category, managed-connector action-plan state, managed-connector action
+id, managed-connector write-path-readiness state, and managed-connector write-path-readiness
+category as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
 `GetByRemediationCategory(...)`, `GetByManagedConnectorGovernanceState(...)`,
 `GetByManagedConnectorGovernanceCategory(...)`, `GetByManagedConnectorDriftState(...)`, and
 `GetByManagedConnectorDriftCategory(...)`, `GetByManagedConnectorActionPlanState(...)`, and
-`GetByManagedConnectorActionId(...)`, so host code, provider packs, and tooling can narrow the
-shared CDC runtime story without rebuilding a second coordination, remediation,
-managed-connector governance, managed-connector drift, or managed-connector action-planning
-index. ASP.NET Core maps those same
+`GetByManagedConnectorActionId(...)`, `GetByManagedConnectorWritePathReadinessState(...)`, and
+`GetByManagedConnectorWritePathReadinessCategory(...)`, so host code, provider packs, and tooling
+can narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
+managed-connector governance, managed-connector drift, managed-connector action-planning, or
+managed-connector readiness index. ASP.NET Core maps those same
 filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
 `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
@@ -218,8 +230,10 @@ filters through
 `/engine/cdc-capture-runtimes/drift/{driftState}` and
 `/engine/cdc-capture-runtimes/drift/categories/{driftCategory}` plus
 `/engine/cdc-capture-runtimes/action-plans/{actionPlanState}` and
-`/engine/cdc-capture-runtimes/actions/{actionId}` so the live host surface stays aligned with the
-same shared runtime-state and execution-runtime catalogs.
+`/engine/cdc-capture-runtimes/actions/{actionId}` plus
+`/engine/cdc-capture-runtimes/write-path-readiness/{readinessState}` and
+`/engine/cdc-capture-runtimes/write-path-readiness/categories/{readinessCategory}` so the live
+host surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,

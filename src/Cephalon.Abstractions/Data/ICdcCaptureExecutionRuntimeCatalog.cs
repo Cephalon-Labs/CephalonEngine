@@ -100,4 +100,18 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="actionId">The stable managed-connector action identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that action identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorActionId(string actionId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector write-path readiness answer matches the requested state.
+    /// </summary>
+    /// <param name="readinessState">The stable managed-connector write-path readiness state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that readiness state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorWritePathReadinessState(string readinessState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector write-path readiness answer includes the requested category.
+    /// </summary>
+    /// <param name="readinessCategory">The stable managed-connector write-path readiness category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that readiness category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorWritePathReadinessCategory(string readinessCategory);
 }
