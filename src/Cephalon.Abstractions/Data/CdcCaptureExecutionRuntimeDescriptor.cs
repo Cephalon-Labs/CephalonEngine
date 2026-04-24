@@ -400,6 +400,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus ManagedConnectorProviderOwnedControlPlaneMutationReconcile { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector provider-owned control-plane provisioning posture derived from control-plane mutation and reconcile, ownership, command-lane truth, and retained journal evidence.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus ManagedConnectorProviderOwnedControlPlaneProvisioning { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

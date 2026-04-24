@@ -8648,6 +8648,16 @@ CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStat
 
 Gets the operator-facing managed-connector provider-owned control-plane ownership posture derived from provider execution orchestration, provider-owned write-path execution, command-journal, scheduler, and recovery truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedcontrolplaneprovisioning"></a>
+
+##### `ManagedConnectorProviderOwnedControlPlaneProvisioning`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus ManagedConnectorProviderOwnedControlPlaneProvisioning { get; set; }
+```
+
+Gets the operator-facing managed-connector provider-owned control-plane provisioning posture derived from control-plane mutation and reconcile, ownership, command-lane truth, and retained journal evidence.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedwritepathexecution"></a>
 
 ##### `ManagedConnectorProviderOwnedWritePathExecution`
@@ -27671,6 +27681,1414 @@ bool WouldApplyChanges { get; set; }
 
 Gets a value indicating whether the current provider-owned control-plane lane would still apply one or more shared write-path changes.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories`
+
+Defines the stable category identifiers used by managed-connector provider-owned control-plane provisioning answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The current provider control-plane provisioning lane still requires explicit approval.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandenvelopeblocked"></a>
+
+##### `CommandEnvelopeBlocked`
+
+```csharp
+const string CommandEnvelopeBlocked
+```
+
+The current command envelope remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandenvelopeready"></a>
+
+##### `CommandEnvelopeReady`
+
+```csharp
+const string CommandEnvelopeReady
+```
+
+The current command envelope is engine-ready for provider-owned provisioning.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandissuanceaccepted"></a>
+
+##### `CommandIssuanceAccepted`
+
+```csharp
+const string CommandIssuanceAccepted
+```
+
+The current shared command issuance lane accepted one provider-owned provisioning command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandissuanceissued"></a>
+
+##### `CommandIssuanceIssued`
+
+```csharp
+const string CommandIssuanceIssued
+```
+
+The current shared command issuance lane already issued one provider-owned provisioning command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandjournalevidence"></a>
+
+##### `CommandJournalEvidence`
+
+```csharp
+const string CommandJournalEvidence
+```
+
+The command journal currently exposes retained evidence for provider-owned provisioning.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot yet exercise bounded provider-owned control-plane provisioning safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current node can exercise bounded provider-owned control-plane provisioning safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The current provider control-plane provisioning lane still targets a destructive operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-durablejournalconfigured"></a>
+
+##### `DurableJournalConfigured`
+
+```csharp
+const string DurableJournalConfigured
+```
+
+A durable command-journal store is configured for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-inmemoryjournalonly"></a>
+
+##### `InMemoryJournalOnly`
+
+```csharp
+const string InMemoryJournalOnly
+```
+
+Provider-owned control-plane provisioning currently depends on in-memory history only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationblocked"></a>
+
+##### `MutationBlocked`
+
+```csharp
+const string MutationBlocked
+```
+
+Broader provider-owned control-plane mutation remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationexecuting"></a>
+
+##### `MutationExecuting`
+
+```csharp
+const string MutationExecuting
+```
+
+Broader provider-owned control-plane mutation or reconcile is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationoperation"></a>
+
+##### `MutationOperation`
+
+```csharp
+const string MutationOperation
+```
+
+The current target operation is one provider-owned mutation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationready"></a>
+
+##### `MutationReady`
+
+```csharp
+const string MutationReady
+```
+
+Broader provider-owned control-plane mutation is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationrisk"></a>
+
+##### `MutationRisk`
+
+```csharp
+const string MutationRisk
+```
+
+Broader provider-owned control-plane mutation or reconcile currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-nochangesrequired"></a>
+
+##### `NoChangesRequired`
+
+```csharp
+const string NoChangesRequired
+```
+
+The current provider control-plane provisioning lane would not apply another shared write-path change.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-norecordedcommand"></a>
+
+##### `NoRecordedCommand`
+
+```csharp
+const string NoRecordedCommand
+```
+
+No command-journal evidence has been recorded yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-notargetoperation"></a>
+
+##### `NoTargetOperation`
+
+```csharp
+const string NoTargetOperation
+```
+
+No provider-owned mutation or reconcile operation is currently targeted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-owned control-plane provisioning still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershipactive"></a>
+
+##### `OwnershipActive`
+
+```csharp
+const string OwnershipActive
+```
+
+Broader provider-owned control-plane ownership is currently active.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershipblocked"></a>
+
+##### `OwnershipBlocked`
+
+```csharp
+const string OwnershipBlocked
+```
+
+Broader provider-owned control-plane ownership remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershippartial"></a>
+
+##### `OwnershipPartial`
+
+```csharp
+const string OwnershipPartial
+```
+
+Broader provider-owned control-plane ownership currently remains partial.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershipready"></a>
+
+##### `OwnershipReady`
+
+```csharp
+const string OwnershipReady
+```
+
+Broader provider-owned control-plane ownership is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershiprisk"></a>
+
+##### `OwnershipRisk`
+
+```csharp
+const string OwnershipRisk
+```
+
+Broader provider-owned control-plane ownership currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-persistedhistory"></a>
+
+##### `PersistedHistory`
+
+```csharp
+const string PersistedHistory
+```
+
+The durable command journal currently exposes persisted recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerblocked"></a>
+
+##### `ProviderBlocked`
+
+```csharp
+const string ProviderBlocked
+```
+
+Provider-owned write-path execution remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandadapted"></a>
+
+##### `ProviderCommandAdapted`
+
+```csharp
+const string ProviderCommandAdapted
+```
+
+The latest provider execution translated into a provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandblocked"></a>
+
+##### `ProviderCommandBlocked`
+
+```csharp
+const string ProviderCommandBlocked
+```
+
+The latest provider execution remained blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandfailed"></a>
+
+##### `ProviderCommandFailed`
+
+```csharp
+const string ProviderCommandFailed
+```
+
+The latest provider execution failed while Cephalon translated provider command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandnoop"></a>
+
+##### `ProviderCommandNoOp`
+
+```csharp
+const string ProviderCommandNoOp
+```
+
+The latest provider execution determined that no provider command is required.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandoperatoronly"></a>
+
+##### `ProviderCommandOperatorOnly`
+
+```csharp
+const string ProviderCommandOperatorOnly
+```
+
+The latest provider execution remained operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandunavailable"></a>
+
+##### `ProviderCommandUnavailable`
+
+```csharp
+const string ProviderCommandUnavailable
+```
+
+The latest provider execution could not resolve a provider adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutable"></a>
+
+##### `ProviderExecutable`
+
+```csharp
+const string ProviderExecutable
+```
+
+Provider-owned write-path execution is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutionblocked"></a>
+
+##### `ProviderExecutionBlocked`
+
+```csharp
+const string ProviderExecutionBlocked
+```
+
+Broader provider execution orchestration remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutioncompleted"></a>
+
+##### `ProviderExecutionCompleted`
+
+```csharp
+const string ProviderExecutionCompleted
+```
+
+Broader provider execution orchestration no longer needs another shared step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutionexecuting"></a>
+
+##### `ProviderExecutionExecuting`
+
+```csharp
+const string ProviderExecutionExecuting
+```
+
+Broader provider execution orchestration is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutionready"></a>
+
+##### `ProviderExecutionReady`
+
+```csharp
+const string ProviderExecutionReady
+```
+
+Broader provider execution orchestration is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutionrisk"></a>
+
+##### `ProviderExecutionRisk`
+
+```csharp
+const string ProviderExecutionRisk
+```
+
+Broader provider execution orchestration currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerownedcompleted"></a>
+
+##### `ProviderOwnedCompleted`
+
+```csharp
+const string ProviderOwnedCompleted
+```
+
+Provider-owned write-path execution no longer needs another provider command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerownedcontrolplaneprovisioning"></a>
+
+##### `ProviderOwnedControlPlaneProvisioning`
+
+```csharp
+const string ProviderOwnedControlPlaneProvisioning
+```
+
+The runtime participates in the provider-owned control-plane provisioning lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerownedexecuting"></a>
+
+##### `ProviderOwnedExecuting`
+
+```csharp
+const string ProviderOwnedExecuting
+```
+
+Provider-owned write-path execution is currently active.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerownedrisk"></a>
+
+##### `ProviderOwnedRisk`
+
+```csharp
+const string ProviderOwnedRisk
+```
+
+Provider-owned write-path execution currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningblocked"></a>
+
+##### `ProvisioningBlocked`
+
+```csharp
+const string ProvisioningBlocked
+```
+
+Provider-owned control-plane provisioning remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningexecuting"></a>
+
+##### `ProvisioningExecuting`
+
+```csharp
+const string ProvisioningExecuting
+```
+
+Provider-owned control-plane provisioning is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningpartial"></a>
+
+##### `ProvisioningPartial`
+
+```csharp
+const string ProvisioningPartial
+```
+
+Provider-owned control-plane provisioning is currently partial on the shared lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningready"></a>
+
+##### `ProvisioningReady`
+
+```csharp
+const string ProvisioningReady
+```
+
+Provider-owned control-plane provisioning is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningrisk"></a>
+
+##### `ProvisioningRisk`
+
+```csharp
+const string ProvisioningRisk
+```
+
+Provider-owned control-plane provisioning currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileblocked"></a>
+
+##### `ReconcileBlocked`
+
+```csharp
+const string ReconcileBlocked
+```
+
+Broader provider-owned control-plane reconcile remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileoperation"></a>
+
+##### `ReconcileOperation`
+
+```csharp
+const string ReconcileOperation
+```
+
+The current target operation is one provider-owned reconcile.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileready"></a>
+
+##### `ReconcileReady`
+
+```csharp
+const string ReconcileReady
+```
+
+Broader provider-owned control-plane reconcile is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The durable command journal currently exposes recovered recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-retryblocked"></a>
+
+##### `RetryBlocked`
+
+```csharp
+const string RetryBlocked
+```
+
+The current retry posture remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-retryeligible"></a>
+
+##### `RetryEligible`
+
+```csharp
+const string RetryEligible
+```
+
+The current retry posture still allows one eligible provider-owned provisioning retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+const string WouldApplyChanges
+```
+
+The current provider control-plane provisioning lane would still apply one or more shared write-path changes.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources`
+
+Defines the stable source identifiers used by managed-connector provider-owned control-plane provisioning answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandenvelope"></a>
+
+##### `CommandEnvelope`
+
+```csharp
+const string CommandEnvelope
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from command-envelope truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandexecution"></a>
+
+##### `CommandExecution`
+
+```csharp
+const string CommandExecution
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from the latest command-execution outcome.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandissuance"></a>
+
+##### `CommandIssuance`
+
+```csharp
+const string CommandIssuance
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from command-issuance truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandjournal"></a>
+
+##### `CommandJournal`
+
+```csharp
+const string CommandJournal
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from retained command-journal evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandretry"></a>
+
+##### `CommandRetry`
+
+```csharp
+const string CommandRetry
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from command-retry truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-providerexecutionorchestration"></a>
+
+##### `ProviderExecutionOrchestration`
+
+```csharp
+const string ProviderExecutionOrchestration
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from provider execution-orchestration truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-providerownedcontrolplanemutationreconcile"></a>
+
+##### `ProviderOwnedControlPlaneMutationReconcile`
+
+```csharp
+const string ProviderOwnedControlPlaneMutationReconcile
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from provider-owned control-plane mutation and reconcile truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-providerownedcontrolplaneownership"></a>
+
+##### `ProviderOwnedControlPlaneOwnership`
+
+```csharp
+const string ProviderOwnedControlPlaneOwnership
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from provider-owned control-plane ownership truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-providerownedwritepathexecution"></a>
+
+##### `ProviderOwnedWritePathExecution`
+
+```csharp
+const string ProviderOwnedWritePathExecution
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from provider-owned write-path execution truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-retryexecutionpolicy"></a>
+
+##### `RetryExecutionPolicy`
+
+```csharp
+const string RetryExecutionPolicy
+```
+
+The provider-owned control-plane provisioning answer was derived primarily from retry-execution policy truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The provider-owned control-plane provisioning answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates`
+
+Defines the stable state identifiers used by managed-connector provider-owned control-plane provisioning answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Provider-owned control-plane provisioning does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-owned control-plane provisioning still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningblocked"></a>
+
+##### `ProvisioningBlocked`
+
+```csharp
+const string ProvisioningBlocked
+```
+
+Provider-owned control-plane provisioning remains blocked by shared runtime policy, control-plane truth, or missing provisioning intent.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningexecuting"></a>
+
+##### `ProvisioningExecuting`
+
+```csharp
+const string ProvisioningExecuting
+```
+
+Provider-owned control-plane provisioning is currently executing one bounded provider-facing step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningpartial"></a>
+
+##### `ProvisioningPartial`
+
+```csharp
+const string ProvisioningPartial
+```
+
+Provider-owned control-plane provisioning is partially available but still needs additional shared provider truth before Cephalon can rely on it fully.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningready"></a>
+
+##### `ProvisioningReady`
+
+```csharp
+const string ProvisioningReady
+```
+
+Provider-owned control-plane provisioning is currently ready on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningrisk"></a>
+
+##### `ProvisioningRisk`
+
+```csharp
+const string ProvisioningRisk
+```
+
+Provider-owned control-plane provisioning currently remains risky because broader shared runtime truth is not safe enough yet.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus`
+
+Describes the current operator-facing managed-connector provider-owned control-plane provisioning posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus(string state, string description)
+```
+
+Creates a new managed-connector provider-owned control-plane provisioning answer.
+
+Parameters:
+- `state`: The stable provider-owned control-plane provisioning state, such as `not-applicable`, `operator-only`, `provisioning-ready`, `provisioning-blocked`, `provisioning-executing`, `provisioning-partial`, or `provisioning-risk`.
+- `description`: An optional operator-facing provider-owned control-plane provisioning summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-adapterid"></a>
+
+##### `AdapterId`
+
+```csharp
+string AdapterId { get; set; }
+```
+
+Gets the stable provider execution-adapter identifier currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-canexerciseproviderownedcontrolplaneoncurrentnode"></a>
+
+##### `CanExerciseProviderOwnedControlPlaneOnCurrentNode`
+
+```csharp
+bool CanExerciseProviderOwnedControlPlaneOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can exercise bounded provider-owned control-plane ownership safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-canmutateorreconcileoncurrentnode"></a>
+
+##### `CanMutateOrReconcileOnCurrentNode`
+
+```csharp
+bool CanMutateOrReconcileOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can exercise the current provider-owned control-plane mutation or reconcile answer safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-canprovisionproviderownedcontrolplaneoncurrentnode"></a>
+
+##### `CanProvisionProviderOwnedControlPlaneOnCurrentNode`
+
+```csharp
+bool CanProvisionProviderOwnedControlPlaneOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can exercise the current provider-owned control-plane provisioning answer safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active provider-owned control-plane provisioning categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable provider-owned control-plane provisioning categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandenvelopestate"></a>
+
+##### `CommandEnvelopeState`
+
+```csharp
+string CommandEnvelopeState { get; set; }
+```
+
+Gets the current managed-connector command-envelope state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandissuancestate"></a>
+
+##### `CommandIssuanceState`
+
+```csharp
+string CommandIssuanceState { get; set; }
+```
+
+Gets the current managed-connector command-issuance state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector command-journal state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandretrystate"></a>
+
+##### `CommandRetryState`
+
+```csharp
+string CommandRetryState { get; set; }
+```
+
+Gets the current managed-connector command-retry state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing provider-owned control-plane provisioning summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hascommandjournalevidence"></a>
+
+##### `HasCommandJournalEvidence`
+
+```csharp
+bool HasCommandJournalEvidence { get; set; }
+```
+
+Gets a value indicating whether the current command journal already exposes provider-owned control-plane provisioning evidence.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hastargetoperation"></a>
+
+##### `HasTargetOperation`
+
+```csharp
+bool HasTargetOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer exposes one concrete target operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned control-plane provisioning lane targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-ismutationoperation"></a>
+
+##### `IsMutationOperation`
+
+```csharp
+bool IsMutationOperation { get; set; }
+```
+
+Gets a value indicating whether the current target operation is a provider-owned mutation rather than reconcile.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane provisioning still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningblocked"></a>
+
+##### `IsProvisioningBlocked`
+
+```csharp
+bool IsProvisioningBlocked { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane provisioning currently remains blocked.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningexecuting"></a>
+
+##### `IsProvisioningExecuting`
+
+```csharp
+bool IsProvisioningExecuting { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane provisioning is currently executing one bounded provider-facing step.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningpartial"></a>
+
+##### `IsProvisioningPartial`
+
+```csharp
+bool IsProvisioningPartial { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane provisioning currently remains partial.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningready"></a>
+
+##### `IsProvisioningReady`
+
+```csharp
+bool IsProvisioningReady { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane provisioning is currently ready.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningrisk"></a>
+
+##### `IsProvisioningRisk`
+
+```csharp
+bool IsProvisioningRisk { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane provisioning currently remains risky.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isreconcileoperation"></a>
+
+##### `IsReconcileOperation`
+
+```csharp
+bool IsReconcileOperation { get; set; }
+```
+
+Gets a value indicating whether the current target operation is a provider-owned reconcile.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-issuancefingerprint"></a>
+
+##### `IssuanceFingerprint`
+
+```csharp
+string IssuanceFingerprint { get; set; }
+```
+
+Gets the deterministic issuance fingerprint currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest recorded command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestcommandexecutioninvocationsourceid"></a>
+
+##### `LatestCommandExecutionInvocationSourceId`
+
+```csharp
+string LatestCommandExecutionInvocationSourceId { get; set; }
+```
+
+Gets the invocation-source identifier of the latest recorded command-execution outcome.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestexecutionfingerprint"></a>
+
+##### `LatestExecutionFingerprint`
+
+```csharp
+string LatestExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic latest recorded execution fingerprint currently visible to provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-pollingintervalseconds"></a>
+
+##### `PollingIntervalSeconds`
+
+```csharp
+int PollingIntervalSeconds { get; set; }
+```
+
+Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerexecutionorchestrationstate"></a>
+
+##### `ProviderExecutionOrchestrationState`
+
+```csharp
+string ProviderExecutionOrchestrationState { get; set; }
+```
+
+Gets the current broader provider execution-orchestration state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; set; }
+```
+
+Gets the best available provider identifier currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerownedcontrolplanemutationreconcilestate"></a>
+
+##### `ProviderOwnedControlPlaneMutationReconcileState`
+
+```csharp
+string ProviderOwnedControlPlaneMutationReconcileState { get; set; }
+```
+
+Gets the current provider-owned control-plane mutation and reconcile state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerownedcontrolplaneownershipstate"></a>
+
+##### `ProviderOwnedControlPlaneOwnershipState`
+
+```csharp
+string ProviderOwnedControlPlaneOwnershipState { get; set; }
+```
+
+Gets the current provider-owned control-plane ownership state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerownedwritepathexecutionstate"></a>
+
+##### `ProviderOwnedWritePathExecutionState`
+
+```csharp
+string ProviderOwnedWritePathExecutionState { get; set; }
+```
+
+Gets the current provider-owned write-path execution state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned control-plane provisioning lane still requires explicit approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-schedulerid"></a>
+
+##### `SchedulerId`
+
+```csharp
+string SchedulerId { get; set; }
+```
+
+Gets the stable shared scheduler identifier currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-schedulerkind"></a>
+
+##### `SchedulerKind`
+
+```csharp
+string SchedulerKind { get; set; }
+```
+
+Gets the stable shared scheduler kind currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier currently associated with provider-owned control-plane provisioning.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector provider-owned control-plane provisioning state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned control-plane provisioning lane would still apply one or more shared write-path changes.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories`
@@ -37924,6 +39342,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `providerOwnedControlPlaneOwnershipState`: The stable provider-owned control-plane ownership state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneprovisioningcategory-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory(string providerOwnedControlPlaneProvisioningCategory)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider-owned control-plane provisioning category.
+
+Parameters:
+- `providerOwnedControlPlaneProvisioningCategory`: The stable provider-owned control-plane provisioning category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneprovisioningoperationid-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable provider-owned control-plane provisioning operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneprovisioningstate-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedControlPlaneProvisioningState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningState(string providerOwnedControlPlaneProvisioningState)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider-owned control-plane provisioning state.
+
+Parameters:
+- `providerOwnedControlPlaneProvisioningState`: The stable provider-owned control-plane provisioning state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedwritepathexecutioncategory-system-string"></a>
 

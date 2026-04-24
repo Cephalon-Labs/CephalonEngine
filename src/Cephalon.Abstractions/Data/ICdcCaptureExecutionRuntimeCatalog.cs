@@ -613,6 +613,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileOperationId(string operationId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer matches the requested state.
+    /// </summary>
+    /// <param name="providerOwnedControlPlaneProvisioningState">The stable provider-owned control-plane provisioning state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider-owned control-plane provisioning state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningState(string providerOwnedControlPlaneProvisioningState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer includes the requested category.
+    /// </summary>
+    /// <param name="providerOwnedControlPlaneProvisioningCategory">The stable provider-owned control-plane provisioning category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider-owned control-plane provisioning category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory(string providerOwnedControlPlaneProvisioningCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable provider-owned control-plane provisioning operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId(string operationId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

@@ -3123,6 +3123,116 @@ Delivered:
   composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference
   docs publish script
 
+### ENG-197 Phase 13 managed-connector provider-owned control-plane provisioning baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, `ENG-185`, `ENG-186`, `ENG-187`, `ENG-188`, `ENG-189`, `ENG-190`, `ENG-191`,
+  `ENG-192`, `ENG-193`, `ENG-194`, `ENG-195`, and `ENG-196` already shipped shared coverage,
+  remediation, governance, desired-versus-observed drift, action-planning, write-path readiness,
+  preflight, dry-run, execution-intent, execution-approval, command-envelope, command-issuance,
+  provider execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry execution, automatic background retry
+  coordination, durable command-journal, distributed retry lease, distributed retry orchestration,
+  richer cross-node idempotency hardening, broader multi-node lease-execution, durable shared
+  scheduler-orchestration, scheduler recovery/execution-hardening, broader provider-owned
+  write-path truth, broader provider execution orchestration truth, provider-owned control-plane
+  ownership truth, and provider-owned control-plane mutation/reconcile truth, but operators still
+  lacked one shared answer for whether Cephalon could safely stage provider-owned control-plane
+  provisioning on the current node without pushing that provisioning story into hosts or a
+  Debezium-only subsystem
+- the next follow-through needed to keep provider-owned control-plane provisioning additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only
+  provisioning registry, second coordinator, or second command lane
+- later provider-owned control-plane apply-and-reconcile execution still needed one truthful shared
+  provisioning answer grounded in provider-owned control-plane mutation/reconcile, provider-owned
+  control-plane ownership, provider execution orchestration, provider-owned write-path,
+  command-envelope, command-issuance, command-execution, retry-policy, command-journal, durable
+  scheduler, and recovery truth instead of forcing hosts or provider packs to re-derive
+  provisioning posture outside the shared runtime catalog
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector provider-owned control-plane
+  provisioning contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish
+  `not-applicable`, `operator-only`, `provisioning-ready`, `provisioning-blocked`,
+  `provisioning-executing`, `provisioning-partial`, and `provisioning-risk` posture together with
+  categories, execution-runtime and capture identity, ownership/topology, management mode,
+  operation/source, provider-owned control-plane mutation/reconcile plus provider-owned
+  control-plane ownership plus provider execution orchestration plus provider-owned write-path plus
+  command-envelope plus command-issuance plus latest-command plus retry-policy plus command-journal
+  state, deterministic fingerprints, adapter/provider metadata, approval/destructive/change
+  metadata, durable-history evidence, and `CanProvisionProviderOwnedControlPlaneOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive provider-owned control-plane
+  provisioning state, category, and operation filters while deriving that posture from the same
+  shared provider-owned control-plane mutation/reconcile, provider-owned control-plane ownership,
+  provider execution orchestration, provider-owned write-path, command-envelope, command-issuance,
+  latest command-execution, retry-policy, command-journal, durable shared scheduler, and
+  scheduler-recovery truth instead of forcing hosts or providers to invent another provisioning
+  planner
+- the shared data pack now feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  `ManagedConnectorCommandExecutor` invocations through that broader provider-owned control-plane
+  provisioning answer so bounded background retry execution no longer trusts provider-owned
+  control-plane mutation/reconcile truth alone when the merged provisioning lane still reports
+  `provisioning-blocked`, `provisioning-partial`, or `provisioning-risk`
+- ASP.NET Core publishes those same provider-owned control-plane provisioning filters on the
+  existing `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down and
+  operation filters, and the provisioning answer stays additive beside the existing coordination,
+  lease, hardening, orchestration, scheduler, recovery, command, provider-owned write-path,
+  provider execution, provider-owned control-plane ownership, and provider-owned mutation/reconcile
+  surfaces instead of branching into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later provider-owned control-plane apply-and-reconcile execution
+  follow-through remains separate
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorProviderOwnedControlPlaneProvisioning`
+- `Cephalon.Data` now derives managed-connector provider-owned control-plane provisioning posture
+  from merged provider-owned control-plane mutation/reconcile, provider-owned control-plane
+  ownership, provider execution orchestration, provider-owned write-path execution,
+  command-envelope, command-issuance, latest command-execution, retry-execution-policy, and
+  bounded command-journal truth, including `provisioning-ready`, `provisioning-blocked`,
+  `provisioning-executing`, `provisioning-partial`, and `provisioning-risk` answers, and
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorProviderOwnedControlPlaneProvisioningState(...)`,
+  `GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory(...)`, and
+  `GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId(...)`
+- `Cephalon.Data` now also feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  invocations in `ManagedConnectorCommandExecutor` through that broader provider-owned
+  control-plane provisioning answer so bounded background retry execution no longer depends on
+  provider-owned control-plane mutation/reconcile truth alone when the merged provisioning lane
+  still reports `provisioning-blocked`, `provisioning-partial`, or `provisioning-risk`
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-provisioning/{providerOwnedControlPlaneProvisioningState}`,
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-provisioning/categories/{providerOwnedControlPlaneProvisioningCategory}`,
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-provisioning/operations/{operationId}`,
+  and `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-provisioning`
+  so host routes stay aligned with the same shared coordination, lease, orchestration, scheduler,
+  recovery, command, provider-owned write-path, provider execution, provider-owned control-plane
+  ownership, provider-owned mutation/reconcile, and provider-owned provisioning story
+- `Cephalon.Data.Debezium` now participates in that broader shared provider-owned control-plane
+  provisioning lane through the existing managed-connector runtime and command surface while
+  targeted coverage proves `provisioning-partial`, `provisioning-executing`, and
+  `provisioning-risk` posture without claiming a Debezium-only provider-owned control-plane
+  provisioning subsystem
+- targeted coverage now proves the provider-owned control-plane provisioning baseline through
+  composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference
+  docs publish script
+
 ### ENG-196 Phase 13 managed-connector provider-owned control-plane mutation/reconcile baseline
 
 Status: done

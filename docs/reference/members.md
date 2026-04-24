@@ -222,6 +222,9 @@ Browse the published API surface by public member.
 - [ActiveReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-activereporterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the active reporter identifier currently visible for the execution runtime when one exists.
   - `string ActiveReporterId { get; set; }`
+- [ActiveReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-activereporterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the active reporter identifier currently visible for the execution runtime when one exists.
+  - `string ActiveReporterId { get; set; }`
 - [ActiveReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-activereporterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the active reporter identifier currently visible for the execution runtime when one exists.
   - `string ActiveReporterId { get; set; }`
@@ -259,6 +262,9 @@ Browse the published API surface by public member.
   - Gets the UTC timestamp when the active reporter lease expires when one is known.
   - `DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }`
 - [ActiveReporterLeaseExpiresAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-activereporterleaseexpiresatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterLeaseExpiresAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp when the active reporter lease expires when one is known.
+  - `DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }`
+- [ActiveReporterLeaseExpiresAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-activereporterleaseexpiresatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterLeaseExpiresAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the active reporter lease expires when one is known.
   - `DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }`
 - [ActiveReporterLeaseExpiresAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-activereporterleaseexpiresatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterLeaseExpiresAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -365,6 +371,9 @@ Browse the published API surface by public member.
   - `string AdapterId { get; set; }`
 - [AdapterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-adapterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AdapterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable provider execution-adapter identifier currently associated with provider-owned control-plane ownership.
+  - `string AdapterId { get; set; }`
+- [AdapterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-adapterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AdapterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable provider execution-adapter identifier currently associated with provider-owned control-plane provisioning.
   - `string AdapterId { get; set; }`
 - [AdapterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-adapterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AdapterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable provider execution-adapter identifier currently associated with provider-owned write-path execution.
@@ -1167,6 +1176,9 @@ Browse the published API surface by public member.
 - [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently represents a managed connector.
   - `bool AppliesToManagedConnector { get; }`
+- [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the execution runtime currently represents a managed connector.
+  - `bool AppliesToManagedConnector { get; }`
 - [AppliesToManagedConnector](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-appliestomanagedconnector): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliesToManagedConnector&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently represents a managed connector.
   - `bool AppliesToManagedConnector { get; }`
@@ -1292,6 +1304,9 @@ Browse the published API surface by public member.
   - `const string ApprovalRequired`
 - [ApprovalRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-approvalrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current provider control-plane lane still requires explicit approval.
+  - `const string ApprovalRequired`
+- [ApprovalRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-approvalrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current provider control-plane provisioning lane still requires explicit approval.
   - `const string ApprovalRequired`
 - [ApprovalRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-approvalrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current write-path still requires explicit approval.
@@ -2259,6 +2274,9 @@ Browse the published API surface by public member.
 - [CanExerciseProviderOwnedControlPlaneOnCurrentNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-canexerciseproviderownedcontrolplaneoncurrentnode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanExerciseProviderOwnedControlPlaneOnCurrentNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current node can exercise bounded provider-owned control-plane work safely.
   - `bool CanExerciseProviderOwnedControlPlaneOnCurrentNode { get; set; }`
+- [CanExerciseProviderOwnedControlPlaneOnCurrentNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-canexerciseproviderownedcontrolplaneoncurrentnode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanExerciseProviderOwnedControlPlaneOnCurrentNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current node can exercise bounded provider-owned control-plane ownership safely.
+  - `bool CanExerciseProviderOwnedControlPlaneOnCurrentNode { get; set; }`
 - [CanHandle](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-canhandle-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor): `Methods` on `ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanHandle&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the adapter can currently handle the supplied execution runtime.
   - `bool CanHandle(CdcCaptureExecutionRuntimeDescriptor runtime)`
@@ -2274,12 +2292,18 @@ Browse the published API surface by public member.
 - [CanMutateOrReconcileOnCurrentNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-canmutateorreconcileoncurrentnode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanMutateOrReconcileOnCurrentNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current node can exercise the current mutation or reconcile answer safely.
   - `bool CanMutateOrReconcileOnCurrentNode { get; set; }`
+- [CanMutateOrReconcileOnCurrentNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-canmutateorreconcileoncurrentnode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanMutateOrReconcileOnCurrentNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current node can exercise the current provider-owned control-plane mutation or reconcile answer safely.
+  - `bool CanMutateOrReconcileOnCurrentNode { get; set; }`
 - [CanOrchestrateProviderExecutionOnCurrentNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-canorchestrateproviderexecutiononcurrentnode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanOrchestrateProviderExecutionOnCurrentNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current node can orchestrate provider execution safely.
   - `bool CanOrchestrateProviderExecutionOnCurrentNode { get; set; }`
 - [CanPrepareFutureExecutionLane](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-canpreparefutureexecutionlane): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanPrepareFutureExecutionLane&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the command envelope currently fits a future engine-execution lane.
   - `bool CanPrepareFutureExecutionLane { get; }`
+- [CanProvisionProviderOwnedControlPlaneOnCurrentNode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-canprovisionproviderownedcontrolplaneoncurrentnode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanProvisionProviderOwnedControlPlaneOnCurrentNode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current node can exercise the current provider-owned control-plane provisioning answer safely.
+  - `bool CanProvisionProviderOwnedControlPlaneOnCurrentNode { get; set; }`
 - [CanRequestApproval](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-canrequestapproval): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanRequestApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector can currently enter a future approval workflow.
   - `bool CanRequestApproval { get; }`
@@ -2493,6 +2517,9 @@ Browse the published API surface by public member.
 - [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active provider-owned control-plane ownership categories currently visible for the execution runtime.
   - `int CategoryCount { get; }`
+- [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of active provider-owned control-plane provisioning categories currently visible for the execution runtime.
+  - `int CategoryCount { get; }`
 - [CategoryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-categorycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active provider-owned write-path execution categories currently visible for the execution runtime.
   - `int CategoryCount { get; }`
@@ -2576,6 +2603,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable provider-owned control-plane ownership categories currently active for the execution runtime.
+  - `IReadOnlyList<string> CategoryIds { get; set; }`
+- [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable provider-owned control-plane provisioning categories currently active for the execution runtime.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable provider-owned write-path execution categories currently active for the execution runtime.
@@ -2694,6 +2724,9 @@ Browse the published API surface by public member.
 - [CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new managed-connector provider-owned control-plane ownership answer.
   - `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus(string state, string description)`
+- [CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new managed-connector provider-owned control-plane provisioning answer.
+  - `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus(string state, string description)`
 - [CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new managed-connector provider-owned write-path execution answer.
   - `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus(string state, string description)`
@@ -2795,6 +2828,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
 - [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture identifiers currently associated with provider-owned control-plane ownership.
+  - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
+- [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture identifiers currently associated with provider-owned control-plane provisioning.
   - `IReadOnlyList<string> CdcCaptureIds { get; set; }`
 - [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture identifiers currently associated with provider-owned write-path execution.
@@ -3273,11 +3309,20 @@ Browse the published API surface by public member.
 - [CommandEnvelope](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilesources-commandenvelope): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane mutation and reconcile answer was derived primarily from command-envelope truth.
   - `const string CommandEnvelope`
+- [CommandEnvelope](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandenvelope): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from command-envelope truth.
+  - `const string CommandEnvelope`
 - [CommandEnvelopeBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-commandenvelopeblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current command envelope remains blocked.
+  - `const string CommandEnvelopeBlocked`
+- [CommandEnvelopeBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandenvelopeblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current command envelope remains blocked.
   - `const string CommandEnvelopeBlocked`
 - [CommandEnvelopeReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-commandenvelopeready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current command envelope is engine-ready for mutation or reconcile.
+  - `const string CommandEnvelopeReady`
+- [CommandEnvelopeReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandenvelopeready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current command envelope is engine-ready for provider-owned provisioning.
   - `const string CommandEnvelopeReady`
 - [CommandEnvelopeSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-commandenvelopesourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier already associated with managed-connector command envelopes.
@@ -3306,6 +3351,9 @@ Browse the published API surface by public member.
 - [CommandEnvelopeState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-commandenvelopestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-envelope state that informed provider-owned control-plane mutation and reconcile.
   - `string CommandEnvelopeState { get; set; }`
+- [CommandEnvelopeState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandenvelopestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-envelope state that informed provider-owned control-plane provisioning.
+  - `string CommandEnvelopeState { get; set; }`
 - [CommandEnvelopeState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandenvelopestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandEnvelopeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-envelope state that informed retry-execution policy.
   - `string CommandEnvelopeState { get; set; }`
@@ -3320,6 +3368,9 @@ Browse the published API surface by public member.
   - `const string CommandExecution`
 - [CommandExecution](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipsources-commandexecution): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane ownership answer was derived primarily from the latest command-execution outcome.
+  - `const string CommandExecution`
+- [CommandExecution](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandexecution): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from the latest command-execution outcome.
   - `const string CommandExecution`
 - [CommandExecution](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-commandexecution): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned write-path execution answer was derived primarily from the latest command-execution outcome.
@@ -3372,6 +3423,9 @@ Browse the published API surface by public member.
 - [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic command fingerprint currently associated with provider-owned control-plane ownership.
   - `string CommandFingerprint { get; set; }`
+- [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic command fingerprint currently associated with provider-owned control-plane provisioning.
+  - `string CommandFingerprint { get; set; }`
 - [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic command fingerprint currently associated with provider-owned write-path execution.
   - `string CommandFingerprint { get; set; }`
@@ -3387,11 +3441,20 @@ Browse the published API surface by public member.
 - [CommandIssuance](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilesources-commandissuance): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuance&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane mutation and reconcile answer was derived primarily from command-issuance truth.
   - `const string CommandIssuance`
+- [CommandIssuance](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandissuance): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuance&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from command-issuance truth.
+  - `const string CommandIssuance`
 - [CommandIssuanceAccepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-commandissuanceaccepted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceAccepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared command issuance lane accepted one mutation or reconcile command.
   - `const string CommandIssuanceAccepted`
+- [CommandIssuanceAccepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandissuanceaccepted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceAccepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current shared command issuance lane accepted one provider-owned provisioning command.
+  - `const string CommandIssuanceAccepted`
 - [CommandIssuanceIssued](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-commandissuanceissued): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceIssued&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared command issuance lane already issued one mutation or reconcile command.
+  - `const string CommandIssuanceIssued`
+- [CommandIssuanceIssued](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandissuanceissued): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceIssued&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current shared command issuance lane already issued one provider-owned provisioning command.
   - `const string CommandIssuanceIssued`
 - [CommandIssuanceSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-commandissuancesourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier already associated with managed-connector command issuance.
@@ -3414,6 +3477,9 @@ Browse the published API surface by public member.
 - [CommandIssuanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-commandissuancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-issuance state that informed provider-owned control-plane mutation and reconcile.
   - `string CommandIssuanceState { get; set; }`
+- [CommandIssuanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandissuancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-issuance state that informed provider-owned control-plane provisioning.
+  - `string CommandIssuanceState { get; set; }`
 - [CommandIssuanceState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandissuancestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIssuanceState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-issuance state that informed retry-execution policy.
   - `string CommandIssuanceState { get; set; }`
@@ -3428,6 +3494,9 @@ Browse the published API surface by public member.
   - `const string CommandJournal`
 - [CommandJournal](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipsources-commandjournal): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournal&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane ownership answer was derived primarily from command-journal truth.
+  - `const string CommandJournal`
+- [CommandJournal](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandjournal): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournal&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from retained command-journal evidence.
   - `const string CommandJournal`
 - [CommandJournalDurability](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningsources-commandjournaldurability): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalDurability&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The cross-node idempotency-hardening answer was derived primarily from durable command-journal truth.
@@ -3468,6 +3537,9 @@ Browse the published API surface by public member.
 - [CommandJournalEvidence](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-commandjournalevidence): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalEvidence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal currently exposes retained evidence for provider-owned control-plane ownership.
   - `const string CommandJournalEvidence`
+- [CommandJournalEvidence](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-commandjournalevidence): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalEvidence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The command journal currently exposes retained evidence for provider-owned provisioning.
+  - `const string CommandJournalEvidence`
 - [CommandJournalSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-commandjournalsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier already associated with the command journal.
   - `string CommandJournalSourceId { get; set; }`
@@ -3495,11 +3567,17 @@ Browse the published API surface by public member.
 - [CommandJournalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-commandjournalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-journal state that informed provider-owned control-plane ownership.
   - `string CommandJournalState { get; set; }`
+- [CommandJournalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandjournalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-journal state that informed provider-owned control-plane provisioning.
+  - `string CommandJournalState { get; set; }`
 - [CommandRetry](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalsources-commandretry): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal was derived primarily from the shared command-retry lane.
   - `const string CommandRetry`
 - [CommandRetry](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilesources-commandretry): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane mutation and reconcile answer was derived primarily from command-retry truth.
+  - `const string CommandRetry`
+- [CommandRetry](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-commandretry): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from command-retry truth.
   - `const string CommandRetry`
 - [CommandRetry](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-commandretry): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The retry-execution policy was derived primarily from the shared command-retry lane.
@@ -3518,6 +3596,9 @@ Browse the published API surface by public member.
   - `string CommandRetryState { get; set; }`
 - [CommandRetryState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-commandretrystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetryState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-retry state that informed provider-owned control-plane mutation and reconcile.
+  - `string CommandRetryState { get; set; }`
+- [CommandRetryState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-commandretrystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetryState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector command-retry state that informed provider-owned control-plane provisioning.
   - `string CommandRetryState { get; set; }`
 - [CommandRetryState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandretrystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetryState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-retry state that informed retry-execution policy.
@@ -3714,6 +3795,9 @@ Browse the published API surface by public member.
 - [ConnectClusterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-connectclusterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectClusterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the best available connector-cluster identifier currently associated with provider-owned control-plane ownership.
   - `string ConnectClusterId { get; set; }`
+- [ConnectClusterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-connectclusterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectClusterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the best available connector-cluster identifier currently associated with provider-owned control-plane provisioning.
+  - `string ConnectClusterId { get; set; }`
 - [ConnectClusterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-connectclusterid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectClusterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the best available connector-cluster identifier currently associated with provider-owned write-path execution.
   - `string ConnectClusterId { get; set; }`
@@ -3830,6 +3914,9 @@ Browse the published API surface by public member.
   - `string ConnectorClass { get; set; }`
 - [ConnectorClass](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-connectorclass): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectorClass&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the best available connector-class identifier currently associated with provider-owned control-plane ownership.
+  - `string ConnectorClass { get; set; }`
+- [ConnectorClass](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-connectorclass): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectorClass&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the best available connector-class identifier currently associated with provider-owned control-plane provisioning.
   - `string ConnectorClass { get; set; }`
 - [ConnectorClass](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-connectorclass): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectorClass&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the best available connector-class identifier currently associated with provider-owned write-path execution.
@@ -4077,6 +4164,9 @@ Browse the published API surface by public member.
 - [CoordinationOwnerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-coordinationownerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the host-owned coordination owner identifier when one is known.
   - `string CoordinationOwnerId { get; set; }`
+- [CoordinationOwnerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-coordinationownerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the host-owned coordination owner identifier when one is known.
+  - `string CoordinationOwnerId { get; set; }`
 - [CoordinationOwnerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-coordinationownerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationOwnerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the host-owned coordination owner identifier when one was configured for automatic retry.
   - `string CoordinationOwnerId { get; set; }`
@@ -4287,6 +4377,9 @@ Browse the published API surface by public member.
 - [CurrentNodeBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-currentnodeblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current node cannot yet exercise bounded provider-owned control-plane ownership safely.
   - `const string CurrentNodeBlocked`
+- [CurrentNodeBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-currentnodeblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current node cannot yet exercise bounded provider-owned control-plane provisioning safely.
+  - `const string CurrentNodeBlocked`
 - [CurrentNodeBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-currentnodeblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current node cannot yet execute provider-owned write-path work safely.
   - `const string CurrentNodeBlocked`
@@ -4307,6 +4400,9 @@ Browse the published API surface by public member.
   - `const string CurrentNodeExecutable`
 - [CurrentNodeExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-currentnodeexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current node can exercise bounded provider-owned control-plane ownership safely.
+  - `const string CurrentNodeExecutable`
+- [CurrentNodeExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-currentnodeexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current node can exercise bounded provider-owned control-plane provisioning safely.
   - `const string CurrentNodeExecutable`
 - [CurrentNodeExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-currentnodeexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current node can execute provider-owned write-path work safely.
@@ -4923,6 +5019,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing provider-owned control-plane ownership summary.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing provider-owned control-plane provisioning summary.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-description): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing provider-owned write-path execution summary.
   - `string Description { get; }`
@@ -5192,6 +5291,9 @@ Browse the published API surface by public member.
   - `const string DestructiveOperation`
 - [DestructiveOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-destructiveoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current provider control-plane lane still targets a destructive operation.
+  - `const string DestructiveOperation`
+- [DestructiveOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-destructiveoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current provider control-plane provisioning lane still targets a destructive operation.
   - `const string DestructiveOperation`
 - [DestructiveOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-destructiveoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current write-path still targets a destructive provider operation.
@@ -5764,6 +5866,9 @@ Browse the published API surface by public member.
   - A durable command-journal store is configured for the runtime.
   - `const string DurableJournalConfigured`
 - [DurableJournalConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-durablejournalconfigured): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableJournalConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - A durable command-journal store is configured for the runtime.
+  - `const string DurableJournalConfigured`
+- [DurableJournalConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-durablejournalconfigured): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableJournalConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - A durable command-journal store is configured for the runtime.
   - `const string DurableJournalConfigured`
 - [DurableJournalConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-durablejournalconfigured): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableJournalConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -6888,6 +6993,9 @@ Browse the published API surface by public member.
 - [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-executionownership): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-ownership mode that informed provider-owned control-plane ownership.
   - `string ExecutionOwnership { get; set; }`
+- [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-executionownership): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing execution-ownership mode that informed provider-owned control-plane provisioning.
+  - `string ExecutionOwnership { get; set; }`
 - [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-executionownership): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-ownership mode that informed provider-owned write-path execution.
   - `string ExecutionOwnership { get; set; }`
@@ -6963,6 +7071,9 @@ Browse the published API surface by public member.
 - [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable execution-runtime identifier currently associated with provider-owned control-plane ownership.
   - `string ExecutionRuntimeId { get; set; }`
+- [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable execution-runtime identifier currently associated with provider-owned control-plane provisioning.
+  - `string ExecutionRuntimeId { get; set; }`
 - [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable execution-runtime identifier currently associated with provider-owned write-path execution.
   - `string ExecutionRuntimeId { get; set; }`
@@ -7007,6 +7118,9 @@ Browse the published API surface by public member.
   - `string ExecutionTopology { get; set; }`
 - [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-topology classification that informed provider-owned control-plane ownership.
+  - `string ExecutionTopology { get; set; }`
+- [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing execution-topology classification that informed provider-owned control-plane provisioning.
   - `string ExecutionTopology { get; set; }`
 - [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-topology classification that informed provider-owned write-path execution.
@@ -8013,6 +8127,15 @@ Browse the published API surface by public member.
 - [GetByManagedConnectorProviderOwnedControlPlaneOwnershipState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneownershipstate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorProviderOwnedControlPlaneOwnershipState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current provider-owned control-plane ownership answer matches the requested state.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneOwnershipState(string providerOwnedControlPlaneOwnershipState)`
+- [GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneprovisioningcategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer includes the requested category.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory(string providerOwnedControlPlaneProvisioningCategory)`
+- [GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneprovisioningoperationid-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer currently targets the requested operation.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId(string operationId)`
+- [GetByManagedConnectorProviderOwnedControlPlaneProvisioningState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneprovisioningstate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorProviderOwnedControlPlaneProvisioningState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current provider-owned control-plane provisioning answer matches the requested state.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningState(string providerOwnedControlPlaneProvisioningState)`
 - [GetByManagedConnectorProviderOwnedWritePathExecutionCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedwritepathexecutioncategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorProviderOwnedWritePathExecutionCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current provider-owned write-path execution answer includes the requested category.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedWritePathExecutionCategory(string providerExecutionCategory)`
@@ -8535,6 +8658,9 @@ Browse the published API surface by public member.
 - [HasActiveReporterLease](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-hasactivereporterlease): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasActiveReporterLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the runtime currently exposes one active reporter lease.
   - `bool HasActiveReporterLease { get; }`
+- [HasActiveReporterLease](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hasactivereporterlease): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasActiveReporterLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the runtime currently exposes one active reporter lease.
+  - `bool HasActiveReporterLease { get; }`
 - [HasActiveReporterLease](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasactivereporterlease): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasActiveReporterLease&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the runtime currently exposes one active reporter lease.
   - `bool HasActiveReporterLease { get; }`
@@ -8564,6 +8690,9 @@ Browse the published API surface by public member.
   - `bool HasCommandJournalEvidence { get; set; }`
 - [HasCommandJournalEvidence](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-hascommandjournalevidence): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCommandJournalEvidence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current command journal already exposes provider-owned control-plane evidence.
+  - `bool HasCommandJournalEvidence { get; set; }`
+- [HasCommandJournalEvidence](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hascommandjournalevidence): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCommandJournalEvidence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current command journal already exposes provider-owned control-plane provisioning evidence.
   - `bool HasCommandJournalEvidence { get; set; }`
 - [HasCommandTarget](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-hascommandtarget): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCommandTarget&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the command envelope currently targets a concrete managed-connector operation.
@@ -8632,6 +8761,9 @@ Browse the published API surface by public member.
   - Gets a value indicating whether a durable command-journal store is currently configured.
   - `bool HasDurableStoreConfigured { get; set; }`
 - [HasDurableStoreConfigured](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-hasdurablestoreconfigured): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDurableStoreConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether a durable command-journal store is currently configured.
+  - `bool HasDurableStoreConfigured { get; set; }`
+- [HasDurableStoreConfigured](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hasdurablestoreconfigured): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDurableStoreConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether a durable command-journal store is currently configured.
   - `bool HasDurableStoreConfigured { get; set; }`
 - [HasDurableStoreConfigured](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasdurablestoreconfigured): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDurableStoreConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -8751,6 +8883,9 @@ Browse the published API surface by public member.
 - [HasPersistedRecordedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-haspersistedrecordedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPersistedRecordedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
   - `bool HasPersistedRecordedHistory { get; set; }`
+- [HasPersistedRecordedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-haspersistedrecordedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPersistedRecordedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+  - `bool HasPersistedRecordedHistory { get; set; }`
 - [HasPersistedRecordedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-haspersistedrecordedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPersistedRecordedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
   - `bool HasPersistedRecordedHistory { get; set; }`
@@ -8811,6 +8946,9 @@ Browse the published API surface by public member.
 - [HasRecoveredPersistedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-hasrecoveredpersistedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecoveredPersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current process recovered persisted command history for this runtime.
   - `bool HasRecoveredPersistedHistory { get; set; }`
+- [HasRecoveredPersistedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hasrecoveredpersistedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecoveredPersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current process recovered persisted command history for this runtime.
+  - `bool HasRecoveredPersistedHistory { get; set; }`
 - [HasRecoveredPersistedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasrecoveredpersistedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRecoveredPersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current process recovered persisted command history for this runtime.
   - `bool HasRecoveredPersistedHistory { get; set; }`
@@ -8863,6 +9001,9 @@ Browse the published API surface by public member.
   - Gets a value indicating whether any strategy-level override settings were explicitly supplied.
   - `bool HasStrategyValues { get; }`
 - [HasTargetOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-hastargetoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasTargetOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current answer exposes one concrete target operation.
+  - `bool HasTargetOperation { get; set; }`
+- [HasTargetOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hastargetoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasTargetOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current answer exposes one concrete target operation.
   - `bool HasTargetOperation { get; set; }`
 - [HasTruncatedHistory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hastruncatedhistory): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasTruncatedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -9894,6 +10035,9 @@ Browse the published API surface by public member.
 - [InMemoryJournalOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-inmemoryjournalonly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InMemoryJournalOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane ownership currently depends on in-memory history only.
   - `const string InMemoryJournalOnly`
+- [InMemoryJournalOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-inmemoryjournalonly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InMemoryJournalOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning currently depends on in-memory history only.
+  - `const string InMemoryJournalOnly`
 - [InMemoryJournalOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-inmemoryjournalonly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InMemoryJournalOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Automatic retry currently depends on in-memory command history only.
   - `const string InMemoryJournalOnly`
@@ -10146,6 +10290,9 @@ Browse the published API surface by public member.
 - [IsDestructiveOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-isdestructiveoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current provider-owned control-plane lane targets a destructive connector operation.
   - `bool IsDestructiveOperation { get; set; }`
+- [IsDestructiveOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isdestructiveoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current provider-owned control-plane provisioning lane targets a destructive connector operation.
+  - `bool IsDestructiveOperation { get; set; }`
 - [IsDestructiveOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isdestructiveoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDestructiveOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current provider-owned write-path targets a destructive connector operation.
   - `bool IsDestructiveOperation { get; set; }`
@@ -10290,6 +10437,9 @@ Browse the published API surface by public member.
 - [IsMutationOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-ismutationoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsMutationOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current target operation is a provider-owned mutation rather than reconcile.
   - `bool IsMutationOperation { get; set; }`
+- [IsMutationOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-ismutationoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsMutationOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current target operation is a provider-owned mutation rather than reconcile.
+  - `bool IsMutationOperation { get; set; }`
 - [IsMutationReady](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-ismutationready): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsMutationReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether provider-owned control-plane mutation is currently ready.
   - `bool IsMutationReady { get; }`
@@ -10365,6 +10515,9 @@ Browse the published API surface by public member.
 - [IsOperatorOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-isoperatoronly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether provider-owned control-plane ownership still remains operator-owned outside Cephalon.
   - `bool IsOperatorOnly { get; }`
+- [IsOperatorOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isoperatoronly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether provider-owned control-plane provisioning still remains operator-owned outside Cephalon.
+  - `bool IsOperatorOnly { get; }`
 - [IsOperatorOnly](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isoperatoronly): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether provider-owned write-path execution still remains operator-owned outside Cephalon.
   - `bool IsOperatorOnly { get; }`
@@ -10437,6 +10590,21 @@ Browse the published API surface by public member.
 - [IsProviderOwnedRisk](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderownedrisk): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsProviderOwnedRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether provider-owned write-path execution currently remains risky.
   - `bool IsProviderOwnedRisk { get; }`
+- [IsProvisioningBlocked](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningblocked): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsProvisioningBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether provider-owned control-plane provisioning currently remains blocked.
+  - `bool IsProvisioningBlocked { get; }`
+- [IsProvisioningExecuting](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningexecuting): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsProvisioningExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether provider-owned control-plane provisioning is currently executing one bounded provider-facing step.
+  - `bool IsProvisioningExecuting { get; }`
+- [IsProvisioningPartial](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningpartial): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsProvisioningPartial&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether provider-owned control-plane provisioning currently remains partial.
+  - `bool IsProvisioningPartial { get; }`
+- [IsProvisioningReady](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningready): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsProvisioningReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether provider-owned control-plane provisioning is currently ready.
+  - `bool IsProvisioningReady { get; }`
+- [IsProvisioningRisk](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isprovisioningrisk): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsProvisioningRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether provider-owned control-plane provisioning currently remains risky.
+  - `bool IsProvisioningRisk { get; }`
 - [IsReady](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-isready): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether a matching provider execution adapter is ready for the current managed connector.
   - `bool IsReady { get; }`
@@ -10453,6 +10621,9 @@ Browse the published API surface by public member.
   - Gets a value indicating whether provider-owned control-plane reconcile currently remains blocked.
   - `bool IsReconcileBlocked { get; }`
 - [IsReconcileOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-isreconcileoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsReconcileOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current target operation is a provider-owned reconcile.
+  - `bool IsReconcileOperation { get; set; }`
+- [IsReconcileOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-isreconcileoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsReconcileOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current target operation is a provider-owned reconcile.
   - `bool IsReconcileOperation { get; set; }`
 - [IsReconcileReady](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-isreconcileready): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsReconcileReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -10550,6 +10721,9 @@ Browse the published API surface by public member.
   - `string IssuanceFingerprint { get; set; }`
 - [IssuanceFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-issuancefingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IssuanceFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic issuance fingerprint currently associated with provider-owned control-plane mutation and reconcile.
+  - `string IssuanceFingerprint { get; set; }`
+- [IssuanceFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-issuancefingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IssuanceFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic issuance fingerprint currently associated with provider-owned control-plane provisioning.
   - `string IssuanceFingerprint { get; set; }`
 - [IssuanceFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-issuancefingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IssuanceFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic issuance fingerprint currently associated with the retry-execution policy.
@@ -10977,6 +11151,9 @@ Browse the published API surface by public member.
 - [LatestAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-latestattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable latest recorded command-execution attempt identifier when one exists.
   - `string LatestAttemptId { get; set; }`
+- [LatestAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable latest recorded command-execution attempt identifier when one exists.
+  - `string LatestAttemptId { get; set; }`
 - [LatestAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable latest recorded command-execution attempt identifier when one exists.
   - `string LatestAttemptId { get; set; }`
@@ -11064,6 +11241,9 @@ Browse the published API surface by public member.
 - [LatestCommandExecutionInvocationSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-latestcommandexecutioninvocationsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionInvocationSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the invocation-source identifier of the latest recorded command-execution outcome.
   - `string LatestCommandExecutionInvocationSourceId { get; set; }`
+- [LatestCommandExecutionInvocationSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestcommandexecutioninvocationsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionInvocationSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the invocation-source identifier of the latest recorded command-execution outcome.
+  - `string LatestCommandExecutionInvocationSourceId { get; set; }`
 - [LatestCommandExecutionInvocationSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestcommandexecutioninvocationsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionInvocationSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the invocation-source identifier of the latest recorded command-execution outcome.
   - `string LatestCommandExecutionInvocationSourceId { get; set; }`
@@ -11093,6 +11273,9 @@ Browse the published API surface by public member.
   - `string LatestCommandExecutionState { get; set; }`
 - [LatestCommandExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-latestcommandexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest recorded managed-connector command-execution state visible to provider-owned control-plane ownership.
+  - `string LatestCommandExecutionState { get; set; }`
+- [LatestCommandExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestcommandexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest recorded managed-connector command-execution state visible to provider-owned control-plane provisioning.
   - `string LatestCommandExecutionState { get; set; }`
 - [LatestCommandExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestcommandexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestCommandExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest recorded managed-connector command-execution state visible to provider-owned write-path execution.
@@ -11148,6 +11331,9 @@ Browse the published API surface by public member.
 - [LatestExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-latestexecutionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic latest recorded execution fingerprint currently visible to provider-owned control-plane ownership.
   - `string LatestExecutionFingerprint { get; set; }`
+- [LatestExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestexecutionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic latest recorded execution fingerprint currently visible to provider-owned control-plane provisioning.
+  - `string LatestExecutionFingerprint { get; set; }`
 - [LatestExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestexecutionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic latest recorded execution fingerprint currently visible to provider-owned write-path execution.
   - `string LatestExecutionFingerprint { get; set; }`
@@ -11201,6 +11387,9 @@ Browse the published API surface by public member.
   - `DateTimeOffset? LatestRecordedAtUtc { get; set; }`
 - [LatestRecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-latestrecordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider-owned control-plane ownership.
+  - `DateTimeOffset? LatestRecordedAtUtc { get; set; }`
+- [LatestRecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-latestrecordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider-owned control-plane provisioning.
   - `DateTimeOffset? LatestRecordedAtUtc { get; set; }`
 - [LatestRecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestrecordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider-owned write-path execution.
@@ -11499,6 +11688,9 @@ Browse the published API surface by public member.
 - [ManagedConnectorProviderOwnedControlPlaneOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedcontrolplaneownership): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorProviderOwnedControlPlaneOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector provider-owned control-plane ownership posture derived from provider execution orchestration, provider-owned write-path execution, command-journal, scheduler, and recovery truth.
   - `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus ManagedConnectorProviderOwnedControlPlaneOwnership { get; set; }`
+- [ManagedConnectorProviderOwnedControlPlaneProvisioning](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedcontrolplaneprovisioning): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorProviderOwnedControlPlaneProvisioning&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing managed-connector provider-owned control-plane provisioning posture derived from control-plane mutation and reconcile, ownership, command-lane truth, and retained journal evidence.
+  - `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus ManagedConnectorProviderOwnedControlPlaneProvisioning { get; set; }`
 - [ManagedConnectorProviderOwnedWritePathExecution](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedwritepathexecution): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorProviderOwnedWritePathExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector provider-owned write-path execution posture derived from execution-adapter, command-execution, retry, scheduler, and recovery truth.
   - `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus ManagedConnectorProviderOwnedWritePathExecution { get; set; }`
@@ -11587,6 +11779,9 @@ Browse the published API surface by public member.
   - Gets the declared managed-connector management mode when one is known.
   - `string ManagementMode { get; set; }`
 - [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the declared managed-connector management mode when one is known.
+  - `string ManagementMode { get; set; }`
+- [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared managed-connector management mode when one is known.
   - `string ManagementMode { get; set; }`
 - [ManagementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-managementmode): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -12675,13 +12870,22 @@ Browse the published API surface by public member.
 - [MutationBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestates-mutationblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane mutation remains blocked by shared runtime policy, control-plane truth, or missing command intent.
   - `const string MutationBlocked`
+- [MutationBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane mutation remains blocked.
+  - `const string MutationBlocked`
 - [MutationExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-mutationexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane mutation or reconcile is currently executing.
   - `const string MutationExecuting`
 - [MutationExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestates-mutationexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane mutation or reconcile is currently executing one bounded provider-facing step.
   - `const string MutationExecuting`
+- [MutationExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane mutation or reconcile is currently executing.
+  - `const string MutationExecuting`
 - [MutationOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-mutationoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current target operation is one provider-owned mutation.
+  - `const string MutationOperation`
+- [MutationOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current target operation is one provider-owned mutation.
   - `const string MutationOperation`
 - [MutationReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-mutationready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -12690,11 +12894,17 @@ Browse the published API surface by public member.
 - [MutationReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestates-mutationready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane mutation is currently ready on the shared runtime surface.
   - `const string MutationReady`
+- [MutationReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane mutation is currently ready.
+  - `const string MutationReady`
 - [MutationRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-mutationrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane mutation or reconcile currently remains risky.
   - `const string MutationRisk`
 - [MutationRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestates-mutationrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane mutation or reconcile currently remains risky because broader shared runtime truth is not safe enough yet.
+  - `const string MutationRisk`
+- [MutationRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-mutationrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MutationRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane mutation or reconcile currently remains risky.
   - `const string MutationRisk`
 - [MySqlBinlogCaptureOptions](cephalon-data-mysql.md#member-m-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-ctor): `Constructors` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=MySqlBinlogCaptureOptions&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - `MySqlBinlogCaptureOptions()`
@@ -12792,6 +13002,9 @@ Browse the published API surface by public member.
   - `const string NoChangesRequired`
 - [NoChangesRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-nochangesrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoChangesRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current provider control-plane mutation or reconcile would not apply another shared write-path change.
+  - `const string NoChangesRequired`
+- [NoChangesRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-nochangesrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoChangesRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current provider control-plane provisioning lane would not apply another shared write-path change.
   - `const string NoChangesRequired`
 - [NoContent](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-nocontent-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoContent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a no-content result.
@@ -12940,6 +13153,9 @@ Browse the published API surface by public member.
 - [NoRecordedCommand](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-norecordedcommand): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoRecordedCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - No command-journal evidence has been recorded yet.
   - `const string NoRecordedCommand`
+- [NoRecordedCommand](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-norecordedcommand): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoRecordedCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - No command-journal evidence has been recorded yet.
+  - `const string NoRecordedCommand`
 - [NotAllowedAuthoringStyle](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-notallowedauthoringstyle): `Fields` on `RestEndpointAuthoringPolicySuppressionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotAllowedAuthoringStyle&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The candidate authoring style is outside the explicitly allowed authoring-style set.
   - `const RestEndpointAuthoringPolicySuppressionKind NotAllowedAuthoringStyle`
@@ -13015,6 +13231,9 @@ Browse the published API surface by public member.
 - [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane ownership does not currently apply to the execution runtime.
   - `const string NotApplicable`
+- [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning does not currently apply to the execution runtime.
+  - `const string NotApplicable`
 - [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-notapplicable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution does not currently apply to the execution runtime.
   - `const string NotApplicable`
@@ -13031,6 +13250,9 @@ Browse the published API surface by public member.
   - Reporter takeover does not currently apply to the coordination answer.
   - `const string NotApplicable`
 - [NoTargetOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-notargetoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoTargetOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - No provider-owned mutation or reconcile operation is currently targeted.
+  - `const string NoTargetOperation`
+- [NoTargetOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-notargetoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoTargetOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - No provider-owned mutation or reconcile operation is currently targeted.
   - `const string NoTargetOperation`
 - [NotBound](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-notbound): `Fields` on `CdcCaptureExecutionRuntimeReportingCoverageStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotBound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -13375,6 +13597,9 @@ Browse the published API surface by public member.
 - [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable management-operation identifier currently associated with provider-owned control-plane ownership.
   - `string OperationId { get; set; }`
+- [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable management-operation identifier currently associated with provider-owned control-plane provisioning.
+  - `string OperationId { get; set; }`
 - [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable management-operation identifier currently associated with provider-owned write-path execution.
   - `string OperationId { get; set; }`
@@ -13479,6 +13704,12 @@ Browse the published API surface by public member.
   - `const string OperatorOnly`
 - [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstates-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane ownership still remains operator-owned outside Cephalon.
+  - `const string OperatorOnly`
+- [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning still remains operator-owned outside Cephalon.
+  - `const string OperatorOnly`
+- [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning still remains operator-owned outside Cephalon.
   - `const string OperatorOnly`
 - [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution still remains operator-owned outside Cephalon.
@@ -13790,6 +14021,9 @@ Browse the published API surface by public member.
 - [OwnershipActive](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstates-ownershipactive): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipActive&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane ownership is currently active on one bounded provider-facing step.
   - `const string OwnershipActive`
+- [OwnershipActive](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershipactive): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipActive&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane ownership is currently active.
+  - `const string OwnershipActive`
 - [OwnershipBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-ownershipblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider-owned control-plane ownership remains blocked.
   - `const string OwnershipBlocked`
@@ -13798,6 +14032,9 @@ Browse the published API surface by public member.
   - `const string OwnershipBlocked`
 - [OwnershipBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstates-ownershipblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane ownership remains blocked by shared runtime policy, scheduler, or broader ownership truth.
+  - `const string OwnershipBlocked`
+- [OwnershipBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershipblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane ownership remains blocked.
   - `const string OwnershipBlocked`
 - [OwnershipConflict](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-ownershipconflict): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipConflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer observed a conflicting owner for the target resources.
@@ -13811,6 +14048,9 @@ Browse the published API surface by public member.
 - [OwnershipPartial](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstates-ownershippartial): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipPartial&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane ownership is partially available but still depends on bounded operator or shared runtime conditions.
   - `const string OwnershipPartial`
+- [OwnershipPartial](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershippartial): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipPartial&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane ownership currently remains partial.
+  - `const string OwnershipPartial`
 - [OwnershipReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-ownershipready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider-owned control-plane ownership is currently ready.
   - `const string OwnershipReady`
@@ -13820,6 +14060,9 @@ Browse the published API surface by public member.
 - [OwnershipReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstates-ownershipready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane ownership is currently ready on the shared runtime surface.
   - `const string OwnershipReady`
+- [OwnershipReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershipready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane ownership is currently ready.
+  - `const string OwnershipReady`
 - [OwnershipRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-ownershiprisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider-owned control-plane ownership currently remains risky.
   - `const string OwnershipRisk`
@@ -13828,6 +14071,9 @@ Browse the published API surface by public member.
   - `const string OwnershipRisk`
 - [OwnershipRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstates-ownershiprisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane ownership currently remains risky because broader shared runtime truth is not safe enough yet.
+  - `const string OwnershipRisk`
+- [OwnershipRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-ownershiprisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane ownership currently remains risky.
   - `const string OwnershipRisk`
 - [OwnerSubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationresource-ownersubjectid): `Properties` on `AuthorizationResource` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerSubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the owning subject identifier when one is known.
@@ -14162,6 +14408,9 @@ Browse the published API surface by public member.
 - [PersistedHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-persistedhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The durable command journal currently exposes persisted recorded history.
   - `const string PersistedHistory`
+- [PersistedHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-persistedhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The durable command journal currently exposes persisted recorded history.
+  - `const string PersistedHistory`
 - [PersistedHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-persistedhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PersistedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The durable command journal currently exposes persisted recorded history.
   - `const string PersistedHistory`
@@ -14303,6 +14552,9 @@ Browse the published API surface by public member.
 - [PollingIntervalSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-pollingintervalseconds): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
   - `int PollingIntervalSeconds { get; set; }`
+- [PollingIntervalSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-pollingintervalseconds): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
+  - `int PollingIntervalSeconds { get; set; }`
 - [PollingIntervalSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-pollingintervalseconds): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
   - `int PollingIntervalSeconds { get; set; }`
@@ -14408,6 +14660,9 @@ Browse the published API surface by public member.
   - `int PotentialChangeCount { get; set; }`
 - [PotentialChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-potentialchangecount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PotentialChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of visible potential shared provider-execution changes currently associated with provider-owned control-plane ownership.
+  - `int PotentialChangeCount { get; set; }`
+- [PotentialChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-potentialchangecount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PotentialChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of visible potential shared write-path changes currently associated with provider-owned control-plane provisioning.
   - `int PotentialChangeCount { get; set; }`
 - [PotentialChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-potentialchangecount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PotentialChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of visible potential shared write-path changes currently associated with provider-owned write-path execution.
@@ -14739,6 +14994,9 @@ Browse the published API surface by public member.
 - [ProviderBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution remains blocked.
   - `const string ProviderBlocked`
+- [ProviderBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned write-path execution remains blocked.
+  - `const string ProviderBlocked`
 - [ProviderBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution remains blocked.
   - `const string ProviderBlocked`
@@ -14754,6 +15012,9 @@ Browse the published API surface by public member.
 - [ProviderCommandAdapted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providercommandadapted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandAdapted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider execution translated into a provider-facing command shape.
   - `const string ProviderCommandAdapted`
+- [ProviderCommandAdapted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandadapted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandAdapted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider execution translated into a provider-facing command shape.
+  - `const string ProviderCommandAdapted`
 - [ProviderCommandAdapted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandadapted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandAdapted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider-owned command translated into a provider-facing command shape.
   - `const string ProviderCommandAdapted`
@@ -14764,6 +15025,9 @@ Browse the published API surface by public member.
   - The latest provider execution remained blocked.
   - `const string ProviderCommandBlocked`
 - [ProviderCommandBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providercommandblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider execution remained blocked.
+  - `const string ProviderCommandBlocked`
+- [ProviderCommandBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider execution remained blocked.
   - `const string ProviderCommandBlocked`
 - [ProviderCommandBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -14778,6 +15042,9 @@ Browse the published API surface by public member.
 - [ProviderCommandFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providercommandfailed): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider execution failed while Cephalon translated provider command shape.
   - `const string ProviderCommandFailed`
+- [ProviderCommandFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandfailed): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider execution failed while Cephalon translated provider command shape.
+  - `const string ProviderCommandFailed`
 - [ProviderCommandFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandfailed): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider-owned command failed while Cephalon translated it.
   - `const string ProviderCommandFailed`
@@ -14788,6 +15055,9 @@ Browse the published API surface by public member.
   - The latest provider execution determined that no provider command is required.
   - `const string ProviderCommandNoOp`
 - [ProviderCommandNoOp](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providercommandnoop): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandNoOp&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider execution determined that no provider command is required.
+  - `const string ProviderCommandNoOp`
+- [ProviderCommandNoOp](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandnoop): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandNoOp&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider execution determined that no provider command is required.
   - `const string ProviderCommandNoOp`
 - [ProviderCommandNoOp](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandnoop): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandNoOp&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -14802,6 +15072,9 @@ Browse the published API surface by public member.
 - [ProviderCommandOperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providercommandoperatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider execution remained operator-owned.
   - `const string ProviderCommandOperatorOnly`
+- [ProviderCommandOperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandoperatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider execution remained operator-owned.
+  - `const string ProviderCommandOperatorOnly`
 - [ProviderCommandOperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandoperatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandOperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider-owned command remained operator-owned.
   - `const string ProviderCommandOperatorOnly`
@@ -14812,6 +15085,9 @@ Browse the published API surface by public member.
   - The latest provider execution could not resolve a provider adapter.
   - `const string ProviderCommandUnavailable`
 - [ProviderCommandUnavailable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providercommandunavailable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandUnavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider execution could not resolve a provider adapter.
+  - `const string ProviderCommandUnavailable`
+- [ProviderCommandUnavailable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providercommandunavailable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandUnavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider execution could not resolve a provider adapter.
   - `const string ProviderCommandUnavailable`
 - [ProviderCommandUnavailable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandunavailable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandUnavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -14826,6 +15102,9 @@ Browse the published API surface by public member.
 - [ProviderExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution is currently ready.
   - `const string ProviderExecutable`
+- [ProviderExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned write-path execution is currently ready.
+  - `const string ProviderExecutable`
 - [ProviderExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution is currently ready on the shared lane.
   - `const string ProviderExecutable`
@@ -14838,6 +15117,9 @@ Browse the published API surface by public member.
 - [ProviderExecutionBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerexecutionblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider execution orchestration remains blocked.
   - `const string ProviderExecutionBlocked`
+- [ProviderExecutionBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutionblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider execution orchestration remains blocked.
+  - `const string ProviderExecutionBlocked`
 - [ProviderExecutionBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest matching command-execution outcome remained blocked.
   - `const string ProviderExecutionBlocked`
@@ -14847,10 +15129,16 @@ Browse the published API surface by public member.
 - [ProviderExecutionCompleted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerexecutioncompleted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider execution orchestration no longer needs another shared step.
   - `const string ProviderExecutionCompleted`
+- [ProviderExecutionCompleted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutioncompleted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider execution orchestration no longer needs another shared step.
+  - `const string ProviderExecutionCompleted`
 - [ProviderExecutionExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-providerexecutionexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider execution orchestration is currently executing.
   - `const string ProviderExecutionExecuting`
 - [ProviderExecutionExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerexecutionexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider execution orchestration is currently executing.
+  - `const string ProviderExecutionExecuting`
+- [ProviderExecutionExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutionexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider execution orchestration is currently executing.
   - `const string ProviderExecutionExecuting`
 - [ProviderExecutionFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionfailed): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -14865,11 +15153,17 @@ Browse the published API surface by public member.
 - [ProviderExecutionOrchestration](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipsources-providerexecutionorchestration): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionOrchestration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane ownership answer was derived primarily from provider execution-orchestration truth.
   - `const string ProviderExecutionOrchestration`
+- [ProviderExecutionOrchestration](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-providerexecutionorchestration): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionOrchestration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from provider execution-orchestration truth.
+  - `const string ProviderExecutionOrchestration`
 - [ProviderExecutionOrchestrationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-providerexecutionorchestrationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionOrchestrationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current broader provider execution-orchestration state that informed provider-owned control-plane mutation and reconcile.
   - `string ProviderExecutionOrchestrationState { get; set; }`
 - [ProviderExecutionOrchestrationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-providerexecutionorchestrationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionOrchestrationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current broader provider execution-orchestration state that informed provider-owned control-plane ownership.
+  - `string ProviderExecutionOrchestrationState { get; set; }`
+- [ProviderExecutionOrchestrationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerexecutionorchestrationstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionOrchestrationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current broader provider execution-orchestration state that informed provider-owned control-plane provisioning.
   - `string ProviderExecutionOrchestrationState { get; set; }`
 - [ProviderExecutionReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-providerexecutionready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider execution orchestration is currently ready.
@@ -14877,10 +15171,16 @@ Browse the published API surface by public member.
 - [ProviderExecutionReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerexecutionready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider execution orchestration is currently ready.
   - `const string ProviderExecutionReady`
+- [ProviderExecutionReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutionready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider execution orchestration is currently ready.
+  - `const string ProviderExecutionReady`
 - [ProviderExecutionRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-providerexecutionrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider execution orchestration currently remains risky.
   - `const string ProviderExecutionRisk`
 - [ProviderExecutionRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerexecutionrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider execution orchestration currently remains risky.
+  - `const string ProviderExecutionRisk`
+- [ProviderExecutionRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerexecutionrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider execution orchestration currently remains risky.
   - `const string ProviderExecutionRisk`
 - [ProviderExecutionUnavailable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionunavailable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutionUnavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -14906,6 +15206,9 @@ Browse the published API surface by public member.
   - `string ProviderId { get; set; }`
 - [ProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-providerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the best available provider identifier currently associated with provider-owned control-plane ownership.
+  - `string ProviderId { get; set; }`
+- [ProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the best available provider identifier currently associated with provider-owned control-plane provisioning.
   - `string ProviderId { get; set; }`
 - [ProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-providerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the best available provider identifier currently associated with provider-owned write-path execution.
@@ -14976,6 +15279,9 @@ Browse the published API surface by public member.
 - [ProviderOwnedCompleted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerownedcompleted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution no longer needs another provider command.
   - `const string ProviderOwnedCompleted`
+- [ProviderOwnedCompleted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerownedcompleted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned write-path execution no longer needs another provider command.
+  - `const string ProviderOwnedCompleted`
 - [ProviderOwnedCompleted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedcompleted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution no longer needs an additional provider command.
   - `const string ProviderOwnedCompleted`
@@ -14985,15 +15291,30 @@ Browse the published API surface by public member.
 - [ProviderOwnedControlPlaneMutationReconcile](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-providerownedcontrolplanemutationreconcile): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneMutationReconcile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime participates in the provider-owned control-plane mutation and reconcile lane.
   - `const string ProviderOwnedControlPlaneMutationReconcile`
+- [ProviderOwnedControlPlaneMutationReconcile](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-providerownedcontrolplanemutationreconcile): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneMutationReconcile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from provider-owned control-plane mutation and reconcile truth.
+  - `const string ProviderOwnedControlPlaneMutationReconcile`
+- [ProviderOwnedControlPlaneMutationReconcileState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerownedcontrolplanemutationreconcilestate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneMutationReconcileState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current provider-owned control-plane mutation and reconcile state that informed provider-owned control-plane provisioning.
+  - `string ProviderOwnedControlPlaneMutationReconcileState { get; set; }`
 - [ProviderOwnedControlPlaneOwnership](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilesources-providerownedcontrolplaneownership): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane mutation and reconcile answer was derived primarily from provider-owned control-plane ownership truth.
   - `const string ProviderOwnedControlPlaneOwnership`
 - [ProviderOwnedControlPlaneOwnership](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerownedcontrolplaneownership): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime participates in the provider-owned control-plane ownership lane.
   - `const string ProviderOwnedControlPlaneOwnership`
+- [ProviderOwnedControlPlaneOwnership](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-providerownedcontrolplaneownership): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from provider-owned control-plane ownership truth.
+  - `const string ProviderOwnedControlPlaneOwnership`
 - [ProviderOwnedControlPlaneOwnershipState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestatus-providerownedcontrolplaneownershipstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneOwnershipState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current provider-owned control-plane ownership state that informed provider-owned control-plane mutation and reconcile.
   - `string ProviderOwnedControlPlaneOwnershipState { get; set; }`
+- [ProviderOwnedControlPlaneOwnershipState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerownedcontrolplaneownershipstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneOwnershipState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current provider-owned control-plane ownership state that informed provider-owned control-plane provisioning.
+  - `string ProviderOwnedControlPlaneOwnershipState { get; set; }`
+- [ProviderOwnedControlPlaneProvisioning](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerownedcontrolplaneprovisioning): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedControlPlaneProvisioning&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The runtime participates in the provider-owned control-plane provisioning lane.
+  - `const string ProviderOwnedControlPlaneProvisioning`
 - [ProviderOwnedExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution already translated one provider-facing command shape.
   - `const string ProviderOwnedExecuting`
@@ -15001,6 +15322,9 @@ Browse the published API surface by public member.
   - Provider-owned write-path execution is currently active.
   - `const string ProviderOwnedExecuting`
 - [ProviderOwnedExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerownedexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned write-path execution is currently active.
+  - `const string ProviderOwnedExecuting`
+- [ProviderOwnedExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerownedexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution is currently active.
   - `const string ProviderOwnedExecuting`
 - [ProviderOwnedExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -15018,6 +15342,9 @@ Browse the published API surface by public member.
 - [ProviderOwnedRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-providerownedrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution currently remains risky.
   - `const string ProviderOwnedRisk`
+- [ProviderOwnedRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-providerownedrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned write-path execution currently remains risky.
+  - `const string ProviderOwnedRisk`
 - [ProviderOwnedRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution currently remains risky.
   - `const string ProviderOwnedRisk`
@@ -15033,6 +15360,9 @@ Browse the published API surface by public member.
 - [ProviderOwnedWritePathExecution](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipsources-providerownedwritepathexecution): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedWritePathExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane ownership answer was derived primarily from provider-owned write-path execution truth.
   - `const string ProviderOwnedWritePathExecution`
+- [ProviderOwnedWritePathExecution](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-providerownedwritepathexecution): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedWritePathExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from provider-owned write-path execution truth.
+  - `const string ProviderOwnedWritePathExecution`
 - [ProviderOwnedWritePathExecution](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedwritepathexecution): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedWritePathExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime participates in the provider-owned write-path execution lane.
   - `const string ProviderOwnedWritePathExecution`
@@ -15045,9 +15375,42 @@ Browse the published API surface by public member.
 - [ProviderOwnedWritePathExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-providerownedwritepathexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedWritePathExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current provider-owned write-path execution state that informed provider-owned control-plane ownership.
   - `string ProviderOwnedWritePathExecutionState { get; set; }`
+- [ProviderOwnedWritePathExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-providerownedwritepathexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedWritePathExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current provider-owned write-path execution state that informed provider-owned control-plane provisioning.
+  - `string ProviderOwnedWritePathExecutionState { get; set; }`
 - [ProviderResults](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-providerresults): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderResults&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the external provider evaluation results that participated in the final answer.
   - `IReadOnlyList<FeatureFlagProviderEvaluationResult> ProviderResults { get; set; }`
+- [ProvisioningBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning remains blocked.
+  - `const string ProvisioningBlocked`
+- [ProvisioningBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning remains blocked by shared runtime policy, control-plane truth, or missing provisioning intent.
+  - `const string ProvisioningBlocked`
+- [ProvisioningExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning is currently executing.
+  - `const string ProvisioningExecuting`
+- [ProvisioningExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning is currently executing one bounded provider-facing step.
+  - `const string ProvisioningExecuting`
+- [ProvisioningPartial](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningpartial): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningPartial&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning is currently partial on the shared lane.
+  - `const string ProvisioningPartial`
+- [ProvisioningPartial](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningpartial): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningPartial&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning is partially available but still needs additional shared provider truth before Cephalon can rely on it fully.
+  - `const string ProvisioningPartial`
+- [ProvisioningReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning is currently ready.
+  - `const string ProvisioningReady`
+- [ProvisioningReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning is currently ready on the shared runtime surface.
+  - `const string ProvisioningReady`
+- [ProvisioningRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-provisioningrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning currently remains risky.
+  - `const string ProvisioningRisk`
+- [ProvisioningRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstates-provisioningrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Provider-owned control-plane provisioning currently remains risky because broader shared runtime truth is not safe enough yet.
+  - `const string ProvisioningRisk`
 - [ProxyNamespace](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxynamespace): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyNamespace&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Gets or sets the proxy namespace used to build the in-cluster Tanzu proxy endpoint.
   - `string ProxyNamespace { get; set; }`
@@ -15339,10 +15702,16 @@ Browse the published API surface by public member.
 - [ReconcileBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestates-reconcileblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane reconcile remains blocked by shared runtime policy, control-plane truth, or missing command intent.
   - `const string ReconcileBlocked`
+- [ReconcileBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane reconcile remains blocked.
+  - `const string ReconcileBlocked`
 - [ReconcileIntent](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories-reconcileintent): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileIntent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently expresses reconcile-style management intent.
   - `const string ReconcileIntent`
 - [ReconcileOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-reconcileoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current target operation is one provider-owned reconcile.
+  - `const string ReconcileOperation`
+- [ReconcileOperation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileoperation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current target operation is one provider-owned reconcile.
   - `const string ReconcileOperation`
 - [ReconcileReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-reconcileready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -15350,6 +15719,9 @@ Browse the published API surface by public member.
   - `const string ReconcileReady`
 - [ReconcileReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilestates-reconcileready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned control-plane reconcile is currently ready on the shared runtime surface.
+  - `const string ReconcileReady`
+- [ReconcileReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Broader provider-owned control-plane reconcile is currently ready.
   - `const string ReconcileReady`
 - [ReconciliationReason](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reconciliationreason): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported reconciliation summary when one is known.
@@ -15406,6 +15778,9 @@ Browse the published API surface by public member.
   - The durable command journal currently exposes recovered recorded history.
   - `const string RecoveredHistory`
 - [RecoveredHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipcategories-recoveredhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecoveredHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The durable command journal currently exposes recovered recorded history.
+  - `const string RecoveredHistory`
+- [RecoveredHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-recoveredhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecoveredHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The durable command journal currently exposes recovered recorded history.
   - `const string RecoveredHistory`
 - [RecoveredHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveredhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecoveredHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -16197,6 +16572,9 @@ Browse the published API surface by public member.
 - [RequiresExplicitApproval](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-requiresexplicitapproval): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresExplicitApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current provider-owned control-plane lane still requires explicit approval.
   - `bool RequiresExplicitApproval { get; set; }`
+- [RequiresExplicitApproval](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-requiresexplicitapproval): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresExplicitApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current provider-owned control-plane provisioning lane still requires explicit approval.
+  - `bool RequiresExplicitApproval { get; set; }`
 - [RequiresExplicitApproval](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-requiresexplicitapproval): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresExplicitApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current provider-owned write-path still requires explicit approval.
   - `bool RequiresExplicitApproval { get; set; }`
@@ -16695,6 +17073,9 @@ Browse the published API surface by public member.
 - [RetryBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-retryblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current retry posture remains blocked.
   - `const string RetryBlocked`
+- [RetryBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-retryblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current retry posture remains blocked.
+  - `const string RetryBlocked`
 - [RetryCandidate](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-retrycandidate): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryCandidate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth exposes one safe retry candidate.
   - `const string RetryCandidate`
@@ -16709,6 +17090,9 @@ Browse the published API surface by public member.
   - `const string RetryEligible`
 - [RetryEligible](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories-retryeligible): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryEligible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current retry posture still allows one eligible mutation or reconcile retry.
+  - `const string RetryEligible`
+- [RetryEligible](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-retryeligible): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryEligible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current retry posture still allows one eligible provider-owned provisioning retry.
   - `const string RetryEligible`
 - [RetryExecutionPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionsources-retryexecutionpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The automatic background retry execution answer was derived primarily from the shared retry-execution policy lane.
@@ -16727,6 +17111,9 @@ Browse the published API surface by public member.
   - `const string RetryExecutionPolicy`
 - [RetryExecutionPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilesources-retryexecutionpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane mutation and reconcile answer was derived primarily from retry-execution policy truth.
+  - `const string RetryExecutionPolicy`
+- [RetryExecutionPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-retryexecutionpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer was derived primarily from retry-execution policy truth.
   - `const string RetryExecutionPolicy`
 - [RetryExecutionPolicy](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-retryexecutionpolicy): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned write-path execution answer was derived primarily from retry-execution policy truth.
@@ -16764,6 +17151,9 @@ Browse the published API surface by public member.
 - [RetryExecutionPolicyState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-retryexecutionpolicystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector retry-execution policy state that informed provider-owned control-plane ownership.
   - `string RetryExecutionPolicyState { get; set; }`
+- [RetryExecutionPolicyState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-retryexecutionpolicystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current managed-connector retry-execution policy state that informed provider-owned control-plane provisioning.
+  - `string RetryExecutionPolicyState { get; set; }`
 - [RetryExecutionPolicyState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-retryexecutionpolicystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector retry-execution policy state that informed provider-owned write-path execution.
   - `string RetryExecutionPolicyState { get; set; }`
@@ -16799,6 +17189,9 @@ Browse the published API surface by public member.
   - `string RetryFingerprint { get; set; }`
 - [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic retry fingerprint currently associated with provider-owned control-plane ownership.
+  - `string RetryFingerprint { get; set; }`
+- [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the deterministic retry fingerprint currently associated with provider-owned control-plane provisioning.
   - `string RetryFingerprint { get; set; }`
 - [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic retry fingerprint currently associated with provider-owned write-path execution.
@@ -17331,6 +17724,9 @@ Browse the published API surface by public member.
 - [SchedulerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-schedulerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SchedulerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable shared scheduler identifier currently associated with provider-owned control-plane ownership.
   - `string SchedulerId { get; set; }`
+- [SchedulerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-schedulerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SchedulerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable shared scheduler identifier currently associated with provider-owned control-plane provisioning.
+  - `string SchedulerId { get; set; }`
 - [SchedulerId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-schedulerid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SchedulerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable shared scheduler identifier currently associated with scheduler recovery and execution hardening.
   - `string SchedulerId { get; set; }`
@@ -17351,6 +17747,9 @@ Browse the published API surface by public member.
   - `string SchedulerKind { get; set; }`
 - [SchedulerKind](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-schedulerkind): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SchedulerKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable shared scheduler kind currently associated with provider-owned control-plane ownership.
+  - `string SchedulerKind { get; set; }`
+- [SchedulerKind](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-schedulerkind): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SchedulerKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable shared scheduler kind currently associated with provider-owned control-plane provisioning.
   - `string SchedulerKind { get; set; }`
 - [SchedulerKind](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-schedulerkind): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SchedulerKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable shared scheduler kind currently associated with scheduler recovery and execution hardening.
@@ -17904,6 +18303,9 @@ Browse the published API surface by public member.
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-sourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier Cephalon used to derive provider-owned control-plane ownership.
   - `string SourceId { get; set; }`
+- [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-sourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the primary source identifier Cephalon used to derive provider-owned control-plane provisioning.
+  - `string SourceId { get; set; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-sourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary source identifier Cephalon used to derive provider-owned write-path execution.
   - `string SourceId { get; set; }`
@@ -18155,6 +18557,9 @@ Browse the published API surface by public member.
   - `string SourceProviderId { get; set; }`
 - [SourceProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-sourceproviderid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the best available source-provider identifier currently associated with provider-owned control-plane ownership.
+  - `string SourceProviderId { get; set; }`
+- [SourceProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-sourceproviderid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the best available source-provider identifier currently associated with provider-owned control-plane provisioning.
   - `string SourceProviderId { get; set; }`
 - [SourceProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-sourceproviderid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the best available source-provider identifier currently associated with provider-owned write-path execution.
@@ -18411,6 +18816,9 @@ Browse the published API surface by public member.
   - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable managed-connector provider-owned control-plane ownership state.
+  - `string State { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable managed-connector provider-owned control-plane provisioning state.
   - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-state): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable managed-connector provider-owned write-path execution state.
@@ -19774,6 +20182,9 @@ Browse the published API surface by public member.
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipsources-unknown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned control-plane ownership answer does not currently resolve to one specific source.
   - `const string Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningsources-unknown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The provider-owned control-plane provisioning answer does not currently resolve to one specific source.
+  - `const string Unknown`
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-unknown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider-owned write-path execution answer does not currently resolve to one specific source.
   - `const string Unknown`
@@ -20247,6 +20658,12 @@ Browse the published API surface by public member.
   - `bool WouldApplyChanges { get; set; }`
 - [WouldApplyChanges](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-wouldapplychanges): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WouldApplyChanges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current provider-owned control-plane lane would still apply one or more shared write-path changes.
+  - `bool WouldApplyChanges { get; set; }`
+- [WouldApplyChanges](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-wouldapplychanges): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WouldApplyChanges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The current provider control-plane provisioning lane would still apply one or more shared write-path changes.
+  - `const string WouldApplyChanges`
+- [WouldApplyChanges](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-wouldapplychanges): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WouldApplyChanges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the current provider-owned control-plane provisioning lane would still apply one or more shared write-path changes.
   - `bool WouldApplyChanges { get; set; }`
 - [WouldApplyChanges](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-wouldapplychanges): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WouldApplyChanges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current provider-owned write-path would still apply one or more shared write-path changes.
