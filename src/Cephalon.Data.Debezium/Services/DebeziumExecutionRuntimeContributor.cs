@@ -33,6 +33,11 @@ internal sealed class DebeziumExecutionRuntimeContributor(DebeziumDataOptions op
                 ["provider"] = DebeziumDataOptions.ProviderId,
                 ["surface"] = "debezium-cdc",
                 ["connectorId"] = runtimeId,
+                ["managedConnectorProviderSpecificControlPlaneProviderId"] = DebeziumDataOptions.ProviderId,
+                ["managedConnectorProviderSpecificControlPlaneMaterializerId"] = CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest,
+                ["managedConnectorProviderSpecificControlPlaneTransportKind"] = "http-rest",
+                ["managedConnectorProviderSpecificControlPlaneSurfaceId"] = "debezium-kafka-connect-rest",
+                ["managedConnectorProviderSpecificControlPlaneConnectorId"] = runtimeId,
                 ["managedConnectorManagementMode"] = NormalizeRequired(
                     connector.ManagementMode,
                     $"{nameof(DebeziumConnectorOptions.ManagementMode)} is required for Debezium connector '{runtimeId}'."),

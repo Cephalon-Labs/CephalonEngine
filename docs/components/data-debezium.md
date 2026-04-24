@@ -860,6 +860,29 @@ distributed scheduler, or second coordinator.
   `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardening`
   on that same shared route family instead of branching into a Debezium-only provisioning or
   mutation dependency-hardening endpoint set
+- `ENG-201` now keeps that same shared managed-connector control-plane lane explicit about which
+  provider-specific materializer the current runtime can use:
+  `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderSpecificControlPlaneMaterializer`
+  now publishes stable `not-applicable`, `operator-only`, `materializer-unavailable`,
+  `materializer-ready`, `materializer-selected`, `materializer-executing`, and
+  `materializer-risk` posture together with operation/source, broader provider-owned
+  control-plane dependency-aware provisioning and mutation hardening plus apply-and-reconcile
+  plus provisioning plus mutation/reconcile plus ownership plus execution orchestration plus
+  write-path truth, latest command plus retry-policy plus command-journal evidence,
+  durable-history plus reporter-lease signals, and Debezium-reported provider, materializer,
+  transport, provider-surface, connector, and worker identity so the shared execution-runtime
+  catalog can answer one provider-specific control-plane materializer posture without pushing
+  Debezium Kafka Connect REST identity into another control-plane subsystem
+- ASP.NET Core now maps
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/{materializerState}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/categories/{materializerCategory}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/providers/{providerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/materializers/{materializerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/operations/{operationId}`,
+  and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-materializer`
+  on that same shared route family instead of branching into a Debezium-only materializer
+  endpoint set
 - bounded automatic background retry execution still remains shared in-process truth, and the
   shipped broader provider-owned write-path execution posture plus broader provider execution
   orchestration posture plus broader provider-owned control-plane ownership posture plus broader
@@ -867,9 +890,9 @@ distributed scheduler, or second coordinator.
   provisioning posture plus broader provider-owned control-plane apply-and-reconcile execution
   posture plus broader provider-owned control-plane dependency-aware apply-and-reconcile
   hardening posture plus broader provider-owned control-plane dependency-aware provisioning and
-  mutation hardening posture still does not mean Cephalon already owns durable distributed command
-  journals, durable distributed schedulers, or full Kafka Connect provisioning and
-  apply-and-reconcile ownership
+  mutation hardening posture plus broader provider-specific control-plane materializer posture
+  still does not mean Cephalon already owns durable distributed command journals, durable
+  distributed schedulers, or full Kafka Connect provisioning and apply-and-reconcile ownership
 
 ## Not shipped in these slices
 
@@ -878,7 +901,8 @@ This pack intentionally still does not claim:
 - Kafka Connect or Debezium REST API provisioning and apply-and-reconcile ownership beyond the
   shipped shared provider-owned control-plane dependency-aware apply-and-reconcile hardening
   posture plus the shipped shared provider-owned control-plane dependency-aware provisioning and
-  mutation hardening posture
+  mutation hardening posture plus the shipped shared provider-specific control-plane materializer
+  posture
 - broader managed-connector control-plane provisioning ownership beyond the shipped shared
   provider-owned write-path execution posture plus the shipped shared provider execution
   orchestration posture plus the shipped shared provider-owned control-plane ownership posture plus
@@ -887,7 +911,7 @@ This pack intentionally still does not claim:
   provider-owned control-plane apply-and-reconcile execution posture plus the shipped shared
   provider-owned control-plane dependency-aware apply-and-reconcile hardening posture plus the
   shipped shared provider-owned control-plane dependency-aware provisioning and mutation
-  hardening posture
+  hardening posture plus the shipped shared provider-specific control-plane materializer posture
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
 - durable distributed command journals, durable distributed retry schedulers, or full idempotency

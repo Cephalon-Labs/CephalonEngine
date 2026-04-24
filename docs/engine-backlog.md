@@ -3231,6 +3231,108 @@ Delivered:
   and mutation hardening baseline through composition tests `42/42`, hosting tests `20/20`,
   tooling tests `207/207`, and the reference docs publish script
 
+### ENG-201 Phase 13 managed-connector provider-specific control-plane materializer follow-through baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168` through `ENG-200` already shipped the shared external-runtime coverage,
+  remediation, governance, drift, action-planning, write-path-readiness, preflight, dry-run,
+  execution-intent, execution-approval, command-envelope, command-issuance, provider
+  execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry, coordination, durable journal,
+  distributed lease, orchestration, richer cross-node idempotency, broader multi-node
+  lease-execution, durable shared scheduler, scheduler recovery, broader provider-owned
+  write-path, provider execution orchestration, provider-owned control-plane ownership,
+  mutation/reconcile, provisioning, apply-and-reconcile execution, dependency-aware
+  apply-and-reconcile hardening, and dependency-aware provisioning and mutation hardening
+  baselines, but operators still lacked one shared answer for which provider-specific
+  control-plane materializer identity and provider surface should own the current runtime on
+  the current node
+- the next follow-through needed to keep provider-specific control-plane materializer truth
+  additive on the existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only
+  materializer subsystem
+- later broader dependency-aware teardown and mutation-execution hardening still needed one
+  truthful shared answer grounded in provider-specific materializer identity plus the shipped
+  provider-owned control-plane dependency-aware provisioning and mutation hardening,
+  apply-and-reconcile, provisioning, mutation/reconcile, ownership, provider execution
+  orchestration, provider-owned write-path, latest command, retry-policy, command-journal,
+  durable-history, and reporter-lease truth
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector provider-specific control-plane
+  materializer contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish
+  `not-applicable`, `operator-only`, `materializer-unavailable`, `materializer-ready`,
+  `materializer-selected`, `materializer-executing`, and `materializer-risk` posture together
+  with categories, execution-runtime and capture identity, ownership/topology, management
+  mode, operation/source, broader provider-owned control-plane dependency-aware provisioning
+  and mutation hardening plus upstream provider-owned control-plane truth, provider-specific
+  provider/materializer/transport/provider-surface/connector/worker identity, durable-history
+  plus reporter-lease signals, and `CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive provider-specific control-plane
+  materializer state, category, provider, materializer, and operation filters while deriving
+  that posture from the same broader dependency-aware provisioning and mutation hardening,
+  apply-and-reconcile execution, provisioning, mutation/reconcile, ownership, provider
+  execution orchestration, provider-owned write-path, latest command-execution,
+  retry-execution-policy, command-journal, durable-history, reporter-lease, and normalized
+  provider-specific identity truth instead of forcing hosts or providers to invent another
+  materializer selector
+- ASP.NET Core publishes those same provider-specific control-plane materializer filters on
+  the existing `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down,
+  provider filters, and materializer filters, and the materializer answer stays additive beside
+  the existing coordination, lease, hardening, orchestration, scheduler, recovery, command,
+  provider-owned control-plane, and dependency-hardening surfaces instead of branching into a
+  Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned
+  with the shipped slice while later broader dependency-aware teardown and mutation-execution
+  hardening remains separate
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources`,
+  and `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus`,
+  and `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorProviderSpecificControlPlaneMaterializer`
+- `Cephalon.Data` now derives managed-connector provider-specific control-plane materializer
+  posture from merged provider-owned control-plane dependency-aware provisioning and mutation
+  hardening, apply-and-reconcile execution, provisioning, mutation/reconcile, ownership,
+  provider execution orchestration, provider-owned write-path execution, latest
+  command-execution, retry-execution-policy, bounded command-journal, durable-history,
+  reporter-lease, and normalized provider-specific identity truth, including
+  `materializer-ready`, `materializer-selected`, `materializer-executing`, and
+  `materializer-risk` answers, and `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerState(...)`,
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory(...)`,
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderId(...)`,
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(...)`, and
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId(...)`
+- `Cephalon.Data.Debezium` now normalizes provider-specific control-plane provider,
+  materializer, transport, provider-surface, connector, and worker identity through the
+  existing contributor plus report-sink lane so the shared runtime surface can select the
+  Debezium Kafka Connect REST materializer without claiming a Debezium-only control-plane
+  subsystem
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/{materializerState}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/categories/{materializerCategory}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/providers/{providerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/materializers/{materializerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/operations/{operationId}`,
+  and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-materializer`
+  so host routes stay aligned with the same shared provider-owned control-plane and
+  dependency-hardening story
+- targeted coverage now proves the provider-specific control-plane materializer baseline
+  through composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and
+  the reference docs publish script
+
 ### ENG-199 Phase 13 managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening baseline
 
 Status: done

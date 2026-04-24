@@ -158,6 +158,7 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         UpsertOptionalInt(metadata, "managedConnectorReportedTaskCount", reportedTaskCount);
         UpsertOptionalList(metadata, "managedConnectorReportedTaskIds", reportedTaskIds);
         UpsertOptionalList(metadata, "managedConnectorActiveTaskIds", activeTaskIds);
+        UpsertOptional(metadata, "managedConnectorProviderSpecificControlPlaneWorkerId", workerId);
 
         UpsertExecutionRuntimeMetadata(metadata, "debeziumManagementMode", managementMode);
         UpsertExecutionRuntimeMetadata(metadata, "debeziumDeclaredConnectClusterId", declaredConnectClusterId);
@@ -199,6 +200,7 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReportedTaskCount", reportedTaskCount?.ToString(CultureInfo.InvariantCulture));
         UpsertExecutionRuntimeMetadata(metadata, "managedConnectorReportedTaskIds", JoinValues(reportedTaskIds));
         UpsertExecutionRuntimeMetadata(metadata, "managedConnectorActiveTaskIds", JoinValues(activeTaskIds));
+        UpsertExecutionRuntimeMetadata(metadata, "managedConnectorProviderSpecificControlPlaneWorkerId", workerId);
 
         return new CdcCaptureRuntimeObservation(
             cdcCaptureId: observation.CdcCaptureId,

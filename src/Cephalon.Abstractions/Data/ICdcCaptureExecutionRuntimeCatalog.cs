@@ -702,4 +702,39 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable dependency-aware provisioning and mutation hardening operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer matches the requested state.
+    /// </summary>
+    /// <param name="materializerState">The stable provider-specific control-plane materializer state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that materializer state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerState(string materializerState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer includes the requested category.
+    /// </summary>
+    /// <param name="materializerCategory">The stable provider-specific control-plane materializer category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that materializer category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory(string materializerCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested provider identifier.
+    /// </summary>
+    /// <param name="providerId">The stable provider identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderId(string providerId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested materializer identifier.
+    /// </summary>
+    /// <param name="materializerId">The stable materializer identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that materializer identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(string materializerId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable provider-specific control-plane materializer operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId(string operationId);
 }

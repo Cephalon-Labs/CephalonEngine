@@ -795,6 +795,23 @@ read one stable dependency-aware provisioning-versus-mutation answer instead of 
 same connector identity, task topology, durable history, and reporter-lease evidence in separate
 control-plane code.
 
+That same shared execution-runtime story now also keeps provider-specific control-plane
+materializer selection explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderSpecificControlPlaneMaterializer`
+publishes stable `not-applicable` / `operator-only` / `materializer-unavailable` /
+`materializer-ready` / `materializer-selected` / `materializer-executing` /
+`materializer-risk` posture together with operation/source, broader provider-owned
+control-plane dependency-aware provisioning and mutation hardening plus apply-and-reconcile
+plus provisioning plus mutation/reconcile plus ownership plus execution orchestration plus
+write-path truth, latest command plus retry-policy plus command-journal evidence,
+durable-history plus reporter-lease signals, provider/materializer/transport/provider-surface/
+connector/worker identity, and `CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode`.
+The shared execution-runtime catalog now also exposes state/category/provider/materializer/
+operation filters for that materializer posture on the existing
+`/engine/cdc-capture-runtimes*` family, so hosts and provider packs can read one stable
+provider-specific materializer answer instead of re-deriving provider identity, connector
+surface identity, or current-node selection in separate control-plane code.
+
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
 keeps `Cephalon.Data` honest: it now owns the shared in-process execution substrate plus the shared

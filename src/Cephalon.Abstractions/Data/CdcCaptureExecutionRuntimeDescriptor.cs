@@ -424,6 +424,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the current shared provider-specific control-plane materializer answer for the managed connector when one applies.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus ManagedConnectorProviderSpecificControlPlaneMaterializer { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

@@ -8698,6 +8698,16 @@ CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus 
 
 Gets the operator-facing managed-connector provider-owned write-path execution posture derived from execution-adapter, command-execution, retry, scheduler, and recovery truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderspecificcontrolplanematerializer"></a>
+
+##### `ManagedConnectorProviderSpecificControlPlaneMaterializer`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus ManagedConnectorProviderSpecificControlPlaneMaterializer { get; set; }
+```
+
+Gets the current shared provider-specific control-plane materializer answer for the managed connector when one applies.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorretryexecutionpolicy"></a>
 
 ##### `ManagedConnectorRetryExecutionPolicy`
@@ -34461,6 +34471,1394 @@ bool WouldApplyChanges { get; set; }
 
 Gets a value indicating whether the current provider-owned write-path would still apply one or more shared write-path changes.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories`
+
+Defines the stable category identifiers used by managed-connector provider-specific control-plane materializer answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-applyandreconcileexecuting"></a>
+
+##### `ApplyAndReconcileExecuting`
+
+```csharp
+const string ApplyAndReconcileExecuting
+```
+
+The broader provider-owned apply-and-reconcile lane is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-applyandreconcilehardened"></a>
+
+##### `ApplyAndReconcileHardened`
+
+```csharp
+const string ApplyAndReconcileHardened
+```
+
+The broader provider-owned apply-and-reconcile lane is fully hardened.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-applyandreconcilerisk"></a>
+
+##### `ApplyAndReconcileRisk`
+
+```csharp
+const string ApplyAndReconcileRisk
+```
+
+The broader provider-owned apply-and-reconcile lane currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The current provider lane still requires explicit approval.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-connectoridentityready"></a>
+
+##### `ConnectorIdentityReady`
+
+```csharp
+const string ConnectorIdentityReady
+```
+
+The runtime currently exposes one connector identity for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot yet use the selected provider-specific control-plane materializer safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current node can use the selected provider-specific control-plane materializer safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-declareddependencyidentityready"></a>
+
+##### `DeclaredDependencyIdentityReady`
+
+```csharp
+const string DeclaredDependencyIdentityReady
+```
+
+The runtime currently declares complete dependency identity metadata.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-dependencyready"></a>
+
+##### `DependencyReady`
+
+```csharp
+const string DependencyReady
+```
+
+Broader dependency-aware provisioning and mutation hardening is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The current provider lane still targets a destructive operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-materializerexecuting"></a>
+
+##### `MaterializerExecuting`
+
+```csharp
+const string MaterializerExecuting
+```
+
+The selected provider-specific control-plane materializer is currently executing or driving the provider lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-materializeridentityready"></a>
+
+##### `MaterializerIdentityReady`
+
+```csharp
+const string MaterializerIdentityReady
+```
+
+The runtime currently exposes one materializer identifier for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-materializerready"></a>
+
+##### `MaterializerReady`
+
+```csharp
+const string MaterializerReady
+```
+
+The shared runtime currently has enough truth to select a provider-specific control-plane materializer.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-materializerrisk"></a>
+
+##### `MaterializerRisk`
+
+```csharp
+const string MaterializerRisk
+```
+
+Provider-specific control-plane materializer follow-through currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-materializerselected"></a>
+
+##### `MaterializerSelected`
+
+```csharp
+const string MaterializerSelected
+```
+
+One provider-specific control-plane materializer is currently selected.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-materializerunavailable"></a>
+
+##### `MaterializerUnavailable`
+
+```csharp
+const string MaterializerUnavailable
+```
+
+No active provider-specific control-plane materializer is currently available.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-missingconnectorid"></a>
+
+##### `MissingConnectorId`
+
+```csharp
+const string MissingConnectorId
+```
+
+The runtime does not currently expose one connector identity for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-missingmaterializerid"></a>
+
+##### `MissingMaterializerId`
+
+```csharp
+const string MissingMaterializerId
+```
+
+The runtime does not currently expose one materializer identifier for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-missingproviderid"></a>
+
+##### `MissingProviderId`
+
+```csharp
+const string MissingProviderId
+```
+
+The runtime does not currently expose one provider identifier for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-missingprovidersurface"></a>
+
+##### `MissingProviderSurface`
+
+```csharp
+const string MissingProviderSurface
+```
+
+The runtime does not currently expose one provider-facing surface identifier for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-missingtransportkind"></a>
+
+##### `MissingTransportKind`
+
+```csharp
+const string MissingTransportKind
+```
+
+The runtime does not currently expose one transport kind for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-mutationblocked"></a>
+
+##### `MutationBlocked`
+
+```csharp
+const string MutationBlocked
+```
+
+Broader provider-owned control-plane mutation currently remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-mutationexecuting"></a>
+
+##### `MutationExecuting`
+
+```csharp
+const string MutationExecuting
+```
+
+Broader provider-owned control-plane mutation or reconcile is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-mutationoperation"></a>
+
+##### `MutationOperation`
+
+```csharp
+const string MutationOperation
+```
+
+The current target operation is one provider-owned mutation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-mutationready"></a>
+
+##### `MutationReady`
+
+```csharp
+const string MutationReady
+```
+
+Broader provider-owned control-plane mutation is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-mutationrisk"></a>
+
+##### `MutationRisk`
+
+```csharp
+const string MutationRisk
+```
+
+Broader provider-owned control-plane mutation currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-nochangesrequired"></a>
+
+##### `NoChangesRequired`
+
+```csharp
+const string NoChangesRequired
+```
+
+The current provider lane would not apply another shared write-path change.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-notargetoperation"></a>
+
+##### `NoTargetOperation`
+
+```csharp
+const string NoTargetOperation
+```
+
+No provider-owned mutation or reconcile operation is currently targeted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-specific control-plane materializer follow-through still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-providercommandadapted"></a>
+
+##### `ProviderCommandAdapted`
+
+```csharp
+const string ProviderCommandAdapted
+```
+
+The latest provider command translated into a provider-facing shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-providercommandblocked"></a>
+
+##### `ProviderCommandBlocked`
+
+```csharp
+const string ProviderCommandBlocked
+```
+
+The latest provider command remained blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-providercommandfailed"></a>
+
+##### `ProviderCommandFailed`
+
+```csharp
+const string ProviderCommandFailed
+```
+
+The latest provider command failed while Cephalon translated it.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-providercommandnoop"></a>
+
+##### `ProviderCommandNoOp`
+
+```csharp
+const string ProviderCommandNoOp
+```
+
+The latest provider command determined that no provider command is required.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-provideridentityready"></a>
+
+##### `ProviderIdentityReady`
+
+```csharp
+const string ProviderIdentityReady
+```
+
+The runtime currently exposes one provider identifier for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-providerspecificcontrolplanematerializer"></a>
+
+##### `ProviderSpecificControlPlaneMaterializer`
+
+```csharp
+const string ProviderSpecificControlPlaneMaterializer
+```
+
+The runtime participates in the provider-specific control-plane materializer lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-providersurfaceready"></a>
+
+##### `ProviderSurfaceReady`
+
+```csharp
+const string ProviderSurfaceReady
+```
+
+The runtime currently exposes one provider-facing surface identifier for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-provisioningblocked"></a>
+
+##### `ProvisioningBlocked`
+
+```csharp
+const string ProvisioningBlocked
+```
+
+Broader provider-owned control-plane provisioning currently remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-provisioningexecuting"></a>
+
+##### `ProvisioningExecuting`
+
+```csharp
+const string ProvisioningExecuting
+```
+
+Broader provider-owned control-plane provisioning is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-provisioningready"></a>
+
+##### `ProvisioningReady`
+
+```csharp
+const string ProvisioningReady
+```
+
+Broader provider-owned control-plane provisioning is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-provisioningrisk"></a>
+
+##### `ProvisioningRisk`
+
+```csharp
+const string ProvisioningRisk
+```
+
+Broader provider-owned control-plane provisioning currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-reconcileoperation"></a>
+
+##### `ReconcileOperation`
+
+```csharp
+const string ReconcileOperation
+```
+
+The current target operation is one provider-owned reconcile.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-reconcileready"></a>
+
+##### `ReconcileReady`
+
+```csharp
+const string ReconcileReady
+```
+
+Broader provider-owned control-plane reconcile is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-reporteddependencyidentityready"></a>
+
+##### `ReportedDependencyIdentityReady`
+
+```csharp
+const string ReportedDependencyIdentityReady
+```
+
+The runtime currently reports complete dependency identity metadata.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-reporterleaseactive"></a>
+
+##### `ReporterLeaseActive`
+
+```csharp
+const string ReporterLeaseActive
+```
+
+The runtime currently exposes an active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-reporterleasemissingorstale"></a>
+
+##### `ReporterLeaseMissingOrStale`
+
+```csharp
+const string ReporterLeaseMissingOrStale
+```
+
+The runtime is missing one active reporter lease or currently reports degraded reporter ownership.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-transportidentityready"></a>
+
+##### `TransportIdentityReady`
+
+```csharp
+const string TransportIdentityReady
+```
+
+The runtime currently exposes one transport kind for provider-specific materialization.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-workeridentityunavailable"></a>
+
+##### `WorkerIdentityUnavailable`
+
+```csharp
+const string WorkerIdentityUnavailable
+```
+
+The runtime does not currently expose one provider worker identity.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-workeridentityvisible"></a>
+
+##### `WorkerIdentityVisible`
+
+```csharp
+const string WorkerIdentityVisible
+```
+
+The runtime currently exposes one provider worker identity.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+const string WouldApplyChanges
+```
+
+The current provider lane would still apply one or more shared write-path changes.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources`
+
+Defines the stable source identifiers used by managed-connector provider-specific control-plane materializer answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-commandexecution"></a>
+
+##### `CommandExecution`
+
+```csharp
+const string CommandExecution
+```
+
+The latest command-execution outcome supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-commandjournal"></a>
+
+##### `CommandJournal`
+
+```csharp
+const string CommandJournal
+```
+
+The retained command-journal evidence supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-executionadapter"></a>
+
+##### `ExecutionAdapter`
+
+```csharp
+const string ExecutionAdapter
+```
+
+The shared provider execution-adapter answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+const string Metadata
+```
+
+Runtime metadata supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-providerexecutionorchestration"></a>
+
+##### `ProviderExecutionOrchestration`
+
+```csharp
+const string ProviderExecutionOrchestration
+```
+
+The broader provider execution-orchestration answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-providerownedcontrolplaneapplyandreconcileexecution"></a>
+
+##### `ProviderOwnedControlPlaneApplyAndReconcileExecution`
+
+```csharp
+const string ProviderOwnedControlPlaneApplyAndReconcileExecution
+```
+
+The broader provider-owned control-plane apply-and-reconcile execution answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-providerownedcontrolplanedependencyawareprovisioningandmutationhardening"></a>
+
+##### `ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening`
+
+```csharp
+const string ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening
+```
+
+The broader provider-owned control-plane dependency-aware provisioning and mutation hardening answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-providerownedcontrolplanemutationreconcile"></a>
+
+##### `ProviderOwnedControlPlaneMutationReconcile`
+
+```csharp
+const string ProviderOwnedControlPlaneMutationReconcile
+```
+
+The broader provider-owned control-plane mutation and reconcile answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-providerownedcontrolplaneownership"></a>
+
+##### `ProviderOwnedControlPlaneOwnership`
+
+```csharp
+const string ProviderOwnedControlPlaneOwnership
+```
+
+The broader provider-owned control-plane ownership answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-providerownedcontrolplaneprovisioning"></a>
+
+##### `ProviderOwnedControlPlaneProvisioning`
+
+```csharp
+const string ProviderOwnedControlPlaneProvisioning
+```
+
+The broader provider-owned control-plane provisioning answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-providerownedwritepathexecution"></a>
+
+##### `ProviderOwnedWritePathExecution`
+
+```csharp
+const string ProviderOwnedWritePathExecution
+```
+
+The broader provider-owned write-path execution answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializersources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The provider-specific control-plane materializer answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates`
+
+Defines the stable state identifiers used by managed-connector provider-specific control-plane materializer answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstates-materializerexecuting"></a>
+
+##### `MaterializerExecuting`
+
+```csharp
+const string MaterializerExecuting
+```
+
+The selected provider-specific control-plane materializer is currently executing or actively driving one provider-owned lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstates-materializerready"></a>
+
+##### `MaterializerReady`
+
+```csharp
+const string MaterializerReady
+```
+
+Provider-specific control-plane materializer follow-through is currently ready to select one concrete materializer on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstates-materializerrisk"></a>
+
+##### `MaterializerRisk`
+
+```csharp
+const string MaterializerRisk
+```
+
+Provider-specific control-plane materializer follow-through currently remains risky because broader provider or runtime truth is not safe enough yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstates-materializerselected"></a>
+
+##### `MaterializerSelected`
+
+```csharp
+const string MaterializerSelected
+```
+
+Provider-specific control-plane materializer follow-through has selected one concrete materializer on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstates-materializerunavailable"></a>
+
+##### `MaterializerUnavailable`
+
+```csharp
+const string MaterializerUnavailable
+```
+
+Provider-specific control-plane materializer follow-through does not currently expose enough provider identity or adapter truth to select one concrete materializer.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Provider-specific control-plane materializer follow-through does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-specific control-plane materializer follow-through still remains operator-owned outside Cephalon.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus`
+
+Describes the current operator-facing managed-connector provider-specific control-plane materializer posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus(string state, string description)
+```
+
+Creates a new provider-specific control-plane materializer answer.
+
+Parameters:
+- `state`: The stable provider-specific control-plane materializer state, such as `not-applicable`, `operator-only`, `materializer-unavailable`, `materializer-ready`, `materializer-selected`, `materializer-executing`, or `materializer-risk`.
+- `description`: An optional operator-facing provider-specific materializer summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-canuseproviderspecificcontrolplanematerializeroncurrentnode"></a>
+
+##### `CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode`
+
+```csharp
+bool CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can use the selected provider-specific control-plane materializer safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active provider-specific materializer categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable provider-specific control-plane materializer categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with provider-specific control-plane materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector command-journal state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-commandretrystate"></a>
+
+##### `CommandRetryState`
+
+```csharp
+string CommandRetryState { get; set; }
+```
+
+Gets the current managed-connector command-retry state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier currently associated with provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier currently associated with provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-connectorid"></a>
+
+##### `ConnectorId`
+
+```csharp
+string ConnectorId { get; set; }
+```
+
+Gets the best available connector identifier currently associated with provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing provider-specific materializer summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-executionadapterstate"></a>
+
+##### `ExecutionAdapterState`
+
+```csharp
+string ExecutionAdapterState { get; set; }
+```
+
+Gets the current shared execution-adapter state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with provider-specific control-plane materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasconnectoridentity"></a>
+
+##### `HasConnectorIdentity`
+
+```csharp
+bool HasConnectorIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one connector identity for provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasdeclareddependencyidentity"></a>
+
+##### `HasDeclaredDependencyIdentity`
+
+```csharp
+bool HasDeclaredDependencyIdentity { get; set; }
+```
+
+Gets a value indicating whether declared dependency identity is complete.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasmaterializeridentity"></a>
+
+##### `HasMaterializerIdentity`
+
+```csharp
+bool HasMaterializerIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one selected materializer identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasprovideridentity"></a>
+
+##### `HasProviderIdentity`
+
+```csharp
+bool HasProviderIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one provider identity for provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasprovidersurfaceidentity"></a>
+
+##### `HasProviderSurfaceIdentity`
+
+```csharp
+bool HasProviderSurfaceIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one provider-facing surface identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasreporteddependencyidentity"></a>
+
+##### `HasReportedDependencyIdentity`
+
+```csharp
+bool HasReportedDependencyIdentity { get; set; }
+```
+
+Gets a value indicating whether reported dependency identity is complete.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasselectedmaterializer"></a>
+
+##### `HasSelectedMaterializer`
+
+```csharp
+bool HasSelectedMaterializer { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one selected provider-specific materializer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hastargetoperation"></a>
+
+##### `HasTargetOperation`
+
+```csharp
+bool HasTargetOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer exposes one concrete target operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hastransportidentity"></a>
+
+##### `HasTransportIdentity`
+
+```csharp
+bool HasTransportIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one provider transport kind.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-hasworkeridentity"></a>
+
+##### `HasWorkerIdentity`
+
+```csharp
+bool HasWorkerIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one provider worker identity.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current provider lane targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-ismaterializerexecuting"></a>
+
+##### `IsMaterializerExecuting`
+
+```csharp
+bool IsMaterializerExecuting { get; }
+```
+
+Gets a value indicating whether the selected provider-specific control-plane materializer is currently executing.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-ismaterializerready"></a>
+
+##### `IsMaterializerReady`
+
+```csharp
+bool IsMaterializerReady { get; }
+```
+
+Gets a value indicating whether one provider-specific control-plane materializer is currently ready.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-ismaterializerrisk"></a>
+
+##### `IsMaterializerRisk`
+
+```csharp
+bool IsMaterializerRisk { get; }
+```
+
+Gets a value indicating whether provider-specific control-plane materialization currently remains risky.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-ismaterializerselected"></a>
+
+##### `IsMaterializerSelected`
+
+```csharp
+bool IsMaterializerSelected { get; }
+```
+
+Gets a value indicating whether one provider-specific control-plane materializer is currently selected.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-ismaterializerunavailable"></a>
+
+##### `IsMaterializerUnavailable`
+
+```csharp
+bool IsMaterializerUnavailable { get; }
+```
+
+Gets a value indicating whether one provider-specific control-plane materializer is currently unavailable.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-ismutationoperation"></a>
+
+##### `IsMutationOperation`
+
+```csharp
+bool IsMutationOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer currently represents one provider-owned mutation operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether provider-specific control-plane materialization still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-isprovisioningoperation"></a>
+
+##### `IsProvisioningOperation`
+
+```csharp
+bool IsProvisioningOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer currently represents the broader provisioning lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-isreconcileoperation"></a>
+
+##### `IsReconcileOperation`
+
+```csharp
+bool IsReconcileOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer currently represents one provider-owned reconcile operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest recorded command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-materializerid"></a>
+
+##### `MaterializerId`
+
+```csharp
+string MaterializerId { get; set; }
+```
+
+Gets the materializer identifier currently associated with provider-specific materialization when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerexecutionorchestrationstate"></a>
+
+##### `ProviderExecutionOrchestrationState`
+
+```csharp
+string ProviderExecutionOrchestrationState { get; set; }
+```
+
+Gets the current broader provider execution-orchestration state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; set; }
+```
+
+Gets the provider identifier currently associated with provider-specific materialization when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedcontrolplaneapplyandreconcileexecutionstate"></a>
+
+##### `ProviderOwnedControlPlaneApplyAndReconcileExecutionState`
+
+```csharp
+string ProviderOwnedControlPlaneApplyAndReconcileExecutionState { get; set; }
+```
+
+Gets the current provider-owned control-plane apply-and-reconcile execution state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedcontrolplanedependencyawareprovisioningandmutationhardeningstate"></a>
+
+##### `ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState`
+
+```csharp
+string ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState { get; set; }
+```
+
+Gets the current provider-owned control-plane dependency-aware provisioning and mutation hardening state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedcontrolplanemutationreconcilestate"></a>
+
+##### `ProviderOwnedControlPlaneMutationReconcileState`
+
+```csharp
+string ProviderOwnedControlPlaneMutationReconcileState { get; set; }
+```
+
+Gets the current provider-owned control-plane mutation and reconcile state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedcontrolplaneownershipstate"></a>
+
+##### `ProviderOwnedControlPlaneOwnershipState`
+
+```csharp
+string ProviderOwnedControlPlaneOwnershipState { get; set; }
+```
+
+Gets the current provider-owned control-plane ownership state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedcontrolplaneprovisioningstate"></a>
+
+##### `ProviderOwnedControlPlaneProvisioningState`
+
+```csharp
+string ProviderOwnedControlPlaneProvisioningState { get; set; }
+```
+
+Gets the current provider-owned control-plane provisioning state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedwritepathexecutionstate"></a>
+
+##### `ProviderOwnedWritePathExecutionState`
+
+```csharp
+string ProviderOwnedWritePathExecutionState { get; set; }
+```
+
+Gets the current provider-owned write-path execution state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providersurfaceid"></a>
+
+##### `ProviderSurfaceId`
+
+```csharp
+string ProviderSurfaceId { get; set; }
+```
+
+Gets the provider-facing surface identifier currently associated with provider-specific materialization when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-reconciliationreason"></a>
+
+##### `ReconciliationReason`
+
+```csharp
+string ReconciliationReason { get; set; }
+```
+
+Gets the latest operator-facing reconciliation summary currently visible for the managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-reconciliationstate"></a>
+
+##### `ReconciliationState`
+
+```csharp
+string ReconciliationState { get; set; }
+```
+
+Gets the latest reconciliation state currently visible for the managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current provider lane still requires explicit approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier currently associated with provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector provider-specific control-plane materializer state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-transportkind"></a>
+
+##### `TransportKind`
+
+```csharp
+string TransportKind { get; set; }
+```
+
+Gets the provider transport kind currently associated with provider-specific materialization when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-workerid"></a>
+
+##### `WorkerId`
+
+```csharp
+string WorkerId { get; set; }
+```
+
+Gets the best available provider worker identifier currently associated with provider-specific materialization.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current provider lane would still apply one or more shared write-path changes.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories`
@@ -44111,6 +45509,81 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `providerExecutionState`: The stable provider-owned write-path execution state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializercategory-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory(string materializerCategory)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that materializer category.
+
+Parameters:
+- `materializerCategory`: The stable provider-specific control-plane materializer category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(string materializerId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested materializer identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that materializer identifier.
+
+Parameters:
+- `materializerId`: The stable materializer identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializeroperationid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable provider-specific control-plane materializer operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerproviderid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderId(string providerId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested provider identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider identifier.
+
+Parameters:
+- `providerId`: The stable provider identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerstate-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerState(string materializerState)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that materializer state.
+
+Parameters:
+- `materializerState`: The stable provider-specific control-plane materializer state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicycategory-system-string"></a>
 

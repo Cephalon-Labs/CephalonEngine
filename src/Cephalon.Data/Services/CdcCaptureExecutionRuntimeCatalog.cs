@@ -26,6 +26,12 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private const string ManagedConnectorTaskReconciliationStateMetadataKey = "managedConnectorTaskReconciliationState";
     private const string ManagedConnectorReconciliationStateMetadataKey = "managedConnectorReconciliationState";
     private const string ManagedConnectorReconciliationReasonMetadataKey = "managedConnectorReconciliationReason";
+    private const string ManagedConnectorProviderSpecificControlPlaneProviderIdMetadataKey = "managedConnectorProviderSpecificControlPlaneProviderId";
+    private const string ManagedConnectorProviderSpecificControlPlaneMaterializerIdMetadataKey = "managedConnectorProviderSpecificControlPlaneMaterializerId";
+    private const string ManagedConnectorProviderSpecificControlPlaneTransportKindMetadataKey = "managedConnectorProviderSpecificControlPlaneTransportKind";
+    private const string ManagedConnectorProviderSpecificControlPlaneSurfaceIdMetadataKey = "managedConnectorProviderSpecificControlPlaneSurfaceId";
+    private const string ManagedConnectorProviderSpecificControlPlaneConnectorIdMetadataKey = "managedConnectorProviderSpecificControlPlaneConnectorId";
+    private const string ManagedConnectorProviderSpecificControlPlaneWorkerIdMetadataKey = "managedConnectorProviderSpecificControlPlaneWorkerId";
     private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> index;
     private readonly ICdcCaptureCatalog captureCatalog;
     private readonly ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog;
@@ -1119,6 +1125,60 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerState(string materializerState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(materializerState);
+        var normalizedMaterializerState = materializerState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer.State,
+            normalizedMaterializerState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory(string materializerCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(materializerCategory);
+        var normalizedMaterializerCategory = materializerCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer.CategoryIds.Contains(
+            normalizedMaterializerCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderId(string providerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(providerId);
+        var normalizedProviderId = providerId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer.ProviderId,
+            normalizedProviderId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(string materializerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(materializerId);
+        var normalizedMaterializerId = materializerId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer.MaterializerId,
+            normalizedMaterializerId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer.OperationId,
+            normalizedOperationId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -1653,6 +1713,35 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution,
             managedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening,
             managedConnectorMetadata);
+        var managedConnectorProviderSpecificControlPlaneMaterializer = CreateManagedConnectorProviderSpecificControlPlaneMaterializer(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionOwnership,
+            runtime.ExecutionTopology,
+            managedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.ManagementMode ??
+            managedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution.ManagementMode ??
+            managedConnectorProviderOwnedControlPlaneProvisioning.ManagementMode ??
+            managedConnectorProviderOwnedControlPlaneMutationReconcile.ManagementMode ??
+            managedConnectorProviderOwnedControlPlaneOwnership.ManagementMode ??
+            managedConnectorProviderExecutionOrchestration.ManagementMode ??
+            managedConnectorProviderOwnedWritePathExecution.ManagementMode ??
+            managedConnectorExecutionAdapter.ManagementMode ??
+            managedConnectorCommandRetry.ManagementMode ??
+            managedConnectorRetryExecutionPolicy.ManagementMode,
+            summary,
+            managedConnectorCommandExecution,
+            managedConnectorCommandRetry,
+            managedConnectorRetryExecutionPolicy,
+            managedConnectorCommandJournal,
+            managedConnectorProviderOwnedWritePathExecution,
+            managedConnectorProviderExecutionOrchestration,
+            managedConnectorProviderOwnedControlPlaneOwnership,
+            managedConnectorProviderOwnedControlPlaneMutationReconcile,
+            managedConnectorProviderOwnedControlPlaneProvisioning,
+            managedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution,
+            managedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+            managedConnectorExecutionAdapter,
+            managedConnectorMetadata);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
@@ -1693,7 +1782,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorProviderOwnedControlPlaneProvisioning = managedConnectorProviderOwnedControlPlaneProvisioning,
             ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution = managedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution,
             ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening = managedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening,
-            ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening = managedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening
+            ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening = managedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+            ManagedConnectorProviderSpecificControlPlaneMaterializer = managedConnectorProviderSpecificControlPlaneMaterializer
         };
     }
 
@@ -17413,7 +17503,29 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ConnectorLifecycleState: ResolveMetadata(metadata, ManagedConnectorConnectorLifecycleStateMetadataKey, "debeziumConnectorLifecycleState"),
             TaskReconciliationState: ResolveMetadata(metadata, ManagedConnectorTaskReconciliationStateMetadataKey, "debeziumTaskReconciliationState"),
             ReconciliationState: ResolveMetadata(metadata, ManagedConnectorReconciliationStateMetadataKey, "debeziumReconciliationState"),
-            ReconciliationReason: ResolveMetadata(metadata, ManagedConnectorReconciliationReasonMetadataKey, "debeziumReconciliationReason"));
+            ReconciliationReason: ResolveMetadata(metadata, ManagedConnectorReconciliationReasonMetadataKey, "debeziumReconciliationReason"),
+            ProviderSpecificControlPlaneProviderId: ResolveMetadata(
+                metadata,
+                ManagedConnectorProviderSpecificControlPlaneProviderIdMetadataKey,
+                "provider"),
+            ProviderSpecificControlPlaneMaterializerId: ResolveMetadata(
+                metadata,
+                ManagedConnectorProviderSpecificControlPlaneMaterializerIdMetadataKey),
+            ProviderSpecificControlPlaneTransportKind: ResolveMetadata(
+                metadata,
+                ManagedConnectorProviderSpecificControlPlaneTransportKindMetadataKey),
+            ProviderSpecificControlPlaneSurfaceId: ResolveMetadata(
+                metadata,
+                ManagedConnectorProviderSpecificControlPlaneSurfaceIdMetadataKey,
+                "surface"),
+            ProviderSpecificControlPlaneConnectorId: ResolveMetadata(
+                metadata,
+                ManagedConnectorProviderSpecificControlPlaneConnectorIdMetadataKey,
+                "connectorId"),
+            ProviderSpecificControlPlaneWorkerId: ResolveMetadata(
+                metadata,
+                ManagedConnectorProviderSpecificControlPlaneWorkerIdMetadataKey,
+                "debeziumWorkerId"));
     }
 
     private static CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus CreateManagedConnectorActionPlanStatus(
@@ -18912,6 +19024,724 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         return null;
     }
 
+    private static CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus CreateManagedConnectorProviderSpecificControlPlaneMaterializer(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string? executionOwnership,
+        string? executionTopology,
+        string? managementMode,
+        CdcCaptureExecutionRuntimeSummary summary,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus providerOwnedControlPlaneOwnership,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus providerOwnedControlPlaneMutationReconcile,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus providerOwnedControlPlaneProvisioning,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus providerOwnedControlPlaneApplyAndReconcileExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
+        ManagedConnectorMetadataSnapshot metadataSnapshot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(summary);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandRetry);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneOwnership);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneMutationReconcile);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneProvisioning);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneApplyAndReconcileExecution);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening);
+        ArgumentNullException.ThrowIfNull(executionAdapter);
+        ArgumentNullException.ThrowIfNull(metadataSnapshot);
+
+        var normalizedExecutionOwnership = string.IsNullOrWhiteSpace(executionOwnership)
+            ? "runtime-managed"
+            : executionOwnership.Trim();
+        var normalizedExecutionTopology = string.IsNullOrWhiteSpace(executionTopology)
+            ? "not-configured"
+            : executionTopology.Trim();
+        var operationId =
+            !string.IsNullOrWhiteSpace(providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.OperationId)
+                ? providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.OperationId.Trim()
+                : !string.IsNullOrWhiteSpace(providerOwnedControlPlaneApplyAndReconcileExecution.OperationId)
+                    ? providerOwnedControlPlaneApplyAndReconcileExecution.OperationId.Trim()
+                    : !string.IsNullOrWhiteSpace(providerOwnedControlPlaneMutationReconcile.OperationId)
+                        ? providerOwnedControlPlaneMutationReconcile.OperationId.Trim()
+                        : !string.IsNullOrWhiteSpace(providerOwnedControlPlaneProvisioning.OperationId)
+                            ? providerOwnedControlPlaneProvisioning.OperationId.Trim()
+                            : !string.IsNullOrWhiteSpace(executionAdapter.OperationId)
+                                ? executionAdapter.OperationId.Trim()
+                                : !string.IsNullOrWhiteSpace(latestCommandExecution.ResolvedOperationId)
+                                    ? latestCommandExecution.ResolvedOperationId.Trim()
+                                    : !string.IsNullOrWhiteSpace(latestCommandExecution.RequestedOperationId)
+                                        ? latestCommandExecution.RequestedOperationId.Trim()
+                                    : CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None;
+        var providerId = string.IsNullOrWhiteSpace(metadataSnapshot.ProviderSpecificControlPlaneProviderId)
+            ? null
+            : metadataSnapshot.ProviderSpecificControlPlaneProviderId.Trim();
+        var materializerId = string.IsNullOrWhiteSpace(metadataSnapshot.ProviderSpecificControlPlaneMaterializerId)
+            ? null
+            : metadataSnapshot.ProviderSpecificControlPlaneMaterializerId.Trim();
+        var transportKind = string.IsNullOrWhiteSpace(metadataSnapshot.ProviderSpecificControlPlaneTransportKind)
+            ? null
+            : metadataSnapshot.ProviderSpecificControlPlaneTransportKind.Trim();
+        var providerSurfaceId = string.IsNullOrWhiteSpace(metadataSnapshot.ProviderSpecificControlPlaneSurfaceId)
+            ? null
+            : metadataSnapshot.ProviderSpecificControlPlaneSurfaceId.Trim();
+        var connectorId = string.IsNullOrWhiteSpace(metadataSnapshot.ProviderSpecificControlPlaneConnectorId)
+            ? null
+            : metadataSnapshot.ProviderSpecificControlPlaneConnectorId.Trim();
+        var workerId = string.IsNullOrWhiteSpace(metadataSnapshot.ProviderSpecificControlPlaneWorkerId)
+            ? null
+            : metadataSnapshot.ProviderSpecificControlPlaneWorkerId.Trim();
+        var appliesToManagedConnector =
+            executionAdapter.AppliesToManagedConnector ||
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.AppliesToManagedConnector ||
+            providerOwnedControlPlaneApplyAndReconcileExecution.AppliesToManagedConnector ||
+            providerOwnedControlPlaneProvisioning.AppliesToManagedConnector ||
+            providerOwnedControlPlaneMutationReconcile.AppliesToManagedConnector ||
+            providerOwnedControlPlaneOwnership.AppliesToManagedConnector ||
+            providerExecutionOrchestration.AppliesToManagedConnector ||
+            providerOwnedWritePathExecution.AppliesToManagedConnector ||
+            (string.Equals(normalizedExecutionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) &&
+             (!string.IsNullOrWhiteSpace(providerId) || !string.IsNullOrWhiteSpace(materializerId)));
+        var hasProviderIdentity = !string.IsNullOrWhiteSpace(providerId);
+        var hasMaterializerIdentity = !string.IsNullOrWhiteSpace(materializerId);
+        var hasTransportIdentity = !string.IsNullOrWhiteSpace(transportKind);
+        var hasProviderSurfaceIdentity = !string.IsNullOrWhiteSpace(providerSurfaceId);
+        var hasConnectorIdentity = !string.IsNullOrWhiteSpace(connectorId);
+        var hasWorkerIdentity = !string.IsNullOrWhiteSpace(workerId);
+        var hasTargetOperation =
+            !string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None, StringComparison.OrdinalIgnoreCase);
+        var isProvisioningOperation = providerOwnedControlPlaneProvisioning.HasTargetOperation && !providerOwnedControlPlaneMutationReconcile.HasTargetOperation;
+        var isMutationOperation = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsMutationOperation;
+        var isReconcileOperation = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsReconcileOperation;
+        var canUseProviderSpecificControlPlaneMaterializerOnCurrentNode =
+            hasProviderIdentity &&
+            hasMaterializerIdentity &&
+            hasTransportIdentity &&
+            hasProviderSurfaceIdentity &&
+            hasConnectorIdentity &&
+            executionAdapter.CanUseProviderExecutionAdapter &&
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningAndMutationOnCurrentNode;
+        var isRisk =
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsDependencyRisk ||
+            providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileRisk ||
+            providerOwnedControlPlaneProvisioning.IsProvisioningRisk ||
+            providerOwnedControlPlaneMutationReconcile.IsMutationRisk ||
+            providerOwnedControlPlaneOwnership.IsOwnershipRisk ||
+            providerExecutionOrchestration.IsOrchestrationRisk ||
+            providerOwnedWritePathExecution.IsProviderOwnedRisk ||
+            (executionAdapter.IsBlocked && hasMaterializerIdentity);
+        var isExecuting =
+            hasMaterializerIdentity &&
+            (providerExecutionOrchestration.IsOrchestrationExecuting ||
+             providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileExecuting ||
+             providerOwnedControlPlaneProvisioning.IsProvisioningExecuting ||
+             providerOwnedControlPlaneMutationReconcile.IsMutationExecuting ||
+             providerOwnedWritePathExecution.IsProviderOwnedExecuting);
+        var isSelected =
+            hasMaterializerIdentity &&
+            (latestCommandExecution.IsAdapted ||
+             latestCommandExecution.IsNoOp ||
+             providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsProvisioningHardened ||
+             providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsMutationHardened ||
+             providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileCompleted ||
+             executionAdapter.HasAdaptableCommand);
+        var isReady =
+            hasMaterializerIdentity &&
+            executionAdapter.CanUseProviderExecutionAdapter &&
+            (providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsDependencyReady ||
+             providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileReady ||
+             providerOwnedControlPlaneProvisioning.IsProvisioningReady ||
+             providerOwnedControlPlaneMutationReconcile.IsMutationReady ||
+             providerOwnedControlPlaneMutationReconcile.IsReconcileReady ||
+             providerExecutionOrchestration.IsOrchestrationReady ||
+             providerOwnedWritePathExecution.IsProviderExecutable);
+        var state =
+            !appliesToManagedConnector
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.NotApplicable
+                : providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsOperatorOnly ||
+                  providerOwnedControlPlaneApplyAndReconcileExecution.IsOperatorOnly ||
+                  providerOwnedControlPlaneProvisioning.IsOperatorOnly ||
+                  providerOwnedControlPlaneMutationReconcile.IsOperatorOnly ||
+                  providerOwnedControlPlaneOwnership.IsOperatorOnly
+                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.OperatorOnly
+                    : isRisk
+                        ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerRisk
+                        : isExecuting
+                            ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerExecuting
+                            : isSelected
+                                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerSelected
+                                : isReady
+                                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerReady
+                                    : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerUnavailable;
+        var categories = CreateManagedConnectorProviderSpecificControlPlaneMaterializerCategories(
+            state,
+            summary,
+            latestCommandExecution,
+            providerOwnedControlPlaneApplyAndReconcileExecution,
+            providerOwnedControlPlaneProvisioning,
+            providerOwnedControlPlaneMutationReconcile,
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+            hasProviderIdentity,
+            hasMaterializerIdentity,
+            hasTransportIdentity,
+            hasProviderSurfaceIdentity,
+            hasConnectorIdentity,
+            hasWorkerIdentity,
+            hasTargetOperation,
+            isMutationOperation,
+            isReconcileOperation,
+            canUseProviderSpecificControlPlaneMaterializerOnCurrentNode,
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.WouldApplyChanges,
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.RequiresExplicitApproval,
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsDestructiveOperation,
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.HasDeclaredDependencyIdentity,
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.HasReportedDependencyIdentity);
+        var description = CreateManagedConnectorProviderSpecificControlPlaneMaterializerDescription(
+            state,
+            operationId,
+            providerId,
+            materializerId,
+            transportKind,
+            providerSurfaceId,
+            summary,
+            latestCommandExecution,
+            commandJournal,
+            executionAdapter,
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+            hasProviderIdentity,
+            hasMaterializerIdentity,
+            hasTransportIdentity,
+            hasProviderSurfaceIdentity,
+            hasConnectorIdentity,
+            metadataSnapshot.ReconciliationReason);
+        var sourceId = ResolveManagedConnectorProviderSpecificControlPlaneMaterializerSourceId(
+            latestCommandExecution,
+            commandJournal,
+            providerOwnedWritePathExecution,
+            providerExecutionOrchestration,
+            providerOwnedControlPlaneOwnership,
+            providerOwnedControlPlaneMutationReconcile,
+            providerOwnedControlPlaneProvisioning,
+            providerOwnedControlPlaneApplyAndReconcileExecution,
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+            executionAdapter,
+            hasProviderIdentity,
+            hasMaterializerIdentity);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus(state, description)
+        {
+            CategoryIds = categories,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ExecutionOwnership = normalizedExecutionOwnership,
+            ExecutionTopology = normalizedExecutionTopology,
+            ManagementMode = managementMode,
+            OperationId = operationId,
+            SourceId = sourceId,
+            ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.State,
+            ProviderOwnedControlPlaneApplyAndReconcileExecutionState = providerOwnedControlPlaneApplyAndReconcileExecution.State,
+            ProviderOwnedControlPlaneProvisioningState = providerOwnedControlPlaneProvisioning.State,
+            ProviderOwnedControlPlaneMutationReconcileState = providerOwnedControlPlaneMutationReconcile.State,
+            ProviderOwnedControlPlaneOwnershipState = providerOwnedControlPlaneOwnership.State,
+            ProviderExecutionOrchestrationState = providerExecutionOrchestration.State,
+            ProviderOwnedWritePathExecutionState = providerOwnedWritePathExecution.State,
+            ExecutionAdapterState = executionAdapter.State,
+            LatestCommandExecutionState = latestCommandExecution.State,
+            CommandRetryState = commandRetry.State,
+            RetryExecutionPolicyState = retryExecutionPolicy.State,
+            CommandJournalState = commandJournal.State,
+            ProviderId = providerId,
+            MaterializerId = materializerId,
+            TransportKind = transportKind,
+            ProviderSurfaceId = providerSurfaceId,
+            ConnectClusterId = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.ConnectClusterId,
+            ConnectorId = connectorId,
+            ConnectorClass = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.ConnectorClass,
+            SourceProviderId = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.SourceProviderId,
+            WorkerId = workerId,
+            ReconciliationState = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.ReconciliationState,
+            ReconciliationReason = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.ReconciliationReason,
+            PotentialChangeCount = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.PotentialChangeCount,
+            LatestAttemptId = latestCommandExecution.AttemptId,
+            LatestRecordedAtUtc = latestCommandExecution.RecordedAtUtc,
+            ActiveReporterId = summary.ActiveReporterId,
+            ActiveReporterLeaseExpiresAtUtc = summary.ReporterLeaseExpiresAtUtc,
+            WouldApplyChanges = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.WouldApplyChanges,
+            RequiresExplicitApproval = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.RequiresExplicitApproval,
+            IsDestructiveOperation = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsDestructiveOperation,
+            HasTargetOperation = hasTargetOperation,
+            IsProvisioningOperation = isProvisioningOperation,
+            IsMutationOperation = isMutationOperation,
+            IsReconcileOperation = isReconcileOperation,
+            HasProviderIdentity = hasProviderIdentity,
+            HasMaterializerIdentity = hasMaterializerIdentity,
+            HasTransportIdentity = hasTransportIdentity,
+            HasProviderSurfaceIdentity = hasProviderSurfaceIdentity,
+            HasConnectorIdentity = hasConnectorIdentity,
+            HasWorkerIdentity = hasWorkerIdentity,
+            HasDeclaredDependencyIdentity = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.HasDeclaredDependencyIdentity,
+            HasReportedDependencyIdentity = providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.HasReportedDependencyIdentity,
+            CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode = canUseProviderSpecificControlPlaneMaterializerOnCurrentNode
+        };
+    }
+
+    private static string[] CreateManagedConnectorProviderSpecificControlPlaneMaterializerCategories(
+        string state,
+        CdcCaptureExecutionRuntimeSummary summary,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus providerOwnedControlPlaneApplyAndReconcileExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus providerOwnedControlPlaneProvisioning,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus providerOwnedControlPlaneMutationReconcile,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+        bool hasProviderIdentity,
+        bool hasMaterializerIdentity,
+        bool hasTransportIdentity,
+        bool hasProviderSurfaceIdentity,
+        bool hasConnectorIdentity,
+        bool hasWorkerIdentity,
+        bool hasTargetOperation,
+        bool isMutationOperation,
+        bool isReconcileOperation,
+        bool canUseProviderSpecificControlPlaneMaterializerOnCurrentNode,
+        bool wouldApplyChanges,
+        bool requiresExplicitApproval,
+        bool isDestructiveOperation,
+        bool hasDeclaredDependencyIdentity,
+        bool hasReportedDependencyIdentity)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(summary);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneApplyAndReconcileExecution);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneProvisioning);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneMutationReconcile);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening);
+
+        if (!providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.AppliesToManagedConnector &&
+            !providerOwnedControlPlaneApplyAndReconcileExecution.AppliesToManagedConnector &&
+            !providerOwnedControlPlaneProvisioning.AppliesToManagedConnector &&
+            !providerOwnedControlPlaneMutationReconcile.AppliesToManagedConnector)
+        {
+            return [];
+        }
+
+        var categories = new List<string>(capacity: 32);
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProviderSpecificControlPlaneMaterializer);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.OperatorOnly);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerUnavailable, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MaterializerUnavailable);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerReady, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MaterializerReady);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerSelected, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MaterializerSelected);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerExecuting, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MaterializerExecuting);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MaterializerRisk);
+        }
+
+        if (providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsDependencyReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.DependencyReady);
+        }
+
+        if (providerOwnedControlPlaneProvisioning.IsProvisioningReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProvisioningReady);
+        }
+        else if (providerOwnedControlPlaneProvisioning.IsProvisioningExecuting)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProvisioningExecuting);
+        }
+        else if (providerOwnedControlPlaneProvisioning.IsProvisioningBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProvisioningBlocked);
+        }
+        else if (providerOwnedControlPlaneProvisioning.IsProvisioningRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProvisioningRisk);
+        }
+
+        if (providerOwnedControlPlaneMutationReconcile.IsMutationReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MutationReady);
+        }
+
+        if (providerOwnedControlPlaneMutationReconcile.IsReconcileReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ReconcileReady);
+        }
+
+        if (providerOwnedControlPlaneMutationReconcile.IsMutationExecuting)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MutationExecuting);
+        }
+        else if (providerOwnedControlPlaneMutationReconcile.IsMutationBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MutationBlocked);
+        }
+        else if (providerOwnedControlPlaneMutationReconcile.IsMutationRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MutationRisk);
+        }
+
+        if (providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsProvisioningHardened ||
+            providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsMutationHardened)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ApplyAndReconcileHardened);
+        }
+
+        if (providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileExecuting)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ApplyAndReconcileExecuting);
+        }
+        else if (providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileRisk ||
+                 providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.IsDependencyRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ApplyAndReconcileRisk);
+        }
+
+        if (hasTargetOperation)
+        {
+            if (isMutationOperation)
+            {
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MutationOperation);
+            }
+            else if (isReconcileOperation)
+            {
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ReconcileOperation);
+            }
+        }
+        else
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.NoTargetOperation);
+        }
+
+        AddCategory(
+            categories,
+            canUseProviderSpecificControlPlaneMaterializerOnCurrentNode
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.CurrentNodeExecutable
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.CurrentNodeBlocked);
+
+        AddCategory(
+            categories,
+            hasProviderIdentity
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProviderIdentityReady
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MissingProviderId);
+        AddCategory(
+            categories,
+            hasMaterializerIdentity
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MaterializerIdentityReady
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MissingMaterializerId);
+        AddCategory(
+            categories,
+            hasTransportIdentity
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.TransportIdentityReady
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MissingTransportKind);
+        AddCategory(
+            categories,
+            hasProviderSurfaceIdentity
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProviderSurfaceReady
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MissingProviderSurface);
+        AddCategory(
+            categories,
+            hasConnectorIdentity
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ConnectorIdentityReady
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MissingConnectorId);
+        AddCategory(
+            categories,
+            hasWorkerIdentity
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.WorkerIdentityVisible
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.WorkerIdentityUnavailable);
+
+        AddCategory(
+            categories,
+            wouldApplyChanges
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.WouldApplyChanges
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.NoChangesRequired);
+
+        if (requiresExplicitApproval)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ApprovalRequired);
+        }
+
+        if (isDestructiveOperation)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.DestructiveOperation);
+        }
+
+        if (hasDeclaredDependencyIdentity)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.DeclaredDependencyIdentityReady);
+        }
+
+        if (hasReportedDependencyIdentity)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ReportedDependencyIdentityReady);
+        }
+
+        AddCategory(
+            categories,
+            summary.HasActiveReporterLease
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ReporterLeaseActive
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ReporterLeaseMissingOrStale);
+
+        if (latestCommandExecution.IsAdapted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProviderCommandAdapted);
+        }
+        else if (latestCommandExecution.IsNoOp)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProviderCommandNoOp);
+        }
+        else if (latestCommandExecution.IsBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProviderCommandBlocked);
+        }
+        else if (latestCommandExecution.IsFailed)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProviderCommandFailed);
+        }
+
+        return categories
+            .OrderBy(static category => category, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static string CreateManagedConnectorProviderSpecificControlPlaneMaterializerDescription(
+        string state,
+        string operationId,
+        string? providerId,
+        string? materializerId,
+        string? transportKind,
+        string? providerSurfaceId,
+        CdcCaptureExecutionRuntimeSummary summary,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+        bool hasProviderIdentity,
+        bool hasMaterializerIdentity,
+        bool hasTransportIdentity,
+        bool hasProviderSurfaceIdentity,
+        bool hasConnectorIdentity,
+        string? reconciliationReason)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(summary);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(executionAdapter);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening);
+
+        var operationLabel = CreateManagedConnectorExecutionAdapterOperationLabel(operationId);
+        var providerLabel = string.IsNullOrWhiteSpace(providerId) ? "unknown-provider" : providerId.Trim();
+        var materializerLabel = string.IsNullOrWhiteSpace(materializerId) ? "unknown-materializer" : materializerId.Trim();
+        var detail = CombineManagedConnectorCommandEnvelopeDetail(
+            CombineManagedConnectorCommandEnvelopeDetail(
+                providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.Description,
+                executionAdapter.Description,
+                latestCommandExecution.IsUnrecorded ? null : latestCommandExecution.Description),
+            summary.ReporterCoordination.Description,
+            CombineManagedConnectorCommandEnvelopeDetail(commandJournal.Description, reconciliationReason, null));
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                "The execution runtime does not currently represent managed-connector provider-specific control-plane materialization.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can describe provider-specific control-plane materializer follow-through for {operationLabel}, but the lane still remains operator-owned outside the engine.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can identify provider-specific materializer follow-through for provider '{providerLabel}', but the selected materializer '{materializerLabel}' still remains risky on the shared runtime surface.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerUnavailable, StringComparison.OrdinalIgnoreCase))
+        {
+            string summaryText;
+            if (!hasProviderIdentity)
+            {
+                summaryText = $"Cephalon cannot yet select one provider-specific control-plane materializer for {operationLabel} because the provider identity is missing.";
+            }
+            else if (!hasMaterializerIdentity)
+            {
+                summaryText = $"Cephalon cannot yet select one provider-specific control-plane materializer for provider '{providerLabel}' because no materializer id is declared.";
+            }
+            else if (!hasTransportIdentity)
+            {
+                summaryText = $"Cephalon cannot yet use provider-specific materializer '{materializerLabel}' because the transport kind is missing.";
+            }
+            else if (!hasProviderSurfaceIdentity)
+            {
+                summaryText = $"Cephalon cannot yet use provider-specific materializer '{materializerLabel}' because the provider surface id is missing.";
+            }
+            else if (!hasConnectorIdentity)
+            {
+                summaryText = $"Cephalon cannot yet use provider-specific materializer '{materializerLabel}' because the connector identity is missing.";
+            }
+            else
+            {
+                summaryText = $"Cephalon cannot yet use provider-specific materializer '{materializerLabel}' for {operationLabel} because the shared provider adapter lane still remains unavailable.";
+            }
+
+            return AppendManagedConnectorCommandEnvelopeDetail(summaryText, detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerReady, StringComparison.OrdinalIgnoreCase))
+        {
+            var transportLabel = string.IsNullOrWhiteSpace(transportKind) ? "unknown-transport" : transportKind.Trim();
+            var surfaceLabel = string.IsNullOrWhiteSpace(providerSurfaceId) ? "unknown-surface" : providerSurfaceId.Trim();
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon is ready to use provider-specific materializer '{materializerLabel}' for provider '{providerLabel}' on {transportLabel} surface '{surfaceLabel}' when {operationLabel} needs a provider-owned control-plane step.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerSelected, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon selected provider-specific materializer '{materializerLabel}' for provider '{providerLabel}' while staging {operationLabel} on the shared provider lane.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStates.MaterializerExecuting, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon selected provider-specific materializer '{materializerLabel}' for provider '{providerLabel}', and that materializer is actively driving {operationLabel} on the shared provider lane.",
+                detail);
+        }
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"Cephalon exposes provider-specific control-plane materializer truth for provider '{providerLabel}'.",
+            detail);
+    }
+
+    private static string ResolveManagedConnectorProviderSpecificControlPlaneMaterializerSourceId(
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus providerOwnedControlPlaneOwnership,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus providerOwnedControlPlaneMutationReconcile,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus providerOwnedControlPlaneProvisioning,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus providerOwnedControlPlaneApplyAndReconcileExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
+        bool hasProviderIdentity,
+        bool hasMaterializerIdentity)
+    {
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneOwnership);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneMutationReconcile);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneProvisioning);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneApplyAndReconcileExecution);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening);
+        ArgumentNullException.ThrowIfNull(executionAdapter);
+
+        if (!latestCommandExecution.IsUnrecorded && latestCommandExecution.IsFailed)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.CommandExecution;
+        }
+
+        if (providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening;
+        }
+
+        if (providerOwnedControlPlaneApplyAndReconcileExecution.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.ProviderOwnedControlPlaneApplyAndReconcileExecution;
+        }
+
+        if (providerOwnedControlPlaneProvisioning.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.ProviderOwnedControlPlaneProvisioning;
+        }
+
+        if (providerOwnedControlPlaneMutationReconcile.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.ProviderOwnedControlPlaneMutationReconcile;
+        }
+
+        if (providerOwnedControlPlaneOwnership.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.ProviderOwnedControlPlaneOwnership;
+        }
+
+        if (providerExecutionOrchestration.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.ProviderExecutionOrchestration;
+        }
+
+        if (providerOwnedWritePathExecution.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.ProviderOwnedWritePathExecution;
+        }
+
+        if (executionAdapter.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.ExecutionAdapter;
+        }
+
+        if (!string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.CommandJournal;
+        }
+
+        if (!latestCommandExecution.IsUnrecorded)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.CommandExecution;
+        }
+
+        return hasProviderIdentity || hasMaterializerIdentity
+            ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.Metadata
+            : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerSources.Unknown;
+    }
+
     private sealed record ManagedConnectorMetadataSnapshot(
         string? ManagementMode,
         string? DeclaredConnectClusterId,
@@ -18928,5 +19758,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         string? ConnectorLifecycleState,
         string? TaskReconciliationState,
         string? ReconciliationState,
-        string? ReconciliationReason);
+        string? ReconciliationReason,
+        string? ProviderSpecificControlPlaneProviderId,
+        string? ProviderSpecificControlPlaneMaterializerId,
+        string? ProviderSpecificControlPlaneTransportKind,
+        string? ProviderSpecificControlPlaneSurfaceId,
+        string? ProviderSpecificControlPlaneConnectorId,
+        string? ProviderSpecificControlPlaneWorkerId);
 }
