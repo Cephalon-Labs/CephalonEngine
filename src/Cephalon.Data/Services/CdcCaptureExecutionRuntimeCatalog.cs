@@ -1179,6 +1179,17 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind(string transportKind)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportKind);
+        var normalizedTransportKind = transportKind.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer.TransportKind,
+            normalizedTransportKind,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(string connectorId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectorId);
@@ -1187,6 +1198,17 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         return FilterRuntimes(runtime => string.Equals(
             runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer.ConnectorId,
             normalizedConnectorId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(string workerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerId);
+        var normalizedWorkerId = workerId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer.WorkerId,
+            normalizedWorkerId,
             StringComparison.OrdinalIgnoreCase));
     }
 
@@ -1255,6 +1277,17 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind(string transportKind)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportKind);
+        var normalizedTransportKind = transportKind.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.TransportKind,
+            normalizedTransportKind,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(string connectorId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectorId);
@@ -1263,6 +1296,17 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         return FilterRuntimes(runtime => string.Equals(
             runtime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.ConnectorId,
             normalizedConnectorId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(string workerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerId);
+        var normalizedWorkerId = workerId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.WorkerId,
+            normalizedWorkerId,
             StringComparison.OrdinalIgnoreCase));
     }
 
@@ -17657,6 +17701,20 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 "debeziumWorkerId"));
     }
 
+    private static string? ResolveBestAvailableProviderSpecificControlPlaneWorkerId(
+        string? providerSpecificWorkerId,
+        string? activeReporterId)
+    {
+        if (!string.IsNullOrWhiteSpace(providerSpecificWorkerId))
+        {
+            return providerSpecificWorkerId.Trim();
+        }
+
+        return string.IsNullOrWhiteSpace(activeReporterId)
+            ? null
+            : activeReporterId.Trim();
+    }
+
     private static CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus CreateManagedConnectorActionPlanStatus(
         string state,
         string description,
@@ -19228,9 +19286,9 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         var connectorId = string.IsNullOrWhiteSpace(metadataSnapshot.ProviderSpecificControlPlaneConnectorId)
             ? null
             : metadataSnapshot.ProviderSpecificControlPlaneConnectorId.Trim();
-        var workerId = string.IsNullOrWhiteSpace(metadataSnapshot.ProviderSpecificControlPlaneWorkerId)
-            ? null
-            : metadataSnapshot.ProviderSpecificControlPlaneWorkerId.Trim();
+        var workerId = ResolveBestAvailableProviderSpecificControlPlaneWorkerId(
+            metadataSnapshot.ProviderSpecificControlPlaneWorkerId,
+            summary.ActiveReporterId);
         var appliesToManagedConnector =
             executionAdapter.AppliesToManagedConnector ||
             providerOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.AppliesToManagedConnector ||

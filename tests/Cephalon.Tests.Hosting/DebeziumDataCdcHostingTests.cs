@@ -3254,7 +3254,9 @@ public sealed class DebeziumDataCdcHostingTests
                 var providerSpecificMaterializerByProvider = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/providers/{DebeziumDataOptions.ProviderId}");
                 var providerSpecificMaterializerByProviderSurface = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/provider-surfaces/debezium-kafka-connect-rest");
                 var providerSpecificMaterializerByMaterializer = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/materializers/{CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest}");
+                var providerSpecificMaterializerByTransport = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/transports/http-rest");
                 var providerSpecificMaterializerByConnector = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/connectors/{automaticRetryRuntimeId}");
+                var providerSpecificMaterializerByWorker = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/workers/connect-worker-auto");
                 var providerSpecificMaterializerByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/operations/restart");
                 var providerSpecificMaterializer = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-specific-control-plane-materializer");
                 var providerSpecificTeardownAndMutationExecutionHardeningByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/dependency-ready");
@@ -3262,7 +3264,9 @@ public sealed class DebeziumDataCdcHostingTests
                 var providerSpecificTeardownAndMutationExecutionHardeningByProvider = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/providers/{DebeziumDataOptions.ProviderId}");
                 var providerSpecificTeardownAndMutationExecutionHardeningByProviderSurface = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/debezium-kafka-connect-rest");
                 var providerSpecificTeardownAndMutationExecutionHardeningByMaterializer = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest}");
+                var providerSpecificTeardownAndMutationExecutionHardeningByTransport = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/transports/http-rest");
                 var providerSpecificTeardownAndMutationExecutionHardeningByConnector = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{automaticRetryRuntimeId}");
+                var providerSpecificTeardownAndMutationExecutionHardeningByWorker = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/workers/connect-worker-auto");
                 var providerSpecificTeardownAndMutationExecutionHardeningByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/restart");
                 var providerSpecificTeardownAndMutationExecutionHardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening");
                 var commandHistory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/command-executions");
@@ -3366,6 +3370,12 @@ public sealed class DebeziumDataCdcHostingTests
                 Assert.Equal("debezium-kafka-connect-rest", completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.ProviderSurfaceId);
                 Assert.Equal(automaticRetryRuntimeId, completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.ConnectorId);
                 Assert.Equal(automaticRetryRuntimeId, completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.ConnectorId);
+                Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.WorkerId);
+                Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.HasWorkerIdentity);
+                Assert.Equal(
+                    "connect-worker-auto",
+                    completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.WorkerId);
+                Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.HasWorkerIdentity);
                 Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardening);
                 Assert.Equal(
                     CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStates.DependencyReady,
@@ -3376,12 +3386,15 @@ public sealed class DebeziumDataCdcHostingTests
                 Assert.Equal(
                     CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest,
                     providerSpecificTeardownAndMutationExecutionHardening.MaterializerId);
+                Assert.Equal("connect-worker-auto", providerSpecificTeardownAndMutationExecutionHardening.WorkerId);
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByState!.Select(static runtime => runtime.Id).ToArray());
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByCategory!.Select(static runtime => runtime.Id).ToArray());
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByProvider!.Select(static runtime => runtime.Id).ToArray());
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByProviderSurface!.Select(static runtime => runtime.Id).ToArray());
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByMaterializer!.Select(static runtime => runtime.Id).ToArray());
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByTransport!.Select(static runtime => runtime.Id).ToArray());
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByConnector!.Select(static runtime => runtime.Id).ToArray());
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByWorker!.Select(static runtime => runtime.Id).ToArray());
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByOperation!.Select(static runtime => runtime.Id).ToArray());
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
                 Assert.Contains(
@@ -3608,9 +3621,16 @@ public sealed class DebeziumDataCdcHostingTests
                 Assert.Equal("http-rest", providerSpecificMaterializer.TransportKind);
                 Assert.Equal("debezium-kafka-connect-rest", providerSpecificMaterializer.ProviderSurfaceId);
                 Assert.Equal(automaticRetryRuntimeId, providerSpecificMaterializer.ConnectorId);
+                Assert.Equal("connect-worker-auto", providerSpecificMaterializer.WorkerId);
+                Assert.True(providerSpecificMaterializer.HasWorkerIdentity);
                 Assert.False(providerSpecificMaterializer.CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerByTransport!.Select(static runtime => runtime.Id).ToArray());
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerByWorker!.Select(static runtime => runtime.Id).ToArray());
                 Assert.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.MaterializerExecuting,
+                    providerSpecificMaterializer.CategoryIds);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.WorkerIdentityVisible,
                     providerSpecificMaterializer.CategoryIds);
                 Assert.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ProviderCommandAdapted,
@@ -4013,7 +4033,9 @@ public sealed class DebeziumDataCdcHostingTests
             var providerSpecificTeardownAndMutationExecutionHardeningByProvider = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/providers/{DebeziumDataOptions.ProviderId}");
             var providerSpecificTeardownAndMutationExecutionHardeningByProviderSurface = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/debezium-kafka-connect-rest");
             var providerSpecificTeardownAndMutationExecutionHardeningByMaterializer = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest}");
+            var providerSpecificTeardownAndMutationExecutionHardeningByTransport = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/transports/http-rest");
             var providerSpecificTeardownAndMutationExecutionHardeningByConnector = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{automaticRetryRuntimeId}");
+            var providerSpecificTeardownAndMutationExecutionHardeningByWorker = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/workers/connect-worker-owner-b");
             var providerSpecificTeardownAndMutationExecutionHardeningByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/restart");
             var providerSpecificTeardownAndMutationExecutionHardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening");
 
@@ -4447,8 +4469,14 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByMaterializer);
             Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByMaterializer.Select(static item => item.Id).ToArray());
 
+            Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByTransport);
+            Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByTransport.Select(static item => item.Id).ToArray());
+
             Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByConnector);
             Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByConnector.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByWorker);
+            Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByWorker.Select(static item => item.Id).ToArray());
 
             Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByOperation);
             Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByOperation.Select(static item => item.Id).ToArray());
@@ -4466,8 +4494,13 @@ public sealed class DebeziumDataCdcHostingTests
                 providerSpecificTeardownAndMutationExecutionHardening.MaterializerId);
             Assert.Equal("debezium-kafka-connect-rest", providerSpecificTeardownAndMutationExecutionHardening.ProviderSurfaceId);
             Assert.Equal(automaticRetryRuntimeId, providerSpecificTeardownAndMutationExecutionHardening.ConnectorId);
+            Assert.Equal("connect-worker-owner-b", providerSpecificTeardownAndMutationExecutionHardening.WorkerId);
+            Assert.True(providerSpecificTeardownAndMutationExecutionHardening.HasWorkerIdentity);
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories.ProviderCommandBlocked,
+                providerSpecificTeardownAndMutationExecutionHardening.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories.WorkerIdentityVisible,
                 providerSpecificTeardownAndMutationExecutionHardening.CategoryIds);
             Assert.False(providerSpecificTeardownAndMutationExecutionHardening.CanExecuteDependencyAwareTeardownAndMutationExecutionOnCurrentNode);
             Assert.False(providerSpecificTeardownAndMutationExecutionHardening.CanExecuteDependencyAwareMutationExecutionOnCurrentNode);

@@ -47253,6 +47253,36 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 Parameters:
 - `hardeningState`: The stable provider-specific teardown and mutation-execution hardening state to filter on.
 
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningtransportkind-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind(string transportKind)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested transport kind.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that transport kind.
+
+Parameters:
+- `transportKind`: The stable transport kind to filter on.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningworkerid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(string workerId)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested worker identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that worker identifier.
+
+Parameters:
+- `workerId`: The stable worker identifier to filter on.
+
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializercategory-system-string"></a>
 
 ##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory`
@@ -47357,6 +47387,36 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `materializerState`: The stable provider-specific control-plane materializer state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializertransportkind-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind(string transportKind)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested transport kind.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that transport kind.
+
+Parameters:
+- `transportKind`: The stable transport kind to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerworkerid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(string workerId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested worker identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that worker identifier.
+
+Parameters:
+- `workerId`: The stable worker identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicycategory-system-string"></a>
 

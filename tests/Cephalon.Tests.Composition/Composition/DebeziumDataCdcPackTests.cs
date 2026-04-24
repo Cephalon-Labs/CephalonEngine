@@ -186,6 +186,7 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal("RUNNING:2", state.Metadata["debeziumTaskStateSummary"]);
         Assert.Equal("42", state.Metadata["debeziumConnectorGeneration"]);
         Assert.Equal("connect-worker-a-1", state.Metadata["debeziumWorkerId"]);
+        Assert.Equal("connect-worker-a-1", state.Metadata["managedConnectorProviderSpecificControlPlaneWorkerId"]);
         Assert.Equal("180", state.Metadata["observationStaleAfterSeconds"]);
         Assert.Equal("2026-04-23T05:02:00.0000000+00:00", state.Metadata["cdcCaptureReporterLeaseExpiresAtUtc"]);
 
@@ -277,6 +278,7 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal("RUNNING:2", runtime.Metadata["debeziumTaskStateSummary"]);
         Assert.Equal("42", runtime.Metadata["debeziumConnectorGeneration"]);
         Assert.Equal("connect-worker-a-1", runtime.Metadata["debeziumWorkerId"]);
+        Assert.Equal("connect-worker-a-1", runtime.Metadata["managedConnectorProviderSpecificControlPlaneWorkerId"]);
     }
 
     [Fact]
@@ -3924,13 +3926,17 @@ public sealed class DebeziumDataCdcPackTests
                 Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.HasTransportIdentity);
                 Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.HasProviderSurfaceIdentity);
                 Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.HasConnectorIdentity);
-                Assert.False(completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.HasWorkerIdentity);
+                Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.WorkerId);
+                Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.HasWorkerIdentity);
                 Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.HasProviderIdentity);
                 Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.HasMaterializerIdentity);
                 Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.HasTransportIdentity);
                 Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.HasProviderSurfaceIdentity);
                 Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.HasConnectorIdentity);
-                Assert.False(completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.HasWorkerIdentity);
+                Assert.Equal(
+                    "connect-worker-auto",
+                    completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.WorkerId);
+                Assert.True(completedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.HasWorkerIdentity);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorDistributedRetryLease.CoordinationOwnerId);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorCrossNodeIdempotencyHardening.CoordinationOwnerId);
@@ -4080,7 +4086,7 @@ public sealed class DebeziumDataCdcPackTests
                     CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.ConnectorIdentityReady,
                     completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.CategoryIds);
                 Assert.Contains(
-                    CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.WorkerIdentityUnavailable,
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.WorkerIdentityVisible,
                     completedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.CategoryIds);
                 Assert.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories.CurrentNodeBlocked,
@@ -4402,6 +4408,12 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind("http-rest")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(automaticRetryRuntimeId)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
@@ -4439,6 +4451,12 @@ public sealed class DebeziumDataCdcPackTests
                 [automaticRetryRuntimeId],
                 runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind("http-rest")
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
@@ -5146,6 +5164,12 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId("connect-worker-auto")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId(refreshedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.OperationId)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
@@ -5183,6 +5207,12 @@ public sealed class DebeziumDataCdcPackTests
                 [automaticRetryRuntimeId],
                 runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(automaticRetryRuntimeId)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId("connect-worker-auto")
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(

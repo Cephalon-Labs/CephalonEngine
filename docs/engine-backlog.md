@@ -3231,6 +3231,142 @@ Delivered:
   and mutation hardening baseline through composition tests `42/42`, hosting tests `20/20`,
   tooling tests `207/207`, and the reference docs publish script
 
+### ENG-206 Phase 13 managed-connector provider-specific transport identity drill-down follow-through baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-201` through `ENG-205` already shipped shared provider-specific materializer and
+  dependency-aware teardown/mutation-execution posture plus provider-surface, connector, and worker
+  drill-down truth, but operators still lacked one stable shared way to drill into those answers by
+  transport kind on the same `/engine/cdc-capture-runtimes*` family
+- the next follow-through needed to keep provider-specific transport identity drill-down additive on
+  the existing shared execution-runtime catalog, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` instead of inventing a Debezium-only operator surface
+- later additional provider-specific control-plane materializers or broader provider-specific
+  teardown and mutation-execution follow-through still needed that transport drill-down truth to stay
+  grounded in the same shared catalog and route family
+
+Acceptance:
+
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive transport-kind filters for both
+  `ManagedConnectorProviderSpecificControlPlaneMaterializer` and
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`
+- `Cephalon.AspNetCore` publishes matching transport routes for those same two shared
+  provider-specific surfaces without introducing a second coordinator, second registry, or
+  Debezium-only API family
+- targeted coverage proves the new transport drill-downs across the shared composition and hosting
+  stories, and docs/tracking stay aligned with the shipped slice
+
+Delivered:
+
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind(...)` and
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind(...)`
+  on the same shared execution-runtime catalog
+- `Cephalon.AspNetCore` now publishes
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/transports/{transportKind}`
+  and
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/transports/{transportKind}`
+  on the existing shared route family
+- targeted coverage now proves the transport drill-down follow-through through composition tests
+  `2/2`, hosting tests `2/2`, tooling tests `207/207`, and the reference docs publish script
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later additional provider-specific control-plane materializers or
+  broader provider-specific teardown and mutation-execution follow-through remain separate
+
+### ENG-205 Phase 13 managed-connector provider-specific worker identity drill-down follow-through baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-201` through `ENG-204` already shipped shared provider-specific materializer and
+  dependency-aware teardown/mutation-execution posture plus truthful worker identity, but operators
+  still lacked one stable shared way to drill into those answers by worker id on the same
+  `/engine/cdc-capture-runtimes*` family
+- the next follow-through needed to keep provider-specific worker identity drill-down additive on
+  the existing shared execution-runtime catalog, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` instead of inventing a Debezium-only operator surface
+- later provider-specific transport drill-down or broader provider-specific teardown and
+  mutation-execution follow-through still needed that worker drill-down truth to stay grounded in
+  the same shared catalog and route family
+
+Acceptance:
+
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive worker-id filters for both
+  `ManagedConnectorProviderSpecificControlPlaneMaterializer` and
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`
+- `Cephalon.AspNetCore` publishes matching worker routes for those same two shared provider-specific
+  surfaces without introducing a second coordinator, second registry, or Debezium-only API family
+- targeted coverage proves the new worker drill-downs across the shared composition and hosting
+  stories, and docs/tracking stay aligned with the shipped slice
+
+Delivered:
+
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(...)` and
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(...)`
+  on the same shared execution-runtime catalog
+- `Cephalon.AspNetCore` now publishes
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/workers/{workerId}`
+  and
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/workers/{workerId}`
+  on the existing shared route family
+- targeted coverage now proves the worker drill-down follow-through through composition tests
+  `2/2`, hosting tests `2/2`, tooling tests `207/207`, and the reference docs publish script
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later provider-specific transport drill-down or broader
+  provider-specific teardown and mutation-execution follow-through remain separate
+
+### ENG-204 Phase 13 managed-connector provider-specific worker identity normalization follow-through baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-201` and `ENG-202` already shipped shared provider-specific materializer and
+  dependency-aware teardown/mutation-execution posture, but Debezium external reports could still
+  omit raw `workerId` metadata even when the stable external `reporterId` was already known on the
+  same shared runtime story
+- the next follow-through needed to keep worker identity truthful on the existing shared
+  execution-runtime catalog, `/engine/runtime-story`, and `snapshot.CdcCaptureExecutionRuntimes`
+  instead of collapsing provider-specific worker posture back to missing identity whenever a report
+  omitted that one metadata field
+- later worker and transport drill-down follow-through still needed worker identity normalization to
+  stay grounded in the same shared report-sink and execution-runtime catalog path
+
+Acceptance:
+
+- `Cephalon.Data.Debezium` normalizes provider-specific worker identity through the existing report
+  sink by falling back from raw `workerId` metadata to the stable external `reporterId`
+- the shared execution-runtime catalog resolves the best available provider-specific worker id from
+  normalized metadata plus active reporter truth for both provider-specific materializer and
+  dependency-aware teardown/mutation-execution hardening posture
+- targeted coverage proves worker identity stays visible across external report ingestion and the
+  existing automatic retry execution story, and docs/tracking stay aligned with the shipped slice
+
+Delivered:
+
+- `DebeziumExecutionRuntimeReportSink` now falls back from raw `workerId` metadata to the stable
+  external `reporterId` when normalizing provider-specific control-plane observations
+- the shared execution-runtime catalog now resolves the best available provider-specific worker id
+  from normalized provider-specific metadata plus active reporter truth, keeping
+  `WorkerIdentityVisible`, `WorkerId`, and `HasWorkerIdentity` aligned for both shared
+  provider-specific control-plane surfaces
+- targeted coverage now proves the worker identity normalization follow-through through composition
+  tests `2/2`, hosting tests `2/2`, tooling tests `207/207`, and the reference docs publish script
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later worker/transport drill-down or broader provider-specific teardown
+  and mutation-execution follow-through remain separate
+
 ### ENG-203 Phase 13 managed-connector provider-specific control-plane identity drill-down follow-through baseline
 
 Status: done

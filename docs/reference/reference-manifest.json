@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-24T16:12:46.4230117+00:00",
+  "GeneratedAtUtc": "2026-04-24T18:01:07.3709845+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8866,7 +8866,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 113
+        "Methods": 117
       }
     },
     {
@@ -47301,6 +47301,28 @@
       "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningtransportkind-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind(string transportKind)",
+      "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested transport kind."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningworkerid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(string workerId)",
+      "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested worker identifier."
+    },
+    {
       "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -47376,6 +47398,28 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerstate-system-string",
       "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerState(string materializerState)",
       "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer matches the requested state."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializertransportkind-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind(string transportKind)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested transport kind."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerworkerid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(string workerId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested worker identifier."
     },
     {
       "DisplayName": "GetByManagedConnectorRetryExecutionPolicyCategory",

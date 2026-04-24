@@ -921,6 +921,28 @@ distributed scheduler, or second coordinator.
   `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`,
   so operators can move directly from `debezium-kafka-connect-rest` surface identity or a stable
   connector id to the matching runtime on the same shared CDC runtime story
+- `ENG-204` now keeps worker identity truthful on that same shared lane even when Debezium reports
+  omit a raw `workerId`: the report sink now falls back to the stable external `reporterId`, the
+  shared execution-runtime catalog resolves the best available provider-specific worker id from
+  normalized metadata plus active reporter truth, and both provider-specific control-plane answers
+  now keep `WorkerId`, `HasWorkerIdentity`, and `WorkerIdentityVisible` posture aligned on the same
+  shared runtime story
+- `ENG-205` now keeps that same shared managed-connector control-plane lane explicit about how to
+  drill into shipped Debezium worker identity without inventing a Debezium-only operator API: the
+  shared execution-runtime catalog and ASP.NET Core route family now expose
+  `/workers/{workerId}` filters for both
+  `ManagedConnectorProviderSpecificControlPlaneMaterializer` and
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`,
+  so operators can move directly from a stable Kafka Connect worker id to the matching runtime on
+  the same shared CDC runtime story
+- `ENG-206` now keeps that same shared managed-connector control-plane lane explicit about how to
+  drill into shipped Debezium transport identity without inventing a Debezium-only operator API:
+  the shared execution-runtime catalog and ASP.NET Core route family now expose
+  `/transports/{transportKind}` filters for both
+  `ManagedConnectorProviderSpecificControlPlaneMaterializer` and
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`,
+  so operators can move directly from the stable `http-rest` transport kind to the matching runtime
+  on the same shared CDC runtime story
 - bounded automatic background retry execution still remains shared in-process truth, and the
   shipped broader provider-owned write-path execution posture plus broader provider execution
   orchestration posture plus broader provider-owned control-plane ownership posture plus broader

@@ -76,7 +76,8 @@ internal sealed class DebeziumExecutionRuntimeReportSink(IServiceProvider servic
         var restartingTaskIds = ResolveTaskIds(metadata, "restartingTaskIds");
         var taskStateSummary = NormalizeOptional(ResolveMetadata(metadata, "taskStateSummary"));
         var connectorGeneration = NormalizeConfiguredValue(ResolveMetadata(metadata, "connectorGeneration"));
-        var workerId = NormalizeOptional(ResolveMetadata(metadata, "workerId"));
+        var workerId = NormalizeOptional(ResolveMetadata(metadata, "workerId")) ??
+                       NormalizeOptional(observation.ReporterId);
 
         if (reportedTaskIds.Length == 0)
         {

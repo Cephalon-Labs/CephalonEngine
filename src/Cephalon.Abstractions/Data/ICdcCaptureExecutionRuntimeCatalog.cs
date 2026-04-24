@@ -739,11 +739,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(string materializerId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested transport kind.
+    /// </summary>
+    /// <param name="transportKind">The stable transport kind to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that transport kind.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind(string transportKind);
+
+    /// <summary>
     /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested connector identifier.
     /// </summary>
     /// <param name="connectorId">The stable connector identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that connector identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(string connectorId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested worker identifier.
+    /// </summary>
+    /// <param name="workerId">The stable worker identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that worker identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(string workerId);
 
     /// <summary>
     /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested operation.
@@ -788,11 +802,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(string materializerId);
 
     /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested transport kind.
+    /// </summary>
+    /// <param name="transportKind">The stable transport kind to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that transport kind.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind(string transportKind);
+
+    /// <summary>
     /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested connector identifier.
     /// </summary>
     /// <param name="connectorId">The stable connector identifier to filter on.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that connector identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(string connectorId);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested worker identifier.
+    /// </summary>
+    /// <param name="workerId">The stable worker identifier to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that worker identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(string workerId);
 
     /// <summary>
     /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested operation identifier.
