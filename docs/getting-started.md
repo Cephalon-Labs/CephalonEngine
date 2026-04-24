@@ -45,11 +45,14 @@ If you are running the repo-local artifact flow, replace `<package-source>` with
 - `Microsoft.NETCore.App` 10.x is installed
 - `Microsoft.AspNetCore.App` 10.x is installed
 - the optional Cephalon template pack is available through `dotnet new`
+- the packaged deployment-mode support contract is echoed back so adopters can see the stable shipping floor, the `.NET 11` readiness lane, and the current trim / Native AOT / single-file posture from one command
 
 Expected success characteristics:
 
 - required SDK/runtime checks show `[ok]`
 - missing template-pack support shows `[warn]` rather than blocking `cephalon new`
+- the deployment-mode shipping baseline shows `[ok]` for `net10.0` plus the `.NET 11` `assessment-only` readiness lane
+- trim, Native AOT, and single-file support stay visible as `[warn]` while they remain outside the current support contract
 - the command finishes with next steps for `cephalon new`, `dotnet run`, and the runtime inspection routes
 
 If the command reports a required failure, fix that issue first and rerun `cephalon doctor` before generating a host.

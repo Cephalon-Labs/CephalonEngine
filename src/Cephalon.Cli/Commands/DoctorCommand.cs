@@ -290,8 +290,51 @@ internal static class DoctorCommand
             }
         }
 
+        AddDeploymentModeSupportChecks(checks);
         var generatedApp = EvaluateGeneratedApp(options.AppRootPath, checks);
         return new DoctorEvaluation(checks, templatePackInstalled, generatedApp);
+    }
+
+    private static void AddDeploymentModeSupportChecks(ICollection<DoctorCheck> checks)
+    {
+        if (!DeploymentModeSupportContract.TryLoad(out var supportContract, out var error) || supportContract is null)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Warning,
+                "Deployment-mode support contract",
+                $"Could not load the packaged deployment-mode support contract: {error}",
+                "Reinstall Cephalon.Cli or inspect docs/deployment-mode-support.md from the matching repository snapshot."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Deployment-mode shipping baseline",
+            $"Stable shipping floor '{supportContract.ShippingBaseline.StableTargetFramework}', readiness lane '{supportContract.ShippingBaseline.ReadinessLaneTargetFramework}' ({supportContract.ShippingBaseline.ReadinessLaneStatus}).",
+            null));
+
+        AddDeploymentModeCheck(checks, "Trim support contract", supportContract.DeploymentModes.Trim);
+        AddDeploymentModeCheck(checks, "Native AOT support contract", supportContract.DeploymentModes.NativeAot);
+        AddDeploymentModeCheck(checks, "Single-file support contract", supportContract.DeploymentModes.SingleFile);
+    }
+
+    private static void AddDeploymentModeCheck(
+        ICollection<DoctorCheck> checks,
+        string title,
+        DeploymentModeSupportMode supportMode)
+    {
+        var severity = string.Equals(supportMode.Status, "claimed", StringComparison.OrdinalIgnoreCase)
+            ? DoctorCheckSeverity.Pass
+            : DoctorCheckSeverity.Warning;
+        var guidance = severity == DoctorCheckSeverity.Pass
+            ? null
+            : "Treat this deployment mode as unsupported for external adoption until the support contract explicitly changes.";
+
+        checks.Add(new DoctorCheck(
+            severity,
+            title,
+            $"{supportMode.Status}. {supportMode.Summary}",
+            guidance));
     }
 
     private static GeneratedAppDoctorEvaluation? EvaluateGeneratedApp(

@@ -18,4 +18,8 @@
   <ItemGroup>
     <None Include="PACKAGE.md" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\scripts\deployment-mode-support.json" LogicalName="Cephalon.Cli.Resources.deployment-mode-support.json" />
+  </ItemGroup>
 </Project>

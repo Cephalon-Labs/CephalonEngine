@@ -281,6 +281,10 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Microsoft.NETCore.App: 10.0.5", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Microsoft.AspNetCore.App: 10.0.5", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Cephalon template pack: No Cephalon templates were found by `dotnet new list cephalon`.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Deployment-mode shipping baseline: Stable shipping floor 'net10.0', readiness lane 'net11.0' (assessment-only).", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Trim support contract: not-claimed. Trimming is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Native AOT support contract: not-claimed. Native AOT is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Single-file support contract: not-claimed. Single-file publishing is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Environment is ready for Cephalon CLI scaffolding.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("cephalon new Acme.Store --output ./Acme.Store", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("dotnet new install Cephalon.TemplatePack", stdout.ToString(), StringComparison.Ordinal);
@@ -383,6 +387,8 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Cephalon package source: ./.cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Cephalon local package feed:", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains(".cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Deployment-mode shipping baseline: Stable shipping floor 'net10.0', readiness lane 'net11.0' (assessment-only).", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Trim support contract: not-claimed. Trimming is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host project: ./src/Acme.Store.Host/Acme.Store.Host.csproj", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated publish profile: ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Environment and generated app bootstrap are ready for Cephalon.", stdout.ToString(), StringComparison.Ordinal);

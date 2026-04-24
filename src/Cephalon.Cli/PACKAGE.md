@@ -35,7 +35,7 @@ dotnet tool update --tool-path .\.tools\cephalon Cephalon.Cli `
 .\.tools\cephalon\cephalon docs publish --root .
 ```
 
-`cephalon doctor` is the recommended first-run verification step after installing the tool. It checks the active .NET SDK selection, the installed .NET 10 runtime baselines, and whether the optional `dotnet new` template pack is available.
+`cephalon doctor` is the recommended first-run verification step after installing the tool. It checks the active .NET SDK selection, the installed .NET 10 runtime baselines, whether the optional `dotnet new` template pack is available, and the packaged deployment-mode support contract that currently keeps the stable shipping floor on `net10.0` while `.NET 11` stays an assessment-only readiness lane and trim / Native AOT / single-file remain `not-claimed`.
 If you pass `--app-root <path>`, the same command also verifies the generated app bootstrap: solution file, `Directory.Packages.props`, `NuGet.config`, local or shared Cephalon package-source reachability, generated host project, and `Properties/PublishProfiles/CephalonFolder.pubxml`.
 
 `cephalon new` now emits generated app roots with `NuGet.config`, `./.cephalon/packages/README.md`, `Properties/PublishProfiles/CephalonFolder.pubxml`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/<App>.service`, `deploy/linux/systemd/<App>.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml` so a new host can be validated with `dotnet publish`, Windows Service install previews, IIS install previews, Azure App Service ZIP deploy previews, provider-neutral container-image publish previews, Azure Container Apps source-deploy previews, Kubernetes manifest previews, WSL `systemd-analyze` verification, published-output smoke runs, `docker compose up --build`, and `dotnet run`.
@@ -50,7 +50,7 @@ After scaffolding and seeding packages, rerun:
 .\.tools\cephalon\cephalon doctor --app-root ./Acme.Store
 ```
 
-That gives adopters one truthful command for both machine readiness and generated-app bootstrap readiness before they restore, run, publish, or deploy.
+That gives adopters one truthful command for machine readiness, deployment-mode support posture, and generated-app bootstrap readiness before they restore, run, publish, or deploy.
 
 The shipped `CephalonFolder.pubxml` profile publishes generated hosts to a deterministic `./artifacts/publish/<ProjectName>/` path. For a repo-native replay of scaffold -> seed packages -> publish -> run published output -> probe routes, use `pwsh ./scripts/validate-generated-app-publish.ps1`.
 
