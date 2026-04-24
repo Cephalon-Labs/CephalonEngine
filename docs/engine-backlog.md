@@ -3231,6 +3231,105 @@ Delivered:
   and mutation hardening baseline through composition tests `42/42`, hosting tests `20/20`,
   tooling tests `207/207`, and the reference docs publish script
 
+### ENG-202 Phase 13 managed-connector provider-specific control-plane dependency-aware teardown and mutation-execution hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168` through `ENG-201` already shipped the shared external-runtime coverage,
+  remediation, governance, drift, action-planning, write-path-readiness, preflight, dry-run,
+  execution-intent, execution-approval, command-envelope, command-issuance, provider
+  execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry, coordination, durable journal,
+  distributed lease, orchestration, richer cross-node idempotency, broader multi-node
+  lease-execution, durable shared scheduler, scheduler recovery, broader provider-owned
+  write-path, provider execution orchestration, provider-owned control-plane ownership,
+  mutation/reconcile, provisioning, apply-and-reconcile execution, dependency-aware
+  apply-and-reconcile hardening, dependency-aware provisioning and mutation hardening,
+  and provider-specific control-plane materializer baselines, but operators still lacked one
+  shared answer for whether the selected provider-specific materializer could execute
+  dependency-aware teardown or mutation work safely on the current node
+- the next follow-through needed to keep provider-specific teardown and mutation-execution
+  hardening additive on the existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`,
+  and `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only
+  teardown or mutation-execution subsystem
+- later additional provider-specific control-plane materializers or broader provider-specific
+  teardown and mutation-execution follow-through still needed one truthful shared answer
+  grounded in provider-specific materializer identity plus the shipped provider-owned
+  control-plane dependency-aware provisioning and mutation hardening, apply-and-reconcile,
+  provisioning, mutation/reconcile, ownership, provider execution orchestration,
+  provider-owned write-path, latest command, retry-policy, command-journal, durable-history,
+  and reporter-lease truth
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector provider-specific control-plane
+  dependency-aware teardown and mutation-execution hardening contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `operator-only`,
+  `dependency-ready`, `teardown-blocked`, `mutation-execution-blocked`,
+  `dependency-degraded`, `teardown-hardened`, `mutation-execution-hardened`, and
+  `dependency-risk` posture together with state/category/provider/materializer/operation
+  filters
+- `Cephalon.Data` derives that hardening truth from the shipped provider-specific materializer
+  posture plus provider-owned control-plane dependency-aware provisioning and mutation
+  hardening, apply-and-reconcile, provisioning, mutation/reconcile, ownership, execution
+  orchestration, provider-owned write-path, latest command, retry-policy, command-journal,
+  durable-history, and reporter-lease evidence without introducing a second coordinator or
+  second registry
+- the shared execution-runtime story keeps provider/materializer/transport/provider-surface/
+  connector/worker identity plus current-node capability booleans visible, so hosts and
+  provider packs can read one stable dependency-aware teardown-versus-mutation-execution
+  answer instead of re-deriving the same provider-specific control-plane truth in separate
+  control-plane code
+- `Cephalon.AspNetCore` extends the existing CDC runtime surface with provider-specific
+  dependency-aware teardown and mutation-execution hardening routes for state, category,
+  provider, materializer, operation, and per-runtime detail without introducing a Debezium-only
+  control-plane API family, second coordinator, or second registry
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSources`,
+  and
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus`,
+  and `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`
+- `Cephalon.Data` now derives managed-connector provider-specific control-plane
+  dependency-aware teardown and mutation-execution hardening posture from merged
+  provider-specific materializer plus provider-owned control-plane dependency-aware
+  provisioning and mutation hardening, apply-and-reconcile execution, provisioning,
+  mutation/reconcile, ownership, provider execution orchestration, provider-owned write-path,
+  latest command-execution, retry-execution-policy, command-journal, durable-history,
+  reporter-lease, and normalized provider/materializer/transport/provider-surface/connector/
+  worker identity truth
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState(...)`,
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory(...)`,
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderId(...)`,
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(...)`,
+  and
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningOperationId(...)`
+  on the shared execution-runtime surface instead of forcing hosts or providers to invent a
+  separate teardown or mutation-execution hardening selector
+- `Cephalon.AspNetCore` now publishes
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/{hardeningState}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/categories/{hardeningCategory}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/providers/{providerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{materializerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/{operationId}`,
+  and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening`
+  on the same shared route family without introducing a second coordinator, second registry,
+  or Debezium-only teardown/mutation-execution endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned
+  with the shipped slice while later additional provider-specific control-plane materializers
+  or broader provider-specific teardown and mutation-execution follow-through remain separate
+
 ### ENG-201 Phase 13 managed-connector provider-specific control-plane materializer follow-through baseline
 
 Status: done

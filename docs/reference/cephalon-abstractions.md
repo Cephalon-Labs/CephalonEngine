@@ -8698,6 +8698,16 @@ CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus 
 
 Gets the operator-facing managed-connector provider-owned write-path execution posture derived from execution-adapter, command-execution, retry, scheduler, and recovery truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardening"></a>
+
+##### `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening { get; set; }
+```
+
+Gets the current shared provider-specific dependency-aware teardown and mutation-execution hardening answer for the managed connector when one applies.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderspecificcontrolplanematerializer"></a>
 
 ##### `ManagedConnectorProviderSpecificControlPlaneMaterializer`
@@ -34471,6 +34481,1634 @@ bool WouldApplyChanges { get; set; }
 
 Gets a value indicating whether the current provider-owned write-path would still apply one or more shared write-path changes.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories`
+
+Defines the stable category identifiers used by managed-connector provider-specific control-plane dependency-aware teardown and mutation-execution hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-activetasktopologyready"></a>
+
+##### `ActiveTaskTopologyReady`
+
+```csharp
+const string ActiveTaskTopologyReady
+```
+
+The runtime currently exposes one active task topology.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The current provider lane still requires explicit approval.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-connectoridentityready"></a>
+
+##### `ConnectorIdentityReady`
+
+```csharp
+const string ConnectorIdentityReady
+```
+
+The runtime currently exposes one connector identity.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot yet execute the broader provider-specific teardown or mutation-execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current node can execute the broader provider-specific teardown or mutation-execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-currentnodemutationexecutionblocked"></a>
+
+##### `CurrentNodeMutationExecutionBlocked`
+
+```csharp
+const string CurrentNodeMutationExecutionBlocked
+```
+
+The current node cannot yet execute dependency-aware mutation execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-currentnodemutationexecutionexecutable"></a>
+
+##### `CurrentNodeMutationExecutionExecutable`
+
+```csharp
+const string CurrentNodeMutationExecutionExecutable
+```
+
+The current node can execute dependency-aware mutation execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-currentnodeteardownblocked"></a>
+
+##### `CurrentNodeTeardownBlocked`
+
+```csharp
+const string CurrentNodeTeardownBlocked
+```
+
+The current node cannot yet execute dependency-aware teardown.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-currentnodeteardownexecutable"></a>
+
+##### `CurrentNodeTeardownExecutable`
+
+```csharp
+const string CurrentNodeTeardownExecutable
+```
+
+The current node can execute dependency-aware teardown.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-declareddependencyidentityready"></a>
+
+##### `DeclaredDependencyIdentityReady`
+
+```csharp
+const string DeclaredDependencyIdentityReady
+```
+
+The runtime currently declares complete dependency identity metadata.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-dependencydegraded"></a>
+
+##### `DependencyDegraded`
+
+```csharp
+const string DependencyDegraded
+```
+
+Provider-specific dependency-aware teardown and mutation execution currently remains degraded.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-dependencyidentitymismatch"></a>
+
+##### `DependencyIdentityMismatch`
+
+```csharp
+const string DependencyIdentityMismatch
+```
+
+The runtime currently reports one dependency identity mismatch.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-dependencyready"></a>
+
+##### `DependencyReady`
+
+```csharp
+const string DependencyReady
+```
+
+Provider-specific dependency-aware teardown and mutation-execution hardening is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-dependencyrisk"></a>
+
+##### `DependencyRisk`
+
+```csharp
+const string DependencyRisk
+```
+
+Provider-specific dependency-aware teardown and mutation execution currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The current provider lane still targets a destructive operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-durablestoreconfigured"></a>
+
+##### `DurableStoreConfigured`
+
+```csharp
+const string DurableStoreConfigured
+```
+
+The runtime currently has one durable store configured.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-materializerexecuting"></a>
+
+##### `MaterializerExecuting`
+
+```csharp
+const string MaterializerExecuting
+```
+
+The selected provider-specific control-plane materializer is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-materializeridentityready"></a>
+
+##### `MaterializerIdentityReady`
+
+```csharp
+const string MaterializerIdentityReady
+```
+
+The runtime currently exposes one materializer identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-materializerready"></a>
+
+##### `MaterializerReady`
+
+```csharp
+const string MaterializerReady
+```
+
+One provider-specific control-plane materializer is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-materializerrisk"></a>
+
+##### `MaterializerRisk`
+
+```csharp
+const string MaterializerRisk
+```
+
+The selected provider-specific control-plane materializer currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-materializerselected"></a>
+
+##### `MaterializerSelected`
+
+```csharp
+const string MaterializerSelected
+```
+
+One provider-specific control-plane materializer is currently selected.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-materializerunavailable"></a>
+
+##### `MaterializerUnavailable`
+
+```csharp
+const string MaterializerUnavailable
+```
+
+One provider-specific control-plane materializer is currently unavailable.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-missingconnectorid"></a>
+
+##### `MissingConnectorId`
+
+```csharp
+const string MissingConnectorId
+```
+
+The runtime does not currently expose one connector identity.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-missingmaterializerid"></a>
+
+##### `MissingMaterializerId`
+
+```csharp
+const string MissingMaterializerId
+```
+
+The runtime does not currently expose one materializer identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-missingproviderid"></a>
+
+##### `MissingProviderId`
+
+```csharp
+const string MissingProviderId
+```
+
+The runtime does not currently expose one provider identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-missingprovidersurface"></a>
+
+##### `MissingProviderSurface`
+
+```csharp
+const string MissingProviderSurface
+```
+
+The runtime does not currently expose one provider-facing surface identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-missingtransportkind"></a>
+
+##### `MissingTransportKind`
+
+```csharp
+const string MissingTransportKind
+```
+
+The runtime does not currently expose one transport kind.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-mutationexecutionblocked"></a>
+
+##### `MutationExecutionBlocked`
+
+```csharp
+const string MutationExecutionBlocked
+```
+
+Provider-specific dependency-aware mutation execution currently remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-mutationexecutionhardened"></a>
+
+##### `MutationExecutionHardened`
+
+```csharp
+const string MutationExecutionHardened
+```
+
+Provider-specific dependency-aware mutation execution is fully hardened.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-mutationexecutionoperation"></a>
+
+##### `MutationExecutionOperation`
+
+```csharp
+const string MutationExecutionOperation
+```
+
+The current target operation is one mutation-execution operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-mutationoperation"></a>
+
+##### `MutationOperation`
+
+```csharp
+const string MutationOperation
+```
+
+The current target operation is one provider-owned mutation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-nochangesrequired"></a>
+
+##### `NoChangesRequired`
+
+```csharp
+const string NoChangesRequired
+```
+
+The current provider lane would not apply another shared write-path change.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-notargetoperation"></a>
+
+##### `NoTargetOperation`
+
+```csharp
+const string NoTargetOperation
+```
+
+No provider-owned operation is currently targeted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-specific dependency-aware teardown and mutation-execution hardening still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-persistedhistoryvisible"></a>
+
+##### `PersistedHistoryVisible`
+
+```csharp
+const string PersistedHistoryVisible
+```
+
+The runtime currently exposes persisted history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-providercommandadapted"></a>
+
+##### `ProviderCommandAdapted`
+
+```csharp
+const string ProviderCommandAdapted
+```
+
+The latest provider command translated into a provider-facing shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-providercommandblocked"></a>
+
+##### `ProviderCommandBlocked`
+
+```csharp
+const string ProviderCommandBlocked
+```
+
+The latest provider command remained blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-providercommandfailed"></a>
+
+##### `ProviderCommandFailed`
+
+```csharp
+const string ProviderCommandFailed
+```
+
+The latest provider command failed while Cephalon translated it.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-providercommandnoop"></a>
+
+##### `ProviderCommandNoOp`
+
+```csharp
+const string ProviderCommandNoOp
+```
+
+The latest provider command determined that no provider command is required.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-provideridentityready"></a>
+
+##### `ProviderIdentityReady`
+
+```csharp
+const string ProviderIdentityReady
+```
+
+The runtime currently exposes one provider identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-providerspecificcontrolplanedependencyawareteardownandmutationexecutionhardening"></a>
+
+##### `ProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`
+
+```csharp
+const string ProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening
+```
+
+The runtime participates in the provider-specific dependency-aware teardown and mutation-execution hardening lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-providersurfaceready"></a>
+
+##### `ProviderSurfaceReady`
+
+```csharp
+const string ProviderSurfaceReady
+```
+
+The runtime currently exposes one provider-facing surface identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-reconcileoperation"></a>
+
+##### `ReconcileOperation`
+
+```csharp
+const string ReconcileOperation
+```
+
+The current target operation is one provider-owned reconcile.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-recoveredpersistedhistory"></a>
+
+##### `RecoveredPersistedHistory`
+
+```csharp
+const string RecoveredPersistedHistory
+```
+
+The runtime recovered persisted history in the current process.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-reporteddependencyidentityready"></a>
+
+##### `ReportedDependencyIdentityReady`
+
+```csharp
+const string ReportedDependencyIdentityReady
+```
+
+The runtime currently reports complete dependency identity metadata.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-reportedtasktopologyready"></a>
+
+##### `ReportedTaskTopologyReady`
+
+```csharp
+const string ReportedTaskTopologyReady
+```
+
+The runtime currently exposes one reported task topology.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-reporterleaseactive"></a>
+
+##### `ReporterLeaseActive`
+
+```csharp
+const string ReporterLeaseActive
+```
+
+The runtime currently exposes an active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-reporterleasemissingorstale"></a>
+
+##### `ReporterLeaseMissingOrStale`
+
+```csharp
+const string ReporterLeaseMissingOrStale
+```
+
+The runtime is missing one active reporter lease or currently reports degraded reporter ownership.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-taskbaselineready"></a>
+
+##### `TaskBaselineReady`
+
+```csharp
+const string TaskBaselineReady
+```
+
+The runtime currently exposes one declared task baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-tasktopologymismatch"></a>
+
+##### `TaskTopologyMismatch`
+
+```csharp
+const string TaskTopologyMismatch
+```
+
+The runtime currently reports one task-topology mismatch.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-teardownblocked"></a>
+
+##### `TeardownBlocked`
+
+```csharp
+const string TeardownBlocked
+```
+
+Provider-specific dependency-aware teardown currently remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-teardownhardened"></a>
+
+##### `TeardownHardened`
+
+```csharp
+const string TeardownHardened
+```
+
+Provider-specific dependency-aware teardown is fully hardened.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-teardownoperation"></a>
+
+##### `TeardownOperation`
+
+```csharp
+const string TeardownOperation
+```
+
+The current target operation is one teardown operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-transportidentityready"></a>
+
+##### `TransportIdentityReady`
+
+```csharp
+const string TransportIdentityReady
+```
+
+The runtime currently exposes one transport kind.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-workeridentityunavailable"></a>
+
+##### `WorkerIdentityUnavailable`
+
+```csharp
+const string WorkerIdentityUnavailable
+```
+
+The runtime does not currently expose one provider worker identity.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-workeridentityvisible"></a>
+
+##### `WorkerIdentityVisible`
+
+```csharp
+const string WorkerIdentityVisible
+```
+
+The runtime currently exposes one provider worker identity.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+const string WouldApplyChanges
+```
+
+The current provider lane would still apply one or more shared write-path changes.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSources`
+
+Defines the stable source identifiers used by managed-connector provider-specific control-plane dependency-aware teardown and mutation-execution hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-commandexecution"></a>
+
+##### `CommandExecution`
+
+```csharp
+const string CommandExecution
+```
+
+The latest command-execution outcome supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-commandjournal"></a>
+
+##### `CommandJournal`
+
+```csharp
+const string CommandJournal
+```
+
+The retained command-journal evidence supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-executionadapter"></a>
+
+##### `ExecutionAdapter`
+
+```csharp
+const string ExecutionAdapter
+```
+
+The shared provider execution-adapter answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+const string Metadata
+```
+
+Runtime metadata supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-providerexecutionorchestration"></a>
+
+##### `ProviderExecutionOrchestration`
+
+```csharp
+const string ProviderExecutionOrchestration
+```
+
+The broader provider execution-orchestration answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-providerownedcontrolplaneapplyandreconcileexecution"></a>
+
+##### `ProviderOwnedControlPlaneApplyAndReconcileExecution`
+
+```csharp
+const string ProviderOwnedControlPlaneApplyAndReconcileExecution
+```
+
+The broader provider-owned control-plane apply-and-reconcile execution answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-providerownedcontrolplanedependencyawareprovisioningandmutationhardening"></a>
+
+##### `ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening`
+
+```csharp
+const string ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening
+```
+
+The broader provider-owned control-plane dependency-aware provisioning and mutation hardening answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-providerownedcontrolplanemutationreconcile"></a>
+
+##### `ProviderOwnedControlPlaneMutationReconcile`
+
+```csharp
+const string ProviderOwnedControlPlaneMutationReconcile
+```
+
+The broader provider-owned control-plane mutation and reconcile answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-providerownedcontrolplaneownership"></a>
+
+##### `ProviderOwnedControlPlaneOwnership`
+
+```csharp
+const string ProviderOwnedControlPlaneOwnership
+```
+
+The broader provider-owned control-plane ownership answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-providerownedcontrolplaneprovisioning"></a>
+
+##### `ProviderOwnedControlPlaneProvisioning`
+
+```csharp
+const string ProviderOwnedControlPlaneProvisioning
+```
+
+The broader provider-owned control-plane provisioning answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-providerownedwritepathexecution"></a>
+
+##### `ProviderOwnedWritePathExecution`
+
+```csharp
+const string ProviderOwnedWritePathExecution
+```
+
+The broader provider-owned write-path execution answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-providerspecificcontrolplanematerializer"></a>
+
+##### `ProviderSpecificControlPlaneMaterializer`
+
+```csharp
+const string ProviderSpecificControlPlaneMaterializer
+```
+
+The provider-specific control-plane materializer answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The provider-specific dependency-aware teardown and mutation-execution hardening answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStates`
+
+Defines the stable state identifiers used by managed-connector provider-specific control-plane dependency-aware teardown and mutation-execution hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-dependencydegraded"></a>
+
+##### `DependencyDegraded`
+
+```csharp
+const string DependencyDegraded
+```
+
+Provider-specific dependency-aware teardown and mutation execution currently remains degraded.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-dependencyready"></a>
+
+##### `DependencyReady`
+
+```csharp
+const string DependencyReady
+```
+
+Provider-specific dependency-aware teardown and mutation-execution hardening is currently ready on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-dependencyrisk"></a>
+
+##### `DependencyRisk`
+
+```csharp
+const string DependencyRisk
+```
+
+Provider-specific dependency-aware teardown and mutation execution currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-mutationexecutionblocked"></a>
+
+##### `MutationExecutionBlocked`
+
+```csharp
+const string MutationExecutionBlocked
+```
+
+Provider-specific dependency-aware mutation execution currently remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-mutationexecutionhardened"></a>
+
+##### `MutationExecutionHardened`
+
+```csharp
+const string MutationExecutionHardened
+```
+
+Provider-specific dependency-aware mutation execution hardening is fully hardened.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Provider-specific dependency-aware teardown and mutation-execution hardening does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-specific dependency-aware teardown and mutation-execution hardening still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-teardownblocked"></a>
+
+##### `TeardownBlocked`
+
+```csharp
+const string TeardownBlocked
+```
+
+Provider-specific dependency-aware teardown currently remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstates-teardownhardened"></a>
+
+##### `TeardownHardened`
+
+```csharp
+const string TeardownHardened
+```
+
+Provider-specific dependency-aware teardown hardening is fully hardened.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus`
+
+Describes the current operator-facing managed-connector provider-specific control-plane dependency-aware teardown and mutation-execution hardening posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus(string state, string description)
+```
+
+Creates a new managed-connector provider-specific control-plane dependency-aware teardown and mutation-execution hardening answer.
+
+Parameters:
+- `state`: The stable provider-specific dependency-aware teardown and mutation-execution hardening state, such as `not-applicable`, `operator-only`, `dependency-ready`, `teardown-blocked`, `mutation-execution-blocked`, `dependency-degraded`, `teardown-hardened`, `mutation-execution-hardened`, or `dependency-risk`.
+- `description`: An optional operator-facing teardown and mutation-execution hardening summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-canexecutedependencyawaremutationexecutiononcurrentnode"></a>
+
+##### `CanExecuteDependencyAwareMutationExecutionOnCurrentNode`
+
+```csharp
+bool CanExecuteDependencyAwareMutationExecutionOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can execute dependency-aware mutation execution safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-canexecutedependencyawareteardownandmutationexecutiononcurrentnode"></a>
+
+##### `CanExecuteDependencyAwareTeardownAndMutationExecutionOnCurrentNode`
+
+```csharp
+bool CanExecuteDependencyAwareTeardownAndMutationExecutionOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can execute dependency-aware teardown or mutation execution safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-canexecutedependencyawareteardownoncurrentnode"></a>
+
+##### `CanExecuteDependencyAwareTeardownOnCurrentNode`
+
+```csharp
+bool CanExecuteDependencyAwareTeardownOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can execute dependency-aware teardown safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active provider-specific teardown and mutation-execution hardening categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable provider-specific dependency-aware teardown and mutation-execution hardening categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with provider-specific teardown and mutation-execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector command-journal state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-commandretrystate"></a>
+
+##### `CommandRetryState`
+
+```csharp
+string CommandRetryState { get; set; }
+```
+
+Gets the current managed-connector command-retry state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier currently associated with provider-specific teardown and mutation execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier currently associated with provider-specific teardown and mutation execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-connectorid"></a>
+
+##### `ConnectorId`
+
+```csharp
+string ConnectorId { get; set; }
+```
+
+Gets the best available connector identifier currently associated with provider-specific teardown and mutation execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing teardown and mutation-execution hardening summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-executionadapterstate"></a>
+
+##### `ExecutionAdapterState`
+
+```csharp
+string ExecutionAdapterState { get; set; }
+```
+
+Gets the current shared execution-adapter state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed provider-specific teardown and mutation-execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with provider-specific teardown and mutation-execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed provider-specific teardown and mutation-execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasactivetasktopology"></a>
+
+##### `HasActiveTaskTopology`
+
+```csharp
+bool HasActiveTaskTopology { get; set; }
+```
+
+Gets a value indicating whether one active task topology is currently available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasconnectoridentity"></a>
+
+##### `HasConnectorIdentity`
+
+```csharp
+bool HasConnectorIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one connector identity.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasdeclareddependencyidentity"></a>
+
+##### `HasDeclaredDependencyIdentity`
+
+```csharp
+bool HasDeclaredDependencyIdentity { get; set; }
+```
+
+Gets a value indicating whether declared dependency identity is complete.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasdependencyidentitymismatch"></a>
+
+##### `HasDependencyIdentityMismatch`
+
+```csharp
+bool HasDependencyIdentityMismatch { get; set; }
+```
+
+Gets a value indicating whether dependency identity currently reports one declared-versus-observed mismatch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasmaterializeridentity"></a>
+
+##### `HasMaterializerIdentity`
+
+```csharp
+bool HasMaterializerIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one selected materializer identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasprovideridentity"></a>
+
+##### `HasProviderIdentity`
+
+```csharp
+bool HasProviderIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one provider identity.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasprovidersurfaceidentity"></a>
+
+##### `HasProviderSurfaceIdentity`
+
+```csharp
+bool HasProviderSurfaceIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one provider-facing surface identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasreporteddependencyidentity"></a>
+
+##### `HasReportedDependencyIdentity`
+
+```csharp
+bool HasReportedDependencyIdentity { get; set; }
+```
+
+Gets a value indicating whether reported dependency identity is complete.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasreportedtasktopology"></a>
+
+##### `HasReportedTaskTopology`
+
+```csharp
+bool HasReportedTaskTopology { get; set; }
+```
+
+Gets a value indicating whether one reported task topology is currently available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hastargetoperation"></a>
+
+##### `HasTargetOperation`
+
+```csharp
+bool HasTargetOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer exposes one concrete target operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hastaskbaseline"></a>
+
+##### `HasTaskBaseline`
+
+```csharp
+bool HasTaskBaseline { get; set; }
+```
+
+Gets a value indicating whether one declared task baseline is currently available.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hastasktopologymismatch"></a>
+
+##### `HasTaskTopologyMismatch`
+
+```csharp
+bool HasTaskTopologyMismatch { get; set; }
+```
+
+Gets a value indicating whether task topology currently reports one declared-versus-observed mismatch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hastransportidentity"></a>
+
+##### `HasTransportIdentity`
+
+```csharp
+bool HasTransportIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one provider transport kind.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hasworkeridentity"></a>
+
+##### `HasWorkerIdentity`
+
+```csharp
+bool HasWorkerIdentity { get; set; }
+```
+
+Gets a value indicating whether the runtime currently exposes one provider worker identity.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isdependencydegraded"></a>
+
+##### `IsDependencyDegraded`
+
+```csharp
+bool IsDependencyDegraded { get; }
+```
+
+Gets a value indicating whether provider-specific dependency-aware teardown and mutation execution currently remains degraded.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isdependencyready"></a>
+
+##### `IsDependencyReady`
+
+```csharp
+bool IsDependencyReady { get; }
+```
+
+Gets a value indicating whether provider-specific dependency-aware teardown and mutation execution is currently ready.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isdependencyrisk"></a>
+
+##### `IsDependencyRisk`
+
+```csharp
+bool IsDependencyRisk { get; }
+```
+
+Gets a value indicating whether provider-specific dependency-aware teardown and mutation execution currently remains risky.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current provider lane targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-ismutationexecutionblocked"></a>
+
+##### `IsMutationExecutionBlocked`
+
+```csharp
+bool IsMutationExecutionBlocked { get; }
+```
+
+Gets a value indicating whether provider-specific dependency-aware mutation execution currently remains blocked.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-ismutationexecutionhardened"></a>
+
+##### `IsMutationExecutionHardened`
+
+```csharp
+bool IsMutationExecutionHardened { get; }
+```
+
+Gets a value indicating whether provider-specific dependency-aware mutation execution is fully hardened.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-ismutationexecutionoperation"></a>
+
+##### `IsMutationExecutionOperation`
+
+```csharp
+bool IsMutationExecutionOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer currently represents one mutation-execution operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-ismutationoperation"></a>
+
+##### `IsMutationOperation`
+
+```csharp
+bool IsMutationOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer currently represents one provider-owned mutation operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether provider-specific dependency-aware teardown and mutation-execution hardening still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isreconcileoperation"></a>
+
+##### `IsReconcileOperation`
+
+```csharp
+bool IsReconcileOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer currently represents one provider-owned reconcile operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isteardownblocked"></a>
+
+##### `IsTeardownBlocked`
+
+```csharp
+bool IsTeardownBlocked { get; }
+```
+
+Gets a value indicating whether provider-specific dependency-aware teardown currently remains blocked.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isteardownhardened"></a>
+
+##### `IsTeardownHardened`
+
+```csharp
+bool IsTeardownHardened { get; }
+```
+
+Gets a value indicating whether provider-specific dependency-aware teardown is fully hardened.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isteardownoperation"></a>
+
+##### `IsTeardownOperation`
+
+```csharp
+bool IsTeardownOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer currently represents one teardown operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest recorded command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-materializerid"></a>
+
+##### `MaterializerId`
+
+```csharp
+string MaterializerId { get; set; }
+```
+
+Gets the materializer identifier currently associated with provider-specific teardown and mutation execution when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with provider-specific teardown and mutation-execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerexecutionorchestrationstate"></a>
+
+##### `ProviderExecutionOrchestrationState`
+
+```csharp
+string ProviderExecutionOrchestrationState { get; set; }
+```
+
+Gets the current broader provider execution-orchestration state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; set; }
+```
+
+Gets the provider identifier currently associated with provider-specific teardown and mutation execution when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerownedcontrolplaneapplyandreconcileexecutionstate"></a>
+
+##### `ProviderOwnedControlPlaneApplyAndReconcileExecutionState`
+
+```csharp
+string ProviderOwnedControlPlaneApplyAndReconcileExecutionState { get; set; }
+```
+
+Gets the current provider-owned control-plane apply-and-reconcile execution state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerownedcontrolplanedependencyawareprovisioningandmutationhardeningstate"></a>
+
+##### `ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState`
+
+```csharp
+string ProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState { get; set; }
+```
+
+Gets the current provider-owned control-plane dependency-aware provisioning and mutation hardening state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerownedcontrolplanemutationreconcilestate"></a>
+
+##### `ProviderOwnedControlPlaneMutationReconcileState`
+
+```csharp
+string ProviderOwnedControlPlaneMutationReconcileState { get; set; }
+```
+
+Gets the current provider-owned control-plane mutation and reconcile state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerownedcontrolplaneownershipstate"></a>
+
+##### `ProviderOwnedControlPlaneOwnershipState`
+
+```csharp
+string ProviderOwnedControlPlaneOwnershipState { get; set; }
+```
+
+Gets the current provider-owned control-plane ownership state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerownedcontrolplaneprovisioningstate"></a>
+
+##### `ProviderOwnedControlPlaneProvisioningState`
+
+```csharp
+string ProviderOwnedControlPlaneProvisioningState { get; set; }
+```
+
+Gets the current provider-owned control-plane provisioning state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerownedwritepathexecutionstate"></a>
+
+##### `ProviderOwnedWritePathExecutionState`
+
+```csharp
+string ProviderOwnedWritePathExecutionState { get; set; }
+```
+
+Gets the current provider-owned write-path execution state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providerspecificcontrolplanematerializerstate"></a>
+
+##### `ProviderSpecificControlPlaneMaterializerState`
+
+```csharp
+string ProviderSpecificControlPlaneMaterializerState { get; set; }
+```
+
+Gets the current provider-specific control-plane materializer state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-providersurfaceid"></a>
+
+##### `ProviderSurfaceId`
+
+```csharp
+string ProviderSurfaceId { get; set; }
+```
+
+Gets the provider-facing surface identifier currently associated with provider-specific teardown and mutation execution when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-reconciliationreason"></a>
+
+##### `ReconciliationReason`
+
+```csharp
+string ReconciliationReason { get; set; }
+```
+
+Gets the latest operator-facing reconciliation summary currently visible for the managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-reconciliationstate"></a>
+
+##### `ReconciliationState`
+
+```csharp
+string ReconciliationState { get; set; }
+```
+
+Gets the latest reconciliation state currently visible for the managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current provider lane still requires explicit approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed this hardening answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive provider-specific teardown and mutation-execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier currently associated with provider-specific teardown and mutation execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector provider-specific control-plane dependency-aware teardown and mutation-execution hardening state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-transportkind"></a>
+
+##### `TransportKind`
+
+```csharp
+string TransportKind { get; set; }
+```
+
+Gets the provider transport kind currently associated with provider-specific teardown and mutation execution when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-workerid"></a>
+
+##### `WorkerId`
+
+```csharp
+string WorkerId { get; set; }
+```
+
+Gets the best available provider worker identifier currently associated with provider-specific teardown and mutation execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current provider lane would still apply one or more shared write-path changes.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories`
@@ -45509,6 +47147,81 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `providerExecutionState`: The stable provider-owned write-path execution state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategory-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory(string hardeningCategory)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening category.
+
+Parameters:
+- `hardeningCategory`: The stable provider-specific teardown and mutation-execution hardening category to filter on.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningmaterializerid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(string materializerId)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested materializer identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that materializer identifier.
+
+Parameters:
+- `materializerId`: The stable materializer identifier to filter on.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningoperationid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningOperationId(string operationId)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested operation identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable operation identifier to filter on.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningproviderid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderId(string providerId)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested provider identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider identifier.
+
+Parameters:
+- `providerId`: The stable provider identifier to filter on.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstate-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState(string hardeningState)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening state.
+
+Parameters:
+- `hardeningState`: The stable provider-specific teardown and mutation-execution hardening state to filter on.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializercategory-system-string"></a>
 

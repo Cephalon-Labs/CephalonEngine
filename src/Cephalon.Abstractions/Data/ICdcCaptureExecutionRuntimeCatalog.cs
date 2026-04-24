@@ -737,4 +737,39 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable provider-specific control-plane materializer operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested state.
+    /// </summary>
+    /// <param name="hardeningState">The stable provider-specific teardown and mutation-execution hardening state to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState(string hardeningState);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested category.
+    /// </summary>
+    /// <param name="hardeningCategory">The stable provider-specific teardown and mutation-execution hardening category to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory(string hardeningCategory);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested provider identifier.
+    /// </summary>
+    /// <param name="providerId">The stable provider identifier to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderId(string providerId);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested materializer identifier.
+    /// </summary>
+    /// <param name="materializerId">The stable materializer identifier to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that materializer identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(string materializerId);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested operation identifier.
+    /// </summary>
+    /// <param name="operationId">The stable operation identifier to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningOperationId(string operationId);
 }

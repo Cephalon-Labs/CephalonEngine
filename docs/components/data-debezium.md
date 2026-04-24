@@ -883,6 +883,32 @@ distributed scheduler, or second coordinator.
   `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-materializer`
   on that same shared route family instead of branching into a Debezium-only materializer
   endpoint set
+- `ENG-202` now keeps that same shared managed-connector control-plane lane explicit about
+  whether the selected provider-specific materializer can execute dependency-aware teardown or
+  mutation work on the current node:
+  `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`
+  now publishes stable `not-applicable`, `operator-only`, `dependency-ready`,
+  `teardown-blocked`, `mutation-execution-blocked`, `dependency-degraded`,
+  `teardown-hardened`, `mutation-execution-hardened`, and `dependency-risk` posture together
+  with operation/source, broader provider-specific control-plane materializer plus
+  provider-owned control-plane dependency-aware provisioning and mutation hardening plus
+  apply-and-reconcile plus provisioning plus mutation/reconcile plus ownership plus execution
+  orchestration plus write-path truth, latest command plus retry-policy plus command-journal
+  evidence, durable-history plus reporter-lease signals, and Debezium-reported provider,
+  materializer, transport, provider-surface, connector, and worker identity so the shared
+  execution-runtime catalog can answer one provider-specific teardown-versus-mutation-execution
+  hardening posture without pushing Debezium Kafka Connect REST identity into another
+  control-plane subsystem
+- ASP.NET Core now maps
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/{hardeningState}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/categories/{hardeningCategory}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/providers/{providerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{materializerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/{operationId}`,
+  and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening`
+  on that same shared route family instead of branching into a Debezium-only teardown or
+  mutation-execution endpoint set
 - bounded automatic background retry execution still remains shared in-process truth, and the
   shipped broader provider-owned write-path execution posture plus broader provider execution
   orchestration posture plus broader provider-owned control-plane ownership posture plus broader
@@ -891,8 +917,10 @@ distributed scheduler, or second coordinator.
   posture plus broader provider-owned control-plane dependency-aware apply-and-reconcile
   hardening posture plus broader provider-owned control-plane dependency-aware provisioning and
   mutation hardening posture plus broader provider-specific control-plane materializer posture
-  still does not mean Cephalon already owns durable distributed command journals, durable
-  distributed schedulers, or full Kafka Connect provisioning and apply-and-reconcile ownership
+  plus broader provider-specific control-plane dependency-aware teardown and mutation-execution
+  hardening posture still does not mean Cephalon already owns durable distributed command
+  journals, durable distributed schedulers, or full Kafka Connect provisioning and
+  apply-and-reconcile ownership
 
 ## Not shipped in these slices
 
@@ -902,7 +930,8 @@ This pack intentionally still does not claim:
   shipped shared provider-owned control-plane dependency-aware apply-and-reconcile hardening
   posture plus the shipped shared provider-owned control-plane dependency-aware provisioning and
   mutation hardening posture plus the shipped shared provider-specific control-plane materializer
-  posture
+  posture plus the shipped shared provider-specific control-plane dependency-aware teardown and
+  mutation-execution hardening posture
 - broader managed-connector control-plane provisioning ownership beyond the shipped shared
   provider-owned write-path execution posture plus the shipped shared provider execution
   orchestration posture plus the shipped shared provider-owned control-plane ownership posture plus
@@ -912,6 +941,8 @@ This pack intentionally still does not claim:
   provider-owned control-plane dependency-aware apply-and-reconcile hardening posture plus the
   shipped shared provider-owned control-plane dependency-aware provisioning and mutation
   hardening posture plus the shipped shared provider-specific control-plane materializer posture
+  plus the shipped shared provider-specific control-plane dependency-aware teardown and
+  mutation-execution hardening posture
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
 - durable distributed command journals, durable distributed retry schedulers, or full idempotency
@@ -925,7 +956,9 @@ This pack intentionally still does not claim:
   provider-owned control-plane provisioning posture plus broader provider-owned control-plane
   apply-and-reconcile execution posture plus broader provider-owned control-plane
   dependency-aware apply-and-reconcile hardening posture plus broader provider-owned control-plane
-  dependency-aware provisioning and mutation hardening posture
+  dependency-aware provisioning and mutation hardening posture plus broader
+  provider-specific control-plane materializer posture plus broader provider-specific
+  control-plane dependency-aware teardown and mutation-execution hardening posture
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 
