@@ -3564,6 +3564,9 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates.OrchestrationReady,
                 eligibleRuntime.ManagedConnectorProviderExecutionOrchestration.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipPartial,
+                eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.State);
             Assert.True(eligibleRuntime.ManagedConnectorRetryExecutionPolicy.CanReuseApprovalFromMatchingHistory);
             Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryExecution.CanReuseApprovalFromMatchingHistory);
             Assert.True(eligibleRuntime.ManagedConnectorAutomaticRetryExecution.LatestMatchingApprovalApplied);
@@ -3576,6 +3579,8 @@ public sealed class DebeziumDataCdcPackTests
             Assert.True(eligibleRuntime.ManagedConnectorSchedulerRecoveryExecutionHardening.CanExecuteAutomaticRetryOnCurrentNode);
             Assert.True(eligibleRuntime.ManagedConnectorProviderOwnedWritePathExecution.CanExecuteProviderOwnedWritePathOnCurrentNode);
             Assert.True(eligibleRuntime.ManagedConnectorProviderExecutionOrchestration.CanOrchestrateProviderExecutionOnCurrentNode);
+            Assert.True(eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode);
+            Assert.True(eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.RequiresExplicitApproval);
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources.DurableSharedSchedulerOrchestration,
                 eligibleRuntime.ManagedConnectorSchedulerRecoveryExecutionHardening.SourceId);
@@ -3588,6 +3593,9 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources.ProviderOwnedWritePathExecution,
                 eligibleRuntime.ManagedConnectorProviderExecutionOrchestration.SourceId);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.ProviderExecutionOrchestration,
+                eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.SourceId);
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMatch,
                 eligibleRuntime.ManagedConnectorAutomaticRetryCoordination.CategoryIds);
@@ -3657,6 +3665,24 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories.ExecutionHardened,
                 eligibleRuntime.ManagedConnectorProviderExecutionOrchestration.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipPartial,
+                eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.CurrentNodeExecutable,
+                eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderExecutionReady,
+                eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderBlocked,
+                eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.SchedulerScheduled,
+                eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ApprovalRequired,
+                eligibleRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
@@ -3673,6 +3699,24 @@ public sealed class DebeziumDataCdcPackTests
                 [automaticRetryRuntimeId],
                 runtimeCatalog
                     .GetByManagedConnectorProviderExecutionOrchestrationOperationId(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Restart)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderOwnedControlPlaneOwnershipState(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipPartial)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderOwnedControlPlaneOwnershipCategory(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipPartial)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderOwnedControlPlaneOwnershipOperationId(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Restart)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.False(string.IsNullOrWhiteSpace(eligibleRuntime.ManagedConnectorCrossNodeIdempotencyHardening.RetryFingerprint));
@@ -3746,6 +3790,9 @@ public sealed class DebeziumDataCdcPackTests
                 Assert.Equal(
                     CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates.OrchestrationExecuting,
                     completedRuntime.ManagedConnectorProviderExecutionOrchestration.State);
+                Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipActive,
+                    completedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.State);
                 Assert.True(completedRuntime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
                 Assert.True(completedRuntime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
                 Assert.True(completedRuntime.ManagedConnectorCrossNodeIdempotencyHardening.CanExecuteAutomaticRetryOnCurrentNode);
@@ -3755,6 +3802,7 @@ public sealed class DebeziumDataCdcPackTests
                 Assert.False(completedRuntime.ManagedConnectorSchedulerRecoveryExecutionHardening.CanExecuteAutomaticRetryOnCurrentNode);
                 Assert.False(completedRuntime.ManagedConnectorProviderOwnedWritePathExecution.CanExecuteProviderOwnedWritePathOnCurrentNode);
                 Assert.False(completedRuntime.ManagedConnectorProviderExecutionOrchestration.CanOrchestrateProviderExecutionOnCurrentNode);
+                Assert.False(completedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorDistributedRetryLease.CoordinationOwnerId);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorCrossNodeIdempotencyHardening.CoordinationOwnerId);
@@ -3787,6 +3835,9 @@ public sealed class DebeziumDataCdcPackTests
                     CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources.ProviderOwnedWritePathExecution,
                     completedRuntime.ManagedConnectorProviderExecutionOrchestration.SourceId);
                 Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.ProviderExecutionOrchestration,
+                    completedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.SourceId);
+                Assert.Equal(
                     CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Adapted,
                     completedRuntime.ManagedConnectorProviderOwnedWritePathExecution.LatestCommandExecutionState);
                 Assert.Equal(
@@ -3816,6 +3867,18 @@ public sealed class DebeziumDataCdcPackTests
                 Assert.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories.Unscheduled,
                     completedRuntime.ManagedConnectorDurableSharedSchedulerOrchestration.CategoryIds);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipActive,
+                    completedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderExecutionExecuting,
+                    completedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderOwnedExecuting,
+                    completedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderCommandAdapted,
+                    completedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
                 Assert.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories.CooldownWindow,
                     completedRuntime.ManagedConnectorDurableSharedSchedulerOrchestration.CategoryIds);
@@ -4176,6 +4239,9 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(
             CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates.ProviderOwnedRisk,
             riskRuntime.ManagedConnectorProviderOwnedWritePathExecution.State);
+        Assert.Equal(
+            CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipRisk,
+            riskRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.State);
         Assert.False(riskRuntime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
         Assert.False(riskRuntime.ManagedConnectorCrossNodeIdempotencyHardening.CanExecuteAutomaticRetryOnCurrentNode);
         Assert.False(riskRuntime.ManagedConnectorDistributedRetryOrchestration.CanScheduleAutomaticRetryOnCurrentNode);
@@ -4183,6 +4249,7 @@ public sealed class DebeziumDataCdcPackTests
         Assert.False(riskRuntime.ManagedConnectorDurableSharedSchedulerOrchestration.CanScheduleAutomaticRetryOnCurrentNode);
         Assert.False(riskRuntime.ManagedConnectorSchedulerRecoveryExecutionHardening.CanExecuteAutomaticRetryOnCurrentNode);
         Assert.False(riskRuntime.ManagedConnectorProviderOwnedWritePathExecution.CanExecuteProviderOwnedWritePathOnCurrentNode);
+        Assert.False(riskRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode);
         Assert.Contains(
             CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories.InMemoryJournalOnly,
             riskRuntime.ManagedConnectorDistributedRetryLease.CategoryIds);
@@ -4237,6 +4304,18 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Contains(
             CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories.CurrentNodeBlocked,
             riskRuntime.ManagedConnectorProviderOwnedWritePathExecution.CategoryIds);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipRisk,
+            riskRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.CurrentNodeBlocked,
+            riskRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.RecoveryBlocked,
+            riskRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+        Assert.Contains(
+            CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderOwnedRisk,
+            riskRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
 
         try
         {
@@ -4279,6 +4358,9 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates.OrchestrationRisk,
                 refreshedRuntime.ManagedConnectorProviderExecutionOrchestration.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipRisk,
+                refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.State);
             Assert.False(refreshedRuntime.ManagedConnectorDistributedRetryLease.HasMatchingAutomaticRetryAttempt);
             Assert.False(refreshedRuntime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
             Assert.False(refreshedRuntime.ManagedConnectorCrossNodeIdempotencyHardening.CanExecuteAutomaticRetryOnCurrentNode);
@@ -4288,9 +4370,13 @@ public sealed class DebeziumDataCdcPackTests
             Assert.False(refreshedRuntime.ManagedConnectorSchedulerRecoveryExecutionHardening.CanExecuteAutomaticRetryOnCurrentNode);
             Assert.False(refreshedRuntime.ManagedConnectorProviderOwnedWritePathExecution.CanExecuteProviderOwnedWritePathOnCurrentNode);
             Assert.False(refreshedRuntime.ManagedConnectorProviderExecutionOrchestration.CanOrchestrateProviderExecutionOnCurrentNode);
+            Assert.False(refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode);
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources.SchedulerRecoveryExecutionHardening,
                 refreshedRuntime.ManagedConnectorProviderExecutionOrchestration.SourceId);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.SchedulerRecoveryExecutionHardening,
+                refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.SourceId);
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories.OrchestrationRisk,
                 refreshedRuntime.ManagedConnectorProviderExecutionOrchestration.CategoryIds);
@@ -4303,6 +4389,15 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Contains(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories.CurrentNodeBlocked,
                 refreshedRuntime.ManagedConnectorProviderExecutionOrchestration.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipRisk,
+                refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.CurrentNodeBlocked,
+                refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.RecoveryBlocked,
+                refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds);
 
             Assert.Single(history);
             Assert.Equal(

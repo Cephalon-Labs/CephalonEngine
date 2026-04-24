@@ -927,6 +927,38 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneOwnershipState(string providerOwnedControlPlaneOwnershipState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(providerOwnedControlPlaneOwnershipState);
+        var normalizedProviderOwnedControlPlaneOwnershipState = providerOwnedControlPlaneOwnershipState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderOwnedControlPlaneOwnership.State,
+            normalizedProviderOwnedControlPlaneOwnershipState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneOwnershipCategory(string providerOwnedControlPlaneOwnershipCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(providerOwnedControlPlaneOwnershipCategory);
+        var normalizedProviderOwnedControlPlaneOwnershipCategory = providerOwnedControlPlaneOwnershipCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorProviderOwnedControlPlaneOwnership.CategoryIds.Contains(
+            normalizedProviderOwnedControlPlaneOwnershipCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneOwnershipOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderOwnedControlPlaneOwnership.OperationId,
+            normalizedOperationId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -1316,6 +1348,26 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandJournal,
             managedConnectorDurableSharedSchedulerOrchestration,
             managedConnectorSchedulerRecoveryExecutionHardening);
+        var managedConnectorProviderOwnedControlPlaneOwnership = CreateManagedConnectorProviderOwnedControlPlaneOwnership(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionOwnership,
+            runtime.ExecutionTopology,
+            managedConnectorProviderExecutionOrchestration.ManagementMode ??
+            managedConnectorProviderOwnedWritePathExecution.ManagementMode ??
+            managedConnectorExecutionAdapter.ManagementMode ??
+            managedConnectorRetryExecutionPolicy.ManagementMode ??
+            managedConnectorCommandJournal.ManagementMode ??
+            managedConnectorDurableSharedSchedulerOrchestration.ManagementMode ??
+            managedConnectorSchedulerRecoveryExecutionHardening.ManagementMode,
+            managedConnectorProviderExecutionOrchestration,
+            managedConnectorProviderOwnedWritePathExecution,
+            managedConnectorExecutionAdapter,
+            managedConnectorCommandExecution,
+            managedConnectorRetryExecutionPolicy,
+            managedConnectorCommandJournal,
+            managedConnectorDurableSharedSchedulerOrchestration,
+            managedConnectorSchedulerRecoveryExecutionHardening);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
@@ -1350,7 +1402,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorDurableSharedSchedulerOrchestration = managedConnectorDurableSharedSchedulerOrchestration,
             ManagedConnectorSchedulerRecoveryExecutionHardening = managedConnectorSchedulerRecoveryExecutionHardening,
             ManagedConnectorProviderOwnedWritePathExecution = managedConnectorProviderOwnedWritePathExecution,
-            ManagedConnectorProviderExecutionOrchestration = managedConnectorProviderExecutionOrchestration
+            ManagedConnectorProviderExecutionOrchestration = managedConnectorProviderExecutionOrchestration,
+            ManagedConnectorProviderOwnedControlPlaneOwnership = managedConnectorProviderOwnedControlPlaneOwnership
         };
     }
 
@@ -11695,6 +11748,730 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources.Unknown;
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus CreateManagedConnectorProviderOwnedControlPlaneOwnership(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string executionOwnership,
+        string executionTopology,
+        string? managementMode,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus durableSharedSchedulerOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus schedulerRecoveryExecutionHardening)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(executionAdapter);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(durableSharedSchedulerOrchestration);
+        ArgumentNullException.ThrowIfNull(schedulerRecoveryExecutionHardening);
+
+        var normalizedExecutionOwnership = string.IsNullOrWhiteSpace(executionOwnership)
+            ? "runtime-managed"
+            : executionOwnership.Trim();
+        var normalizedExecutionTopology = string.IsNullOrWhiteSpace(executionTopology)
+            ? "not-configured"
+            : executionTopology.Trim();
+        var normalizedOperationId =
+            !string.IsNullOrWhiteSpace(providerExecutionOrchestration.OperationId)
+                ? providerExecutionOrchestration.OperationId.Trim()
+                : !string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.OperationId)
+                    ? providerOwnedWritePathExecution.OperationId.Trim()
+                    : !string.IsNullOrWhiteSpace(executionAdapter.OperationId)
+                        ? executionAdapter.OperationId.Trim()
+                        : !string.IsNullOrWhiteSpace(commandJournal.OperationId)
+                            ? commandJournal.OperationId.Trim()
+                            : !string.IsNullOrWhiteSpace(durableSharedSchedulerOrchestration.OperationId)
+                                ? durableSharedSchedulerOrchestration.OperationId.Trim()
+                                : !string.IsNullOrWhiteSpace(schedulerRecoveryExecutionHardening.OperationId)
+                                    ? schedulerRecoveryExecutionHardening.OperationId.Trim()
+                                    : CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None;
+        var appliesToManagedConnector =
+            string.Equals(normalizedExecutionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) &&
+            (providerExecutionOrchestration.AppliesToManagedConnector ||
+             providerOwnedWritePathExecution.AppliesToManagedConnector ||
+             executionAdapter.AppliesToManagedConnector ||
+             !string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable, StringComparison.OrdinalIgnoreCase) ||
+             durableSharedSchedulerOrchestration.AppliesToManagedConnector ||
+             schedulerRecoveryExecutionHardening.AppliesToManagedConnector);
+        var hasCommandJournalEvidence =
+            !string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable, StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty, StringComparison.OrdinalIgnoreCase);
+        var hasDurableStoreConfigured =
+            providerExecutionOrchestration.HasDurableStoreConfigured ||
+            schedulerRecoveryExecutionHardening.HasDurableStoreConfigured ||
+            durableSharedSchedulerOrchestration.HasDurableStoreConfigured;
+        var hasPersistedRecordedHistory =
+            providerExecutionOrchestration.HasPersistedRecordedHistory ||
+            schedulerRecoveryExecutionHardening.HasPersistedRecordedHistory ||
+            durableSharedSchedulerOrchestration.HasPersistedRecordedHistory;
+        var hasRecoveredPersistedHistory =
+            providerExecutionOrchestration.HasRecoveredPersistedHistory ||
+            schedulerRecoveryExecutionHardening.HasRecoveredPersistedHistory ||
+            durableSharedSchedulerOrchestration.HasRecoveredPersistedHistory;
+        var wouldApplyChanges =
+            providerExecutionOrchestration.WouldApplyChanges ||
+            providerOwnedWritePathExecution.WouldApplyChanges ||
+            executionAdapter.WouldApplyChanges ||
+            retryExecutionPolicy.WouldApplyChanges;
+        var requiresExplicitApproval =
+            providerExecutionOrchestration.RequiresExplicitApproval ||
+            providerOwnedWritePathExecution.RequiresExplicitApproval ||
+            executionAdapter.RequiresExplicitApproval ||
+            retryExecutionPolicy.RequiresExplicitApproval;
+        var isDestructiveOperation =
+            providerExecutionOrchestration.IsDestructiveOperation ||
+            providerOwnedWritePathExecution.IsDestructiveOperation ||
+            executionAdapter.IsDestructiveOperation ||
+            retryExecutionPolicy.IsDestructiveOperation;
+        var canExerciseProviderOwnedControlPlaneOnCurrentNode = providerExecutionOrchestration.CanOrchestrateProviderExecutionOnCurrentNode;
+        var state =
+            !appliesToManagedConnector
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.NotApplicable
+                : providerExecutionOrchestration.IsOperatorOnly ||
+                  providerOwnedWritePathExecution.IsOperatorOnly ||
+                  durableSharedSchedulerOrchestration.IsOperatorOnly ||
+                  schedulerRecoveryExecutionHardening.IsOperatorOnly
+                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OperatorOnly
+                    : providerExecutionOrchestration.IsOrchestrationRisk ||
+                      providerOwnedWritePathExecution.IsProviderOwnedRisk ||
+                      schedulerRecoveryExecutionHardening.IsRecoveryBlocked ||
+                      schedulerRecoveryExecutionHardening.IsExecutionRisk ||
+                      durableSharedSchedulerOrchestration.IsSchedulerConflicted
+                        ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipRisk
+                        : providerExecutionOrchestration.IsOrchestrationExecuting ||
+                          providerOwnedWritePathExecution.IsProviderOwnedExecuting
+                            ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipActive
+                            : providerExecutionOrchestration.IsOrchestrationReady &&
+                              canExerciseProviderOwnedControlPlaneOnCurrentNode &&
+                              !requiresExplicitApproval &&
+                              !isDestructiveOperation
+                                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipReady
+                                : providerExecutionOrchestration.IsOrchestrationReady ||
+                                  providerExecutionOrchestration.IsOrchestrationCompleted ||
+                                  providerOwnedWritePathExecution.IsProviderOwnedCompleted ||
+                                  providerOwnedWritePathExecution.IsProviderExecutable ||
+                                  requiresExplicitApproval ||
+                                  isDestructiveOperation
+                                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipPartial
+                                    : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipBlocked;
+        var categories = CreateManagedConnectorProviderOwnedControlPlaneOwnershipCategories(
+            state,
+            providerExecutionOrchestration,
+            providerOwnedWritePathExecution,
+            latestCommandExecution,
+            commandJournal,
+            durableSharedSchedulerOrchestration,
+            schedulerRecoveryExecutionHardening,
+            canExerciseProviderOwnedControlPlaneOnCurrentNode,
+            requiresExplicitApproval,
+            isDestructiveOperation,
+            hasCommandJournalEvidence,
+            hasDurableStoreConfigured,
+            hasPersistedRecordedHistory,
+            hasRecoveredPersistedHistory);
+        var description = CreateManagedConnectorProviderOwnedControlPlaneOwnershipDescription(
+            state,
+            normalizedOperationId,
+            providerExecutionOrchestration,
+            providerOwnedWritePathExecution,
+            latestCommandExecution,
+            commandJournal,
+            durableSharedSchedulerOrchestration,
+            schedulerRecoveryExecutionHardening,
+            requiresExplicitApproval,
+            isDestructiveOperation);
+        var sourceId = ResolveManagedConnectorProviderOwnedControlPlaneOwnershipSourceId(
+            state,
+            providerExecutionOrchestration,
+            providerOwnedWritePathExecution,
+            executionAdapter,
+            latestCommandExecution,
+            commandJournal,
+            durableSharedSchedulerOrchestration,
+            schedulerRecoveryExecutionHardening);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus(state, description)
+        {
+            CategoryIds = categories,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ExecutionOwnership = normalizedExecutionOwnership,
+            ExecutionTopology = normalizedExecutionTopology,
+            ManagementMode = managementMode,
+            OperationId = normalizedOperationId,
+            SourceId = sourceId,
+            ProviderExecutionOrchestrationState = providerExecutionOrchestration.State,
+            ProviderOwnedWritePathExecutionState = providerOwnedWritePathExecution.State,
+            ExecutionAdapterState = executionAdapter.State,
+            LatestCommandExecutionState = latestCommandExecution.State,
+            LatestCommandExecutionInvocationSourceId = latestCommandExecution.InvocationSourceId,
+            RetryExecutionPolicyState = retryExecutionPolicy.State,
+            CommandJournalState = commandJournal.State,
+            DurableSharedSchedulerOrchestrationState = durableSharedSchedulerOrchestration.State,
+            SchedulerRecoveryExecutionHardeningState = schedulerRecoveryExecutionHardening.State,
+            AdapterId = !string.IsNullOrWhiteSpace(providerExecutionOrchestration.AdapterId)
+                ? providerExecutionOrchestration.AdapterId
+                : !string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.AdapterId)
+                    ? providerOwnedWritePathExecution.AdapterId
+                    : executionAdapter.AdapterId,
+            ProviderId = providerExecutionOrchestration.ProviderId ??
+                         providerOwnedWritePathExecution.ProviderId ??
+                         latestCommandExecution.ProviderId,
+            ConnectClusterId = providerExecutionOrchestration.ConnectClusterId ??
+                               providerOwnedWritePathExecution.ConnectClusterId ??
+                               executionAdapter.ConnectClusterId ??
+                               latestCommandExecution.ConnectClusterId ??
+                               retryExecutionPolicy.ConnectClusterId,
+            ConnectorClass = providerExecutionOrchestration.ConnectorClass ??
+                             providerOwnedWritePathExecution.ConnectorClass ??
+                             executionAdapter.ConnectorClass ??
+                             latestCommandExecution.ConnectorClass ??
+                             retryExecutionPolicy.ConnectorClass,
+            SourceProviderId = providerExecutionOrchestration.SourceProviderId ??
+                               providerOwnedWritePathExecution.SourceProviderId ??
+                               executionAdapter.SourceProviderId ??
+                               latestCommandExecution.SourceProviderId ??
+                               retryExecutionPolicy.SourceProviderId,
+            CommandFingerprint = !string.IsNullOrWhiteSpace(providerExecutionOrchestration.CommandFingerprint)
+                ? providerExecutionOrchestration.CommandFingerprint
+                : !string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.CommandFingerprint)
+                    ? providerOwnedWritePathExecution.CommandFingerprint
+                    : !string.IsNullOrWhiteSpace(latestCommandExecution.CommandFingerprint)
+                        ? latestCommandExecution.CommandFingerprint
+                        : executionAdapter.CommandFingerprint,
+            AdapterFingerprint = !string.IsNullOrWhiteSpace(providerExecutionOrchestration.AdapterFingerprint)
+                ? providerExecutionOrchestration.AdapterFingerprint
+                : !string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.AdapterFingerprint)
+                    ? providerOwnedWritePathExecution.AdapterFingerprint
+                    : !string.IsNullOrWhiteSpace(executionAdapter.AdapterFingerprint)
+                        ? executionAdapter.AdapterFingerprint
+                        : latestCommandExecution.AdapterFingerprint,
+            LatestExecutionFingerprint = !string.IsNullOrWhiteSpace(providerExecutionOrchestration.LatestExecutionFingerprint)
+                ? providerExecutionOrchestration.LatestExecutionFingerprint
+                : !string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.LatestExecutionFingerprint)
+                    ? providerOwnedWritePathExecution.LatestExecutionFingerprint
+                    : latestCommandExecution.IsUnrecorded
+                        ? string.Empty
+                        : latestCommandExecution.ExecutionFingerprint,
+            RetryFingerprint = !string.IsNullOrWhiteSpace(providerExecutionOrchestration.RetryFingerprint)
+                ? providerExecutionOrchestration.RetryFingerprint
+                : !string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.RetryFingerprint)
+                    ? providerOwnedWritePathExecution.RetryFingerprint
+                    : !string.IsNullOrWhiteSpace(schedulerRecoveryExecutionHardening.RetryFingerprint)
+                        ? schedulerRecoveryExecutionHardening.RetryFingerprint
+                        : durableSharedSchedulerOrchestration.RetryFingerprint,
+            PotentialChangeCount = providerExecutionOrchestration.PotentialChangeCount > 0
+                ? providerExecutionOrchestration.PotentialChangeCount
+                : providerOwnedWritePathExecution.PotentialChangeCount > 0
+                    ? providerOwnedWritePathExecution.PotentialChangeCount
+                    : executionAdapter.PotentialChangeCount,
+            LatestAttemptId = !string.IsNullOrWhiteSpace(providerExecutionOrchestration.LatestAttemptId)
+                ? providerExecutionOrchestration.LatestAttemptId
+                : !string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.LatestAttemptId)
+                    ? providerOwnedWritePathExecution.LatestAttemptId
+                    : latestCommandExecution.AttemptId,
+            LatestRecordedAtUtc = providerExecutionOrchestration.LatestRecordedAtUtc ??
+                                  providerOwnedWritePathExecution.LatestRecordedAtUtc ??
+                                  latestCommandExecution.RecordedAtUtc,
+            CoordinationOwnerId = providerExecutionOrchestration.CoordinationOwnerId ??
+                                  schedulerRecoveryExecutionHardening.CoordinationOwnerId ??
+                                  durableSharedSchedulerOrchestration.CoordinationOwnerId,
+            ActiveReporterId = providerExecutionOrchestration.ActiveReporterId ??
+                               schedulerRecoveryExecutionHardening.ActiveReporterId ??
+                               durableSharedSchedulerOrchestration.ActiveReporterId,
+            ActiveReporterLeaseExpiresAtUtc = providerExecutionOrchestration.ActiveReporterLeaseExpiresAtUtc ??
+                                              schedulerRecoveryExecutionHardening.ActiveReporterLeaseExpiresAtUtc ??
+                                              durableSharedSchedulerOrchestration.ActiveReporterLeaseExpiresAtUtc,
+            SchedulerId = !string.IsNullOrWhiteSpace(providerExecutionOrchestration.SchedulerId)
+                ? providerExecutionOrchestration.SchedulerId
+                : !string.IsNullOrWhiteSpace(schedulerRecoveryExecutionHardening.SchedulerId)
+                    ? schedulerRecoveryExecutionHardening.SchedulerId
+                    : durableSharedSchedulerOrchestration.SchedulerId,
+            SchedulerKind = !string.IsNullOrWhiteSpace(providerExecutionOrchestration.SchedulerKind)
+                ? providerExecutionOrchestration.SchedulerKind
+                : !string.IsNullOrWhiteSpace(schedulerRecoveryExecutionHardening.SchedulerKind)
+                    ? schedulerRecoveryExecutionHardening.SchedulerKind
+                    : durableSharedSchedulerOrchestration.SchedulerKind,
+            PollingIntervalSeconds = providerExecutionOrchestration.PollingIntervalSeconds > 0
+                ? providerExecutionOrchestration.PollingIntervalSeconds
+                : schedulerRecoveryExecutionHardening.PollingIntervalSeconds > 0
+                    ? schedulerRecoveryExecutionHardening.PollingIntervalSeconds
+                    : durableSharedSchedulerOrchestration.PollingIntervalSeconds,
+            WouldApplyChanges = wouldApplyChanges,
+            RequiresExplicitApproval = requiresExplicitApproval,
+            IsDestructiveOperation = isDestructiveOperation,
+            HasCommandJournalEvidence = hasCommandJournalEvidence,
+            HasDurableStoreConfigured = hasDurableStoreConfigured,
+            HasPersistedRecordedHistory = hasPersistedRecordedHistory,
+            HasRecoveredPersistedHistory = hasRecoveredPersistedHistory,
+            CanExerciseProviderOwnedControlPlaneOnCurrentNode = canExerciseProviderOwnedControlPlaneOnCurrentNode
+        };
+    }
+
+    private static string[] CreateManagedConnectorProviderOwnedControlPlaneOwnershipCategories(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus durableSharedSchedulerOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus schedulerRecoveryExecutionHardening,
+        bool canExerciseProviderOwnedControlPlaneOnCurrentNode,
+        bool requiresExplicitApproval,
+        bool isDestructiveOperation,
+        bool hasCommandJournalEvidence,
+        bool hasDurableStoreConfigured,
+        bool hasPersistedRecordedHistory,
+        bool hasRecoveredPersistedHistory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(durableSharedSchedulerOrchestration);
+        ArgumentNullException.ThrowIfNull(schedulerRecoveryExecutionHardening);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return [];
+        }
+
+        var categories = new List<string>(capacity: 24);
+
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderOwnedControlPlaneOwnership);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OperatorOnly);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipReady, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipReady);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipBlocked);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipActive, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipActive);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipPartial, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipPartial);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.OwnershipRisk);
+        }
+
+        if (canExerciseProviderOwnedControlPlaneOnCurrentNode)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.CurrentNodeExecutable);
+        }
+        else if (!string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.CurrentNodeBlocked);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderExecutionReady);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderExecutionBlocked);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationExecuting)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderExecutionExecuting);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationCompleted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderExecutionCompleted);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderExecutionRisk);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderExecutable)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderExecutable);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderBlocked);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderOwnedExecuting)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderOwnedExecuting);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderOwnedCompleted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderOwnedCompleted);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderOwnedRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderOwnedRisk);
+        }
+
+        if (durableSharedSchedulerOrchestration.IsScheduled)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.SchedulerScheduled);
+        }
+
+        if (durableSharedSchedulerOrchestration.IsUnscheduled)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.SchedulerUnscheduled);
+        }
+
+        if (durableSharedSchedulerOrchestration.IsRecoveryNeeded)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.RecoveryNeeded);
+        }
+
+        if (durableSharedSchedulerOrchestration.IsSchedulerConflicted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.SchedulerConflicted);
+        }
+
+        if (schedulerRecoveryExecutionHardening.IsRecoveryReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.RecoveryReady);
+        }
+
+        if (schedulerRecoveryExecutionHardening.IsRecoveryBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.RecoveryBlocked);
+        }
+
+        if (schedulerRecoveryExecutionHardening.IsExecutionHardened)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ExecutionHardened);
+        }
+
+        if (schedulerRecoveryExecutionHardening.IsExecutionRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ExecutionRisk);
+        }
+
+        if (hasCommandJournalEvidence)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.CommandJournalEvidence);
+        }
+        else if (string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.NoRecordedCommand);
+        }
+
+        if (hasDurableStoreConfigured)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.DurableJournalConfigured);
+        }
+        else if (!string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.InMemoryJournalOnly);
+        }
+
+        if (hasPersistedRecordedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.PersistedHistory);
+        }
+
+        if (hasRecoveredPersistedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.RecoveredHistory);
+        }
+
+        if (requiresExplicitApproval)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ApprovalRequired);
+        }
+
+        if (isDestructiveOperation)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.DestructiveOperation);
+        }
+
+        if (latestCommandExecution.IsAdapted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderCommandAdapted);
+        }
+        else if (latestCommandExecution.IsNoOp)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderCommandNoOp);
+        }
+        else if (latestCommandExecution.IsBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderCommandBlocked);
+        }
+        else if (latestCommandExecution.IsOperatorOnly)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderCommandOperatorOnly);
+        }
+        else if (latestCommandExecution.IsUnavailable)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderCommandUnavailable);
+        }
+        else if (latestCommandExecution.IsFailed)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipCategories.ProviderCommandFailed);
+        }
+
+        return [.. categories];
+    }
+
+    private static string CreateManagedConnectorProviderOwnedControlPlaneOwnershipDescription(
+        string state,
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus durableSharedSchedulerOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus schedulerRecoveryExecutionHardening,
+        bool requiresExplicitApproval,
+        bool isDestructiveOperation)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(durableSharedSchedulerOrchestration);
+        ArgumentNullException.ThrowIfNull(schedulerRecoveryExecutionHardening);
+
+        var detail = CombineManagedConnectorCommandEnvelopeDetail(
+            CombineManagedConnectorCommandEnvelopeDetail(
+                CombineManagedConnectorCommandEnvelopeDetail(
+                    providerExecutionOrchestration.Description,
+                    providerOwnedWritePathExecution.Description,
+                    commandJournal.Description),
+                durableSharedSchedulerOrchestration.Description,
+                schedulerRecoveryExecutionHardening.Description),
+            latestCommandExecution.Description);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                "Cephalon does not currently expose provider-owned control-plane ownership for this execution runtime.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                "Cephalon can observe bounded provider-owned control-plane ownership for this managed connector, but control-plane ownership still remains operator-owned outside Cephalon.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            var riskReason =
+                schedulerRecoveryExecutionHardening.IsRecoveryBlocked
+                    ? "Scheduler recovery still needs durable journal evidence before Cephalon should assert broader control-plane ownership."
+                    : durableSharedSchedulerOrchestration.IsSchedulerConflicted
+                        ? "Shared scheduler coordination still remains conflicted across ownership or lease truth."
+                        : schedulerRecoveryExecutionHardening.IsExecutionRisk
+                            ? "Broader scheduler and lease execution truth still remains unsafe on the current node."
+                            : "The bounded provider-owned control-plane lane still looks risky right now.";
+
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon cannot safely assert provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on the current node right now. {riskReason}",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            string blockReason;
+            if (providerExecutionOrchestration.IsOrchestrationBlocked)
+            {
+                blockReason = "Broader provider execution orchestration still remains blocked on the shared lane.";
+            }
+            else if (durableSharedSchedulerOrchestration.IsRecoveryNeeded)
+            {
+                blockReason = "The durable shared scheduler still needs recovery hardening before Cephalon should own another provider-facing step.";
+            }
+            else if (durableSharedSchedulerOrchestration.IsLeaseBlocked)
+            {
+                blockReason = "The durable shared scheduler is still blocked by broader lease-execution truth.";
+            }
+            else if (string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.InsufficientForAutomation, StringComparison.OrdinalIgnoreCase))
+            {
+                blockReason = "Retained command-journal evidence is still insufficient for bounded control-plane ownership.";
+            }
+            else if (string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty, StringComparison.OrdinalIgnoreCase))
+            {
+                blockReason = "No provider-execution command evidence has been recorded yet for the bounded control-plane lane.";
+            }
+            else if (latestCommandExecution.IsBlocked)
+            {
+                blockReason = "The latest provider execution remained blocked by the current shared runtime truth.";
+            }
+            else if (latestCommandExecution.IsUnavailable)
+            {
+                blockReason = "No matching provider execution adapter is currently available for the bounded control-plane lane.";
+            }
+            else
+            {
+                blockReason = "The bounded provider-owned control-plane lane is not yet ready for another shared step.";
+            }
+
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon cannot currently assert provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}. {blockReason}",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipActive, StringComparison.OrdinalIgnoreCase))
+        {
+            var attemptId = NormalizeManagedConnectorFingerprintSegment(
+                !string.IsNullOrWhiteSpace(providerExecutionOrchestration.LatestAttemptId)
+                    ? providerExecutionOrchestration.LatestAttemptId
+                    : !string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.LatestAttemptId)
+                        ? providerOwnedWritePathExecution.LatestAttemptId
+                        : latestCommandExecution.AttemptId);
+
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon is currently exercising bounded provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on the shared lane; latest attempt '{attemptId}' already translated provider command shape.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.OwnershipPartial, StringComparison.OrdinalIgnoreCase))
+        {
+            string summary;
+            if (requiresExplicitApproval)
+            {
+                summary = $"Cephalon exposes bounded provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but explicit approval still gates execution.";
+            }
+            else if (isDestructiveOperation)
+            {
+                summary = $"Cephalon exposes bounded provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but destructive execution still needs deliberate operator confirmation.";
+            }
+            else if (providerExecutionOrchestration.IsOrchestrationCompleted || latestCommandExecution.IsNoOp)
+            {
+                summary = $"Cephalon currently retains bounded provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but no additional provider step is needed right now.";
+            }
+            else if (!providerExecutionOrchestration.CanOrchestrateProviderExecutionOnCurrentNode)
+            {
+                summary = $"Cephalon exposes bounded provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but the current node is not the active control-plane owner.";
+            }
+            else
+            {
+                summary = $"Cephalon exposes bounded provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)}, but the lane remains partial while broader provider ownership stays intentionally limited.";
+            }
+
+            return AppendManagedConnectorCommandEnvelopeDetail(summary, detail);
+        }
+
+        var schedulerId = NormalizeManagedConnectorFingerprintSegment(
+            !string.IsNullOrWhiteSpace(providerExecutionOrchestration.SchedulerId)
+                ? providerExecutionOrchestration.SchedulerId
+                : !string.IsNullOrWhiteSpace(schedulerRecoveryExecutionHardening.SchedulerId)
+                    ? schedulerRecoveryExecutionHardening.SchedulerId
+                    : durableSharedSchedulerOrchestration.SchedulerId);
+        var adapterId = NormalizeManagedConnectorFingerprintSegment(
+            !string.IsNullOrWhiteSpace(providerExecutionOrchestration.AdapterId)
+                ? providerExecutionOrchestration.AdapterId
+                : providerOwnedWritePathExecution.AdapterId);
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"Cephalon can exercise bounded provider-owned control-plane ownership for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on the current node through scheduler '{schedulerId}' and adapter '{adapterId}'.",
+            detail);
+    }
+
+    private static string ResolveManagedConnectorProviderOwnedControlPlaneOwnershipSourceId(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterStatus executionAdapter,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus durableSharedSchedulerOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus schedulerRecoveryExecutionHardening)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(executionAdapter);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(durableSharedSchedulerOrchestration);
+        ArgumentNullException.ThrowIfNull(schedulerRecoveryExecutionHardening);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.Unknown;
+        }
+
+        if (schedulerRecoveryExecutionHardening.IsRecoveryBlocked ||
+            schedulerRecoveryExecutionHardening.IsExecutionRisk)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.SchedulerRecoveryExecutionHardening;
+        }
+
+        if (durableSharedSchedulerOrchestration.IsSchedulerConflicted ||
+            durableSharedSchedulerOrchestration.IsRecoveryNeeded ||
+            durableSharedSchedulerOrchestration.IsLeaseBlocked)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.DurableSharedSchedulerOrchestration;
+        }
+
+        if (providerExecutionOrchestration.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.ProviderExecutionOrchestration;
+        }
+
+        if (providerOwnedWritePathExecution.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.ProviderOwnedWritePathExecution;
+        }
+
+        if (!string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.CommandJournal;
+        }
+
+        if (!latestCommandExecution.IsUnrecorded)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.CommandExecution;
+        }
+
+        if (executionAdapter.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.ExecutionAdapter;
+        }
+
+        return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.Unknown;
     }
 
     private static string CreateManagedConnectorBlockedAutomaticRetryExecutionDescription(

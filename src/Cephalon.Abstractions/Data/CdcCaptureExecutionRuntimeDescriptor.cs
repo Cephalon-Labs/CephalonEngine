@@ -388,6 +388,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus ManagedConnectorProviderExecutionOrchestration { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector provider-owned control-plane ownership posture derived from provider execution orchestration, provider-owned write-path execution, command-journal, scheduler, and recovery truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus ManagedConnectorProviderOwnedControlPlaneOwnership { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

@@ -727,19 +727,41 @@ distributed scheduler, or second coordinator.
   `/engine/cdc-capture-runtimes/provider-execution-orchestrations/operations/{operationId}`, and
   `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-execution-orchestration` on that
   same shared route family instead of branching into a Debezium-only orchestration endpoint set
+- `ENG-195` now keeps the shared managed-connector provider-owned control-plane ownership lane
+  provider-owned-control-plane-ownership-aware:
+  `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderOwnedControlPlaneOwnership` now
+  publishes stable `not-applicable`, `operator-only`, `ownership-ready`, `ownership-blocked`,
+  `ownership-active`, `ownership-partial`, and `ownership-risk` posture together with
+  operation/source, provider execution orchestration plus provider-owned write-path plus
+  execution-adapter plus latest-command plus retry-policy plus command-journal plus durable shared
+  scheduler plus scheduler-recovery state, deterministic fingerprints, adapter/provider metadata,
+  approval/destructive/change metadata, durable-history evidence, and
+  `CanExerciseProviderOwnedControlPlaneOnCurrentNode`, so the shared execution-runtime catalog can
+  gate both `ManagedConnectorAutomaticRetryHostedService` and automatic command execution through
+  one merged provider-owned control-plane ownership answer instead of trusting broader provider
+  execution orchestration truth alone when the ownership lane still reports blocked or risky
+- ASP.NET Core now maps
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-ownership/{providerOwnedControlPlaneOwnershipState}`,
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-ownership/categories/{providerOwnedControlPlaneOwnershipCategory}`,
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-ownership/operations/{operationId}`,
+  and `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-ownership`
+  on that same shared route family instead of branching into a Debezium-only ownership endpoint
+  set
 - bounded automatic background retry execution still remains shared in-process truth, and the
   shipped broader provider-owned write-path execution posture plus broader provider execution
-  orchestration posture still does not mean Cephalon already owns durable distributed command
-  journals, durable distributed schedulers, full Kafka Connect provisioning/reconciliation
-  ownership, or full provider-owned control-plane execution orchestration
+  orchestration posture plus broader provider-owned control-plane ownership posture still does not
+  mean Cephalon already owns durable distributed command journals, durable distributed schedulers,
+  full Kafka Connect provisioning/reconciliation ownership, or provider-native control-plane
+  mutation and reconcile ownership
 
 ## Not shipped in these slices
 
 This pack intentionally still does not claim:
 
 - Kafka Connect or Debezium REST API provisioning, configuration mutation, and apply-and-reconcile ownership
-- broader managed-connector control-plane ownership beyond the shipped shared provider-owned
-  write-path execution posture plus the shipped shared provider execution orchestration posture
+- broader managed-connector control-plane mutation or reconcile ownership beyond the shipped shared
+  provider-owned write-path execution posture plus the shipped shared provider execution
+  orchestration posture plus the shipped shared provider-owned control-plane ownership posture
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
 - durable distributed command journals, durable distributed retry schedulers, or full idempotency
@@ -748,7 +770,8 @@ This pack intentionally still does not claim:
   plus distributed retry orchestration truth plus richer cross-node idempotency hardening plus
   broader multi-node lease execution plus durable shared scheduler orchestration plus scheduler
   recovery hardening plus broader provider-owned write-path execution posture plus broader
-  provider execution orchestration posture
+  provider execution orchestration posture plus broader provider-owned control-plane ownership
+  posture
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

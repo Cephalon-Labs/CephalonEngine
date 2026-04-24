@@ -685,6 +685,23 @@ truth, and the shared data pack now gates both `ManagedConnectorAutomaticRetryHo
 automatic command invocations through that one orchestration answer instead of scattering broader
 provider orchestration checks across host code.
 
+That same shared execution-runtime story now also keeps managed-connector provider-owned
+control-plane ownership explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderOwnedControlPlaneOwnership` publishes
+stable `not-applicable` / `operator-only` / `ownership-ready` / `ownership-blocked` /
+`ownership-active` / `ownership-partial` / `ownership-risk` posture together with
+operation/source, provider execution orchestration plus provider-owned write-path plus
+execution-adapter plus latest-command plus retry-policy plus command-journal plus durable shared
+scheduler plus scheduler-recovery state, deterministic fingerprints, adapter/provider metadata,
+approval/destructive/change metadata, durable-history evidence, and
+`CanExerciseProviderOwnedControlPlaneOnCurrentNode`. The shared execution-runtime catalog derives
+that answer from the existing provider execution orchestration, provider-owned write-path,
+execution-adapter, latest command-execution, retry-execution-policy, bounded command-journal,
+durable shared scheduler, and scheduler recovery truth, and the shared data pack now gates both
+`ManagedConnectorAutomaticRetryHostedService` and automatic command invocations through that one
+provider-owned control-plane ownership answer instead of trusting broader provider execution
+orchestration truth alone when the merged ownership lane still reports blocked or risky.
+
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
 keeps `Cephalon.Data` honest: it now owns the shared in-process execution substrate plus the shared

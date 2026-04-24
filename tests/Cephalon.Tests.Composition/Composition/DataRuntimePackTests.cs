@@ -269,6 +269,7 @@ public sealed class DataRuntimePackTests
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.NotApplicable, runtimeDescriptor.ManagedConnectorExecutionIntent.State);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates.NotApplicable, runtimeDescriptor.ManagedConnectorProviderOwnedWritePathExecution.State);
         Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates.NotApplicable, runtimeDescriptor.ManagedConnectorProviderExecutionOrchestration.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStates.NotApplicable, runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneOwnership.State);
         var cdcCapture = cdcCaptureCatalog.GetById("tenant-profile-cdc");
         Assert.NotNull(cdcCapture);
         Assert.True(cdcCapture.ExecutionBinding.IsBound);

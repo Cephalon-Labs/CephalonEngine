@@ -91,14 +91,18 @@ internal sealed class ManagedConnectorCommandExecutor(
                 normalizedInvocationSourceId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
                 StringComparison.OrdinalIgnoreCase) &&
-            !runtime.ManagedConnectorProviderExecutionOrchestration.CanOrchestrateProviderExecutionOnCurrentNode)
+            !runtime.ManagedConnectorProviderOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode)
         {
+            var providerOwnedControlPlaneOwnership = runtime.ManagedConnectorProviderOwnedControlPlaneOwnership;
             var providerExecutionOrchestration = runtime.ManagedConnectorProviderExecutionOrchestration;
             var providerOwnedWritePathExecution = runtime.ManagedConnectorProviderOwnedWritePathExecution;
-            var coordinationState = providerExecutionOrchestration.IsOperatorOnly || providerOwnedWritePathExecution.IsOperatorOnly
+            var coordinationState = providerOwnedControlPlaneOwnership.IsOperatorOnly ||
+                                    providerExecutionOrchestration.IsOperatorOnly ||
+                                    providerOwnedWritePathExecution.IsOperatorOnly
                 ? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly
                 : CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked;
-            var coordinationDescription = string.IsNullOrWhiteSpace(providerExecutionOrchestration.Description)
+            var coordinationDescription = string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.Description)
+                ? string.IsNullOrWhiteSpace(providerExecutionOrchestration.Description)
                 ? string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.Description)
                     ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.Description)
                         ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description)
@@ -110,7 +114,8 @@ internal sealed class ManagedConnectorCommandExecutor(
                             : runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description
                         : runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.Description
                     : providerOwnedWritePathExecution.Description
-                : providerExecutionOrchestration.Description;
+                : providerExecutionOrchestration.Description
+                : providerOwnedControlPlaneOwnership.Description;
 
             return CreateResult(
                 runtime,
