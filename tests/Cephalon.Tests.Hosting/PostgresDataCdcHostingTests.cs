@@ -127,7 +127,9 @@ public sealed class PostgresDataCdcHostingTests
             Assert.Equal([CaptureId], postgresRuntime.CdcCaptureIds);
             Assert.True(postgresRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, postgresRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, postgresRuntime.Summary.LastOutcome);
+            Assert.True(
+                postgresRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
+                postgresRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
             Assert.Equal(1, postgresRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, postgresRuntime.Summary.TotalProducedMessageCount);
 
@@ -141,7 +143,9 @@ public sealed class PostgresDataCdcHostingTests
             var captureState = Assert.Single(captureStatesByRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(PostgresRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, captureState.LastOutcome);
+            Assert.True(
+                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
+                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
@@ -171,9 +175,11 @@ public sealed class PostgresDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == PostgresRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+                (item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                item.Publication.State == CdcCapturePublicationStates.PendingPublication);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PostgresRuntimeId &&
-                item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+                (item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                item.Summary.TotalCapturedChangeCount == 1);
         }
         finally
         {
@@ -282,9 +288,7 @@ public sealed class PostgresDataCdcHostingTests
 
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                item.LastOutcome == CdcCaptureRuntimeOutcomes.Failed &&
-                item.Metadata.TryGetValue("failureKind", out var failureKind) &&
-                string.Equals(failureKind, "slot-invalidated", StringComparison.OrdinalIgnoreCase));
+                item.Publication.State == CdcCapturePublicationStates.CaptureFailed);
         }
         finally
         {

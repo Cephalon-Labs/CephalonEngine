@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-24T09:15:59.7606878+00:00",
+  "GeneratedAtUtc": "2026-04-24T10:19:20.0411851+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 505
+      "TypeCount": 509
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -571,7 +571,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 225
+      "TypeCount": 229
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3210,7 +3210,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 46,
+        "Properties": 47,
         "Methods": 0
       }
     },
@@ -4726,6 +4726,66 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 63,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 46,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "Summary": "Defines the stable source identifiers used by managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 9,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "Summary": "Describes the current operator-facing managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 67,
         "Methods": 0
       }
     },
@@ -8626,7 +8686,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 93
+        "Methods": 96
       }
     },
     {
@@ -15430,6 +15490,17 @@
     {
       "DisplayName": "ActiveReporterId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-activereporterid",
+      "Signature": "string ActiveReporterId { get; set; }",
+      "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
+    },
+    {
+      "DisplayName": "ActiveReporterId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15595,6 +15666,17 @@
     {
       "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-activereporterleaseexpiresatutc",
+      "Signature": "DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when the active reporter lease expires when one is known."
+    },
+    {
+      "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15723,6 +15805,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-activetaskids",
       "Signature": "IReadOnlyList\u003Cstring\u003E ActiveTaskIds { get; set; }",
       "Summary": "Gets the latest reported active managed-connector task identifiers when they are known."
+    },
+    {
+      "DisplayName": "ActiveTaskIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-activetaskids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ActiveTaskIds { get; set; }",
+      "Summary": "Gets the currently active connector task identifiers when one report exists."
+    },
+    {
+      "DisplayName": "ActiveTaskTopology",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-activetasktopology",
+      "Signature": "const string ActiveTaskTopology",
+      "Summary": "The runtime currently reports one or more active connector tasks."
     },
     {
       "DisplayName": "ActiveWindow",
@@ -18961,6 +19065,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19091,6 +19206,17 @@
       "Summary": "Provider-owned control-plane apply-and-reconcile execution remains blocked by shared runtime policy, control-plane truth, or missing execution intent."
     },
     {
+      "DisplayName": "ApplyAndReconcileBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-applyandreconcileblocked",
+      "Signature": "const string ApplyAndReconcileBlocked",
+      "Summary": "The current provider-owned apply-and-reconcile lane remains blocked."
+    },
+    {
       "DisplayName": "ApplyAndReconcileCompleted",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategories",
@@ -19111,6 +19237,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-applyandreconcilecompleted",
       "Signature": "const string ApplyAndReconcileCompleted",
       "Summary": "Provider-owned control-plane apply-and-reconcile execution no longer needs another shared execution step for the current operation."
+    },
+    {
+      "DisplayName": "ApplyAndReconcileCompleted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-applyandreconcilecompleted",
+      "Signature": "const string ApplyAndReconcileCompleted",
+      "Summary": "The current provider-owned apply-and-reconcile lane no longer needs another execution step."
     },
     {
       "DisplayName": "ApplyAndReconcileExecuting",
@@ -19135,6 +19272,39 @@
       "Summary": "Provider-owned control-plane apply-and-reconcile execution is currently exercising one bounded provider-facing step."
     },
     {
+      "DisplayName": "ApplyAndReconcileExecuting",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-applyandreconcileexecuting",
+      "Signature": "const string ApplyAndReconcileExecuting",
+      "Summary": "The current provider-owned apply-and-reconcile lane is currently executing."
+    },
+    {
+      "DisplayName": "ApplyAndReconcileHardened",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-applyandreconcilehardened",
+      "Signature": "const string ApplyAndReconcileHardened",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening is fully hardened."
+    },
+    {
+      "DisplayName": "ApplyAndReconcileHardened",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstates-applyandreconcilehardened",
+      "Signature": "const string ApplyAndReconcileHardened",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening is fully hardened on the shared runtime surface."
+    },
+    {
       "DisplayName": "ApplyAndReconcileReady",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategories",
@@ -19157,6 +19327,17 @@
       "Summary": "Provider-owned control-plane apply-and-reconcile execution is currently ready on the shared runtime surface."
     },
     {
+      "DisplayName": "ApplyAndReconcileReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-applyandreconcileready",
+      "Signature": "const string ApplyAndReconcileReady",
+      "Summary": "The current provider-owned apply-and-reconcile lane is currently ready."
+    },
+    {
       "DisplayName": "ApplyAndReconcileRisk",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategories",
@@ -19177,6 +19358,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-applyandreconcilerisk",
       "Signature": "const string ApplyAndReconcileRisk",
       "Summary": "Provider-owned control-plane apply-and-reconcile execution currently remains risky because broader shared runtime truth is not safe enough yet."
+    },
+    {
+      "DisplayName": "ApplyAndReconcileRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-applyandreconcilerisk",
+      "Signature": "const string ApplyAndReconcileRisk",
+      "Summary": "The current provider-owned apply-and-reconcile lane currently remains risky."
     },
     {
       "DisplayName": "ApplyCephalonRateLimiting",
@@ -19551,6 +19743,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-approvalrequired",
       "Signature": "const string ApprovalRequired",
       "Summary": "The current provider control-plane apply-and-reconcile lane still requires explicit approval."
+    },
+    {
+      "DisplayName": "ApprovalRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-approvalrequired",
+      "Signature": "const string ApprovalRequired",
+      "Summary": "The current provider lane still requires explicit approval."
     },
     {
       "DisplayName": "ApprovalRequired",
@@ -23040,6 +23243,17 @@
       "Summary": "Gets a value indicating whether the current node can safely execute the next bounded automatic retry step."
     },
     {
+      "DisplayName": "CanExecuteDependencyAwareApplyAndReconcileOnCurrentNode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-canexecutedependencyawareapplyandreconcileoncurrentnode",
+      "Signature": "bool CanExecuteDependencyAwareApplyAndReconcileOnCurrentNode { get; set; }",
+      "Summary": "Gets a value indicating whether the current node can execute dependency-aware apply-and-reconcile safely."
+    },
+    {
       "DisplayName": "CanExecuteOnCurrentNode",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus",
@@ -24032,6 +24246,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active dependency-aware hardening categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -24358,6 +24583,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable provider-owned control-plane apply-and-reconcile execution categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable provider-owned control-plane dependency-aware apply-and-reconcile hardening categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -24811,6 +25047,17 @@
       "Summary": "Creates a new managed-connector provider-owned control-plane apply-and-reconcile execution answer."
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening answer."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
@@ -25205,6 +25452,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with provider-owned control-plane apply-and-reconcile execution."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with dependency-aware apply-and-reconcile hardening."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -27244,6 +27502,17 @@
     {
       "DisplayName": "CommandExecution",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-commandexecution",
+      "Signature": "const string CommandExecution",
+      "Summary": "The latest recorded command-execution answer supplied the decisive input."
+    },
+    {
+      "DisplayName": "CommandExecution",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27772,6 +28041,17 @@
     {
       "DisplayName": "CommandJournal",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-commandjournal",
+      "Signature": "const string CommandJournal",
+      "Summary": "The shared command-journal answer supplied the decisive input."
+    },
+    {
+      "DisplayName": "CommandJournal",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -28058,6 +28338,17 @@
     {
       "DisplayName": "CommandJournalState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-commandjournalstate",
+      "Signature": "string CommandJournalState { get; set; }",
+      "Summary": "Gets the current managed-connector command-journal state that informed dependency-aware hardening."
+    },
+    {
+      "DisplayName": "CommandJournalState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -28197,6 +28488,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-commandretrystate",
       "Signature": "string CommandRetryState { get; set; }",
       "Summary": "Gets the current managed-connector command-retry state that informed provider-owned control-plane apply-and-reconcile execution."
+    },
+    {
+      "DisplayName": "CommandRetryState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-commandretrystate",
+      "Signature": "string CommandRetryState { get; set; }",
+      "Summary": "Gets the current managed-connector command-retry state that informed dependency-aware hardening."
     },
     {
       "DisplayName": "CommandRetryState",
@@ -28927,6 +29229,17 @@
     {
       "DisplayName": "ConnectClusterId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-connectclusterid",
+      "Signature": "string ConnectClusterId { get; set; }",
+      "Summary": "Gets the best available connector-cluster identifier currently associated with dependency-aware hardening."
+    },
+    {
+      "DisplayName": "ConnectClusterId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -29000,6 +29313,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-connectclustermismatch",
       "Signature": "const string ConnectClusterMismatch",
       "Summary": "The latest reported connector-cluster identifier differs from the declared managed-connector baseline."
+    },
+    {
+      "DisplayName": "ConnectClusterMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-connectclustermismatch",
+      "Signature": "const string ConnectClusterMismatch",
+      "Summary": "The latest reported connector-cluster identifier differs from the declared baseline."
     },
     {
       "DisplayName": "ConnectionMode",
@@ -29378,6 +29702,17 @@
     {
       "DisplayName": "ConnectorClass",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-connectorclass",
+      "Signature": "string ConnectorClass { get; set; }",
+      "Summary": "Gets the best available connector-class identifier currently associated with dependency-aware hardening."
+    },
+    {
+      "DisplayName": "ConnectorClass",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -29462,6 +29797,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-connectorclassmismatch",
       "Signature": "const string ConnectorClassMismatch",
       "Summary": "The latest reported connector class differs from the declared managed-connector baseline."
+    },
+    {
+      "DisplayName": "ConnectorClassMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-connectorclassmismatch",
+      "Signature": "const string ConnectorClassMismatch",
+      "Summary": "The latest reported connector class differs from the declared baseline."
     },
     {
       "DisplayName": "ConnectorId",
@@ -31094,6 +31440,17 @@
     {
       "DisplayName": "CurrentNodeBlocked",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-currentnodeblocked",
+      "Signature": "const string CurrentNodeBlocked",
+      "Summary": "The current node cannot yet execute dependency-aware apply-and-reconcile work safely."
+    },
+    {
+      "DisplayName": "CurrentNodeBlocked",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -31189,6 +31546,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-currentnodeexecutable",
       "Signature": "const string CurrentNodeExecutable",
       "Summary": "The current node can exercise bounded provider-owned control-plane apply-and-reconcile execution safely."
+    },
+    {
+      "DisplayName": "CurrentNodeExecutable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-currentnodeexecutable",
+      "Signature": "const string CurrentNodeExecutable",
+      "Summary": "The current node can execute dependency-aware apply-and-reconcile work safely."
     },
     {
       "DisplayName": "CurrentNodeExecutable",
@@ -32112,6 +32480,17 @@
       "Summary": "Gets the declared connector-cluster identifier when one is known."
     },
     {
+      "DisplayName": "DeclaredConnectClusterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-declaredconnectclusterid",
+      "Signature": "string DeclaredConnectClusterId { get; set; }",
+      "Summary": "Gets the declared connector-cluster identifier when one is known."
+    },
+    {
       "DisplayName": "DeclaredConnectorClass",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
@@ -32123,6 +32502,17 @@
       "Summary": "Gets the declared connector-class identifier when one is known."
     },
     {
+      "DisplayName": "DeclaredConnectorClass",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-declaredconnectorclass",
+      "Signature": "string DeclaredConnectorClass { get; set; }",
+      "Summary": "Gets the declared connector-class identifier when one is known."
+    },
+    {
       "DisplayName": "DeclaredSourceProviderId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
@@ -32130,6 +32520,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-declaredsourceproviderid",
+      "Signature": "string DeclaredSourceProviderId { get; set; }",
+      "Summary": "Gets the declared source-provider identifier when one is known."
+    },
+    {
+      "DisplayName": "DeclaredSourceProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-declaredsourceproviderid",
       "Signature": "string DeclaredSourceProviderId { get; set; }",
       "Summary": "Gets the declared source-provider identifier when one is known."
     },
@@ -32154,6 +32555,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-declaredtaskids",
       "Signature": "IReadOnlyList\u003Cstring\u003E DeclaredTaskIds { get; set; }",
       "Summary": "Gets the declared managed-connector task identifiers when they are known."
+    },
+    {
+      "DisplayName": "DeclaredTaskIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-declaredtaskids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E DeclaredTaskIds { get; set; }",
+      "Summary": "Gets the declared connector task identifiers when one baseline exists."
     },
     {
       "DisplayName": "Default",
@@ -32926,6 +33338,50 @@
       "Summary": "A condition that describes traffic dependency posture such as missing gateways, middleware, or backend services."
     },
     {
+      "DisplayName": "DependencyBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-dependencyblocked",
+      "Signature": "const string DependencyBlocked",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening remains blocked."
+    },
+    {
+      "DisplayName": "DependencyBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstates-dependencyblocked",
+      "Signature": "const string DependencyBlocked",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening remains blocked by missing dependency truth, task topology, or execution targeting."
+    },
+    {
+      "DisplayName": "DependencyDegraded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-dependencydegraded",
+      "Signature": "const string DependencyDegraded",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening is currently degraded."
+    },
+    {
+      "DisplayName": "DependencyDegraded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstates-dependencydegraded",
+      "Signature": "const string DependencyDegraded",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening is currently degraded by mismatched, stale, or incomplete dependency observations."
+    },
+    {
       "DisplayName": "DependencyHealthReport",
       "Category": "Constructors",
       "DeclaringTypeName": "DependencyHealthReport",
@@ -32935,6 +33391,17 @@
       "AnchorId": "member-m-cephalon-abstractions-health-dependencyhealthreport-ctor-system-string-system-string-cephalon-abstractions-health-healthstate-system-string-system-boolean-system-string",
       "Signature": "DependencyHealthReport(string Id, string DisplayName, HealthState State, string Description, bool Required, string Source)",
       "Summary": "Describes the health state of one dependency surfaced by the runtime."
+    },
+    {
+      "DisplayName": "DependencyIdentityReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-dependencyidentityready",
+      "Signature": "const string DependencyIdentityReady",
+      "Summary": "The runtime currently declares complete dependency identity metadata."
     },
     {
       "DisplayName": "DependencyIds",
@@ -32957,6 +33424,50 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-dependencyids",
       "Signature": "IReadOnlyList\u003Cstring\u003E DependencyIds { get; }",
       "Summary": "Gets the normalized dependency identifiers observed across the related health-isolation answers."
+    },
+    {
+      "DisplayName": "DependencyReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-dependencyready",
+      "Signature": "const string DependencyReady",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening is currently ready."
+    },
+    {
+      "DisplayName": "DependencyReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstates-dependencyready",
+      "Signature": "const string DependencyReady",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening is currently ready on the shared runtime surface."
+    },
+    {
+      "DisplayName": "DependencyRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-dependencyrisk",
+      "Signature": "const string DependencyRisk",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening currently remains risky."
+    },
+    {
+      "DisplayName": "DependencyRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstates-dependencyrisk",
+      "Signature": "const string DependencyRisk",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening currently remains risky because broader provider or runtime truth is not safe enough yet."
     },
     {
       "DisplayName": "DependsOn",
@@ -33463,6 +33974,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing provider-owned control-plane apply-and-reconcile execution summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing dependency-aware apply-and-reconcile hardening summary."
     },
     {
       "DisplayName": "Description",
@@ -34475,6 +34997,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-destructiveoperation",
       "Signature": "const string DestructiveOperation",
       "Summary": "The current provider control-plane apply-and-reconcile lane still targets a destructive operation."
+    },
+    {
+      "DisplayName": "DestructiveOperation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-destructiveoperation",
+      "Signature": "const string DestructiveOperation",
+      "Summary": "The current provider lane still targets a destructive operation."
     },
     {
       "DisplayName": "DestructiveOperation",
@@ -36140,6 +36673,17 @@
     {
       "DisplayName": "DriftState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-driftstate",
+      "Signature": "string DriftState { get; set; }",
+      "Summary": "Gets the current broader managed-connector drift state that informed dependency-aware apply-and-reconcile hardening."
+    },
+    {
+      "DisplayName": "DriftState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36596,6 +37140,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-durablejournalconfigured",
+      "Signature": "const string DurableJournalConfigured",
+      "Summary": "A durable command-journal store is configured for the runtime."
+    },
+    {
+      "DisplayName": "DurableJournalConfigured",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-durablejournalconfigured",
       "Signature": "const string DurableJournalConfigured",
       "Summary": "A durable command-journal store is configured for the runtime."
     },
@@ -40727,6 +41282,17 @@
     {
       "DisplayName": "ExecutionOwnership",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-executionownership",
+      "Signature": "string ExecutionOwnership { get; set; }",
+      "Summary": "Gets the operator-facing execution-ownership mode that informed dependency-aware apply-and-reconcile hardening."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41024,6 +41590,17 @@
     {
       "DisplayName": "ExecutionRuntimeId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with dependency-aware apply-and-reconcile hardening."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41211,6 +41788,17 @@
     {
       "DisplayName": "ExecutionTopology",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets the operator-facing execution-topology classification that informed dependency-aware apply-and-reconcile hardening."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41383,6 +41971,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-expectedtaskcount",
       "Signature": "int? ExpectedTaskCount { get; set; }",
       "Summary": "Gets the declared task count when the managed connector reports one."
+    },
+    {
+      "DisplayName": "ExpectedTaskCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-expectedtaskcount",
+      "Signature": "int? ExpectedTaskCount { get; set; }",
+      "Summary": "Gets the declared task count when one is known."
     },
     {
       "DisplayName": "ExpectedTaskCount",
@@ -44872,6 +45471,39 @@
       "Summary": "Gets the CDC capture execution runtimes whose current provider-owned control-plane apply-and-reconcile execution answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory(string hardeningCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware apply-and-reconcile hardening answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningoperationid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperationId(string operationId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware apply-and-reconcile hardening answer currently targets the requested operation."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState(string hardeningState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware apply-and-reconcile hardening answer matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -46480,6 +47112,17 @@
     {
       "DisplayName": "GovernanceState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-governancestate",
+      "Signature": "string GovernanceState { get; set; }",
+      "Summary": "Gets the current broader managed-connector governance state that informed dependency-aware apply-and-reconcile hardening."
+    },
+    {
+      "DisplayName": "GovernanceState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -46865,6 +47508,17 @@
     {
       "DisplayName": "HasActiveReporterLease",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hasactivereporterlease",
+      "Signature": "bool HasActiveReporterLease { get; }",
+      "Summary": "Gets a value indicating whether the runtime currently exposes one active reporter lease."
+    },
+    {
+      "DisplayName": "HasActiveReporterLease",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -46927,6 +47581,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasactivereporterowner",
       "Signature": "bool HasActiveReporterOwner { get; }",
       "Summary": "Gets a value indicating whether the capture\u0027s execution runtime currently has one active reporter owner."
+    },
+    {
+      "DisplayName": "HasActiveTaskTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hasactivetasktopology",
+      "Signature": "bool HasActiveTaskTopology { get; set; }",
+      "Summary": "Gets a value indicating whether one active task topology is currently available."
     },
     {
       "DisplayName": "HasAdaptableCommand",
@@ -47116,6 +47781,17 @@
       "Summary": "Gets a value indicating whether the current host declared a coordination owner identifier for distributed retry."
     },
     {
+      "DisplayName": "HasDeclaredDependencyIdentity",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hasdeclareddependencyidentity",
+      "Signature": "bool HasDeclaredDependencyIdentity { get; set; }",
+      "Summary": "Gets a value indicating whether declared dependency identity is complete."
+    },
+    {
       "DisplayName": "HasDefaultValues",
       "Category": "Properties",
       "DeclaringTypeName": "CellTrafficAutomationSettings",
@@ -47136,6 +47812,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-hasdegradedcdccaptures",
       "Signature": "bool HasDegradedCdcCaptures { get; }",
       "Summary": "Gets a value indicating whether any CDC capture currently reports degraded coordination posture for the execution runtime."
+    },
+    {
+      "DisplayName": "HasDependencyIdentityMismatch",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hasdependencyidentitymismatch",
+      "Signature": "bool HasDependencyIdentityMismatch { get; set; }",
+      "Summary": "Gets a value indicating whether dependency identity currently reports one declared-versus-observed mismatch."
     },
     {
       "DisplayName": "HasDispatchReports",
@@ -47266,6 +47953,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-hasdurablestoreconfigured",
+      "Signature": "bool HasDurableStoreConfigured { get; set; }",
+      "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
+    },
+    {
+      "DisplayName": "HasDurableStoreConfigured",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hasdurablestoreconfigured",
       "Signature": "bool HasDurableStoreConfigured { get; set; }",
       "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
     },
@@ -47723,6 +48421,17 @@
     {
       "DisplayName": "HasPersistedRecordedHistory",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-haspersistedrecordedhistory",
+      "Signature": "bool HasPersistedRecordedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history."
+    },
+    {
+      "DisplayName": "HasPersistedRecordedHistory",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -47965,6 +48674,17 @@
     {
       "DisplayName": "HasRecoveredPersistedHistory",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hasrecoveredpersistedhistory",
+      "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the current process recovered persisted command history for this runtime."
+    },
+    {
+      "DisplayName": "HasRecoveredPersistedHistory",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48038,6 +48758,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasrejectedreporters",
       "Signature": "bool HasRejectedReporters { get; }",
       "Summary": "Gets a value indicating whether the coordination answer currently carries rejected reporter evidence."
+    },
+    {
+      "DisplayName": "HasReportedDependencyIdentity",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hasreporteddependencyidentity",
+      "Signature": "bool HasReportedDependencyIdentity { get; set; }",
+      "Summary": "Gets a value indicating whether reported dependency identity is complete."
+    },
+    {
+      "DisplayName": "HasReportedTaskTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hasreportedtasktopology",
+      "Signature": "bool HasReportedTaskTopology { get; set; }",
+      "Summary": "Gets a value indicating whether one reported task topology is currently available."
     },
     {
       "DisplayName": "HasReporterCoordinationIssue",
@@ -48196,6 +48938,17 @@
     {
       "DisplayName": "HasTargetOperation",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hastargetoperation",
+      "Signature": "bool HasTargetOperation { get; set; }",
+      "Summary": "Gets a value indicating whether the current answer exposes one concrete target operation."
+    },
+    {
+      "DisplayName": "HasTargetOperation",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48214,6 +48967,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningstatus-hastargetoperation",
       "Signature": "bool HasTargetOperation { get; set; }",
       "Summary": "Gets a value indicating whether the current answer exposes one concrete target operation."
+    },
+    {
+      "DisplayName": "HasTaskBaseline",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hastaskbaseline",
+      "Signature": "bool HasTaskBaseline { get; set; }",
+      "Summary": "Gets a value indicating whether one declared task baseline is currently available."
+    },
+    {
+      "DisplayName": "HasTaskTopologyMismatch",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-hastasktopologymismatch",
+      "Signature": "bool HasTaskTopologyMismatch { get; set; }",
+      "Summary": "Gets a value indicating whether task topology currently reports one declared-versus-observed mismatch."
     },
     {
       "DisplayName": "HasTruncatedHistory",
@@ -51969,6 +52744,17 @@
     {
       "DisplayName": "InMemoryJournalOnly",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-inmemoryjournalonly",
+      "Signature": "const string InMemoryJournalOnly",
+      "Summary": "Dependency-aware hardening currently depends on in-memory history only."
+    },
+    {
+      "DisplayName": "InMemoryJournalOnly",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52328,6 +53114,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isapplyandreconcileexecuting",
       "Signature": "bool IsApplyAndReconcileExecuting { get; }",
       "Summary": "Gets a value indicating whether provider-owned control-plane apply-and-reconcile execution is currently executing one bounded provider-facing step."
+    },
+    {
+      "DisplayName": "IsApplyAndReconcileHardened",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-isapplyandreconcilehardened",
+      "Signature": "bool IsApplyAndReconcileHardened { get; }",
+      "Summary": "Gets a value indicating whether dependency-aware apply-and-reconcile hardening is fully hardened."
     },
     {
       "DisplayName": "IsApplyAndReconcileReady",
@@ -52869,6 +53666,50 @@
       "Summary": "Gets a value indicating whether the coordination answer currently reports degraded reporter ownership."
     },
     {
+      "DisplayName": "IsDependencyBlocked",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-isdependencyblocked",
+      "Signature": "bool IsDependencyBlocked { get; }",
+      "Summary": "Gets a value indicating whether dependency-aware apply-and-reconcile hardening currently remains blocked."
+    },
+    {
+      "DisplayName": "IsDependencyDegraded",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-isdependencydegraded",
+      "Signature": "bool IsDependencyDegraded { get; }",
+      "Summary": "Gets a value indicating whether dependency-aware apply-and-reconcile hardening currently remains degraded."
+    },
+    {
+      "DisplayName": "IsDependencyReady",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-isdependencyready",
+      "Signature": "bool IsDependencyReady { get; }",
+      "Summary": "Gets a value indicating whether dependency-aware apply-and-reconcile hardening is currently ready."
+    },
+    {
+      "DisplayName": "IsDependencyRisk",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-isdependencyrisk",
+      "Signature": "bool IsDependencyRisk { get; }",
+      "Summary": "Gets a value indicating whether dependency-aware apply-and-reconcile hardening currently remains risky."
+    },
+    {
       "DisplayName": "IsDestructiveOperation",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -52966,6 +53807,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isdestructiveoperation",
       "Signature": "bool IsDestructiveOperation { get; set; }",
       "Summary": "Gets a value indicating whether the current provider-owned control-plane apply-and-reconcile lane targets a destructive connector operation."
+    },
+    {
+      "DisplayName": "IsDestructiveOperation",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-isdestructiveoperation",
+      "Signature": "bool IsDestructiveOperation { get; set; }",
+      "Summary": "Gets a value indicating whether the current provider lane targets a destructive connector operation."
     },
     {
       "DisplayName": "IsDestructiveOperation",
@@ -53813,6 +54665,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isoperatoronly",
       "Signature": "bool IsOperatorOnly { get; }",
       "Summary": "Gets a value indicating whether provider-owned control-plane apply-and-reconcile execution still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether dependency-aware apply-and-reconcile hardening still remains operator-owned outside Cephalon."
     },
     {
       "DisplayName": "IsOperatorOnly",
@@ -56149,6 +57012,17 @@
     {
       "DisplayName": "LatestAttemptId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-latestattemptid",
+      "Signature": "string LatestAttemptId { get; set; }",
+      "Summary": "Gets the stable latest recorded command-execution attempt identifier when one exists."
+    },
+    {
+      "DisplayName": "LatestAttemptId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -56622,6 +57496,17 @@
     {
       "DisplayName": "LatestCommandExecutionState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-latestcommandexecutionstate",
+      "Signature": "string LatestCommandExecutionState { get; set; }",
+      "Summary": "Gets the latest recorded managed-connector command-execution state visible to dependency-aware hardening."
+    },
+    {
+      "DisplayName": "LatestCommandExecutionState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -57058,6 +57943,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-latestrecordedatutc",
       "Signature": "DateTimeOffset? LatestRecordedAtUtc { get; set; }",
       "Summary": "Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider-owned control-plane apply-and-reconcile execution."
+    },
+    {
+      "DisplayName": "LatestRecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-latestrecordedatutc",
+      "Signature": "DateTimeOffset? LatestRecordedAtUtc { get; set; }",
+      "Summary": "Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed dependency-aware hardening."
     },
     {
       "DisplayName": "LatestRecordedAtUtc",
@@ -58050,6 +58946,17 @@
       "Summary": "Gets the operator-facing desired-versus-observed managed-connector drift posture for the execution runtime."
     },
     {
+      "DisplayName": "ManagedConnectorDrift",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-managedconnectordrift",
+      "Signature": "const string ManagedConnectorDrift",
+      "Summary": "The broader managed-connector drift answer supplied the decisive input."
+    },
+    {
       "DisplayName": "ManagedConnectorDryRun",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -58116,6 +59023,17 @@
       "Summary": "Gets the operator-facing managed-connector governance posture for the execution runtime."
     },
     {
+      "DisplayName": "ManagedConnectorGovernance",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-managedconnectorgovernance",
+      "Signature": "const string ManagedConnectorGovernance",
+      "Summary": "The broader managed-connector governance answer supplied the decisive input."
+    },
+    {
       "DisplayName": "ManagedConnectorMultiNodeLeaseExecution",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -58158,6 +59076,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedcontrolplaneapplyandreconcileexecution",
       "Signature": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution { get; set; }",
       "Summary": "Gets the operator-facing managed-connector provider-owned control-plane apply-and-reconcile execution posture derived from control-plane provisioning, ownership, command-lane truth, and retained journal evidence."
+    },
+    {
+      "DisplayName": "ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardening",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening { get; set; }",
+      "Summary": "Gets the current shared dependency-aware apply-and-reconcile hardening answer for the managed connector when one applies."
     },
     {
       "DisplayName": "ManagedConnectorProviderOwnedControlPlaneMutationReconcile",
@@ -58508,6 +59437,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -61691,6 +62631,17 @@
       "Summary": "The execution runtime does not currently declare the upstream connector-cluster identifier."
     },
     {
+      "DisplayName": "MissingConnectClusterId",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-missingconnectclusterid",
+      "Signature": "const string MissingConnectClusterId",
+      "Summary": "The runtime does not currently declare the upstream connector-cluster identifier."
+    },
+    {
       "DisplayName": "MissingConnectorClass",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories",
@@ -61700,6 +62651,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories-missingconnectorclass",
       "Signature": "const string MissingConnectorClass",
       "Summary": "The execution runtime does not currently declare the upstream connector class."
+    },
+    {
+      "DisplayName": "MissingConnectorClass",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-missingconnectorclass",
+      "Signature": "const string MissingConnectorClass",
+      "Summary": "The runtime does not currently declare the upstream connector class."
     },
     {
       "DisplayName": "MissingDeclaredTaskIds",
@@ -61735,6 +62697,17 @@
       "Summary": "One or more declared task ids are missing from the latest reported task ids."
     },
     {
+      "DisplayName": "MissingDeclaredTaskReports",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-missingdeclaredtaskreports",
+      "Signature": "const string MissingDeclaredTaskReports",
+      "Summary": "One or more declared task ids are missing from the latest reported task ids."
+    },
+    {
       "DisplayName": "MissingManagementMode",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories",
@@ -61757,6 +62730,17 @@
       "Summary": "The execution runtime does not currently declare the upstream source-provider identifier."
     },
     {
+      "DisplayName": "MissingSourceProviderId",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-missingsourceproviderid",
+      "Signature": "const string MissingSourceProviderId",
+      "Summary": "The runtime does not currently declare the upstream source-provider identifier."
+    },
+    {
       "DisplayName": "MissingTaskBaseline",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftCategories",
@@ -61764,6 +62748,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-missingtaskbaseline",
+      "Signature": "const string MissingTaskBaseline",
+      "Summary": "The managed connector does not currently declare task ids or an expected task count."
+    },
+    {
+      "DisplayName": "MissingTaskBaseline",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-missingtaskbaseline",
       "Signature": "const string MissingTaskBaseline",
       "Summary": "The managed connector does not currently declare task ids or an expected task count."
     },
@@ -63042,6 +64037,17 @@
       "Summary": "Gets the earliest UTC due timestamp across the currently pending timers when one exists."
     },
     {
+      "DisplayName": "NoActiveTaskTopology",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-noactivetasktopology",
+      "Signature": "const string NoActiveTaskTopology",
+      "Summary": "The runtime does not currently report any active connector task ids."
+    },
+    {
       "DisplayName": "NoChangesRequired",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
@@ -63062,6 +64068,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-nochangesrequired",
       "Signature": "const string NoChangesRequired",
       "Summary": "The current provider control-plane apply-and-reconcile lane would not apply another shared write-path change."
+    },
+    {
+      "DisplayName": "NoChangesRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-nochangesrequired",
+      "Signature": "const string NoChangesRequired",
+      "Summary": "The current provider lane would not apply another shared write-path change."
     },
     {
       "DisplayName": "NoChangesRequired",
@@ -63909,6 +64926,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-notapplicable",
       "Signature": "const string NotApplicable",
       "Summary": "Provider-owned control-plane apply-and-reconcile execution does not currently apply to the execution runtime."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening does not currently apply to the execution runtime."
     },
     {
       "DisplayName": "NotApplicable",
@@ -65266,6 +66294,17 @@
     {
       "DisplayName": "OperationId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier currently associated with dependency-aware apply-and-reconcile hardening."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -65658,6 +66697,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-operatoronly",
       "Signature": "const string OperatorOnly",
       "Summary": "Provider-owned control-plane apply-and-reconcile execution still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Provider-owned control-plane dependency-aware apply-and-reconcile hardening still remains operator-owned outside Cephalon."
     },
     {
       "DisplayName": "OperatorOnly",
@@ -68322,6 +69383,17 @@
     {
       "DisplayName": "PersistedHistory",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-persistedhistory",
+      "Signature": "const string PersistedHistory",
+      "Summary": "The durable command journal currently exposes persisted recorded history."
+    },
+    {
+      "DisplayName": "PersistedHistory",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -69273,6 +70345,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-potentialchangecount",
       "Signature": "int PotentialChangeCount { get; set; }",
       "Summary": "Gets the number of visible potential shared write-path changes currently associated with provider-owned control-plane apply-and-reconcile execution."
+    },
+    {
+      "DisplayName": "PotentialChangeCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-potentialchangecount",
+      "Signature": "int PotentialChangeCount { get; set; }",
+      "Summary": "Gets the number of visible potential shared write-path changes currently associated with dependency-aware hardening."
     },
     {
       "DisplayName": "PotentialChangeCount",
@@ -70586,6 +71669,17 @@
     {
       "DisplayName": "ProviderCommandAdapted",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-providercommandadapted",
+      "Signature": "const string ProviderCommandAdapted",
+      "Summary": "The latest provider command translated into a provider-facing shape."
+    },
+    {
+      "DisplayName": "ProviderCommandAdapted",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -70648,6 +71742,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providercommandblocked",
       "Signature": "const string ProviderCommandBlocked",
       "Summary": "The latest provider execution remained blocked."
+    },
+    {
+      "DisplayName": "ProviderCommandBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-providercommandblocked",
+      "Signature": "const string ProviderCommandBlocked",
+      "Summary": "The latest provider command remained blocked."
     },
     {
       "DisplayName": "ProviderCommandBlocked",
@@ -70718,6 +71823,17 @@
     {
       "DisplayName": "ProviderCommandFailed",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-providercommandfailed",
+      "Signature": "const string ProviderCommandFailed",
+      "Summary": "The latest provider command failed while Cephalon translated it."
+    },
+    {
+      "DisplayName": "ProviderCommandFailed",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -70780,6 +71896,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providercommandnoop",
       "Signature": "const string ProviderCommandNoOp",
       "Summary": "The latest provider execution determined that no provider command is required."
+    },
+    {
+      "DisplayName": "ProviderCommandNoOp",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-providercommandnoop",
+      "Signature": "const string ProviderCommandNoOp",
+      "Summary": "The latest provider command determined that no provider command is required."
     },
     {
       "DisplayName": "ProviderCommandNoOp",
@@ -71253,6 +72380,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerexecutionorchestrationstate",
       "Signature": "string ProviderExecutionOrchestrationState { get; set; }",
       "Summary": "Gets the current broader provider execution-orchestration state that informed provider-owned control-plane apply-and-reconcile execution."
+    },
+    {
+      "DisplayName": "ProviderExecutionOrchestrationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-providerexecutionorchestrationstate",
+      "Signature": "string ProviderExecutionOrchestrationState { get; set; }",
+      "Summary": "Gets the current broader provider execution-orchestration state that informed dependency-aware hardening."
     },
     {
       "DisplayName": "ProviderExecutionOrchestrationState",
@@ -71794,6 +72932,39 @@
       "Summary": "The runtime participates in the provider-owned control-plane apply-and-reconcile execution lane."
     },
     {
+      "DisplayName": "ProviderOwnedControlPlaneApplyAndReconcileExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-providerownedcontrolplaneapplyandreconcileexecution",
+      "Signature": "const string ProviderOwnedControlPlaneApplyAndReconcileExecution",
+      "Summary": "The broader provider-owned control-plane apply-and-reconcile execution answer supplied the decisive input."
+    },
+    {
+      "DisplayName": "ProviderOwnedControlPlaneApplyAndReconcileExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-providerownedcontrolplaneapplyandreconcileexecutionstate",
+      "Signature": "string ProviderOwnedControlPlaneApplyAndReconcileExecutionState { get; set; }",
+      "Summary": "Gets the current provider-owned control-plane apply-and-reconcile execution state that informed dependency-aware hardening."
+    },
+    {
+      "DisplayName": "ProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-providerownedcontrolplanedependencyawareapplyandreconcilehardening",
+      "Signature": "const string ProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening",
+      "Summary": "The runtime participates in the provider-owned control-plane dependency-aware apply-and-reconcile hardening lane."
+    },
+    {
       "DisplayName": "ProviderOwnedControlPlaneMutationReconcile",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionSources",
@@ -71801,6 +72972,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-providerownedcontrolplanemutationreconcile",
+      "Signature": "const string ProviderOwnedControlPlaneMutationReconcile",
+      "Summary": "The broader provider-owned control-plane mutation and reconcile answer supplied the decisive input."
+    },
+    {
+      "DisplayName": "ProviderOwnedControlPlaneMutationReconcile",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-providerownedcontrolplanemutationreconcile",
       "Signature": "const string ProviderOwnedControlPlaneMutationReconcile",
       "Summary": "The broader provider-owned control-plane mutation and reconcile answer supplied the decisive input."
     },
@@ -71840,6 +73022,17 @@
     {
       "DisplayName": "ProviderOwnedControlPlaneMutationReconcileState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-providerownedcontrolplanemutationreconcilestate",
+      "Signature": "string ProviderOwnedControlPlaneMutationReconcileState { get; set; }",
+      "Summary": "Gets the current provider-owned control-plane mutation and reconcile state that informed dependency-aware hardening."
+    },
+    {
+      "DisplayName": "ProviderOwnedControlPlaneMutationReconcileState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -71856,6 +73049,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-providerownedcontrolplaneownership",
+      "Signature": "const string ProviderOwnedControlPlaneOwnership",
+      "Summary": "The broader provider-owned control-plane ownership answer supplied the decisive input."
+    },
+    {
+      "DisplayName": "ProviderOwnedControlPlaneOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-providerownedcontrolplaneownership",
       "Signature": "const string ProviderOwnedControlPlaneOwnership",
       "Summary": "The broader provider-owned control-plane ownership answer supplied the decisive input."
     },
@@ -71906,6 +73110,17 @@
     {
       "DisplayName": "ProviderOwnedControlPlaneOwnershipState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-providerownedcontrolplaneownershipstate",
+      "Signature": "string ProviderOwnedControlPlaneOwnershipState { get; set; }",
+      "Summary": "Gets the current provider-owned control-plane ownership state that informed dependency-aware hardening."
+    },
+    {
+      "DisplayName": "ProviderOwnedControlPlaneOwnershipState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -71939,6 +73154,17 @@
     {
       "DisplayName": "ProviderOwnedControlPlaneProvisioning",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-providerownedcontrolplaneprovisioning",
+      "Signature": "const string ProviderOwnedControlPlaneProvisioning",
+      "Summary": "The broader provider-owned control-plane provisioning answer supplied the decisive input."
+    },
+    {
+      "DisplayName": "ProviderOwnedControlPlaneProvisioning",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -71957,6 +73183,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerownedcontrolplaneprovisioningstate",
       "Signature": "string ProviderOwnedControlPlaneProvisioningState { get; set; }",
       "Summary": "Gets the current provider-owned control-plane provisioning state that informed provider-owned control-plane apply-and-reconcile execution."
+    },
+    {
+      "DisplayName": "ProviderOwnedControlPlaneProvisioningState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-providerownedcontrolplaneprovisioningstate",
+      "Signature": "string ProviderOwnedControlPlaneProvisioningState { get; set; }",
+      "Summary": "Gets the current provider-owned control-plane provisioning state that informed dependency-aware hardening."
     },
     {
       "DisplayName": "ProviderOwnedExecuting",
@@ -72199,6 +73436,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerownedwritepathexecutionstate",
       "Signature": "string ProviderOwnedWritePathExecutionState { get; set; }",
       "Summary": "Gets the current provider-owned write-path execution state that informed provider-owned control-plane apply-and-reconcile execution."
+    },
+    {
+      "DisplayName": "ProviderOwnedWritePathExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-providerownedwritepathexecutionstate",
+      "Signature": "string ProviderOwnedWritePathExecutionState { get; set; }",
+      "Summary": "Gets the current provider-owned write-path execution state that informed dependency-aware hardening."
     },
     {
       "DisplayName": "ProviderOwnedWritePathExecutionState",
@@ -73565,6 +74813,17 @@
       "Summary": "Broader provider-owned control-plane reconcile is currently ready."
     },
     {
+      "DisplayName": "ReconciliationDegraded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reconciliationdegraded",
+      "Signature": "const string ReconciliationDegraded",
+      "Summary": "The runtime currently reports a degraded reconciliation posture."
+    },
+    {
       "DisplayName": "ReconciliationReason",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
@@ -73585,6 +74844,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-reconciliationreason",
       "Signature": "string ReconciliationReason { get; set; }",
       "Summary": "Gets the latest reported reconciliation summary when one is known."
+    },
+    {
+      "DisplayName": "ReconciliationReason",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-reconciliationreason",
+      "Signature": "string ReconciliationReason { get; set; }",
+      "Summary": "Gets the latest operator-facing reconciliation summary currently visible for the managed connector."
+    },
+    {
+      "DisplayName": "ReconciliationStable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reconciliationstable",
+      "Signature": "const string ReconciliationStable",
+      "Summary": "The runtime currently reports a stable reconciliation posture."
     },
     {
       "DisplayName": "ReconciliationState",
@@ -73618,6 +74899,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-reconciliationstate",
       "Signature": "string ReconciliationState { get; set; }",
       "Summary": "Gets the latest reported overall reconciliation state when one is known."
+    },
+    {
+      "DisplayName": "ReconciliationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-reconciliationstate",
+      "Signature": "string ReconciliationState { get; set; }",
+      "Summary": "Gets the latest reconciliation state currently visible for the managed connector."
     },
     {
       "DisplayName": "Reconciling",
@@ -73759,6 +75051,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-recoveredhistory",
+      "Signature": "const string RecoveredHistory",
+      "Summary": "The durable command journal currently exposes recovered recorded history."
+    },
+    {
+      "DisplayName": "RecoveredHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-recoveredhistory",
       "Signature": "const string RecoveredHistory",
       "Summary": "The durable command journal currently exposes recovered recorded history."
     },
@@ -75259,6 +76562,17 @@
       "Summary": "Gets the latest reported connector-cluster identifier when one is known."
     },
     {
+      "DisplayName": "ReportedConnectClusterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-reportedconnectclusterid",
+      "Signature": "string ReportedConnectClusterId { get; set; }",
+      "Summary": "Gets the last reported connector-cluster identifier when one is known."
+    },
+    {
       "DisplayName": "ReportedConnectorClass",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
@@ -75268,6 +76582,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reportedconnectorclass",
       "Signature": "string ReportedConnectorClass { get; set; }",
       "Summary": "Gets the latest reported connector-class identifier when one is known."
+    },
+    {
+      "DisplayName": "ReportedConnectorClass",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-reportedconnectorclass",
+      "Signature": "string ReportedConnectorClass { get; set; }",
+      "Summary": "Gets the last reported connector-class identifier when one is known."
+    },
+    {
+      "DisplayName": "ReportedDependencyIdentityReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reporteddependencyidentityready",
+      "Signature": "const string ReportedDependencyIdentityReady",
+      "Summary": "The runtime currently reports complete dependency identity metadata."
     },
     {
       "DisplayName": "ReportEdgeAsync",
@@ -75314,6 +76650,17 @@
       "Summary": "Gets the latest reported source-provider identifier when one is known."
     },
     {
+      "DisplayName": "ReportedSourceProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-reportedsourceproviderid",
+      "Signature": "string ReportedSourceProviderId { get; set; }",
+      "Summary": "Gets the last reported source-provider identifier when one is known."
+    },
+    {
       "DisplayName": "ReportedTaskCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
@@ -75336,6 +76683,17 @@
       "Summary": "Gets the latest reported task count when the managed connector reports one."
     },
     {
+      "DisplayName": "ReportedTaskCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-reportedtaskcount",
+      "Signature": "int? ReportedTaskCount { get; set; }",
+      "Summary": "Gets the last reported task count when one is known."
+    },
+    {
       "DisplayName": "ReportedTaskIdentityUnavailable",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftCategories",
@@ -75345,6 +76703,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-reportedtaskidentityunavailable",
       "Signature": "const string ReportedTaskIdentityUnavailable",
       "Summary": "The managed connector reports task counts, but not the task identities needed to compare declared task ids."
+    },
+    {
+      "DisplayName": "ReportedTaskIdentityUnavailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reportedtaskidentityunavailable",
+      "Signature": "const string ReportedTaskIdentityUnavailable",
+      "Summary": "The managed connector reports task counts, but not task identities."
     },
     {
       "DisplayName": "ReportedTaskIds",
@@ -75369,6 +76738,17 @@
       "Summary": "Gets the latest reported managed-connector task identifiers when they are known."
     },
     {
+      "DisplayName": "ReportedTaskIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-reportedtaskids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ReportedTaskIds { get; set; }",
+      "Summary": "Gets the last reported connector task identifiers when one report exists."
+    },
+    {
       "DisplayName": "ReportedTaskTopologyUnavailable",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftCategories",
@@ -75376,6 +76756,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-reportedtasktopologyunavailable",
+      "Signature": "const string ReportedTaskTopologyUnavailable",
+      "Summary": "The managed connector has not yet reported task ids or a reported task count."
+    },
+    {
+      "DisplayName": "ReportedTaskTopologyUnavailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reportedtasktopologyunavailable",
       "Signature": "const string ReportedTaskTopologyUnavailable",
       "Summary": "The managed connector has not yet reported task ids or a reported task count."
     },
@@ -75512,6 +76903,17 @@
       "Summary": "Gets the stable reporter identity that submitted the observation when one was supplied."
     },
     {
+      "DisplayName": "ReporterLeaseActive",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reporterleaseactive",
+      "Signature": "const string ReporterLeaseActive",
+      "Summary": "The runtime currently exposes an active reporter lease."
+    },
+    {
       "DisplayName": "ReporterLeaseExpiresAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -75532,6 +76934,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-reporterleaseexpiresatutc",
       "Signature": "DateTimeOffset? ReporterLeaseExpiresAtUtc { get; set; }",
       "Summary": "Gets the UTC timestamp when the latest reporter lease expires when one is known."
+    },
+    {
+      "DisplayName": "ReporterLeaseMissingOrStale",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reporterleasemissingorstale",
+      "Signature": "const string ReporterLeaseMissingOrStale",
+      "Summary": "The runtime is missing one active reporter lease or currently reports degraded reporter ownership."
     },
     {
       "DisplayName": "ReporterLeaseSeconds",
@@ -76676,6 +78089,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-requiresexplicitapproval",
       "Signature": "bool RequiresExplicitApproval { get; set; }",
       "Summary": "Gets a value indicating whether the current provider-owned control-plane apply-and-reconcile lane still requires explicit approval."
+    },
+    {
+      "DisplayName": "RequiresExplicitApproval",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-requiresexplicitapproval",
+      "Signature": "bool RequiresExplicitApproval { get; set; }",
+      "Summary": "Gets a value indicating whether the current provider lane still requires explicit approval."
     },
     {
       "DisplayName": "RequiresExplicitApproval",
@@ -78843,6 +80267,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-retryexecutionpolicystate",
       "Signature": "string RetryExecutionPolicyState { get; set; }",
       "Summary": "Gets the current managed-connector retry-execution policy state that informed provider-owned control-plane apply-and-reconcile execution."
+    },
+    {
+      "DisplayName": "RetryExecutionPolicyState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-retryexecutionpolicystate",
+      "Signature": "string RetryExecutionPolicyState { get; set; }",
+      "Summary": "Gets the current managed-connector retry-execution policy state that informed dependency-aware hardening."
     },
     {
       "DisplayName": "RetryExecutionPolicyState",
@@ -83104,6 +84539,17 @@
     {
       "DisplayName": "SourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive dependency-aware apply-and-reconcile hardening."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -84050,6 +85496,17 @@
     {
       "DisplayName": "SourceProviderId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-sourceproviderid",
+      "Signature": "string SourceProviderId { get; set; }",
+      "Summary": "Gets the best available source-provider identifier currently associated with dependency-aware hardening."
+    },
+    {
+      "DisplayName": "SourceProviderId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -84123,6 +85580,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftcategories-sourceprovidermismatch",
       "Signature": "const string SourceProviderMismatch",
       "Summary": "The latest reported source-provider identifier differs from the declared managed-connector baseline."
+    },
+    {
+      "DisplayName": "SourceProviderMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-sourceprovidermismatch",
+      "Signature": "const string SourceProviderMismatch",
+      "Summary": "The latest reported source-provider identifier differs from the declared baseline."
     },
     {
       "DisplayName": "SourceRepository",
@@ -85012,6 +86480,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector provider-owned control-plane apply-and-reconcile execution state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening state."
     },
     {
       "DisplayName": "State",
@@ -87522,6 +89001,17 @@
       "Summary": "The managed connector reports a different task count than the declared task baseline."
     },
     {
+      "DisplayName": "TaskCountMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-taskcountmismatch",
+      "Signature": "const string TaskCountMismatch",
+      "Summary": "The managed connector reports a different task count than the declared baseline."
+    },
+    {
       "DisplayName": "TaskIds",
       "Category": "Properties",
       "DeclaringTypeName": "DebeziumConnectorOptions",
@@ -89744,6 +91234,17 @@
       "Summary": "One or more reported task ids were not part of the declared task baseline."
     },
     {
+      "DisplayName": "UnexpectedReportedTasks",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-unexpectedreportedtasks",
+      "Signature": "const string UnexpectedReportedTasks",
+      "Summary": "One or more reported task ids were not part of the declared task baseline."
+    },
+    {
       "DisplayName": "Unhealthy",
       "Category": "Fields",
       "DeclaringTypeName": "HealthState",
@@ -90004,6 +91505,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "No decisive source answer was available."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningsources-unknown",
       "Signature": "const string Unknown",
       "Summary": "No decisive source answer was available."
     },
@@ -91744,6 +93256,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-wouldapplychanges",
       "Signature": "bool WouldApplyChanges { get; set; }",
       "Summary": "Gets a value indicating whether the current provider-owned control-plane apply-and-reconcile lane would still apply one or more shared write-path changes."
+    },
+    {
+      "DisplayName": "WouldApplyChanges",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-wouldapplychanges",
+      "Signature": "const string WouldApplyChanges",
+      "Summary": "The current provider lane would still apply shared write-path changes."
+    },
+    {
+      "DisplayName": "WouldApplyChanges",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningstatus-wouldapplychanges",
+      "Signature": "bool WouldApplyChanges { get; set; }",
+      "Summary": "Gets a value indicating whether the current provider lane would still apply one or more shared write-path changes."
     },
     {
       "DisplayName": "WouldApplyChanges",

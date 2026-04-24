@@ -1055,6 +1055,38 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState(string hardeningState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(hardeningState);
+        var normalizedHardeningState = hardeningState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.State,
+            normalizedHardeningState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory(string hardeningCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(hardeningCategory);
+        var normalizedHardeningCategory = hardeningCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.CategoryIds.Contains(
+            normalizedHardeningCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.OperationId,
+            normalizedOperationId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -1533,6 +1565,33 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandRetry,
             managedConnectorRetryExecutionPolicy,
             managedConnectorCommandJournal);
+        var managedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening = CreateManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionOwnership,
+            runtime.ExecutionTopology,
+            managedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution.ManagementMode ??
+            managedConnectorProviderOwnedControlPlaneProvisioning.ManagementMode ??
+            managedConnectorProviderOwnedControlPlaneMutationReconcile.ManagementMode ??
+            managedConnectorProviderOwnedControlPlaneOwnership.ManagementMode ??
+            managedConnectorProviderExecutionOrchestration.ManagementMode ??
+            managedConnectorProviderOwnedWritePathExecution.ManagementMode ??
+            managedConnectorCommandRetry.ManagementMode ??
+            managedConnectorRetryExecutionPolicy.ManagementMode,
+            summary,
+            managedConnectorGovernance,
+            managedConnectorDrift,
+            managedConnectorCommandExecution,
+            managedConnectorCommandRetry,
+            managedConnectorRetryExecutionPolicy,
+            managedConnectorCommandJournal,
+            managedConnectorProviderOwnedWritePathExecution,
+            managedConnectorProviderExecutionOrchestration,
+            managedConnectorProviderOwnedControlPlaneOwnership,
+            managedConnectorProviderOwnedControlPlaneMutationReconcile,
+            managedConnectorProviderOwnedControlPlaneProvisioning,
+            managedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution,
+            managedConnectorMetadata);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
@@ -1571,7 +1630,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorProviderOwnedControlPlaneOwnership = managedConnectorProviderOwnedControlPlaneOwnership,
             ManagedConnectorProviderOwnedControlPlaneMutationReconcile = managedConnectorProviderOwnedControlPlaneMutationReconcile,
             ManagedConnectorProviderOwnedControlPlaneProvisioning = managedConnectorProviderOwnedControlPlaneProvisioning,
-            ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution = managedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution
+            ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution = managedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution,
+            ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening = managedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening
         };
     }
 
@@ -14920,6 +14980,676 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionSources.Unknown;
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus CreateManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string executionOwnership,
+        string executionTopology,
+        string? managementMode,
+        CdcCaptureExecutionRuntimeSummary summary,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus providerOwnedControlPlaneOwnership,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus providerOwnedControlPlaneMutationReconcile,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus providerOwnedControlPlaneProvisioning,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus providerOwnedControlPlaneApplyAndReconcileExecution,
+        ManagedConnectorMetadataSnapshot metadataSnapshot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(summary);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandRetry);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneOwnership);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneMutationReconcile);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneProvisioning);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneApplyAndReconcileExecution);
+        ArgumentNullException.ThrowIfNull(metadataSnapshot);
+
+        var normalizedExecutionOwnership = string.IsNullOrWhiteSpace(executionOwnership)
+            ? "runtime-managed"
+            : executionOwnership.Trim();
+        var normalizedExecutionTopology = string.IsNullOrWhiteSpace(executionTopology)
+            ? "not-configured"
+            : executionTopology.Trim();
+        var normalizedOperationId = string.IsNullOrWhiteSpace(providerOwnedControlPlaneApplyAndReconcileExecution.OperationId)
+            ? CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None
+            : providerOwnedControlPlaneApplyAndReconcileExecution.OperationId.Trim();
+        var appliesToManagedConnector =
+            string.Equals(normalizedExecutionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) &&
+            (providerOwnedControlPlaneApplyAndReconcileExecution.AppliesToManagedConnector ||
+             providerOwnedControlPlaneProvisioning.AppliesToManagedConnector ||
+             providerOwnedControlPlaneMutationReconcile.AppliesToManagedConnector ||
+             providerOwnedControlPlaneOwnership.AppliesToManagedConnector ||
+             providerExecutionOrchestration.AppliesToManagedConnector ||
+             providerOwnedWritePathExecution.AppliesToManagedConnector ||
+             governance.AppliesToManagedConnector ||
+             drift.CanEvaluateDrift);
+        var hasDeclaredDependencyIdentity =
+            !string.IsNullOrWhiteSpace(metadataSnapshot.DeclaredConnectClusterId) &&
+            !string.IsNullOrWhiteSpace(metadataSnapshot.DeclaredConnectorClass) &&
+            !string.IsNullOrWhiteSpace(metadataSnapshot.DeclaredSourceProviderId);
+        var hasReportedDependencyIdentity =
+            !string.IsNullOrWhiteSpace(metadataSnapshot.ReportedConnectClusterId) &&
+            !string.IsNullOrWhiteSpace(metadataSnapshot.ReportedConnectorClass) &&
+            !string.IsNullOrWhiteSpace(metadataSnapshot.ReportedSourceProviderId);
+        var hasTaskBaseline = metadataSnapshot.ExpectedTaskCount.HasValue || metadataSnapshot.DeclaredTaskIds.Length > 0;
+        var hasReportedTaskTopology = metadataSnapshot.ReportedTaskCount.HasValue || metadataSnapshot.ReportedTaskIds.Length > 0;
+        var hasActiveTaskTopology = metadataSnapshot.ActiveTaskIds.Length > 0;
+        var hasDependencyIdentityMismatch =
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectClusterMismatch, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectorClassMismatch, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.SourceProviderMismatch, StringComparer.OrdinalIgnoreCase);
+        var hasTaskTopologyMismatch =
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.TaskCountMismatch, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingDeclaredTaskReports, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.UnexpectedReportedTasks, StringComparer.OrdinalIgnoreCase);
+        var hasTaskTopologyGap =
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingTaskBaseline, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ReportedTaskTopologyUnavailable, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ReportedTaskIdentityUnavailable, StringComparer.OrdinalIgnoreCase);
+        var hasReconciliationDegraded = !IsManagedConnectorReconciliationStable(metadataSnapshot.ReconciliationState);
+        var hasReporterLease = summary.HasActiveReporterLease;
+        var hasReporterLeaseIssue = !hasReporterLease || summary.HasReporterCoordinationIssue || summary.HasStaleObservations;
+        var hasDurableStoreConfigured =
+            providerOwnedControlPlaneApplyAndReconcileExecution.HasDurableStoreConfigured ||
+            providerOwnedControlPlaneProvisioning.HasDurableStoreConfigured ||
+            providerOwnedControlPlaneMutationReconcile.HasDurableStoreConfigured ||
+            providerOwnedControlPlaneOwnership.HasDurableStoreConfigured;
+        var hasPersistedRecordedHistory =
+            providerOwnedControlPlaneApplyAndReconcileExecution.HasPersistedRecordedHistory ||
+            providerOwnedControlPlaneProvisioning.HasPersistedRecordedHistory ||
+            providerOwnedControlPlaneMutationReconcile.HasPersistedRecordedHistory ||
+            providerOwnedControlPlaneOwnership.HasPersistedRecordedHistory;
+        var hasRecoveredPersistedHistory =
+            providerOwnedControlPlaneApplyAndReconcileExecution.HasRecoveredPersistedHistory ||
+            providerOwnedControlPlaneProvisioning.HasRecoveredPersistedHistory ||
+            providerOwnedControlPlaneMutationReconcile.HasRecoveredPersistedHistory ||
+            providerOwnedControlPlaneOwnership.HasRecoveredPersistedHistory;
+        var canExecuteDependencyAwareApplyAndReconcileOnCurrentNode =
+            providerOwnedControlPlaneApplyAndReconcileExecution.CanExecuteProviderOwnedControlPlaneApplyAndReconcileOnCurrentNode &&
+            hasDeclaredDependencyIdentity &&
+            hasTaskBaseline &&
+            hasReportedTaskTopology;
+        var hasDependencyRisk =
+            providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileRisk ||
+            providerOwnedControlPlaneProvisioning.IsProvisioningRisk ||
+            providerOwnedControlPlaneMutationReconcile.IsMutationRisk ||
+            providerOwnedControlPlaneOwnership.IsOwnershipRisk ||
+            providerExecutionOrchestration.IsOrchestrationRisk ||
+            providerOwnedWritePathExecution.IsProviderOwnedRisk ||
+            latestCommandExecution.IsFailed;
+        var hasDependencyBlockers =
+            !hasDeclaredDependencyIdentity ||
+            !hasTaskBaseline ||
+            !hasReportedTaskTopology ||
+            !providerOwnedControlPlaneApplyAndReconcileExecution.HasTargetOperation ||
+            providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileBlocked;
+        var hasDependencyDegradation =
+            hasDependencyIdentityMismatch ||
+            hasTaskTopologyMismatch ||
+            hasTaskTopologyGap ||
+            !hasReportedDependencyIdentity ||
+            !hasActiveTaskTopology ||
+            hasReconciliationDegraded ||
+            hasReporterLeaseIssue ||
+            latestCommandExecution.IsBlocked ||
+            latestCommandExecution.IsUnavailable;
+        var hasHardenedEvidence =
+            hasDeclaredDependencyIdentity &&
+            hasReportedDependencyIdentity &&
+            hasTaskBaseline &&
+            hasReportedTaskTopology &&
+            hasActiveTaskTopology &&
+            !hasDependencyIdentityMismatch &&
+            !hasTaskTopologyMismatch &&
+            !hasTaskTopologyGap &&
+            !hasReconciliationDegraded &&
+            !hasReporterLeaseIssue &&
+            (hasDurableStoreConfigured || hasPersistedRecordedHistory);
+        var state =
+            !appliesToManagedConnector
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.NotApplicable
+                : providerOwnedControlPlaneApplyAndReconcileExecution.IsOperatorOnly ||
+                  providerOwnedControlPlaneProvisioning.IsOperatorOnly ||
+                  providerOwnedControlPlaneMutationReconcile.IsOperatorOnly ||
+                  providerOwnedControlPlaneOwnership.IsOperatorOnly
+                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.OperatorOnly
+                    : hasDependencyRisk
+                        ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyRisk
+                        : hasDependencyBlockers
+                            ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyBlocked
+                            : hasHardenedEvidence &&
+                              (providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileReady ||
+                               providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileExecuting ||
+                               providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileCompleted)
+                                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.ApplyAndReconcileHardened
+                                : hasDependencyDegradation
+                                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyDegraded
+                                    : canExecuteDependencyAwareApplyAndReconcileOnCurrentNode ||
+                                      providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileReady
+                                        ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyReady
+                                        : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyBlocked;
+        var categories = CreateManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories(
+            state,
+            governance,
+            drift,
+            summary,
+            latestCommandExecution,
+            providerOwnedControlPlaneApplyAndReconcileExecution,
+            hasDeclaredDependencyIdentity,
+            hasReportedDependencyIdentity,
+            hasTaskBaseline,
+            hasReportedTaskTopology,
+            hasActiveTaskTopology,
+            hasReconciliationDegraded,
+            hasDurableStoreConfigured,
+            hasPersistedRecordedHistory,
+            hasRecoveredPersistedHistory,
+            canExecuteDependencyAwareApplyAndReconcileOnCurrentNode);
+        var description = CreateManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningDescription(
+            state,
+            normalizedOperationId,
+            summary,
+            latestCommandExecution,
+            commandJournal,
+            providerOwnedControlPlaneApplyAndReconcileExecution,
+            hasDeclaredDependencyIdentity,
+            hasReportedDependencyIdentity,
+            hasTaskBaseline,
+            hasReportedTaskTopology,
+            hasActiveTaskTopology,
+            hasReconciliationDegraded,
+            hasReporterLeaseIssue,
+            metadataSnapshot.ReconciliationReason);
+        var sourceId = ResolveManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSourceId(
+            governance,
+            drift,
+            latestCommandExecution,
+            commandJournal,
+            providerOwnedControlPlaneOwnership,
+            providerOwnedControlPlaneMutationReconcile,
+            providerOwnedControlPlaneProvisioning,
+            providerOwnedControlPlaneApplyAndReconcileExecution);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus(state, description)
+        {
+            CategoryIds = categories,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ExecutionOwnership = normalizedExecutionOwnership,
+            ExecutionTopology = normalizedExecutionTopology,
+            ManagementMode = managementMode,
+            OperationId = normalizedOperationId,
+            SourceId = sourceId,
+            GovernanceState = governance.State,
+            DriftState = drift.State,
+            ProviderOwnedControlPlaneApplyAndReconcileExecutionState = providerOwnedControlPlaneApplyAndReconcileExecution.State,
+            ProviderOwnedControlPlaneProvisioningState = providerOwnedControlPlaneProvisioning.State,
+            ProviderOwnedControlPlaneMutationReconcileState = providerOwnedControlPlaneMutationReconcile.State,
+            ProviderOwnedControlPlaneOwnershipState = providerOwnedControlPlaneOwnership.State,
+            ProviderExecutionOrchestrationState = providerExecutionOrchestration.State,
+            ProviderOwnedWritePathExecutionState = providerOwnedWritePathExecution.State,
+            LatestCommandExecutionState = latestCommandExecution.State,
+            CommandRetryState = commandRetry.State,
+            RetryExecutionPolicyState = retryExecutionPolicy.State,
+            CommandJournalState = commandJournal.State,
+            ConnectClusterId = ResolveManagedConnectorCommandTargetValue(
+                metadataSnapshot.DeclaredConnectClusterId,
+                metadataSnapshot.ReportedConnectClusterId),
+            ConnectorClass = ResolveManagedConnectorCommandTargetValue(
+                metadataSnapshot.DeclaredConnectorClass,
+                metadataSnapshot.ReportedConnectorClass),
+            SourceProviderId = ResolveManagedConnectorCommandTargetValue(
+                metadataSnapshot.DeclaredSourceProviderId,
+                metadataSnapshot.ReportedSourceProviderId),
+            DeclaredConnectClusterId = metadataSnapshot.DeclaredConnectClusterId,
+            ReportedConnectClusterId = metadataSnapshot.ReportedConnectClusterId,
+            DeclaredConnectorClass = metadataSnapshot.DeclaredConnectorClass,
+            ReportedConnectorClass = metadataSnapshot.ReportedConnectorClass,
+            DeclaredSourceProviderId = metadataSnapshot.DeclaredSourceProviderId,
+            ReportedSourceProviderId = metadataSnapshot.ReportedSourceProviderId,
+            ExpectedTaskCount = metadataSnapshot.ExpectedTaskCount,
+            ReportedTaskCount = metadataSnapshot.ReportedTaskCount,
+            DeclaredTaskIds = metadataSnapshot.DeclaredTaskIds,
+            ReportedTaskIds = metadataSnapshot.ReportedTaskIds,
+            ActiveTaskIds = metadataSnapshot.ActiveTaskIds,
+            ReconciliationState = metadataSnapshot.ReconciliationState,
+            ReconciliationReason = metadataSnapshot.ReconciliationReason,
+            PotentialChangeCount = providerOwnedControlPlaneApplyAndReconcileExecution.PotentialChangeCount,
+            LatestAttemptId = latestCommandExecution.AttemptId,
+            LatestRecordedAtUtc = latestCommandExecution.RecordedAtUtc,
+            ActiveReporterId = summary.ActiveReporterId,
+            ActiveReporterLeaseExpiresAtUtc = summary.ReporterLeaseExpiresAtUtc,
+            WouldApplyChanges = providerOwnedControlPlaneApplyAndReconcileExecution.WouldApplyChanges,
+            RequiresExplicitApproval = providerOwnedControlPlaneApplyAndReconcileExecution.RequiresExplicitApproval,
+            IsDestructiveOperation = providerOwnedControlPlaneApplyAndReconcileExecution.IsDestructiveOperation,
+            HasTargetOperation = providerOwnedControlPlaneApplyAndReconcileExecution.HasTargetOperation,
+            HasDeclaredDependencyIdentity = hasDeclaredDependencyIdentity,
+            HasReportedDependencyIdentity = hasReportedDependencyIdentity,
+            HasTaskBaseline = hasTaskBaseline,
+            HasReportedTaskTopology = hasReportedTaskTopology,
+            HasActiveTaskTopology = hasActiveTaskTopology,
+            HasDependencyIdentityMismatch = hasDependencyIdentityMismatch,
+            HasTaskTopologyMismatch = hasTaskTopologyMismatch,
+            HasDurableStoreConfigured = hasDurableStoreConfigured,
+            HasPersistedRecordedHistory = hasPersistedRecordedHistory,
+            HasRecoveredPersistedHistory = hasRecoveredPersistedHistory,
+            CanExecuteDependencyAwareApplyAndReconcileOnCurrentNode = canExecuteDependencyAwareApplyAndReconcileOnCurrentNode
+        };
+    }
+
+    private static string[] CreateManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeSummary summary,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus providerOwnedControlPlaneApplyAndReconcileExecution,
+        bool hasDeclaredDependencyIdentity,
+        bool hasReportedDependencyIdentity,
+        bool hasTaskBaseline,
+        bool hasReportedTaskTopology,
+        bool hasActiveTaskTopology,
+        bool hasReconciliationDegraded,
+        bool hasDurableStoreConfigured,
+        bool hasPersistedRecordedHistory,
+        bool hasRecoveredPersistedHistory,
+        bool canExecuteDependencyAwareApplyAndReconcileOnCurrentNode)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(summary);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneApplyAndReconcileExecution);
+
+        if (!providerOwnedControlPlaneApplyAndReconcileExecution.AppliesToManagedConnector &&
+            !governance.AppliesToManagedConnector &&
+            !drift.CanEvaluateDrift)
+        {
+            return [];
+        }
+
+        var categories = new List<string>(capacity: 32);
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        AddCategory(
+            categories,
+            CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.OperatorOnly);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyReady, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.DependencyReady);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.DependencyBlocked);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyDegraded, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.DependencyDegraded);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.ApplyAndReconcileHardened, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ApplyAndReconcileHardened);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.DependencyRisk);
+        }
+
+        if (providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ApplyAndReconcileReady);
+        }
+        else if (providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ApplyAndReconcileBlocked);
+        }
+        else if (providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileExecuting)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ApplyAndReconcileExecuting);
+        }
+        else if (providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileCompleted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ApplyAndReconcileCompleted);
+        }
+        else if (providerOwnedControlPlaneApplyAndReconcileExecution.IsApplyAndReconcileRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ApplyAndReconcileRisk);
+        }
+
+        if (providerOwnedControlPlaneApplyAndReconcileExecution.HasTargetOperation)
+        {
+            AddCategory(
+                categories,
+                canExecuteDependencyAwareApplyAndReconcileOnCurrentNode
+                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.CurrentNodeExecutable
+                    : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.CurrentNodeBlocked);
+        }
+
+        AddCategory(
+            categories,
+            providerOwnedControlPlaneApplyAndReconcileExecution.WouldApplyChanges
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.WouldApplyChanges
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.NoChangesRequired);
+
+        if (providerOwnedControlPlaneApplyAndReconcileExecution.RequiresExplicitApproval)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ApprovalRequired);
+        }
+
+        if (providerOwnedControlPlaneApplyAndReconcileExecution.IsDestructiveOperation)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.DestructiveOperation);
+        }
+
+        if (hasDeclaredDependencyIdentity)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.DependencyIdentityReady);
+        }
+
+        if (hasReportedDependencyIdentity)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ReportedDependencyIdentityReady);
+        }
+
+        foreach (var category in governance.CategoryIds)
+        {
+            AddCategory(categories, category);
+        }
+
+        foreach (var category in drift.CategoryIds)
+        {
+            AddCategory(categories, category);
+        }
+
+        AddCategory(
+            categories,
+            hasActiveTaskTopology
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ActiveTaskTopology
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.NoActiveTaskTopology);
+
+        AddCategory(
+            categories,
+            hasReconciliationDegraded
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ReconciliationDegraded
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ReconciliationStable);
+
+        AddCategory(
+            categories,
+            summary.HasActiveReporterLease && !summary.HasReporterCoordinationIssue && !summary.HasStaleObservations
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ReporterLeaseActive
+                : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ReporterLeaseMissingOrStale);
+
+        if (hasDurableStoreConfigured)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.DurableJournalConfigured);
+        }
+
+        if (hasPersistedRecordedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.PersistedHistory);
+        }
+        else if (!hasDurableStoreConfigured)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.InMemoryJournalOnly);
+        }
+
+        if (hasRecoveredPersistedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.RecoveredHistory);
+        }
+
+        if (latestCommandExecution.IsAdapted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ProviderCommandAdapted);
+        }
+        else if (latestCommandExecution.IsNoOp)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ProviderCommandNoOp);
+        }
+        else if (latestCommandExecution.IsBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ProviderCommandBlocked);
+        }
+        else if (latestCommandExecution.IsFailed)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ProviderCommandFailed);
+        }
+
+        return categories
+            .OrderBy(static category => category, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static string CreateManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningDescription(
+        string state,
+        string operationId,
+        CdcCaptureExecutionRuntimeSummary summary,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus providerOwnedControlPlaneApplyAndReconcileExecution,
+        bool hasDeclaredDependencyIdentity,
+        bool hasReportedDependencyIdentity,
+        bool hasTaskBaseline,
+        bool hasReportedTaskTopology,
+        bool hasActiveTaskTopology,
+        bool hasReconciliationDegraded,
+        bool hasReporterLeaseIssue,
+        string? reconciliationReason)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(summary);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneApplyAndReconcileExecution);
+
+        var operationLabel = CreateManagedConnectorExecutionAdapterOperationLabel(operationId);
+        var detail = CombineManagedConnectorCommandEnvelopeDetail(
+            CombineManagedConnectorCommandEnvelopeDetail(
+                providerOwnedControlPlaneApplyAndReconcileExecution.Description,
+                latestCommandExecution.IsUnrecorded ? null : latestCommandExecution.Description,
+                reconciliationReason),
+            summary.ReporterCoordination.Description,
+            commandJournal.Description);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                "The execution runtime does not currently represent managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can describe dependency-aware provider-owned control-plane apply-and-reconcile hardening for {operationLabel}, but the lane still remains operator-owned outside the engine.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Provider-owned control-plane dependency-aware apply-and-reconcile hardening for {operationLabel} currently remains risky because broader provider or runtime truth is not safe enough yet.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            string summaryText;
+            if (!hasDeclaredDependencyIdentity)
+            {
+                summaryText = $"Cephalon cannot yet dependency-harden provider-owned control-plane apply-and-reconcile for {operationLabel} because declared connector dependency identity is incomplete.";
+            }
+            else if (!hasTaskBaseline)
+            {
+                summaryText = $"Cephalon cannot yet dependency-harden provider-owned control-plane apply-and-reconcile for {operationLabel} because the declared task baseline is missing.";
+            }
+            else if (!hasReportedTaskTopology)
+            {
+                summaryText = $"Cephalon cannot yet dependency-harden provider-owned control-plane apply-and-reconcile for {operationLabel} because reported task topology is still unavailable.";
+            }
+            else if (!providerOwnedControlPlaneApplyAndReconcileExecution.HasTargetOperation)
+            {
+                summaryText = $"Cephalon cannot yet dependency-harden provider-owned control-plane apply-and-reconcile for {operationLabel} because no concrete target operation is selected.";
+            }
+            else
+            {
+                summaryText = $"Cephalon cannot yet dependency-harden provider-owned control-plane apply-and-reconcile for {operationLabel} because the shared provider lane still remains blocked.";
+            }
+
+            return AppendManagedConnectorCommandEnvelopeDetail(summaryText, detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyDegraded, StringComparison.OrdinalIgnoreCase))
+        {
+            var summaryText =
+                !hasReportedDependencyIdentity
+                    ? $"Cephalon can stage dependency-aware provider-owned control-plane apply-and-reconcile for {operationLabel}, but reported dependency identity is still incomplete."
+                    : !hasActiveTaskTopology
+                        ? $"Cephalon can stage dependency-aware provider-owned control-plane apply-and-reconcile for {operationLabel}, but no active task topology is currently reported."
+                        : hasReconciliationDegraded
+                            ? $"Cephalon can stage dependency-aware provider-owned control-plane apply-and-reconcile for {operationLabel}, but the managed connector currently reports degraded reconciliation truth."
+                            : hasReporterLeaseIssue
+                                ? $"Cephalon can stage dependency-aware provider-owned control-plane apply-and-reconcile for {operationLabel}, but reporter lease or freshness truth is currently degraded."
+                                : $"Cephalon can stage dependency-aware provider-owned control-plane apply-and-reconcile for {operationLabel}, but declared-versus-observed dependency truth is still degraded.";
+
+            return AppendManagedConnectorCommandEnvelopeDetail(summaryText, detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.ApplyAndReconcileHardened, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can dependency-harden provider-owned control-plane apply-and-reconcile for {operationLabel} because declared and reported dependency identity, task topology, reporter lease, and command-journal evidence are all present.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyReady, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can currently stage dependency-aware provider-owned control-plane apply-and-reconcile for {operationLabel} because the shared runtime exposes enough dependency truth, even though full hardening evidence is not complete yet.",
+                detail);
+        }
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"Cephalon exposes provider-owned control-plane dependency-aware apply-and-reconcile hardening truth for {operationLabel}.",
+            detail);
+    }
+
+    private static string ResolveManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSourceId(
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus providerOwnedControlPlaneOwnership,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus providerOwnedControlPlaneMutationReconcile,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStatus providerOwnedControlPlaneProvisioning,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus providerOwnedControlPlaneApplyAndReconcileExecution)
+    {
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneOwnership);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneMutationReconcile);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneProvisioning);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneApplyAndReconcileExecution);
+
+        if (!latestCommandExecution.IsUnrecorded && latestCommandExecution.IsFailed)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.CommandExecution;
+        }
+
+        if (governance.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectClusterId, StringComparer.OrdinalIgnoreCase) ||
+            governance.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingConnectorClass, StringComparer.OrdinalIgnoreCase) ||
+            governance.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories.MissingSourceProviderId, StringComparer.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.ManagedConnectorGovernance;
+        }
+
+        if (drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingTaskBaseline, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ReportedTaskTopologyUnavailable, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ReportedTaskIdentityUnavailable, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.TaskCountMismatch, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingDeclaredTaskReports, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.UnexpectedReportedTasks, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectClusterMismatch, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectorClassMismatch, StringComparer.OrdinalIgnoreCase) ||
+            drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.SourceProviderMismatch, StringComparer.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.ManagedConnectorDrift;
+        }
+
+        if (providerOwnedControlPlaneApplyAndReconcileExecution.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.ProviderOwnedControlPlaneApplyAndReconcileExecution;
+        }
+
+        if (providerOwnedControlPlaneProvisioning.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.ProviderOwnedControlPlaneProvisioning;
+        }
+
+        if (providerOwnedControlPlaneMutationReconcile.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.ProviderOwnedControlPlaneMutationReconcile;
+        }
+
+        if (providerOwnedControlPlaneOwnership.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.ProviderOwnedControlPlaneOwnership;
+        }
+
+        if (!string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.CommandJournal;
+        }
+
+        if (!latestCommandExecution.IsUnrecorded)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.CommandExecution;
+        }
+
+        return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.Unknown;
+    }
+
+    private static bool IsManagedConnectorReconciliationStable(string? reconciliationState)
+    {
+        if (string.IsNullOrWhiteSpace(reconciliationState))
+        {
+            return true;
+        }
+
+        return string.Equals(reconciliationState, "current", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(reconciliationState, "aligned", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(reconciliationState, "in-sync", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(reconciliationState, "stable", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string CreateManagedConnectorBlockedAutomaticRetryExecutionDescription(

@@ -412,6 +412,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the current shared dependency-aware apply-and-reconcile hardening answer for the managed connector when one applies.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

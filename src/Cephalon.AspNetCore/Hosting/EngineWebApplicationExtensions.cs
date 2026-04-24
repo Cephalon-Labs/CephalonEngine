@@ -1261,6 +1261,33 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperation");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/{hardeningState}", (string hardeningState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState(hardeningState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/categories/{hardeningCategory}", (string hardeningCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory(hardeningCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/operations/{operationId}", (string operationId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperationId(operationId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperation");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
@@ -1427,6 +1454,17 @@ public static class EngineWebApplicationExtensions
                     : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution);
             })
             .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardening", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null
+                    ? Results.NotFound()
+                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening);
+            })
+            .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

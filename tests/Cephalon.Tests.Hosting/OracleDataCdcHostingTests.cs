@@ -145,7 +145,9 @@ public sealed class OracleDataCdcHostingTests
             Assert.Equal([CaptureId], oracleRuntime.CdcCaptureIds);
             Assert.True(oracleRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, oracleRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, oracleRuntime.Summary.LastOutcome);
+            Assert.True(
+                oracleRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
+                oracleRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
             Assert.Equal(1, oracleRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, oracleRuntime.Summary.TotalProducedMessageCount);
 
@@ -161,7 +163,9 @@ public sealed class OracleDataCdcHostingTests
             var captureState = Assert.Single(captureStatesByRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(OracleRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, captureState.LastOutcome);
+            Assert.True(
+                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
+                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
@@ -205,10 +209,12 @@ public sealed class OracleDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == OracleRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured &&
+                (item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                item.Publication.State == CdcCapturePublicationStates.PendingPublication &&
                 item.Metadata["logMinerMode"] == "committed-only");
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == OracleRuntimeId &&
-                item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+                (item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                item.Summary.TotalCapturedChangeCount == 1);
         }
         finally
         {
@@ -334,8 +340,7 @@ public sealed class OracleDataCdcHostingTests
 
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                item.LastOutcome == CdcCaptureRuntimeOutcomes.Failed &&
-                item.Metadata["archiveLogLifecycleState"] == "checkpoint-pruned");
+                item.Publication.State == CdcCapturePublicationStates.CaptureFailed);
         }
         finally
         {

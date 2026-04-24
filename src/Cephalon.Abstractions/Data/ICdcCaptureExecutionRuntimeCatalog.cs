@@ -660,4 +660,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>
     /// <returns>The latest-first bounded command-execution history for the runtime, or an empty list when no outcome has been recorded yet.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware apply-and-reconcile hardening answer matches the requested state.
+    /// </summary>
+    /// <param name="hardeningState">The stable provider-owned control-plane dependency-aware apply-and-reconcile hardening state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that dependency-aware hardening state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState(string hardeningState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware apply-and-reconcile hardening answer includes the requested category.
+    /// </summary>
+    /// <param name="hardeningCategory">The stable provider-owned control-plane dependency-aware apply-and-reconcile hardening category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that dependency-aware hardening category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory(string hardeningCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware apply-and-reconcile hardening answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable dependency-aware apply-and-reconcile hardening operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperationId(string operationId);
 }

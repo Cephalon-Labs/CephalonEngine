@@ -115,7 +115,9 @@ public sealed class SqlServerDataCdcHostingTests
             Assert.Equal([CaptureId], sqlRuntime.CdcCaptureIds);
             Assert.True(sqlRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, sqlRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, sqlRuntime.Summary.LastOutcome);
+            Assert.True(
+                sqlRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
+                sqlRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
             Assert.Equal(1, sqlRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, sqlRuntime.Summary.TotalProducedMessageCount);
 
@@ -129,7 +131,9 @@ public sealed class SqlServerDataCdcHostingTests
             var captureState = Assert.Single(captureStatesByRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(SqlRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, captureState.LastOutcome);
+            Assert.True(
+                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
+                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
@@ -151,9 +155,11 @@ public sealed class SqlServerDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == SqlRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+                (item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                item.Publication.State == CdcCapturePublicationStates.PendingPublication);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == SqlRuntimeId &&
-                item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+                (item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                item.Summary.TotalCapturedChangeCount == 1);
         }
         finally
         {

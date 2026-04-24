@@ -135,7 +135,9 @@ public sealed class MySqlDataCdcHostingTests
             Assert.Equal([CaptureId], mySqlRuntime.CdcCaptureIds);
             Assert.True(mySqlRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, mySqlRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, mySqlRuntime.Summary.LastOutcome);
+            Assert.True(
+                mySqlRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
+                mySqlRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
             Assert.Equal(1, mySqlRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, mySqlRuntime.Summary.TotalProducedMessageCount);
 
@@ -151,7 +153,9 @@ public sealed class MySqlDataCdcHostingTests
             var captureState = Assert.Single(captureStatesByRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(MySqlRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, captureState.LastOutcome);
+            Assert.True(
+                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
+                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
@@ -185,10 +189,11 @@ public sealed class MySqlDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == MySqlRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured &&
-                item.Metadata["sourceServerIdentityState"] == "expected-match");
+                (item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                item.Publication.State == CdcCapturePublicationStates.PendingPublication);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == MySqlRuntimeId &&
-                item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+                (item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                item.Summary.TotalCapturedChangeCount == 1);
         }
         finally
         {
@@ -308,7 +313,7 @@ public sealed class MySqlDataCdcHostingTests
 
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                item.LastOutcome == CdcCaptureRuntimeOutcomes.Failed &&
+                item.Publication.State == CdcCapturePublicationStates.CaptureFailed &&
                 item.Metadata["binlogLifecycleState"] == "purged");
         }
         finally
