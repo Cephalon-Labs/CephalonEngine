@@ -390,6 +390,8 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Deployment-mode shipping baseline: Stable shipping floor 'net10.0', readiness lane 'net11.0' (assessment-only).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Trim support contract: not-claimed. Trimming is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0 and stays on the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj keeps the generated package references and `Configurations/**/*.json` copy/publish baseline explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.*.json and ./src/Acme.Store.Host/Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app-model split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.AppModel.json keeps explicit Engine app-model selections with Blueprint=ModularMonolith and 1 discovery assembly entries.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated engine feature split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Data.json, ./src/Acme.Store.Host/Configurations/AddEngine.Identity.json, ./src/Acme.Store.Host/Configurations/AddEngine.Tenancy.json, ./src/Acme.Store.Host/Configurations/AddEngine.Audit.json, and ./src/Acme.Store.Host/Configurations/AddEngine.Messaging.json keep explicit Engine data, identity, tenancy, audit, and messaging sections with Audit.Enabled=true.", stdout.ToString(), StringComparison.Ordinal);
@@ -478,6 +480,8 @@ public sealed class CliApplicationTests
 
             Assert.Equal(0, exitCode);
             Assert.Contains("[warn] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net11.0 and stays on the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj keeps the generated package references and `Configurations/**/*.json` copy/publish baseline explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.*.json and ./src/Acme.Store.Host/Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app-model split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.AppModel.json keeps explicit Engine app-model selections with Blueprint=ModularMonolith and 1 discovery assembly entries.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated engine feature split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Data.json, ./src/Acme.Store.Host/Configurations/AddEngine.Identity.json, ./src/Acme.Store.Host/Configurations/AddEngine.Tenancy.json, ./src/Acme.Store.Host/Configurations/AddEngine.Audit.json, and ./src/Acme.Store.Host/Configurations/AddEngine.Messaging.json keep explicit Engine data, identity, tenancy, audit, and messaging sections with Audit.Enabled=true.", stdout.ToString(), StringComparison.Ordinal);
@@ -558,6 +562,85 @@ public sealed class CliApplicationTests
 
             Assert.Equal(1, exitCode);
             Assert.Contains("[error] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net8.0, which falls outside the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedHostBootstrapBaselinesDrift()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-host-bootstrap-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            programContents: """
+                var builder = WebApplication.CreateBuilder(args);
+                var app = builder.Build();
+                app.Run();
+                """,
+            projectContents: """
+                <Project Sdk="Microsoft.NET.Sdk.Web">
+                  <PropertyGroup>
+                    <TargetFramework>net10.0</TargetFramework>
+                  </PropertyGroup>
+
+                  <ItemGroup>
+                    <PackageReference Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
+                  </ItemGroup>
+
+                  <ItemGroup>
+                    <Content Include="Configurations\**\*.json">
+                      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+                    </Content>
+                  </ItemGroup>
+                </Project>
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs no longer keeps the generated Cephalon host bootstrap explicit for: AddCephalonProjectConfigurations, UseWindowsService, AddCephalon, AddSfidIds, AddAudit, AddCephalonObservability, Serilog clear-provider guard, ClearProviders, AddCephalonSerilog, AddCephalonOpenTelemetry, UseExceptionHandler, MapCephalon.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj no longer keeps the generated package references or `Configurations/**/*.json` copy/publish baseline explicit (missing package references: Cephalon.Audit, Cephalon.Behaviors.Http, Cephalon.Ids.Sfid, Cephalon.Observability, Cephalon.Observability.OpenTelemetry, Cephalon.Observability.Serilog, Microsoft.Extensions.Hosting.WindowsServices, Serilog.Sinks.Console; missing CopyToOutputDirectory=PreserveNewest; missing CopyToPublishDirectory=PreserveNewest).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -1960,6 +2043,8 @@ public sealed class CliApplicationTests
         bool includeDeploymentAssets = true,
         bool includePublishedDeploymentAssets = true,
         bool includeLocalOrchestrationAssets = true,
+        string? projectContents = null,
+        string? programContents = null,
         string? appModelSettingsContents = null,
         string? dataSettingsContents = null,
         string? identitySettingsContents = null,
@@ -2026,12 +2111,81 @@ public sealed class CliApplicationTests
         var hostProjectPath = Path.Combine(appRootPath, "src", "Acme.Store.Host", "Acme.Store.Host.csproj");
         File.WriteAllText(
             hostProjectPath,
-            $$"""
+            projectContents ?? $$"""
             <Project Sdk="Microsoft.NET.Sdk.Web">
               <PropertyGroup>
                 <TargetFramework>{{targetFramework}}</TargetFramework>
+                <Description>Cephalon modular monolith app generated from dotnet new.</Description>
               </PropertyGroup>
+
+              <ItemGroup>
+                <PackageReference Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
+                <PackageReference Include="Cephalon.Audit" Version="0.1.0-preview" />
+                <PackageReference Include="Cephalon.Behaviors.Http" Version="0.1.0-preview" />
+                <PackageReference Include="Cephalon.Ids.Sfid" Version="0.1.0-preview" />
+                <PackageReference Include="Cephalon.Observability" Version="0.1.0-preview" />
+                <PackageReference Include="Cephalon.Observability.OpenTelemetry" Version="0.1.0-preview" />
+                <PackageReference Include="Cephalon.Observability.Serilog" Version="0.1.0-preview" />
+                <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.5" />
+                <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+              </ItemGroup>
+
+              <ItemGroup>
+                <Content Include="Configurations\**\*.json">
+                  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+                  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+                </Content>
+              </ItemGroup>
             </Project>
+            """);
+        File.WriteAllText(
+            Path.Combine(appRootPath, "src", "Acme.Store.Host", "Program.cs"),
+            programContents ?? """
+            using Cephalon.AspNetCore.Hosting;
+            using Cephalon.Audit.Registration;
+            using Cephalon.Ids.Sfid.Registration;
+            using Cephalon.Observability.Hosting;
+            using Cephalon.Observability.OpenTelemetry.Hosting;
+            using Cephalon.Observability.Serilog.Hosting;
+            using Microsoft.Extensions.Configuration;
+            using Microsoft.Extensions.Hosting.WindowsServices;
+
+            var options = new WebApplicationOptions
+            {
+                Args = args,
+                ContentRootPath = WindowsServiceHelpers.IsWindowsService()
+                    ? AppContext.BaseDirectory
+                    : default
+            };
+
+            var builder = WebApplication.CreateBuilder(options);
+            builder.AddCephalonProjectConfigurations();
+            builder.Host.UseWindowsService();
+
+            builder.AddCephalon(engine =>
+            {
+                engine.AddSfidIds();
+                engine.AddAudit();
+            });
+            builder.Services.AddCephalonObservability(builder.Configuration);
+            if (builder.Configuration.GetSection("Serilog").Exists())
+            {
+                builder.Logging.ClearProviders();
+            }
+            builder.AddCephalonSerilog();
+            builder.AddCephalonOpenTelemetry();
+
+            var app = builder.Build();
+
+            app.UseExceptionHandler();
+            app.MapGet("/", () => TypedResults.Ok(new
+            {
+                name = "Acme.Store.Host",
+                blueprint = "ModularMonolith"
+            })).ExcludeFromDescription();
+
+            app.MapCephalon();
+            app.Run();
             """);
         File.WriteAllText(Path.Combine(appRootPath, "src", "Acme.Store.Host", "appsettings.json"), "{}");
         var configurationsPath = Path.Combine(appRootPath, "src", "Acme.Store.Host", "Configurations");

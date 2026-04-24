@@ -65,6 +65,39 @@ internal static class DoctorCommand
         Path.Combine("Configurations", "Observability", "Development.json")
     ];
 
+    private static readonly (string Snippet, string Requirement)[] RequiredGeneratedHostBootstrapProgramMarkers =
+    [
+        ("builder.AddCephalonProjectConfigurations();", "AddCephalonProjectConfigurations"),
+        ("builder.Host.UseWindowsService();", "UseWindowsService"),
+        ("builder.AddCephalon(engine =>", "AddCephalon"),
+        ("engine.AddSfidIds();", "AddSfidIds"),
+        ("engine.AddAudit();", "AddAudit"),
+        ("builder.Services.AddCephalonObservability(builder.Configuration);", "AddCephalonObservability"),
+        ("builder.Configuration.GetSection(\"Serilog\").Exists()", "Serilog clear-provider guard"),
+        ("builder.Logging.ClearProviders();", "ClearProviders"),
+        ("builder.AddCephalonSerilog();", "AddCephalonSerilog"),
+        ("builder.AddCephalonOpenTelemetry();", "AddCephalonOpenTelemetry"),
+        ("app.UseExceptionHandler();", "UseExceptionHandler"),
+        ("app.MapCephalon();", "MapCephalon"),
+        ("app.Run();", "Run")
+    ];
+
+    private static readonly string[] RequiredGeneratedHostProjectPackageReferences =
+    [
+        "Cephalon.AspNetCore",
+        "Cephalon.Audit",
+        "Cephalon.Behaviors.Http",
+        "Cephalon.Ids.Sfid",
+        "Cephalon.Observability",
+        "Cephalon.Observability.OpenTelemetry",
+        "Cephalon.Observability.Serilog",
+        "Microsoft.Extensions.Hosting.WindowsServices",
+        "Serilog.Sinks.Console"
+    ];
+
+    private const string GeneratedConfigurationsContentInclude = "Configurations/**/*.json";
+    private const string PreserveNewestValue = "PreserveNewest";
+
     /// <summary>
     /// Executes the doctor command with the supplied options.
     /// </summary>
@@ -508,6 +541,7 @@ internal static class DoctorCommand
             .Select(candidate => new GeneratedHostProject(
                 candidate.Directory,
                 candidate.ProjectPath!,
+                Path.Combine(candidate.Directory, "Program.cs"),
                 Path.Combine(candidate.Directory, "appsettings.json"),
                 Path.Combine(candidate.Directory, "Properties", "PublishProfiles", "CephalonFolder.pubxml")))
             .Where(candidate => File.Exists(candidate.AppSettingsPath))
@@ -532,6 +566,7 @@ internal static class DoctorCommand
 
         var selectedHostProject = hostProjects[0];
         EvaluateGeneratedAppSupportContract(selectedHostProject, resolvedAppRootPath, supportContract, checks);
+        EvaluateGeneratedHostBootstrapBaseline(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedSplitConfigurationAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedDocumentationSurfaceAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedAppDeploymentAssets(selectedHostProject, resolvedAppRootPath, solutionPath, supportContract, checks);
@@ -687,6 +722,138 @@ internal static class DoctorCommand
             hostProject.ProjectPath,
             publishProfileDocument,
             hostProject.PublishProfilePath);
+    }
+
+    private static void EvaluateGeneratedHostBootstrapBaseline(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(hostProject.ProgramPath))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated host bootstrap source baseline",
+                $"Missing generated host bootstrap source: {ToDisplayRelativePath(generatedAppRootPath, hostProject.ProgramPath)}.",
+                "Restore the generated Program.cs file or regenerate the app before teams rely on the scaffolded Cephalon host bootstrap."));
+        }
+        else if (TryReadGeneratedTextAsset(
+                     hostProject.ProgramPath,
+                     generatedAppRootPath,
+                     "Generated host bootstrap source baseline",
+                     "Fix the generated Program.cs file before rerunning `cephalon doctor --app-root`.",
+                     checks,
+                     out var programContents))
+        {
+            var missingRequirements = RequiredGeneratedHostBootstrapProgramMarkers
+                .Where(marker => programContents.IndexOf(marker.Snippet, StringComparison.Ordinal) < 0)
+                .Select(marker => marker.Requirement)
+                .ToArray();
+
+            if (missingRequirements.Length > 0)
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Generated host bootstrap source baseline",
+                    $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProgramPath)} no longer keeps the generated Cephalon host bootstrap explicit for: {string.Join(", ", missingRequirements)}.",
+                    "Restore the generated Program.cs file so AddCephalonProjectConfigurations, observability wiring, and MapCephalon stay explicit in the scaffolded host bootstrap."));
+            }
+            else
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Pass,
+                    "Generated host bootstrap source baseline",
+                    $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProgramPath)} keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, observability wiring, and MapCephalon().",
+                    null));
+            }
+        }
+
+        XDocument projectDocument;
+        try
+        {
+            projectDocument = XDocument.Load(hostProject.ProjectPath);
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated host project baseline",
+                $"Could not inspect {ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)}: {exception.Message}",
+                "Fix the generated host project file before rerunning `cephalon doctor --app-root`."));
+            return;
+        }
+
+        var packageReferences = projectDocument
+            .Descendants()
+            .Where(element => string.Equals(element.Name.LocalName, "PackageReference", StringComparison.Ordinal))
+            .Select(element => (string?)element.Attribute("Include"))
+            .Where(include => !string.IsNullOrWhiteSpace(include))
+            .Select(include => include!.Trim())
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        var missingPackageReferences = RequiredGeneratedHostProjectPackageReferences
+            .Except(packageReferences, StringComparer.Ordinal)
+            .ToArray();
+
+        var generatedConfigurationsContentItem = projectDocument
+            .Descendants()
+            .FirstOrDefault(element =>
+                string.Equals(element.Name.LocalName, "Content", StringComparison.Ordinal) &&
+                string.Equals(
+                    NormalizeMsBuildPath((string?)element.Attribute("Include")),
+                    GeneratedConfigurationsContentInclude,
+                    StringComparison.Ordinal));
+
+        var copyToOutputDirectory = generatedConfigurationsContentItem?
+            .Elements()
+            .FirstOrDefault(element => string.Equals(element.Name.LocalName, "CopyToOutputDirectory", StringComparison.Ordinal))
+            ?.Value
+            ?.Trim();
+        var copyToPublishDirectory = generatedConfigurationsContentItem?
+            .Elements()
+            .FirstOrDefault(element => string.Equals(element.Name.LocalName, "CopyToPublishDirectory", StringComparison.Ordinal))
+            ?.Value
+            ?.Trim();
+
+        var baselineIssues = new List<string>();
+        if (missingPackageReferences.Length > 0)
+        {
+            baselineIssues.Add($"missing package references: {string.Join(", ", missingPackageReferences)}");
+        }
+
+        if (generatedConfigurationsContentItem is null)
+        {
+            baselineIssues.Add($"missing Content Include=\"{GeneratedConfigurationsContentInclude}\"");
+        }
+        else
+        {
+            if (!string.Equals(copyToOutputDirectory, PreserveNewestValue, StringComparison.Ordinal))
+            {
+                baselineIssues.Add($"missing CopyToOutputDirectory={PreserveNewestValue}");
+            }
+
+            if (!string.Equals(copyToPublishDirectory, PreserveNewestValue, StringComparison.Ordinal))
+            {
+                baselineIssues.Add($"missing CopyToPublishDirectory={PreserveNewestValue}");
+            }
+        }
+
+        if (baselineIssues.Count > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated host project baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)} no longer keeps the generated package references or `{GeneratedConfigurationsContentInclude}` copy/publish baseline explicit ({string.Join("; ", baselineIssues)}).",
+                "Restore the generated host project package references and Configurations/**/*.json copy/publish items before teams rely on scaffolded runtime and deployment defaults."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated host project baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)} keeps the generated package references and `{GeneratedConfigurationsContentInclude}` copy/publish baseline explicit.",
+            null));
     }
 
     private static void EvaluateGeneratedAppDeploymentAssets(
@@ -1679,6 +1846,13 @@ internal static class DoctorCommand
             .ToArray();
     }
 
+    private static string NormalizeMsBuildPath(string? path)
+    {
+        return string.IsNullOrWhiteSpace(path)
+            ? string.Empty
+            : path.Replace('\\', '/').Trim();
+    }
+
     private static GeneratedDeploymentBaseline? ResolveGeneratedDeploymentBaseline(
         string[] targetFrameworks,
         DeploymentModeSupportContract? supportContract)
@@ -2323,6 +2497,7 @@ internal static class DoctorCommand
     private sealed record GeneratedHostProject(
         string DirectoryPath,
         string ProjectPath,
+        string ProgramPath,
         string AppSettingsPath,
         string PublishProfilePath);
 

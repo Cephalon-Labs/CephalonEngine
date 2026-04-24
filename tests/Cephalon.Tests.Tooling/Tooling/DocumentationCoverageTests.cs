@@ -178,6 +178,7 @@ public sealed class DocumentationCoverageTests
         var kubernetesDeployment = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "kubernetes-deployment.md"));
         var linuxSystemdDeployment = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "linux-systemd-deployment.md"));
         var referenceDocsGuide = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "reference-docs.md"));
+        var cliComponentDoc = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "components", "cli.md"));
         var cliPackageReadme = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Cephalon.Cli", "PACKAGE.md"));
         var templatePackReadme = File.ReadAllText(Path.Combine(repositoryRoot, "templates", "Cephalon.TemplatePack", "PACKAGE.md"));
         var rootReadme = File.ReadAllText(Path.Combine(repositoryRoot, "README.md"));
@@ -187,6 +188,11 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deployment-mode support contract", gettingStarted, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("assessment-only", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("dotnet run --project ./Acme.Store/src/Acme.Store.Host/Acme.Store.Host.csproj", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("Program.cs", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("AddCephalonProjectConfigurations", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("MapCephalon", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("PackageReference", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("Configurations/**/*.json", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Configurations/AddEngine.*.json", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Configurations/Observability/Development.json", gettingStarted, StringComparison.Ordinal);
@@ -261,6 +267,11 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("target framework", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Program.cs", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("AddCephalonProjectConfigurations", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("MapCephalon", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("PackageReference", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("Configurations/**/*.json", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("PublishTrimmed", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("PublishAot", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("PublishSingleFile", cliPackageReadme, StringComparison.Ordinal);
@@ -292,6 +303,11 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", templatePackReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Program.cs", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("AddCephalonProjectConfigurations", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("MapCephalon", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("PackageReference", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("Configurations/**/*.json", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/AddEngine.*.json", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/Observability/Development.json", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("AddOpenApi.json", templatePackReadme, StringComparison.Ordinal);
@@ -329,6 +345,11 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor", rootReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", rootReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", rootReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Program.cs", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("AddCephalonProjectConfigurations", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("MapCephalon", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("PackageReference", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("Configurations/**/*.json", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/AddEngine.*.json", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/Observability/Development.json", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/AddOpenApi.json", rootReadme, StringComparison.Ordinal);
@@ -343,6 +364,11 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-generated-app-container-image.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-apps.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-kubernetes.ps1", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("Program.cs", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("AddCephalonProjectConfigurations", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("MapCephalon", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("PackageReference", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("Configurations/**/*.json", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("docker compose -f ./Acme.Store/compose.yaml up --build", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("compose.yaml", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("docker compose up --build", templatePackReadme, StringComparison.Ordinal);
