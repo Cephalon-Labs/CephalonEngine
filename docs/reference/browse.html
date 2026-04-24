@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T23:41:17.0230489+00:00",
+  "GeneratedAtUtc": "2026-04-24T00:30:29.8866699+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 477
+      "TypeCount": 481
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -674,7 +674,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 197
+      "TypeCount": 201
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3313,7 +3313,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 39,
+        "Properties": 40,
         "Methods": 0
       }
     },
@@ -4784,6 +4784,66 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 64,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector scheduler recovery and execution-hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 34,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
+      "Summary": "Defines the stable source identifiers used by managed-connector scheduler recovery and execution-hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector scheduler recovery and execution-hardening answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "Summary": "Describes the current operator-facing managed-connector scheduler recovery and execution-hardening posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 41,
         "Methods": 0
       }
     },
@@ -8309,7 +8369,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 71
+        "Methods": 75
       }
     },
     {
@@ -14990,6 +15050,17 @@
       "Summary": "The current runtime still exposes one active reporter lease."
     },
     {
+      "DisplayName": "ActiveLeaseVisible",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-activeleasevisible",
+      "Signature": "const string ActiveLeaseVisible",
+      "Summary": "The runtime still exposes one active reporter lease."
+    },
+    {
       "DisplayName": "ActiveReporterCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
@@ -15074,6 +15145,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-activereporterid",
+      "Signature": "string ActiveReporterId { get; set; }",
+      "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
+    },
+    {
+      "DisplayName": "ActiveReporterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-activereporterid",
       "Signature": "string ActiveReporterId { get; set; }",
       "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
     },
@@ -15179,6 +15261,17 @@
     {
       "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-activereporterleaseexpiresatutc",
+      "Signature": "DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when the active reporter lease expires when one is known."
+    },
+    {
+      "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15230,6 +15323,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-activereportervisible",
       "Signature": "const string ActiveReporterVisible",
       "Summary": "The current runtime still exposes one active reporter identifier."
+    },
+    {
+      "DisplayName": "ActiveReporterVisible",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-activereportervisible",
+      "Signature": "const string ActiveReporterVisible",
+      "Summary": "The runtime still exposes one active reporter identifier."
     },
     {
       "DisplayName": "ActiveTaskIds",
@@ -18358,6 +18462,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19749,6 +19864,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-automaticretryattemptrecorded",
+      "Signature": "const string AutomaticRetryAttemptRecorded",
+      "Summary": "The bounded command history already records one automatic retry attempt."
+    },
+    {
+      "DisplayName": "AutomaticRetryAttemptRecorded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-automaticretryattemptrecorded",
       "Signature": "const string AutomaticRetryAttemptRecorded",
       "Summary": "The bounded command history already records one automatic retry attempt."
     },
@@ -22151,6 +22277,17 @@
       "Summary": "Gets a value indicating whether the current node can execute the next bounded automatic retry step."
     },
     {
+      "DisplayName": "CanExecuteAutomaticRetryOnCurrentNode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-canexecuteautomaticretryoncurrentnode",
+      "Signature": "bool CanExecuteAutomaticRetryOnCurrentNode { get; set; }",
+      "Summary": "Gets a value indicating whether the current node can safely execute the next bounded automatic retry step."
+    },
+    {
       "DisplayName": "CanExecuteOnCurrentNode",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus",
@@ -23000,6 +23137,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active scheduler recovery and execution-hardening categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -23249,6 +23397,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable retry-execution policy categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable scheduler recovery and execution-hardening categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -23625,6 +23784,17 @@
       "Summary": "Creates a new managed-connector retry-execution policy answer."
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector scheduler recovery and execution-hardening answer."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus",
@@ -23942,6 +24112,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with retry-execution policy."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with scheduler recovery and execution hardening."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -25759,6 +25940,17 @@
       "Summary": "The retry posture was derived from the latest shared command-execution outcome."
     },
     {
+      "DisplayName": "CommandExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-commandexecution",
+      "Signature": "const string CommandExecution",
+      "Summary": "The scheduler recovery and execution-hardening answer was derived primarily from the latest command-execution outcome."
+    },
+    {
       "DisplayName": "CommandExecutionHistory",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalSources",
@@ -26056,6 +26248,17 @@
       "Summary": "The durable shared scheduler-orchestration answer was derived primarily from durable command-journal truth."
     },
     {
+      "DisplayName": "CommandJournalDurability",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-commandjournaldurability",
+      "Signature": "const string CommandJournalDurability",
+      "Summary": "The scheduler recovery and execution-hardening answer was derived primarily from durable command-journal truth."
+    },
+    {
       "DisplayName": "CommandJournalDurabilityState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
@@ -26098,6 +26301,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-commandjournaldurabilitystate",
       "Signature": "string CommandJournalDurabilityState { get; set; }",
       "Summary": "Gets the current managed-connector command-journal durability state that informed durable shared scheduler orchestration."
+    },
+    {
+      "DisplayName": "CommandJournalDurabilityState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-commandjournaldurabilitystate",
+      "Signature": "string CommandJournalDurabilityState { get; set; }",
+      "Summary": "Gets the current managed-connector command-journal durability state that informed scheduler recovery and execution hardening."
     },
     {
       "DisplayName": "CommandJournalSourceId",
@@ -28003,6 +28217,17 @@
       "Summary": "The current retry policy is still waiting for a cooldown window to elapse."
     },
     {
+      "DisplayName": "CooldownWindow",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-cooldownwindow",
+      "Signature": "const string CooldownWindow",
+      "Summary": "The current retry policy is still waiting for a cooldown window to elapse."
+    },
+    {
       "DisplayName": "CoordinatedMigrationIds",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalStep",
@@ -28131,6 +28356,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-coordinationownerid",
+      "Signature": "string CoordinationOwnerId { get; set; }",
+      "Summary": "Gets the host-owned coordination owner identifier when one was configured for automatic retry."
+    },
+    {
+      "DisplayName": "CoordinationOwnerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-coordinationownerid",
       "Signature": "string CoordinationOwnerId { get; set; }",
       "Summary": "Gets the host-owned coordination owner identifier when one was configured for automatic retry."
     },
@@ -28861,6 +29097,17 @@
       "Summary": "The current node cannot yet execute the next bounded automatic retry step."
     },
     {
+      "DisplayName": "CurrentNodeBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-currentnodeblocked",
+      "Signature": "const string CurrentNodeBlocked",
+      "Summary": "The current node cannot safely execute automatic retry yet."
+    },
+    {
       "DisplayName": "CurrentNodeExecutable",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
@@ -28892,6 +29139,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-currentnodeexecutable",
       "Signature": "const string CurrentNodeExecutable",
       "Summary": "The current node can execute the next bounded automatic retry step."
+    },
+    {
+      "DisplayName": "CurrentNodeExecutable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-currentnodeexecutable",
+      "Signature": "const string CurrentNodeExecutable",
+      "Summary": "The current node can execute automatic retry safely for the current hardening answer."
     },
     {
       "DisplayName": "CurrentNodeSchedulable",
@@ -31089,6 +31347,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing retry-execution policy summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing scheduler recovery and execution-hardening summary."
     },
     {
       "DisplayName": "Description",
@@ -33291,6 +33560,17 @@
       "Summary": "The multi-node lease-execution answer was derived primarily from distributed retry orchestration truth."
     },
     {
+      "DisplayName": "DistributedRetryOrchestration",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-distributedretryorchestration",
+      "Signature": "const string DistributedRetryOrchestration",
+      "Summary": "The scheduler recovery and execution-hardening answer was derived primarily from distributed retry orchestration truth."
+    },
+    {
       "DisplayName": "DistributedRetryOrchestrationState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus",
@@ -33311,6 +33591,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-distributedretryorchestrationstate",
       "Signature": "string DistributedRetryOrchestrationState { get; set; }",
       "Summary": "Gets the current managed-connector distributed retry orchestration state that informed broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "DistributedRetryOrchestrationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-distributedretryorchestrationstate",
+      "Signature": "string DistributedRetryOrchestrationState { get; set; }",
+      "Summary": "Gets the current managed-connector distributed retry orchestration state that informed scheduler recovery and execution hardening."
     },
     {
       "DisplayName": "Distribution",
@@ -34039,6 +34330,17 @@
       "Summary": "A durable command-journal store is configured for the runtime."
     },
     {
+      "DisplayName": "DurableJournalConfigured",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-durablejournalconfigured",
+      "Signature": "const string DurableJournalConfigured",
+      "Summary": "A durable command-journal store is configured for the runtime."
+    },
+    {
       "DisplayName": "DurableJournalHealthy",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
@@ -34092,6 +34394,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-durablesharedscheduler",
       "Signature": "const string DurableSharedScheduler",
       "Summary": "The runtime participates in the durable shared scheduler-orchestration lane."
+    },
+    {
+      "DisplayName": "DurableSharedSchedulerOrchestration",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-durablesharedschedulerorchestration",
+      "Signature": "const string DurableSharedSchedulerOrchestration",
+      "Summary": "The scheduler recovery and execution-hardening answer was derived primarily from durable shared scheduler orchestration truth."
+    },
+    {
+      "DisplayName": "DurableSharedSchedulerOrchestrationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-durablesharedschedulerorchestrationstate",
+      "Signature": "string DurableSharedSchedulerOrchestrationState { get; set; }",
+      "Summary": "Gets the current managed-connector durable shared scheduler-orchestration state that informed scheduler recovery and execution hardening."
     },
     {
       "DisplayName": "DurableStoreConfigured",
@@ -37570,6 +37894,28 @@
       "Summary": "Gets the ordered physical-target execution groups derived from the current migration catalog."
     },
     {
+      "DisplayName": "ExecutionHardened",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-executionhardened",
+      "Signature": "const string ExecutionHardened",
+      "Summary": "Scheduler execution truth currently looks hardened enough for bounded execution."
+    },
+    {
+      "DisplayName": "ExecutionHardened",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-executionhardened",
+      "Signature": "const string ExecutionHardened",
+      "Summary": "Scheduler execution truth currently looks hardened enough for truthful bounded execution on the shared lane."
+    },
+    {
       "DisplayName": "ExecutionIntent",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources",
@@ -37913,6 +38259,17 @@
     {
       "DisplayName": "ExecutionOwnership",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-executionownership",
+      "Signature": "string ExecutionOwnership { get; set; }",
+      "Summary": "Gets the operator-facing execution-ownership mode that informed scheduler recovery and execution hardening."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
       "NamespaceName": "Cephalon.Data.Configuration",
       "AssemblyName": "Cephalon.Data",
@@ -37931,6 +38288,28 @@
       "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executionownership",
       "Signature": "string ExecutionOwnership { get; set; }",
       "Summary": "Gets or sets the execution-ownership mode published for the connector runtime."
+    },
+    {
+      "DisplayName": "ExecutionRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-executionrisk",
+      "Signature": "const string ExecutionRisk",
+      "Summary": "Scheduler execution truth currently remains risky."
+    },
+    {
+      "DisplayName": "ExecutionRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-executionrisk",
+      "Signature": "const string ExecutionRisk",
+      "Summary": "Scheduler execution still remains risky because lease, scheduler, or automatic execution truth is not yet safe enough."
     },
     {
       "DisplayName": "ExecutionRuntimeId",
@@ -38098,6 +38477,17 @@
       "Summary": "Gets the stable execution-runtime identifier currently associated with retry-execution policy."
     },
     {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with scheduler recovery and execution hardening."
+    },
+    {
       "DisplayName": "ExecutionTopology",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
@@ -38195,6 +38585,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-executiontopology",
       "Signature": "string ExecutionTopology { get; set; }",
       "Summary": "Gets the operator-facing execution-topology classification that informed broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets the operator-facing execution-topology classification that informed scheduler recovery and execution hardening."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -41772,6 +42173,50 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector retry-execution policy answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorschedulerrecoveryexecutionhardeningcategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory(string hardeningCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorschedulerrecoveryexecutionhardeningownerid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId(string ownerId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer currently reports the requested local coordination owner."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorschedulerrecoveryexecutionhardeningretryfingerprint-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(string retryFingerprint)",
+      "Summary": "Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer currently reports the requested retry fingerprint."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorSchedulerRecoveryExecutionHardeningState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorschedulerrecoveryexecutionhardeningstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorSchedulerRecoveryExecutionHardeningState(string hardeningState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorWritePathReadinessCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -43534,6 +43979,17 @@
     {
       "DisplayName": "HasActiveReporterLease",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasactivereporterlease",
+      "Signature": "bool HasActiveReporterLease { get; }",
+      "Summary": "Gets a value indicating whether the runtime currently exposes one active reporter lease."
+    },
+    {
+      "DisplayName": "HasActiveReporterLease",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -43818,6 +44274,17 @@
       "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
     },
     {
+      "DisplayName": "HasDurableStoreConfigured",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasdurablestoreconfigured",
+      "Signature": "bool HasDurableStoreConfigured { get; set; }",
+      "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
+    },
+    {
       "DisplayName": "HasFreshnessWindow",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
@@ -43926,6 +44393,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasmatchingautomaticretryattempt",
       "Signature": "bool HasMatchingAutomaticRetryAttempt { get; set; }",
       "Summary": "Gets a value indicating whether the bounded command journal currently retains one matching automatic retry attempt."
+    },
+    {
+      "DisplayName": "HasMatchingAutomaticRetryAttempt",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasmatchingautomaticretryattempt",
+      "Signature": "bool HasMatchingAutomaticRetryAttempt { get; set; }",
+      "Summary": "Gets a value indicating whether retained history currently contains one automatic retry attempt for the current retry fingerprint."
     },
     {
       "DisplayName": "HasMatchingCommandFingerprint",
@@ -44192,6 +44670,17 @@
       "Summary": "Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history."
     },
     {
+      "DisplayName": "HasPersistedRecordedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-haspersistedrecordedhistory",
+      "Signature": "bool HasPersistedRecordedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history."
+    },
+    {
       "DisplayName": "HasPersistedSnapshot",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -44364,6 +44853,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-hasrecoveredpersistedhistory",
+      "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the current process recovered persisted command history for this runtime."
+    },
+    {
+      "DisplayName": "HasRecoveredPersistedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasrecoveredpersistedhistory",
       "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
       "Summary": "Gets a value indicating whether the current process recovered persisted command history for this runtime."
     },
@@ -48273,6 +48773,17 @@
       "Summary": "Automatic retry currently depends on in-memory command history only."
     },
     {
+      "DisplayName": "InMemoryJournalOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-inmemoryjournalonly",
+      "Signature": "const string InMemoryJournalOnly",
+      "Summary": "Automatic retry currently depends on in-memory command history only."
+    },
+    {
       "DisplayName": "InMemoryOnly",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
@@ -49307,6 +49818,28 @@
       "Summary": "Gets a value indicating whether the managed connector currently sits on an engine-ready execution lane."
     },
     {
+      "DisplayName": "IsExecutionHardened",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isexecutionhardened",
+      "Signature": "bool IsExecutionHardened { get; }",
+      "Summary": "Gets a value indicating whether scheduler execution truth currently looks hardened enough for bounded execution."
+    },
+    {
+      "DisplayName": "IsExecutionRisk",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isexecutionrisk",
+      "Signature": "bool IsExecutionRisk { get; }",
+      "Summary": "Gets a value indicating whether scheduler execution truth currently remains risky."
+    },
+    {
       "DisplayName": "IsFailed",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
@@ -49846,6 +50379,17 @@
       "Summary": "Gets a value indicating whether retry remains operator-owned outside Cephalon."
     },
     {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether scheduler recovery and execution hardening still remains operator-owned outside Cephalon."
+    },
+    {
       "DisplayName": "IsOperatorRequestInvocation",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
@@ -49967,6 +50511,17 @@
       "Summary": "Gets a value indicating whether the current durability answer reports recovered persisted history."
     },
     {
+      "DisplayName": "IsRecoveryBlocked",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isrecoveryblocked",
+      "Signature": "bool IsRecoveryBlocked { get; }",
+      "Summary": "Gets a value indicating whether scheduler recovery still remains blocked by missing or unhealthy durable evidence."
+    },
+    {
       "DisplayName": "IsRecoveryFailed",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -49989,6 +50544,17 @@
       "Summary": "Gets a value indicating whether durable shared scheduler orchestration still needs durable journal recovery or persistence hardening."
     },
     {
+      "DisplayName": "IsRecoveryReady",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isrecoveryready",
+      "Signature": "bool IsRecoveryReady { get; }",
+      "Summary": "Gets a value indicating whether scheduler recovery is ready for safe bounded execution on the current node."
+    },
+    {
       "DisplayName": "IsRejected",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
@@ -49998,6 +50564,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-isrejected",
       "Signature": "bool IsRejected { get; }",
       "Summary": "Gets a value indicating whether the managed connector has been rejected on the shared issuance lane."
+    },
+    {
+      "DisplayName": "IsReplaying",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isreplaying",
+      "Signature": "bool IsReplaying { get; }",
+      "Summary": "Gets a value indicating whether scheduler recovery is replaying retained execution evidence."
     },
     {
       "DisplayName": "IsReplayWindowRisk",
@@ -51760,6 +52337,61 @@
       "Summary": "Gets the stable latest recorded command-execution attempt identifier when one exists."
     },
     {
+      "DisplayName": "LatestAutomaticExecutionAdapted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionadapted",
+      "Signature": "const string LatestAutomaticExecutionAdapted",
+      "Summary": "The latest automatic retry execution already translated into one provider-facing command shape."
+    },
+    {
+      "DisplayName": "LatestAutomaticExecutionBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionblocked",
+      "Signature": "const string LatestAutomaticExecutionBlocked",
+      "Summary": "The latest automatic retry execution remained blocked before provider translation."
+    },
+    {
+      "DisplayName": "LatestAutomaticExecutionFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionfailed",
+      "Signature": "const string LatestAutomaticExecutionFailed",
+      "Summary": "The latest automatic retry execution failed while Cephalon translated it."
+    },
+    {
+      "DisplayName": "LatestAutomaticExecutionOperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionoperatoronly",
+      "Signature": "const string LatestAutomaticExecutionOperatorOnly",
+      "Summary": "The latest automatic retry execution remained operator-owned."
+    },
+    {
+      "DisplayName": "LatestAutomaticExecutionUnavailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionunavailable",
+      "Signature": "const string LatestAutomaticExecutionUnavailable",
+      "Summary": "The latest automatic retry execution could not resolve one provider execution adapter."
+    },
+    {
       "DisplayName": "LatestAutomaticRetryAttemptId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -51826,6 +52458,17 @@
       "Summary": "Gets the latest automatic retry attempt identifier currently associated with broader multi-node lease execution."
     },
     {
+      "DisplayName": "LatestAutomaticRetryAttemptId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestautomaticretryattemptid",
+      "Signature": "string LatestAutomaticRetryAttemptId { get; set; }",
+      "Summary": "Gets the stable latest automatic retry attempt identifier when one exists."
+    },
+    {
       "DisplayName": "LatestAutomaticRetryExecutionFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -51857,6 +52500,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-latestautomaticretryexecutionfingerprint",
       "Signature": "string LatestAutomaticRetryExecutionFingerprint { get; set; }",
       "Summary": "Gets the latest automatic retry execution fingerprint currently associated with distributed retry lease posture."
+    },
+    {
+      "DisplayName": "LatestAutomaticRetryExecutionFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestautomaticretryexecutionfingerprint",
+      "Signature": "string LatestAutomaticRetryExecutionFingerprint { get; set; }",
+      "Summary": "Gets the deterministic execution fingerprint of the latest automatic retry attempt when one exists."
     },
     {
       "DisplayName": "LatestAutomaticRetryRecordedAtUtc",
@@ -51903,6 +52557,17 @@
       "Summary": "Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists."
     },
     {
+      "DisplayName": "LatestAutomaticRetryRecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestautomaticretryrecordedatutc",
+      "Signature": "DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }",
+      "Summary": "Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists."
+    },
+    {
       "DisplayName": "LatestAutomaticRetryState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -51914,6 +52579,17 @@
       "Summary": "Gets the state of the latest recorded automatic background retry attempt when one exists."
     },
     {
+      "DisplayName": "LatestCommandExecutionFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestcommandexecutionfingerprint",
+      "Signature": "string LatestCommandExecutionFingerprint { get; set; }",
+      "Summary": "Gets the deterministic execution fingerprint of the latest recorded command-execution outcome when one exists."
+    },
+    {
       "DisplayName": "LatestCommandExecutionInvocationSourceId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -51923,6 +52599,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-latestcommandexecutioninvocationsourceid",
       "Signature": "string LatestCommandExecutionInvocationSourceId { get; set; }",
       "Summary": "Gets the invocation source identifier of the latest recorded command-execution outcome."
+    },
+    {
+      "DisplayName": "LatestCommandExecutionInvocationSourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestcommandexecutioninvocationsourceid",
+      "Signature": "string LatestCommandExecutionInvocationSourceId { get; set; }",
+      "Summary": "Gets the invocation-source identifier of the latest recorded command-execution outcome."
     },
     {
       "DisplayName": "LatestCommandExecutionSourceId",
@@ -51989,6 +52676,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestcommandexecutionstate",
       "Signature": "string LatestCommandExecutionState { get; set; }",
       "Summary": "Gets the latest recorded managed-connector command-execution state Cephalon considered for retry-execution policy."
+    },
+    {
+      "DisplayName": "LatestCommandExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestcommandexecutionstate",
+      "Signature": "string LatestCommandExecutionState { get; set; }",
+      "Summary": "Gets the latest recorded managed-connector command-execution state visible to scheduler recovery and execution hardening."
     },
     {
       "DisplayName": "LatestExecutionAdapted",
@@ -52449,6 +53147,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leasecoordinatedruntime",
+      "Signature": "const string LeaseCoordinatedRuntime",
+      "Summary": "The runtime depends on cross-node lease ownership before automatic retry should execute."
+    },
+    {
+      "DisplayName": "LeaseCoordinatedRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-leasecoordinatedruntime",
       "Signature": "const string LeaseCoordinatedRuntime",
       "Summary": "The runtime depends on cross-node lease ownership before automatic retry should execute."
     },
@@ -53311,6 +54020,17 @@
       "Summary": "Gets the operator-facing managed-connector retry-execution policy derived from command retry, execution approval, execution adapter, and the broader shared runtime truth."
     },
     {
+      "DisplayName": "ManagedConnectorSchedulerRecoveryExecutionHardening",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorschedulerrecoveryexecutionhardening",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus ManagedConnectorSchedulerRecoveryExecutionHardening { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector scheduler recovery and execution-hardening posture derived from durable scheduler, lease-execution, durable journal, and latest execution truth."
+    },
+    {
       "DisplayName": "ManagedConnectorWritePathReadiness",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -53582,6 +54302,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -54145,6 +54876,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-matchingautomaticretryattempt",
       "Signature": "const string MatchingAutomaticRetryAttempt",
       "Summary": "The bounded command journal currently retains one matching automatic retry attempt."
+    },
+    {
+      "DisplayName": "MatchingAutomaticRetryAttempt",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-matchingautomaticretryattempt",
+      "Signature": "const string MatchingAutomaticRetryAttempt",
+      "Summary": "Retained history currently contains one automatic retry attempt for the current retry fingerprint."
     },
     {
       "DisplayName": "MatchingAutomaticRetryAttemptCount",
@@ -57436,6 +58178,17 @@
       "Summary": "The durable shared scheduler-orchestration answer was derived primarily from broader multi-node lease-execution truth."
     },
     {
+      "DisplayName": "MultiNodeLeaseExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-multinodeleaseexecution",
+      "Signature": "const string MultiNodeLeaseExecution",
+      "Summary": "The scheduler recovery and execution-hardening answer was derived primarily from broader multi-node lease-execution truth."
+    },
+    {
       "DisplayName": "MultiNodeLeaseExecutionState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus",
@@ -57445,6 +58198,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-multinodeleaseexecutionstate",
       "Signature": "string MultiNodeLeaseExecutionState { get; set; }",
       "Summary": "Gets the current managed-connector broader multi-node lease-execution state that informed durable shared scheduler orchestration."
+    },
+    {
+      "DisplayName": "MultiNodeLeaseExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-multinodeleaseexecutionstate",
+      "Signature": "string MultiNodeLeaseExecutionState { get; set; }",
+      "Summary": "Gets the current managed-connector broader multi-node lease-execution state that informed scheduler recovery and execution hardening."
     },
     {
       "DisplayName": "MultipleActiveReporters",
@@ -58050,6 +58814,17 @@
       "Summary": "The current shared runtime truth does not currently need another automatic retry attempt."
     },
     {
+      "DisplayName": "NoFurtherRetryNeeded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-nofurtherretryneeded",
+      "Signature": "const string NoFurtherRetryNeeded",
+      "Summary": "The current shared runtime truth does not currently need another automatic retry attempt."
+    },
+    {
       "DisplayName": "NoMatchingCommandHistory",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories",
@@ -58565,6 +59340,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-notapplicable",
       "Signature": "const string NotApplicable",
       "Summary": "The retry-execution policy does not currently apply to the execution runtime."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "Scheduler recovery and execution hardening does not currently apply to the execution runtime."
     },
     {
       "DisplayName": "NotApplicable",
@@ -59810,6 +60596,17 @@
       "Summary": "Gets the stable management-operation identifier currently associated with retry-execution policy."
     },
     {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier currently associated with scheduler recovery and execution hardening."
+    },
+    {
       "DisplayName": "OperationPath",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorApiSurfaceDescriptor",
@@ -60116,6 +60913,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-operatoronly",
       "Signature": "const string OperatorOnly",
       "Summary": "The current retry-execution policy remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Scheduler recovery and execution hardening still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Scheduler recovery and execution hardening still remains operator-owned outside Cephalon."
     },
     {
       "DisplayName": "OperatorRequest",
@@ -60952,6 +61771,17 @@
       "Summary": "The current host coordination owner matches the active reporter lease."
     },
     {
+      "DisplayName": "OwnerMatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-ownermatch",
+      "Signature": "const string OwnerMatch",
+      "Summary": "The current host coordination owner matches the active reporter lease."
+    },
+    {
       "DisplayName": "OwnerMismatch",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories",
@@ -61014,6 +61844,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-ownermismatch",
+      "Signature": "const string OwnerMismatch",
+      "Summary": "The current host coordination owner does not match the active reporter lease."
+    },
+    {
+      "DisplayName": "OwnerMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-ownermismatch",
       "Signature": "const string OwnerMismatch",
       "Summary": "The current host coordination owner does not match the active reporter lease."
     },
@@ -62217,6 +63058,17 @@
       "Summary": "The durable command journal currently exposes persisted recorded history."
     },
     {
+      "DisplayName": "PersistedHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-persistedhistory",
+      "Signature": "const string PersistedHistory",
+      "Summary": "The durable command journal currently exposes persisted recorded history."
+    },
+    {
       "DisplayName": "PersistedRecordedHistory",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
@@ -62270,6 +63122,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-persistencefailed",
       "Signature": "const string PersistenceFailed",
       "Summary": "The durable command-journal store could not persist the latest snapshot."
+    },
+    {
+      "DisplayName": "PersistenceFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-persistencefailed",
+      "Signature": "const string PersistenceFailed",
+      "Summary": "The durable command journal currently reports a persistence error."
     },
     {
       "DisplayName": "PersistenceHealthy",
@@ -62675,6 +63538,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets the bounded retry scheduler polling interval, in seconds, when one is configured."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-pollingintervalseconds",
       "Signature": "int PollingIntervalSeconds { get; set; }",
       "Summary": "Gets the bounded retry scheduler polling interval, in seconds, when one is configured."
     },
@@ -65702,6 +66576,39 @@
       "Summary": "The durable command journal currently exposes recovered recorded history."
     },
     {
+      "DisplayName": "RecoveredHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveredhistory",
+      "Signature": "const string RecoveredHistory",
+      "Summary": "The durable command journal currently exposes recovered recorded history."
+    },
+    {
+      "DisplayName": "RecoveryBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveryblocked",
+      "Signature": "const string RecoveryBlocked",
+      "Summary": "Scheduler recovery remains blocked by missing or unhealthy durable evidence."
+    },
+    {
+      "DisplayName": "RecoveryBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-recoveryblocked",
+      "Signature": "const string RecoveryBlocked",
+      "Summary": "Scheduler recovery remains blocked by missing, unhealthy, or incomplete durable journal evidence."
+    },
+    {
       "DisplayName": "RecoveryError",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
@@ -65735,6 +66642,17 @@
       "Summary": "The durable command-journal store could not recover the persisted snapshot."
     },
     {
+      "DisplayName": "RecoveryFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveryfailed",
+      "Signature": "const string RecoveryFailed",
+      "Summary": "The durable command journal currently reports a recovery error."
+    },
+    {
       "DisplayName": "RecoveryNeeded",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories",
@@ -65755,6 +66673,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-recoveryneeded",
       "Signature": "const string RecoveryNeeded",
       "Summary": "Durable shared scheduler orchestration still needs durable journal recovery or persistence hardening."
+    },
+    {
+      "DisplayName": "RecoveryReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveryready",
+      "Signature": "const string RecoveryReady",
+      "Summary": "Scheduler recovery completed enough that bounded execution can resume safely."
+    },
+    {
+      "DisplayName": "RecoveryReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-recoveryready",
+      "Signature": "const string RecoveryReady",
+      "Summary": "Scheduler recovery completed enough that the current node can safely resume bounded execution."
     },
     {
       "DisplayName": "RecreateSlotIfInvalidated",
@@ -66888,6 +67828,28 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-restendpointoverridebindingmode-replaceexplicit",
       "Signature": "const RestEndpointOverrideBindingMode ReplaceExplicit",
       "Summary": "Replaces the candidate\u0027s explicit binding plan with the configured descriptors."
+    },
+    {
+      "DisplayName": "Replaying",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-replaying",
+      "Signature": "const string Replaying",
+      "Summary": "Scheduler recovery is replaying retained execution evidence."
+    },
+    {
+      "DisplayName": "Replaying",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-replaying",
+      "Signature": "const string Replaying",
+      "Summary": "Scheduler recovery is currently replaying bounded execution evidence on the current node."
     },
     {
       "DisplayName": "ReplayWindowRisk",
@@ -70498,6 +71460,17 @@
       "Summary": "Gets the deterministic retry fingerprint currently associated with the retry-execution policy."
     },
     {
+      "DisplayName": "RetryFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-retryfingerprint",
+      "Signature": "string RetryFingerprint { get; set; }",
+      "Summary": "Gets the deterministic retry fingerprint currently associated with scheduler recovery and execution hardening."
+    },
+    {
       "DisplayName": "RetryHistoryPresent",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
@@ -72247,6 +73220,17 @@
       "Summary": "Durable shared scheduler orchestration remains conflicted across coordination or lease ownership truth."
     },
     {
+      "DisplayName": "SchedulerConflicted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerconflicted",
+      "Signature": "const string SchedulerConflicted",
+      "Summary": "The durable shared scheduler currently remains conflicted."
+    },
+    {
       "DisplayName": "SchedulerDisabled",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
@@ -72324,6 +73308,17 @@
       "Summary": "Gets the stable shared scheduler identifier currently associated with broader multi-node lease execution."
     },
     {
+      "DisplayName": "SchedulerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-schedulerid",
+      "Signature": "string SchedulerId { get; set; }",
+      "Summary": "Gets the stable shared scheduler identifier currently associated with scheduler recovery and execution hardening."
+    },
+    {
       "DisplayName": "SchedulerKind",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
@@ -72355,6 +73350,61 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-schedulerkind",
       "Signature": "string SchedulerKind { get; set; }",
       "Summary": "Gets the stable shared scheduler kind currently associated with broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "SchedulerKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-schedulerkind",
+      "Signature": "string SchedulerKind { get; set; }",
+      "Summary": "Gets the stable shared scheduler kind currently associated with scheduler recovery and execution hardening."
+    },
+    {
+      "DisplayName": "SchedulerLeaseBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerleaseblocked",
+      "Signature": "const string SchedulerLeaseBlocked",
+      "Summary": "The durable shared scheduler currently remains blocked by broader lease truth."
+    },
+    {
+      "DisplayName": "SchedulerRecoveryExecutionHardening",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerrecoveryexecutionhardening",
+      "Signature": "const string SchedulerRecoveryExecutionHardening",
+      "Summary": "The runtime participates in the scheduler recovery and execution-hardening lane."
+    },
+    {
+      "DisplayName": "SchedulerScheduled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerscheduled",
+      "Signature": "const string SchedulerScheduled",
+      "Summary": "The durable shared scheduler currently keeps one bounded retry scheduled."
+    },
+    {
+      "DisplayName": "SchedulerUnscheduled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerunscheduled",
+      "Signature": "const string SchedulerUnscheduled",
+      "Summary": "The durable shared scheduler currently does not need to keep the runtime scheduled."
     },
     {
       "DisplayName": "Schema",
@@ -73556,6 +74606,17 @@
       "Summary": "The runtime currently executes automatic retry on a single node without cross-node lease ownership."
     },
     {
+      "DisplayName": "SingleNodeRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-singlenoderuntime",
+      "Signature": "const string SingleNodeRuntime",
+      "Summary": "The runtime currently executes automatic retry on a single node without cross-node lease ownership."
+    },
+    {
       "DisplayName": "Skipped",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchExecutionOutcomes",
@@ -74181,6 +75242,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-sourceid",
       "Signature": "string SourceId { get; set; }",
       "Summary": "Gets the primary source identifier Cephalon used to derive retry-execution policy."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive scheduler recovery and execution hardening."
     },
     {
       "DisplayName": "SourceId",
@@ -75950,6 +77022,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector retry-execution policy state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector scheduler recovery and execution-hardening state."
     },
     {
       "DisplayName": "State",
@@ -80867,6 +81950,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicysources-unknown",
       "Signature": "const string Unknown",
       "Summary": "The retry-execution policy does not currently resolve to one specific source."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The scheduler recovery and execution-hardening answer does not currently resolve to one specific source."
     },
     {
       "DisplayName": "Unknown",

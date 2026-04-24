@@ -8628,6 +8628,16 @@ CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus ManagedConn
 
 Gets the operator-facing managed-connector retry-execution policy derived from command retry, execution approval, execution adapter, and the broader shared runtime truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorschedulerrecoveryexecutionhardening"></a>
+
+##### `ManagedConnectorSchedulerRecoveryExecutionHardening`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus ManagedConnectorSchedulerRecoveryExecutionHardening { get; set; }
+```
+
+Gets the operator-facing managed-connector scheduler recovery and execution-hardening posture derived from durable scheduler, lease-execution, durable journal, and latest execution truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorwritepathreadiness"></a>
 
 ##### `ManagedConnectorWritePathReadiness`
@@ -25118,6 +25128,954 @@ string WritePathReadinessState { get; set; }
 
 Gets the current managed-connector write-path readiness state that informed retry-execution policy.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories`
+
+Defines the stable category identifiers used by managed-connector scheduler recovery and execution-hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-activeleasevisible"></a>
+
+##### `ActiveLeaseVisible`
+
+```csharp
+const string ActiveLeaseVisible
+```
+
+The runtime still exposes one active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-activereportervisible"></a>
+
+##### `ActiveReporterVisible`
+
+```csharp
+const string ActiveReporterVisible
+```
+
+The runtime still exposes one active reporter identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-automaticretryattemptrecorded"></a>
+
+##### `AutomaticRetryAttemptRecorded`
+
+```csharp
+const string AutomaticRetryAttemptRecorded
+```
+
+The bounded command history already records one automatic retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-cooldownwindow"></a>
+
+##### `CooldownWindow`
+
+```csharp
+const string CooldownWindow
+```
+
+The current retry policy is still waiting for a cooldown window to elapse.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot safely execute automatic retry yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current node can execute automatic retry safely for the current hardening answer.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-durablejournalconfigured"></a>
+
+##### `DurableJournalConfigured`
+
+```csharp
+const string DurableJournalConfigured
+```
+
+A durable command-journal store is configured for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-executionhardened"></a>
+
+##### `ExecutionHardened`
+
+```csharp
+const string ExecutionHardened
+```
+
+Scheduler execution truth currently looks hardened enough for bounded execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-executionrisk"></a>
+
+##### `ExecutionRisk`
+
+```csharp
+const string ExecutionRisk
+```
+
+Scheduler execution truth currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-inmemoryjournalonly"></a>
+
+##### `InMemoryJournalOnly`
+
+```csharp
+const string InMemoryJournalOnly
+```
+
+Automatic retry currently depends on in-memory command history only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionadapted"></a>
+
+##### `LatestAutomaticExecutionAdapted`
+
+```csharp
+const string LatestAutomaticExecutionAdapted
+```
+
+The latest automatic retry execution already translated into one provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionblocked"></a>
+
+##### `LatestAutomaticExecutionBlocked`
+
+```csharp
+const string LatestAutomaticExecutionBlocked
+```
+
+The latest automatic retry execution remained blocked before provider translation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionfailed"></a>
+
+##### `LatestAutomaticExecutionFailed`
+
+```csharp
+const string LatestAutomaticExecutionFailed
+```
+
+The latest automatic retry execution failed while Cephalon translated it.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionoperatoronly"></a>
+
+##### `LatestAutomaticExecutionOperatorOnly`
+
+```csharp
+const string LatestAutomaticExecutionOperatorOnly
+```
+
+The latest automatic retry execution remained operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-latestautomaticexecutionunavailable"></a>
+
+##### `LatestAutomaticExecutionUnavailable`
+
+```csharp
+const string LatestAutomaticExecutionUnavailable
+```
+
+The latest automatic retry execution could not resolve one provider execution adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-leasecoordinatedruntime"></a>
+
+##### `LeaseCoordinatedRuntime`
+
+```csharp
+const string LeaseCoordinatedRuntime
+```
+
+The runtime depends on cross-node lease ownership before automatic retry should execute.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-matchingautomaticretryattempt"></a>
+
+##### `MatchingAutomaticRetryAttempt`
+
+```csharp
+const string MatchingAutomaticRetryAttempt
+```
+
+Retained history currently contains one automatic retry attempt for the current retry fingerprint.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-nofurtherretryneeded"></a>
+
+##### `NoFurtherRetryNeeded`
+
+```csharp
+const string NoFurtherRetryNeeded
+```
+
+The current shared runtime truth does not currently need another automatic retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Scheduler recovery and execution hardening still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-ownermatch"></a>
+
+##### `OwnerMatch`
+
+```csharp
+const string OwnerMatch
+```
+
+The current host coordination owner matches the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-ownermismatch"></a>
+
+##### `OwnerMismatch`
+
+```csharp
+const string OwnerMismatch
+```
+
+The current host coordination owner does not match the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-persistedhistory"></a>
+
+##### `PersistedHistory`
+
+```csharp
+const string PersistedHistory
+```
+
+The durable command journal currently exposes persisted recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-persistencefailed"></a>
+
+##### `PersistenceFailed`
+
+```csharp
+const string PersistenceFailed
+```
+
+The durable command journal currently reports a persistence error.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The durable command journal currently exposes recovered recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveryblocked"></a>
+
+##### `RecoveryBlocked`
+
+```csharp
+const string RecoveryBlocked
+```
+
+Scheduler recovery remains blocked by missing or unhealthy durable evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveryfailed"></a>
+
+##### `RecoveryFailed`
+
+```csharp
+const string RecoveryFailed
+```
+
+The durable command journal currently reports a recovery error.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveryready"></a>
+
+##### `RecoveryReady`
+
+```csharp
+const string RecoveryReady
+```
+
+Scheduler recovery completed enough that bounded execution can resume safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-replaying"></a>
+
+##### `Replaying`
+
+```csharp
+const string Replaying
+```
+
+Scheduler recovery is replaying retained execution evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerconflicted"></a>
+
+##### `SchedulerConflicted`
+
+```csharp
+const string SchedulerConflicted
+```
+
+The durable shared scheduler currently remains conflicted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerleaseblocked"></a>
+
+##### `SchedulerLeaseBlocked`
+
+```csharp
+const string SchedulerLeaseBlocked
+```
+
+The durable shared scheduler currently remains blocked by broader lease truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerrecoveryexecutionhardening"></a>
+
+##### `SchedulerRecoveryExecutionHardening`
+
+```csharp
+const string SchedulerRecoveryExecutionHardening
+```
+
+The runtime participates in the scheduler recovery and execution-hardening lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerscheduled"></a>
+
+##### `SchedulerScheduled`
+
+```csharp
+const string SchedulerScheduled
+```
+
+The durable shared scheduler currently keeps one bounded retry scheduled.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerunscheduled"></a>
+
+##### `SchedulerUnscheduled`
+
+```csharp
+const string SchedulerUnscheduled
+```
+
+The durable shared scheduler currently does not need to keep the runtime scheduled.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-singlenoderuntime"></a>
+
+##### `SingleNodeRuntime`
+
+```csharp
+const string SingleNodeRuntime
+```
+
+The runtime currently executes automatic retry on a single node without cross-node lease ownership.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources`
+
+Defines the stable source identifiers used by managed-connector scheduler recovery and execution-hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-commandexecution"></a>
+
+##### `CommandExecution`
+
+```csharp
+const string CommandExecution
+```
+
+The scheduler recovery and execution-hardening answer was derived primarily from the latest command-execution outcome.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-commandjournaldurability"></a>
+
+##### `CommandJournalDurability`
+
+```csharp
+const string CommandJournalDurability
+```
+
+The scheduler recovery and execution-hardening answer was derived primarily from durable command-journal truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-distributedretryorchestration"></a>
+
+##### `DistributedRetryOrchestration`
+
+```csharp
+const string DistributedRetryOrchestration
+```
+
+The scheduler recovery and execution-hardening answer was derived primarily from distributed retry orchestration truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-durablesharedschedulerorchestration"></a>
+
+##### `DurableSharedSchedulerOrchestration`
+
+```csharp
+const string DurableSharedSchedulerOrchestration
+```
+
+The scheduler recovery and execution-hardening answer was derived primarily from durable shared scheduler orchestration truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-multinodeleaseexecution"></a>
+
+##### `MultiNodeLeaseExecution`
+
+```csharp
+const string MultiNodeLeaseExecution
+```
+
+The scheduler recovery and execution-hardening answer was derived primarily from broader multi-node lease-execution truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The scheduler recovery and execution-hardening answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates`
+
+Defines the stable state identifiers used by managed-connector scheduler recovery and execution-hardening answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-executionhardened"></a>
+
+##### `ExecutionHardened`
+
+```csharp
+const string ExecutionHardened
+```
+
+Scheduler execution truth currently looks hardened enough for truthful bounded execution on the shared lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-executionrisk"></a>
+
+##### `ExecutionRisk`
+
+```csharp
+const string ExecutionRisk
+```
+
+Scheduler execution still remains risky because lease, scheduler, or automatic execution truth is not yet safe enough.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Scheduler recovery and execution hardening does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Scheduler recovery and execution hardening still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-recoveryblocked"></a>
+
+##### `RecoveryBlocked`
+
+```csharp
+const string RecoveryBlocked
+```
+
+Scheduler recovery remains blocked by missing, unhealthy, or incomplete durable journal evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-recoveryready"></a>
+
+##### `RecoveryReady`
+
+```csharp
+const string RecoveryReady
+```
+
+Scheduler recovery completed enough that the current node can safely resume bounded execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-replaying"></a>
+
+##### `Replaying`
+
+```csharp
+const string Replaying
+```
+
+Scheduler recovery is currently replaying bounded execution evidence on the current node.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus`
+
+Describes the current operator-facing managed-connector scheduler recovery and execution-hardening posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus(string state, string description)
+```
+
+Creates a new managed-connector scheduler recovery and execution-hardening answer.
+
+Parameters:
+- `state`: The stable scheduler recovery and execution-hardening state, such as `not-applicable`, `operator-only`, `recovery-ready`, `recovery-blocked`, `replaying`, `execution-hardened`, or `execution-risk`.
+- `description`: An optional operator-facing scheduler recovery and execution-hardening summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-canexecuteautomaticretryoncurrentnode"></a>
+
+##### `CanExecuteAutomaticRetryOnCurrentNode`
+
+```csharp
+bool CanExecuteAutomaticRetryOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can safely execute the next bounded automatic retry step.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active scheduler recovery and execution-hardening categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable scheduler recovery and execution-hardening categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-commandjournaldurabilitystate"></a>
+
+##### `CommandJournalDurabilityState`
+
+```csharp
+string CommandJournalDurabilityState { get; set; }
+```
+
+Gets the current managed-connector command-journal durability state that informed scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one was configured for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing scheduler recovery and execution-hardening summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-distributedretryorchestrationstate"></a>
+
+##### `DistributedRetryOrchestrationState`
+
+```csharp
+string DistributedRetryOrchestrationState { get; set; }
+```
+
+Gets the current managed-connector distributed retry orchestration state that informed scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-durablesharedschedulerorchestrationstate"></a>
+
+##### `DurableSharedSchedulerOrchestrationState`
+
+```csharp
+string DurableSharedSchedulerOrchestrationState { get; set; }
+```
+
+Gets the current managed-connector durable shared scheduler-orchestration state that informed scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasmatchingautomaticretryattempt"></a>
+
+##### `HasMatchingAutomaticRetryAttempt`
+
+```csharp
+bool HasMatchingAutomaticRetryAttempt { get; set; }
+```
+
+Gets a value indicating whether retained history currently contains one automatic retry attempt for the current retry fingerprint.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isexecutionhardened"></a>
+
+##### `IsExecutionHardened`
+
+```csharp
+bool IsExecutionHardened { get; }
+```
+
+Gets a value indicating whether scheduler execution truth currently looks hardened enough for bounded execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isexecutionrisk"></a>
+
+##### `IsExecutionRisk`
+
+```csharp
+bool IsExecutionRisk { get; }
+```
+
+Gets a value indicating whether scheduler execution truth currently remains risky.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether scheduler recovery and execution hardening still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isrecoveryblocked"></a>
+
+##### `IsRecoveryBlocked`
+
+```csharp
+bool IsRecoveryBlocked { get; }
+```
+
+Gets a value indicating whether scheduler recovery still remains blocked by missing or unhealthy durable evidence.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isrecoveryready"></a>
+
+##### `IsRecoveryReady`
+
+```csharp
+bool IsRecoveryReady { get; }
+```
+
+Gets a value indicating whether scheduler recovery is ready for safe bounded execution on the current node.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isreplaying"></a>
+
+##### `IsReplaying`
+
+```csharp
+bool IsReplaying { get; }
+```
+
+Gets a value indicating whether scheduler recovery is replaying retained execution evidence.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestautomaticretryattemptid"></a>
+
+##### `LatestAutomaticRetryAttemptId`
+
+```csharp
+string LatestAutomaticRetryAttemptId { get; set; }
+```
+
+Gets the stable latest automatic retry attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestautomaticretryexecutionfingerprint"></a>
+
+##### `LatestAutomaticRetryExecutionFingerprint`
+
+```csharp
+string LatestAutomaticRetryExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic execution fingerprint of the latest automatic retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestautomaticretryrecordedatutc"></a>
+
+##### `LatestAutomaticRetryRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestcommandexecutionfingerprint"></a>
+
+##### `LatestCommandExecutionFingerprint`
+
+```csharp
+string LatestCommandExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic execution fingerprint of the latest recorded command-execution outcome when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestcommandexecutioninvocationsourceid"></a>
+
+##### `LatestCommandExecutionInvocationSourceId`
+
+```csharp
+string LatestCommandExecutionInvocationSourceId { get; set; }
+```
+
+Gets the invocation-source identifier of the latest recorded command-execution outcome.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-multinodeleaseexecutionstate"></a>
+
+##### `MultiNodeLeaseExecutionState`
+
+```csharp
+string MultiNodeLeaseExecutionState { get; set; }
+```
+
+Gets the current managed-connector broader multi-node lease-execution state that informed scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-pollingintervalseconds"></a>
+
+##### `PollingIntervalSeconds`
+
+```csharp
+int PollingIntervalSeconds { get; set; }
+```
+
+Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-schedulerid"></a>
+
+##### `SchedulerId`
+
+```csharp
+string SchedulerId { get; set; }
+```
+
+Gets the stable shared scheduler identifier currently associated with scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-schedulerkind"></a>
+
+##### `SchedulerKind`
+
+```csharp
+string SchedulerKind { get; set; }
+```
+
+Gets the stable shared scheduler kind currently associated with scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive scheduler recovery and execution hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector scheduler recovery and execution-hardening state.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinesscategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessCategories`
@@ -32394,6 +33352,66 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `policyState`: The stable managed-connector retry-execution policy state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorschedulerrecoveryexecutionhardeningcategory-system-string"></a>
+
+##### `GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory(string hardeningCategory)
+```
+
+Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening category.
+
+Parameters:
+- `hardeningCategory`: The stable scheduler recovery and execution-hardening category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorschedulerrecoveryexecutionhardeningownerid-system-string"></a>
+
+##### `GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId(string ownerId)
+```
+
+Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer currently reports the requested local coordination owner.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.
+
+Parameters:
+- `ownerId`: The stable local coordination owner identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorschedulerrecoveryexecutionhardeningretryfingerprint-system-string"></a>
+
+##### `GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(string retryFingerprint)
+```
+
+Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer currently reports the requested retry fingerprint.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that retry fingerprint.
+
+Parameters:
+- `retryFingerprint`: The deterministic retry fingerprint to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorschedulerrecoveryexecutionhardeningstate-system-string"></a>
+
+##### `GetByManagedConnectorSchedulerRecoveryExecutionHardeningState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningState(string hardeningState)
+```
+
+Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening state.
+
+Parameters:
+- `hardeningState`: The stable scheduler recovery and execution-hardening state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorwritepathreadinesscategory-system-string"></a>
 

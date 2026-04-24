@@ -501,6 +501,34 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDurableSharedSchedulerOrchestrationOwnerId(string ownerId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer matches the requested state.
+    /// </summary>
+    /// <param name="hardeningState">The stable scheduler recovery and execution-hardening state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningState(string hardeningState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer includes the requested category.
+    /// </summary>
+    /// <param name="hardeningCategory">The stable scheduler recovery and execution-hardening category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that hardening category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory(string hardeningCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer currently reports the requested local coordination owner.
+    /// </summary>
+    /// <param name="ownerId">The stable local coordination owner identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId(string ownerId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current scheduler recovery and execution-hardening answer currently reports the requested retry fingerprint.
+    /// </summary>
+    /// <param name="retryFingerprint">The deterministic retry fingerprint to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that retry fingerprint.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(string retryFingerprint);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

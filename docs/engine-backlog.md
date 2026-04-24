@@ -3027,6 +3027,102 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-192 Phase 13 managed-connector scheduler recovery / execution hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, `ENG-185`, `ENG-186`, `ENG-187`, `ENG-188`, `ENG-189`, `ENG-190`, and `ENG-191`
+  already shipped shared coverage, remediation, governance, desired-versus-observed drift,
+  action-planning, write-path readiness, preflight, dry-run, execution-intent,
+  execution-approval, command-envelope, command-issuance, provider execution-adapter, execution
+  outcome/history, retry/idempotency, retry-execution-policy, bounded command-journal, automatic
+  background retry execution, automatic background retry coordination, durable command-journal,
+  distributed retry lease, distributed retry orchestration, richer cross-node idempotency
+  hardening, broader multi-node lease-execution, and durable shared scheduler-orchestration truth,
+  but operators still lacked one shared answer for whether the current node had recovered enough
+  durable evidence to resume bounded execution safely
+- the next follow-through needed to keep scheduler recovery and execution hardening additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only recovery
+  registry, second coordinator, or second recovery lane
+- later broader provider-owned write-path execution also needed one truthful shared recovery answer
+  grounded in durable scheduler, lease-execution, orchestration, journal, and latest command
+  history truth instead of forcing hosts or provider packs to re-derive recovery posture outside
+  the shared runtime catalog
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector scheduler recovery and execution
+  hardening contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish
+  `not-applicable`, `operator-only`, `recovery-ready`, `recovery-blocked`, `replaying`,
+  `execution-hardened`, and `execution-risk` posture together with categories, execution-runtime
+  and capture identity, ownership/topology, operation, coordination-owner and active-reporter
+  identity, durable scheduler, broader multi-node lease-execution, distributed retry
+  orchestration, command-journal durability, latest command-execution truth, scheduler identity
+  and kind, retry fingerprint, latest automatic-attempt evidence, durable-history truth, and
+  `CanExecuteAutomaticRetryOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive scheduler recovery state, category,
+  owner, and retry-fingerprint filters while deriving that posture from the same shared durable
+  scheduler, lease-execution, orchestration, durability, and latest command-execution truth
+  instead of forcing hosts or providers to invent another recovery planner
+- the shared data pack now feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  `ManagedConnectorCommandExecutor` invocations through that scheduler recovery answer so bounded
+  background retry execution no longer trusts durable shared scheduler truth alone when merged
+  durable evidence or latest automatic execution still says the current node remains blocked or at
+  risk
+- ASP.NET Core publishes those same scheduler recovery filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down and retry
+  fingerprint filters, and the recovery answer stays additive beside the existing coordination,
+  lease, hardening, orchestration, lease-execution, and scheduler surfaces instead of branching
+  into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later broader provider-owned write-path execution remains separate
+  follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorSchedulerRecoveryExecutionHardening`
+- `Cephalon.Data` now derives managed-connector scheduler recovery and execution-hardening posture
+  from merged durable shared scheduler, broader multi-node lease-execution, distributed retry
+  orchestration, command-journal durability, and latest command-execution truth, including
+  `recovery-ready`, `recovery-blocked`, `replaying`, `execution-hardened`, and `execution-risk`
+  answers, and `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorSchedulerRecoveryExecutionHardeningState(...)`,
+  `GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory(...)`,
+  `GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId(...)`, and
+  `GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(...)`
+- `Cephalon.Data` now also feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  invocations in `ManagedConnectorCommandExecutor` through that broader scheduler recovery answer
+  so bounded background retry execution no longer depends on durable shared scheduler truth alone
+  when the merged recovery answer still reports `recovery-blocked` or `execution-risk`
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/{hardeningState}`,
+  `/engine/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/categories/{hardeningCategory}`,
+  `/engine/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/owners/{ownerId}`,
+  `/engine/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/fingerprints/{retryFingerprint}`,
+  and `/engine/cdc-capture-runtimes/{executionRuntimeId}/scheduler-recovery-execution-hardening`
+  so host routes stay aligned with the same shared coordination, lease, orchestration, scheduler,
+  durability, and recovery story
+- `Cephalon.Data.Debezium` now participates in that broader shared recovery lane through the
+  existing managed-connector runtime and command surface while targeted coverage proves
+  `execution-hardened`, `recovery-blocked`, and `replaying`-ready recovery posture without
+  claiming a Debezium-only recovery subsystem
+- targeted coverage now proves the scheduler recovery and execution-hardening baseline through
+  composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference
+  docs publish script
+
 ### ENG-191 Phase 13 managed-connector durable shared scheduler orchestration baseline
 
 Status: done

@@ -91,19 +91,21 @@ internal sealed class ManagedConnectorCommandExecutor(
                 normalizedInvocationSourceId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
                 StringComparison.OrdinalIgnoreCase) &&
-            !runtime.ManagedConnectorDurableSharedSchedulerOrchestration.CanScheduleAutomaticRetryOnCurrentNode)
+            !runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.CanExecuteAutomaticRetryOnCurrentNode)
         {
-            var durableSharedSchedulerOrchestration = runtime.ManagedConnectorDurableSharedSchedulerOrchestration;
-            var coordinationState = durableSharedSchedulerOrchestration.IsOperatorOnly
+            var schedulerRecoveryExecutionHardening = runtime.ManagedConnectorSchedulerRecoveryExecutionHardening;
+            var coordinationState = schedulerRecoveryExecutionHardening.IsOperatorOnly
                 ? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly
                 : CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked;
-            var coordinationDescription = string.IsNullOrWhiteSpace(durableSharedSchedulerOrchestration.Description)
-                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorMultiNodeLeaseExecution.Description)
-                    ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
-                        ? "Automatic background retry is not currently allowed to execute on this node."
-                        : runtime.ManagedConnectorDistributedRetryOrchestration.Description
-                    : runtime.ManagedConnectorMultiNodeLeaseExecution.Description
-                : durableSharedSchedulerOrchestration.Description;
+            var coordinationDescription = string.IsNullOrWhiteSpace(schedulerRecoveryExecutionHardening.Description)
+                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description)
+                    ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorMultiNodeLeaseExecution.Description)
+                        ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
+                            ? "Automatic background retry is not currently allowed to execute on this node."
+                            : runtime.ManagedConnectorDistributedRetryOrchestration.Description
+                        : runtime.ManagedConnectorMultiNodeLeaseExecution.Description
+                    : runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description
+                : schedulerRecoveryExecutionHardening.Description;
 
             return CreateResult(
                 runtime,

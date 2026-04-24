@@ -820,6 +820,49 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningState(string hardeningState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(hardeningState);
+        var normalizedHardeningState = hardeningState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.State,
+            normalizedHardeningState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory(string hardeningCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(hardeningCategory);
+        var normalizedHardeningCategory = hardeningCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.CategoryIds.Contains(
+            normalizedHardeningCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId(string ownerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ownerId);
+        var normalizedOwnerId = ownerId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.CoordinationOwnerId,
+            normalizedOwnerId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(string retryFingerprint)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(retryFingerprint);
+        var normalizedRetryFingerprint = retryFingerprint.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.RetryFingerprint,
+            normalizedRetryFingerprint,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -1154,6 +1197,25 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandJournalDurability,
             managedConnectorDistributedRetryOrchestration,
             managedConnectorMultiNodeLeaseExecution);
+        var managedConnectorSchedulerRecoveryExecutionHardening = CreateManagedConnectorSchedulerRecoveryExecutionHardening(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionOwnership,
+            runtime.ExecutionTopology,
+            managedConnectorRetryExecutionPolicy.ManagementMode ??
+            managedConnectorAutomaticRetryExecution.ManagementMode ??
+            managedConnectorAutomaticRetryCoordination.ManagementMode ??
+            managedConnectorDistributedRetryLease.ManagementMode ??
+            managedConnectorCrossNodeIdempotencyHardening.ManagementMode ??
+            managedConnectorDistributedRetryOrchestration.ManagementMode ??
+            managedConnectorMultiNodeLeaseExecution.ManagementMode ??
+            managedConnectorDurableSharedSchedulerOrchestration.ManagementMode,
+            managedConnectorCommandJournalDurability,
+            managedConnectorDistributedRetryOrchestration,
+            managedConnectorMultiNodeLeaseExecution,
+            managedConnectorDurableSharedSchedulerOrchestration,
+            managedConnectorCommandExecution,
+            commandExecutionHistory);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
@@ -1185,7 +1247,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorCrossNodeIdempotencyHardening = managedConnectorCrossNodeIdempotencyHardening,
             ManagedConnectorDistributedRetryOrchestration = managedConnectorDistributedRetryOrchestration,
             ManagedConnectorMultiNodeLeaseExecution = managedConnectorMultiNodeLeaseExecution,
-            ManagedConnectorDurableSharedSchedulerOrchestration = managedConnectorDurableSharedSchedulerOrchestration
+            ManagedConnectorDurableSharedSchedulerOrchestration = managedConnectorDurableSharedSchedulerOrchestration,
+            ManagedConnectorSchedulerRecoveryExecutionHardening = managedConnectorSchedulerRecoveryExecutionHardening
         };
     }
 
@@ -9886,6 +9949,549 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         return multiNodeLeaseExecution.IsLeaseBlocked
             ? CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationSources.MultiNodeLeaseExecution
             : CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationSources.DistributedRetryOrchestration;
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus CreateManagedConnectorSchedulerRecoveryExecutionHardening(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string executionOwnership,
+        string executionTopology,
+        string? managementMode,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus distributedRetryOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus multiNodeLeaseExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus durableSharedSchedulerOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> commandExecutionHistory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(commandJournalDurability);
+        ArgumentNullException.ThrowIfNull(distributedRetryOrchestration);
+        ArgumentNullException.ThrowIfNull(multiNodeLeaseExecution);
+        ArgumentNullException.ThrowIfNull(durableSharedSchedulerOrchestration);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandExecutionHistory);
+
+        var normalizedExecutionOwnership = string.IsNullOrWhiteSpace(executionOwnership)
+            ? "runtime-managed"
+            : executionOwnership.Trim();
+        var normalizedExecutionTopology = string.IsNullOrWhiteSpace(executionTopology)
+            ? "not-configured"
+            : executionTopology.Trim();
+        var normalizedOperationId = string.IsNullOrWhiteSpace(durableSharedSchedulerOrchestration.OperationId)
+            ? string.IsNullOrWhiteSpace(multiNodeLeaseExecution.OperationId)
+                ? string.IsNullOrWhiteSpace(distributedRetryOrchestration.OperationId)
+                    ? CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds.None
+                    : distributedRetryOrchestration.OperationId.Trim()
+                : multiNodeLeaseExecution.OperationId.Trim()
+            : durableSharedSchedulerOrchestration.OperationId.Trim();
+        var appliesToManagedConnector =
+            string.Equals(normalizedExecutionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) &&
+            (commandJournalDurability.AppliesToManagedConnector ||
+             distributedRetryOrchestration.AppliesToManagedConnector ||
+             multiNodeLeaseExecution.AppliesToManagedConnector ||
+             durableSharedSchedulerOrchestration.AppliesToManagedConnector);
+        var isSingleNodeRuntime = multiNodeLeaseExecution.IsSingleNode;
+        var latestAutomaticRetryEntry = commandExecutionHistory.FirstOrDefault(static entry => entry.IsAutomaticRetryInvocation);
+        var hasAutomaticRetryAttemptRecorded = latestAutomaticRetryEntry is not null;
+        var latestAutomaticRetryExecutionFingerprint = latestAutomaticRetryEntry?.ExecutionFingerprint ?? string.Empty;
+        var latestCommandExecutionFingerprint = latestCommandExecution.IsUnrecorded
+            ? string.Empty
+            : latestCommandExecution.ExecutionFingerprint;
+        var hasMatchingAutomaticRetryAttempt =
+            !string.IsNullOrWhiteSpace(durableSharedSchedulerOrchestration.LatestAutomaticRetryAttemptId) &&
+            commandExecutionHistory.Any(entry =>
+                entry.IsAutomaticRetryInvocation &&
+                string.Equals(
+                    entry.AttemptId,
+                    durableSharedSchedulerOrchestration.LatestAutomaticRetryAttemptId,
+                    StringComparison.OrdinalIgnoreCase));
+        var latestAutomaticExecutionSucceeded = latestAutomaticRetryEntry?.IsAdapted == true;
+        var latestAutomaticExecutionRisk = latestAutomaticRetryEntry is not null &&
+                                           (latestAutomaticRetryEntry.IsFailed ||
+                                            latestAutomaticRetryEntry.IsBlocked ||
+                                            latestAutomaticRetryEntry.IsOperatorOnly ||
+                                            latestAutomaticRetryEntry.IsUnavailable);
+        var canExecuteAutomaticRetryOnCurrentNode =
+            durableSharedSchedulerOrchestration.CanScheduleAutomaticRetryOnCurrentNode &&
+            !latestAutomaticExecutionRisk;
+        var recoveryBlocked =
+            durableSharedSchedulerOrchestration.IsRecoveryNeeded ||
+            commandJournalDurability.IsInMemoryOnly ||
+            commandJournalDurability.IsRecoveryFailed ||
+            commandJournalDurability.IsPersistenceFailed ||
+            !commandJournalDurability.HasDurableStoreConfigured;
+        var executionRisk =
+            durableSharedSchedulerOrchestration.IsSchedulerConflicted ||
+            durableSharedSchedulerOrchestration.IsLeaseBlocked ||
+            multiNodeLeaseExecution.IsLeaseConflicted ||
+            multiNodeLeaseExecution.IsStaleLeaseRisk ||
+            distributedRetryOrchestration.IsBlocked ||
+            latestAutomaticExecutionRisk;
+        var state =
+            !appliesToManagedConnector
+                ? CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.NotApplicable
+                : durableSharedSchedulerOrchestration.IsOperatorOnly || multiNodeLeaseExecution.IsOperatorOnly
+                    ? CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.OperatorOnly
+                    : recoveryBlocked
+                        ? CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryBlocked
+                        : executionRisk
+                            ? CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.ExecutionRisk
+                            : commandJournalDurability.HasRecoveredPersistedHistory &&
+                              canExecuteAutomaticRetryOnCurrentNode &&
+                              hasMatchingAutomaticRetryAttempt
+                                ? CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.Replaying
+                                : commandJournalDurability.HasRecoveredPersistedHistory &&
+                                  canExecuteAutomaticRetryOnCurrentNode
+                                    ? CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryReady
+                                    : commandJournalDurability.IsDurable &&
+                                      (durableSharedSchedulerOrchestration.IsScheduled ||
+                                       durableSharedSchedulerOrchestration.IsUnscheduled ||
+                                       distributedRetryOrchestration.IsCompleted ||
+                                       distributedRetryOrchestration.IsCooldown ||
+                                       latestAutomaticExecutionSucceeded)
+                                        ? CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.ExecutionHardened
+                                        : CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.ExecutionRisk;
+
+        var categories = CreateManagedConnectorSchedulerRecoveryExecutionHardeningCategories(
+            state,
+            commandJournalDurability,
+            distributedRetryOrchestration,
+            multiNodeLeaseExecution,
+            durableSharedSchedulerOrchestration,
+            latestAutomaticRetryEntry,
+            isSingleNodeRuntime,
+            hasAutomaticRetryAttemptRecorded,
+            hasMatchingAutomaticRetryAttempt,
+            canExecuteAutomaticRetryOnCurrentNode);
+        var description = CreateManagedConnectorSchedulerRecoveryExecutionHardeningDescription(
+            state,
+            normalizedOperationId,
+            commandJournalDurability,
+            distributedRetryOrchestration,
+            multiNodeLeaseExecution,
+            durableSharedSchedulerOrchestration,
+            latestAutomaticRetryEntry,
+            isSingleNodeRuntime);
+        var sourceId = ResolveManagedConnectorSchedulerRecoveryExecutionHardeningSourceId(
+            state,
+            commandJournalDurability,
+            distributedRetryOrchestration,
+            multiNodeLeaseExecution,
+            durableSharedSchedulerOrchestration,
+            latestAutomaticRetryEntry);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus(state, description)
+        {
+            CategoryIds = categories,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ExecutionOwnership = normalizedExecutionOwnership,
+            ExecutionTopology = normalizedExecutionTopology,
+            ManagementMode = managementMode,
+            OperationId = normalizedOperationId,
+            CoordinationOwnerId = durableSharedSchedulerOrchestration.CoordinationOwnerId,
+            ActiveReporterId = durableSharedSchedulerOrchestration.ActiveReporterId,
+            ActiveReporterLeaseExpiresAtUtc = durableSharedSchedulerOrchestration.ActiveReporterLeaseExpiresAtUtc,
+            DurableSharedSchedulerOrchestrationState = durableSharedSchedulerOrchestration.State,
+            MultiNodeLeaseExecutionState = multiNodeLeaseExecution.State,
+            DistributedRetryOrchestrationState = distributedRetryOrchestration.State,
+            CommandJournalDurabilityState = commandJournalDurability.State,
+            LatestCommandExecutionState = latestCommandExecution.State,
+            LatestCommandExecutionInvocationSourceId = latestCommandExecution.InvocationSourceId,
+            SourceId = sourceId,
+            SchedulerId = durableSharedSchedulerOrchestration.SchedulerId,
+            SchedulerKind = durableSharedSchedulerOrchestration.SchedulerKind,
+            PollingIntervalSeconds = durableSharedSchedulerOrchestration.PollingIntervalSeconds,
+            RetryFingerprint = durableSharedSchedulerOrchestration.RetryFingerprint,
+            LatestAutomaticRetryAttemptId = durableSharedSchedulerOrchestration.LatestAutomaticRetryAttemptId,
+            LatestAutomaticRetryExecutionFingerprint = latestAutomaticRetryExecutionFingerprint,
+            LatestCommandExecutionFingerprint = latestCommandExecutionFingerprint,
+            LatestAutomaticRetryRecordedAtUtc = durableSharedSchedulerOrchestration.LatestAutomaticRetryRecordedAtUtc,
+            HasDurableStoreConfigured = commandJournalDurability.HasDurableStoreConfigured,
+            HasPersistedRecordedHistory = commandJournalDurability.HasPersistedRecordedHistory,
+            HasRecoveredPersistedHistory = commandJournalDurability.HasRecoveredPersistedHistory,
+            HasMatchingAutomaticRetryAttempt = hasMatchingAutomaticRetryAttempt,
+            CanExecuteAutomaticRetryOnCurrentNode = canExecuteAutomaticRetryOnCurrentNode
+        };
+    }
+
+    private static string[] CreateManagedConnectorSchedulerRecoveryExecutionHardeningCategories(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus distributedRetryOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus multiNodeLeaseExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus durableSharedSchedulerOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult? latestAutomaticRetryEntry,
+        bool isSingleNodeRuntime,
+        bool hasAutomaticRetryAttemptRecorded,
+        bool hasMatchingAutomaticRetryAttempt,
+        bool canExecuteAutomaticRetryOnCurrentNode)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(commandJournalDurability);
+        ArgumentNullException.ThrowIfNull(distributedRetryOrchestration);
+        ArgumentNullException.ThrowIfNull(multiNodeLeaseExecution);
+        ArgumentNullException.ThrowIfNull(durableSharedSchedulerOrchestration);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return [];
+        }
+
+        var categories = new List<string>(capacity: 24);
+
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.SchedulerRecoveryExecutionHardening);
+        AddCategory(
+            categories,
+            isSingleNodeRuntime
+                ? CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.SingleNodeRuntime
+                : CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.LeaseCoordinatedRuntime);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.OperatorOnly);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryReady, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.RecoveryReady);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.RecoveryBlocked);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.Replaying, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.Replaying);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.ExecutionHardened, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.ExecutionHardened);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.ExecutionRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.ExecutionRisk);
+        }
+
+        if (!string.IsNullOrWhiteSpace(durableSharedSchedulerOrchestration.ActiveReporterId))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.ActiveReporterVisible);
+        }
+
+        if (durableSharedSchedulerOrchestration.HasActiveReporterLease)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.ActiveLeaseVisible);
+        }
+
+        if (multiNodeLeaseExecution.CoordinationOwnerMatchesActiveReporter)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.OwnerMatch);
+        }
+        else if (!string.IsNullOrWhiteSpace(multiNodeLeaseExecution.CoordinationOwnerId) &&
+                 multiNodeLeaseExecution.HasActiveReporterLease)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.OwnerMismatch);
+        }
+
+        if (commandJournalDurability.HasDurableStoreConfigured)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.DurableJournalConfigured);
+        }
+        else
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.InMemoryJournalOnly);
+        }
+
+        if (commandJournalDurability.HasPersistedRecordedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.PersistedHistory);
+        }
+
+        if (commandJournalDurability.HasRecoveredPersistedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.RecoveredHistory);
+        }
+
+        if (commandJournalDurability.IsRecoveryFailed)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.RecoveryFailed);
+        }
+
+        if (commandJournalDurability.IsPersistenceFailed)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.PersistenceFailed);
+        }
+
+        if (durableSharedSchedulerOrchestration.IsScheduled)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.SchedulerScheduled);
+        }
+        else if (durableSharedSchedulerOrchestration.IsUnscheduled)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.SchedulerUnscheduled);
+        }
+        else if (durableSharedSchedulerOrchestration.IsSchedulerConflicted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.SchedulerConflicted);
+        }
+        else if (durableSharedSchedulerOrchestration.IsLeaseBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.SchedulerLeaseBlocked);
+        }
+
+        if (distributedRetryOrchestration.IsCooldown)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.CooldownWindow);
+        }
+
+        if (distributedRetryOrchestration.IsCompleted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.NoFurtherRetryNeeded);
+        }
+
+        if (hasAutomaticRetryAttemptRecorded)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.AutomaticRetryAttemptRecorded);
+        }
+
+        if (hasMatchingAutomaticRetryAttempt)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.MatchingAutomaticRetryAttempt);
+        }
+
+        if (latestAutomaticRetryEntry?.IsAdapted == true)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.LatestAutomaticExecutionAdapted);
+        }
+        else if (latestAutomaticRetryEntry?.IsFailed == true)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.LatestAutomaticExecutionFailed);
+        }
+        else if (latestAutomaticRetryEntry?.IsBlocked == true)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.LatestAutomaticExecutionBlocked);
+        }
+        else if (latestAutomaticRetryEntry?.IsOperatorOnly == true)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.LatestAutomaticExecutionOperatorOnly);
+        }
+        else if (latestAutomaticRetryEntry?.IsUnavailable == true)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.LatestAutomaticExecutionUnavailable);
+        }
+
+        if (canExecuteAutomaticRetryOnCurrentNode)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.CurrentNodeExecutable);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryBlocked, StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.ExecutionRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories.CurrentNodeBlocked);
+        }
+
+        return [.. categories];
+    }
+
+    private static string CreateManagedConnectorSchedulerRecoveryExecutionHardeningDescription(
+        string state,
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus distributedRetryOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus multiNodeLeaseExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus durableSharedSchedulerOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult? latestAutomaticRetryEntry,
+        bool isSingleNodeRuntime)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        ArgumentNullException.ThrowIfNull(commandJournalDurability);
+        ArgumentNullException.ThrowIfNull(distributedRetryOrchestration);
+        ArgumentNullException.ThrowIfNull(multiNodeLeaseExecution);
+        ArgumentNullException.ThrowIfNull(durableSharedSchedulerOrchestration);
+
+        var detail = CombineManagedConnectorCommandEnvelopeDetail(
+            CombineManagedConnectorCommandEnvelopeDetail(
+                CombineManagedConnectorCommandEnvelopeDetail(
+                    durableSharedSchedulerOrchestration.Description,
+                    multiNodeLeaseExecution.Description,
+                    distributedRetryOrchestration.Description),
+                commandJournalDurability.Description),
+            latestAutomaticRetryEntry?.Description);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                "Cephalon does not currently expose scheduler recovery and execution hardening for this execution runtime.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                "Cephalon can observe scheduler recovery and execution posture for this managed connector, but recovery and execution ownership still remain operator-owned outside Cephalon.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            var recoveryReason =
+                !commandJournalDurability.HasDurableStoreConfigured || commandJournalDurability.IsInMemoryOnly
+                    ? "The bounded managed-connector command journal is still in memory only."
+                    : commandJournalDurability.IsRecoveryFailed
+                        ? $"The durable command journal still needs recovery after startup: {NormalizeManagedConnectorFingerprintSegment(commandJournalDurability.LastRecoveryError)}."
+                        : commandJournalDurability.IsPersistenceFailed
+                            ? $"The durable command journal could not persist the latest bounded scheduler evidence: {NormalizeManagedConnectorFingerprintSegment(commandJournalDurability.LastPersistenceError)}."
+                            : "Shared scheduler recovery still needs durable journal evidence before bounded execution should continue.";
+
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon cannot safely continue {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} yet. {recoveryReason}",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.ExecutionRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            var riskReason =
+                latestAutomaticRetryEntry?.IsFailed == true
+                    ? "The latest automatic retry attempt failed while Cephalon translated provider execution."
+                    : latestAutomaticRetryEntry?.IsBlocked == true
+                        ? "The latest automatic retry attempt was still blocked by shared runtime truth."
+                        : latestAutomaticRetryEntry?.IsOperatorOnly == true
+                            ? "The latest automatic retry attempt still remained operator-owned."
+                            : latestAutomaticRetryEntry?.IsUnavailable == true
+                                ? "The latest automatic retry attempt could not resolve a provider execution adapter."
+                                : durableSharedSchedulerOrchestration.IsSchedulerConflicted
+                                    ? "Durable shared scheduler ownership still remains conflicted across the current runtime truth."
+                                    : durableSharedSchedulerOrchestration.IsLeaseBlocked || multiNodeLeaseExecution.IsLeaseBlocked
+                                        ? "The broader multi-node lease-execution answer still blocks the current node."
+                                        : multiNodeLeaseExecution.IsStaleLeaseRisk
+                                            ? "The broader multi-node lease posture still looks stale."
+                                            : distributedRetryOrchestration.IsBlocked
+                                                ? "Shared distributed retry orchestration still blocks the next bounded execution step."
+                                                : "Shared scheduler execution truth still remains risky on the current node.";
+
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon cannot safely continue {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on the current node right now. {riskReason}",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.Replaying, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon recovered durable scheduler evidence and is replaying bounded execution truth for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on the current node.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryReady, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon recovered durable scheduler evidence and can safely resume bounded execution for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} on the current node.",
+                detail);
+        }
+
+        if (durableSharedSchedulerOrchestration.IsScheduled)
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"The durable shared scheduler, broader lease-execution truth, and retained journal evidence currently keep {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} hardened enough for bounded execution on the current node.",
+                detail);
+        }
+
+        if (distributedRetryOrchestration.IsCooldown)
+        {
+            var cooldownMessage = distributedRetryOrchestration.CooldownUntilUtc.HasValue
+                ? $"Cephalon already hardened bounded execution for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} and is waiting until the cooldown window ends at '{distributedRetryOrchestration.CooldownUntilUtc.Value:O}' before another step would run."
+                : $"Cephalon already hardened bounded execution for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} and is still waiting for the current cooldown window to finish.";
+
+            return AppendManagedConnectorCommandEnvelopeDetail(cooldownMessage, detail);
+        }
+
+        if (distributedRetryOrchestration.IsCompleted)
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon already hardened the bounded execution lane for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} and no further automatic retry is currently needed.",
+                detail);
+        }
+
+        if (latestAutomaticRetryEntry?.IsAdapted == true)
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon already translated the latest automatic retry for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} and retained enough scheduler evidence to keep the execution lane hardened.",
+                detail);
+        }
+
+        if (isSingleNodeRuntime)
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon currently keeps the bounded execution lane for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} hardened on a single node without broader cross-node scheduler recovery requirements.",
+                detail);
+        }
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            $"Cephalon currently keeps the bounded execution lane for {CreateManagedConnectorExecutionAdapterOperationLabel(operationId)} hardened enough for truthful shared scheduling and execution decisions.",
+            detail);
+    }
+
+    private static string ResolveManagedConnectorSchedulerRecoveryExecutionHardeningSourceId(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus commandJournalDurability,
+        CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus distributedRetryOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus multiNodeLeaseExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus durableSharedSchedulerOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult? latestAutomaticRetryEntry)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(commandJournalDurability);
+        ArgumentNullException.ThrowIfNull(distributedRetryOrchestration);
+        ArgumentNullException.ThrowIfNull(multiNodeLeaseExecution);
+        ArgumentNullException.ThrowIfNull(durableSharedSchedulerOrchestration);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources.Unknown;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryBlocked, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.RecoveryReady, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources.CommandJournalDurability;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.Replaying, StringComparison.OrdinalIgnoreCase) ||
+            latestAutomaticRetryEntry is not null)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources.CommandExecution;
+        }
+
+        if (durableSharedSchedulerOrchestration.IsSchedulerConflicted)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources.DurableSharedSchedulerOrchestration;
+        }
+
+        if (durableSharedSchedulerOrchestration.IsLeaseBlocked ||
+            multiNodeLeaseExecution.IsLeaseBlocked ||
+            multiNodeLeaseExecution.IsLeaseConflicted ||
+            multiNodeLeaseExecution.IsStaleLeaseRisk)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources.MultiNodeLeaseExecution;
+        }
+
+        if (distributedRetryOrchestration.IsBlocked ||
+            distributedRetryOrchestration.IsCooldown ||
+            distributedRetryOrchestration.IsCompleted)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources.DistributedRetryOrchestration;
+        }
+
+        return CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources.DurableSharedSchedulerOrchestration;
     }
 
     private static string CreateManagedConnectorBlockedAutomaticRetryExecutionDescription(

@@ -1063,6 +1063,42 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationOwner");
+        engineGroup.MapGet("/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/{hardeningState}", (string hardeningState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorSchedulerRecoveryExecutionHardeningState(hardeningState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningState");
+        engineGroup.MapGet("/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/categories/{hardeningCategory}", (string hardeningCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory(hardeningCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId(ownerId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningOwner");
+        engineGroup.MapGet("/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/fingerprints/{retryFingerprint}", (string retryFingerprint, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(retryFingerprint) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
@@ -1152,6 +1188,17 @@ public static class EngineWebApplicationExtensions
                     : Results.Ok(runtimeDescriptor.ManagedConnectorDurableSharedSchedulerOrchestration);
             })
             .WithName("GetCephalonManagedConnectorDurableSharedSchedulerOrchestration");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/scheduler-recovery-execution-hardening", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null
+                    ? Results.NotFound()
+                    : Results.Ok(runtimeDescriptor.ManagedConnectorSchedulerRecoveryExecutionHardening);
+            })
+            .WithName("GetCephalonManagedConnectorSchedulerRecoveryExecutionHardening");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

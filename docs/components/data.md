@@ -414,6 +414,20 @@ broader multi-node lease-execution truth so both `ManagedConnectorAutomaticRetry
 automatic command invocations can ask one shared question about whether the current node should
 keep the bounded retry lane durably scheduled.
 
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorSchedulerRecoveryExecutionHardening` now also
+publishes stable `not-applicable` / `operator-only` / `recovery-ready` / `recovery-blocked` /
+`replaying` / `execution-hardened` / `execution-risk` posture together with execution-runtime and
+capture identity, ownership/topology, coordination-owner and active-reporter identity, durable
+shared scheduler state, broader multi-node lease-execution state, distributed retry orchestration
+state, command-journal durability state, latest command-execution truth, scheduler identity and
+kind, retry fingerprint, latest automatic-attempt evidence, durable-history truth, and
+`CanExecuteAutomaticRetryOnCurrentNode`. The shared execution-runtime catalog derives that broader
+recovery and execution-hardening answer from the already shipped durable shared scheduler,
+multi-node lease-execution, distributed retry orchestration, command-journal durability, and
+latest command-execution surfaces so both `ManagedConnectorAutomaticRetryHostedService` and
+automatic command invocations can ask one merged question about whether the current node can safely
+resume or continue bounded retry execution.
+
 That same shared execution-runtime story now also keeps managed-connector distributed retry
 orchestration explicit.
 `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDistributedRetryOrchestration` publishes

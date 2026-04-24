@@ -680,6 +680,17 @@ distributed scheduler, or second coordinator.
   `CanScheduleAutomaticRetryOnCurrentNode`, so the shared execution-runtime catalog can gate both
   `ManagedConnectorAutomaticRetryHostedService` and automatic command execution through one
   scheduler answer instead of trusting broader multi-node lease-execution truth alone
+- the `ENG-192` follow-through keeps that same bounded retry lane scheduler-recovery and
+  execution-hardening-aware: `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorSchedulerRecoveryExecutionHardening`
+  now publishes stable `not-applicable`, `operator-only`, `recovery-ready`, `recovery-blocked`,
+  `replaying`, `execution-hardened`, and `execution-risk` posture together with coordination owner,
+  active reporter, durable shared scheduler state, broader multi-node lease-execution state,
+  distributed retry orchestration state, command-journal durability state, latest command-execution
+  truth, scheduler identity and kind, retry fingerprint, latest automatic-attempt evidence, and
+  `CanExecuteAutomaticRetryOnCurrentNode`, so the shared execution-runtime catalog can gate both
+  `ManagedConnectorAutomaticRetryHostedService` and automatic command execution through one merged
+  recovery answer instead of trusting durable shared scheduler truth alone when durable evidence or
+  latest automatic execution still says the current node is blocked or risky
 - automatic background retry execution currently remains bounded shared in-process truth; it does
   not mean Cephalon already owns durable distributed command journals, durable distributed
   schedulers, or full provider-owned control-plane execution orchestration

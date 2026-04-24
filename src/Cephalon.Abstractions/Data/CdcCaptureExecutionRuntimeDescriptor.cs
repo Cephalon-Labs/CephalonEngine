@@ -370,6 +370,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus ManagedConnectorDurableSharedSchedulerOrchestration { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector scheduler recovery and execution-hardening posture derived from durable scheduler, lease-execution, durable journal, and latest execution truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus ManagedConnectorSchedulerRecoveryExecutionHardening { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?
