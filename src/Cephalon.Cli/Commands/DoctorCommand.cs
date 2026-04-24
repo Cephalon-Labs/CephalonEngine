@@ -52,6 +52,19 @@ internal static class DoctorCommand
         Path.Combine("deploy", "azure-app-service", "deploy-zip.ps1")
     ];
 
+    private static readonly string[] RequiredGeneratedSplitConfigurationAssetRelativePaths =
+    [
+        Path.Combine("Configurations", "AddEngine.AppModel.json"),
+        Path.Combine("Configurations", "AddEngine.Data.json"),
+        Path.Combine("Configurations", "AddEngine.Identity.json"),
+        Path.Combine("Configurations", "AddEngine.Tenancy.json"),
+        Path.Combine("Configurations", "AddEngine.Audit.json"),
+        Path.Combine("Configurations", "AddEngine.Messaging.json"),
+        Path.Combine("Configurations", "AddEngine.Observability.json"),
+        Path.Combine("Configurations", "AddEngine.Localization.json"),
+        Path.Combine("Configurations", "Observability", "Development.json")
+    ];
+
     /// <summary>
     /// Executes the doctor command with the supplied options.
     /// </summary>
@@ -519,6 +532,7 @@ internal static class DoctorCommand
 
         var selectedHostProject = hostProjects[0];
         EvaluateGeneratedAppSupportContract(selectedHostProject, resolvedAppRootPath, supportContract, checks);
+        EvaluateGeneratedSplitConfigurationAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedDocumentationSurfaceAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedAppDeploymentAssets(selectedHostProject, resolvedAppRootPath, solutionPath, supportContract, checks);
 
@@ -820,6 +834,337 @@ internal static class DoctorCommand
 
         EvaluateGeneratedOpenApiBaseline(openApiSettingsPath, generatedAppRootPath, checks);
         EvaluateGeneratedReferenceDocsBaseline(referenceDocsSettingsPath, generatedAppRootPath, checks);
+    }
+
+    private static void EvaluateGeneratedSplitConfigurationAssets(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        var configurationDirectoryPath = Path.Combine(hostProject.DirectoryPath, "Configurations");
+        var appModelSettingsPath = Path.Combine(configurationDirectoryPath, "AddEngine.AppModel.json");
+        var dataSettingsPath = Path.Combine(configurationDirectoryPath, "AddEngine.Data.json");
+        var identitySettingsPath = Path.Combine(configurationDirectoryPath, "AddEngine.Identity.json");
+        var tenancySettingsPath = Path.Combine(configurationDirectoryPath, "AddEngine.Tenancy.json");
+        var auditSettingsPath = Path.Combine(configurationDirectoryPath, "AddEngine.Audit.json");
+        var messagingSettingsPath = Path.Combine(configurationDirectoryPath, "AddEngine.Messaging.json");
+        var observabilitySettingsPath = Path.Combine(configurationDirectoryPath, "AddEngine.Observability.json");
+        var localizationSettingsPath = Path.Combine(configurationDirectoryPath, "AddEngine.Localization.json");
+        var developmentObservabilitySettingsPath = Path.Combine(configurationDirectoryPath, "Observability", "Development.json");
+
+        var missingRelativePaths = RequiredGeneratedSplitConfigurationAssetRelativePaths
+            .Select(relativePath => Path.Combine(hostProject.DirectoryPath, relativePath))
+            .Where(path => !File.Exists(path))
+            .Select(path => ToDisplayRelativePath(generatedAppRootPath, path))
+            .ToArray();
+
+        var configurationDirectoryDisplayPath = ToDisplayRelativePath(generatedAppRootPath, configurationDirectoryPath);
+        var developmentObservabilityDisplayPath = ToDisplayRelativePath(generatedAppRootPath, developmentObservabilitySettingsPath);
+        if (missingRelativePaths.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated split configuration assets",
+                $"Missing generated split configuration assets: {string.Join(", ", missingRelativePaths)}.",
+                "Restore the generated AddEngine.*.json files plus Configurations/Observability/Development.json or regenerate the app before teams rely on split project configuration defaults."));
+        }
+        else
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Generated split configuration assets",
+                $"{configurationDirectoryDisplayPath}/AddEngine.*.json and {developmentObservabilityDisplayPath} are present.",
+                null));
+        }
+
+        EvaluateGeneratedAppModelSplitConfigurationBaseline(appModelSettingsPath, generatedAppRootPath, checks);
+        EvaluateGeneratedEngineFeatureSplitConfigurationBaseline(
+            dataSettingsPath,
+            identitySettingsPath,
+            tenancySettingsPath,
+            auditSettingsPath,
+            messagingSettingsPath,
+            generatedAppRootPath,
+            checks);
+        EvaluateGeneratedObservabilitySplitConfigurationBaseline(observabilitySettingsPath, generatedAppRootPath, checks);
+        EvaluateGeneratedLocalizationSplitConfigurationBaseline(localizationSettingsPath, generatedAppRootPath, checks);
+        EvaluateGeneratedDevelopmentObservabilityBaseline(developmentObservabilitySettingsPath, generatedAppRootPath, checks);
+    }
+
+    private static void EvaluateGeneratedAppModelSplitConfigurationBaseline(
+        string appModelSettingsPath,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(appModelSettingsPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedJsonObjectAsset(
+                appModelSettingsPath,
+                generatedAppRootPath,
+                "Generated app-model split-config baseline",
+                "Fix the generated AddEngine.AppModel.json file before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var appModelRoot))
+        {
+            return;
+        }
+
+        if (!TryGetJsonObject(appModelRoot, "Engine", out var engineSection) ||
+            string.IsNullOrWhiteSpace(GetRequiredJsonString(engineSection, "Blueprint")) ||
+            !TryGetJsonObject(engineSection, "Discovery", out var discoverySection) ||
+            !TryGetJsonArray(discoverySection, "Assemblies", out var assemblies) ||
+            !JsonArrayContainsOnlyStrings(assemblies) ||
+            !TryGetJsonArray(engineSection, "Patterns", out var patterns) ||
+            !JsonArrayContainsOnlyStrings(patterns) ||
+            !TryGetJsonArray(engineSection, "Technologies", out var technologies) ||
+            !JsonArrayContainsOnlyStrings(technologies) ||
+            !TryGetJsonArray(engineSection, "Transports", out var transports) ||
+            !JsonArrayContainsOnlyStrings(transports))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated app-model split-config baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, appModelSettingsPath)} no longer keeps explicit Engine blueprint, discovery assemblies, pattern, technology, and transport selections.",
+                "Restore the generated AddEngine.AppModel.json file so the scaffolded app model stays explicit in split project configuration."));
+            return;
+        }
+
+        var blueprint = GetRequiredJsonString(engineSection, "Blueprint");
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated app-model split-config baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, appModelSettingsPath)} keeps explicit Engine app-model selections with Blueprint={blueprint} and {assemblies.Count} discovery assembly entries.",
+            null));
+    }
+
+    private static void EvaluateGeneratedEngineFeatureSplitConfigurationBaseline(
+        string dataSettingsPath,
+        string identitySettingsPath,
+        string tenancySettingsPath,
+        string auditSettingsPath,
+        string messagingSettingsPath,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        var splitConfigFiles = new (string Path, string SectionName)[]
+        {
+            (dataSettingsPath, "Data"),
+            (identitySettingsPath, "Identity"),
+            (tenancySettingsPath, "Tenancy"),
+            (messagingSettingsPath, "Messaging")
+        };
+
+        foreach (var splitConfigFile in splitConfigFiles)
+        {
+            if (!File.Exists(splitConfigFile.Path))
+            {
+                return;
+            }
+
+            if (!TryReadGeneratedJsonObjectAsset(
+                    splitConfigFile.Path,
+                    generatedAppRootPath,
+                    "Generated engine feature split-config baseline",
+                    $"Fix the generated {Path.GetFileName(splitConfigFile.Path)} file before rerunning `cephalon doctor --app-root`.",
+                    checks,
+                    out var splitConfigRoot))
+            {
+                return;
+            }
+
+            if (!TryGetJsonObject(splitConfigRoot, "Engine", out var engineSection) ||
+                !TryGetJsonObject(engineSection, splitConfigFile.SectionName, out _))
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Generated engine feature split-config baseline",
+                    $"{ToDisplayRelativePath(generatedAppRootPath, splitConfigFile.Path)} no longer keeps an explicit `Engine:{splitConfigFile.SectionName}` section.",
+                    $"Restore the generated {Path.GetFileName(splitConfigFile.Path)} file so split project configuration keeps `{splitConfigFile.SectionName}` explicit."));
+                return;
+            }
+        }
+
+        if (!File.Exists(auditSettingsPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedJsonObjectAsset(
+                auditSettingsPath,
+                generatedAppRootPath,
+                "Generated engine feature split-config baseline",
+                "Fix the generated AddEngine.Audit.json file before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var auditRoot))
+        {
+            return;
+        }
+
+        if (!TryGetJsonObject(auditRoot, "Engine", out var auditEngineSection) ||
+            !TryGetJsonObject(auditEngineSection, "Audit", out var auditSection) ||
+            !TryGetRequiredBoolean(auditSection, "Enabled", out var auditEnabled))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated engine feature split-config baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, auditSettingsPath)} no longer keeps an explicit boolean `Engine:Audit:Enabled` baseline.",
+                "Restore the generated AddEngine.Audit.json file so audit enablement stays explicit in split project configuration."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated engine feature split-config baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, dataSettingsPath)}, {ToDisplayRelativePath(generatedAppRootPath, identitySettingsPath)}, {ToDisplayRelativePath(generatedAppRootPath, tenancySettingsPath)}, {ToDisplayRelativePath(generatedAppRootPath, auditSettingsPath)}, and {ToDisplayRelativePath(generatedAppRootPath, messagingSettingsPath)} keep explicit Engine data, identity, tenancy, audit, and messaging sections with Audit.Enabled={auditEnabled.ToString().ToLowerInvariant()}.",
+            null));
+    }
+
+    private static void EvaluateGeneratedObservabilitySplitConfigurationBaseline(
+        string observabilitySettingsPath,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(observabilitySettingsPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedJsonObjectAsset(
+                observabilitySettingsPath,
+                generatedAppRootPath,
+                "Generated observability split-config baseline",
+                "Fix the generated AddEngine.Observability.json file before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var observabilityRoot))
+        {
+            return;
+        }
+
+        if (!TryGetJsonObject(observabilityRoot, "Engine", out var engineSection) ||
+            !TryGetJsonObject(engineSection, "Observability", out var observabilitySection) ||
+            !TryGetRequiredBoolean(observabilitySection, "LogManifestSummary", out _) ||
+            !TryGetRequiredBoolean(observabilitySection, "LogModuleSummary", out _) ||
+            !TryGetRequiredBoolean(observabilitySection, "LogCapabilitySummary", out _) ||
+            !TryGetJsonObject(observabilitySection, "Telemetry", out var telemetrySection) ||
+            string.IsNullOrWhiteSpace(GetRequiredJsonString(telemetrySection, "Provider")) ||
+            string.IsNullOrWhiteSpace(GetRequiredJsonString(telemetrySection, "Protocol")) ||
+            !TryGetRequiredBoolean(telemetrySection, "ExportLogs", out var exportLogs) ||
+            !TryGetRequiredBoolean(telemetrySection, "ExportMetrics", out var exportMetrics) ||
+            !TryGetRequiredBoolean(telemetrySection, "ExportTraces", out var exportTraces))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated observability split-config baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, observabilitySettingsPath)} no longer keeps explicit Engine observability summary and telemetry export settings.",
+                "Restore the generated AddEngine.Observability.json file so observability defaults stay explicit in split project configuration."));
+            return;
+        }
+
+        var provider = GetRequiredJsonString(telemetrySection, "Provider");
+        var protocol = GetRequiredJsonString(telemetrySection, "Protocol");
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated observability split-config baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, observabilitySettingsPath)} keeps explicit Engine observability telemetry defaults with Provider={provider}, Protocol={protocol}, ExportLogs={exportLogs.ToString().ToLowerInvariant()}, ExportMetrics={exportMetrics.ToString().ToLowerInvariant()}, and ExportTraces={exportTraces.ToString().ToLowerInvariant()}.",
+            null));
+    }
+
+    private static void EvaluateGeneratedLocalizationSplitConfigurationBaseline(
+        string localizationSettingsPath,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(localizationSettingsPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedJsonObjectAsset(
+                localizationSettingsPath,
+                generatedAppRootPath,
+                "Generated localization split-config baseline",
+                "Fix the generated AddEngine.Localization.json file before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var localizationRoot))
+        {
+            return;
+        }
+
+        if (!TryGetJsonObject(localizationRoot, "Engine", out var engineSection) ||
+            !TryGetJsonObject(engineSection, "Localization", out var localizationSection) ||
+            string.IsNullOrWhiteSpace(GetRequiredJsonString(localizationSection, "DefaultCulture")) ||
+            !TryGetJsonArray(localizationSection, "SupportedCultures", out var supportedCultures) ||
+            !JsonArrayContainsOnlyStrings(supportedCultures) ||
+            !TryGetJsonObject(localizationSection, "Resources", out var resourcesSection) ||
+            !TryGetJsonObject(resourcesSection, "th", out _))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated localization split-config baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, localizationSettingsPath)} no longer keeps explicit Engine localization culture and resource defaults.",
+                "Restore the generated AddEngine.Localization.json file so localization defaults stay explicit in split project configuration."));
+            return;
+        }
+
+        var defaultCulture = GetRequiredJsonString(localizationSection, "DefaultCulture");
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated localization split-config baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, localizationSettingsPath)} keeps explicit Engine localization defaults with DefaultCulture={defaultCulture} and {supportedCultures.Count} supported cultures.",
+            null));
+    }
+
+    private static void EvaluateGeneratedDevelopmentObservabilityBaseline(
+        string developmentObservabilitySettingsPath,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(developmentObservabilitySettingsPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedJsonObjectAsset(
+                developmentObservabilitySettingsPath,
+                generatedAppRootPath,
+                "Generated development observability baseline",
+                "Fix the generated Configurations/Observability/Development.json file before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var developmentObservabilityRoot))
+        {
+            return;
+        }
+
+        if (!TryGetJsonObject(developmentObservabilityRoot, "Serilog", out var serilogSection) ||
+            !TryGetJsonArray(serilogSection, "Using", out var usingEntries) ||
+            !JsonArrayContainsStringValue(usingEntries, "Serilog.Sinks.Console") ||
+            !TryGetJsonObject(serilogSection, "MinimumLevel", out var minimumLevelSection) ||
+            string.IsNullOrWhiteSpace(GetRequiredJsonString(minimumLevelSection, "Default")) ||
+            !TryGetJsonObject(minimumLevelSection, "Override", out var overrideSection) ||
+            string.IsNullOrWhiteSpace(GetRequiredJsonString(overrideSection, "Microsoft")) ||
+            string.IsNullOrWhiteSpace(GetRequiredJsonString(overrideSection, "System")) ||
+            !TryGetJsonArray(serilogSection, "WriteTo", out var writeToEntries) ||
+            !JsonArrayContainsObjectWithString(writeToEntries, "Name", "Console") ||
+            !TryGetJsonObject(serilogSection, "Properties", out var propertiesSection) ||
+            string.IsNullOrWhiteSpace(GetRequiredJsonString(propertiesSection, "Application")))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated development observability baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, developmentObservabilitySettingsPath)} no longer keeps the generated Serilog console sample explicit for development overrides.",
+                "Restore the generated Configurations/Observability/Development.json file so the optional Serilog development override stays explicit in split project configuration."));
+            return;
+        }
+
+        var applicationName = GetRequiredJsonString(propertiesSection, "Application");
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated development observability baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, developmentObservabilitySettingsPath)} keeps the generated Serilog console sample explicit with Application={applicationName}.",
+            null));
     }
 
     private static void EvaluateGeneratedLocalOrchestrationAssets(
@@ -1538,6 +1883,50 @@ internal static class DoctorCommand
         return value is JsonValue jsonValue && jsonValue.TryGetValue<string>(out var stringValue)
             ? stringValue?.Trim()
             : null;
+    }
+
+    private static bool TryGetJsonObject(JsonObject node, string propertyName, out JsonObject value)
+    {
+        if (node[propertyName] is JsonObject objectValue)
+        {
+            value = objectValue;
+            return true;
+        }
+
+        value = new JsonObject();
+        return false;
+    }
+
+    private static bool TryGetJsonArray(JsonObject node, string propertyName, out JsonArray value)
+    {
+        if (node[propertyName] is JsonArray arrayValue)
+        {
+            value = arrayValue;
+            return true;
+        }
+
+        value = new JsonArray();
+        return false;
+    }
+
+    private static bool JsonArrayContainsOnlyStrings(JsonArray array)
+    {
+        return array.All(item => item is JsonValue jsonValue && jsonValue.TryGetValue<string>(out _));
+    }
+
+    private static bool JsonArrayContainsStringValue(JsonArray array, string expectedValue)
+    {
+        return array.Any(item =>
+            item is JsonValue jsonValue &&
+            jsonValue.TryGetValue<string>(out var stringValue) &&
+            string.Equals(stringValue?.Trim(), expectedValue, StringComparison.Ordinal));
+    }
+
+    private static bool JsonArrayContainsObjectWithString(JsonArray array, string propertyName, string expectedValue)
+    {
+        return array.Any(item =>
+            item is JsonObject objectValue &&
+            string.Equals(GetRequiredJsonString(objectValue, propertyName), expectedValue, StringComparison.Ordinal));
     }
 
     private static bool TryGetRequiredBoolean(JsonObject node, string propertyName, out bool value)

@@ -390,6 +390,12 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Deployment-mode shipping baseline: Stable shipping floor 'net10.0', readiness lane 'net11.0' (assessment-only).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Trim support contract: not-claimed. Trimming is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0 and stays on the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.*.json and ./src/Acme.Store.Host/Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated app-model split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.AppModel.json keeps explicit Engine app-model selections with Blueprint=ModularMonolith and 1 discovery assembly entries.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated engine feature split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Data.json, ./src/Acme.Store.Host/Configurations/AddEngine.Identity.json, ./src/Acme.Store.Host/Configurations/AddEngine.Tenancy.json, ./src/Acme.Store.Host/Configurations/AddEngine.Audit.json, and ./src/Acme.Store.Host/Configurations/AddEngine.Messaging.json keep explicit Engine data, identity, tenancy, audit, and messaging sections with Audit.Enabled=true.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated observability split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Observability.json keeps explicit Engine observability telemetry defaults with Provider=OpenTelemetry, Protocol=otlp/http, ExportLogs=true, ExportMetrics=true, and ExportTraces=true.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated localization split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Localization.json keeps explicit Engine localization defaults with DefaultCulture=en and 2 supported cultures.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated development observability baseline: ./src/Acme.Store.Host/Configurations/Observability/Development.json keeps the generated Serilog console sample explicit with Application=Acme.Store.Host.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated documentation surface assets: ./src/Acme.Store.Host/Configurations/AddOpenApi.json and ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenAPI baseline: ./src/Acme.Store.Host/Configurations/AddOpenApi.json keeps the generated REST docs surface explicit with Title='Acme.Store API'.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated hosted reference docs baseline: ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json keeps hosted reference docs explicit with Enabled=false, RoutePrefix=/reference, DirectoryPath=..\\..\\docs\\reference, and DefaultDocument=browse.html.", stdout.ToString(), StringComparison.Ordinal);
@@ -472,6 +478,12 @@ public sealed class CliApplicationTests
 
             Assert.Equal(0, exitCode);
             Assert.Contains("[warn] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net11.0 and stays on the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.*.json and ./src/Acme.Store.Host/Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated app-model split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.AppModel.json keeps explicit Engine app-model selections with Blueprint=ModularMonolith and 1 discovery assembly entries.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated engine feature split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Data.json, ./src/Acme.Store.Host/Configurations/AddEngine.Identity.json, ./src/Acme.Store.Host/Configurations/AddEngine.Tenancy.json, ./src/Acme.Store.Host/Configurations/AddEngine.Audit.json, and ./src/Acme.Store.Host/Configurations/AddEngine.Messaging.json keep explicit Engine data, identity, tenancy, audit, and messaging sections with Audit.Enabled=true.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated observability split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Observability.json keeps explicit Engine observability telemetry defaults with Provider=OpenTelemetry, Protocol=otlp/http, ExportLogs=true, ExportMetrics=true, and ExportTraces=true.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated localization split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Localization.json keeps explicit Engine localization defaults with DefaultCulture=en and 2 supported cultures.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated development observability baseline: ./src/Acme.Store.Host/Configurations/Observability/Development.json keeps the generated Serilog console sample explicit with Application=Acme.Store.Host.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated documentation surface assets: ./src/Acme.Store.Host/Configurations/AddOpenApi.json and ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenAPI baseline: ./src/Acme.Store.Host/Configurations/AddOpenApi.json keeps the generated REST docs surface explicit with Title='Acme.Store API'.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated hosted reference docs baseline: ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json keeps hosted reference docs explicit with Enabled=false, RoutePrefix=/reference, DirectoryPath=..\\..\\docs\\reference, and DefaultDocument=browse.html.", stdout.ToString(), StringComparison.Ordinal);
@@ -730,6 +742,63 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedSplitConfigurationAssetsAreMissing()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-missing-split-config-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            includeGeneratedSplitConfigurationAssets: false);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated split configuration assets: Missing generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.AppModel.json, ./src/Acme.Store.Host/Configurations/AddEngine.Data.json, ./src/Acme.Store.Host/Configurations/AddEngine.Identity.json, ./src/Acme.Store.Host/Configurations/AddEngine.Tenancy.json, ./src/Acme.Store.Host/Configurations/AddEngine.Audit.json, ./src/Acme.Store.Host/Configurations/AddEngine.Messaging.json, ./src/Acme.Store.Host/Configurations/AddEngine.Observability.json, ./src/Acme.Store.Host/Configurations/AddEngine.Localization.json, ./src/Acme.Store.Host/Configurations/Observability/Development.json.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task RunAsyncDoctorFailsWhenGeneratedDocumentationSurfaceAssetsAreMissing()
     {
         var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-missing-doc-surfaces-{Guid.NewGuid():N}");
@@ -830,6 +899,142 @@ public sealed class CliApplicationTests
 
             Assert.Equal(1, exitCode);
             Assert.Contains("[error] Generated self-hosted and hosted deployment assets: Missing generated self-hosted and hosted deployment assets: ./deploy/windows-service/install-service.ps1, ./deploy/windows-service/remove-service.ps1, ./deploy/iis/install-site.ps1, ./deploy/iis/remove-site.ps1, ./deploy/azure-app-service/deploy-zip.ps1, ./deploy/linux/systemd/Acme.Store.service, ./deploy/linux/systemd/Acme.Store.env.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedSplitConfigurationBaselinesDrift()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-split-config-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            appModelSettingsContents: """
+                {
+                  "Engine": {
+                    "Blueprint": "ModularMonolith"
+                  }
+                }
+                """,
+            dataSettingsContents: """
+                {
+                  "Engine": {
+                    "LegacyData": {
+                      "UseSfid": true
+                    }
+                  }
+                }
+                """,
+            observabilitySettingsContents: """
+                {
+                  "Engine": {
+                    "Observability": {
+                      "LogManifestSummary": true,
+                      "LogModuleSummary": true,
+                      "LogCapabilitySummary": true,
+                      "Telemetry": {
+                        "Provider": "",
+                        "Protocol": "otlp/http",
+                        "ExportLogs": true,
+                        "ExportMetrics": true,
+                        "ExportTraces": true
+                      }
+                    }
+                  }
+                }
+                """,
+            localizationSettingsContents: """
+                {
+                  "Engine": {
+                    "Localization": {
+                      "DefaultCulture": "en",
+                      "SupportedCultures": [
+                        "en",
+                        "th"
+                      ],
+                      "Resources": {
+                        "en": {
+                          "engine.docs.rest.title": "Acme.Store API"
+                        }
+                      }
+                    }
+                  }
+                }
+                """,
+            developmentObservabilitySettingsContents: """
+                {
+                  "Serilog": {
+                    "Using": [
+                      "Serilog.Sinks.Console"
+                    ],
+                    "MinimumLevel": {
+                      "Default": "Information",
+                      "Override": {
+                        "Microsoft": "Warning",
+                        "System": "Warning"
+                      }
+                    },
+                    "WriteTo": [
+                      {
+                        "Name": "File"
+                      }
+                    ],
+                    "Properties": {
+                      "Application": ""
+                    }
+                  }
+                }
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated app-model split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.AppModel.json no longer keeps explicit Engine blueprint, discovery assemblies, pattern, technology, and transport selections.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated engine feature split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Data.json no longer keeps an explicit `Engine:Data` section.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated observability split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Observability.json no longer keeps explicit Engine observability summary and telemetry export settings.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated localization split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.Localization.json no longer keeps explicit Engine localization culture and resource defaults.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated development observability baseline: ./src/Acme.Store.Host/Configurations/Observability/Development.json no longer keeps the generated Serilog console sample explicit for development overrides.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -1750,10 +1955,20 @@ public sealed class CliApplicationTests
         bool publishTrimmed = false,
         bool publishAot = false,
         bool publishSingleFile = false,
+        bool includeGeneratedSplitConfigurationAssets = true,
         bool includeDocumentationSurfaceAssets = true,
         bool includeDeploymentAssets = true,
         bool includePublishedDeploymentAssets = true,
         bool includeLocalOrchestrationAssets = true,
+        string? appModelSettingsContents = null,
+        string? dataSettingsContents = null,
+        string? identitySettingsContents = null,
+        string? tenancySettingsContents = null,
+        string? auditSettingsContents = null,
+        string? messagingSettingsContents = null,
+        string? observabilitySettingsContents = null,
+        string? localizationSettingsContents = null,
+        string? developmentObservabilitySettingsContents = null,
         string? openApiSettingsContents = null,
         string? referenceDocsSettingsContents = null,
         string? composeFileContents = null,
@@ -1819,11 +2034,169 @@ public sealed class CliApplicationTests
             </Project>
             """);
         File.WriteAllText(Path.Combine(appRootPath, "src", "Acme.Store.Host", "appsettings.json"), "{}");
+        var configurationsPath = Path.Combine(appRootPath, "src", "Acme.Store.Host", "Configurations");
+
+        if (includeGeneratedSplitConfigurationAssets || includeDocumentationSurfaceAssets)
+        {
+            Directory.CreateDirectory(configurationsPath);
+        }
+
+        if (includeGeneratedSplitConfigurationAssets)
+        {
+            Directory.CreateDirectory(Path.Combine(configurationsPath, "Observability"));
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "AddEngine.AppModel.json"),
+                appModelSettingsContents ?? """
+                {
+                  "Engine": {
+                    "Blueprint": "ModularMonolith",
+                    "Discovery": {
+                      "Assemblies": [
+                        "Acme.Store.Modules.Catalog"
+                      ]
+                    },
+                    "Patterns": [
+                      "SharedFoundation"
+                    ],
+                    "Technologies": [
+                      "Data"
+                    ],
+                    "Transports": [
+                      "RestApi"
+                    ]
+                  }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "AddEngine.Data.json"),
+                dataSettingsContents ?? """
+                {
+                  "Engine": {
+                    "Data": {
+                      "UseSfid": true
+                    }
+                  }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "AddEngine.Identity.json"),
+                identitySettingsContents ?? """
+                {
+                  "Engine": {
+                    "Identity": {
+                      "Authentication": {
+                        "Mode": "None"
+                      }
+                    }
+                  }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "AddEngine.Tenancy.json"),
+                tenancySettingsContents ?? """
+                {
+                  "Engine": {
+                    "Tenancy": {
+                      "Enabled": false
+                    }
+                  }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "AddEngine.Audit.json"),
+                auditSettingsContents ?? """
+                {
+                  "Engine": {
+                    "Audit": {
+                      "Enabled": true
+                    }
+                  }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "AddEngine.Messaging.json"),
+                messagingSettingsContents ?? """
+                {
+                  "Engine": {
+                    "Messaging": {
+                      "Outbox": {
+                        "Enabled": true
+                      }
+                    }
+                  }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "AddEngine.Observability.json"),
+                observabilitySettingsContents ?? """
+                {
+                  "Engine": {
+                    "Observability": {
+                      "LogManifestSummary": true,
+                      "LogModuleSummary": true,
+                      "LogCapabilitySummary": true,
+                      "Telemetry": {
+                        "Provider": "OpenTelemetry",
+                        "Protocol": "otlp/http",
+                        "ExportLogs": true,
+                        "ExportMetrics": true,
+                        "ExportTraces": true
+                      }
+                    }
+                  }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "AddEngine.Localization.json"),
+                localizationSettingsContents ?? """
+                {
+                  "Engine": {
+                    "Localization": {
+                      "DefaultCulture": "en",
+                      "SupportedCultures": [
+                        "en",
+                        "th"
+                      ],
+                      "Resources": {
+                        "th": {
+                          "engine.docs.rest.title": "Acme.Store API ภาษาไทย"
+                        }
+                      }
+                    }
+                  }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "Observability", "Development.json"),
+                developmentObservabilitySettingsContents ?? """
+                {
+                  "Serilog": {
+                    "Using": [
+                      "Serilog.Sinks.Console"
+                    ],
+                    "MinimumLevel": {
+                      "Default": "Information",
+                      "Override": {
+                        "Microsoft": "Warning",
+                        "Microsoft.Hosting.Lifetime": "Information",
+                        "System": "Warning"
+                      }
+                    },
+                    "WriteTo": [
+                      {
+                        "Name": "Console"
+                      }
+                    ],
+                    "Properties": {
+                      "Application": "Acme.Store.Host"
+                    }
+                  }
+                }
+                """);
+        }
 
         if (includeDocumentationSurfaceAssets)
         {
-            var configurationsPath = Path.Combine(appRootPath, "src", "Acme.Store.Host", "Configurations");
-            Directory.CreateDirectory(configurationsPath);
             File.WriteAllText(
                 Path.Combine(configurationsPath, "AddOpenApi.json"),
                 openApiSettingsContents ?? """

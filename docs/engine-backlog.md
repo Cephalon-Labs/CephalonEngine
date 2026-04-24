@@ -1061,6 +1061,35 @@ Completed work:
 - aligned `README.md`, `docs/getting-started.md`, `docs/components/cli.md`, `docs/reference-docs.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated documentation-surface doctor flow
 - extended focused CLI and documentation coverage for aligned documentation-surface assets, missing generated documentation-surface assets, and drifted OpenAPI or hosted reference-doc baseline settings
 
+### ENG-217 Generated app doctor split-config alignment baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-216` made generated-app doctor truthful about documentation-surface config, but external adopters could still drift `Configurations/AddEngine.*.json` or `Configurations/Observability/Development.json` without the same command path warning them before they relied on generated runtime, docs, localization, or telemetry defaults
+- `cephalon doctor --app-root <path>` was already the generated-app bootstrap, support-contract, and deployment-asset command, so it was the sharpest place to validate those split-config assets instead of inventing another configuration-verification command
+- generated-app verification should answer whether the scaffolded split project configuration surface still keeps app-model, engine-feature, observability, localization, and development Serilog defaults explicit before teams rely on those generated baselines
+
+Acceptance:
+
+- `cephalon doctor --app-root <path>` validates the generated `Configurations/AddEngine.*.json` assets plus `Configurations/Observability/Development.json` alongside the earlier bootstrap, deployment-asset, and support-contract checks
+- generated-app doctor verifies that the generated app-model split-config still keeps explicit `Engine:Blueprint`, `Engine:Discovery:Assemblies`, `Engine:Patterns`, `Engine:Technologies`, and `Engine:Transports` selections
+- generated-app doctor verifies that the generated engine feature split-config still keeps explicit `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit:Enabled`, and `Engine:Messaging` sections
+- generated-app doctor verifies that the generated observability, localization, and development Serilog baselines still keep explicit telemetry, culture, resource, and console-sink defaults
+- aligned split-config assets emit `[ok]`, while missing or drifted split-config assets or baseline sections emit `[error]` with a failing doctor exit code
+- the root README, getting-started guide, CLI docs, CLI package README, and template-pack README stay aligned with the same generated split-config doctor story
+- focused tooling coverage proves aligned split-config assets, missing generated split-config assets, and drifted split-config baselines on the same doctor path
+
+Completed work:
+
+- extended `DoctorCommand` so generated-app doctor now validates the shipped `Configurations/AddEngine.*.json` assets plus `Configurations/Observability/Development.json` as part of the generated-app bootstrap answer
+- added generated split-config baseline checks that compare the app-model, engine-feature, observability, localization, and development Serilog settings against explicit scaffolded defaults before teams rely on those generated baselines
+- aligned `README.md`, `docs/getting-started.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated split-config doctor flow
+- extended focused CLI and documentation coverage for aligned split-config assets, missing generated split-config assets, and drifted split-config baseline settings
+
 ### ENG-213 Generated app doctor deployment-asset alignment baseline
 
 Status: done
@@ -7952,6 +7981,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-214 generated app doctor self-hosted and hosted deployment-asset alignment baseline: `cephalon doctor --app-root <path>` now validates the shipped Windows Service, IIS, Azure App Service, and Linux `systemd` deployment assets, compares those generated published-output deployment scripts and units against the current host identity, and keeps self-hosted plus hosted deployment-asset posture visible from the same generated-app bootstrap doctor path before published-output deployment work begins — **Shipped** · focused CLI and documentation coverage
 - ENG-215 generated app doctor local orchestration asset alignment baseline: `cephalon doctor --app-root <path>` now validates the shipped `compose.yaml` and `otel-collector-config.yaml` assets, compares the generated compose baseline against the shipped Dockerfile plus OTLP collector handoff, compares the generated collector config against `health_check`, `otlp/http` on `4318`, and the debug-exporter pipelines, and keeps generated local orchestration posture visible from the same generated-app bootstrap doctor path before local `docker compose up --build` work begins — **Shipped** · focused CLI and documentation coverage
 - ENG-216 generated app doctor documentation-surface config alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Configurations/AddOpenApi.json` and `Configurations/AddReferenceDocs.json` assets, compares `AddOpenApi.json` against an explicit `OpenApi:Title`, compares `AddReferenceDocs.json` against explicit hosted reference-doc enablement, route, directory, and default-document settings, and keeps `/scalar` plus optional hosted reference-doc posture visible from the same generated-app bootstrap doctor path before teams rely on those docs surfaces — **Shipped** · focused CLI and documentation coverage
+- ENG-217 generated app doctor split-config alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Configurations/AddEngine.*.json` assets plus `Configurations/Observability/Development.json`, compares the scaffolded app-model, engine-feature, observability, localization, and development Serilog defaults against explicit split-config baselines, and keeps generated runtime plus docs plus telemetry configuration posture visible from the same generated-app bootstrap doctor path before teams rely on those defaults — **Shipped** · focused CLI and documentation coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
