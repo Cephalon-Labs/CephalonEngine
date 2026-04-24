@@ -339,6 +339,145 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task RunAsyncDoctorValidatesGeneratedAppBootstrap()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-app-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(appRootPath, includeLocalPackages: true, includePublishProfile: true);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(0, exitCode);
+            Assert.Contains($"[ok] Generated app root: {appRootPath}", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated app solution: ./Acme.Store.slnx", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated package baseline: Cephalon.AspNetCore 0.1.0-preview, Cephalon.Data 0.1.0-preview", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Cephalon package source: ./.cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Cephalon local package feed:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains(".cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host project: ./src/Acme.Store.Host/Acme.Store.Host.csproj", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated publish profile: ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Environment and generated app bootstrap are ready for Cephalon.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains($"Set-Location {QuotePowerShellArgument(appRootPath)}", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("dotnet restore ./Acme.Store.slnx", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("dotnet run --project ./src/Acme.Store.Host/Acme.Store.Host.csproj", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedAppBootstrapIsIncomplete()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-broken-app-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(appRootPath, includeLocalPackages: false, includePublishProfile: false);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Cephalon local package feed: No `Cephalon*.nupkg` files were found under", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains(Path.Combine(appRootPath, ".cephalon", "packages"), stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated publish profile: Missing `CephalonFolder.pubxml` for: ./src/Acme.Store.Host/Acme.Store.Host.csproj.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+            Assert.Contains($"cephalon doctor --app-root {QuotePowerShellArgument(appRootPath)}", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorRequiresAppRootValue()
+    {
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        var exitCode = await CliApplication.RunAsync(
+            [
+                "doctor",
+                "--app-root"
+            ],
+            stdout,
+            stderr);
+
+        Assert.Equal(1, exitCode);
+        Assert.Equal(string.Empty, stdout.ToString());
+        Assert.Contains("Option '--app-root' requires a value.", stderr.ToString(), StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task RunAsyncStagesPublishedModulePackageIntoLoadableDirectory()
     {
         var packageOutputPath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-package-stage-pack-{Guid.NewGuid():N}");
@@ -919,11 +1058,79 @@ public sealed class CliApplicationTests
             stderr);
 
         Assert.Equal(0, exitCode);
-        Assert.Contains("cephalon doctor", stdout.ToString(), StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor [options]", stdout.ToString(), StringComparison.Ordinal);
+        Assert.Contains("--app-root <path>", stdout.ToString(), StringComparison.Ordinal);
         Assert.Contains("cephalon package stage", stdout.ToString(), StringComparison.Ordinal);
         Assert.Contains("Doctor options:", stdout.ToString(), StringComparison.Ordinal);
         Assert.Contains("Package stage options:", stdout.ToString(), StringComparison.Ordinal);
         Assert.Equal(string.Empty, stderr.ToString());
+    }
+
+    private static void CreateGeneratedDoctorAppRoot(
+        string appRootPath,
+        bool includeLocalPackages,
+        bool includePublishProfile)
+    {
+        Directory.CreateDirectory(appRootPath);
+        Directory.CreateDirectory(Path.Combine(appRootPath, ".cephalon", "packages"));
+        Directory.CreateDirectory(Path.Combine(appRootPath, "src", "Acme.Store.Host"));
+
+        File.WriteAllText(Path.Combine(appRootPath, "Acme.Store.slnx"), "<Solution />");
+        File.WriteAllText(
+            Path.Combine(appRootPath, "Directory.Packages.props"),
+            """
+            <Project>
+              <ItemGroup>
+                <PackageVersion Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
+                <PackageVersion Include="Cephalon.Data" Version="0.1.0-preview" />
+              </ItemGroup>
+            </Project>
+            """);
+        File.WriteAllText(
+            Path.Combine(appRootPath, "NuGet.config"),
+            """
+            <?xml version="1.0" encoding="utf-8"?>
+            <configuration>
+              <packageSources>
+                <clear />
+                <add key="cephalon" value="./.cephalon/packages" />
+                <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+              </packageSources>
+              <packageSourceMapping>
+                <packageSource key="cephalon">
+                  <package pattern="Cephalon*" />
+                </packageSource>
+                <packageSource key="nuget.org">
+                  <package pattern="*" />
+                </packageSource>
+              </packageSourceMapping>
+            </configuration>
+            """);
+
+        var localPackageFeedPath = Path.Combine(appRootPath, ".cephalon", "packages");
+        File.WriteAllText(Path.Combine(localPackageFeedPath, "README.md"), "# Placeholder");
+        if (includeLocalPackages)
+        {
+            File.WriteAllBytes(Path.Combine(localPackageFeedPath, "Cephalon.AspNetCore.0.1.0-preview.nupkg"), []);
+        }
+
+        var hostProjectPath = Path.Combine(appRootPath, "src", "Acme.Store.Host", "Acme.Store.Host.csproj");
+        File.WriteAllText(hostProjectPath, "<Project Sdk=\"Microsoft.NET.Sdk.Web\"></Project>");
+        File.WriteAllText(Path.Combine(appRootPath, "src", "Acme.Store.Host", "appsettings.json"), "{}");
+
+        if (includePublishProfile)
+        {
+            var publishProfilesPath = Path.Combine(appRootPath, "src", "Acme.Store.Host", "Properties", "PublishProfiles");
+            Directory.CreateDirectory(publishProfilesPath);
+            File.WriteAllText(Path.Combine(publishProfilesPath, "CephalonFolder.pubxml"), "<Project />");
+        }
+    }
+
+    private static string QuotePowerShellArgument(string value)
+    {
+        return value.Contains(' ', StringComparison.Ordinal)
+            ? $"\"{value}\""
+            : value;
     }
 
     private static string GetCurrentBuildConfiguration()

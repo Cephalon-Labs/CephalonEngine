@@ -194,7 +194,7 @@ Cephalon CLI
 
 Usage:
   cephalon new <AppName> [options]
-  cephalon doctor
+  cephalon doctor [options]
   cephalon package stage --package <path> --output <path> [options]
   cephalon docs publish [options]
   cephalon docs enable-hosting [options]
@@ -213,7 +213,7 @@ New options:
   --force                    Overwrite existing files.
 
 Doctor options:
-  (no options)               Verifies the current .NET SDK/runtime baseline and optional template-pack install path.
+  --app-root <path>          Also validate a generated app root, local package source, host project, and publish profile.
 
 Package stage options:
   --package <path>           Published module .nupkg to stage into a loadable package directory.

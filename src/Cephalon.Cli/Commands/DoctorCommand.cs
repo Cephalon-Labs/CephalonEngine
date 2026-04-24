@@ -1,4 +1,5 @@
 using Cephalon.Cli.Console;
+using System.Xml.Linq;
 
 namespace Cephalon.Cli.Commands;
 
@@ -36,7 +37,7 @@ internal static class DoctorCommand
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(console);
 
-        var evaluation = await EvaluateAsync(cancellationToken);
+        var evaluation = await EvaluateAsync(options, cancellationToken);
 
         await console.WriteOutputAsync("Cephalon doctor", cancellationToken);
         await console.WriteOutputAsync($"Cephalon scaffolds currently target '{RequiredTargetFramework}'.", cancellationToken);
@@ -59,10 +60,14 @@ internal static class DoctorCommand
         if (evaluation.HasFailures)
         {
             await console.WriteErrorAsync(
-                $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Install or select the missing prerequisites and rerun `cephalon doctor`.",
+                evaluation.GeneratedApp is null
+                    ? $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Install or select the missing prerequisites and rerun `cephalon doctor`."
+                    : $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Fix the missing prerequisites or generated-app bootstrap blockers and rerun `cephalon doctor --app-root {FormatCommandPath(evaluation.GeneratedApp.ResolvedAppRootPath)}`.",
                 cancellationToken);
             await console.WriteErrorAsync(
-                "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, and Microsoft.AspNetCore.App 10.x.",
+                evaluation.GeneratedApp is null
+                    ? "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, and Microsoft.AspNetCore.App 10.x."
+                    : "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, and a generated app root with a usable Cephalon package source plus host bootstrap assets.",
                 cancellationToken);
             return 1;
         }
@@ -72,11 +77,36 @@ internal static class DoctorCommand
             : $"The optional template-pack path still needs `dotnet new install {TemplatePackPackageId}` if you want `dotnet new` starters in addition to `cephalon new`.";
 
         await console.WriteOutputAsync(
-            $"Environment is ready for Cephalon CLI scaffolding. {templateSummary}",
+            evaluation.GeneratedApp is null
+                ? $"Environment is ready for Cephalon CLI scaffolding. {templateSummary}"
+                : $"Environment and generated app bootstrap are ready for Cephalon. {templateSummary}",
             cancellationToken);
         await console.WriteOutputAsync("Next steps:", cancellationToken);
-        await console.WriteOutputAsync("  cephalon new Acme.Store --output ./Acme.Store", cancellationToken);
-        await console.WriteOutputAsync("  dotnet run --project ./Acme.Store/src/Acme.Store.Host/Acme.Store.Host.csproj", cancellationToken);
+
+        if (evaluation.GeneratedApp is null)
+        {
+            await console.WriteOutputAsync("  cephalon new Acme.Store --output ./Acme.Store", cancellationToken);
+            await console.WriteOutputAsync("  cephalon doctor --app-root ./Acme.Store", cancellationToken);
+            await console.WriteOutputAsync("  dotnet run --project ./Acme.Store/src/Acme.Store.Host/Acme.Store.Host.csproj", cancellationToken);
+        }
+        else
+        {
+            await console.WriteOutputAsync(
+                $"  Set-Location {FormatCommandPath(evaluation.GeneratedApp.ResolvedAppRootPath)}",
+                cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(evaluation.GeneratedApp.SolutionRelativePath))
+            {
+                await console.WriteOutputAsync(
+                    $"  dotnet restore {FormatCommandPath(evaluation.GeneratedApp.SolutionRelativePath)}",
+                    cancellationToken);
+            }
+
+            await console.WriteOutputAsync(
+                $"  dotnet run --project {FormatCommandPath(evaluation.GeneratedApp.HostProjectRelativePath!)}",
+                cancellationToken);
+        }
+
         await console.WriteOutputAsync("  Browse /engine, /engine/manifest, /engine/snapshot, /health/ready, and /scalar once the host starts", cancellationToken);
         await console.WriteOutputAsync("Optional template-pack path:", cancellationToken);
 
@@ -107,17 +137,36 @@ internal static class DoctorCommand
         options = null;
         error = null;
 
-        if (args.Length > 0)
+        string? appRootPath = null;
+
+        for (var index = 0; index < args.Length; index++)
         {
-            error = $"Unknown option '{args[0]}'.";
-            return false;
+            switch (args[index])
+            {
+                case "--app-root":
+                    if (index + 1 >= args.Length || string.IsNullOrWhiteSpace(args[index + 1]))
+                    {
+                        error = "Option '--app-root' requires a value.";
+                        return false;
+                    }
+
+                    appRootPath = args[index + 1].Trim();
+                    index++;
+                    break;
+                default:
+                    error = $"Unknown option '{args[index]}'.";
+                    return false;
+            }
         }
 
-        options = new DoctorOptions();
+        options = new DoctorOptions
+        {
+            AppRootPath = appRootPath
+        };
         return true;
     }
 
-    private static async Task<DoctorEvaluation> EvaluateAsync(CancellationToken cancellationToken)
+    private static async Task<DoctorEvaluation> EvaluateAsync(DoctorOptions options, CancellationToken cancellationToken)
     {
         var checks = new List<DoctorCheck>();
 
@@ -129,7 +178,7 @@ internal static class DoctorCommand
             cancellationToken);
         if (selectedSdkResult is null)
         {
-            return new DoctorEvaluation(checks, false);
+            return new DoctorEvaluation(checks, false, null);
         }
 
         var currentSdkVersion = TryParseVersionToken(selectedSdkResult.Output);
@@ -166,7 +215,7 @@ internal static class DoctorCommand
             cancellationToken);
         if (sdkListResult is null)
         {
-            return new DoctorEvaluation(checks, false);
+            return new DoctorEvaluation(checks, false, null);
         }
 
         var installedSdkVersions = ParseSdkVersions(sdkListResult.Output);
@@ -200,7 +249,7 @@ internal static class DoctorCommand
             cancellationToken);
         if (runtimeListResult is null)
         {
-            return new DoctorEvaluation(checks, false);
+            return new DoctorEvaluation(checks, false, null);
         }
 
         AddRuntimeCheck(checks, runtimeListResult.Output, "Microsoft.NETCore.App");
@@ -241,7 +290,351 @@ internal static class DoctorCommand
             }
         }
 
-        return new DoctorEvaluation(checks, templatePackInstalled);
+        var generatedApp = EvaluateGeneratedApp(options.AppRootPath, checks);
+        return new DoctorEvaluation(checks, templatePackInstalled, generatedApp);
+    }
+
+    private static GeneratedAppDoctorEvaluation? EvaluateGeneratedApp(
+        string? requestedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (string.IsNullOrWhiteSpace(requestedAppRootPath))
+        {
+            return null;
+        }
+
+        string resolvedAppRootPath;
+
+        try
+        {
+            resolvedAppRootPath = Path.GetFullPath(requestedAppRootPath.Trim());
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated app root",
+                $"Could not resolve '{requestedAppRootPath}': {exception.Message}",
+                "Pass a valid generated-app root path to `cephalon doctor --app-root`."));
+            return null;
+        }
+
+        if (!Directory.Exists(resolvedAppRootPath))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated app root",
+                $"Directory '{resolvedAppRootPath}' does not exist.",
+                "Run `cephalon new <AppName>` first or point `--app-root` at an existing generated app root."));
+            return new GeneratedAppDoctorEvaluation(resolvedAppRootPath, null, null);
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated app root",
+            resolvedAppRootPath,
+            null));
+
+        var solutionPath = Directory.GetFiles(resolvedAppRootPath, "*.slnx", SearchOption.TopDirectoryOnly)
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+
+        if (solutionPath is null)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated app solution",
+                "No `.slnx` file was found at the generated app root.",
+                "Use the root produced by `cephalon new` or restore the solution file before rerunning doctor."));
+        }
+        else
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Generated app solution",
+                ToDisplayRelativePath(resolvedAppRootPath, solutionPath),
+                null));
+        }
+
+        var packagePropsPath = Path.Combine(resolvedAppRootPath, "Directory.Packages.props");
+        if (!File.Exists(packagePropsPath))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated package baseline",
+                "Missing `Directory.Packages.props` at the generated app root.",
+                "Restore the generated package baseline or regenerate the app before continuing."));
+        }
+        else
+        {
+            var cephalonPackageVersions = ExtractCephalonPackageVersions(packagePropsPath);
+            if (cephalonPackageVersions.Length == 0)
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Generated package baseline",
+                    "`Directory.Packages.props` does not define any `Cephalon*` package versions.",
+                    "Keep the generated package baseline intact or restore the Cephalon package references before rerunning doctor."));
+            }
+            else
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Pass,
+                    "Generated package baseline",
+                    string.Join(", ", cephalonPackageVersions),
+                    null));
+            }
+        }
+
+        var nuGetConfigPath = Path.Combine(resolvedAppRootPath, "NuGet.config");
+        if (!File.Exists(nuGetConfigPath))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Cephalon package source",
+                "Missing `NuGet.config` at the generated app root.",
+                "Restore the generated package-source bootstrap or regenerate the app before continuing."));
+        }
+        else
+        {
+            EvaluatePackageSource(nuGetConfigPath, resolvedAppRootPath, checks);
+        }
+
+        var hostProjectDirectories = Directory.Exists(Path.Combine(resolvedAppRootPath, "src"))
+            ? Directory.GetDirectories(Path.Combine(resolvedAppRootPath, "src"), "*", SearchOption.TopDirectoryOnly)
+            : [];
+
+        var hostProjects = hostProjectDirectories
+            .Select(directory => new
+            {
+                Directory = directory,
+                ProjectPath = Directory.GetFiles(directory, "*.csproj", SearchOption.TopDirectoryOnly)
+                    .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                    .FirstOrDefault()
+            })
+            .Where(candidate => candidate.ProjectPath is not null)
+            .Select(candidate => new GeneratedHostProject(
+                candidate.Directory,
+                candidate.ProjectPath!,
+                Path.Combine(candidate.Directory, "appsettings.json"),
+                Path.Combine(candidate.Directory, "Properties", "PublishProfiles", "CephalonFolder.pubxml")))
+            .Where(candidate => File.Exists(candidate.AppSettingsPath))
+            .OrderBy(candidate => candidate.ProjectPath, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (hostProjects.Length == 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated host project",
+                "No generated host project with `appsettings.json` was found under `src/`.",
+                "Use the root emitted by `cephalon new` or restore the generated host project before rerunning doctor."));
+            return new GeneratedAppDoctorEvaluation(resolvedAppRootPath, solutionPath, null);
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated host project",
+            string.Join(", ", hostProjects.Select(project => ToDisplayRelativePath(resolvedAppRootPath, project.ProjectPath))),
+            null));
+
+        var missingPublishProfileProjects = hostProjects
+            .Where(project => !File.Exists(project.PublishProfilePath))
+            .Select(project => ToDisplayRelativePath(resolvedAppRootPath, project.ProjectPath))
+            .ToArray();
+
+        if (missingPublishProfileProjects.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated publish profile",
+                $"Missing `CephalonFolder.pubxml` for: {string.Join(", ", missingPublishProfileProjects)}.",
+                "Restore the generated publish profile or regenerate the app before replaying the published-output path."));
+        }
+        else
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Generated publish profile",
+                string.Join(", ", hostProjects.Select(project => ToDisplayRelativePath(resolvedAppRootPath, project.PublishProfilePath))),
+                null));
+        }
+
+        var selectedHostProject = hostProjects[0];
+        return new GeneratedAppDoctorEvaluation(resolvedAppRootPath, solutionPath, selectedHostProject.ProjectPath);
+    }
+
+    private static void EvaluatePackageSource(
+        string nuGetConfigPath,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        try
+        {
+            var document = XDocument.Load(nuGetConfigPath);
+            var cephalonSource = document
+                .Descendants("packageSources")
+                .Elements("add")
+                .FirstOrDefault(element => string.Equals((string?)element.Attribute("key"), "cephalon", StringComparison.OrdinalIgnoreCase));
+
+            if (cephalonSource is null)
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Cephalon package source",
+                    "`NuGet.config` does not define a `cephalon` package source.",
+                    "Add a `cephalon` package source that points at `./.cephalon/packages` or at your shared Cephalon feed before restoring the app."));
+                return;
+            }
+
+            var sourceValue = ((string?)cephalonSource.Attribute("value"))?.Trim();
+            if (string.IsNullOrWhiteSpace(sourceValue))
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Cephalon package source",
+                    "`NuGet.config` defines `cephalon`, but its `value` is empty.",
+                    "Point the `cephalon` package source at `./.cephalon/packages` or at your shared Cephalon feed before restoring the app."));
+                return;
+            }
+
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Cephalon package source",
+                sourceValue,
+                null));
+
+            var mapping = document
+                .Descendants("packageSourceMapping")
+                .Elements("packageSource")
+                .FirstOrDefault(element => string.Equals((string?)element.Attribute("key"), "cephalon", StringComparison.OrdinalIgnoreCase));
+
+            var hasCephalonMapping = mapping?
+                .Elements("package")
+                .Select(element => ((string?)element.Attribute("pattern"))?.Trim())
+                .Any(pattern => string.Equals(pattern, "Cephalon*", StringComparison.Ordinal)) == true;
+
+            checks.Add(new DoctorCheck(
+                hasCephalonMapping ? DoctorCheckSeverity.Pass : DoctorCheckSeverity.Warning,
+                "Cephalon package source mapping",
+                hasCephalonMapping
+                    ? "Cephalon* packages stay pinned to the `cephalon` source."
+                    : "No `Cephalon*` packageSourceMapping entry was found for the `cephalon` source.",
+                hasCephalonMapping
+                    ? null
+                    : "Add `packageSourceMapping` for `Cephalon*` if you want restore to stay deterministic across multiple feeds."));
+
+            if (!TryResolveLocalPackageSource(sourceValue, generatedAppRootPath, out var localFeedPath))
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Pass,
+                    "Cephalon package source reachability",
+                    "Remote/shared feed configured. Doctor cannot validate package contents locally.",
+                    null));
+                return;
+            }
+
+            if (!Directory.Exists(localFeedPath))
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Cephalon local package feed",
+                    $"Local package source '{localFeedPath}' does not exist.",
+                    "Populate the generated `./.cephalon/packages` directory with Cephalon packages or replace the `cephalon` source in `NuGet.config` before restore/build."));
+                return;
+            }
+
+            var packageFiles = Directory.GetFiles(localFeedPath, "Cephalon*.nupkg", SearchOption.TopDirectoryOnly)
+                .Where(path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase))
+                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (packageFiles.Length == 0)
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Cephalon local package feed",
+                    $"No `Cephalon*.nupkg` files were found under '{localFeedPath}'.",
+                    "Populate the generated local feed with Cephalon packages or replace the `cephalon` source in `NuGet.config` before restore/build."));
+                return;
+            }
+
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Cephalon local package feed",
+                $"{packageFiles.Length} package(s) found under {ToDisplayRelativePath(generatedAppRootPath, localFeedPath)}.",
+                null));
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Cephalon package source",
+                $"Could not inspect `NuGet.config`: {exception.Message}",
+                "Fix or recreate the generated `NuGet.config` before rerunning doctor."));
+        }
+    }
+
+    private static string[] ExtractCephalonPackageVersions(string packagePropsPath)
+    {
+        try
+        {
+            return XDocument.Load(packagePropsPath)
+                .Descendants("PackageVersion")
+                .Select(element => new
+                {
+                    Include = ((string?)element.Attribute("Include"))?.Trim(),
+                    Version = ((string?)element.Attribute("Version"))?.Trim()
+                })
+                .Where(package => !string.IsNullOrWhiteSpace(package.Include) &&
+                    package.Include.StartsWith("Cephalon.", StringComparison.Ordinal) &&
+                    !string.IsNullOrWhiteSpace(package.Version))
+                .Select(package => $"{package.Include} {package.Version}")
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(value => value, StringComparer.Ordinal)
+                .Take(4)
+                .ToArray();
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    private static bool TryResolveLocalPackageSource(
+        string sourceValue,
+        string generatedAppRootPath,
+        out string resolvedPath)
+    {
+        if (Uri.TryCreate(sourceValue, UriKind.Absolute, out var absoluteUri))
+        {
+            if (absoluteUri.IsFile)
+            {
+                resolvedPath = absoluteUri.LocalPath;
+                return true;
+            }
+
+            resolvedPath = string.Empty;
+            return false;
+        }
+
+        resolvedPath = Path.GetFullPath(Path.Combine(generatedAppRootPath, sourceValue));
+        return true;
+    }
+
+    private static string ToDisplayRelativePath(string rootPath, string path)
+    {
+        var relativePath = Path.GetRelativePath(rootPath, path).Replace('\\', '/');
+        return relativePath.StartsWith("..", StringComparison.Ordinal)
+            ? relativePath
+            : $"./{relativePath}";
+    }
+
+    private static string FormatCommandPath(string path)
+    {
+        return path.Contains(' ')
+            ? $"\"{path}\""
+            : path;
     }
 
     private static async Task<CommandProcessResult?> TryRunDotNetAsync(
@@ -393,10 +786,31 @@ internal static class DoctorCommand
 
     private sealed record DoctorEvaluation(
         IReadOnlyList<DoctorCheck> Checks,
-        bool TemplatePackInstalled)
+        bool TemplatePackInstalled,
+        GeneratedAppDoctorEvaluation? GeneratedApp)
     {
         internal bool HasFailures => Checks.Any(check => check.Severity == DoctorCheckSeverity.Failure);
 
         internal int FailureCount => Checks.Count(check => check.Severity == DoctorCheckSeverity.Failure);
     }
+
+    private sealed record GeneratedAppDoctorEvaluation(
+        string ResolvedAppRootPath,
+        string? SolutionPath,
+        string? HostProjectPath)
+    {
+        internal string? SolutionRelativePath => SolutionPath is null
+            ? null
+            : ToDisplayRelativePath(ResolvedAppRootPath, SolutionPath);
+
+        internal string? HostProjectRelativePath => HostProjectPath is null
+            ? null
+            : ToDisplayRelativePath(ResolvedAppRootPath, HostProjectPath);
+    }
+
+    private sealed record GeneratedHostProject(
+        string DirectoryPath,
+        string ProjectPath,
+        string AppSettingsPath,
+        string PublishProfilePath);
 }

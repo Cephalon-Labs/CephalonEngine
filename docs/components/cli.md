@@ -24,7 +24,7 @@ Internal command pipeline:
 - generated app container-runtime assets for app hosts
 - generated app local package-feed bootstrap assets for app hosts
 - external package staging from published `.nupkg` artifacts
-- first-run doctor checks for SDK/runtime/template readiness
+- first-run doctor checks for SDK/runtime/template readiness plus generated-app bootstrap verification
 - optional reference-doc publishing
 - hosted reference-doc configuration updates
 - hosted reference-doc validation
@@ -52,6 +52,7 @@ Internal command pipeline:
 ## How it fits
 
 This package is the shell over engine, scaffolding, and optional reference-doc services. It should stay aligned with engine semantics rather than inventing its own blueprint or documentation behavior. The `cephalon new` path now emits the same operator-ready local container assets, Windows Service deployment assets, IIS deployment assets, Azure App Service deployment assets, provider-neutral container-image publishing assets, Azure Container Apps deployment assets, Kubernetes deployment assets, Linux `systemd` deployment assets, `NuGet.config` bootstrap, and `Properties/PublishProfiles/CephalonFolder.pubxml` profile used by the shipped app-starter baseline so generated hosts can restore from `./.cephalon/packages`, or a swapped-in shared feed, before they are validated with `dotnet publish`, Windows Service install previews, IIS install previews, Azure App Service ZIP deploy previews, container-image publish previews, Azure Container Apps source-deploy previews, Kubernetes manifest previews, WSL `systemd-analyze` verification, published-output smoke runs, or `docker compose up --build`.
+That same adoption path now stays truthful through `cephalon doctor --app-root <path>`, which layers generated-app bootstrap checks for the solution, package baseline, package-source reachability, generated host project, and `CephalonFolder.pubxml` on top of the machine-level SDK/runtime/template checks.
 The same CLI path now owns the phase-8 starter contract too: canonical kebab-case `Engine` ids, structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections, a low-ceremony `Sfid` plus `Audit` default, and test placeholders that steer teams toward composition smoke checks plus Given/When/Then-style business specifications instead of hand-written plumbing.
 
 For package-surface hardening, the command handlers, parsed option objects, console abstraction, and browser launcher are implementation details. External callers should integrate through `CliApplication` rather than binding directly to individual command types.

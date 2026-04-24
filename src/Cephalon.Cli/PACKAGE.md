@@ -30,17 +30,27 @@ dotnet tool update --tool-path .\.tools\cephalon Cephalon.Cli `
 .\.tools\cephalon\cephalon --help
 .\.tools\cephalon\cephalon doctor
 .\.tools\cephalon\cephalon new Acme.Store --blueprint Microservice
+.\.tools\cephalon\cephalon doctor --app-root ./Acme.Store
 .\.tools\cephalon\cephalon package stage --package .\artifacts\packages-release\Cephalon.ReferenceModule.Operations.0.1.0-preview.nupkg --output .\plugins\reference-operations
 .\.tools\cephalon\cephalon docs publish --root .
 ```
 
 `cephalon doctor` is the recommended first-run verification step after installing the tool. It checks the active .NET SDK selection, the installed .NET 10 runtime baselines, and whether the optional `dotnet new` template pack is available.
+If you pass `--app-root <path>`, the same command also verifies the generated app bootstrap: solution file, `Directory.Packages.props`, `NuGet.config`, local or shared Cephalon package-source reachability, generated host project, and `Properties/PublishProfiles/CephalonFolder.pubxml`.
 
 `cephalon new` now emits generated app roots with `NuGet.config`, `./.cephalon/packages/README.md`, `Properties/PublishProfiles/CephalonFolder.pubxml`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/<App>.service`, `deploy/linux/systemd/<App>.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml` so a new host can be validated with `dotnet publish`, Windows Service install previews, IIS install previews, Azure App Service ZIP deploy previews, provider-neutral container-image publish previews, Azure Container Apps source-deploy previews, Kubernetes manifest previews, WSL `systemd-analyze` verification, published-output smoke runs, `docker compose up --build`, and `dotnet run`.
 The same starter path now also emits canonical kebab-case `Engine` ids and structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections. The shipped low-ceremony baseline keeps `Identity`, `Tenancy`, and `Messaging` disabled until selected, enables `Audit`, and defaults ids to `Sfid` so consumer apps can stay focused on business logic while phase-8 packs grow around them.
 Generated apps now also start their test project with `Architecture/CompositionSmokeTests.cs` plus per-feature `Features/*BehaviorSpecifications.cs` placeholders so teams can turn the starter directly into composition checks and Given/When/Then-style business behavior instead of hand-authoring boilerplate test harness code first.
 
 When you are iterating from the Cephalon repository before packages land on a shared feed, publish package artifacts into that generated `./.cephalon/packages` folder and keep the generated `NuGet.config` as-is. If your team already publishes Cephalon packages somewhere else, replace the generated `cephalon` source instead.
+
+After scaffolding and seeding packages, rerun:
+
+```powershell
+.\.tools\cephalon\cephalon doctor --app-root ./Acme.Store
+```
+
+That gives adopters one truthful command for both machine readiness and generated-app bootstrap readiness before they restore, run, publish, or deploy.
 
 The shipped `CephalonFolder.pubxml` profile publishes generated hosts to a deterministic `./artifacts/publish/<ProjectName>/` path. For a repo-native replay of scaffold -> seed packages -> publish -> run published output -> probe routes, use `pwsh ./scripts/validate-generated-app-publish.ps1`.
 

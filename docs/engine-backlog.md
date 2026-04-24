@@ -907,6 +907,32 @@ Completed work:
 - added `scripts/validate-generated-app-container-image.ps1` so the repo can scaffold a temporary app, seed local packages, preview the shipped build/push contract, build the generated image, and prove push through a local Docker registry backed by `registry:2`
 - extended scaffolding, CLI, template-pack, and documentation coverage for the generated container-image publishing contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> generated `publish-image.ps1` -> local registry push
 
+### ENG-209 Generated app bootstrap doctor follow-through baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-034` gave external adopters a truthful machine-level `cephalon doctor`, and `ENG-037` plus `ENG-038` gave generated apps the right package-source and publish-profile bootstrap assets, but a freshly scaffolded app still lacked one reusable command that proved those generated assets were still intact before the first restore, run, publish, or deployment replay
+- without a generated-app-aware doctor path, teams still had to rediscover whether the scaffolded solution, `Directory.Packages.props`, `NuGet.config` `cephalon` source, seeded local feed or replaced external source, host project, and `CephalonFolder.pubxml` profile were all present before adoption docs would actually work on a clean machine
+- external-adoption hardening should close the gap between "I can scaffold the app" and "I can trust the generated bootstrap shape" without inventing a second validation command outside `Cephalon.Cli`
+
+Acceptance:
+
+- `cephalon doctor` accepts `--app-root <path>` and reuses the existing machine-level readiness checks while adding generated-app bootstrap validation for the scaffolded app root
+- generated-app doctor output validates the solution file, `Directory.Packages.props` Cephalon package baseline, `NuGet.config` `cephalon` source plus package-source mapping, seeded local package feed or non-local shared source, generated host project, and `CephalonFolder.pubxml`
+- success output ends with copy/paste-ready generated-app next steps for `Set-Location`, `dotnet restore`, and `dotnet run`
+- docs, CLI help text, tooling coverage, roadmap, and project memory stay aligned with the same generated-app bootstrap doctor path
+
+Completed work:
+
+- extended `DoctorOptions`, `DoctorCommand`, and `CliApplication` so `cephalon doctor --app-root <path>` now layers generated-app bootstrap validation on top of the existing machine-level SDK, runtime, and optional template-pack checks
+- taught the generated-app doctor path to validate the scaffolded `.slnx`, `Directory.Packages.props` Cephalon package baseline, `NuGet.config` `cephalon` source plus package-source mapping, local `./.cephalon/packages` feed or a replaced non-local source, generated host project, and `Properties/PublishProfiles/CephalonFolder.pubxml`, while returning generated-app-specific failure guidance and copy/paste-ready restore or run next steps
+- aligned `README.md`, `docs/getting-started.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated-app doctor flow
+- added targeted CLI and documentation coverage for the new doctor option, generated-app bootstrap success path, generated-app bootstrap failure path, and aligned public help text, then verified the slice through focused tooling coverage plus regenerated reference docs
+
 ### ENG-097 `.NET 11` readiness baseline
 
 Status: done

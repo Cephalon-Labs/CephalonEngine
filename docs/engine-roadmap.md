@@ -396,6 +396,7 @@ Deliverables:
 
 - cross-platform script, shell, and CI parity for the repo-native validation, packaging, and install surfaces
 - a first-run adoption path with an environment-doctor or equivalent self-check flow in `Cephalon.Cli`
+- a generated-app bootstrap verification follow-through that reuses `cephalon doctor` to validate a scaffolded app root, package-source baseline, host project, and publish profile before the first restore, run, publish, or deployment replay
 - an end-to-end external module-package lifecycle prove-out that exercises publish, trust, load, and runtime introspection outside the repo-local assembly path
 - a containerized local runtime/operations sample path that proves health, config-loading, and telemetry/export handoff under Docker Desktop or WSL-friendly environments without pushing Docker-specific behavior into the engine core
 - generated-app bootstrap assets and package-source guidance that let a freshly scaffolded app restore, build, and run from a seeded local feed or a replaced external source without rediscovering Cephalon's package assumptions
@@ -408,7 +409,7 @@ Deliverables:
 - a generated-app Kubernetes deployment baseline that proves scaffolded hosts carry a platform-neutral manifest/apply shape from the generated Dockerfile and app root without inventing a second cluster-deploy packaging workflow from scratch
 - a generated-app Linux `systemd` deployment baseline that proves scaffolded hosts carry an installable self-hosted service-manager shape after publish without inventing platform-specific packaging from scratch
 
-Current status as of `April 5, 2026`:
+Current status as of `April 25, 2026`:
 
 - `ENG-033` is implemented: repo-native validation, package publishing, and reference-doc flows now run through `pwsh`-friendly scripts with Windows and Ubuntu CI legs
 - `ENG-034` is implemented: `Cephalon.Cli` now ships `cephalon doctor`, and the repo now has a dedicated getting-started path plus aligned help/readme guidance
@@ -423,11 +424,13 @@ Current status as of `April 5, 2026`:
 - `ENG-043` is implemented: scaffolded hosts and shipped `dotnet new` app starters now emit Azure Container Apps deployment assets under `deploy/azure-container-apps/`, and those generated source-deploy scripts are verified through a real scaffold -> package publish -> local Docker build -> deploy-preview smoke path against the current Azure CLI contract
 - `ENG-044` is implemented: scaffolded hosts and shipped `dotnet new` app starters now emit Kubernetes deployment assets under `deploy/kubernetes/`, and those generated manifest/apply scripts are verified through a real scaffold -> package publish -> local Docker build -> `kubectl kustomize` preview smoke path against the generated app root
 - `ENG-045` is implemented: scaffolded hosts and shipped `dotnet new` app starters now emit container-image publishing assets under `deploy/container-image/`, and those generated build/tag/push scripts are verified through a real scaffold -> package publish -> local Docker build -> local-registry push smoke path against the generated app root
-- the planned phase-7 baseline plus the generated-app bootstrap, published-output, container-image publishing, Windows/Linux self-hosted deployment follow-through, hosted Windows IIS path, hosted Azure App Service plus Azure Container Apps paths, and the platform-neutral Kubernetes path are now in place, so the next adoption work can stay scenario-driven instead of filling a known install/run/deploy gap
+- `ENG-209` is implemented: `Cephalon.Cli` now extends `cephalon doctor` with `--app-root <path>` so a freshly scaffolded app can truthfully validate its `.slnx`, `Directory.Packages.props` baseline, `NuGet.config` `cephalon` source and package-source mapping, seeded local feed or external source, generated host project, and `CephalonFolder.pubxml` profile from one command path before restore, run, publish, or deployment work
+- the planned phase-7 baseline plus the generated-app bootstrap, generated-app bootstrap verification, published-output, container-image publishing, Windows/Linux self-hosted deployment follow-through, hosted Windows IIS path, hosted Azure App Service plus Azure Container Apps paths, and the platform-neutral Kubernetes path are now in place, so the next adoption work can stay scenario-driven instead of filling a known install/run/deploy gap
 
 Exit criteria:
 
 - a team can install the CLI or template pack, scaffold an app or module, and validate its environment on Windows or Linux-class shells without custom repo knowledge
+- a team can rerun `cephalon doctor --app-root <path>` against a freshly scaffolded app and get one truthful answer for generated-app bootstrap readiness plus copy/paste-ready restore or run next steps
 - the repo-native validation and packaging flow no longer depends on Windows-only shell assumptions
 - an out-of-tree Cephalon package can be published, trusted, loaded, and inspected through the shipped runtime surfaces
 - at least one adoption-quality sample host can be run through a documented containerized path that preserves the current `/engine/*`, `/health/*`, and telemetry behaviors

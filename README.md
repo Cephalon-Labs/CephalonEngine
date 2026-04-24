@@ -159,6 +159,8 @@ The split files load before the normal `appsettings.json` and `appsettings.{Envi
   dotnet pack src/Cephalon.Cli/Cephalon.Cli.csproj -c Release -o artifacts/cli-tool
   dotnet tool install --tool-path .\.tools\cephalon Cephalon.Cli --add-source .\artifacts\cli-tool --ignore-failed-sources --no-cache --prerelease
   .\.tools\cephalon\cephalon doctor
+  .\.tools\cephalon\cephalon new Acme.Store --output .\Acme.Store
+  .\.tools\cephalon\cephalon doctor --app-root ./Acme.Store
   .\.tools\cephalon\cephalon --help
   pwsh ./scripts/publish-package-artifacts.ps1 -SkipBuild
   dotnet run --project src/Cephalon.Cli -- docs publish --root .
@@ -193,7 +195,7 @@ dotnet pack templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj -c Rele
 
 For local validation, prefer PowerShell 7 with `pwsh`. The same script entry points now work from Windows, WSL, and Linux-class shells. The current CI baseline proves the full release-validation flow on Windows and the same repo-native flow with `-SkipBenchmarks` on Ubuntu until benchmark guardrails grow an OS-neutral baseline.
 
-If you are adopting Cephalon from a clean machine or package source, start with [docs/getting-started.md](docs/getting-started.md). That guide walks through installing the CLI, running `cephalon doctor`, scaffolding a host, and validating the runtime introspection endpoints.
+If you are adopting Cephalon from a clean machine or package source, start with [docs/getting-started.md](docs/getting-started.md). That guide walks through installing the CLI, running `cephalon doctor`, scaffolding a host, rerunning `cephalon doctor --app-root ./Acme.Store`, and validating the runtime introspection endpoints.
 
 If you want the published-output baseline for a freshly generated app, continue with [docs/generated-app-publishing.md](docs/generated-app-publishing.md). That guide walks through the shipped `CephalonFolder.pubxml` publish profile, deterministic `artifacts/publish/*` output, and the optional `pwsh ./scripts/validate-generated-app-publish.ps1` replay.
 

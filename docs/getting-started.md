@@ -7,8 +7,9 @@ The recommended flow is:
 1. install `Cephalon.Cli`
 2. run `cephalon doctor`
 3. scaffold an app
-4. run the generated host
-5. inspect the engine and health endpoints
+4. validate the generated app bootstrap
+5. run the generated host
+6. inspect the engine and health endpoints
 
 ## Prerequisites
 
@@ -79,6 +80,30 @@ pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath (Join-Path $generatedRo
 ```
 
 If your team already publishes Cephalon packages to a shared source instead, replace the `cephalon` source in `./Acme.Store/NuGet.config` and skip the repo-local artifact step.
+
+## Validate The Generated App Bootstrap
+
+After scaffolding, rerun doctor against the generated app root:
+
+```powershell
+./.tools/cephalon/cephalon doctor --app-root ./Acme.Store
+```
+
+`cephalon doctor --app-root ./Acme.Store` keeps the machine baseline checks, then also verifies that the generated app still has:
+
+- `Acme.Store.slnx`
+- `Directory.Packages.props` with `Cephalon*` package versions
+- `NuGet.config` with a `cephalon` package source
+- a seeded local `./.cephalon/packages` feed or a non-local shared feed
+- a generated host project under `src/`
+- `Properties/PublishProfiles/CephalonFolder.pubxml`
+
+Expected success characteristics:
+
+- the generated-app checks show `[ok]`
+- the command ends with `Set-Location`, `dotnet restore`, and `dotnet run` next steps that are copy/paste-ready for that app root
+
+If the command reports a generated-app failure, fix the missing bootstrap asset or package-source problem first, then rerun `cephalon doctor --app-root ./Acme.Store` before build, publish, or deployment work.
 
 ## Optional Published-Output Path
 
