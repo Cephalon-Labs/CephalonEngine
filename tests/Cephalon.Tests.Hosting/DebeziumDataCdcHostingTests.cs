@@ -3255,8 +3255,12 @@ public sealed class DebeziumDataCdcHostingTests
                 var providerSpecificMaterializerByProviderSurface = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/provider-surfaces/debezium-kafka-connect-rest");
                 var providerSpecificMaterializerByMaterializer = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/materializers/{CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest}");
                 var providerSpecificMaterializerByTransport = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/transports/http-rest");
+                var providerSpecificMaterializerByConnectCluster = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/connect-clusters/connect-cluster-auto");
+                var providerSpecificMaterializerByConnectorClass = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/connector-classes/io.debezium.connector.postgresql.PostgresConnector");
+                var providerSpecificMaterializerBySourceProvider = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/source-providers/postgresql");
                 var providerSpecificMaterializerByConnector = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/connectors/{automaticRetryRuntimeId}");
                 var providerSpecificMaterializerByWorker = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/workers/connect-worker-auto");
+                var providerSpecificMaterializerByCurrentNode = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/current-nodes/false");
                 var providerSpecificMaterializerByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/operations/restart");
                 var providerSpecificMaterializer = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-specific-control-plane-materializer");
                 var providerSpecificTeardownAndMutationExecutionHardeningByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/dependency-ready");
@@ -3265,8 +3269,14 @@ public sealed class DebeziumDataCdcHostingTests
                 var providerSpecificTeardownAndMutationExecutionHardeningByProviderSurface = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/debezium-kafka-connect-rest");
                 var providerSpecificTeardownAndMutationExecutionHardeningByMaterializer = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest}");
                 var providerSpecificTeardownAndMutationExecutionHardeningByTransport = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/transports/http-rest");
+                var providerSpecificTeardownAndMutationExecutionHardeningByConnectCluster = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connect-clusters/connect-cluster-auto");
+                var providerSpecificTeardownAndMutationExecutionHardeningByConnectorClass = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connector-classes/io.debezium.connector.postgresql.PostgresConnector");
+                var providerSpecificTeardownAndMutationExecutionHardeningBySourceProvider = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/source-providers/postgresql");
                 var providerSpecificTeardownAndMutationExecutionHardeningByConnector = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{automaticRetryRuntimeId}");
                 var providerSpecificTeardownAndMutationExecutionHardeningByWorker = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/workers/connect-worker-auto");
+                var providerSpecificTeardownAndMutationExecutionHardeningByCurrentNode = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/false");
+                var providerSpecificTeardownAndMutationExecutionHardeningByTeardownCurrentNode = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/teardowns/false");
+                var providerSpecificTeardownAndMutationExecutionHardeningByMutationCurrentNode = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/mutation-executions/false");
                 var providerSpecificTeardownAndMutationExecutionHardeningByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/restart");
                 var providerSpecificTeardownAndMutationExecutionHardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening");
                 var commandHistory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/command-executions");
@@ -3601,8 +3611,20 @@ public sealed class DebeziumDataCdcHostingTests
                 Assert.NotNull(providerSpecificMaterializerByMaterializer);
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerByMaterializer.Select(static item => item.Id).ToArray());
 
+                Assert.NotNull(providerSpecificMaterializerByConnectCluster);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerByConnectCluster.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificMaterializerByConnectorClass);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerByConnectorClass.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificMaterializerBySourceProvider);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerBySourceProvider.Select(static item => item.Id).ToArray());
+
                 Assert.NotNull(providerSpecificMaterializerByConnector);
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerByConnector.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificMaterializerByCurrentNode);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerByCurrentNode.Select(static item => item.Id).ToArray());
 
                 Assert.NotNull(providerSpecificMaterializerByOperation);
                 Assert.Equal([automaticRetryRuntimeId], providerSpecificMaterializerByOperation.Select(static item => item.Id).ToArray());
@@ -4034,8 +4056,14 @@ public sealed class DebeziumDataCdcHostingTests
             var providerSpecificTeardownAndMutationExecutionHardeningByProviderSurface = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/debezium-kafka-connect-rest");
             var providerSpecificTeardownAndMutationExecutionHardeningByMaterializer = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest}");
             var providerSpecificTeardownAndMutationExecutionHardeningByTransport = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/transports/http-rest");
+            var providerSpecificTeardownAndMutationExecutionHardeningByConnectCluster = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connect-clusters/connect-cluster-auto-mismatch");
+            var providerSpecificTeardownAndMutationExecutionHardeningByConnectorClass = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connector-classes/io.debezium.connector.postgresql.PostgresConnector");
+            var providerSpecificTeardownAndMutationExecutionHardeningBySourceProvider = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/source-providers/postgresql");
             var providerSpecificTeardownAndMutationExecutionHardeningByConnector = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{automaticRetryRuntimeId}");
             var providerSpecificTeardownAndMutationExecutionHardeningByWorker = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/workers/connect-worker-owner-b");
+            var providerSpecificTeardownAndMutationExecutionHardeningByCurrentNode = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/false");
+            var providerSpecificTeardownAndMutationExecutionHardeningByTeardownCurrentNode = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/teardowns/false");
+            var providerSpecificTeardownAndMutationExecutionHardeningByMutationCurrentNode = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/mutation-executions/false");
             var providerSpecificTeardownAndMutationExecutionHardeningByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/restart");
             var providerSpecificTeardownAndMutationExecutionHardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening");
 
@@ -4466,20 +4494,38 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByProviderSurface);
             Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByProviderSurface.Select(static item => item.Id).ToArray());
 
-            Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByMaterializer);
-            Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByMaterializer.Select(static item => item.Id).ToArray());
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByMaterializer);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByMaterializer.Select(static item => item.Id).ToArray());
 
-            Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByTransport);
-            Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByTransport.Select(static item => item.Id).ToArray());
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByConnectCluster);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByConnectCluster.Select(static item => item.Id).ToArray());
 
-            Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByConnector);
-            Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByConnector.Select(static item => item.Id).ToArray());
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByConnectorClass);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByConnectorClass.Select(static item => item.Id).ToArray());
 
-            Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByWorker);
-            Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByWorker.Select(static item => item.Id).ToArray());
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningBySourceProvider);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningBySourceProvider.Select(static item => item.Id).ToArray());
 
-            Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByOperation);
-            Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByOperation.Select(static item => item.Id).ToArray());
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByTransport);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByTransport.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByConnector);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByConnector.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByWorker);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByWorker.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByCurrentNode);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByCurrentNode.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByTeardownCurrentNode);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByTeardownCurrentNode.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByMutationCurrentNode);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByMutationCurrentNode.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardeningByOperation);
+                Assert.Equal([automaticRetryRuntimeId], providerSpecificTeardownAndMutationExecutionHardeningByOperation.Select(static item => item.Id).ToArray());
 
             Assert.NotNull(providerSpecificTeardownAndMutationExecutionHardening);
             Assert.Equal(

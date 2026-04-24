@@ -4414,7 +4414,31 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId("connect-cluster-auto")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass("io.debezium.connector.postgresql.PostgresConnector")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId("postgresql")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(automaticRetryRuntimeId)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode(false)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
@@ -4462,7 +4486,43 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId("connect-cluster-auto")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass("io.debezium.connector.postgresql.PostgresConnector")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId("postgresql")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(automaticRetryRuntimeId)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode(false)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode(false)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode(false)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
@@ -5158,13 +5218,37 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId("connect-cluster-auto-risk")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass("io.debezium.connector.postgresql.PostgresConnector")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId("postgresql")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(automaticRetryRuntimeId)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId("connect-worker-auto")
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(refreshedRuntime.ManagedConnectorProviderSpecificControlPlaneMaterializer.WorkerId!)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode(false)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
@@ -5206,13 +5290,49 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId("connect-cluster-auto-risk")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass("io.debezium.connector.postgresql.PostgresConnector")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId("postgresql")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(automaticRetryRuntimeId)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId("connect-worker-auto")
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(refreshedRuntime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening.WorkerId!)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode(false)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode(false)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode(false)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(

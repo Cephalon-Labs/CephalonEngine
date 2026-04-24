@@ -943,6 +943,26 @@ distributed scheduler, or second coordinator.
   `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`,
   so operators can move directly from the stable `http-rest` transport kind to the matching runtime
   on the same shared CDC runtime story
+- `ENG-207` now keeps that same shared managed-connector control-plane lane explicit about how to
+  drill into shipped Debezium dependency identity without inventing a Debezium-only operator API:
+  the shared execution-runtime catalog and ASP.NET Core route family now expose
+  `/connect-clusters/{connectClusterId}`, `/connector-classes/{connectorClass}`, and
+  `/source-providers/{sourceProviderId}` filters for both
+  `ManagedConnectorProviderSpecificControlPlaneMaterializer` and
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`,
+  so operators can move directly from the stable Kafka Connect cluster id, connector class, or
+  source-provider id to the matching runtime on the same shared CDC runtime story
+- `ENG-208` now keeps that same shared managed-connector control-plane lane explicit about how to
+  drill into shipped current-node provider posture without inventing a Debezium-only operator API:
+  the shared execution-runtime catalog and ASP.NET Core route family now expose
+  `/current-nodes/{canUseOnCurrentNode}` for
+  `ManagedConnectorProviderSpecificControlPlaneMaterializer`, plus
+  `/current-nodes/{canExecuteOnCurrentNode}`,
+  `/current-nodes/teardowns/{canExecuteTeardownOnCurrentNode}`, and
+  `/current-nodes/mutation-executions/{canExecuteMutationExecutionOnCurrentNode}` for
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`,
+  so operators can move directly from blocked-versus-executable Debezium node posture to the
+  matching runtime on the same shared CDC runtime story
 - bounded automatic background retry execution still remains shared in-process truth, and the
   shipped broader provider-owned write-path execution posture plus broader provider execution
   orchestration posture plus broader provider-owned control-plane ownership posture plus broader

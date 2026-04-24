@@ -805,13 +805,15 @@ control-plane dependency-aware provisioning and mutation hardening plus apply-an
 plus provisioning plus mutation/reconcile plus ownership plus execution orchestration plus
 write-path truth, latest command plus retry-policy plus command-journal evidence,
 durable-history plus reporter-lease signals, provider/materializer/transport/provider-surface/
-connector/worker identity, and `CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode`.
-The shared execution-runtime catalog now also exposes state/category/provider/materializer/
-provider-surface/transport/connector/worker/operation filters for that materializer posture on the existing
+connect-cluster/connector-class/source-provider/connector/worker identity, and
+`CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode`. The shared execution-runtime
+catalog now also exposes state/category/provider/materializer/provider-surface/transport/
+connect-cluster/connector-class/source-provider/connector/worker/current-node/operation filters
+for that materializer posture on the existing
 `/engine/cdc-capture-runtimes*` family, so hosts and provider packs can read one stable
 provider-specific materializer answer instead of re-deriving provider identity, provider-surface
-identity, transport identity, connector identity, worker identity, or current-node selection in
-separate control-plane code.
+identity, transport identity, dependency identity, connector identity, worker identity, or
+current-node selection in separate control-plane code.
 
 That same shared execution-runtime story now also keeps provider-specific control-plane
 dependency-aware teardown and mutation-execution hardening explicit.
@@ -824,16 +826,19 @@ control-plane dependency-aware provisioning and mutation hardening plus apply-an
 plus provisioning plus mutation/reconcile plus ownership plus execution orchestration plus
 write-path truth, latest command plus retry-policy plus command-journal evidence,
 durable-history plus reporter-lease signals, provider/materializer/transport/provider-surface/
-connector/worker identity, and `CanExecuteDependencyAwareTeardownAndMutationExecutionOnCurrentNode`,
+connect-cluster/connector-class/source-provider/connector/worker identity, and
+`CanExecuteDependencyAwareTeardownAndMutationExecutionOnCurrentNode`,
 `CanExecuteDependencyAwareTeardownOnCurrentNode`, and
 `CanExecuteDependencyAwareMutationExecutionOnCurrentNode`. The shared execution-runtime
-catalog now also exposes state/category/provider/provider-surface/materializer/transport/connector/
-worker/operation filters for that hardening posture, and the sibling provider-specific materializer
-posture now exposes the same provider-surface, transport, connector, and worker drill-downs on the existing
+catalog now also exposes state/category/provider/provider-surface/materializer/transport/
+connect-cluster/connector-class/source-provider/connector/worker/current-node/
+teardown-current-node/mutation-current-node/operation filters for that hardening posture, and the
+sibling provider-specific materializer posture now exposes the same provider-surface, transport,
+dependency-identity, connector, worker, and current-node drill-downs on the existing
 `/engine/cdc-capture-runtimes*` family, so hosts and provider packs can read one stable
 dependency-aware teardown-versus-mutation-execution answer instead of re-deriving the same
-provider-specific connector identity, transport identity, control-plane surface identity, worker
-identity, current-node eligibility,
+provider-specific connector identity, transport identity, dependency identity, control-plane
+surface identity, worker identity, current-node eligibility,
 and durable-history or reporter-lease evidence in separate control-plane code.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively

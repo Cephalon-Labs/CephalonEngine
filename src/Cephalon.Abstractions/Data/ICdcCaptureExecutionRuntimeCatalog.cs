@@ -746,6 +746,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind(string transportKind);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested Kafka Connect cluster identifier.
+    /// </summary>
+    /// <param name="connectClusterId">The stable Kafka Connect cluster identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that cluster identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId(string connectClusterId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested connector-class identifier.
+    /// </summary>
+    /// <param name="connectorClass">The stable connector-class identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that connector-class identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass(string connectorClass);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested source-provider identifier.
+    /// </summary>
+    /// <param name="sourceProviderId">The stable source-provider identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that source-provider identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId(string sourceProviderId);
+
+    /// <summary>
     /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested connector identifier.
     /// </summary>
     /// <param name="connectorId">The stable connector identifier to filter by.</param>
@@ -758,6 +779,13 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="workerId">The stable worker identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that worker identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(string workerId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports whether the current node can use that materializer.
+    /// </summary>
+    /// <param name="canUseOnCurrentNode"><see langword="true"/> to return runtimes that can use the materializer on the current node; otherwise, <see langword="false"/>.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that current-node posture.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode(bool canUseOnCurrentNode);
 
     /// <summary>
     /// Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested operation.
@@ -809,6 +837,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind(string transportKind);
 
     /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested Kafka Connect cluster identifier.
+    /// </summary>
+    /// <param name="connectClusterId">The stable Kafka Connect cluster identifier to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that cluster identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId(string connectClusterId);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested connector-class identifier.
+    /// </summary>
+    /// <param name="connectorClass">The stable connector-class identifier to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that connector-class identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass(string connectorClass);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested source-provider identifier.
+    /// </summary>
+    /// <param name="sourceProviderId">The stable source-provider identifier to filter on.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that source-provider identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId(string sourceProviderId);
+
+    /// <summary>
     /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested connector identifier.
     /// </summary>
     /// <param name="connectorId">The stable connector identifier to filter on.</param>
@@ -821,6 +870,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="workerId">The stable worker identifier to filter on.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that worker identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(string workerId);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute that broader provider-specific lane.
+    /// </summary>
+    /// <param name="canExecuteOnCurrentNode"><see langword="true"/> to return runtimes executable on the current node; otherwise, <see langword="false"/>.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that current-node posture.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode(bool canExecuteOnCurrentNode);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute provider-specific teardown.
+    /// </summary>
+    /// <param name="canExecuteTeardownOnCurrentNode"><see langword="true"/> to return runtimes whose current node can execute teardown; otherwise, <see langword="false"/>.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that teardown current-node posture.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode(bool canExecuteTeardownOnCurrentNode);
+
+    /// <summary>
+    /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute provider-specific mutation execution.
+    /// </summary>
+    /// <param name="canExecuteMutationExecutionOnCurrentNode"><see langword="true"/> to return runtimes whose current node can execute mutation execution; otherwise, <see langword="false"/>.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that mutation-execution current-node posture.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode(bool canExecuteMutationExecutionOnCurrentNode);
 
     /// <summary>
     /// Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested operation identifier.

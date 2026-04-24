@@ -47148,6 +47148,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 Parameters:
 - `providerExecutionState`: The stable provider-owned write-path execution state identifier to filter by.
 
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcanexecutemutationexecutiononcurrentnode-system-boolean"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode(bool canExecuteMutationExecutionOnCurrentNode)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute provider-specific mutation execution.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that mutation-execution current-node posture.
+
+Parameters:
+- `canExecuteMutationExecutionOnCurrentNode`: `true` to return runtimes whose current node can execute mutation execution; otherwise, `false`.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcanexecuteoncurrentnode-system-boolean"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode(bool canExecuteOnCurrentNode)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute that broader provider-specific lane.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that current-node posture.
+
+Parameters:
+- `canExecuteOnCurrentNode`: `true` to return runtimes executable on the current node; otherwise, `false`.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcanexecuteteardownoncurrentnode-system-boolean"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode(bool canExecuteTeardownOnCurrentNode)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute provider-specific teardown.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that teardown current-node posture.
+
+Parameters:
+- `canExecuteTeardownOnCurrentNode`: `true` to return runtimes whose current node can execute teardown; otherwise, `false`.
+
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategory-system-string"></a>
 
 ##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory`
@@ -47162,6 +47207,36 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `hardeningCategory`: The stable provider-specific teardown and mutation-execution hardening category to filter on.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningconnectclusterid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId(string connectClusterId)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested Kafka Connect cluster identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that cluster identifier.
+
+Parameters:
+- `connectClusterId`: The stable Kafka Connect cluster identifier to filter on.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningconnectorclass-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass(string connectorClass)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested connector-class identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that connector-class identifier.
+
+Parameters:
+- `connectorClass`: The stable connector-class identifier to filter on.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningconnectorid-system-string"></a>
 
@@ -47238,6 +47313,21 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 Parameters:
 - `providerSurfaceId`: The stable provider-surface identifier to filter on.
 
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsourceproviderid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId(string sourceProviderId)
+```
+
+Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested source-provider identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that source-provider identifier.
+
+Parameters:
+- `sourceProviderId`: The stable source-provider identifier to filter on.
+
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstate-system-string"></a>
 
 ##### `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState`
@@ -47283,6 +47373,21 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 Parameters:
 - `workerId`: The stable worker identifier to filter on.
 
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializercanuseoncurrentnode-system-boolean"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode(bool canUseOnCurrentNode)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports whether the current node can use that materializer.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that current-node posture.
+
+Parameters:
+- `canUseOnCurrentNode`: `true` to return runtimes that can use the materializer on the current node; otherwise, `false`.
+
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializercategory-system-string"></a>
 
 ##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory`
@@ -47297,6 +47402,36 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `materializerCategory`: The stable provider-specific control-plane materializer category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerconnectclusterid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId(string connectClusterId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested Kafka Connect cluster identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that cluster identifier.
+
+Parameters:
+- `connectClusterId`: The stable Kafka Connect cluster identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerconnectorclass-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass(string connectorClass)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested connector-class identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that connector-class identifier.
+
+Parameters:
+- `connectorClass`: The stable connector-class identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerconnectorid-system-string"></a>
 
@@ -47372,6 +47507,21 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `providerSurfaceId`: The stable provider-surface identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializersourceproviderid-system-string"></a>
+
+##### `GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId(string sourceProviderId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested source-provider identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that source-provider identifier.
+
+Parameters:
+- `sourceProviderId`: The stable source-provider identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerstate-system-string"></a>
 

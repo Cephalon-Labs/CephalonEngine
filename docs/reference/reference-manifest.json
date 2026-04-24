@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-24T18:01:07.3709845+00:00",
+  "GeneratedAtUtc": "2026-04-24T18:47:12.6450271+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8866,7 +8866,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 117
+        "Methods": 127
       }
     },
     {
@@ -47224,6 +47224,39 @@
       "Summary": "Gets the CDC capture execution runtimes whose current provider-owned write-path execution answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcanexecutemutationexecutiononcurrentnode-system-boolean",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode(bool canExecuteMutationExecutionOnCurrentNode)",
+      "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute provider-specific mutation execution."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcanexecuteoncurrentnode-system-boolean",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode(bool canExecuteOnCurrentNode)",
+      "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute that broader provider-specific lane."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcanexecuteteardownoncurrentnode-system-boolean",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode(bool canExecuteTeardownOnCurrentNode)",
+      "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports whether the current node can execute provider-specific teardown."
+    },
+    {
       "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -47233,6 +47266,28 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategory-system-string",
       "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory(string hardeningCategory)",
       "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningconnectclusterid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId(string connectClusterId)",
+      "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested Kafka Connect cluster identifier."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningconnectorclass-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass(string connectorClass)",
+      "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested connector-class identifier."
     },
     {
       "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId",
@@ -47290,6 +47345,17 @@
       "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested provider-surface identifier."
     },
     {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningsourceproviderid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId(string sourceProviderId)",
+      "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested source-provider identifier."
+    },
+    {
       "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -47323,6 +47389,17 @@
       "Summary": "Gets the CDC execution runtimes whose provider-specific dependency-aware teardown and mutation-execution hardening answer currently reports the requested worker identifier."
     },
     {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializercanuseoncurrentnode-system-boolean",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode(bool canUseOnCurrentNode)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports whether the current node can use that materializer."
+    },
+    {
       "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -47332,6 +47409,28 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializercategory-system-string",
       "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory(string materializerCategory)",
       "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerconnectclusterid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId(string connectClusterId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested Kafka Connect cluster identifier."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerconnectorclass-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass(string connectorClass)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested connector-class identifier."
     },
     {
       "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId",
@@ -47387,6 +47486,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializerprovidersurfaceid-system-string",
       "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurfaceId(string providerSurfaceId)",
       "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently targets the requested provider-surface identifier."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderspecificcontrolplanematerializersourceproviderid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId(string sourceProviderId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider-specific control-plane materializer answer currently reports the requested source-provider identifier."
     },
     {
       "DisplayName": "GetByManagedConnectorProviderSpecificControlPlaneMaterializerState",
