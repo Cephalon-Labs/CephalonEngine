@@ -1342,6 +1342,15 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerProvider");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/provider-surfaces/{providerSurfaceId}", (string providerSurfaceId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurfaceId(providerSurfaceId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurface");
         engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/materializers/{materializerId}", (string materializerId, HttpContext httpContext) =>
             {
                 var runtimes = httpContext.RequestServices
@@ -1351,6 +1360,15 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerId");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/connectors/{connectorId}", (string connectorId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(connectorId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerConnector");
         engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/operations/{operationId}", (string operationId, HttpContext httpContext) =>
             {
                 var runtimes = httpContext.RequestServices
@@ -1387,6 +1405,15 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProvider");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/{providerSurfaceId}", (string providerSurfaceId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurfaceId(providerSurfaceId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurface");
         engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{materializerId}", (string materializerId, HttpContext httpContext) =>
             {
                 var runtimes = httpContext.RequestServices
@@ -1396,6 +1423,15 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializer");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{connectorId}", (string connectorId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(connectorId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnector");
         engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/{operationId}", (string operationId, HttpContext httpContext) =>
             {
                 var runtimes = httpContext.RequestServices

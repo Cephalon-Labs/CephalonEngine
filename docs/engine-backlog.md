@@ -3231,6 +3231,58 @@ Delivered:
   and mutation hardening baseline through composition tests `42/42`, hosting tests `20/20`,
   tooling tests `207/207`, and the reference docs publish script
 
+### ENG-203 Phase 13 managed-connector provider-specific control-plane identity drill-down follow-through baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-201` and `ENG-202` already shipped shared provider-specific materializer and
+  dependency-aware teardown/mutation-execution posture, but operators still lacked one stable
+  shared way to drill into those answers by provider-surface id or connector id on the same
+  `/engine/cdc-capture-runtimes*` family
+- the next follow-through needed to keep provider-specific identity drill-down additive on the
+  existing shared execution-runtime catalog, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` instead of inventing a Debezium-only operator surface
+- later additional provider-specific materializers or broader provider-specific teardown and
+  mutation-execution follow-through still needed that provider-surface and connector drill-down
+  truth to stay grounded in the same shared catalog and route family
+
+Acceptance:
+
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive provider-surface and connector filters for
+  both `ManagedConnectorProviderSpecificControlPlaneMaterializer` and
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`
+- `Cephalon.AspNetCore` publishes matching provider-surface and connector routes for those same two
+  shared provider-specific surfaces without introducing a second coordinator, second registry, or
+  Debezium-only API family
+- targeted coverage proves the new provider-surface and connector drill-downs across the shared
+  composition and hosting stories, and docs/tracking stay aligned with the shipped slice
+
+Delivered:
+
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurfaceId(...)`,
+  `GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(...)`,
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurfaceId(...)`,
+  and
+  `GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(...)`
+  on the same shared execution-runtime catalog
+- `Cephalon.AspNetCore` now publishes
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/provider-surfaces/{providerSurfaceId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/connectors/{connectorId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/{providerSurfaceId}`,
+  and
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{connectorId}`
+  on the existing shared route family
+- targeted coverage now proves the identity drill-down follow-through through composition tests
+  `2/2`, hosting tests `2/2`, tooling tests `207/207`, and the reference docs publish script
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later additional provider-specific control-plane materializers or
+  broader provider-specific teardown and mutation-execution follow-through remain separate
+
 ### ENG-202 Phase 13 managed-connector provider-specific control-plane dependency-aware teardown and mutation-execution hardening baseline
 
 Status: done

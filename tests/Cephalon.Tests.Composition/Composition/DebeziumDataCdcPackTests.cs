@@ -4390,7 +4390,19 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurfaceId("debezium-kafka-connect-rest")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(automaticRetryRuntimeId)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
@@ -4420,7 +4432,19 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurfaceId("debezium-kafka-connect-rest")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(automaticRetryRuntimeId)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
@@ -5104,7 +5128,19 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurfaceId("debezium-kafka-connect-rest")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(automaticRetryRuntimeId)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(
@@ -5134,7 +5170,19 @@ public sealed class DebeziumDataCdcPackTests
             Assert.Equal(
                 [automaticRetryRuntimeId],
                 runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurfaceId("debezium-kafka-connect-rest")
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
                     .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterIds.DebeziumKafkaConnectRest)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [automaticRetryRuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(automaticRetryRuntimeId)
                     .Select(static runtime => runtime.Id)
                     .ToArray());
             Assert.Equal(

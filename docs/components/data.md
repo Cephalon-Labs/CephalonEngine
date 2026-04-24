@@ -826,12 +826,13 @@ durable-history plus reporter-lease signals, provider/materializer/transport/pro
 connector/worker identity, and `CanExecuteDependencyAwareTeardownAndMutationExecutionOnCurrentNode`,
 `CanExecuteDependencyAwareTeardownOnCurrentNode`, and
 `CanExecuteDependencyAwareMutationExecutionOnCurrentNode`. The shared execution-runtime
-catalog now also exposes state/category/provider/materializer/operation filters for that
-hardening posture on the existing `/engine/cdc-capture-runtimes*` family, so hosts and
-provider packs can read one stable dependency-aware teardown-versus-mutation-execution answer
-instead of re-deriving the same provider-specific connector identity, control-plane surface
-identity, current-node eligibility, and durable-history or reporter-lease evidence in separate
-control-plane code.
+catalog now also exposes state/category/provider/provider-surface/materializer/connector/
+operation filters for that hardening posture, and the sibling provider-specific materializer
+posture now exposes the same provider-surface and connector drill-downs on the existing
+`/engine/cdc-capture-runtimes*` family, so hosts and provider packs can read one stable
+dependency-aware teardown-versus-mutation-execution answer instead of re-deriving the same
+provider-specific connector identity, control-plane surface identity, current-node eligibility,
+and durable-history or reporter-lease evidence in separate control-plane code.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

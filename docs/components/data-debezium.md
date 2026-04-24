@@ -877,7 +877,9 @@ distributed scheduler, or second coordinator.
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/{materializerState}`,
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/categories/{materializerCategory}`,
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/providers/{providerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/provider-surfaces/{providerSurfaceId}`,
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/materializers/{materializerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/connectors/{connectorId}`,
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-materializers/operations/{operationId}`,
   and
   `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-materializer`
@@ -903,12 +905,22 @@ distributed scheduler, or second coordinator.
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/{hardeningState}`,
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/categories/{hardeningCategory}`,
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/providers/{providerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/{providerSurfaceId}`,
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{materializerId}`,
+  `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{connectorId}`,
   `/engine/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/{operationId}`,
   and
   `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening`
   on that same shared route family instead of branching into a Debezium-only teardown or
   mutation-execution endpoint set
+- `ENG-203` now keeps that same shared managed-connector control-plane lane explicit about how to
+  drill into the shipped Debezium provider-specific identities without inventing a Debezium-only
+  operator API: the shared execution-runtime catalog and ASP.NET Core route family now expose
+  provider-surface and connector filters for both
+  `ManagedConnectorProviderSpecificControlPlaneMaterializer` and
+  `ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening`,
+  so operators can move directly from `debezium-kafka-connect-rest` surface identity or a stable
+  connector id to the matching runtime on the same shared CDC runtime story
 - bounded automatic background retry execution still remains shared in-process truth, and the
   shipped broader provider-owned write-path execution posture plus broader provider execution
   orchestration posture plus broader provider-owned control-plane ownership posture plus broader
