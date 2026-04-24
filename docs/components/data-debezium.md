@@ -691,20 +691,45 @@ distributed scheduler, or second coordinator.
   `ManagedConnectorAutomaticRetryHostedService` and automatic command execution through one merged
   recovery answer instead of trusting durable shared scheduler truth alone when durable evidence or
   latest automatic execution still says the current node is blocked or risky
-- automatic background retry execution currently remains bounded shared in-process truth; it does
-  not mean Cephalon already owns durable distributed command journals, durable distributed
-  schedulers, or full provider-owned control-plane execution orchestration
+- the `ENG-193` follow-through keeps that same bounded retry and command lane broader
+  provider-owned-write-path-aware: `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderOwnedWritePathExecution`
+  now publishes stable `not-applicable`, `operator-only`, `provider-executable`,
+  `provider-blocked`, `provider-owned-executing`, `provider-owned-completed`, and
+  `provider-owned-risk` posture together with management mode, operation/source, execution-adapter
+  plus latest-command plus retry-policy plus automatic-retry plus lease plus scheduler plus
+  recovery state, adapter/provider metadata, deterministic fingerprints, approval/destructive/
+  change metadata, and `CanExecuteProviderOwnedWritePathOnCurrentNode`, so the shared
+  execution-runtime catalog can gate both `ManagedConnectorAutomaticRetryHostedService` and
+  automatic command execution through one merged provider-owned write-path answer instead of
+  trusting scheduler recovery truth alone when the provider lane still reports blocked or risky
+- ASP.NET Core now maps
+  `/engine/cdc-capture-runtimes/provider-owned-write-path-executions/{providerExecutionState}`,
+  `/engine/cdc-capture-runtimes/provider-owned-write-path-executions/categories/{providerExecutionCategory}`,
+  `/engine/cdc-capture-runtimes/provider-owned-write-path-executions/operations/{operationId}`,
+  and `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-write-path-execution` on
+  that same shared route family instead of branching into a Debezium-only control-plane endpoint
+  set
+- bounded automatic background retry execution still remains shared in-process truth, and the
+  shipped broader provider-owned write-path execution posture still does not mean Cephalon already
+  owns durable distributed command journals, durable distributed schedulers, full Kafka Connect
+  provisioning/reconciliation ownership, or full provider-owned control-plane execution
+  orchestration
 
 ## Not shipped in these slices
 
 This pack intentionally still does not claim:
 
-- Kafka Connect or Debezium REST API provisioning and reconciliation
-- connector restart or pause management
-- managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
+- Kafka Connect or Debezium REST API provisioning, configuration mutation, and apply-and-reconcile ownership
+- broader managed-connector control-plane ownership beyond the shipped shared provider-owned
+  write-path execution posture
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
-- durable distributed command journals, durable distributed retry schedulers, or full idempotency orchestration beyond the shipped shared bounded command-journal plus durable journal posture plus bounded automatic background retry plus coordination posture plus distributed retry lease truth plus distributed retry orchestration truth plus richer cross-node idempotency hardening plus broader multi-node lease execution plus durable shared scheduler orchestration
+- durable distributed command journals, durable distributed retry schedulers, or full idempotency
+  orchestration beyond the shipped shared bounded command-journal plus durable journal posture plus
+  bounded automatic background retry plus coordination posture plus distributed retry lease truth
+  plus distributed retry orchestration truth plus richer cross-node idempotency hardening plus
+  broader multi-node lease execution plus durable shared scheduler orchestration plus scheduler
+  recovery hardening plus broader provider-owned write-path execution posture
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

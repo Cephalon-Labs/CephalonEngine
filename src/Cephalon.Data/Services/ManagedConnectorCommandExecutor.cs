@@ -91,21 +91,23 @@ internal sealed class ManagedConnectorCommandExecutor(
                 normalizedInvocationSourceId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
                 StringComparison.OrdinalIgnoreCase) &&
-            !runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.CanExecuteAutomaticRetryOnCurrentNode)
+            !runtime.ManagedConnectorProviderOwnedWritePathExecution.CanExecuteProviderOwnedWritePathOnCurrentNode)
         {
-            var schedulerRecoveryExecutionHardening = runtime.ManagedConnectorSchedulerRecoveryExecutionHardening;
-            var coordinationState = schedulerRecoveryExecutionHardening.IsOperatorOnly
+            var providerOwnedWritePathExecution = runtime.ManagedConnectorProviderOwnedWritePathExecution;
+            var coordinationState = providerOwnedWritePathExecution.IsOperatorOnly
                 ? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly
                 : CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked;
-            var coordinationDescription = string.IsNullOrWhiteSpace(schedulerRecoveryExecutionHardening.Description)
-                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description)
-                    ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorMultiNodeLeaseExecution.Description)
-                        ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
-                            ? "Automatic background retry is not currently allowed to execute on this node."
-                            : runtime.ManagedConnectorDistributedRetryOrchestration.Description
-                        : runtime.ManagedConnectorMultiNodeLeaseExecution.Description
-                    : runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description
-                : schedulerRecoveryExecutionHardening.Description;
+            var coordinationDescription = string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.Description)
+                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.Description)
+                    ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description)
+                        ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorMultiNodeLeaseExecution.Description)
+                            ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
+                                ? "Automatic background retry is not currently allowed to execute on this node."
+                                : runtime.ManagedConnectorDistributedRetryOrchestration.Description
+                            : runtime.ManagedConnectorMultiNodeLeaseExecution.Description
+                        : runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description
+                    : runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.Description
+                : providerOwnedWritePathExecution.Description;
 
             return CreateResult(
                 runtime,

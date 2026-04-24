@@ -529,6 +529,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(string retryFingerprint);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned write-path execution answer matches the requested state.
+    /// </summary>
+    /// <param name="providerExecutionState">The stable provider-owned write-path execution state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider-owned write-path execution state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedWritePathExecutionState(string providerExecutionState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned write-path execution answer includes the requested category.
+    /// </summary>
+    /// <param name="providerExecutionCategory">The stable provider-owned write-path execution category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider-owned write-path execution category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedWritePathExecutionCategory(string providerExecutionCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned write-path execution answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable provider-owned write-path execution operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedWritePathExecutionOperationId(string operationId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

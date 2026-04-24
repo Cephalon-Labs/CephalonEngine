@@ -8618,6 +8618,16 @@ CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus ManagedConnectorPrefli
 
 Gets the operator-facing managed-connector preflight posture derived from coverage, remediation, governance, drift, action planning, and write-path readiness.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedwritepathexecution"></a>
+
+##### `ManagedConnectorProviderOwnedWritePathExecution`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus ManagedConnectorProviderOwnedWritePathExecution { get; set; }
+```
+
+Gets the operator-facing managed-connector provider-owned write-path execution posture derived from execution-adapter, command-execution, retry, scheduler, and recovery truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorretryexecutionpolicy"></a>
 
 ##### `ManagedConnectorRetryExecutionPolicy`
@@ -24017,6 +24027,834 @@ string WritePathReadinessState { get; set; }
 
 Gets the current managed-connector write-path readiness state that informed connector-management preflight.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories`
+
+Defines the stable category identifiers used by managed-connector provider-owned write-path execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-adapterready"></a>
+
+##### `AdapterReady`
+
+```csharp
+const string AdapterReady
+```
+
+The current execution adapter is ready to translate provider-facing commands.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-adapterunavailable"></a>
+
+##### `AdapterUnavailable`
+
+```csharp
+const string AdapterUnavailable
+```
+
+No matching provider execution adapter is currently available.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The current write-path still requires explicit approval.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-cooldownwindow"></a>
+
+##### `CooldownWindow`
+
+```csharp
+const string CooldownWindow
+```
+
+The shared retry policy currently remains inside one cooldown window.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot yet execute provider-owned write-path work safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current node can execute provider-owned write-path work safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The current write-path still targets a destructive provider operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-owned write-path execution still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerblocked"></a>
+
+##### `ProviderBlocked`
+
+```csharp
+const string ProviderBlocked
+```
+
+Provider-owned write-path execution remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandadapted"></a>
+
+##### `ProviderCommandAdapted`
+
+```csharp
+const string ProviderCommandAdapted
+```
+
+The latest provider-owned command translated into a provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandblocked"></a>
+
+##### `ProviderCommandBlocked`
+
+```csharp
+const string ProviderCommandBlocked
+```
+
+The latest provider-owned command remained blocked by shared runtime truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandfailed"></a>
+
+##### `ProviderCommandFailed`
+
+```csharp
+const string ProviderCommandFailed
+```
+
+The latest provider-owned command failed while Cephalon translated it.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandnoop"></a>
+
+##### `ProviderCommandNoOp`
+
+```csharp
+const string ProviderCommandNoOp
+```
+
+The latest provider-owned command determined that no provider command is required.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandoperatoronly"></a>
+
+##### `ProviderCommandOperatorOnly`
+
+```csharp
+const string ProviderCommandOperatorOnly
+```
+
+The latest provider-owned command remained operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandunavailable"></a>
+
+##### `ProviderCommandUnavailable`
+
+```csharp
+const string ProviderCommandUnavailable
+```
+
+The latest provider-owned command could not resolve a provider execution adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerexecutable"></a>
+
+##### `ProviderExecutable`
+
+```csharp
+const string ProviderExecutable
+```
+
+Provider-owned write-path execution is currently ready on the shared lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedcompleted"></a>
+
+##### `ProviderOwnedCompleted`
+
+```csharp
+const string ProviderOwnedCompleted
+```
+
+Provider-owned write-path execution no longer needs an additional provider command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedexecuting"></a>
+
+##### `ProviderOwnedExecuting`
+
+```csharp
+const string ProviderOwnedExecuting
+```
+
+Provider-owned write-path execution already translated one provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedrisk"></a>
+
+##### `ProviderOwnedRisk`
+
+```csharp
+const string ProviderOwnedRisk
+```
+
+Provider-owned write-path execution currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedwritepathexecution"></a>
+
+##### `ProviderOwnedWritePathExecution`
+
+```csharp
+const string ProviderOwnedWritePathExecution
+```
+
+The runtime participates in the provider-owned write-path execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-retryready"></a>
+
+##### `RetryReady`
+
+```csharp
+const string RetryReady
+```
+
+The shared retry policy currently exposes a retry-ready provider lane.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources`
+
+Defines the stable source identifiers used by managed-connector provider-owned write-path execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-automaticretryexecution"></a>
+
+##### `AutomaticRetryExecution`
+
+```csharp
+const string AutomaticRetryExecution
+```
+
+The provider-owned write-path execution answer was derived primarily from automatic background retry execution truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-commandexecution"></a>
+
+##### `CommandExecution`
+
+```csharp
+const string CommandExecution
+```
+
+The provider-owned write-path execution answer was derived primarily from the latest command-execution outcome.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-executionadapter"></a>
+
+##### `ExecutionAdapter`
+
+```csharp
+const string ExecutionAdapter
+```
+
+The provider-owned write-path execution answer was derived primarily from execution-adapter truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-retryexecutionpolicy"></a>
+
+##### `RetryExecutionPolicy`
+
+```csharp
+const string RetryExecutionPolicy
+```
+
+The provider-owned write-path execution answer was derived primarily from retry-execution policy truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-schedulerrecoveryexecutionhardening"></a>
+
+##### `SchedulerRecoveryExecutionHardening`
+
+```csharp
+const string SchedulerRecoveryExecutionHardening
+```
+
+The provider-owned write-path execution answer was derived primarily from scheduler recovery and execution-hardening truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The provider-owned write-path execution answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates`
+
+Defines the stable state identifiers used by managed-connector provider-owned write-path execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Provider-owned write-path execution does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-owned write-path execution still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerblocked"></a>
+
+##### `ProviderBlocked`
+
+```csharp
+const string ProviderBlocked
+```
+
+Provider-owned write-path execution remains blocked by shared runtime policy, approval, or adapter posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerexecutable"></a>
+
+##### `ProviderExecutable`
+
+```csharp
+const string ProviderExecutable
+```
+
+Provider-owned write-path execution is currently ready on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerownedcompleted"></a>
+
+##### `ProviderOwnedCompleted`
+
+```csharp
+const string ProviderOwnedCompleted
+```
+
+Provider-owned write-path execution no longer needs an additional provider command on the shared lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerownedexecuting"></a>
+
+##### `ProviderOwnedExecuting`
+
+```csharp
+const string ProviderOwnedExecuting
+```
+
+Provider-owned write-path execution already translated one provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerownedrisk"></a>
+
+##### `ProviderOwnedRisk`
+
+```csharp
+const string ProviderOwnedRisk
+```
+
+Provider-owned write-path execution currently remains risky because broader shared runtime truth is not safe enough yet.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus`
+
+Describes the current operator-facing managed-connector provider-owned write-path execution posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus(string state, string description)
+```
+
+Creates a new managed-connector provider-owned write-path execution answer.
+
+Parameters:
+- `state`: The stable provider-owned write-path execution state, such as `not-applicable`, `operator-only`, `provider-executable`, `provider-blocked`, `provider-owned-executing`, `provider-owned-completed`, or `provider-owned-risk`.
+- `description`: An optional operator-facing provider-owned write-path execution summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-adapterfingerprint"></a>
+
+##### `AdapterFingerprint`
+
+```csharp
+string AdapterFingerprint { get; set; }
+```
+
+Gets the deterministic execution-adapter fingerprint currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-adapterid"></a>
+
+##### `AdapterId`
+
+```csharp
+string AdapterId { get; set; }
+```
+
+Gets the stable provider execution-adapter identifier currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-automaticretryexecutionstate"></a>
+
+##### `AutomaticRetryExecutionState`
+
+```csharp
+string AutomaticRetryExecutionState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry execution state that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-canexecuteproviderownedwritepathoncurrentnode"></a>
+
+##### `CanExecuteProviderOwnedWritePathOnCurrentNode`
+
+```csharp
+bool CanExecuteProviderOwnedWritePathOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can execute provider-owned write-path work safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active provider-owned write-path execution categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable provider-owned write-path execution categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing provider-owned write-path execution summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-distributedretryleasestate"></a>
+
+##### `DistributedRetryLeaseState`
+
+```csharp
+string DistributedRetryLeaseState { get; set; }
+```
+
+Gets the current managed-connector distributed retry lease state that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-durablesharedschedulerorchestrationstate"></a>
+
+##### `DurableSharedSchedulerOrchestrationState`
+
+```csharp
+string DurableSharedSchedulerOrchestrationState { get; set; }
+```
+
+Gets the current managed-connector durable shared scheduler-orchestration state that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-executionadapterstate"></a>
+
+##### `ExecutionAdapterState`
+
+```csharp
+string ExecutionAdapterState { get; set; }
+```
+
+Gets the current managed-connector execution-adapter state that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned write-path targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether provider-owned write-path execution still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderblocked"></a>
+
+##### `IsProviderBlocked`
+
+```csharp
+bool IsProviderBlocked { get; }
+```
+
+Gets a value indicating whether provider-owned write-path execution currently remains blocked.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderexecutable"></a>
+
+##### `IsProviderExecutable`
+
+```csharp
+bool IsProviderExecutable { get; }
+```
+
+Gets a value indicating whether provider-owned write-path execution is currently ready.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderownedcompleted"></a>
+
+##### `IsProviderOwnedCompleted`
+
+```csharp
+bool IsProviderOwnedCompleted { get; }
+```
+
+Gets a value indicating whether provider-owned write-path execution no longer needs another provider command.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderownedexecuting"></a>
+
+##### `IsProviderOwnedExecuting`
+
+```csharp
+bool IsProviderOwnedExecuting { get; }
+```
+
+Gets a value indicating whether provider-owned write-path execution already translated a provider-facing command shape.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderownedrisk"></a>
+
+##### `IsProviderOwnedRisk`
+
+```csharp
+bool IsProviderOwnedRisk { get; }
+```
+
+Gets a value indicating whether provider-owned write-path execution currently remains risky.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest recorded command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestcommandexecutioninvocationsourceid"></a>
+
+##### `LatestCommandExecutionInvocationSourceId`
+
+```csharp
+string LatestCommandExecutionInvocationSourceId { get; set; }
+```
+
+Gets the invocation-source identifier of the latest recorded command-execution outcome.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestexecutionfingerprint"></a>
+
+##### `LatestExecutionFingerprint`
+
+```csharp
+string LatestExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic latest recorded execution fingerprint currently visible to provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; set; }
+```
+
+Gets the best available provider identifier currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned write-path still requires explicit approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-schedulerrecoveryexecutionhardeningstate"></a>
+
+##### `SchedulerRecoveryExecutionHardeningState`
+
+```csharp
+string SchedulerRecoveryExecutionHardeningState { get; set; }
+```
+
+Gets the current managed-connector scheduler recovery and execution-hardening state that informed provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier currently associated with provider-owned write-path execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector provider-owned write-path execution state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned write-path would still apply one or more shared write-path changes.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories`
@@ -33307,6 +34145,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `preflightState`: The stable managed-connector preflight state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedwritepathexecutioncategory-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedWritePathExecutionCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedWritePathExecutionCategory(string providerExecutionCategory)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned write-path execution answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider-owned write-path execution category.
+
+Parameters:
+- `providerExecutionCategory`: The stable provider-owned write-path execution category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedwritepathexecutionoperationid-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedWritePathExecutionOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedWritePathExecutionOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned write-path execution answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable provider-owned write-path execution operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedwritepathexecutionstate-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedWritePathExecutionState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedWritePathExecutionState(string providerExecutionState)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned write-path execution answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider-owned write-path execution state.
+
+Parameters:
+- `providerExecutionState`: The stable provider-owned write-path execution state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorretryexecutionpolicycategory-system-string"></a>
 

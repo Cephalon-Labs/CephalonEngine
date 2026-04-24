@@ -428,6 +428,20 @@ latest command-execution surfaces so both `ManagedConnectorAutomaticRetryHostedS
 automatic command invocations can ask one merged question about whether the current node can safely
 resume or continue bounded retry execution.
 
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderOwnedWritePathExecution` now also
+publishes stable `not-applicable` / `operator-only` / `provider-executable` / `provider-blocked` /
+`provider-owned-executing` / `provider-owned-completed` / `provider-owned-risk` posture together
+with execution-runtime and capture identity, ownership/topology, management mode, operation/source,
+execution-adapter plus latest-command plus retry-policy plus automatic-retry plus lease plus
+scheduler plus recovery state, adapter/provider metadata, deterministic fingerprints,
+approval/destructive/change metadata, and `CanExecuteProviderOwnedWritePathOnCurrentNode`. The
+shared execution-runtime catalog derives that broader provider-owned write-path answer from the
+already shipped provider execution-adapter, latest command-execution, retry-execution-policy,
+automatic background retry, distributed retry lease, durable shared scheduler, and scheduler
+recovery surfaces so both `ManagedConnectorAutomaticRetryHostedService` and automatic command
+invocations can ask one merged question about whether the current node can safely execute the
+provider-owned write-path lane instead of trusting scheduler recovery truth alone.
+
 That same shared execution-runtime story now also keeps managed-connector distributed retry
 orchestration explicit.
 `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDistributedRetryOrchestration` publishes
@@ -536,6 +550,7 @@ managed-connector distributed retry orchestration,
 managed-connector cross-node idempotency hardening, or
 managed-connector broader multi-node lease execution,
 managed-connector durable shared scheduler orchestration, or
+managed-connector broader provider-owned write-path execution, or
 managed-connector command-execution-history
 index.
 ASP.NET Core maps those same filters through
