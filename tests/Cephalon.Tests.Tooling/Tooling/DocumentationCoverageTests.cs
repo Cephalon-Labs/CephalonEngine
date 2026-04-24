@@ -224,6 +224,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("dotnet new list cephalon", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CompositionSmokeTests.cs", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("BehaviorSpecifications.cs", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("Given/When/Then", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("test harness", gettingStarted, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("CephalonFolder.pubxml", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("deploy/windows-service/install-service.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("windows-service-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
@@ -300,6 +302,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("generated Dockerfile base-image alignment", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("CompositionSmokeTests.cs", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("BehaviorSpecifications.cs", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("Given/When/Then", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", templatePackReadme, StringComparison.OrdinalIgnoreCase);
@@ -333,6 +336,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("CephalonFolder.pubxml", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("CompositionSmokeTests.cs", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("BehaviorSpecifications.cs", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("Given/When/Then", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("docs/getting-started.md", rootReadme, StringComparison.Ordinal);
         Assert.Contains("docs/generated-app-publishing.md", rootReadme, StringComparison.Ordinal);
         Assert.Contains("docs/container-image-publishing.md", rootReadme, StringComparison.Ordinal);
@@ -369,6 +373,10 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("MapCephalon", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("PackageReference", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("CompositionSmokeTests.cs", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("BehaviorSpecifications.cs", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("Given/When/Then", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("test harness", cliComponentDoc, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("docker compose -f ./Acme.Store/compose.yaml up --build", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("compose.yaml", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("docker compose up --build", templatePackReadme, StringComparison.Ordinal);

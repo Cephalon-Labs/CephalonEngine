@@ -96,6 +96,10 @@ internal static class DoctorCommand
     ];
 
     private const string GeneratedConfigurationsContentInclude = "Configurations/**/*.json";
+    private const string GeneratedBehaviorSpecificationSearchPattern = "*BehaviorSpecifications.cs";
+    private const string GeneratedCompositionSmokeTestMethodMarker = "Generated_scaffold_has_a_test_harness_ready_for_real_composition_checks";
+    private const string GeneratedBehaviorSpecificationGivenMarker = "Given_";
+    private const string GeneratedBehaviorSpecificationPlaceholderMarker = "then_replace_this_placeholder_with_the_first_failing_specification";
     private const string PreserveNewestValue = "PreserveNewest";
 
     /// <summary>
@@ -564,9 +568,48 @@ internal static class DoctorCommand
             string.Join(", ", hostProjects.Select(project => ToDisplayRelativePath(resolvedAppRootPath, project.ProjectPath))),
             null));
 
+        var testProjectDirectories = Directory.Exists(Path.Combine(resolvedAppRootPath, "tests"))
+            ? Directory.GetDirectories(Path.Combine(resolvedAppRootPath, "tests"), "*", SearchOption.TopDirectoryOnly)
+            : [];
+
+        var testProjects = testProjectDirectories
+            .Select(directory => new
+            {
+                Directory = directory,
+                ProjectPath = Directory.GetFiles(directory, "*.csproj", SearchOption.TopDirectoryOnly)
+                    .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                    .FirstOrDefault()
+            })
+            .Where(candidate => candidate.ProjectPath is not null)
+            .Select(candidate => new GeneratedTestProject(
+                candidate.Directory,
+                candidate.ProjectPath!,
+                Path.Combine(candidate.Directory, "Architecture", "CompositionSmokeTests.cs"),
+                Path.Combine(candidate.Directory, "Features")))
+            .OrderBy(candidate => candidate.ProjectPath, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (testProjects.Length == 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated test project",
+                "No generated test project was found under `tests/`.",
+                "Restore the scaffolded test project or regenerate the app before teams rely on the generated composition and behavior-specification harness."));
+        }
+        else
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Generated test project",
+                string.Join(", ", testProjects.Select(project => ToDisplayRelativePath(resolvedAppRootPath, project.ProjectPath))),
+                null));
+        }
+
         var selectedHostProject = hostProjects[0];
         EvaluateGeneratedAppSupportContract(selectedHostProject, resolvedAppRootPath, supportContract, checks);
         EvaluateGeneratedHostBootstrapBaseline(selectedHostProject, resolvedAppRootPath, checks);
+        EvaluateGeneratedTestHarnessBaseline(testProjects, resolvedAppRootPath, checks);
         EvaluateGeneratedSplitConfigurationAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedDocumentationSurfaceAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedAppDeploymentAssets(selectedHostProject, resolvedAppRootPath, solutionPath, supportContract, checks);
@@ -853,6 +896,118 @@ internal static class DoctorCommand
             DoctorCheckSeverity.Pass,
             "Generated host project baseline",
             $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)} keeps the generated package references and `{GeneratedConfigurationsContentInclude}` copy/publish baseline explicit.",
+            null));
+    }
+
+    private static void EvaluateGeneratedTestHarnessBaseline(
+        IReadOnlyList<GeneratedTestProject> testProjects,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (testProjects.Count == 0)
+        {
+            return;
+        }
+
+        var baselineIssues = new List<string>();
+        var alignedProjectDetails = new List<string>();
+        var encounteredReadFailure = false;
+
+        foreach (var testProject in testProjects)
+        {
+            var projectIsAligned = true;
+
+            if (!File.Exists(testProject.CompositionSmokeTestPath))
+            {
+                baselineIssues.Add($"missing generated composition smoke test {ToDisplayRelativePath(generatedAppRootPath, testProject.CompositionSmokeTestPath)}");
+            }
+            else if (!TryReadGeneratedTextAsset(
+                    testProject.CompositionSmokeTestPath,
+                    generatedAppRootPath,
+                    "Generated test harness baseline",
+                    "Fix the generated composition smoke test before rerunning `cephalon doctor --app-root`.",
+                    checks,
+                    out var compositionSmokeTestContents))
+            {
+                encounteredReadFailure = true;
+                projectIsAligned = false;
+            }
+            else if (!compositionSmokeTestContents.Contains(GeneratedCompositionSmokeTestMethodMarker, StringComparison.Ordinal))
+            {
+                baselineIssues.Add($"{ToDisplayRelativePath(generatedAppRootPath, testProject.CompositionSmokeTestPath)} no longer keeps the generated composition smoke placeholder explicit");
+                projectIsAligned = false;
+            }
+
+            if (!Directory.Exists(testProject.FeaturesDirectoryPath))
+            {
+                baselineIssues.Add($"missing generated feature specifications under {ToDisplayRelativePath(generatedAppRootPath, testProject.FeaturesDirectoryPath)}");
+                projectIsAligned = false;
+            }
+            else
+            {
+                var featureSpecificationPaths = Directory
+                    .GetFiles(testProject.FeaturesDirectoryPath, GeneratedBehaviorSpecificationSearchPattern, SearchOption.TopDirectoryOnly)
+                    .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                if (featureSpecificationPaths.Length == 0)
+                {
+                    baselineIssues.Add($"missing generated feature specifications under {ToDisplayRelativePath(generatedAppRootPath, testProject.FeaturesDirectoryPath)}");
+                    projectIsAligned = false;
+                }
+                else
+                {
+                    foreach (var featureSpecificationPath in featureSpecificationPaths)
+                    {
+                        if (!TryReadGeneratedTextAsset(
+                                featureSpecificationPath,
+                                generatedAppRootPath,
+                                "Generated test harness baseline",
+                                "Fix the generated behavior specification placeholder before rerunning `cephalon doctor --app-root`.",
+                                checks,
+                                out var behaviorSpecificationContents))
+                        {
+                            encounteredReadFailure = true;
+                            projectIsAligned = false;
+                            continue;
+                        }
+
+                        if (!behaviorSpecificationContents.Contains(GeneratedBehaviorSpecificationGivenMarker, StringComparison.Ordinal) ||
+                            !behaviorSpecificationContents.Contains(GeneratedBehaviorSpecificationPlaceholderMarker, StringComparison.Ordinal))
+                        {
+                            baselineIssues.Add($"{ToDisplayRelativePath(generatedAppRootPath, featureSpecificationPath)} no longer keeps the generated Given/When/Then placeholder explicit");
+                            projectIsAligned = false;
+                        }
+                    }
+
+                    if (projectIsAligned)
+                    {
+                        alignedProjectDetails.Add(
+                            $"{ToDisplayRelativePath(generatedAppRootPath, testProject.CompositionSmokeTestPath)} plus {featureSpecificationPaths.Length} feature specification placeholder(s) keep the generated composition and Given/When/Then test harness explicit.");
+                    }
+                }
+            }
+        }
+
+        if (baselineIssues.Count > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated test harness baseline",
+                string.Join("; ", baselineIssues) + ".",
+                "Restore the scaffolded CompositionSmokeTests.cs and Features/*BehaviorSpecifications.cs placeholders before teams rely on the generated test harness."));
+            return;
+        }
+
+        if (encounteredReadFailure)
+        {
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated test harness baseline",
+            string.Join("; ", alignedProjectDetails),
             null));
     }
 
@@ -2500,6 +2655,12 @@ internal static class DoctorCommand
         string ProgramPath,
         string AppSettingsPath,
         string PublishProfilePath);
+
+    private sealed record GeneratedTestProject(
+        string DirectoryPath,
+        string ProjectPath,
+        string CompositionSmokeTestPath,
+        string FeaturesDirectoryPath);
 
     private sealed record GeneratedDeploymentBaseline(
         string TargetFramework,

@@ -389,8 +389,10 @@ public sealed class CliApplicationTests
             Assert.Contains(".cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Deployment-mode shipping baseline: Stable shipping floor 'net10.0', readiness lane 'net11.0' (assessment-only).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Trim support contract: not-claimed. Trimming is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated test project: ./tests/Acme.Store.Host.Tests/Acme.Store.Host.Tests.csproj", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0 and stays on the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated test harness baseline: ./tests/Acme.Store.Host.Tests/Architecture/CompositionSmokeTests.cs plus 1 feature specification placeholder(s) keep the generated composition and Given/When/Then test harness explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj keeps the generated package references and `Configurations/**/*.json` copy/publish baseline explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.*.json and ./src/Acme.Store.Host/Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app-model split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.AppModel.json keeps explicit Engine app-model selections with Blueprint=ModularMonolith and 1 discovery assembly entries.", stdout.ToString(), StringComparison.Ordinal);
@@ -479,8 +481,10 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
+            Assert.Contains("[ok] Generated test project: ./tests/Acme.Store.Host.Tests/Acme.Store.Host.Tests.csproj", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net11.0 and stays on the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated test harness baseline: ./tests/Acme.Store.Host.Tests/Architecture/CompositionSmokeTests.cs plus 1 feature specification placeholder(s) keep the generated composition and Given/When/Then test harness explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj keeps the generated package references and `Configurations/**/*.json` copy/publish baseline explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.*.json and ./src/Acme.Store.Host/Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app-model split-config baseline: ./src/Acme.Store.Host/Configurations/AddEngine.AppModel.json keeps explicit Engine app-model selections with Blueprint=ModularMonolith and 1 discovery assembly entries.", stdout.ToString(), StringComparison.Ordinal);
@@ -641,6 +645,81 @@ public sealed class CliApplicationTests
             Assert.Equal(1, exitCode);
             Assert.Contains("[error] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs no longer keeps the generated Cephalon host bootstrap explicit for: AddCephalonProjectConfigurations, UseWindowsService, AddCephalon, AddSfidIds, AddAudit, AddCephalonObservability, Serilog clear-provider guard, ClearProviders, AddCephalonSerilog, AddCephalonOpenTelemetry, UseExceptionHandler, MapCephalon.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[error] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj no longer keeps the generated package references or `Configurations/**/*.json` copy/publish baseline explicit (missing package references: Cephalon.Audit, Cephalon.Behaviors.Http, Cephalon.Ids.Sfid, Cephalon.Observability, Cephalon.Observability.OpenTelemetry, Cephalon.Observability.Serilog, Microsoft.Extensions.Hosting.WindowsServices, Serilog.Sinks.Console; missing CopyToOutputDirectory=PreserveNewest; missing CopyToPublishDirectory=PreserveNewest).", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedTestHarnessBaselinesDrift()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-test-harness-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            compositionSmokeTestContents: """
+                namespace Acme.Store.Host.Tests.Architecture;
+
+                public sealed class CompositionSmokeTests
+                {
+                }
+                """,
+            behaviorSpecificationContents: """
+                namespace Acme.Store.Host.Tests.Features;
+
+                public sealed class CheckoutBehaviorSpecifications
+                {
+                    [Fact]
+                    public void Placeholder()
+                    {
+                        Assert.True(true);
+                    }
+                }
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated test harness baseline: ./tests/Acme.Store.Host.Tests/Architecture/CompositionSmokeTests.cs no longer keeps the generated composition smoke placeholder explicit; ./tests/Acme.Store.Host.Tests/Features/CheckoutBehaviorSpecifications.cs no longer keeps the generated Given/When/Then placeholder explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -2038,6 +2117,7 @@ public sealed class CliApplicationTests
         bool publishTrimmed = false,
         bool publishAot = false,
         bool publishSingleFile = false,
+        bool includeGeneratedTestHarnessAssets = true,
         bool includeGeneratedSplitConfigurationAssets = true,
         bool includeDocumentationSurfaceAssets = true,
         bool includeDeploymentAssets = true,
@@ -2045,6 +2125,9 @@ public sealed class CliApplicationTests
         bool includeLocalOrchestrationAssets = true,
         string? projectContents = null,
         string? programContents = null,
+        string? testProjectContents = null,
+        string? compositionSmokeTestContents = null,
+        string? behaviorSpecificationContents = null,
         string? appModelSettingsContents = null,
         string? dataSettingsContents = null,
         string? identitySettingsContents = null,
@@ -2188,6 +2271,57 @@ public sealed class CliApplicationTests
             app.Run();
             """);
         File.WriteAllText(Path.Combine(appRootPath, "src", "Acme.Store.Host", "appsettings.json"), "{}");
+
+        if (includeGeneratedTestHarnessAssets)
+        {
+            var testProjectRoot = Path.Combine(appRootPath, "tests", "Acme.Store.Host.Tests");
+            Directory.CreateDirectory(Path.Combine(testProjectRoot, "Architecture"));
+            Directory.CreateDirectory(Path.Combine(testProjectRoot, "Features"));
+
+            File.WriteAllText(
+                Path.Combine(testProjectRoot, "Acme.Store.Host.Tests.csproj"),
+                testProjectContents ?? $$"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <TargetFramework>{{targetFramework}}</TargetFramework>
+                    <IsPackable>false</IsPackable>
+                  </PropertyGroup>
+                </Project>
+                """);
+            File.WriteAllText(
+                Path.Combine(testProjectRoot, "Architecture", "CompositionSmokeTests.cs"),
+                compositionSmokeTestContents ?? """
+                using Xunit;
+
+                namespace Acme.Store.Host.Tests.Architecture;
+
+                public sealed class CompositionSmokeTests
+                {
+                    [Fact]
+                    public void Generated_scaffold_has_a_test_harness_ready_for_real_composition_checks()
+                    {
+                        Assert.True(true);
+                    }
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(testProjectRoot, "Features", "CheckoutBehaviorSpecifications.cs"),
+                behaviorSpecificationContents ?? """
+                using Xunit;
+
+                namespace Acme.Store.Host.Tests.Features;
+
+                public sealed class CheckoutBehaviorSpecifications
+                {
+                    [Fact]
+                    public void Given_checkout_behavior_when_you_start_tdd_then_replace_this_placeholder_with_the_first_failing_specification()
+                    {
+                        Assert.True(false, "Replace this placeholder with the first failing behavior specification.");
+                    }
+                }
+                """);
+        }
+
         var configurationsPath = Path.Combine(appRootPath, "src", "Acme.Store.Host", "Configurations");
 
         if (includeGeneratedSplitConfigurationAssets || includeDocumentationSurfaceAssets)

@@ -1111,12 +1111,33 @@ Acceptance:
 - the root README, getting-started guide, CLI docs, CLI package README, and template-pack README stay aligned with the same generated host-bootstrap doctor story
 - focused tooling coverage proves aligned host-bootstrap assets and drifted `Program.cs` or host-project baselines on the same doctor path
 
+### ENG-219 Generated app doctor test-harness alignment baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- docs and package readmes already told external adopters that generated app starters ship `Architecture/CompositionSmokeTests.cs` plus per-feature `Features/*BehaviorSpecifications.cs`, but `cephalon doctor --app-root <path>` still had no truthful way to warn when those starter test-harness seams drifted
+- the generated-app doctor path already owned bootstrap, support-contract, split-config, docs-surface, deployment-asset, and orchestration truth, so it was the sharpest place to keep the scaffolded starter tests explicit instead of inventing another starter-verification command
+- generated-app verification should answer whether the starter composition smoke test plus Given/When/Then behavior placeholders are still present before teams replace them with real specs
+
+Acceptance:
+
+- `cephalon doctor --app-root <path>` validates that at least one generated test project exists under `tests/`
+- generated-app doctor validates that the scaffolded `Architecture/CompositionSmokeTests.cs` keeps the generated composition smoke placeholder explicit
+- generated-app doctor validates that at least one `Features/*BehaviorSpecifications.cs` file exists and keeps the generated Given/When/Then placeholder explicit
+- aligned starter tests emit `[ok]`, while missing or drifted generated test-harness assets emit `[error]` with a failing doctor exit code
+- the root README, getting-started guide, CLI docs, CLI package README, and template-pack README stay aligned with the same generated starter test-harness doctor story
+- focused tooling coverage proves aligned starter tests and drifted composition smoke or behavior-specification placeholders on the same doctor path
+
 Completed work:
 
-- extended `DoctorCommand` so generated-app doctor now validates the scaffolded `Program.cs` bootstrap source plus the generated host-project `PackageReference` set and `Configurations/**/*.json` copy/publish baseline as part of the generated-app bootstrap answer
-- added generated host-bootstrap baseline checks that compare `Program.cs` against explicit `AddCephalonProjectConfigurations`, observability wiring, and `MapCephalon` seams and compare the generated host project against the scaffolded package plus split-config copy/publish baseline before teams rely on edited startup code
-- aligned `README.md`, `docs/getting-started.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated host-bootstrap doctor flow
-- extended focused CLI and documentation coverage for aligned host-bootstrap assets and drifted `Program.cs` or host-project baselines on the same doctor path
+- extended `DoctorCommand` so generated-app doctor now validates generated test-project discovery plus the scaffolded `Architecture/CompositionSmokeTests.cs` and `Features/*BehaviorSpecifications.cs` placeholders as part of the same generated-app bootstrap answer
+- added generated test-harness baseline checks that compare the composition smoke test against the scaffolded placeholder method and compare feature-specification files against the starter Given/When/Then placeholder before teams replace those files with real specs
+- aligned `README.md`, `docs/getting-started.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated starter test-harness doctor flow
+- extended focused CLI and documentation coverage for aligned starter tests and drifted composition smoke or behavior-specification placeholders on the same doctor path
 
 ### ENG-213 Generated app doctor deployment-asset alignment baseline
 
@@ -8011,6 +8032,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-216 generated app doctor documentation-surface config alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Configurations/AddOpenApi.json` and `Configurations/AddReferenceDocs.json` assets, compares `AddOpenApi.json` against an explicit `OpenApi:Title`, compares `AddReferenceDocs.json` against explicit hosted reference-doc enablement, route, directory, and default-document settings, and keeps `/scalar` plus optional hosted reference-doc posture visible from the same generated-app bootstrap doctor path before teams rely on those docs surfaces — **Shipped** · focused CLI and documentation coverage
 - ENG-217 generated app doctor split-config alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Configurations/AddEngine.*.json` assets plus `Configurations/Observability/Development.json`, compares the scaffolded app-model, engine-feature, observability, localization, and development Serilog defaults against explicit split-config baselines, and keeps generated runtime plus docs plus telemetry configuration posture visible from the same generated-app bootstrap doctor path before teams rely on those defaults — **Shipped** · focused CLI and documentation coverage
 - ENG-218 generated app doctor host-bootstrap alignment baseline: `cephalon doctor --app-root <path>` now validates the scaffolded `Program.cs` bootstrap source plus the generated host-project `PackageReference` set and `Configurations/**/*.json` copy/publish baseline, compares explicit `AddCephalonProjectConfigurations`, observability wiring, and `MapCephalon` seams against that scaffolded host bootstrap, and keeps host startup plus build/publish bootstrap posture visible from the same generated-app bootstrap doctor path before teams rely on edited startup code — **Shipped** · focused CLI and documentation coverage
+- ENG-219 generated app doctor test-harness alignment baseline: `cephalon doctor --app-root <path>` now validates the generated test project plus scaffolded `Architecture/CompositionSmokeTests.cs` and `Features/*BehaviorSpecifications.cs` placeholders, compares starter composition smoke plus Given/When/Then seams against the shipped scaffold contract, and keeps generated starter-test posture visible from the same generated-app bootstrap doctor path before teams replace those files with real specs — **Shipped** · focused CLI and documentation coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
