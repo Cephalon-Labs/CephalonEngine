@@ -3245,6 +3245,10 @@ public sealed class DebeziumDataCdcHostingTests
                 var dependencyAwareApplyAndReconcileHardeningByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/categories/{CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.CurrentNodeBlocked}");
                 var dependencyAwareApplyAndReconcileHardeningByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/operations/restart");
                 var dependencyAwareApplyAndReconcileHardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardening");
+                var dependencyAwareProvisioningAndMutationHardeningByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/mutation-hardened");
+                var dependencyAwareProvisioningAndMutationHardeningByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/categories/{CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategories.CurrentNodeMutationBlocked}");
+                var dependencyAwareProvisioningAndMutationHardeningByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/operations/restart");
+                var dependencyAwareProvisioningAndMutationHardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardening");
                 var commandHistory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult[]>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/command-executions");
                 var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
@@ -3295,6 +3299,9 @@ public sealed class DebeziumDataCdcHostingTests
                     CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.ApplyAndReconcileHardened,
                     completedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.State);
                 Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.MutationHardened,
+                    completedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.State);
+                Assert.Equal(
                     CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionOperationIds.Restart,
                     completedRuntime.ManagedConnectorAutomaticRetryExecution.OperationId);
                 Assert.Equal(
@@ -3323,6 +3330,9 @@ public sealed class DebeziumDataCdcHostingTests
                 Assert.False(completedRuntime.ManagedConnectorProviderOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode);
                 Assert.False(completedRuntime.ManagedConnectorProviderOwnedControlPlaneProvisioning.CanProvisionProviderOwnedControlPlaneOnCurrentNode);
                 Assert.False(completedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.CanExecuteDependencyAwareApplyAndReconcileOnCurrentNode);
+                Assert.False(completedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningAndMutationOnCurrentNode);
+                Assert.False(completedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningOnCurrentNode);
+                Assert.False(completedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareMutationOnCurrentNode);
                 Assert.Equal("connect-worker-auto", completedRuntime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
                 Assert.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories.OwnerMatch,
@@ -3393,6 +3403,9 @@ public sealed class DebeziumDataCdcHostingTests
                 Assert.Equal(
                     CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.ProviderOwnedControlPlaneApplyAndReconcileExecution,
                     completedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.SourceId);
+                Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningSources.ProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening,
+                    completedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.SourceId);
                 Assert.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories.OrchestrationExecuting,
                     completedRuntime.ManagedConnectorProviderExecutionOrchestration.CategoryIds);
@@ -3488,6 +3501,25 @@ public sealed class DebeziumDataCdcHostingTests
                     CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningSources.ProviderOwnedControlPlaneApplyAndReconcileExecution,
                     dependencyAwareApplyAndReconcileHardening.SourceId);
                 Assert.False(dependencyAwareApplyAndReconcileHardening.CanExecuteDependencyAwareApplyAndReconcileOnCurrentNode);
+                Assert.NotNull(dependencyAwareProvisioningAndMutationHardeningByState);
+                Assert.Equal([automaticRetryRuntimeId], dependencyAwareProvisioningAndMutationHardeningByState.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(dependencyAwareProvisioningAndMutationHardeningByCategory);
+                Assert.Equal([automaticRetryRuntimeId], dependencyAwareProvisioningAndMutationHardeningByCategory.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(dependencyAwareProvisioningAndMutationHardeningByOperation);
+                Assert.Equal([automaticRetryRuntimeId], dependencyAwareProvisioningAndMutationHardeningByOperation.Select(static item => item.Id).ToArray());
+
+                Assert.NotNull(dependencyAwareProvisioningAndMutationHardening);
+                Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.MutationHardened,
+                    dependencyAwareProvisioningAndMutationHardening.State);
+                Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningSources.ProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening,
+                    dependencyAwareProvisioningAndMutationHardening.SourceId);
+                Assert.False(dependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningAndMutationOnCurrentNode);
+                Assert.False(dependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningOnCurrentNode);
+                Assert.False(dependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareMutationOnCurrentNode);
                 Assert.Equal(
                     CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningSources.ProviderOwnedControlPlaneMutationReconcile,
                     providerOwnedControlPlaneProvisioning.SourceId);
@@ -3720,6 +3752,7 @@ public sealed class DebeziumDataCdcHostingTests
                 item.ManagedConnectorProviderOwnedControlPlaneProvisioning.State == CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates.ProvisioningExecuting &&
                 item.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution.State == CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStates.ApplyAndReconcileExecuting &&
                 item.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.State == CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.ApplyAndReconcileHardened &&
+                item.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.State == CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.MutationHardened &&
                 item.ManagedConnectorAutomaticRetryExecution.HasMatchingAutomaticRetryAttempt &&
                 item.ManagedConnectorAutomaticRetryExecution.CategoryIds.Contains(
                     CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories.AutomaticAttemptRecorded,
@@ -3871,6 +3904,10 @@ public sealed class DebeziumDataCdcHostingTests
             var dependencyAwareApplyAndReconcileHardeningByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/categories/{CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ProviderCommandBlocked}");
             var dependencyAwareApplyAndReconcileHardeningByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/operations/restart");
             var dependencyAwareApplyAndReconcileHardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardening");
+            var dependencyAwareProvisioningAndMutationHardeningByState = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/dependency-risk");
+            var dependencyAwareProvisioningAndMutationHardeningByCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>($"/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/categories/{CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategories.ProviderCommandBlocked}");
+            var dependencyAwareProvisioningAndMutationHardeningByOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/operations/restart");
+            var dependencyAwareProvisioningAndMutationHardening = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus>($"/engine/cdc-capture-runtimes/{automaticRetryRuntimeId}/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardening");
 
             await Task.Delay(1400);
 
@@ -3924,6 +3961,9 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Equal(
                 CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyRisk,
                 runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.DependencyRisk,
+                runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.State);
             Assert.False(runtime.ManagedConnectorAutomaticRetryCoordination.CanExecuteOnCurrentNode);
             Assert.False(runtime.ManagedConnectorDistributedRetryLease.CanExecuteAutomaticRetryOnCurrentNode);
             Assert.False(runtime.ManagedConnectorCrossNodeIdempotencyHardening.CanExecuteAutomaticRetryOnCurrentNode);
@@ -3936,6 +3976,9 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.False(runtime.ManagedConnectorProviderOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode);
             Assert.False(runtime.ManagedConnectorProviderOwnedControlPlaneProvisioning.CanProvisionProviderOwnedControlPlaneOnCurrentNode);
             Assert.False(runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.CanExecuteDependencyAwareApplyAndReconcileOnCurrentNode);
+            Assert.False(runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningAndMutationOnCurrentNode);
+            Assert.False(runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningOnCurrentNode);
+            Assert.False(runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareMutationOnCurrentNode);
             Assert.Equal("connect-worker-owner-a", runtime.ManagedConnectorAutomaticRetryCoordination.CoordinationOwnerId);
             Assert.Equal("connect-worker-owner-b", runtime.ManagedConnectorAutomaticRetryCoordination.ActiveReporterId);
             Assert.Contains(
@@ -4253,6 +4296,28 @@ public sealed class DebeziumDataCdcHostingTests
                 CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories.ProviderCommandBlocked,
                 dependencyAwareApplyAndReconcileHardening.CategoryIds);
             Assert.False(dependencyAwareApplyAndReconcileHardening.CanExecuteDependencyAwareApplyAndReconcileOnCurrentNode);
+            Assert.NotNull(dependencyAwareProvisioningAndMutationHardeningByState);
+            Assert.Equal([automaticRetryRuntimeId], dependencyAwareProvisioningAndMutationHardeningByState.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(dependencyAwareProvisioningAndMutationHardeningByCategory);
+            Assert.Equal([automaticRetryRuntimeId], dependencyAwareProvisioningAndMutationHardeningByCategory.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(dependencyAwareProvisioningAndMutationHardeningByOperation);
+            Assert.Equal([automaticRetryRuntimeId], dependencyAwareProvisioningAndMutationHardeningByOperation.Select(static item => item.Id).ToArray());
+
+            Assert.NotNull(dependencyAwareProvisioningAndMutationHardening);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.DependencyRisk,
+                dependencyAwareProvisioningAndMutationHardening.State);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningSources.ProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening,
+                dependencyAwareProvisioningAndMutationHardening.SourceId);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategories.ProviderCommandBlocked,
+                dependencyAwareProvisioningAndMutationHardening.CategoryIds);
+            Assert.False(dependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningAndMutationOnCurrentNode);
+            Assert.False(dependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningOnCurrentNode);
+            Assert.False(dependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareMutationOnCurrentNode);
 
             Assert.NotNull(schedulerRecoveryHardeningByState);
             Assert.Equal([automaticRetryRuntimeId], schedulerRecoveryHardeningByState.Select(static item => item.Id).ToArray());
@@ -4332,6 +4397,12 @@ public sealed class DebeziumDataCdcHostingTests
                 CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyRisk,
                 refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.State);
             Assert.False(refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.CanExecuteDependencyAwareApplyAndReconcileOnCurrentNode);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.DependencyRisk,
+                refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.State);
+            Assert.False(refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningAndMutationOnCurrentNode);
+            Assert.False(refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareProvisioningOnCurrentNode);
+            Assert.False(refreshedRuntime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.CanExecuteDependencyAwareMutationOnCurrentNode);
 
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == automaticRetryRuntimeId &&
@@ -4350,6 +4421,7 @@ public sealed class DebeziumDataCdcHostingTests
                 item.ManagedConnectorProviderOwnedControlPlaneProvisioning.State == CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningStates.ProvisioningRisk &&
                 item.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution.State == CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStates.ApplyAndReconcileRisk &&
                 item.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening.State == CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.DependencyRisk &&
+                item.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening.State == CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.DependencyRisk &&
                 !item.ManagedConnectorAutomaticRetryExecution.HasAutomaticRetryAttempt);
         }
         finally

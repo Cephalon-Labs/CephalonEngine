@@ -3123,6 +3123,114 @@ Delivered:
   composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference
   docs publish script
 
+### ENG-200 Phase 13 managed-connector provider-owned control-plane dependency-aware provisioning and mutation hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168` through `ENG-199` already shipped the shared external-runtime coverage,
+  remediation, governance, drift, action-planning, write-path-readiness, preflight, dry-run,
+  execution-intent, execution-approval, command-envelope, command-issuance, provider
+  execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry, coordination, durable journal,
+  distributed lease, orchestration, richer cross-node idempotency, broader multi-node
+  lease-execution, durable shared scheduler, scheduler recovery, broader provider-owned
+  write-path, provider execution orchestration, provider-owned control-plane ownership,
+  mutation/reconcile, provisioning, apply-and-reconcile execution, and dependency-aware
+  apply-and-reconcile hardening baselines, but operators still lacked one shared answer for
+  whether dependency truth was strong enough to harden the broader provisioning-versus-mutation
+  lane on the current node
+- the next follow-through needed to keep provider-owned control-plane dependency-aware
+  provisioning and mutation hardening additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only
+  provisioning or mutation dependency-hardening subsystem
+- later provider-specific control-plane materializer follow-through or broader dependency-aware
+  teardown and mutation-execution hardening still needed one truthful shared answer grounded in
+  the shipped provider-owned control-plane dependency-aware apply-and-reconcile hardening lane
+  plus broader provider-owned control-plane provisioning, mutation/reconcile, ownership,
+  provider execution orchestration, provider-owned write-path, governance, drift, latest
+  command, retry-policy, command-journal, durable-history, and reporter-lease truth
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector provider-owned control-plane
+  dependency-aware provisioning and mutation hardening contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `operator-only`,
+  `dependency-ready`, `provisioning-blocked`, `mutation-blocked`, `dependency-degraded`,
+  `provisioning-hardened`, `mutation-hardened`, and `dependency-risk` posture together with
+  categories, execution-runtime and capture identity, ownership/topology, management mode,
+  operation/source, broader provider-owned control-plane dependency-aware apply-and-reconcile
+  plus apply-and-reconcile execution plus provisioning plus mutation/reconcile plus ownership
+  plus execution-orchestration plus write-path truth, governance and drift posture, latest
+  command plus retry-policy plus command-journal evidence, declared-versus-reported dependency
+  identity and task-topology metadata, durable-history plus reporter-lease evidence, and
+  `CanExecuteDependencyAwareProvisioningAndMutationOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive dependency-aware provisioning and
+  mutation hardening state, category, and operation filters while deriving that posture from the
+  same shared governance, drift, provider-owned control-plane dependency-aware
+  apply-and-reconcile hardening, provider-owned control-plane apply-and-reconcile execution,
+  provider-owned control-plane provisioning, provider-owned control-plane mutation/reconcile,
+  provider-owned control-plane ownership, provider execution orchestration, provider-owned
+  write-path, latest command-execution, retry-policy, command-journal, dependency-identity,
+  task-topology, durable-history, and reporter-lease truth instead of forcing hosts or providers
+  to invent another dependency evaluator
+- ASP.NET Core publishes those same dependency-aware provisioning and mutation hardening filters
+  on the existing `/engine/cdc-capture-runtimes*` route family, including per-runtime
+  drill-down and operation filters, and the hardening answer stays additive beside the existing
+  coordination, lease, hardening, orchestration, scheduler, recovery, command, provider-owned
+  write-path, provider execution, provider-owned control-plane ownership, provider-owned
+  mutation/reconcile, provider-owned provisioning, provider-owned apply-and-reconcile, and
+  dependency-aware apply-and-reconcile surfaces instead of branching into a Debezium-only
+  endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later provider-specific control-plane materializer follow-through or
+  broader dependency-aware teardown and mutation-execution hardening remains separate
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningSources`,
+  and
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus`,
+  and `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening`
+- `Cephalon.Data` now derives managed-connector provider-owned control-plane dependency-aware
+  provisioning and mutation hardening posture from merged governance, drift,
+  provider-owned control-plane dependency-aware apply-and-reconcile hardening, provider-owned
+  control-plane apply-and-reconcile execution, provider-owned control-plane provisioning,
+  provider-owned control-plane mutation/reconcile, provider-owned control-plane ownership,
+  provider execution orchestration, provider-owned write-path execution, latest command-
+  execution, retry-execution-policy, bounded command-journal, dependency-identity,
+  task-topology, durable-history, and reporter-lease truth, including `dependency-ready`,
+  `provisioning-blocked`, `mutation-blocked`, `dependency-degraded`, `provisioning-hardened`,
+  `mutation-hardened`, and `dependency-risk` answers, and
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState(...)`,
+  `GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategory(...)`,
+  and
+  `GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningOperationId(...)`
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/{hardeningState}`,
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/categories/{hardeningCategory}`,
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/operations/{operationId}`,
+  and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardening`
+  so host routes stay aligned with the same shared governance, drift, orchestration, command,
+  provider-owned control-plane, and dependency-hardening story
+- `Cephalon.Data.Debezium` now participates in that broader shared dependency-aware hardening
+  lane through the existing managed-connector runtime and command surface while targeted coverage
+  proves `mutation-hardened` and `dependency-risk` posture without claiming a Debezium-only
+  provisioning/mutation dependency-hardening subsystem
+- targeted coverage now proves the provider-owned control-plane dependency-aware provisioning
+  and mutation hardening baseline through composition tests `42/42`, hosting tests `20/20`,
+  tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-199 Phase 13 managed-connector provider-owned control-plane dependency-aware apply-and-reconcile hardening baseline
 
 Status: done

@@ -103,12 +103,27 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
                 TimeSpan.FromSeconds(15));
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
-            var mongoRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MongoRuntimeId}");
+            var mongoRuntime = await WaitForAsync(
+                () => client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MongoRuntimeId}")!,
+                static runtime => runtime is not null &&
+                    runtime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured &&
+                    runtime.Summary.TotalCapturedChangeCount == 1 &&
+                    runtime.Summary.TotalProducedMessageCount == 1,
+                TimeSpan.FromSeconds(15));
             var capturesByMongoRuntime = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>($"/engine/cdc-captures/execution-runtimes/{MongoRuntimeId}");
             var captureStatesByMongoRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>($"/engine/cdc-captures/runtime/execution-runtimes/{MongoRuntimeId}");
             var hostedExecutions = await client.GetFromJsonAsync<HostedExecutionDescriptor[]>("/engine/hosted-executions");
             var executionGraphs = await client.GetFromJsonAsync<ExecutionGraphDescriptor[]>("/engine/execution-graphs");
-            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+            var snapshot = await WaitForAsync(
+                () => client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot")!,
+                static current => current is not null &&
+                    current.CdcCaptureStates.Any(item =>
+                        item.CdcCaptureId == CaptureId &&
+                        item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured) &&
+                    current.CdcCaptureExecutionRuntimes.Any(item =>
+                        item.Id == MongoRuntimeId &&
+                        item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured),
+                TimeSpan.FromSeconds(15));
 
             Assert.NotNull(cdcCaptureRuntimes);
             Assert.NotNull(mongoRuntime);

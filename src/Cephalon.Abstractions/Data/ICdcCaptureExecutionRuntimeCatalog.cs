@@ -681,4 +681,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable dependency-aware apply-and-reconcile hardening operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware provisioning and mutation hardening answer matches the requested state.
+    /// </summary>
+    /// <param name="hardeningState">The stable provider-owned control-plane dependency-aware provisioning and mutation hardening state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that dependency-aware hardening state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState(string hardeningState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware provisioning and mutation hardening answer includes the requested category.
+    /// </summary>
+    /// <param name="hardeningCategory">The stable provider-owned control-plane dependency-aware provisioning and mutation hardening category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that dependency-aware hardening category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategory(string hardeningCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane dependency-aware provisioning and mutation hardening answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable dependency-aware provisioning and mutation hardening operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningOperationId(string operationId);
 }

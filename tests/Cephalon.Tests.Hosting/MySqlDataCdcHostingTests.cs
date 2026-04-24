@@ -283,11 +283,22 @@ public sealed class MySqlDataCdcHostingTests
             var client = app.GetTestClient();
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
-                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Failed,
+                static state => state is not null &&
+                    state.LastOutcome == CdcCaptureRuntimeOutcomes.Failed &&
+                    state.Metadata.ContainsKey("failureKind") &&
+                    state.Metadata.ContainsKey("binlogLifecycleState") &&
+                    state.Metadata.ContainsKey("binlogLifecycleAction"),
                 TimeSpan.FromSeconds(10));
 
             var mySqlRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MySqlRuntimeId}");
-            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+            var snapshot = await WaitForAsync(
+                () => client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot")!,
+                static current => current is not null &&
+                    current.CdcCaptureStates.Any(item =>
+                        item.CdcCaptureId == CaptureId &&
+                        item.Publication.State == CdcCapturePublicationStates.CaptureFailed &&
+                        item.Metadata.ContainsKey("binlogLifecycleState")),
+                TimeSpan.FromSeconds(10));
 
             Assert.NotNull(cdcState);
             Assert.Equal(MySqlRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);

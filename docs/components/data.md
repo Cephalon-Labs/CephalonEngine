@@ -775,6 +775,26 @@ also exposes state/category/operation filters for that hardening posture on the 
 dependency-aware answer instead of re-deriving the same connector identity, task topology, and
 lease evidence in separate control-plane code.
 
+That same shared execution-runtime story now also keeps provider-owned control-plane
+dependency-aware provisioning and mutation hardening explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening`
+publishes stable `not-applicable` / `operator-only` / `dependency-ready` /
+`provisioning-blocked` / `mutation-blocked` / `dependency-degraded` /
+`provisioning-hardened` / `mutation-hardened` / `dependency-risk` posture together with
+operation/source, broader governance plus drift plus provider-owned control-plane
+dependency-aware apply-and-reconcile plus apply-and-reconcile execution plus provisioning plus
+mutation/reconcile plus ownership plus execution orchestration plus write-path truth, latest
+command plus retry-policy plus command-journal evidence, declared-versus-reported dependency
+identity and task-topology metadata, durable-history plus reporter-lease signals, and
+`CanExecuteDependencyAwareProvisioningAndMutationOnCurrentNode`,
+`CanExecuteDependencyAwareProvisioningOnCurrentNode`, and
+`CanExecuteDependencyAwareMutationOnCurrentNode`. The shared execution-runtime catalog now also
+exposes state/category/operation filters for that broader provisioning-and-mutation hardening
+posture on the existing `/engine/cdc-capture-runtimes*` family, so hosts and provider packs can
+read one stable dependency-aware provisioning-versus-mutation answer instead of re-deriving the
+same connector identity, task topology, durable history, and reporter-lease evidence in separate
+control-plane code.
+
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
 keeps `Cephalon.Data` honest: it now owns the shared in-process execution substrate plus the shared

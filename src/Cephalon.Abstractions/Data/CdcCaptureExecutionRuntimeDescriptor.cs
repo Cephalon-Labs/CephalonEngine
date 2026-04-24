@@ -418,6 +418,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStatus ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the current shared dependency-aware provisioning and mutation hardening answer for the managed connector when one applies.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?
