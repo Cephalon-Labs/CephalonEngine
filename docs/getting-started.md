@@ -101,6 +101,7 @@ After scaffolding, rerun doctor against the generated app root:
 - a generated host project under `src/`
 - `Properties/PublishProfiles/CephalonFolder.pubxml`
 - the generated host target framework against the stable `net10.0` shipping floor and the `.NET 11` `assessment-only` readiness lane
+- the generated Windows Service, IIS, Azure App Service, and Linux `systemd` deployment assets that back the published-output self-hosted and hosted deployment paths
 - the generated `Dockerfile` plus the shipped container-image, Azure Container Apps, and Kubernetes deployment assets
 - the generated Dockerfile SDK/runtime image tags against the generated host target framework baseline
 - generated `PublishTrimmed`, `PublishAot`, and `PublishSingleFile` posture against the current `not-claimed` support contract
@@ -109,13 +110,13 @@ Expected success characteristics:
 
 - the generated-app checks show `[ok]`
 - a generated host that stays on `net10.0` shows `[ok]` for the stable shipping floor
-- a generated host that keeps the scaffolded Dockerfile baseline shows `[ok]` for deployment-asset and Dockerfile alignment
+- a generated host that keeps the scaffolded Windows Service, IIS, Azure App Service, Linux `systemd`, and container deployment assets shows `[ok]` for self-hosted and hosted deployment assets plus Dockerfile alignment
 - a generated host on `net11.0` or publish settings that enable trim / Native AOT / single-file show `[warn]` so teams can see readiness-only or out-of-contract posture before publish and deployment work
-- a generated app that drops the shipped Dockerfile/deployment assets or retargets Docker base images away from the host baseline shows `[error]`
+- a generated app that drops the shipped self-hosted and hosted deployment assets, drops the container deployment assets, or retargets Docker base images away from the host baseline shows `[error]`
 - a generated host that targets something outside the current contract shows `[error]`
 - the command ends with `Set-Location`, `dotnet restore`, and `dotnet run` next steps that are copy/paste-ready for that app root
 
-If the command reports a generated-app failure, fix the missing bootstrap asset or package-source problem first, then rerun `cephalon doctor --app-root ./Acme.Store` before build, publish, or deployment work.
+If the command reports a generated-app failure, fix the missing bootstrap asset, generated self-hosted and hosted deployment assets, or package-source problem first, then rerun `cephalon doctor --app-root ./Acme.Store` before build, publish, or deployment work.
 
 ## Optional Published-Output Path
 

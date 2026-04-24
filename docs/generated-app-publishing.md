@@ -90,6 +90,7 @@ Once the published host is running, inspect:
 - `/scalar`
 
 Those routes should behave the same way they do under `dotnet run` and under the generated Docker compose path.
+Before you replay the generated Windows Service, IIS, Azure App Service, or Linux `systemd` paths from this published-output baseline, rerun `cephalon doctor --app-root ./Acme.Store` so the same generated-app command path can confirm the generated self-hosted and hosted deployment assets still align with the current host identity, publish profile, and package-source bootstrap.
 
 From this published-output baseline, teams can continue into the shipped Windows Service, IIS, Azure App Service, or Linux `systemd` install surfaces without changing the generated host shape. For the source/Dockerfile-based hosted container paths, continue with the generated `deploy/container-image/*` assets and [Container image publishing](container-image-publishing.md), then into the generated `deploy/azure-container-apps/*` assets and [Azure Container Apps deployment](azure-container-apps-deployment.md), or with the generated `deploy/kubernetes/*` assets and [Kubernetes deployment](kubernetes-deployment.md).
 

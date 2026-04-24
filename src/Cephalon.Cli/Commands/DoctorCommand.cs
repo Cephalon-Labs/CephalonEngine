@@ -24,7 +24,7 @@ internal static class DoctorCommand
         "cephalon-rest-module"
     ];
 
-    private static readonly string[] RequiredGeneratedDeploymentAssetRelativePaths =
+    private static readonly string[] RequiredGeneratedContainerDeploymentAssetRelativePaths =
     [
         "Dockerfile",
         Path.Combine("deploy", "container-image", "publish-image.ps1"),
@@ -34,6 +34,15 @@ internal static class DoctorCommand
         Path.Combine("deploy", "kubernetes", "namespace.yaml"),
         Path.Combine("deploy", "kubernetes", "deployment.yaml"),
         Path.Combine("deploy", "kubernetes", "service.yaml")
+    ];
+
+    private static readonly string[] RequiredGeneratedPublishedDeploymentAssetRelativePaths =
+    [
+        Path.Combine("deploy", "windows-service", "install-service.ps1"),
+        Path.Combine("deploy", "windows-service", "remove-service.ps1"),
+        Path.Combine("deploy", "iis", "install-site.ps1"),
+        Path.Combine("deploy", "iis", "remove-site.ps1"),
+        Path.Combine("deploy", "azure-app-service", "deploy-zip.ps1")
     ];
 
     /// <summary>
@@ -503,7 +512,7 @@ internal static class DoctorCommand
 
         var selectedHostProject = hostProjects[0];
         EvaluateGeneratedAppSupportContract(selectedHostProject, resolvedAppRootPath, supportContract, checks);
-        EvaluateGeneratedAppDeploymentAssets(selectedHostProject, resolvedAppRootPath, supportContract, checks);
+        EvaluateGeneratedAppDeploymentAssets(selectedHostProject, resolvedAppRootPath, solutionPath, supportContract, checks);
 
         var missingPublishProfileProjects = hostProjects
             .Where(project => !File.Exists(project.PublishProfilePath))
@@ -661,10 +670,11 @@ internal static class DoctorCommand
     private static void EvaluateGeneratedAppDeploymentAssets(
         GeneratedHostProject hostProject,
         string generatedAppRootPath,
+        string? solutionPath,
         DeploymentModeSupportContract? supportContract,
         ICollection<DoctorCheck> checks)
     {
-        var missingRelativePaths = RequiredGeneratedDeploymentAssetRelativePaths
+        var missingRelativePaths = RequiredGeneratedContainerDeploymentAssetRelativePaths
             .Where(relativePath => !File.Exists(Path.Combine(generatedAppRootPath, relativePath)))
             .Select(relativePath => ToDisplayRelativePath(generatedAppRootPath, Path.Combine(generatedAppRootPath, relativePath)))
             .ToArray();
@@ -753,6 +763,214 @@ internal static class DoctorCommand
             "Generated Dockerfile baseline",
             $"{dockerfileDisplayPath} uses sdk:{sdkTag} and aspnet:{aspNetTag} {deploymentBaseline.AlignedDetail}.",
             deploymentBaseline.AlignedGuidance));
+
+        var generatedAppId = ResolveGeneratedAppId(solutionPath, generatedAppRootPath);
+        EvaluateGeneratedPublishedDeploymentAssets(generatedAppRootPath, generatedAppId, checks);
+        EvaluateGeneratedWindowsServiceBaseline(hostProject, generatedAppRootPath, checks);
+        EvaluateGeneratedIisBaseline(generatedAppRootPath, generatedAppId, checks);
+        EvaluateAzureAppServiceBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
+        EvaluateGeneratedLinuxSystemdBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
+    }
+
+    private static void EvaluateGeneratedPublishedDeploymentAssets(
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var dynamicRelativePaths = new[]
+        {
+            Path.Combine("deploy", "linux", "systemd", $"{generatedAppId}.service"),
+            Path.Combine("deploy", "linux", "systemd", $"{generatedAppId}.env")
+        };
+
+        var missingRelativePaths = RequiredGeneratedPublishedDeploymentAssetRelativePaths
+            .Concat(dynamicRelativePaths)
+            .Where(relativePath => !File.Exists(Path.Combine(generatedAppRootPath, relativePath)))
+            .Select(relativePath => ToDisplayRelativePath(generatedAppRootPath, Path.Combine(generatedAppRootPath, relativePath)))
+            .ToArray();
+
+        if (missingRelativePaths.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated self-hosted and hosted deployment assets",
+                $"Missing generated self-hosted and hosted deployment assets: {string.Join(", ", missingRelativePaths)}.",
+                "Restore the generated Windows Service, IIS, Azure App Service, and Linux systemd deployment assets or regenerate the app before replaying published-output deployment flows."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated self-hosted and hosted deployment assets",
+            "./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.",
+            null));
+    }
+
+    private static void EvaluateGeneratedWindowsServiceBaseline(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        var installScriptPath = Path.Combine(generatedAppRootPath, "deploy", "windows-service", "install-service.ps1");
+        if (!File.Exists(installScriptPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedTextAsset(
+                installScriptPath,
+                generatedAppRootPath,
+                "Generated Windows Service baseline",
+                "Fix the generated Windows Service install script before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var installScriptContents))
+        {
+            return;
+        }
+
+        var expectedHostAssemblyName = $"{Path.GetFileNameWithoutExtension(hostProject.ProjectPath)}.dll";
+        if (!installScriptContents.Contains(expectedHostAssemblyName, StringComparison.Ordinal) ||
+            !installScriptContents.Contains("sc.exe create", StringComparison.Ordinal))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated Windows Service baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, installScriptPath)} no longer references {expectedHostAssemblyName} through the generated Windows Service install flow.",
+                "Restore the generated Windows Service install script so the published host DLL stays aligned with the current app root."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated Windows Service baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, installScriptPath)} keeps the generated Windows Service install flow aligned with {expectedHostAssemblyName}.",
+            null));
+    }
+
+    private static void EvaluateGeneratedIisBaseline(
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var installScriptPath = Path.Combine(generatedAppRootPath, "deploy", "iis", "install-site.ps1");
+        if (!File.Exists(installScriptPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedTextAsset(
+                installScriptPath,
+                generatedAppRootPath,
+                "Generated IIS baseline",
+                "Fix the generated IIS install script before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var installScriptContents))
+        {
+            return;
+        }
+
+        if (!installScriptContents.Contains("web.config", StringComparison.Ordinal) ||
+            !installScriptContents.Contains(generatedAppId, StringComparison.Ordinal))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated IIS baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, installScriptPath)} no longer keeps the generated IIS site/app-pool defaults aligned with {generatedAppId}.",
+                "Restore the generated IIS install script so the published web.config and physical-path defaults stay aligned with the current app root."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated IIS baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, installScriptPath)} keeps the generated IIS site/app-pool defaults aligned with {generatedAppId}.",
+            null));
+    }
+
+    private static void EvaluateAzureAppServiceBaseline(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var deployScriptPath = Path.Combine(generatedAppRootPath, "deploy", "azure-app-service", "deploy-zip.ps1");
+        if (!File.Exists(deployScriptPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedTextAsset(
+                deployScriptPath,
+                generatedAppRootPath,
+                "Generated Azure App Service baseline",
+                "Fix the generated Azure App Service deploy script before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var deployScriptContents))
+        {
+            return;
+        }
+
+        var expectedHostAssemblyName = $"{Path.GetFileNameWithoutExtension(hostProject.ProjectPath)}.dll";
+        if (!deployScriptContents.Contains("azure-app-service.zip", StringComparison.Ordinal) ||
+            !deployScriptContents.Contains(expectedHostAssemblyName, StringComparison.Ordinal) ||
+            !deployScriptContents.Contains(generatedAppId, StringComparison.Ordinal))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated Azure App Service baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, deployScriptPath)} no longer keeps the generated ZIP package and published host defaults aligned with {generatedAppId}.",
+                "Restore the generated Azure App Service deploy script so the published host DLL and ZIP package defaults stay aligned with the current app root."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated Azure App Service baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, deployScriptPath)} keeps the generated ZIP package and published host defaults aligned with {generatedAppId}.",
+            null));
+    }
+
+    private static void EvaluateGeneratedLinuxSystemdBaseline(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var serviceFilePath = Path.Combine(generatedAppRootPath, "deploy", "linux", "systemd", $"{generatedAppId}.service");
+        if (!File.Exists(serviceFilePath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedTextAsset(
+                serviceFilePath,
+                generatedAppRootPath,
+                "Generated Linux systemd baseline",
+                "Fix the generated Linux systemd unit before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var serviceFileContents))
+        {
+            return;
+        }
+
+        var expectedHostAssemblyName = $"{Path.GetFileNameWithoutExtension(hostProject.ProjectPath)}.dll";
+        if (!serviceFileContents.Contains(expectedHostAssemblyName, StringComparison.Ordinal) ||
+            !serviceFileContents.Contains($"/opt/{generatedAppId}/current", StringComparison.Ordinal) ||
+            !serviceFileContents.Contains($"/etc/cephalon/{generatedAppId}.env", StringComparison.Ordinal))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated Linux systemd baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, serviceFilePath)} no longer keeps the generated Linux systemd unit aligned with {generatedAppId} and {expectedHostAssemblyName}.",
+                "Restore the generated Linux systemd unit so the published host DLL, install root, and environment-file defaults stay aligned with the current app root."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated Linux systemd baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, serviceFilePath)} keeps the generated Linux systemd unit aligned with {generatedAppId} and {expectedHostAssemblyName}.",
+            null));
     }
 
     private static void AddGeneratedAppDeploymentModeCheck(
@@ -889,6 +1107,20 @@ internal static class DoctorCommand
                 alignedGuidance);
     }
 
+    private static string ResolveGeneratedAppId(string? solutionPath, string generatedAppRootPath)
+    {
+        var solutionStem = Path.GetFileNameWithoutExtension(solutionPath);
+        if (!string.IsNullOrWhiteSpace(solutionStem))
+        {
+            return solutionStem;
+        }
+
+        var directoryInfo = new DirectoryInfo(generatedAppRootPath);
+        return string.IsNullOrWhiteSpace(directoryInfo.Name)
+            ? "CephalonApp"
+            : directoryInfo.Name;
+    }
+
     private static string? TryGetDotNetContainerImageTag(string targetFramework)
     {
         if (string.IsNullOrWhiteSpace(targetFramework))
@@ -935,6 +1167,31 @@ internal static class DoctorCommand
         }
 
         return null;
+    }
+
+    private static bool TryReadGeneratedTextAsset(
+        string path,
+        string generatedAppRootPath,
+        string checkTitle,
+        string failureGuidance,
+        ICollection<DoctorCheck> checks,
+        out string contents)
+    {
+        try
+        {
+            contents = File.ReadAllText(path);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                checkTitle,
+                $"Could not inspect {ToDisplayRelativePath(generatedAppRootPath, path)}: {exception.Message}",
+                failureGuidance));
+            contents = string.Empty;
+            return false;
+        }
     }
 
     private static MsBuildPropertyObservation? ResolveMsBuildPropertyObservation(

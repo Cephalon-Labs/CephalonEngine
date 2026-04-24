@@ -28,7 +28,7 @@ The broader framework-readiness story stays aligned through:
 External adopters can read that same contract through:
 
 - `cephalon doctor` for the machine-level shipping floor, readiness lane, and current trim / Native AOT / single-file posture
-- `cephalon doctor --app-root <path>` for generated-app bootstrap plus generated host target-framework, generated deployment-asset, generated Dockerfile baseline, and publish-mode claim posture against the same contract
+- `cephalon doctor --app-root <path>` for generated-app bootstrap plus generated host target-framework, generated self-hosted and hosted deployment assets, generated container deployment assets, generated Dockerfile baseline, and publish-mode claim posture against the same contract
 
 ## What the current statuses mean
 

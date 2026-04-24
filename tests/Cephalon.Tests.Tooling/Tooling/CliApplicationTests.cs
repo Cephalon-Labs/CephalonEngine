@@ -392,6 +392,11 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0 and stays on the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Dockerfile baseline: ./Dockerfile uses sdk:10.0 and aspnet:10.0 for the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Windows Service baseline: ./deploy/windows-service/install-service.ps1 keeps the generated Windows Service install flow aligned with Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app trim posture: PublishTrimmed is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app Native AOT posture: PublishAot is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app single-file posture: PublishSingleFile is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
@@ -463,6 +468,11 @@ public sealed class CliApplicationTests
             Assert.Contains("[warn] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net11.0 and stays on the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated Dockerfile baseline: ./Dockerfile uses sdk:11.0 and aspnet:11.0 for the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Windows Service baseline: ./deploy/windows-service/install-service.ps1 keeps the generated Windows Service install flow aligned with Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app trim posture: PublishTrimmed=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app Native AOT posture: PublishAot=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app single-file posture: PublishSingleFile=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
@@ -651,6 +661,63 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedPublishedDeploymentAssetsAreMissing()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-missing-published-assets-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            includePublishedDeploymentAssets: false);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated self-hosted and hosted deployment assets: Missing generated self-hosted and hosted deployment assets: ./deploy/windows-service/install-service.ps1, ./deploy/windows-service/remove-service.ps1, ./deploy/iis/install-site.ps1, ./deploy/iis/remove-site.ps1, ./deploy/azure-app-service/deploy-zip.ps1, ./deploy/linux/systemd/Acme.Store.service, ./deploy/linux/systemd/Acme.Store.env.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task RunAsyncDoctorFailsWhenGeneratedDockerfileDriftsFromHostTargetFramework()
     {
         var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-dockerfile-drift-{Guid.NewGuid():N}");
@@ -695,6 +762,87 @@ public sealed class CliApplicationTests
 
             Assert.Equal(1, exitCode);
             Assert.Contains("[error] Generated Dockerfile baseline: ./Dockerfile uses sdk:11.0 and aspnet:11.0, but ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedPublishedDeploymentBaselinesDriftFromHostIdentity()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-published-asset-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            windowsServiceInstallScriptContents: """
+                sc.exe create Acme.Store binPath= "dotnet Legacy.Store.Host.dll"
+                """,
+            iisInstallScriptContents: """
+                $siteName = "Legacy.Store"
+                Write-Output $siteName
+                """,
+            azureAppServiceDeployScriptContents: """
+                $appName = "Legacy.Store"
+                Write-Output $appName
+                """,
+            linuxSystemdServiceContents: """
+                [Unit]
+                Description=Legacy Store
+
+                [Service]
+                WorkingDirectory=/opt/Legacy.Store/current
+                ExecStart=/usr/bin/dotnet /opt/Legacy.Store/current/Legacy.Store.Host.dll
+
+                [Install]
+                WantedBy=multi-user.target
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated Windows Service baseline: ./deploy/windows-service/install-service.ps1 no longer references Acme.Store.Host.dll through the generated Windows Service install flow.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated IIS baseline: ./deploy/iis/install-site.ps1 no longer keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 no longer keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service no longer keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -1325,8 +1473,13 @@ public sealed class CliApplicationTests
         bool publishAot = false,
         bool publishSingleFile = false,
         bool includeDeploymentAssets = true,
+        bool includePublishedDeploymentAssets = true,
         string? dockerSdkImageTag = null,
-        string? dockerAspNetImageTag = null)
+        string? dockerAspNetImageTag = null,
+        string? windowsServiceInstallScriptContents = null,
+        string? iisInstallScriptContents = null,
+        string? azureAppServiceDeployScriptContents = null,
+        string? linuxSystemdServiceContents = null)
     {
         Directory.CreateDirectory(appRootPath);
         Directory.CreateDirectory(Path.Combine(appRootPath, ".cephalon", "packages"));
@@ -1412,6 +1565,54 @@ public sealed class CliApplicationTests
             File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "namespace.yaml"), "apiVersion: v1");
             File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "deployment.yaml"), "apiVersion: apps/v1");
             File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "service.yaml"), "apiVersion: v1");
+        }
+
+        if (includePublishedDeploymentAssets)
+        {
+            Directory.CreateDirectory(Path.Combine(appRootPath, "deploy", "windows-service"));
+            Directory.CreateDirectory(Path.Combine(appRootPath, "deploy", "iis"));
+            Directory.CreateDirectory(Path.Combine(appRootPath, "deploy", "azure-app-service"));
+            Directory.CreateDirectory(Path.Combine(appRootPath, "deploy", "linux", "systemd"));
+
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "windows-service", "install-service.ps1"),
+                windowsServiceInstallScriptContents ?? """
+                $serviceName = "Acme.Store"
+                $publishedHostAssembly = "Acme.Store.Host.dll"
+                sc.exe create $serviceName binPath= "dotnet $publishedHostAssembly"
+                """);
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "windows-service", "remove-service.ps1"), "sc.exe delete Acme.Store");
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "iis", "install-site.ps1"),
+                iisInstallScriptContents ?? """
+                $siteName = "Acme.Store"
+                $webConfigPath = "web.config"
+                Write-Output "$siteName $webConfigPath"
+                """);
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "iis", "remove-site.ps1"), "Write-Output 'remove-site'");
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "azure-app-service", "deploy-zip.ps1"),
+                azureAppServiceDeployScriptContents ?? """
+                $appName = "Acme.Store"
+                $packageName = "azure-app-service.zip"
+                $entryAssembly = "Acme.Store.Host.dll"
+                Write-Output "$appName $packageName $entryAssembly"
+                """);
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "linux", "systemd", "Acme.Store.service"),
+                linuxSystemdServiceContents ?? """
+                [Unit]
+                Description=Acme Store
+
+                [Service]
+                WorkingDirectory=/opt/Acme.Store/current
+                EnvironmentFile=/etc/cephalon/Acme.Store.env
+                ExecStart=/usr/bin/dotnet /opt/Acme.Store/current/Acme.Store.Host.dll
+
+                [Install]
+                WantedBy=multi-user.target
+                """);
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "linux", "systemd", "Acme.Store.env"), "ASPNETCORE_URLS=http://0.0.0.0:8080");
         }
 
         if (includePublishProfile)

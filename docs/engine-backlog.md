@@ -980,6 +980,33 @@ Completed work:
 - aligned the adoption docs and package READMEs so generated-app doctor now explicitly documents target-framework and publish-claim validation alongside the earlier bootstrap checks
 - extended focused tooling coverage so stable-floor generated apps stay green, readiness-lane plus unclaimed publish-mode apps warn truthfully, and out-of-contract generated hosts fail doctor with the expected error posture
 
+### ENG-214 Generated app doctor self-hosted and hosted deployment-asset alignment baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-213` made generated-app doctor truthful about the shipped `Dockerfile` and container deployment assets, but external adopters could still drift the generated Windows Service, IIS, Azure App Service, or Linux `systemd` assets without the same command path warning them before they replayed published-output deployment flows
+- `cephalon doctor --app-root <path>` was already the generated-app bootstrap, support-contract, and deployment-asset command, so it was the sharpest place to validate those self-hosted and hosted assets instead of inventing another published-output verification surface
+- generated-app verification should answer whether the scaffolded published-output deployment shape still matches the current host identity before teams rely on Windows Service, IIS, Azure App Service, or Linux `systemd` replays
+
+Acceptance:
+
+- `cephalon doctor --app-root <path>` validates the shipped Windows Service, IIS, Azure App Service, and Linux `systemd` deployment assets alongside the earlier container deployment checks
+- generated-app doctor compares those generated published-output deployment scripts and units against the current host identity so host-assembly or app-id drift becomes visible before deployment work begins
+- aligned self-hosted and hosted deployment assets emit `[ok]`, while missing or drifted published-output deployment assets emit `[error]` with a failing doctor exit code
+- the root README, getting-started guide, generated-app publishing guide, deployment-mode-support guide, CLI docs, CLI package README, and template-pack README stay aligned with the same generated published-output deployment-asset doctor story
+- focused tooling coverage proves aligned published-output deployment assets, missing self-hosted and hosted deployment assets, and drifted published-output deployment scripts on the same doctor path
+
+Completed work:
+
+- extended `DoctorCommand` so generated-app doctor now validates the shipped Windows Service, IIS, Azure App Service, and Linux `systemd` deployment assets as part of the generated-app bootstrap answer
+- added generated published-output baseline checks that compare those Windows Service, IIS, Azure App Service, and Linux `systemd` assets against the current host identity before replaying deployment flows
+- aligned `README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/deployment-mode-support.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated self-hosted and hosted deployment-asset doctor flow
+- extended focused CLI and documentation coverage for aligned published-output deployment assets, missing self-hosted and hosted deployment assets, and drifted published-output deployment scripts
+
 ### ENG-213 Generated app doctor deployment-asset alignment baseline
 
 Status: done
@@ -7868,6 +7895,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-211 doctor support-contract follow-through baseline: `Cephalon.Cli` now packages that same deployment-mode support manifest, `cephalon doctor` now echoes the stable shipping floor plus the `.NET 11` assessment-only readiness lane and keeps trim / Native AOT / single-file `not-claimed` posture visible from the same first-run command path, and the adoption docs plus CLI/template-pack readmes now stay aligned with that CLI-surfaced support-contract story — **Shipped** · focused CLI and documentation coverage
 - ENG-212 generated app doctor support-contract follow-through baseline: `cephalon doctor --app-root <path>` now carries that same packaged support contract into generated-app validation by comparing the scaffolded host target framework against the stable `net10.0` shipping floor plus the `.NET 11` assessment-only readiness lane, reading effective `PublishTrimmed`, `PublishAot`, and `PublishSingleFile` settings from the generated host project plus publish profile, and keeping stable-floor, readiness-lane, unclaimed publish-mode, and out-of-contract posture visible from the same generated-app bootstrap doctor path — **Shipped** · focused CLI and documentation coverage
 - ENG-213 generated app doctor deployment-asset alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Dockerfile` plus the shipped container-image, Azure Container Apps, and Kubernetes deployment assets, compares generated Dockerfile SDK/runtime base-image tags against the generated host target framework baseline, and keeps stable-floor versus readiness-lane deployment-asset posture visible from the same generated-app bootstrap doctor path before container deployment work begins — **Shipped** · focused CLI and documentation coverage
+- ENG-214 generated app doctor self-hosted and hosted deployment-asset alignment baseline: `cephalon doctor --app-root <path>` now validates the shipped Windows Service, IIS, Azure App Service, and Linux `systemd` deployment assets, compares those generated published-output deployment scripts and units against the current host identity, and keeps self-hosted plus hosted deployment-asset posture visible from the same generated-app bootstrap doctor path before published-output deployment work begins — **Shipped** · focused CLI and documentation coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
