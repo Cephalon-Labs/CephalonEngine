@@ -125,6 +125,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("[Architecture](architecture.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Component catalog](components/README.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[App models](app-models.md)", docsReadme, StringComparison.Ordinal);
+        Assert.Contains("[Deployment-mode support](deployment-mode-support.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[.NET 11 readiness](dotnet11-readiness.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Module authoring](module-authoring.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Package publishing](package-publishing.md)", docsReadme, StringComparison.Ordinal);
@@ -138,6 +139,25 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("[Engine roadmap](engine-roadmap.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Engine backlog](engine-backlog.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Reference landing page](reference/README.md)", docsReadme, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void FrameworkReadinessDocsStayAlignedWithDeploymentModeSupportContract()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var docsReadme = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "README.md"));
+        var compatibility = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "compatibility.md"));
+        var deploymentModeSupport = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "deployment-mode-support.md"));
+        var dotNet11Readiness = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "dotnet11-readiness.md"));
+        var packagePublishing = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "package-publishing.md"));
+
+        Assert.Contains("deployment-mode-support.md", docsReadme, StringComparison.Ordinal);
+        Assert.Contains("scripts/deployment-mode-support.json", compatibility, StringComparison.Ordinal);
+        Assert.Contains("docs/deployment-mode-support.md", compatibility, StringComparison.Ordinal);
+        Assert.Contains("scripts/deployment-mode-support.json", deploymentModeSupport, StringComparison.Ordinal);
+        Assert.Contains("dotnet11-readiness.md", deploymentModeSupport, StringComparison.Ordinal);
+        Assert.Contains("deployment-mode-support.md", dotNet11Readiness, StringComparison.Ordinal);
+        Assert.Contains("scripts/deployment-mode-support.json", packagePublishing, StringComparison.Ordinal);
     }
 
     [Fact]

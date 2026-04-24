@@ -28,6 +28,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Database topology](database-topology.md)
 - [Component catalog](components/README.md)
 - [Compatibility](compatibility.md)
+- [Deployment-mode support](deployment-mode-support.md)
 - [.NET 11 readiness](dotnet11-readiness.md)
 - [App models](app-models.md)
 - [Module authoring](module-authoring.md)
@@ -79,7 +80,7 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 - [Planning governance](planning-governance.md)
 - [Engine roadmap](engine-roadmap.md)
 - [Engine backlog](engine-backlog.md)
-- framework-baseline and support-claim changes should stay aligned with [.NET 11 readiness](dotnet11-readiness.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)
+- framework-baseline and support-claim changes should stay aligned with [.NET 11 readiness](dotnet11-readiness.md), [Deployment-mode support](deployment-mode-support.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)
 - planning issues and phase milestones can be synchronized from those docs through `scripts/sync-planning-github.ps1` and `.github/workflows/planning-sync.yml`
 - set `CEPHALON_PROJECT_TOKEN` with `repo`, `project`, and `read:org` scopes when the workflow needs to update the organization-level GitHub Project as well as repository issues and milestones
 

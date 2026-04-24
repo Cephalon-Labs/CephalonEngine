@@ -15,6 +15,7 @@ $solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
 $referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-reference-docs.ps1")
 $packageArtifactsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-package-artifacts.ps1")
 $globalJsonPath = [System.IO.Path]::Combine($repoRoot, "global.json")
+$deploymentModeSupportManifestPath = [System.IO.Path]::Combine($repoRoot, "scripts", "deployment-mode-support.json")
 $testProjectPaths = @(
     [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Composition", "Cephalon.Tests.Composition.csproj"),
     [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Hosting", "Cephalon.Tests.Hosting.csproj"),
@@ -304,6 +305,12 @@ try {
         Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries)
 
     $globalJson = Get-Content -LiteralPath $globalJsonPath -Raw | ConvertFrom-Json
+    if (-not (Test-Path -LiteralPath $deploymentModeSupportManifestPath)) {
+        throw "Expected deployment-mode support manifest '$deploymentModeSupportManifestPath' was not found."
+    }
+
+    $deploymentModeSupport = Get-Content -LiteralPath $deploymentModeSupportManifestPath -Raw | ConvertFrom-Json
+    $deploymentModeSupportManifestRelativePath = Get-RepoRelativePath -Path $deploymentModeSupportManifestPath
     $projectMetadata = Get-ChildItem -Path (Join-Path $repoRoot "src"), (Join-Path $repoRoot "tests"), (Join-Path $repoRoot "samples"), (Join-Path $repoRoot "templates"), (Join-Path $repoRoot "benchmarks") -Recurse -Filter *.csproj |
         Sort-Object FullName |
         ForEach-Object { Get-ProjectMetadata -Path $_.FullName }
@@ -384,6 +391,58 @@ try {
         $claimEntries |
             Where-Object { $_.Property -eq "EnableAotAnalyzer" -and (Test-ExplicitTrue -Values $_.Values) }
     )
+    $trimDetectedStatus = if ($trimClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+    $nativeAotDetectedStatus = if ($aotClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+    $singleFileDetectedStatus = if ($singleFileClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+
+    $allowedDeploymentModeStatuses = @("not-claimed", "claimed")
+    $expectedTrimStatus = [string]$deploymentModeSupport.deploymentModes.trim.status
+    $expectedNativeAotStatus = [string]$deploymentModeSupport.deploymentModes.nativeAot.status
+    $expectedSingleFileStatus = [string]$deploymentModeSupport.deploymentModes.singleFile.status
+
+    foreach ($statusEntry in @(
+        @{ Name = "trim"; Status = $expectedTrimStatus },
+        @{ Name = "nativeAot"; Status = $expectedNativeAotStatus },
+        @{ Name = "singleFile"; Status = $expectedSingleFileStatus }
+    )) {
+        if ($statusEntry.Status -notin $allowedDeploymentModeStatuses) {
+            throw "Deployment-mode support manifest declares unsupported status '$($statusEntry.Status)' for '$($statusEntry.Name)'."
+        }
+    }
+
+    $supportGuideRelativePath = [string]$deploymentModeSupport.documentation.guidePath
+    $readinessGuideRelativePath = [string]$deploymentModeSupport.documentation.readinessGuidePath
+    $compatibilityGuideRelativePath = [string]$deploymentModeSupport.documentation.compatibilityGuidePath
+    $packagePublishingGuideRelativePath = [string]$deploymentModeSupport.documentation.packagePublishingGuidePath
+    $supportGuidePaths = @(
+        @{ Label = "support guide"; RelativePath = $supportGuideRelativePath },
+        @{ Label = "readiness guide"; RelativePath = $readinessGuideRelativePath },
+        @{ Label = "compatibility guide"; RelativePath = $compatibilityGuideRelativePath },
+        @{ Label = "package-publishing guide"; RelativePath = $packagePublishingGuideRelativePath }
+    )
+    $missingSupportGuides = [System.Collections.Generic.List[string]]::new()
+    foreach ($pathEntry in $supportGuidePaths) {
+        if ([string]::IsNullOrWhiteSpace($pathEntry.RelativePath)) {
+            $missingSupportGuides.Add("$($pathEntry.Label) path is empty in $deploymentModeSupportManifestRelativePath") | Out-Null
+            continue
+        }
+
+        $resolvedGuidePath = Resolve-FullPath -Path $pathEntry.RelativePath
+        if (-not (Test-Path -LiteralPath $resolvedGuidePath)) {
+            $missingSupportGuides.Add("$($pathEntry.RelativePath) ($($pathEntry.Label))") | Out-Null
+        }
+    }
+
+    $deploymentModeSupportMismatches = [System.Collections.Generic.List[string]]::new()
+    foreach ($comparison in @(
+        @{ Name = "trim"; Expected = $expectedTrimStatus; Actual = $trimDetectedStatus },
+        @{ Name = "Native AOT"; Expected = $expectedNativeAotStatus; Actual = $nativeAotDetectedStatus },
+        @{ Name = "single-file"; Expected = $expectedSingleFileStatus; Actual = $singleFileDetectedStatus }
+    )) {
+        if ($comparison.Expected -ne $comparison.Actual) {
+            $deploymentModeSupportMismatches.Add("$($comparison.Name) manifest status '$($comparison.Expected)' does not match detected project status '$($comparison.Actual)'") | Out-Null
+        }
+    }
 
     $checks = [System.Collections.Generic.List[object]]::new()
 
@@ -419,16 +478,26 @@ try {
         $checks.Add((New-CheckResult -Name "legacy-target-framework-version" -Status "fail" -Detail $details)) | Out-Null
     }
 
-    if ($trimClaimProjects.Count -eq 0 -and $aotClaimProjects.Count -eq 0 -and $singleFileClaimProjects.Count -eq 0) {
-        $checks.Add((New-CheckResult -Name "deployment-mode-claims" -Status "pass" -Detail "No shipped project currently asserts trim, Native AOT, or single-file support as repo truth.")) | Out-Null
+    if ($missingSupportGuides.Count -eq 0) {
+        $checks.Add((New-CheckResult -Name "deployment-mode-support-docs" -Status "pass" -Detail "Deployment-mode support manifest documentation paths resolve successfully.")) | Out-Null
     }
     else {
-        $details = [System.Collections.Generic.List[string]]::new()
-        foreach ($entry in @($trimClaimProjects + $aotClaimProjects + $singleFileClaimProjects)) {
-            $details.Add("$($entry.Project) sets $($entry.Property)=$(@($entry.Values) -join ', ')") | Out-Null
-        }
+        $checks.Add((New-CheckResult -Name "deployment-mode-support-docs" -Status "fail" -Detail ($missingSupportGuides -join "; "))) | Out-Null
+    }
 
-        $checks.Add((New-CheckResult -Name "deployment-mode-claims" -Status "fail" -Detail ($details -join "; "))) | Out-Null
+    if ($deploymentModeSupportMismatches.Count -eq 0) {
+        $checks.Add((New-CheckResult -Name "deployment-mode-support-contract" -Status "pass" -Detail "Project-detected deployment-mode statuses match scripts/deployment-mode-support.json.")) | Out-Null
+    }
+    else {
+        $checks.Add((New-CheckResult -Name "deployment-mode-support-contract" -Status "fail" -Detail ($deploymentModeSupportMismatches -join "; "))) | Out-Null
+    }
+
+    $detectedDeploymentModeSummary = "Trim=$trimDetectedStatus; NativeAOT=$nativeAotDetectedStatus; SingleFile=$singleFileDetectedStatus"
+    if ($deploymentModeSupportMismatches.Count -eq 0) {
+        $checks.Add((New-CheckResult -Name "deployment-mode-claims" -Status "pass" -Detail "Detected deployment-mode claim status matches the repo support contract ($detectedDeploymentModeSummary).")) | Out-Null
+    }
+    else {
+        $checks.Add((New-CheckResult -Name "deployment-mode-claims" -Status "fail" -Detail ("$detectedDeploymentModeSummary. " + ($deploymentModeSupportMismatches -join "; ")))) | Out-Null
     }
 
     if (-not $SkipBuild) {
@@ -528,19 +597,52 @@ try {
                 }
             })
         }
+        DeploymentModeSupport = [pscustomobject]@{
+            ManifestPath = $deploymentModeSupportManifestRelativePath
+            ShippingBaseline = [pscustomobject]@{
+                StableTargetFramework = [string]$deploymentModeSupport.shippingBaseline.stableTargetFramework
+                ReadinessLaneTargetFramework = [string]$deploymentModeSupport.shippingBaseline.readinessLaneTargetFramework
+                ReadinessLaneStatus = [string]$deploymentModeSupport.shippingBaseline.readinessLaneStatus
+            }
+            Documentation = [pscustomobject]@{
+                GuidePath = $supportGuideRelativePath
+                ReadinessGuidePath = $readinessGuideRelativePath
+                CompatibilityGuidePath = $compatibilityGuideRelativePath
+                PackagePublishingGuidePath = $packagePublishingGuideRelativePath
+            }
+            AnalyzerOnlySignalsDoNotCount = [bool]$deploymentModeSupport.analyzerOnlySignalsDoNotCount
+            SupportChangeRequirements = @($deploymentModeSupport.supportChangeRequirements)
+            DeploymentModes = [pscustomobject]@{
+                Trim = [pscustomobject]@{
+                    Status = $expectedTrimStatus
+                    Summary = [string]$deploymentModeSupport.deploymentModes.trim.summary
+                }
+                NativeAot = [pscustomobject]@{
+                    Status = $expectedNativeAotStatus
+                    Summary = [string]$deploymentModeSupport.deploymentModes.nativeAot.summary
+                }
+                SingleFile = [pscustomobject]@{
+                    Status = $expectedSingleFileStatus
+                    Summary = [string]$deploymentModeSupport.deploymentModes.singleFile.summary
+                }
+            }
+        }
         Claims = [pscustomobject]@{
             Trim = [pscustomobject]@{
-                Status = if ($trimClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+                Status = $trimDetectedStatus
+                SupportContractStatus = $expectedTrimStatus
                 ClaimProjects = $trimClaimProjects
                 AnalyzerProjects = $trimAnalyzerProjects
             }
             NativeAot = [pscustomobject]@{
-                Status = if ($aotClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+                Status = $nativeAotDetectedStatus
+                SupportContractStatus = $expectedNativeAotStatus
                 ClaimProjects = $aotClaimProjects
                 AnalyzerProjects = $aotAnalyzerProjects
             }
             SingleFile = [pscustomobject]@{
-                Status = if ($singleFileClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+                Status = $singleFileDetectedStatus
+                SupportContractStatus = $expectedSingleFileStatus
                 ClaimProjects = $singleFileClaimProjects
             }
         }
@@ -553,6 +655,16 @@ try {
     $checkLines = @($checks | ForEach-Object { "- **$($_.Name)**: $($_.Status) — $($_.Detail)" })
     $stepLines = @($stepResults | ForEach-Object { "- **$($_.Name)**: $($_.Status) — $($_.Detail)" })
     $installedSdkLines = @($installedSdks | ForEach-Object { "- $_" })
+    $deploymentModeSupportLines = @(
+        ('- Source manifest: `{0}`' -f $report.DeploymentModeSupport.ManifestPath)
+        ('- Support guide: `{0}`' -f $report.DeploymentModeSupport.Documentation.GuidePath)
+        ('- Stable shipping floor: `{0}`' -f $report.DeploymentModeSupport.ShippingBaseline.StableTargetFramework)
+        ('- Readiness lane target framework: `{0}` ({1})' -f $report.DeploymentModeSupport.ShippingBaseline.ReadinessLaneTargetFramework, $report.DeploymentModeSupport.ShippingBaseline.ReadinessLaneStatus)
+        ('- Trim support contract: **{0}**' -f $report.DeploymentModeSupport.DeploymentModes.Trim.Status)
+        ('- Native AOT support contract: **{0}**' -f $report.DeploymentModeSupport.DeploymentModes.NativeAot.Status)
+        ('- Single-file support contract: **{0}**' -f $report.DeploymentModeSupport.DeploymentModes.SingleFile.Status)
+        '- Project-detected deployment-mode statuses must match the manifest before repo truth changes.'
+    )
 
     $markdown = @(
         "# Cephalon .NET Readiness Report"
@@ -575,11 +687,16 @@ try {
         '- Allowed exceptions remain `Cephalon.Behaviors.SourceGen` and `Cephalon.TemplatePack`, both on `netstandard2.0`.'
         '- Starter template project files remain expected to target `net10.0` until an intentional migration lane changes repo truth.'
         ""
+        "## Deployment-mode support contract"
+        ""
+        $deploymentModeSupportLines
+        ""
         "## Deployment-mode claims"
         ""
         ('- Trim status: **{0}**' -f $report.Claims.Trim.Status)
         ('- Native AOT status: **{0}**' -f $report.Claims.NativeAot.Status)
         ('- Single-file status: **{0}**' -f $report.Claims.SingleFile.Status)
+        '- Manifest-backed support statements and project-detected statuses now travel together in the readiness report.'
         '- Analyzer-only flags do not become support claims by themselves.'
         ""
         "## Checks"

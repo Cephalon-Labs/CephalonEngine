@@ -8,6 +8,7 @@ This guide records the current Cephalon truth for future-framework assessment wi
 - `global.json` still pins `.NET SDK 10.0.201`
 - the template-pack package and source-generator surface remain the two `netstandard2.0` exceptions
 - `.NET 11` is currently a readiness lane, not a default-target migration
+- trim, Native AOT, and single-file support remain explicit `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`
 
 As of `April 18, 2026`, Microsoft has:
 
@@ -45,7 +46,7 @@ The script:
 - confirms the shipped source baseline still stays on `net10.0`, with only the documented `netstandard2.0` exceptions
 - confirms starter template project files still align with the stable `net10.0` floor
 - fails if the repo starts using legacy `TargetFrameworkVersion`
-- records the current trim / Native AOT / single-file claim status
+- records the current trim / Native AOT / single-file claim status from the manifest-backed deployment-mode support contract
 - can optionally build, test, publish reference docs, and publish package artifacts under the readiness SDK without editing `global.json`
 
 Example audit-only run:
@@ -93,6 +94,8 @@ Cephalon does **not** currently treat trim, Native AOT, or single-file support a
 
 For those claims to become real support statements, Cephalon must update all of the following together:
 
+- `scripts/deployment-mode-support.json`
+- [Deployment-mode support](deployment-mode-support.md)
 - project properties that actually enable or declare the deployment mode
 - `scripts/validate-dotnet-readiness.ps1`
 - release-validation workflow coverage
@@ -102,6 +105,8 @@ For those claims to become real support statements, Cephalon must update all of 
 - backlog and roadmap tracking
 
 Analyzer-only settings are useful readiness signals, but they are not support claims by themselves.
+
+The machine-readable contract exists so future support claims cannot drift away from what the readiness report and the human-facing docs say.
 
 ## What this slice intentionally does not do
 
@@ -116,5 +121,5 @@ After this readiness baseline, the next framework-focused work should be deliber
 
 - analyzer drift review as new `.NET 11` previews and RCs arrive
 - package-surface review for Microsoft and ecosystem package compatibility under `.NET 11`
-- truthful deployment-mode validation before any trim / AOT / single-file claims are added
+- truthful deployment-mode validation before any trim / AOT / single-file claims are added on top of the shipped support-contract manifest
 - an eventual baseline-migration lane once `.NET 11` is stable enough for Cephalon's package, tooling, and template defaults

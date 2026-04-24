@@ -38,13 +38,27 @@ public sealed class DotNetReadinessTests
             var shippingBaseline = Assert.IsType<JsonObject>(report["ShippingBaseline"]);
             Assert.Equal("net10.0", shippingBaseline["StableTargetFramework"]?.GetValue<string>());
 
+            var deploymentModeSupport = Assert.IsType<JsonObject>(report["DeploymentModeSupport"]);
+            Assert.Equal("scripts/deployment-mode-support.json", deploymentModeSupport["ManifestPath"]?.GetValue<string>());
+            Assert.Equal("net10.0", deploymentModeSupport["ShippingBaseline"]?["StableTargetFramework"]?.GetValue<string>());
+            Assert.Equal("net11.0", deploymentModeSupport["ShippingBaseline"]?["ReadinessLaneTargetFramework"]?.GetValue<string>());
+            Assert.Equal("docs/deployment-mode-support.md", deploymentModeSupport["Documentation"]?["GuidePath"]?.GetValue<string>());
+            Assert.Equal("not-claimed", deploymentModeSupport["DeploymentModes"]?["Trim"]?["Status"]?.GetValue<string>());
+            Assert.Equal("not-claimed", deploymentModeSupport["DeploymentModes"]?["NativeAot"]?["Status"]?.GetValue<string>());
+            Assert.Equal("not-claimed", deploymentModeSupport["DeploymentModes"]?["SingleFile"]?["Status"]?.GetValue<string>());
+
             var claims = Assert.IsType<JsonObject>(report["Claims"]);
             Assert.Equal("not-claimed", claims["Trim"]?["Status"]?.GetValue<string>());
             Assert.Equal("not-claimed", claims["NativeAot"]?["Status"]?.GetValue<string>());
             Assert.Equal("not-claimed", claims["SingleFile"]?["Status"]?.GetValue<string>());
+            Assert.Equal("not-claimed", claims["Trim"]?["SupportContractStatus"]?.GetValue<string>());
+            Assert.Equal("not-claimed", claims["NativeAot"]?["SupportContractStatus"]?.GetValue<string>());
+            Assert.Equal("not-claimed", claims["SingleFile"]?["SupportContractStatus"]?.GetValue<string>());
 
             var markdown = File.ReadAllText(markdownPath);
             Assert.Contains("Stable shipping floor remains `net10.0`.", markdown, StringComparison.Ordinal);
+            Assert.Contains("Source manifest: `scripts/deployment-mode-support.json`", markdown, StringComparison.Ordinal);
+            Assert.Contains("Support guide: `docs/deployment-mode-support.md`", markdown, StringComparison.Ordinal);
             Assert.Contains("Trim status: **not-claimed**", markdown, StringComparison.Ordinal);
         }
         finally

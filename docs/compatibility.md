@@ -13,7 +13,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 | REST authoring and governance contract | the module-owned projection, runtime-catalog, and governance surfaces in `Cephalon.Behaviors.Http` and `Cephalon.AspNetCore` | REST-enabled `Cephalon.Scaffolding` output, `cephalon-monolith` / `cephalon-slice` / `cephalon-microservice`, `cephalon-rest-behavior-module`, `cephalon-rest-module`, blueprint samples, REST strategy docs, module-authoring docs, component docs, runtime/operator guidance, and host governance config examples |
 | Reference-doc publishing flow | `Cephalon.ReferenceDocs`, the CLI docs commands, and the host `ReferenceDocs` section | scaffolded host appsettings/readmes, docs-publish command help, hosted docs guidance, and docs examples |
 | Release package-artifact flow | `scripts/publish-package-artifacts.ps1`, `scripts/validate-release.ps1`, and the release-validation workflow | intended packable project set, shared NuGet metadata/readme defaults, CLI tool packaging, release checksum/provenance metadata, artifact uploads, and package-publishing docs |
-| Framework readiness and deployment-mode claims | `scripts/validate-dotnet-readiness.ps1` plus the dedicated `.NET 11` readiness workflow lane | `global.json`, shipped TFMs, template baselines, scaffolding/runtime defaults, docs claims, package-publishing guidance, and roadmap/backlog planning |
+| Framework readiness and deployment-mode claims | `scripts/deployment-mode-support.json`, `docs/deployment-mode-support.md`, `scripts/validate-dotnet-readiness.ps1`, and the dedicated `.NET 11` readiness workflow lane | `global.json`, shipped TFMs, template baselines, scaffolding/runtime defaults, docs claims, package-publishing guidance, and roadmap/backlog planning |
 
 ## Alignment rules
 
@@ -26,10 +26,11 @@ This guide describes the compatibility contract that must stay aligned across Ce
 
 ### Framework readiness and deployment-mode claims
 
-- use `scripts/validate-dotnet-readiness.ps1` as the repo-native truth source for current SDK selection, future-SDK assessment, target-framework audit results, and deployment-mode claim status
+- use `scripts/deployment-mode-support.json` as the explicit deployment-mode support manifest, and use `scripts/validate-dotnet-readiness.ps1` as the repo-native validation and reporting surface for current SDK selection, future-SDK assessment, target-framework audit results, and deployment-mode claim status
 - treat `.NET 11` as a readiness lane until an intentional migration changes the shipping baseline; preview compatibility does not, by itself, change Cephalon's supported default target framework
 - keep higher-SDK validation separate from `global.json` pinning so Cephalon can assess future SDKs without silently changing the stable shipping toolchain
-- do not claim trim, Native AOT, or single-file support until project settings, validation coverage, workflow automation, and docs all agree on the same support statement
+- keep `docs/deployment-mode-support.md` aligned as the human-facing explanation of that same manifest-backed support contract
+- do not claim trim, Native AOT, or single-file support until the manifest, project settings, validation coverage, workflow automation, and docs all agree on the same support statement
 - analyzer-only settings are readiness signals, not support claims
 
 ### Package manifest compatibility
@@ -87,5 +88,5 @@ Use this checklist whenever compatibility-sensitive behavior changes:
 3. If blueprint or transport semantics changed, did you update runtime contracts, scaffolding, CLI help/behavior, template starters, and docs together?
 4. If `cephalon.package.json` changed, did you update engine enforcement, scaffold/template output, authoring docs, and operational guidance together?
 5. If reference-doc publishing changed, did you update `Cephalon.ReferenceDocs`, CLI docs commands, scaffolded `ReferenceDocs` config, and `docs/reference-docs.md` together?
-6. If framework-readiness or future-SDK behavior changed, did you update `scripts/validate-dotnet-readiness.ps1`, the release-validation workflow, `docs/dotnet11-readiness.md`, `docs/project-memory.md`, and planning docs together?
-7. If trim, Native AOT, or single-file support claims changed, did you add explicit validation and update package-publishing/support docs instead of relying on analyzer output or local assumptions?
+6. If framework-readiness or future-SDK behavior changed, did you update `scripts/deployment-mode-support.json`, `scripts/validate-dotnet-readiness.ps1`, the release-validation workflow, `docs/deployment-mode-support.md`, `docs/dotnet11-readiness.md`, `docs/project-memory.md`, and planning docs together?
+7. If trim, Native AOT, or single-file support claims changed, did you add explicit validation and update the deployment-mode support manifest plus package-publishing/support docs instead of relying on analyzer output or local assumptions?

@@ -1,0 +1,39 @@
+{
+  "shippingBaseline": {
+    "stableTargetFramework": "net10.0",
+    "readinessLaneTargetFramework": "net11.0",
+    "readinessLaneStatus": "assessment-only"
+  },
+  "documentation": {
+    "guidePath": "docs/deployment-mode-support.md",
+    "readinessGuidePath": "docs/dotnet11-readiness.md",
+    "compatibilityGuidePath": "docs/compatibility.md",
+    "packagePublishingGuidePath": "docs/package-publishing.md"
+  },
+  "analyzerOnlySignalsDoNotCount": true,
+  "supportChangeRequirements": [
+    "project properties that intentionally enable or declare the deployment mode",
+    "scripts/validate-dotnet-readiness.ps1",
+    "release-validation workflow coverage",
+    "docs/deployment-mode-support.md",
+    "docs/compatibility.md",
+    "docs/package-publishing.md",
+    "docs/project-memory.md",
+    "docs/engine-roadmap.md",
+    "docs/engine-backlog.md"
+  ],
+  "deploymentModes": {
+    "trim": {
+      "status": "not-claimed",
+      "summary": "Trimming is not part of the current Cephalon support contract."
+    },
+    "nativeAot": {
+      "status": "not-claimed",
+      "summary": "Native AOT is not part of the current Cephalon support contract."
+    },
+    "singleFile": {
+      "status": "not-claimed",
+      "summary": "Single-file publishing is not part of the current Cephalon support contract."
+    }
+  }
+}

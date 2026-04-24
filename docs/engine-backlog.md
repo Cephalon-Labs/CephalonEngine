@@ -907,6 +907,32 @@ Completed work:
 - added `scripts/validate-generated-app-container-image.ps1` so the repo can scaffold a temporary app, seed local packages, preview the shipped build/push contract, build the generated image, and prove push through a local Docker registry backed by `registry:2`
 - extended scaffolding, CLI, template-pack, and documentation coverage for the generated container-image publishing contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> generated `publish-image.ps1` -> local registry push
 
+### ENG-210 Deployment-mode support contract baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-097` made the `.NET 11` readiness lane truthful, but the trim / Native AOT / single-file support statement still lived only in prose across readiness, compatibility, and package-publishing docs
+- without a machine-readable support contract, future project-property changes could drift ahead of the docs or the readiness report and accidentally over-claim deployment-mode support
+- external adopters need one explicit contract that answers "what does Cephalon support today" before the repo widens its official deployment matrix
+
+Acceptance:
+
+- the repo ships a machine-readable deployment-mode support manifest that records the current trim, Native AOT, and single-file support statement
+- `scripts/validate-dotnet-readiness.ps1` reads that manifest, publishes it back into the readiness report, and fails if project-detected claim status drifts away from the manifest-backed support contract
+- hand-authored support docs and package-publishing guidance stay aligned with the same manifest-backed support story
+- focused tooling coverage proves the readiness report and docs alignment without widening current repo truth beyond `not-claimed`
+
+Completed work:
+
+- added `scripts/deployment-mode-support.json` as the machine-readable trim / Native AOT / single-file support contract, including the current `net10.0` shipping floor and `net11.0` readiness-lane metadata
+- updated `scripts/validate-dotnet-readiness.ps1` so readiness reports now project the support manifest, validate project-detected claim status against it, and fail if the manifest documentation paths drift
+- added `docs/deployment-mode-support.md` and aligned `docs/README.md`, `docs/dotnet11-readiness.md`, `docs/compatibility.md`, and `docs/package-publishing.md` with the same support-contract story
+- extended focused tooling coverage so readiness-report JSON plus Markdown output and the framework-readiness docs hub all stay aligned with the new manifest-backed contract
+
 ### ENG-209 Generated app bootstrap doctor follow-through baseline
 
 Status: done
@@ -7766,6 +7792,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 39
 
 - ENG-097 `.NET 11` readiness baseline: the repo now ships `scripts/validate-dotnet-readiness.ps1`, `validate-release.ps1` now uses the split test projects plus emits readiness artifacts, the release-validation workflow now includes a dedicated `.NET 11` lane, and scaffolding now keeps `net11.0` Dockerfile base images aligned with the requested target framework instead of freezing on `10.0` — **Shipped** · targeted tooling tests plus readiness-script contract coverage
+- ENG-210 deployment-mode support contract baseline: the repo now ships `scripts/deployment-mode-support.json`, readiness reports now validate project-detected trim / Native AOT / single-file posture against that manifest, and the support docs now keep the same manifest-backed statement aligned across readiness, compatibility, and package-publishing guidance — **Shipped** · focused readiness and documentation coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
