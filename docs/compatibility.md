@@ -29,7 +29,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 - use `scripts/deployment-mode-support.json` as the explicit deployment-mode support manifest, and use `scripts/validate-dotnet-readiness.ps1` as the repo-native validation and reporting surface for current SDK selection, future-SDK assessment, target-framework audit results, and deployment-mode claim status
 - treat `.NET 11` as a readiness lane until an intentional migration changes the shipping baseline; preview compatibility does not, by itself, change Cephalon's supported default target framework
 - keep higher-SDK validation separate from `global.json` pinning so Cephalon can assess future SDKs without silently changing the stable shipping toolchain
-- keep `docs/deployment-mode-support.md` aligned as the human-facing explanation of that same manifest-backed support contract
+- keep `docs/deployment-mode-support.md` aligned as the human-facing explanation of that same manifest-backed support contract, and keep `cephalon doctor` plus `cephalon doctor --app-root <path>` aligned as the adoption-facing readback path for the same support truth
 - do not claim trim, Native AOT, or single-file support until the manifest, project settings, validation coverage, workflow automation, and docs all agree on the same support statement
 - analyzer-only settings are readiness signals, not support claims
 

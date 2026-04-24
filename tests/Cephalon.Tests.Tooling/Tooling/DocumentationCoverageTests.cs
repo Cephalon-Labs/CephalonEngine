@@ -154,9 +154,13 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deployment-mode-support.md", docsReadme, StringComparison.Ordinal);
         Assert.Contains("scripts/deployment-mode-support.json", compatibility, StringComparison.Ordinal);
         Assert.Contains("docs/deployment-mode-support.md", compatibility, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --app-root <path>", compatibility, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor", deploymentModeSupport, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --app-root <path>", deploymentModeSupport, StringComparison.Ordinal);
         Assert.Contains("scripts/deployment-mode-support.json", deploymentModeSupport, StringComparison.Ordinal);
         Assert.Contains("dotnet11-readiness.md", deploymentModeSupport, StringComparison.Ordinal);
         Assert.Contains("deployment-mode-support.md", dotNet11Readiness, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --app-root <path>", dotNet11Readiness, StringComparison.Ordinal);
         Assert.Contains("scripts/deployment-mode-support.json", packagePublishing, StringComparison.Ordinal);
     }
 
@@ -183,6 +187,9 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("assessment-only", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("dotnet run --project ./Acme.Store/src/Acme.Store.Host/Acme.Store.Host.csproj", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("PublishTrimmed", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("PublishAot", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("PublishSingleFile", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-publish.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("container-image-publishing.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", gettingStarted, StringComparison.Ordinal);
@@ -241,6 +248,10 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("target framework", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("PublishTrimmed", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("PublishAot", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("PublishSingleFile", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("not-claimed", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("getting-started.md", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("generated-app-publishing.md", cliPackageReadme, StringComparison.Ordinal);
@@ -263,6 +274,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", templatePackReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("generated host target framework", templatePackReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("dotnet new list cephalon", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("generated-app-publishing.md", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("container-image-publishing.md", templatePackReadme, StringComparison.Ordinal);
@@ -293,6 +305,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor", rootReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", rootReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", rootReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("publish-claim posture", rootReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("CephalonFolder.pubxml", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-windows-service.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-iis.ps1", rootReadme, StringComparison.Ordinal);

@@ -25,6 +25,11 @@ The broader framework-readiness story stays aligned through:
 - [Compatibility](compatibility.md)
 - [Package publishing](package-publishing.md)
 
+External adopters can read that same contract through:
+
+- `cephalon doctor` for the machine-level shipping floor, readiness lane, and current trim / Native AOT / single-file posture
+- `cephalon doctor --app-root <path>` for generated-app bootstrap plus generated host target-framework and publish-mode claim posture against the same contract
+
 ## What the current statuses mean
 
 - `not-claimed` means Cephalon does not currently publish trim, Native AOT, or single-file as supported deployment modes for external adopters.

@@ -100,10 +100,15 @@ After scaffolding, rerun doctor against the generated app root:
 - a seeded local `./.cephalon/packages` feed or a non-local shared feed
 - a generated host project under `src/`
 - `Properties/PublishProfiles/CephalonFolder.pubxml`
+- the generated host target framework against the stable `net10.0` shipping floor and the `.NET 11` `assessment-only` readiness lane
+- generated `PublishTrimmed`, `PublishAot`, and `PublishSingleFile` posture against the current `not-claimed` support contract
 
 Expected success characteristics:
 
 - the generated-app checks show `[ok]`
+- a generated host that stays on `net10.0` shows `[ok]` for the stable shipping floor
+- a generated host on `net11.0` or publish settings that enable trim / Native AOT / single-file show `[warn]` so teams can see readiness-only or out-of-contract posture before publish and deployment work
+- a generated host that targets something outside the current contract shows `[error]`
 - the command ends with `Set-Location`, `dotnet restore`, and `dotnet run` next steps that are copy/paste-ready for that app root
 
 If the command reports a generated-app failure, fix the missing bootstrap asset or package-source problem first, then rerun `cephalon doctor --app-root ./Acme.Store` before build, publish, or deployment work.

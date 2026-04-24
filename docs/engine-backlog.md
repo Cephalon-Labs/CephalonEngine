@@ -953,6 +953,33 @@ Completed work:
 - added `docs/deployment-mode-support.md` and aligned `docs/README.md`, `docs/dotnet11-readiness.md`, `docs/compatibility.md`, and `docs/package-publishing.md` with the same support-contract story
 - extended focused tooling coverage so readiness-report JSON plus Markdown output and the framework-readiness docs hub all stay aligned with the new manifest-backed contract
 
+### ENG-212 Generated app doctor support-contract follow-through baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-211` surfaced the packaged deployment-mode support contract at machine scope, but external adopters still had to infer whether a generated app stayed on the stable shipping floor or drifted into the `.NET 11` readiness lane or an unclaimed publish mode
+- `cephalon doctor --app-root <path>` was already the generated-app bootstrap validation command, so it was the sharpest place to compare a scaffolded host's target framework and publish settings against the same packaged support contract
+- generated-app verification should answer whether the app is still inside the current Cephalon support contract before restore, publish, or deployment work begins
+
+Acceptance:
+
+- `cephalon doctor --app-root <path>` reads the generated host target framework and compares it against the stable `net10.0` shipping floor plus the `.NET 11` assessment-only readiness lane
+- generated-app doctor reads effective `PublishTrimmed`, `PublishAot`, and `PublishSingleFile` settings from the generated host project or publish profile and compares them against the packaged deployment-mode support contract
+- stable-floor hosts emit `[ok]`, readiness-lane or unclaimed deployment-mode settings emit `[warn]`, and out-of-contract frameworks emit `[error]` with a failing doctor exit code
+- the root README, getting-started guide, CLI docs, deployment-mode-support guide, compatibility guide, .NET 11 readiness guide, CLI package README, and template-pack README stay aligned with the same generated-app support-contract story
+- focused tooling coverage proves stable-floor, readiness-lane, unclaimed publish-mode, and out-of-contract generated-app answers on the same doctor path
+
+Completed work:
+
+- extended `DoctorCommand` so generated-app doctor now inspects `TargetFramework` or `TargetFrameworks`, compares them against the packaged support contract, and keeps stable-versus-readiness-versus-out-of-contract posture visible directly in doctor output
+- added effective generated-app deployment-mode checks for `PublishTrimmed`, `PublishAot`, and `PublishSingleFile` by reading the generated host project together with `CephalonFolder.pubxml`
+- aligned the adoption docs and package READMEs so generated-app doctor now explicitly documents target-framework and publish-claim validation alongside the earlier bootstrap checks
+- extended focused tooling coverage so stable-floor generated apps stay green, readiness-lane plus unclaimed publish-mode apps warn truthfully, and out-of-contract generated hosts fail doctor with the expected error posture
+
 ### ENG-209 Generated app bootstrap doctor follow-through baseline
 
 Status: done
@@ -7814,6 +7841,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-097 `.NET 11` readiness baseline: the repo now ships `scripts/validate-dotnet-readiness.ps1`, `validate-release.ps1` now uses the split test projects plus emits readiness artifacts, the release-validation workflow now includes a dedicated `.NET 11` lane, and scaffolding now keeps `net11.0` Dockerfile base images aligned with the requested target framework instead of freezing on `10.0` — **Shipped** · targeted tooling tests plus readiness-script contract coverage
 - ENG-210 deployment-mode support contract baseline: the repo now ships `scripts/deployment-mode-support.json`, readiness reports now validate project-detected trim / Native AOT / single-file posture against that manifest, and the support docs now keep the same manifest-backed statement aligned across readiness, compatibility, and package-publishing guidance — **Shipped** · focused readiness and documentation coverage
 - ENG-211 doctor support-contract follow-through baseline: `Cephalon.Cli` now packages that same deployment-mode support manifest, `cephalon doctor` now echoes the stable shipping floor plus the `.NET 11` assessment-only readiness lane and keeps trim / Native AOT / single-file `not-claimed` posture visible from the same first-run command path, and the adoption docs plus CLI/template-pack readmes now stay aligned with that CLI-surfaced support-contract story — **Shipped** · focused CLI and documentation coverage
+- ENG-212 generated app doctor support-contract follow-through baseline: `cephalon doctor --app-root <path>` now carries that same packaged support contract into generated-app validation by comparing the scaffolded host target framework against the stable `net10.0` shipping floor plus the `.NET 11` assessment-only readiness lane, reading effective `PublishTrimmed`, `PublishAot`, and `PublishSingleFile` settings from the generated host project plus publish profile, and keeping stable-floor, readiness-lane, unclaimed publish-mode, and out-of-contract posture visible from the same generated-app bootstrap doctor path — **Shipped** · focused CLI and documentation coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153

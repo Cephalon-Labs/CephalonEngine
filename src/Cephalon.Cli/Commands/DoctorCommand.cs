@@ -290,23 +290,28 @@ internal static class DoctorCommand
             }
         }
 
-        AddDeploymentModeSupportChecks(checks);
-        var generatedApp = EvaluateGeneratedApp(options.AppRootPath, checks);
-        return new DoctorEvaluation(checks, templatePackInstalled, generatedApp);
-    }
-
-    private static void AddDeploymentModeSupportChecks(ICollection<DoctorCheck> checks)
-    {
-        if (!DeploymentModeSupportContract.TryLoad(out var supportContract, out var error) || supportContract is null)
+        DeploymentModeSupportContract? supportContract = null;
+        if (!DeploymentModeSupportContract.TryLoad(out supportContract, out var supportContractError) || supportContract is null)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Warning,
                 "Deployment-mode support contract",
-                $"Could not load the packaged deployment-mode support contract: {error}",
+                $"Could not load the packaged deployment-mode support contract: {supportContractError}",
                 "Reinstall Cephalon.Cli or inspect docs/deployment-mode-support.md from the matching repository snapshot."));
-            return;
+        }
+        else
+        {
+            AddDeploymentModeSupportChecks(checks, supportContract);
         }
 
+        var generatedApp = EvaluateGeneratedApp(options.AppRootPath, supportContract, checks);
+        return new DoctorEvaluation(checks, templatePackInstalled, generatedApp);
+    }
+
+    private static void AddDeploymentModeSupportChecks(
+        ICollection<DoctorCheck> checks,
+        DeploymentModeSupportContract supportContract)
+    {
         checks.Add(new DoctorCheck(
             DoctorCheckSeverity.Pass,
             "Deployment-mode shipping baseline",
@@ -339,6 +344,7 @@ internal static class DoctorCommand
 
     private static GeneratedAppDoctorEvaluation? EvaluateGeneratedApp(
         string? requestedAppRootPath,
+        DeploymentModeSupportContract? supportContract,
         ICollection<DoctorCheck> checks)
     {
         if (string.IsNullOrWhiteSpace(requestedAppRootPath))
@@ -481,6 +487,9 @@ internal static class DoctorCommand
             string.Join(", ", hostProjects.Select(project => ToDisplayRelativePath(resolvedAppRootPath, project.ProjectPath))),
             null));
 
+        var selectedHostProject = hostProjects[0];
+        EvaluateGeneratedAppSupportContract(selectedHostProject, resolvedAppRootPath, supportContract, checks);
+
         var missingPublishProfileProjects = hostProjects
             .Where(project => !File.Exists(project.PublishProfilePath))
             .Select(project => ToDisplayRelativePath(resolvedAppRootPath, project.ProjectPath))
@@ -503,8 +512,245 @@ internal static class DoctorCommand
                 null));
         }
 
-        var selectedHostProject = hostProjects[0];
         return new GeneratedAppDoctorEvaluation(resolvedAppRootPath, solutionPath, selectedHostProject.ProjectPath);
+    }
+
+    private static void EvaluateGeneratedAppSupportContract(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        DeploymentModeSupportContract? supportContract,
+        ICollection<DoctorCheck> checks)
+    {
+        if (supportContract is null)
+        {
+            return;
+        }
+
+        XDocument projectDocument;
+        try
+        {
+            projectDocument = XDocument.Load(hostProject.ProjectPath);
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated host target framework",
+                $"Could not inspect {ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)}: {exception.Message}",
+                "Fix the generated host project file before rerunning `cephalon doctor --app-root`."));
+            return;
+        }
+
+        var targetFrameworks = ExtractTargetFrameworks(projectDocument);
+        var stableTargetFramework = supportContract.ShippingBaseline.StableTargetFramework;
+        var readinessLaneTargetFramework = supportContract.ShippingBaseline.ReadinessLaneTargetFramework;
+        var hostProjectDisplayPath = ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath);
+
+        if (targetFrameworks.Length == 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated host target framework",
+                $"{hostProjectDisplayPath} does not declare `<TargetFramework>` or `<TargetFrameworks>`.",
+                $"Retarget the generated host project to `{stableTargetFramework}` for the shipped baseline or `{readinessLaneTargetFramework}` for the assessment-only readiness lane."));
+        }
+        else
+        {
+            var unsupportedTargetFrameworks = targetFrameworks
+                .Where(targetFramework =>
+                    !string.Equals(targetFramework, stableTargetFramework, StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(targetFramework, readinessLaneTargetFramework, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+
+            if (unsupportedTargetFrameworks.Length > 0)
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Generated host target framework",
+                    $"{hostProjectDisplayPath} targets {string.Join(", ", targetFrameworks)}, which falls outside the current Cephalon support contract.",
+                    $"Use `{stableTargetFramework}` for the supported shipping baseline or keep `{readinessLaneTargetFramework}` for assessment-only readiness work."));
+            }
+            else if (targetFrameworks.Any(targetFramework => string.Equals(targetFramework, readinessLaneTargetFramework, StringComparison.OrdinalIgnoreCase)))
+            {
+                var detail = targetFrameworks.All(targetFramework => string.Equals(targetFramework, readinessLaneTargetFramework, StringComparison.OrdinalIgnoreCase))
+                    ? $"{hostProjectDisplayPath} targets {string.Join(", ", targetFrameworks)} and stays on the assessment-only readiness lane."
+                    : $"{hostProjectDisplayPath} targets {string.Join(", ", targetFrameworks)} and includes the assessment-only readiness lane.";
+
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Warning,
+                    "Generated host target framework",
+                    detail,
+                    $"Keep `{stableTargetFramework}` for supported external adoption, or treat `{readinessLaneTargetFramework}` as readiness-only until the support contract changes."));
+            }
+            else
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Pass,
+                    "Generated host target framework",
+                    $"{hostProjectDisplayPath} targets {string.Join(", ", targetFrameworks)} and stays on the stable shipping floor.",
+                    null));
+            }
+        }
+
+        XDocument? publishProfileDocument = null;
+        if (File.Exists(hostProject.PublishProfilePath))
+        {
+            try
+            {
+                publishProfileDocument = XDocument.Load(hostProject.PublishProfilePath);
+            }
+            catch (Exception exception)
+            {
+                checks.Add(new DoctorCheck(
+                    DoctorCheckSeverity.Failure,
+                    "Generated publish profile contract",
+                    $"Could not inspect {ToDisplayRelativePath(generatedAppRootPath, hostProject.PublishProfilePath)}: {exception.Message}",
+                    "Fix the generated publish profile before rerunning `cephalon doctor --app-root`."));
+            }
+        }
+
+        AddGeneratedAppDeploymentModeCheck(
+            checks,
+            generatedAppRootPath,
+            "Generated app trim posture",
+            "PublishTrimmed",
+            supportContract.DeploymentModes.Trim,
+            projectDocument,
+            hostProject.ProjectPath,
+            publishProfileDocument,
+            hostProject.PublishProfilePath);
+
+        AddGeneratedAppDeploymentModeCheck(
+            checks,
+            generatedAppRootPath,
+            "Generated app Native AOT posture",
+            "PublishAot",
+            supportContract.DeploymentModes.NativeAot,
+            projectDocument,
+            hostProject.ProjectPath,
+            publishProfileDocument,
+            hostProject.PublishProfilePath);
+
+        AddGeneratedAppDeploymentModeCheck(
+            checks,
+            generatedAppRootPath,
+            "Generated app single-file posture",
+            "PublishSingleFile",
+            supportContract.DeploymentModes.SingleFile,
+            projectDocument,
+            hostProject.ProjectPath,
+            publishProfileDocument,
+            hostProject.PublishProfilePath);
+    }
+
+    private static void AddGeneratedAppDeploymentModeCheck(
+        ICollection<DoctorCheck> checks,
+        string generatedAppRootPath,
+        string title,
+        string propertyName,
+        DeploymentModeSupportMode supportMode,
+        XDocument projectDocument,
+        string projectPath,
+        XDocument? publishProfileDocument,
+        string publishProfilePath)
+    {
+        var observation = ResolveMsBuildPropertyObservation(
+            propertyName,
+            generatedAppRootPath,
+            projectDocument,
+            projectPath,
+            publishProfileDocument,
+            publishProfilePath);
+
+        if (observation is null)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                title,
+                $"{propertyName} is not enabled in the generated app bootstrap.",
+                null));
+            return;
+        }
+
+        if (!bool.TryParse(observation.Value, out var enabled))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Warning,
+                title,
+                $"Could not parse {propertyName}='{observation.Value}' from {observation.SourceDisplayPath}.",
+                "Use explicit `true` or `false` values if you want doctor to validate this deployment-mode posture."));
+            return;
+        }
+
+        if (!enabled)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                title,
+                $"{propertyName}=false in {observation.SourceDisplayPath}.",
+                null));
+            return;
+        }
+
+        var claimed = string.Equals(supportMode.Status, "claimed", StringComparison.OrdinalIgnoreCase);
+        checks.Add(new DoctorCheck(
+            claimed ? DoctorCheckSeverity.Pass : DoctorCheckSeverity.Warning,
+            title,
+            claimed
+                ? $"{propertyName}=true in {observation.SourceDisplayPath}. {supportMode.Summary}"
+                : $"{propertyName}=true in {observation.SourceDisplayPath}, but the support contract remains {supportMode.Status}. {supportMode.Summary}",
+            claimed
+                ? null
+                : "Treat this generated app as outside the supported external-adoption baseline until you remove the deployment-mode claim or the support contract changes."));
+    }
+
+    private static string[] ExtractTargetFrameworks(XDocument projectDocument)
+    {
+        return projectDocument
+            .Descendants()
+            .Where(element =>
+                string.Equals(element.Name.LocalName, "TargetFramework", StringComparison.Ordinal) ||
+                string.Equals(element.Name.LocalName, "TargetFrameworks", StringComparison.Ordinal))
+            .Select(element => element.Value)
+            .SelectMany(value => value.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static MsBuildPropertyObservation? ResolveMsBuildPropertyObservation(
+        string propertyName,
+        string generatedAppRootPath,
+        XDocument projectDocument,
+        string projectPath,
+        XDocument? publishProfileDocument,
+        string publishProfilePath)
+    {
+        var publishProfileValue = publishProfileDocument is null
+            ? null
+            : FindMsBuildPropertyValue(publishProfileDocument, propertyName);
+        if (!string.IsNullOrWhiteSpace(publishProfileValue))
+        {
+            return new MsBuildPropertyObservation(
+                publishProfileValue,
+                ToDisplayRelativePath(generatedAppRootPath, publishProfilePath));
+        }
+
+        var projectValue = FindMsBuildPropertyValue(projectDocument, propertyName);
+        return string.IsNullOrWhiteSpace(projectValue)
+            ? null
+            : new MsBuildPropertyObservation(
+                projectValue,
+                ToDisplayRelativePath(generatedAppRootPath, projectPath));
+    }
+
+    private static string? FindMsBuildPropertyValue(XDocument document, string propertyName)
+    {
+        return document
+            .Descendants()
+            .FirstOrDefault(element => string.Equals(element.Name.LocalName, propertyName, StringComparison.Ordinal))
+            ?.Value
+            .Trim();
     }
 
     private static void EvaluatePackageSource(
@@ -856,4 +1102,8 @@ internal static class DoctorCommand
         string ProjectPath,
         string AppSettingsPath,
         string PublishProfilePath);
+
+    private sealed record MsBuildPropertyObservation(
+        string Value,
+        string SourceDisplayPath);
 }
