@@ -1033,6 +1033,34 @@ Completed work:
 - aligned `README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/deployment-mode-support.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated self-hosted and hosted deployment-asset doctor flow
 - extended focused CLI and documentation coverage for aligned published-output deployment assets, missing self-hosted and hosted deployment assets, and drifted published-output deployment scripts
 
+### ENG-216 Generated app doctor documentation-surface config alignment baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- `ENG-215` made generated-app doctor truthful about local orchestration assets, but external adopters could still drift `Configurations/AddOpenApi.json` or `Configurations/AddReferenceDocs.json` without the same command path warning them before they relied on `/scalar` or optional hosted reference docs
+- `cephalon doctor --app-root <path>` was already the generated-app bootstrap, support-contract, and deployment-asset command, so it was the sharpest place to validate those documentation-surface config assets instead of inventing another docs-verification command
+- generated-app verification should answer whether the scaffolded OpenAPI and hosted reference-doc config shape still stays explicit in split project settings before teams rely on those docs surfaces
+
+Acceptance:
+
+- `cephalon doctor --app-root <path>` validates the generated `Configurations/AddOpenApi.json` and `Configurations/AddReferenceDocs.json` assets alongside the earlier bootstrap, deployment-asset, and support-contract checks
+- generated-app doctor verifies that the generated OpenAPI settings still keep an explicit `OpenApi:Title`
+- generated-app doctor verifies that the generated hosted reference-doc settings still keep explicit `ReferenceDocs:Enabled`, `RoutePrefix`, `DirectoryPath`, and `DefaultDocument` values
+- aligned documentation-surface assets emit `[ok]`, while missing or drifted OpenAPI or hosted reference-doc config assets emit `[error]` with a failing doctor exit code
+- the root README, getting-started guide, CLI docs, reference-docs guide, CLI package README, and template-pack README stay aligned with the same generated documentation-surface doctor story
+- focused tooling coverage proves aligned documentation-surface assets, missing generated documentation-surface assets, and drifted OpenAPI or hosted reference-doc baseline settings on the same doctor path
+
+Completed work:
+
+- extended `DoctorCommand` so generated-app doctor now validates the shipped `Configurations/AddOpenApi.json` and `Configurations/AddReferenceDocs.json` assets as part of the generated-app bootstrap answer
+- added generated documentation-surface baseline checks that compare `AddOpenApi.json` against an explicit `OpenApi:Title` and compare `AddReferenceDocs.json` against explicit hosted reference-doc enablement, route, directory, and default-document settings before teams rely on `/scalar` or hosted reference docs
+- aligned `README.md`, `docs/getting-started.md`, `docs/components/cli.md`, `docs/reference-docs.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated documentation-surface doctor flow
+- extended focused CLI and documentation coverage for aligned documentation-surface assets, missing generated documentation-surface assets, and drifted OpenAPI or hosted reference-doc baseline settings
+
 ### ENG-213 Generated app doctor deployment-asset alignment baseline
 
 Status: done
@@ -7923,6 +7951,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-213 generated app doctor deployment-asset alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Dockerfile` plus the shipped container-image, Azure Container Apps, and Kubernetes deployment assets, compares generated Dockerfile SDK/runtime base-image tags against the generated host target framework baseline, and keeps stable-floor versus readiness-lane deployment-asset posture visible from the same generated-app bootstrap doctor path before container deployment work begins — **Shipped** · focused CLI and documentation coverage
 - ENG-214 generated app doctor self-hosted and hosted deployment-asset alignment baseline: `cephalon doctor --app-root <path>` now validates the shipped Windows Service, IIS, Azure App Service, and Linux `systemd` deployment assets, compares those generated published-output deployment scripts and units against the current host identity, and keeps self-hosted plus hosted deployment-asset posture visible from the same generated-app bootstrap doctor path before published-output deployment work begins — **Shipped** · focused CLI and documentation coverage
 - ENG-215 generated app doctor local orchestration asset alignment baseline: `cephalon doctor --app-root <path>` now validates the shipped `compose.yaml` and `otel-collector-config.yaml` assets, compares the generated compose baseline against the shipped Dockerfile plus OTLP collector handoff, compares the generated collector config against `health_check`, `otlp/http` on `4318`, and the debug-exporter pipelines, and keeps generated local orchestration posture visible from the same generated-app bootstrap doctor path before local `docker compose up --build` work begins — **Shipped** · focused CLI and documentation coverage
+- ENG-216 generated app doctor documentation-surface config alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Configurations/AddOpenApi.json` and `Configurations/AddReferenceDocs.json` assets, compares `AddOpenApi.json` against an explicit `OpenApi:Title`, compares `AddReferenceDocs.json` against explicit hosted reference-doc enablement, route, directory, and default-document settings, and keeps `/scalar` plus optional hosted reference-doc posture visible from the same generated-app bootstrap doctor path before teams rely on those docs surfaces — **Shipped** · focused CLI and documentation coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153

@@ -177,6 +177,7 @@ public sealed class DocumentationCoverageTests
         var azureContainerAppsDeployment = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "azure-container-apps-deployment.md"));
         var kubernetesDeployment = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "kubernetes-deployment.md"));
         var linuxSystemdDeployment = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "linux-systemd-deployment.md"));
+        var referenceDocsGuide = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "reference-docs.md"));
         var cliPackageReadme = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Cephalon.Cli", "PACKAGE.md"));
         var templatePackReadme = File.ReadAllText(Path.Combine(repositoryRoot, "templates", "Cephalon.TemplatePack", "PACKAGE.md"));
         var rootReadme = File.ReadAllText(Path.Combine(repositoryRoot, "README.md"));
@@ -187,6 +188,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("assessment-only", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("dotnet run --project ./Acme.Store/src/Acme.Store.Host/Acme.Store.Host.csproj", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("AddOpenApi.json", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("AddReferenceDocs.json", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("self-hosted and hosted deployment assets", gettingStarted, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("generated Dockerfile SDK/runtime image tags", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("PublishTrimmed", gettingStarted, StringComparison.Ordinal);
@@ -259,6 +262,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("PublishAot", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("PublishSingleFile", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("not-claimed", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("AddOpenApi.json", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("AddReferenceDocs.json", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("self-hosted and hosted deployment assets", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("getting-started.md", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("generated-app-publishing.md", cliPackageReadme, StringComparison.Ordinal);
@@ -282,6 +287,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", templatePackReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("AddOpenApi.json", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("AddReferenceDocs.json", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("self-hosted and hosted deployment assets", templatePackReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("generated host target framework", templatePackReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("generated Dockerfile baseline", templatePackReadme, StringComparison.OrdinalIgnoreCase);
@@ -315,6 +322,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor", rootReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", rootReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", rootReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Configurations/AddOpenApi.json", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("Configurations/AddReferenceDocs.json", rootReadme, StringComparison.Ordinal);
         Assert.Contains("self-hosted and hosted deployment assets", rootReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Dockerfile baseline", rootReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("publish-claim posture", rootReadme, StringComparison.OrdinalIgnoreCase);
@@ -332,6 +341,9 @@ public sealed class DocumentationCoverageTests
         Assert.Contains(".cephalon/packages", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("NuGet.config", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("AddReferenceDocs.json", referenceDocsGuide, StringComparison.Ordinal);
+        Assert.Contains("AddOpenApi.json", referenceDocsGuide, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --app-root <path>", referenceDocsGuide, StringComparison.Ordinal);
     }
 
     [Fact]

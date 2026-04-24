@@ -1,4 +1,5 @@
 using Cephalon.Cli.Console;
+using System.Text.Json.Nodes;
 using System.Xml.Linq;
 
 namespace Cephalon.Cli.Commands;
@@ -518,6 +519,7 @@ internal static class DoctorCommand
 
         var selectedHostProject = hostProjects[0];
         EvaluateGeneratedAppSupportContract(selectedHostProject, resolvedAppRootPath, supportContract, checks);
+        EvaluateGeneratedDocumentationSurfaceAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedAppDeploymentAssets(selectedHostProject, resolvedAppRootPath, solutionPath, supportContract, checks);
 
         var missingPublishProfileProjects = hostProjects
@@ -782,6 +784,44 @@ internal static class DoctorCommand
         EvaluateGeneratedLinuxSystemdBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
     }
 
+    private static void EvaluateGeneratedDocumentationSurfaceAssets(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        var openApiSettingsPath = Path.Combine(hostProject.DirectoryPath, "Configurations", "AddOpenApi.json");
+        var referenceDocsSettingsPath = Path.Combine(hostProject.DirectoryPath, "Configurations", "AddReferenceDocs.json");
+
+        var missingRelativePaths = new[]
+            {
+                openApiSettingsPath,
+                referenceDocsSettingsPath
+            }
+            .Where(path => !File.Exists(path))
+            .Select(path => ToDisplayRelativePath(generatedAppRootPath, path))
+            .ToArray();
+
+        if (missingRelativePaths.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated documentation surface assets",
+                $"Missing generated documentation surface assets: {string.Join(", ", missingRelativePaths)}.",
+                "Restore the generated OpenAPI and hosted reference-doc config assets or regenerate the app before teams rely on `/scalar` or hosted reference-doc routes."));
+        }
+        else
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Generated documentation surface assets",
+                $"{ToDisplayRelativePath(generatedAppRootPath, openApiSettingsPath)} and {ToDisplayRelativePath(generatedAppRootPath, referenceDocsSettingsPath)} are present.",
+                null));
+        }
+
+        EvaluateGeneratedOpenApiBaseline(openApiSettingsPath, generatedAppRootPath, checks);
+        EvaluateGeneratedReferenceDocsBaseline(referenceDocsSettingsPath, generatedAppRootPath, checks);
+    }
+
     private static void EvaluateGeneratedLocalOrchestrationAssets(
         string generatedAppRootPath,
         ICollection<DoctorCheck> checks)
@@ -902,6 +942,119 @@ internal static class DoctorCommand
             DoctorCheckSeverity.Pass,
             "Generated OpenTelemetry collector baseline",
             $"{ToDisplayRelativePath(generatedAppRootPath, collectorConfigPath)} keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.",
+            null));
+    }
+
+    private static void EvaluateGeneratedOpenApiBaseline(
+        string openApiSettingsPath,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(openApiSettingsPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedJsonObjectAsset(
+                openApiSettingsPath,
+                generatedAppRootPath,
+                "Generated OpenAPI baseline",
+                "Fix the generated AddOpenApi.json file before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var openApiRoot))
+        {
+            return;
+        }
+
+        if (openApiRoot["OpenApi"] is not JsonObject openApiSection)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated OpenAPI baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, openApiSettingsPath)} no longer keeps an explicit `OpenApi` section for the generated REST docs surface.",
+                "Restore the generated AddOpenApi.json file so `/openapi/*` and `/scalar` configuration stays explicit in the split project settings."));
+            return;
+        }
+
+        var title = GetRequiredJsonString(openApiSection, "Title");
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated OpenAPI baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, openApiSettingsPath)} no longer keeps an explicit `OpenApi:Title` for the generated REST docs surface.",
+                "Restore the generated AddOpenApi.json file so the OpenAPI title stays explicit before teams rely on `/openapi/*` and `/scalar`."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated OpenAPI baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, openApiSettingsPath)} keeps the generated REST docs surface explicit with Title='{title}'.",
+            null));
+    }
+
+    private static void EvaluateGeneratedReferenceDocsBaseline(
+        string referenceDocsSettingsPath,
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(referenceDocsSettingsPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedJsonObjectAsset(
+                referenceDocsSettingsPath,
+                generatedAppRootPath,
+                "Generated hosted reference docs baseline",
+                "Fix the generated AddReferenceDocs.json file before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var referenceDocsRoot))
+        {
+            return;
+        }
+
+        if (referenceDocsRoot["ReferenceDocs"] is not JsonObject referenceDocsSection)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated hosted reference docs baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, referenceDocsSettingsPath)} no longer keeps an explicit `ReferenceDocs` section for optional hosted API reference output.",
+                "Restore the generated AddReferenceDocs.json file so hosted reference-doc settings stay explicit even when the route remains disabled by default."));
+            return;
+        }
+
+        if (!TryGetRequiredBoolean(referenceDocsSection, "Enabled", out var enabled))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated hosted reference docs baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, referenceDocsSettingsPath)} no longer keeps an explicit boolean `ReferenceDocs:Enabled` setting.",
+                "Restore the generated AddReferenceDocs.json file so hosted reference-doc enablement stays explicit."));
+            return;
+        }
+
+        var routePrefix = GetRequiredJsonString(referenceDocsSection, "RoutePrefix");
+        var directoryPath = GetRequiredJsonString(referenceDocsSection, "DirectoryPath");
+        var defaultDocument = GetRequiredJsonString(referenceDocsSection, "DefaultDocument");
+        if (string.IsNullOrWhiteSpace(routePrefix) ||
+            !routePrefix.StartsWith('/') ||
+            string.IsNullOrWhiteSpace(directoryPath) ||
+            string.IsNullOrWhiteSpace(defaultDocument))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated hosted reference docs baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, referenceDocsSettingsPath)} no longer keeps explicit hosted reference-doc route, directory, and default-document settings.",
+                "Restore the generated AddReferenceDocs.json file so hosted reference-doc routing and directory defaults stay explicit before teams turn that route on."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated hosted reference docs baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, referenceDocsSettingsPath)} keeps hosted reference docs explicit with Enabled={enabled.ToString().ToLowerInvariant()}, RoutePrefix={routePrefix}, DirectoryPath={directoryPath}, and DefaultDocument={defaultDocument}.",
             null));
     }
 
@@ -1330,6 +1483,73 @@ internal static class DoctorCommand
             contents = string.Empty;
             return false;
         }
+    }
+
+    private static bool TryReadGeneratedJsonObjectAsset(
+        string path,
+        string generatedAppRootPath,
+        string checkTitle,
+        string failureGuidance,
+        ICollection<DoctorCheck> checks,
+        out JsonObject rootObject)
+    {
+        if (!TryReadGeneratedTextAsset(
+                path,
+                generatedAppRootPath,
+                checkTitle,
+                failureGuidance,
+                checks,
+                out var contents))
+        {
+            rootObject = new JsonObject();
+            return false;
+        }
+
+        try
+        {
+            if (JsonNode.Parse(contents) is JsonObject parsedObject)
+            {
+                rootObject = parsedObject;
+                return true;
+            }
+
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                checkTitle,
+                $"{ToDisplayRelativePath(generatedAppRootPath, path)} did not parse as a JSON object.",
+                failureGuidance));
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                checkTitle,
+                $"Could not parse {ToDisplayRelativePath(generatedAppRootPath, path)}: {exception.Message}",
+                failureGuidance));
+        }
+
+        rootObject = new JsonObject();
+        return false;
+    }
+
+    private static string? GetRequiredJsonString(JsonObject node, string propertyName)
+    {
+        var value = node[propertyName];
+        return value is JsonValue jsonValue && jsonValue.TryGetValue<string>(out var stringValue)
+            ? stringValue?.Trim()
+            : null;
+    }
+
+    private static bool TryGetRequiredBoolean(JsonObject node, string propertyName, out bool value)
+    {
+        var property = node[propertyName];
+        if (property is JsonValue jsonValue && jsonValue.TryGetValue<bool>(out value))
+        {
+            return true;
+        }
+
+        value = false;
+        return false;
     }
 
     private static MsBuildPropertyObservation? ResolveMsBuildPropertyObservation(

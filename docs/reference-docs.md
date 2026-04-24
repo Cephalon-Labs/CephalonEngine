@@ -47,6 +47,8 @@ Current follow-up boundary:
 
 `Cephalon.AspNetCore` can optionally serve the generated output directly from a running host when `ReferenceDocs` hosting is enabled.
 
+Generated app roots now also emit `Configurations/AddReferenceDocs.json` with the disabled-by-default hosted reference-doc baseline, and `cephalon doctor --app-root <path>` validates that file together with `Configurations/AddOpenApi.json` so the generated `/scalar` plus hosted-reference-doc config shape stays explicit before teams rely on either surface.
+
 ```json
 {
   "ReferenceDocs": {
