@@ -959,6 +959,38 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileState(string providerOwnedControlPlaneMutationReconcileState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(providerOwnedControlPlaneMutationReconcileState);
+        var normalizedProviderOwnedControlPlaneMutationReconcileState = providerOwnedControlPlaneMutationReconcileState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderOwnedControlPlaneMutationReconcile.State,
+            normalizedProviderOwnedControlPlaneMutationReconcileState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileCategory(string providerOwnedControlPlaneMutationReconcileCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(providerOwnedControlPlaneMutationReconcileCategory);
+        var normalizedProviderOwnedControlPlaneMutationReconcileCategory = providerOwnedControlPlaneMutationReconcileCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorProviderOwnedControlPlaneMutationReconcile.CategoryIds.Contains(
+            normalizedProviderOwnedControlPlaneMutationReconcileCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorProviderOwnedControlPlaneMutationReconcile.OperationId,
+            normalizedOperationId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
@@ -1368,6 +1400,27 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandJournal,
             managedConnectorDurableSharedSchedulerOrchestration,
             managedConnectorSchedulerRecoveryExecutionHardening);
+        var managedConnectorProviderOwnedControlPlaneMutationReconcile = CreateManagedConnectorProviderOwnedControlPlaneMutationReconcile(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionOwnership,
+            runtime.ExecutionTopology,
+            managedConnectorProviderOwnedControlPlaneOwnership.ManagementMode ??
+            managedConnectorProviderExecutionOrchestration.ManagementMode ??
+            managedConnectorProviderOwnedWritePathExecution.ManagementMode ??
+            managedConnectorCommandIssuance.ManagementMode ??
+            managedConnectorCommandEnvelope.ManagementMode ??
+            managedConnectorRetryExecutionPolicy.ManagementMode ??
+            managedConnectorCommandRetry.ManagementMode,
+            managedConnectorProviderOwnedControlPlaneOwnership,
+            managedConnectorProviderExecutionOrchestration,
+            managedConnectorProviderOwnedWritePathExecution,
+            managedConnectorCommandEnvelope,
+            managedConnectorCommandIssuance,
+            managedConnectorCommandExecution,
+            managedConnectorCommandRetry,
+            managedConnectorRetryExecutionPolicy,
+            managedConnectorCommandJournal);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
@@ -1403,7 +1456,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorSchedulerRecoveryExecutionHardening = managedConnectorSchedulerRecoveryExecutionHardening,
             ManagedConnectorProviderOwnedWritePathExecution = managedConnectorProviderOwnedWritePathExecution,
             ManagedConnectorProviderExecutionOrchestration = managedConnectorProviderExecutionOrchestration,
-            ManagedConnectorProviderOwnedControlPlaneOwnership = managedConnectorProviderOwnedControlPlaneOwnership
+            ManagedConnectorProviderOwnedControlPlaneOwnership = managedConnectorProviderOwnedControlPlaneOwnership,
+            ManagedConnectorProviderOwnedControlPlaneMutationReconcile = managedConnectorProviderOwnedControlPlaneMutationReconcile
         };
     }
 
@@ -12472,6 +12526,780 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipSources.Unknown;
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus CreateManagedConnectorProviderOwnedControlPlaneMutationReconcile(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string executionOwnership,
+        string executionTopology,
+        string? managementMode,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus providerOwnedControlPlaneOwnership,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneOwnership);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(commandEnvelope);
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandRetry);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+
+        var normalizedExecutionOwnership = string.IsNullOrWhiteSpace(executionOwnership)
+            ? "runtime-managed"
+            : executionOwnership.Trim();
+        var normalizedExecutionTopology = string.IsNullOrWhiteSpace(executionTopology)
+            ? "not-configured"
+            : executionTopology.Trim();
+        var normalizedOperationId =
+            !string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.OperationId)
+                ? providerOwnedControlPlaneOwnership.OperationId.Trim()
+                : !string.IsNullOrWhiteSpace(commandIssuance.OperationId)
+                    ? commandIssuance.OperationId.Trim()
+                    : !string.IsNullOrWhiteSpace(commandEnvelope.OperationId)
+                        ? commandEnvelope.OperationId.Trim()
+                        : !string.IsNullOrWhiteSpace(retryExecutionPolicy.OperationId)
+                            ? retryExecutionPolicy.OperationId.Trim()
+                            : !string.IsNullOrWhiteSpace(commandRetry.OperationId)
+                                ? commandRetry.OperationId.Trim()
+                                : !string.IsNullOrWhiteSpace(latestCommandExecution.ResolvedOperationId)
+                                    ? latestCommandExecution.ResolvedOperationId.Trim()
+                                    : !string.IsNullOrWhiteSpace(latestCommandExecution.RequestedOperationId)
+                                        ? latestCommandExecution.RequestedOperationId.Trim()
+                                        : CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None;
+        var appliesToManagedConnector =
+            string.Equals(normalizedExecutionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) &&
+            (providerOwnedControlPlaneOwnership.AppliesToManagedConnector ||
+             providerExecutionOrchestration.AppliesToManagedConnector ||
+             providerOwnedWritePathExecution.AppliesToManagedConnector ||
+             commandEnvelope.AppliesToManagedConnector ||
+             commandIssuance.AppliesToManagedConnector ||
+             commandRetry.AppliesToManagedConnector ||
+             retryExecutionPolicy.AppliesToManagedConnector ||
+             !string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable, StringComparison.OrdinalIgnoreCase));
+        var hasTargetOperation = !string.Equals(
+            normalizedOperationId,
+            CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.None,
+            StringComparison.OrdinalIgnoreCase);
+        var isReconcileOperation = hasTargetOperation &&
+                                   string.Equals(
+                                       normalizedOperationId,
+                                       CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile,
+                                       StringComparison.OrdinalIgnoreCase);
+        var isMutationOperation = hasTargetOperation && !isReconcileOperation;
+        var hasCommandJournalEvidence =
+            providerOwnedControlPlaneOwnership.HasCommandJournalEvidence ||
+            (!string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable, StringComparison.OrdinalIgnoreCase) &&
+             !string.Equals(commandJournal.State, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.Empty, StringComparison.OrdinalIgnoreCase));
+        var hasDurableStoreConfigured = providerOwnedControlPlaneOwnership.HasDurableStoreConfigured;
+        var hasPersistedRecordedHistory = providerOwnedControlPlaneOwnership.HasPersistedRecordedHistory;
+        var hasRecoveredPersistedHistory = providerOwnedControlPlaneOwnership.HasRecoveredPersistedHistory;
+        var wouldApplyChanges =
+            providerOwnedControlPlaneOwnership.WouldApplyChanges ||
+            commandEnvelope.WouldApplyChanges ||
+            commandIssuance.WouldApplyChanges ||
+            commandRetry.WouldApplyChanges ||
+            retryExecutionPolicy.WouldApplyChanges ||
+            latestCommandExecution.WouldApplyChanges;
+        var requiresExplicitApproval =
+            providerOwnedControlPlaneOwnership.RequiresExplicitApproval ||
+            commandEnvelope.RequiresExplicitApproval ||
+            commandIssuance.RequiresExplicitApproval ||
+            commandRetry.RequiresExplicitApproval ||
+            retryExecutionPolicy.RequiresExplicitApproval ||
+            latestCommandExecution.RequiresExplicitApproval;
+        var isDestructiveOperation =
+            providerOwnedControlPlaneOwnership.IsDestructiveOperation ||
+            commandEnvelope.IsDestructiveOperation ||
+            commandIssuance.IsDestructiveOperation ||
+            commandRetry.IsDestructiveOperation ||
+            retryExecutionPolicy.IsDestructiveOperation ||
+            latestCommandExecution.IsDestructiveOperation;
+        var canExerciseProviderOwnedControlPlaneOnCurrentNode = providerOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode;
+        var canMutateOrReconcileOnCurrentNode =
+            hasTargetOperation &&
+            canExerciseProviderOwnedControlPlaneOnCurrentNode &&
+            !requiresExplicitApproval &&
+            !isDestructiveOperation &&
+            (providerOwnedControlPlaneOwnership.IsOwnershipReady ||
+             providerOwnedControlPlaneOwnership.IsOwnershipPartial ||
+             providerOwnedControlPlaneOwnership.IsOwnershipActive ||
+             providerExecutionOrchestration.IsOrchestrationReady ||
+             providerExecutionOrchestration.IsOrchestrationCompleted ||
+             providerOwnedWritePathExecution.IsProviderExecutable ||
+             providerOwnedWritePathExecution.IsProviderOwnedCompleted ||
+             commandEnvelope.IsEngineReady ||
+             commandIssuance.IsAccepted ||
+             commandIssuance.IsIssued ||
+             retryExecutionPolicy.IsRetryReady);
+        var state =
+            !appliesToManagedConnector
+                ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.NotApplicable
+                : providerOwnedControlPlaneOwnership.IsOperatorOnly ||
+                  commandEnvelope.IsOperatorOnly ||
+                  commandIssuance.IsOperatorOnly ||
+                  commandRetry.IsOperatorOnly ||
+                  retryExecutionPolicy.IsOperatorOnly
+                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.OperatorOnly
+                    : providerOwnedControlPlaneOwnership.IsOwnershipRisk ||
+                      providerExecutionOrchestration.IsOrchestrationRisk ||
+                      providerOwnedWritePathExecution.IsProviderOwnedRisk ||
+                      latestCommandExecution.IsFailed
+                        ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationRisk
+                        : providerOwnedControlPlaneOwnership.IsOwnershipActive ||
+                          providerExecutionOrchestration.IsOrchestrationExecuting ||
+                          providerOwnedWritePathExecution.IsProviderOwnedExecuting ||
+                          latestCommandExecution.IsAdapted
+                            ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationExecuting
+                            : isReconcileOperation
+                                ? canMutateOrReconcileOnCurrentNode
+                                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.ReconcileReady
+                                    : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.ReconcileBlocked
+                                : isMutationOperation && canMutateOrReconcileOnCurrentNode
+                                    ? CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationReady
+                                    : CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationBlocked;
+        var categories = CreateManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories(
+            state,
+            isMutationOperation,
+            isReconcileOperation,
+            providerOwnedControlPlaneOwnership,
+            providerExecutionOrchestration,
+            providerOwnedWritePathExecution,
+            commandEnvelope,
+            commandIssuance,
+            latestCommandExecution,
+            commandRetry,
+            retryExecutionPolicy,
+            canMutateOrReconcileOnCurrentNode,
+            wouldApplyChanges,
+            requiresExplicitApproval,
+            isDestructiveOperation,
+            hasCommandJournalEvidence,
+            hasDurableStoreConfigured,
+            hasPersistedRecordedHistory,
+            hasRecoveredPersistedHistory);
+        var description = CreateManagedConnectorProviderOwnedControlPlaneMutationReconcileDescription(
+            state,
+            normalizedOperationId,
+            hasTargetOperation,
+            isReconcileOperation,
+            providerOwnedControlPlaneOwnership,
+            commandEnvelope,
+            commandIssuance,
+            latestCommandExecution,
+            commandRetry,
+            retryExecutionPolicy,
+            commandJournal,
+            canMutateOrReconcileOnCurrentNode);
+        var sourceId = ResolveManagedConnectorProviderOwnedControlPlaneMutationReconcileSourceId(
+            state,
+            providerOwnedControlPlaneOwnership,
+            providerExecutionOrchestration,
+            providerOwnedWritePathExecution,
+            commandEnvelope,
+            commandIssuance,
+            latestCommandExecution,
+            commandRetry,
+            retryExecutionPolicy,
+            hasCommandJournalEvidence);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStatus(state, description)
+        {
+            CategoryIds = categories,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ExecutionOwnership = normalizedExecutionOwnership,
+            ExecutionTopology = normalizedExecutionTopology,
+            ManagementMode = managementMode,
+            OperationId = normalizedOperationId,
+            SourceId = sourceId,
+            ProviderOwnedControlPlaneOwnershipState = providerOwnedControlPlaneOwnership.State,
+            ProviderExecutionOrchestrationState = providerExecutionOrchestration.State,
+            ProviderOwnedWritePathExecutionState = providerOwnedWritePathExecution.State,
+            CommandEnvelopeState = commandEnvelope.State,
+            CommandIssuanceState = commandIssuance.State,
+            LatestCommandExecutionState = latestCommandExecution.State,
+            LatestCommandExecutionInvocationSourceId = latestCommandExecution.InvocationSourceId,
+            CommandRetryState = commandRetry.State,
+            RetryExecutionPolicyState = retryExecutionPolicy.State,
+            CommandJournalState = commandJournal.State,
+            AdapterId = !string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.AdapterId)
+                ? providerOwnedControlPlaneOwnership.AdapterId
+                : providerOwnedWritePathExecution.AdapterId,
+            ProviderId = providerOwnedControlPlaneOwnership.ProviderId ??
+                         providerOwnedWritePathExecution.ProviderId ??
+                         latestCommandExecution.ProviderId,
+            ConnectClusterId = providerOwnedControlPlaneOwnership.ConnectClusterId ??
+                               providerOwnedWritePathExecution.ConnectClusterId ??
+                               commandIssuance.ConnectClusterId ??
+                               commandEnvelope.ConnectClusterId ??
+                               retryExecutionPolicy.ConnectClusterId ??
+                               commandRetry.ConnectClusterId ??
+                               latestCommandExecution.ConnectClusterId,
+            ConnectorClass = providerOwnedControlPlaneOwnership.ConnectorClass ??
+                             providerOwnedWritePathExecution.ConnectorClass ??
+                             commandIssuance.ConnectorClass ??
+                             commandEnvelope.ConnectorClass ??
+                             retryExecutionPolicy.ConnectorClass ??
+                             commandRetry.ConnectorClass ??
+                             latestCommandExecution.ConnectorClass,
+            SourceProviderId = providerOwnedControlPlaneOwnership.SourceProviderId ??
+                               providerOwnedWritePathExecution.SourceProviderId ??
+                               commandIssuance.SourceProviderId ??
+                               commandEnvelope.SourceProviderId ??
+                               retryExecutionPolicy.SourceProviderId ??
+                               commandRetry.SourceProviderId ??
+                               latestCommandExecution.SourceProviderId,
+            CommandFingerprint = !string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.CommandFingerprint)
+                ? providerOwnedControlPlaneOwnership.CommandFingerprint
+                : !string.IsNullOrWhiteSpace(commandIssuance.CommandFingerprint)
+                    ? commandIssuance.CommandFingerprint
+                    : !string.IsNullOrWhiteSpace(commandEnvelope.CommandFingerprint)
+                        ? commandEnvelope.CommandFingerprint
+                        : !string.IsNullOrWhiteSpace(commandRetry.CommandFingerprint)
+                            ? commandRetry.CommandFingerprint
+                            : latestCommandExecution.CommandFingerprint,
+            IssuanceFingerprint = !string.IsNullOrWhiteSpace(commandIssuance.IssuanceFingerprint)
+                ? commandIssuance.IssuanceFingerprint
+                : !string.IsNullOrWhiteSpace(commandRetry.IssuanceFingerprint)
+                    ? commandRetry.IssuanceFingerprint
+                    : retryExecutionPolicy.IssuanceFingerprint,
+            LatestExecutionFingerprint = !string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.LatestExecutionFingerprint)
+                ? providerOwnedControlPlaneOwnership.LatestExecutionFingerprint
+                : !string.IsNullOrWhiteSpace(latestCommandExecution.ExecutionFingerprint)
+                    ? latestCommandExecution.ExecutionFingerprint
+                    : retryExecutionPolicy.LatestExecutionFingerprint,
+            RetryFingerprint = !string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.RetryFingerprint)
+                ? providerOwnedControlPlaneOwnership.RetryFingerprint
+                : !string.IsNullOrWhiteSpace(commandRetry.RetryFingerprint)
+                    ? commandRetry.RetryFingerprint
+                    : retryExecutionPolicy.RetryFingerprint,
+            PotentialChangeCount = providerOwnedControlPlaneOwnership.PotentialChangeCount > 0
+                ? providerOwnedControlPlaneOwnership.PotentialChangeCount
+                : commandIssuance.PotentialChangeCount > 0
+                    ? commandIssuance.PotentialChangeCount
+                    : commandEnvelope.PotentialChangeCount > 0
+                        ? commandEnvelope.PotentialChangeCount
+                        : commandRetry.PotentialChangeCount > 0
+                            ? commandRetry.PotentialChangeCount
+                            : retryExecutionPolicy.PotentialChangeCount,
+            LatestAttemptId = !string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.LatestAttemptId)
+                ? providerOwnedControlPlaneOwnership.LatestAttemptId
+                : !string.IsNullOrWhiteSpace(latestCommandExecution.AttemptId)
+                    ? latestCommandExecution.AttemptId
+                    : !string.IsNullOrWhiteSpace(commandRetry.LatestAttemptId)
+                        ? commandRetry.LatestAttemptId
+                        : retryExecutionPolicy.LatestAttemptId,
+            LatestRecordedAtUtc = providerOwnedControlPlaneOwnership.LatestRecordedAtUtc ??
+                                  latestCommandExecution.RecordedAtUtc ??
+                                  commandRetry.LatestRecordedAtUtc ??
+                                  retryExecutionPolicy.LatestRecordedAtUtc,
+            CoordinationOwnerId = providerOwnedControlPlaneOwnership.CoordinationOwnerId,
+            ActiveReporterId = providerOwnedControlPlaneOwnership.ActiveReporterId,
+            ActiveReporterLeaseExpiresAtUtc = providerOwnedControlPlaneOwnership.ActiveReporterLeaseExpiresAtUtc,
+            SchedulerId = providerOwnedControlPlaneOwnership.SchedulerId,
+            SchedulerKind = providerOwnedControlPlaneOwnership.SchedulerKind,
+            PollingIntervalSeconds = providerOwnedControlPlaneOwnership.PollingIntervalSeconds,
+            WouldApplyChanges = wouldApplyChanges,
+            RequiresExplicitApproval = requiresExplicitApproval,
+            IsDestructiveOperation = isDestructiveOperation,
+            HasTargetOperation = hasTargetOperation,
+            IsMutationOperation = isMutationOperation,
+            IsReconcileOperation = isReconcileOperation,
+            HasCommandJournalEvidence = hasCommandJournalEvidence,
+            HasDurableStoreConfigured = hasDurableStoreConfigured,
+            HasPersistedRecordedHistory = hasPersistedRecordedHistory,
+            HasRecoveredPersistedHistory = hasRecoveredPersistedHistory,
+            CanExerciseProviderOwnedControlPlaneOnCurrentNode = canExerciseProviderOwnedControlPlaneOnCurrentNode,
+            CanMutateOrReconcileOnCurrentNode = canMutateOrReconcileOnCurrentNode
+        };
+    }
+
+    private static string[] CreateManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories(
+        string state,
+        bool isMutationOperation,
+        bool isReconcileOperation,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus providerOwnedControlPlaneOwnership,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        bool canMutateOrReconcileOnCurrentNode,
+        bool wouldApplyChanges,
+        bool requiresExplicitApproval,
+        bool isDestructiveOperation,
+        bool hasCommandJournalEvidence,
+        bool hasDurableStoreConfigured,
+        bool hasPersistedRecordedHistory,
+        bool hasRecoveredPersistedHistory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneOwnership);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(commandEnvelope);
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandRetry);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return [];
+        }
+
+        var categories = new List<string>(capacity: 32);
+
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderOwnedControlPlaneMutationReconcile);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.OperatorOnly);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationReady, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.MutationReady);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.ReconcileReady, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ReconcileReady);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.MutationBlocked);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.ReconcileBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ReconcileBlocked);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationExecuting, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.MutationExecuting);
+        }
+        else if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.MutationRisk);
+        }
+
+        if (isMutationOperation)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.MutationOperation);
+        }
+        else if (isReconcileOperation)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ReconcileOperation);
+        }
+        else
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.NoTargetOperation);
+        }
+
+        if (canMutateOrReconcileOnCurrentNode)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.CurrentNodeExecutable);
+        }
+        else if (!string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.CurrentNodeBlocked);
+        }
+
+        if (providerOwnedControlPlaneOwnership.IsOwnershipReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.OwnershipReady);
+        }
+
+        if (providerOwnedControlPlaneOwnership.IsOwnershipBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.OwnershipBlocked);
+        }
+
+        if (providerOwnedControlPlaneOwnership.IsOwnershipActive)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.OwnershipActive);
+        }
+
+        if (providerOwnedControlPlaneOwnership.IsOwnershipPartial)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.OwnershipPartial);
+        }
+
+        if (providerOwnedControlPlaneOwnership.IsOwnershipRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.OwnershipRisk);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderExecutionReady);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderExecutionBlocked);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationExecuting)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderExecutionExecuting);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationCompleted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderExecutionCompleted);
+        }
+
+        if (providerExecutionOrchestration.IsOrchestrationRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderExecutionRisk);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderExecutable)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderExecutable);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderBlocked);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderOwnedExecuting)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderOwnedExecuting);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderOwnedCompleted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderOwnedCompleted);
+        }
+
+        if (providerOwnedWritePathExecution.IsProviderOwnedRisk)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderOwnedRisk);
+        }
+
+        if (commandEnvelope.IsEngineReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.CommandEnvelopeReady);
+        }
+
+        if (commandEnvelope.IsBlocked || commandEnvelope.IsApprovalGated)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.CommandEnvelopeBlocked);
+        }
+
+        if (commandIssuance.IsAccepted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.CommandIssuanceAccepted);
+        }
+
+        if (commandIssuance.IsIssued)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.CommandIssuanceIssued);
+        }
+
+        if (commandRetry.IsRetryEligible || retryExecutionPolicy.IsRetryReady)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.RetryEligible);
+        }
+
+        if (commandRetry.IsRetryBlocked ||
+            commandRetry.IsCooldown ||
+            commandRetry.IsDuplicate ||
+            retryExecutionPolicy.IsPolicyBlocked ||
+            retryExecutionPolicy.RequiresManualApproval ||
+            retryExecutionPolicy.IsCooldown ||
+            retryExecutionPolicy.IsBackgroundRetryDisabled)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.RetryBlocked);
+        }
+
+        if (requiresExplicitApproval)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ApprovalRequired);
+        }
+
+        if (isDestructiveOperation)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.DestructiveOperation);
+        }
+
+        if (wouldApplyChanges)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.WouldApplyChanges);
+        }
+        else
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.NoChangesRequired);
+        }
+
+        if (hasCommandJournalEvidence)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.CommandJournalEvidence);
+        }
+        else
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.NoRecordedCommand);
+        }
+
+        if (hasDurableStoreConfigured)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.DurableJournalConfigured);
+        }
+
+        if (hasPersistedRecordedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.PersistedHistory);
+        }
+
+        if (hasRecoveredPersistedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.RecoveredHistory);
+        }
+
+        if (hasCommandJournalEvidence && !hasDurableStoreConfigured)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.InMemoryJournalOnly);
+        }
+
+        if (latestCommandExecution.IsAdapted)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderCommandAdapted);
+        }
+        else if (latestCommandExecution.IsNoOp)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderCommandNoOp);
+        }
+        else if (latestCommandExecution.IsBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderCommandBlocked);
+        }
+        else if (latestCommandExecution.IsOperatorOnly)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderCommandOperatorOnly);
+        }
+        else if (latestCommandExecution.IsUnavailable)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderCommandUnavailable);
+        }
+        else if (latestCommandExecution.IsFailed)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories.ProviderCommandFailed);
+        }
+
+        return [.. categories];
+    }
+
+    private static string CreateManagedConnectorProviderOwnedControlPlaneMutationReconcileDescription(
+        string state,
+        string operationId,
+        bool hasTargetOperation,
+        bool isReconcileOperation,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus providerOwnedControlPlaneOwnership,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        bool canMutateOrReconcileOnCurrentNode)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneOwnership);
+        ArgumentNullException.ThrowIfNull(commandEnvelope);
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandRetry);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+
+        var detail = CombineManagedConnectorCommandEnvelopeDetail(
+            CombineManagedConnectorCommandEnvelopeDetail(
+                CombineManagedConnectorCommandEnvelopeDetail(
+                    CombineManagedConnectorCommandEnvelopeDetail(
+                        providerOwnedControlPlaneOwnership.Description,
+                        commandEnvelope.Description,
+                        commandIssuance.Description),
+                    latestCommandExecution.Description,
+                    commandRetry.Description),
+                retryExecutionPolicy.Description,
+                commandJournal.Description),
+            null);
+        var operationLabel = CreateManagedConnectorExecutionAdapterOperationLabel(operationId);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                "Cephalon does not currently expose provider-owned control-plane mutation and reconcile for this execution runtime.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.OperatorOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Provider-owned control-plane mutation and reconcile for {operationLabel} still remains operator-owned outside Cephalon.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationRisk, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Provider-owned control-plane mutation and reconcile for {operationLabel} currently remains risky because broader shared control-plane truth is not safe enough yet.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationExecuting, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon is currently exercising provider-owned control-plane {(isReconcileOperation ? "reconcile" : "mutation")} for {operationLabel} through the shared provider lane.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.ReconcileReady, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                $"Cephalon can reconcile provider-owned control-plane state for {operationLabel} on the current node through the shared provider lane.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.ReconcileBlocked, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                hasTargetOperation
+                    ? $"Cephalon cannot yet reconcile provider-owned control-plane state for {operationLabel} because the shared provider lane is still blocked."
+                    : "Cephalon cannot yet reconcile provider-owned control-plane state because no reconcile operation is currently targeted.",
+                detail);
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.MutationReady, StringComparison.OrdinalIgnoreCase))
+        {
+            return AppendManagedConnectorCommandEnvelopeDetail(
+                canMutateOrReconcileOnCurrentNode
+                    ? $"Cephalon can exercise provider-owned control-plane mutation for {operationLabel} on the current node through the shared provider lane."
+                    : $"Cephalon can derive provider-owned control-plane mutation for {operationLabel}, but the current node still cannot execute it safely.",
+                detail);
+        }
+
+        return AppendManagedConnectorCommandEnvelopeDetail(
+            hasTargetOperation
+                ? $"Cephalon cannot yet exercise provider-owned control-plane mutation for {operationLabel} because the shared provider lane is still blocked."
+                : "Cephalon cannot yet exercise provider-owned control-plane mutation because no provider-owned mutation or reconcile operation is currently targeted.",
+            detail);
+    }
+
+    private static string ResolveManagedConnectorProviderOwnedControlPlaneMutationReconcileSourceId(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus providerOwnedControlPlaneOwnership,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus providerExecutionOrchestration,
+        CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus providerOwnedWritePathExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus commandEnvelope,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus commandIssuance,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult latestCommandExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus commandRetry,
+        CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus retryExecutionPolicy,
+        bool hasCommandJournalEvidence)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(providerOwnedControlPlaneOwnership);
+        ArgumentNullException.ThrowIfNull(providerExecutionOrchestration);
+        ArgumentNullException.ThrowIfNull(providerOwnedWritePathExecution);
+        ArgumentNullException.ThrowIfNull(commandEnvelope);
+        ArgumentNullException.ThrowIfNull(commandIssuance);
+        ArgumentNullException.ThrowIfNull(latestCommandExecution);
+        ArgumentNullException.ThrowIfNull(commandRetry);
+        ArgumentNullException.ThrowIfNull(retryExecutionPolicy);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.Unknown;
+        }
+
+        if (latestCommandExecution.IsAdapted ||
+            latestCommandExecution.IsNoOp ||
+            latestCommandExecution.IsBlocked ||
+            latestCommandExecution.IsOperatorOnly ||
+            latestCommandExecution.IsUnavailable ||
+            latestCommandExecution.IsFailed)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.CommandExecution;
+        }
+
+        if (commandIssuance.IsIssued ||
+            commandIssuance.IsAccepted ||
+            commandIssuance.IsRejected)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.CommandIssuance;
+        }
+
+        if (commandEnvelope.IsEngineReady ||
+            commandEnvelope.IsBlocked ||
+            commandEnvelope.IsApprovalGated ||
+            commandEnvelope.IsOperatorOnly)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.CommandEnvelope;
+        }
+
+        if (retryExecutionPolicy.IsRetryReady ||
+            retryExecutionPolicy.IsPolicyBlocked ||
+            retryExecutionPolicy.RequiresManualApproval ||
+            retryExecutionPolicy.IsCooldown ||
+            retryExecutionPolicy.IsBackgroundRetryDisabled)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.RetryExecutionPolicy;
+        }
+
+        if (commandRetry.IsRetryEligible ||
+            commandRetry.IsRetryBlocked ||
+            commandRetry.IsCooldown ||
+            commandRetry.IsDuplicate)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.CommandRetry;
+        }
+
+        if (providerOwnedControlPlaneOwnership.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.ProviderOwnedControlPlaneOwnership;
+        }
+
+        if (providerExecutionOrchestration.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.ProviderExecutionOrchestration;
+        }
+
+        if (providerOwnedWritePathExecution.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.ProviderOwnedWritePathExecution;
+        }
+
+        if (hasCommandJournalEvidence)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.CommandJournal;
+        }
+
+        return CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileSources.Unknown;
     }
 
     private static string CreateManagedConnectorBlockedAutomaticRetryExecutionDescription(

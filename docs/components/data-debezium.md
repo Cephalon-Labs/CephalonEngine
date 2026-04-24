@@ -747,21 +747,44 @@ distributed scheduler, or second coordinator.
   and `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-ownership`
   on that same shared route family instead of branching into a Debezium-only ownership endpoint
   set
+- `ENG-196` now keeps that shared managed-connector provider-owned control-plane lane
+  mutation/reconcile-aware:
+  `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderOwnedControlPlaneMutationReconcile`
+  now publishes stable `not-applicable`, `operator-only`, `mutation-ready`, `reconcile-ready`,
+  `mutation-blocked`, `reconcile-blocked`, `mutation-executing`, and `mutation-risk` posture
+  together with operation/source, provider-owned control-plane ownership plus provider execution
+  orchestration plus provider-owned write-path plus command-envelope plus command-issuance plus
+  latest-command plus retry-policy plus command-journal state, deterministic fingerprints,
+  adapter/provider metadata, approval/destructive/change metadata, durable-history evidence, and
+  `CanMutateOrReconcileOnCurrentNode`, so the shared execution-runtime catalog can gate both
+  `ManagedConnectorAutomaticRetryHostedService` and automatic command execution through one merged
+  provider-owned control-plane mutation/reconcile answer instead of trusting broader provider-owned
+  control-plane ownership truth alone when the mutation/reconcile lane still reports blocked or
+  risky
+- ASP.NET Core now maps
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/{providerOwnedControlPlaneMutationReconcileState}`,
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/categories/{providerOwnedControlPlaneMutationReconcileCategory}`,
+  `/engine/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/operations/{operationId}`,
+  and `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-mutation-reconcile`
+  on that same shared route family instead of branching into a Debezium-only mutation/reconcile
+  endpoint set
 - bounded automatic background retry execution still remains shared in-process truth, and the
   shipped broader provider-owned write-path execution posture plus broader provider execution
-  orchestration posture plus broader provider-owned control-plane ownership posture still does not
-  mean Cephalon already owns durable distributed command journals, durable distributed schedulers,
-  full Kafka Connect provisioning/reconciliation ownership, or provider-native control-plane
-  mutation and reconcile ownership
+  orchestration posture plus broader provider-owned control-plane ownership posture plus broader
+  provider-owned control-plane mutation/reconcile posture still does not mean Cephalon already
+  owns durable distributed command journals, durable distributed schedulers, or full Kafka Connect
+  provisioning ownership
 
 ## Not shipped in these slices
 
 This pack intentionally still does not claim:
 
-- Kafka Connect or Debezium REST API provisioning, configuration mutation, and apply-and-reconcile ownership
-- broader managed-connector control-plane mutation or reconcile ownership beyond the shipped shared
+- Kafka Connect or Debezium REST API provisioning and apply-and-reconcile ownership beyond the
+  shipped shared provider-owned control-plane mutation/reconcile posture
+- broader managed-connector control-plane provisioning ownership beyond the shipped shared
   provider-owned write-path execution posture plus the shipped shared provider execution
-  orchestration posture plus the shipped shared provider-owned control-plane ownership posture
+  orchestration posture plus the shipped shared provider-owned control-plane ownership posture plus
+  the shipped shared provider-owned control-plane mutation/reconcile posture
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
 - durable distributed command journals, durable distributed retry schedulers, or full idempotency
@@ -771,7 +794,7 @@ This pack intentionally still does not claim:
   broader multi-node lease execution plus durable shared scheduler orchestration plus scheduler
   recovery hardening plus broader provider-owned write-path execution posture plus broader
   provider execution orchestration posture plus broader provider-owned control-plane ownership
-  posture
+  posture plus broader provider-owned control-plane mutation/reconcile posture
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 
