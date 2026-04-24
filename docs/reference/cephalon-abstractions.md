@@ -8628,6 +8628,16 @@ CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus M
 
 Gets the operator-facing managed-connector broader provider execution-orchestration posture derived from provider-owned write-path execution, command-journal, scheduler, and recovery truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedcontrolplaneapplyandreconcileexecution"></a>
+
+##### `ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution { get; set; }
+```
+
+Gets the operator-facing managed-connector provider-owned control-plane apply-and-reconcile execution posture derived from control-plane provisioning, ownership, command-lane truth, and retained journal evidence.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedcontrolplanemutationreconcile"></a>
 
 ##### `ManagedConnectorProviderOwnedControlPlaneMutationReconcile`
@@ -25165,6 +25175,1494 @@ bool WouldApplyChanges { get; set; }
 
 Gets a value indicating whether the current provider execution orchestration would still apply one or more shared write-path changes.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategories`
+
+Defines the stable category identifiers used by managed-connector provider-owned control-plane apply-and-reconcile execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-applyandreconcileblocked"></a>
+
+##### `ApplyAndReconcileBlocked`
+
+```csharp
+const string ApplyAndReconcileBlocked
+```
+
+Provider-owned control-plane apply-and-reconcile execution remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-applyandreconcilecompleted"></a>
+
+##### `ApplyAndReconcileCompleted`
+
+```csharp
+const string ApplyAndReconcileCompleted
+```
+
+Provider-owned control-plane apply-and-reconcile execution no longer needs another shared execution step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-applyandreconcileexecuting"></a>
+
+##### `ApplyAndReconcileExecuting`
+
+```csharp
+const string ApplyAndReconcileExecuting
+```
+
+Provider-owned control-plane apply-and-reconcile execution is currently exercising one bounded execution step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-applyandreconcileready"></a>
+
+##### `ApplyAndReconcileReady`
+
+```csharp
+const string ApplyAndReconcileReady
+```
+
+Provider-owned control-plane apply-and-reconcile execution is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-applyandreconcilerisk"></a>
+
+##### `ApplyAndReconcileRisk`
+
+```csharp
+const string ApplyAndReconcileRisk
+```
+
+Provider-owned control-plane apply-and-reconcile execution currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The current provider control-plane apply-and-reconcile lane still requires explicit approval.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-commandenvelopeblocked"></a>
+
+##### `CommandEnvelopeBlocked`
+
+```csharp
+const string CommandEnvelopeBlocked
+```
+
+The current command envelope remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-commandenvelopeready"></a>
+
+##### `CommandEnvelopeReady`
+
+```csharp
+const string CommandEnvelopeReady
+```
+
+The current command envelope is engine-ready for provider-owned apply-and-reconcile execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-commandissuanceaccepted"></a>
+
+##### `CommandIssuanceAccepted`
+
+```csharp
+const string CommandIssuanceAccepted
+```
+
+The current shared command issuance lane accepted one provider-owned apply-and-reconcile command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-commandissuanceissued"></a>
+
+##### `CommandIssuanceIssued`
+
+```csharp
+const string CommandIssuanceIssued
+```
+
+The current shared command issuance lane already issued one provider-owned apply-and-reconcile command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-commandjournalevidence"></a>
+
+##### `CommandJournalEvidence`
+
+```csharp
+const string CommandJournalEvidence
+```
+
+The command journal currently exposes retained evidence for provider-owned apply-and-reconcile execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot yet exercise bounded provider-owned control-plane apply-and-reconcile execution safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current node can exercise bounded provider-owned control-plane apply-and-reconcile execution safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The current provider control-plane apply-and-reconcile lane still targets a destructive operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-durablejournalconfigured"></a>
+
+##### `DurableJournalConfigured`
+
+```csharp
+const string DurableJournalConfigured
+```
+
+A durable command-journal store is configured for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-inmemoryjournalonly"></a>
+
+##### `InMemoryJournalOnly`
+
+```csharp
+const string InMemoryJournalOnly
+```
+
+Provider-owned control-plane apply-and-reconcile execution currently depends on in-memory history only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-mutationblocked"></a>
+
+##### `MutationBlocked`
+
+```csharp
+const string MutationBlocked
+```
+
+Broader provider-owned control-plane mutation remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-mutationexecuting"></a>
+
+##### `MutationExecuting`
+
+```csharp
+const string MutationExecuting
+```
+
+Broader provider-owned control-plane mutation or reconcile is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-mutationoperation"></a>
+
+##### `MutationOperation`
+
+```csharp
+const string MutationOperation
+```
+
+The current target operation is one provider-owned mutation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-mutationready"></a>
+
+##### `MutationReady`
+
+```csharp
+const string MutationReady
+```
+
+Broader provider-owned control-plane mutation is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-mutationrisk"></a>
+
+##### `MutationRisk`
+
+```csharp
+const string MutationRisk
+```
+
+Broader provider-owned control-plane mutation or reconcile currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-nochangesrequired"></a>
+
+##### `NoChangesRequired`
+
+```csharp
+const string NoChangesRequired
+```
+
+The current provider control-plane apply-and-reconcile lane would not apply another shared write-path change.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-norecordedcommand"></a>
+
+##### `NoRecordedCommand`
+
+```csharp
+const string NoRecordedCommand
+```
+
+No command-journal evidence has been recorded yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-notargetoperation"></a>
+
+##### `NoTargetOperation`
+
+```csharp
+const string NoTargetOperation
+```
+
+No provider-owned mutation or reconcile operation is currently targeted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-owned control-plane apply-and-reconcile execution still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-ownershipactive"></a>
+
+##### `OwnershipActive`
+
+```csharp
+const string OwnershipActive
+```
+
+Broader provider-owned control-plane ownership is currently active.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-ownershipblocked"></a>
+
+##### `OwnershipBlocked`
+
+```csharp
+const string OwnershipBlocked
+```
+
+Broader provider-owned control-plane ownership remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-ownershippartial"></a>
+
+##### `OwnershipPartial`
+
+```csharp
+const string OwnershipPartial
+```
+
+Broader provider-owned control-plane ownership currently remains partial.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-ownershipready"></a>
+
+##### `OwnershipReady`
+
+```csharp
+const string OwnershipReady
+```
+
+Broader provider-owned control-plane ownership is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-ownershiprisk"></a>
+
+##### `OwnershipRisk`
+
+```csharp
+const string OwnershipRisk
+```
+
+Broader provider-owned control-plane ownership currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-persistedhistory"></a>
+
+##### `PersistedHistory`
+
+```csharp
+const string PersistedHistory
+```
+
+The durable command journal currently exposes persisted recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerblocked"></a>
+
+##### `ProviderBlocked`
+
+```csharp
+const string ProviderBlocked
+```
+
+Provider-owned write-path execution remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providercommandadapted"></a>
+
+##### `ProviderCommandAdapted`
+
+```csharp
+const string ProviderCommandAdapted
+```
+
+The latest provider execution translated into a provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providercommandblocked"></a>
+
+##### `ProviderCommandBlocked`
+
+```csharp
+const string ProviderCommandBlocked
+```
+
+The latest provider execution remained blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providercommandfailed"></a>
+
+##### `ProviderCommandFailed`
+
+```csharp
+const string ProviderCommandFailed
+```
+
+The latest provider execution failed while Cephalon translated provider command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providercommandnoop"></a>
+
+##### `ProviderCommandNoOp`
+
+```csharp
+const string ProviderCommandNoOp
+```
+
+The latest provider execution determined that no provider command is required.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providercommandoperatoronly"></a>
+
+##### `ProviderCommandOperatorOnly`
+
+```csharp
+const string ProviderCommandOperatorOnly
+```
+
+The latest provider execution remained operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providercommandunavailable"></a>
+
+##### `ProviderCommandUnavailable`
+
+```csharp
+const string ProviderCommandUnavailable
+```
+
+The latest provider execution could not resolve a provider adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerexecutable"></a>
+
+##### `ProviderExecutable`
+
+```csharp
+const string ProviderExecutable
+```
+
+Provider-owned write-path execution is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerexecutionblocked"></a>
+
+##### `ProviderExecutionBlocked`
+
+```csharp
+const string ProviderExecutionBlocked
+```
+
+Broader provider execution orchestration remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerexecutioncompleted"></a>
+
+##### `ProviderExecutionCompleted`
+
+```csharp
+const string ProviderExecutionCompleted
+```
+
+Broader provider execution orchestration no longer needs another shared step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerexecutionexecuting"></a>
+
+##### `ProviderExecutionExecuting`
+
+```csharp
+const string ProviderExecutionExecuting
+```
+
+Broader provider execution orchestration is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerexecutionready"></a>
+
+##### `ProviderExecutionReady`
+
+```csharp
+const string ProviderExecutionReady
+```
+
+Broader provider execution orchestration is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerexecutionrisk"></a>
+
+##### `ProviderExecutionRisk`
+
+```csharp
+const string ProviderExecutionRisk
+```
+
+Broader provider execution orchestration currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerownedcompleted"></a>
+
+##### `ProviderOwnedCompleted`
+
+```csharp
+const string ProviderOwnedCompleted
+```
+
+Provider-owned write-path execution no longer needs another provider command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerownedcontrolplaneapplyandreconcileexecution"></a>
+
+##### `ProviderOwnedControlPlaneApplyAndReconcileExecution`
+
+```csharp
+const string ProviderOwnedControlPlaneApplyAndReconcileExecution
+```
+
+The runtime participates in the provider-owned control-plane apply-and-reconcile execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerownedexecuting"></a>
+
+##### `ProviderOwnedExecuting`
+
+```csharp
+const string ProviderOwnedExecuting
+```
+
+Provider-owned write-path execution is currently active.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-providerownedrisk"></a>
+
+##### `ProviderOwnedRisk`
+
+```csharp
+const string ProviderOwnedRisk
+```
+
+Provider-owned write-path execution currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-provisioningblocked"></a>
+
+##### `ProvisioningBlocked`
+
+```csharp
+const string ProvisioningBlocked
+```
+
+Broader provider-owned control-plane provisioning remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-provisioningexecuting"></a>
+
+##### `ProvisioningExecuting`
+
+```csharp
+const string ProvisioningExecuting
+```
+
+Broader provider-owned control-plane provisioning is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-provisioningpartial"></a>
+
+##### `ProvisioningPartial`
+
+```csharp
+const string ProvisioningPartial
+```
+
+Broader provider-owned control-plane provisioning currently remains partial.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-provisioningready"></a>
+
+##### `ProvisioningReady`
+
+```csharp
+const string ProvisioningReady
+```
+
+Broader provider-owned control-plane provisioning is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-provisioningrisk"></a>
+
+##### `ProvisioningRisk`
+
+```csharp
+const string ProvisioningRisk
+```
+
+Broader provider-owned control-plane provisioning currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-reconcileblocked"></a>
+
+##### `ReconcileBlocked`
+
+```csharp
+const string ReconcileBlocked
+```
+
+Broader provider-owned control-plane reconcile remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-reconcileoperation"></a>
+
+##### `ReconcileOperation`
+
+```csharp
+const string ReconcileOperation
+```
+
+The current target operation is one provider-owned reconcile.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-reconcileready"></a>
+
+##### `ReconcileReady`
+
+```csharp
+const string ReconcileReady
+```
+
+Broader provider-owned control-plane reconcile is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The durable command journal currently exposes recovered recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-retryblocked"></a>
+
+##### `RetryBlocked`
+
+```csharp
+const string RetryBlocked
+```
+
+The current retry posture remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-retryeligible"></a>
+
+##### `RetryEligible`
+
+```csharp
+const string RetryEligible
+```
+
+The current retry posture still allows one eligible provider-owned apply-and-reconcile retry.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+const string WouldApplyChanges
+```
+
+The current provider control-plane apply-and-reconcile lane would still apply one or more shared write-path changes.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionSources`
+
+Defines the stable source identifiers used by managed-connector provider-owned control-plane apply-and-reconcile execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-commandenvelope"></a>
+
+##### `CommandEnvelope`
+
+```csharp
+const string CommandEnvelope
+```
+
+The shared command-envelope answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-commandexecution"></a>
+
+##### `CommandExecution`
+
+```csharp
+const string CommandExecution
+```
+
+The latest recorded command-execution answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-commandissuance"></a>
+
+##### `CommandIssuance`
+
+```csharp
+const string CommandIssuance
+```
+
+The shared command-issuance answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-commandjournal"></a>
+
+##### `CommandJournal`
+
+```csharp
+const string CommandJournal
+```
+
+The shared command-journal answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-commandretry"></a>
+
+##### `CommandRetry`
+
+```csharp
+const string CommandRetry
+```
+
+The shared command-retry answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-providerexecutionorchestration"></a>
+
+##### `ProviderExecutionOrchestration`
+
+```csharp
+const string ProviderExecutionOrchestration
+```
+
+The broader provider execution-orchestration answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-providerownedcontrolplanemutationreconcile"></a>
+
+##### `ProviderOwnedControlPlaneMutationReconcile`
+
+```csharp
+const string ProviderOwnedControlPlaneMutationReconcile
+```
+
+The broader provider-owned control-plane mutation and reconcile answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-providerownedcontrolplaneownership"></a>
+
+##### `ProviderOwnedControlPlaneOwnership`
+
+```csharp
+const string ProviderOwnedControlPlaneOwnership
+```
+
+The broader provider-owned control-plane ownership answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-providerownedcontrolplaneprovisioning"></a>
+
+##### `ProviderOwnedControlPlaneProvisioning`
+
+```csharp
+const string ProviderOwnedControlPlaneProvisioning
+```
+
+The broader provider-owned control-plane provisioning answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-providerownedwritepathexecution"></a>
+
+##### `ProviderOwnedWritePathExecution`
+
+```csharp
+const string ProviderOwnedWritePathExecution
+```
+
+The broader provider-owned write-path execution answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-retryexecutionpolicy"></a>
+
+##### `RetryExecutionPolicy`
+
+```csharp
+const string RetryExecutionPolicy
+```
+
+The shared retry-execution policy answer supplied the decisive input.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+No decisive source answer was available.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStates`
+
+Defines the stable state identifiers used by managed-connector provider-owned control-plane apply-and-reconcile execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-applyandreconcileblocked"></a>
+
+##### `ApplyAndReconcileBlocked`
+
+```csharp
+const string ApplyAndReconcileBlocked
+```
+
+Provider-owned control-plane apply-and-reconcile execution remains blocked by shared runtime policy, control-plane truth, or missing execution intent.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-applyandreconcilecompleted"></a>
+
+##### `ApplyAndReconcileCompleted`
+
+```csharp
+const string ApplyAndReconcileCompleted
+```
+
+Provider-owned control-plane apply-and-reconcile execution no longer needs another shared execution step for the current operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-applyandreconcileexecuting"></a>
+
+##### `ApplyAndReconcileExecuting`
+
+```csharp
+const string ApplyAndReconcileExecuting
+```
+
+Provider-owned control-plane apply-and-reconcile execution is currently exercising one bounded provider-facing step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-applyandreconcileready"></a>
+
+##### `ApplyAndReconcileReady`
+
+```csharp
+const string ApplyAndReconcileReady
+```
+
+Provider-owned control-plane apply-and-reconcile execution is currently ready on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-applyandreconcilerisk"></a>
+
+##### `ApplyAndReconcileRisk`
+
+```csharp
+const string ApplyAndReconcileRisk
+```
+
+Provider-owned control-plane apply-and-reconcile execution currently remains risky because broader shared runtime truth is not safe enough yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Provider-owned control-plane apply-and-reconcile execution does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider-owned control-plane apply-and-reconcile execution still remains operator-owned outside Cephalon.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus`
+
+Describes the current operator-facing managed-connector provider-owned control-plane apply-and-reconcile execution posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus(string state, string description)
+```
+
+Creates a new managed-connector provider-owned control-plane apply-and-reconcile execution answer.
+
+Parameters:
+- `state`: The stable provider-owned control-plane apply-and-reconcile execution state, such as `not-applicable`, `operator-only`, `apply-and-reconcile-ready`, `apply-and-reconcile-blocked`, `apply-and-reconcile-executing`, `apply-and-reconcile-completed`, or `apply-and-reconcile-risk`.
+- `description`: An optional operator-facing provider-owned control-plane apply-and-reconcile execution summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-adapterid"></a>
+
+##### `AdapterId`
+
+```csharp
+string AdapterId { get; set; }
+```
+
+Gets the stable provider execution-adapter identifier currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-canexecuteproviderownedcontrolplaneapplyandreconcileoncurrentnode"></a>
+
+##### `CanExecuteProviderOwnedControlPlaneApplyAndReconcileOnCurrentNode`
+
+```csharp
+bool CanExecuteProviderOwnedControlPlaneApplyAndReconcileOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can execute the current provider-owned control-plane apply-and-reconcile answer safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-canexerciseproviderownedcontrolplaneoncurrentnode"></a>
+
+##### `CanExerciseProviderOwnedControlPlaneOnCurrentNode`
+
+```csharp
+bool CanExerciseProviderOwnedControlPlaneOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can exercise bounded provider-owned control-plane ownership safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-canmutateorreconcileoncurrentnode"></a>
+
+##### `CanMutateOrReconcileOnCurrentNode`
+
+```csharp
+bool CanMutateOrReconcileOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can exercise the current provider-owned control-plane mutation or reconcile answer safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-canprovisionproviderownedcontrolplaneoncurrentnode"></a>
+
+##### `CanProvisionProviderOwnedControlPlaneOnCurrentNode`
+
+```csharp
+bool CanProvisionProviderOwnedControlPlaneOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can exercise the current provider-owned control-plane provisioning answer safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active provider-owned control-plane apply-and-reconcile execution categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable provider-owned control-plane apply-and-reconcile execution categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-commandenvelopestate"></a>
+
+##### `CommandEnvelopeState`
+
+```csharp
+string CommandEnvelopeState { get; set; }
+```
+
+Gets the current managed-connector command-envelope state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-commandissuancestate"></a>
+
+##### `CommandIssuanceState`
+
+```csharp
+string CommandIssuanceState { get; set; }
+```
+
+Gets the current managed-connector command-issuance state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector command-journal state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-commandretrystate"></a>
+
+##### `CommandRetryState`
+
+```csharp
+string CommandRetryState { get; set; }
+```
+
+Gets the current managed-connector command-retry state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing provider-owned control-plane apply-and-reconcile execution summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-hascommandjournalevidence"></a>
+
+##### `HasCommandJournalEvidence`
+
+```csharp
+bool HasCommandJournalEvidence { get; set; }
+```
+
+Gets a value indicating whether the current command journal already exposes provider-owned control-plane apply-and-reconcile execution evidence.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-hastargetoperation"></a>
+
+##### `HasTargetOperation`
+
+```csharp
+bool HasTargetOperation { get; set; }
+```
+
+Gets a value indicating whether the current answer exposes one concrete target operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isapplyandreconcileblocked"></a>
+
+##### `IsApplyAndReconcileBlocked`
+
+```csharp
+bool IsApplyAndReconcileBlocked { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane apply-and-reconcile execution currently remains blocked.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isapplyandreconcilecompleted"></a>
+
+##### `IsApplyAndReconcileCompleted`
+
+```csharp
+bool IsApplyAndReconcileCompleted { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane apply-and-reconcile execution no longer needs another shared execution step.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isapplyandreconcileexecuting"></a>
+
+##### `IsApplyAndReconcileExecuting`
+
+```csharp
+bool IsApplyAndReconcileExecuting { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane apply-and-reconcile execution is currently executing one bounded provider-facing step.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isapplyandreconcileready"></a>
+
+##### `IsApplyAndReconcileReady`
+
+```csharp
+bool IsApplyAndReconcileReady { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane apply-and-reconcile execution is currently ready.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isapplyandreconcilerisk"></a>
+
+##### `IsApplyAndReconcileRisk`
+
+```csharp
+bool IsApplyAndReconcileRisk { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane apply-and-reconcile execution currently remains risky.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned control-plane apply-and-reconcile lane targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-ismutationoperation"></a>
+
+##### `IsMutationOperation`
+
+```csharp
+bool IsMutationOperation { get; set; }
+```
+
+Gets a value indicating whether the current target operation is a provider-owned mutation rather than reconcile.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether provider-owned control-plane apply-and-reconcile execution still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-isreconcileoperation"></a>
+
+##### `IsReconcileOperation`
+
+```csharp
+bool IsReconcileOperation { get; set; }
+```
+
+Gets a value indicating whether the current target operation is a provider-owned reconcile.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-issuancefingerprint"></a>
+
+##### `IssuanceFingerprint`
+
+```csharp
+string IssuanceFingerprint { get; set; }
+```
+
+Gets the deterministic issuance fingerprint currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest recorded command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-latestcommandexecutioninvocationsourceid"></a>
+
+##### `LatestCommandExecutionInvocationSourceId`
+
+```csharp
+string LatestCommandExecutionInvocationSourceId { get; set; }
+```
+
+Gets the invocation-source identifier of the latest recorded command-execution outcome.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-latestexecutionfingerprint"></a>
+
+##### `LatestExecutionFingerprint`
+
+```csharp
+string LatestExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic latest recorded execution fingerprint currently visible to provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-pollingintervalseconds"></a>
+
+##### `PollingIntervalSeconds`
+
+```csharp
+int PollingIntervalSeconds { get; set; }
+```
+
+Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerexecutionorchestrationstate"></a>
+
+##### `ProviderExecutionOrchestrationState`
+
+```csharp
+string ProviderExecutionOrchestrationState { get; set; }
+```
+
+Gets the current broader provider execution-orchestration state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; set; }
+```
+
+Gets the best available provider identifier currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerownedcontrolplanemutationreconcilestate"></a>
+
+##### `ProviderOwnedControlPlaneMutationReconcileState`
+
+```csharp
+string ProviderOwnedControlPlaneMutationReconcileState { get; set; }
+```
+
+Gets the current provider-owned control-plane mutation and reconcile state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerownedcontrolplaneownershipstate"></a>
+
+##### `ProviderOwnedControlPlaneOwnershipState`
+
+```csharp
+string ProviderOwnedControlPlaneOwnershipState { get; set; }
+```
+
+Gets the current provider-owned control-plane ownership state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerownedcontrolplaneprovisioningstate"></a>
+
+##### `ProviderOwnedControlPlaneProvisioningState`
+
+```csharp
+string ProviderOwnedControlPlaneProvisioningState { get; set; }
+```
+
+Gets the current provider-owned control-plane provisioning state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-providerownedwritepathexecutionstate"></a>
+
+##### `ProviderOwnedWritePathExecutionState`
+
+```csharp
+string ProviderOwnedWritePathExecutionState { get; set; }
+```
+
+Gets the current provider-owned write-path execution state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned control-plane apply-and-reconcile lane still requires explicit approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-schedulerid"></a>
+
+##### `SchedulerId`
+
+```csharp
+string SchedulerId { get; set; }
+```
+
+Gets the stable shared scheduler identifier currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-schedulerkind"></a>
+
+##### `SchedulerKind`
+
+```csharp
+string SchedulerKind { get; set; }
+```
+
+Gets the stable shared scheduler kind currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier currently associated with provider-owned control-plane apply-and-reconcile execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector provider-owned control-plane apply-and-reconcile execution state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current provider-owned control-plane apply-and-reconcile lane would still apply one or more shared write-path changes.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanemutationreconcilecategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneMutationReconcileCategories`
@@ -39252,6 +40750,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `providerExecutionOrchestrationState`: The stable provider execution-orchestration state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategory-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory(string applyAndReconcileExecutionCategory)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned control-plane apply-and-reconcile execution answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that apply-and-reconcile execution category.
+
+Parameters:
+- `applyAndReconcileExecutionCategory`: The stable provider-owned control-plane apply-and-reconcile execution category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionoperationid-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned control-plane apply-and-reconcile execution answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable provider-owned control-plane apply-and-reconcile execution operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstate-system-string"></a>
+
+##### `GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState(string applyAndReconcileExecutionState)
+```
+
+Gets the CDC capture execution runtimes whose current provider-owned control-plane apply-and-reconcile execution answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that apply-and-reconcile execution state.
+
+Parameters:
+- `applyAndReconcileExecutionState`: The stable provider-owned control-plane apply-and-reconcile execution state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedcontrolplanemutationreconcilecategory-system-string"></a>
 

@@ -634,6 +634,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId(string operationId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane apply-and-reconcile execution answer matches the requested state.
+    /// </summary>
+    /// <param name="applyAndReconcileExecutionState">The stable provider-owned control-plane apply-and-reconcile execution state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that apply-and-reconcile execution state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState(string applyAndReconcileExecutionState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane apply-and-reconcile execution answer includes the requested category.
+    /// </summary>
+    /// <param name="applyAndReconcileExecutionCategory">The stable provider-owned control-plane apply-and-reconcile execution category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that apply-and-reconcile execution category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory(string applyAndReconcileExecutionCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider-owned control-plane apply-and-reconcile execution answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable provider-owned control-plane apply-and-reconcile execution operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperationId(string operationId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

@@ -738,6 +738,27 @@ provider-owned control-plane provisioning answer instead of trusting broader pro
 control-plane mutation/reconcile truth alone when the merged provisioning lane still reports
 blocked, partial, or risky.
 
+That same shared execution-runtime story now also keeps provider-owned control-plane
+apply-and-reconcile execution explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution`
+publishes stable `not-applicable` / `operator-only` / `apply-and-reconcile-ready` /
+`apply-and-reconcile-blocked` / `apply-and-reconcile-executing` /
+`apply-and-reconcile-completed` / `apply-and-reconcile-risk` posture together with
+operation/source, provider-owned control-plane provisioning plus provider-owned control-plane
+mutation/reconcile plus provider-owned control-plane ownership plus provider execution
+orchestration plus provider-owned write-path plus command-envelope plus command-issuance plus
+latest-command plus retry-policy plus command-journal state, deterministic fingerprints,
+adapter/provider metadata, approval/destructive/change metadata, durable-history evidence, and
+`CanExecuteProviderOwnedControlPlaneApplyAndReconcileOnCurrentNode`. The shared execution-runtime
+catalog derives that answer from the existing provider-owned control-plane provisioning,
+provider-owned control-plane mutation/reconcile, provider-owned control-plane ownership, provider
+execution orchestration, provider-owned write-path, command-envelope, command-issuance, latest
+command-execution, retry-execution-policy, and bounded command-journal truth, and the shared data
+pack now gates both `ManagedConnectorAutomaticRetryHostedService` and automatic command
+invocations through that one provider-owned control-plane apply-and-reconcile execution answer
+instead of trusting broader provider-owned control-plane provisioning truth alone when the merged
+execution lane still reports blocked, completed, or risky.
+
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
 keeps `Cephalon.Data` honest: it now owns the shared in-process execution substrate plus the shared

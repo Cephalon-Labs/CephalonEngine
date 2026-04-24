@@ -1234,6 +1234,33 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneProvisioningOperation");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/{applyAndReconcileExecutionState}", (string applyAndReconcileExecutionState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState(applyAndReconcileExecutionState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/categories/{applyAndReconcileExecutionCategory}", (string applyAndReconcileExecutionCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory(applyAndReconcileExecutionCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/operations/{operationId}", (string operationId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperationId(operationId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperation");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
@@ -1389,6 +1416,17 @@ public static class EngineWebApplicationExtensions
                     : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneProvisioning);
             })
             .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneProvisioning");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-apply-and-reconcile-execution", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null
+                    ? Results.NotFound()
+                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution);
+            })
+            .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

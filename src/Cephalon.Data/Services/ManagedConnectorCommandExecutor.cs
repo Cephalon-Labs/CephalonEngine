@@ -91,31 +91,43 @@ internal sealed class ManagedConnectorCommandExecutor(
                 normalizedInvocationSourceId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
                 StringComparison.OrdinalIgnoreCase) &&
-            !runtime.ManagedConnectorProviderOwnedControlPlaneOwnership.CanExerciseProviderOwnedControlPlaneOnCurrentNode)
+            !runtime.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution.CanExecuteProviderOwnedControlPlaneApplyAndReconcileOnCurrentNode)
         {
+            var providerOwnedControlPlaneApplyAndReconcileExecution = runtime.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution;
+            var providerOwnedControlPlaneProvisioning = runtime.ManagedConnectorProviderOwnedControlPlaneProvisioning;
+            var providerOwnedControlPlaneMutationReconcile = runtime.ManagedConnectorProviderOwnedControlPlaneMutationReconcile;
             var providerOwnedControlPlaneOwnership = runtime.ManagedConnectorProviderOwnedControlPlaneOwnership;
             var providerExecutionOrchestration = runtime.ManagedConnectorProviderExecutionOrchestration;
             var providerOwnedWritePathExecution = runtime.ManagedConnectorProviderOwnedWritePathExecution;
-            var coordinationState = providerOwnedControlPlaneOwnership.IsOperatorOnly ||
+            var coordinationState = providerOwnedControlPlaneApplyAndReconcileExecution.IsOperatorOnly ||
+                                    providerOwnedControlPlaneProvisioning.IsOperatorOnly ||
+                                    providerOwnedControlPlaneMutationReconcile.IsOperatorOnly ||
+                                    providerOwnedControlPlaneOwnership.IsOperatorOnly ||
                                     providerExecutionOrchestration.IsOperatorOnly ||
                                     providerOwnedWritePathExecution.IsOperatorOnly
                 ? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly
                 : CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked;
-            var coordinationDescription = string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.Description)
-                ? string.IsNullOrWhiteSpace(providerExecutionOrchestration.Description)
-                ? string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.Description)
-                    ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.Description)
-                        ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description)
-                            ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorMultiNodeLeaseExecution.Description)
-                                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
-                                    ? "Automatic background retry is not currently allowed to execute on this node."
-                                    : runtime.ManagedConnectorDistributedRetryOrchestration.Description
-                                : runtime.ManagedConnectorMultiNodeLeaseExecution.Description
-                            : runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description
-                        : runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.Description
-                    : providerOwnedWritePathExecution.Description
-                : providerExecutionOrchestration.Description
-                : providerOwnedControlPlaneOwnership.Description;
+            var coordinationDescription = string.IsNullOrWhiteSpace(providerOwnedControlPlaneApplyAndReconcileExecution.Description)
+                ? string.IsNullOrWhiteSpace(providerOwnedControlPlaneProvisioning.Description)
+                    ? string.IsNullOrWhiteSpace(providerOwnedControlPlaneMutationReconcile.Description)
+                        ? string.IsNullOrWhiteSpace(providerOwnedControlPlaneOwnership.Description)
+                            ? string.IsNullOrWhiteSpace(providerExecutionOrchestration.Description)
+                                ? string.IsNullOrWhiteSpace(providerOwnedWritePathExecution.Description)
+                                    ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.Description)
+                                        ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description)
+                                            ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorMultiNodeLeaseExecution.Description)
+                                                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
+                                                    ? "Automatic background retry is not currently allowed to execute on this node."
+                                                    : runtime.ManagedConnectorDistributedRetryOrchestration.Description
+                                                : runtime.ManagedConnectorMultiNodeLeaseExecution.Description
+                                            : runtime.ManagedConnectorDurableSharedSchedulerOrchestration.Description
+                                        : runtime.ManagedConnectorSchedulerRecoveryExecutionHardening.Description
+                                    : providerOwnedWritePathExecution.Description
+                                : providerExecutionOrchestration.Description
+                            : providerOwnedControlPlaneOwnership.Description
+                        : providerOwnedControlPlaneMutationReconcile.Description
+                    : providerOwnedControlPlaneProvisioning.Description
+                : providerOwnedControlPlaneApplyAndReconcileExecution.Description;
 
             return CreateResult(
                 runtime,
