@@ -272,6 +272,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories),
@@ -2925,6 +2929,12 @@ public sealed class PackageSurfaceTests
             .GetMethod("GetByManagedConnectorProviderOwnedWritePathExecutionCategory", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
             .GetMethod("GetByManagedConnectorProviderOwnedWritePathExecutionOperationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorProviderExecutionOrchestrationState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorProviderExecutionOrchestrationCategory", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetByManagedConnectorProviderExecutionOrchestrationOperationId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor)
             .GetMethod("ExecuteAsync", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter)
@@ -2995,6 +3005,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("ManagedConnectorSchedulerRecoveryExecutionHardening", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
             .GetProperty("ManagedConnectorProviderOwnedWritePathExecution", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("ManagedConnectorProviderExecutionOrchestration", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
             .GetProperty("ReportedCdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
@@ -4163,6 +4175,20 @@ public sealed class PackageSurfaceTests
             .GetField("ProviderOwnedCompleted", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates)
             .GetField("ProviderOwnedRisk", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates)
+            .GetField("NotApplicable", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates)
+            .GetField("OperatorOnly", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates)
+            .GetField("OrchestrationReady", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates)
+            .GetField("OrchestrationBlocked", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates)
+            .GetField("OrchestrationExecuting", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates)
+            .GetField("OrchestrationCompleted", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates)
+            .GetField("OrchestrationRisk", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
             .GetField("Unrecorded", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates)
@@ -4615,6 +4641,108 @@ public sealed class PackageSurfaceTests
             .GetProperty("IsProviderOwnedCompleted", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus)
             .GetProperty("IsProviderOwnedRisk", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("CategoryIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ExecutionRuntimeId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("CdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ExecutionOwnership", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ExecutionTopology", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ManagementMode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("OperationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("SourceId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ProviderOwnedWritePathExecutionState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ExecutionAdapterState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("LatestCommandExecutionState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("LatestCommandExecutionInvocationSourceId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("RetryExecutionPolicyState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("CommandJournalState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("DurableSharedSchedulerOrchestrationState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("SchedulerRecoveryExecutionHardeningState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("AdapterId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ProviderId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ConnectClusterId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ConnectorClass", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("SourceProviderId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("CommandFingerprint", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("AdapterFingerprint", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("LatestExecutionFingerprint", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("RetryFingerprint", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("PotentialChangeCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("LatestAttemptId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("LatestRecordedAtUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("CoordinationOwnerId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ActiveReporterId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("ActiveReporterLeaseExpiresAtUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("SchedulerId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("SchedulerKind", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("PollingIntervalSeconds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("WouldApplyChanges", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("RequiresExplicitApproval", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("IsDestructiveOperation", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("HasCommandJournalEvidence", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("HasDurableStoreConfigured", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("HasPersistedRecordedHistory", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("HasRecoveredPersistedHistory", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("CanOrchestrateProviderExecutionOnCurrentNode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("CategoryCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("HasActiveReporterLease", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("AppliesToManagedConnector", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("IsOperatorOnly", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("IsOrchestrationReady", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("IsOrchestrationBlocked", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("IsOrchestrationExecuting", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("IsOrchestrationCompleted", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus)
+            .GetProperty("IsOrchestrationRisk", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
             .GetProperty("OutboxDispatchState", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)

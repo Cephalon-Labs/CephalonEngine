@@ -382,6 +382,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus ManagedConnectorProviderOwnedWritePathExecution { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector broader provider execution-orchestration posture derived from provider-owned write-path execution, command-journal, scheduler, and recovery truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus ManagedConnectorProviderExecutionOrchestration { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

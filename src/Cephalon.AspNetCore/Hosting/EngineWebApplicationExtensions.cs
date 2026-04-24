@@ -1126,6 +1126,33 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedWritePathExecutionOperation");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-execution-orchestrations/{providerExecutionOrchestrationState}", (string providerExecutionOrchestrationState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderExecutionOrchestrationState(providerExecutionOrchestrationState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationState");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-execution-orchestrations/categories/{providerExecutionOrchestrationCategory}", (string providerExecutionOrchestrationCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderExecutionOrchestrationCategory(providerExecutionOrchestrationCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/provider-execution-orchestrations/operations/{operationId}", (string operationId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorProviderExecutionOrchestrationOperationId(operationId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationOperation");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
@@ -1237,6 +1264,17 @@ public static class EngineWebApplicationExtensions
                     : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedWritePathExecution);
             })
             .WithName("GetCephalonManagedConnectorProviderOwnedWritePathExecution");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-execution-orchestration", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null
+                    ? Results.NotFound()
+                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderExecutionOrchestration);
+            })
+            .WithName("GetCephalonManagedConnectorProviderExecutionOrchestration");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

@@ -8618,6 +8618,16 @@ CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus ManagedConnectorPrefli
 
 Gets the operator-facing managed-connector preflight posture derived from coverage, remediation, governance, drift, action planning, and write-path readiness.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderexecutionorchestration"></a>
+
+##### `ManagedConnectorProviderExecutionOrchestration`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus ManagedConnectorProviderExecutionOrchestration { get; set; }
+```
+
+Gets the operator-facing managed-connector broader provider execution-orchestration posture derived from provider-owned write-path execution, command-journal, scheduler, and recovery truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderownedwritepathexecution"></a>
 
 ##### `ManagedConnectorProviderOwnedWritePathExecution`
@@ -24027,6 +24037,1104 @@ string WritePathReadinessState { get; set; }
 
 Gets the current managed-connector write-path readiness state that informed connector-management preflight.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories`
+
+Defines the stable category identifiers used by managed-connector provider execution-orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The current provider execution lane still requires explicit approval.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-commandjournalevidence"></a>
+
+##### `CommandJournalEvidence`
+
+```csharp
+const string CommandJournalEvidence
+```
+
+The command journal currently exposes retained evidence for provider execution orchestration.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot yet orchestrate provider execution safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-currentnodeorchestratable"></a>
+
+##### `CurrentNodeOrchestratable`
+
+```csharp
+const string CurrentNodeOrchestratable
+```
+
+The current node can orchestrate provider execution safely.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The current provider execution lane still targets a destructive operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-durablejournalconfigured"></a>
+
+##### `DurableJournalConfigured`
+
+```csharp
+const string DurableJournalConfigured
+```
+
+A durable command-journal store is configured for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-executionhardened"></a>
+
+##### `ExecutionHardened`
+
+```csharp
+const string ExecutionHardened
+```
+
+Scheduler execution truth currently looks hardened enough for orchestration.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-executionrisk"></a>
+
+##### `ExecutionRisk`
+
+```csharp
+const string ExecutionRisk
+```
+
+Scheduler execution truth currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-inmemoryjournalonly"></a>
+
+##### `InMemoryJournalOnly`
+
+```csharp
+const string InMemoryJournalOnly
+```
+
+Provider execution orchestration currently depends on in-memory history only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-norecordedcommand"></a>
+
+##### `NoRecordedCommand`
+
+```csharp
+const string NoRecordedCommand
+```
+
+No command-journal evidence has been recorded yet.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider execution orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationblocked"></a>
+
+##### `OrchestrationBlocked`
+
+```csharp
+const string OrchestrationBlocked
+```
+
+Provider execution orchestration remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationcompleted"></a>
+
+##### `OrchestrationCompleted`
+
+```csharp
+const string OrchestrationCompleted
+```
+
+Provider execution orchestration no longer needs another provider-facing orchestration step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationexecuting"></a>
+
+##### `OrchestrationExecuting`
+
+```csharp
+const string OrchestrationExecuting
+```
+
+Provider execution orchestration is currently executing one provider-facing orchestration step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationready"></a>
+
+##### `OrchestrationReady`
+
+```csharp
+const string OrchestrationReady
+```
+
+Provider execution orchestration is currently ready on the shared lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationrisk"></a>
+
+##### `OrchestrationRisk`
+
+```csharp
+const string OrchestrationRisk
+```
+
+Provider execution orchestration currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-persistedhistory"></a>
+
+##### `PersistedHistory`
+
+```csharp
+const string PersistedHistory
+```
+
+The durable command journal currently exposes persisted recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerblocked"></a>
+
+##### `ProviderBlocked`
+
+```csharp
+const string ProviderBlocked
+```
+
+Provider-owned write-path execution remains blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandadapted"></a>
+
+##### `ProviderCommandAdapted`
+
+```csharp
+const string ProviderCommandAdapted
+```
+
+The latest provider execution translated into a provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandblocked"></a>
+
+##### `ProviderCommandBlocked`
+
+```csharp
+const string ProviderCommandBlocked
+```
+
+The latest provider execution remained blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandfailed"></a>
+
+##### `ProviderCommandFailed`
+
+```csharp
+const string ProviderCommandFailed
+```
+
+The latest provider execution failed while Cephalon translated provider command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandnoop"></a>
+
+##### `ProviderCommandNoOp`
+
+```csharp
+const string ProviderCommandNoOp
+```
+
+The latest provider execution determined that no provider command is required.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandoperatoronly"></a>
+
+##### `ProviderCommandOperatorOnly`
+
+```csharp
+const string ProviderCommandOperatorOnly
+```
+
+The latest provider execution remained operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandunavailable"></a>
+
+##### `ProviderCommandUnavailable`
+
+```csharp
+const string ProviderCommandUnavailable
+```
+
+The latest provider execution could not resolve a provider adapter.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerexecutable"></a>
+
+##### `ProviderExecutable`
+
+```csharp
+const string ProviderExecutable
+```
+
+Provider-owned write-path execution is currently ready.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerexecutionorchestration"></a>
+
+##### `ProviderExecutionOrchestration`
+
+```csharp
+const string ProviderExecutionOrchestration
+```
+
+The runtime participates in the provider execution-orchestration lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedcompleted"></a>
+
+##### `ProviderOwnedCompleted`
+
+```csharp
+const string ProviderOwnedCompleted
+```
+
+Provider-owned write-path execution no longer needs another provider command.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedexecuting"></a>
+
+##### `ProviderOwnedExecuting`
+
+```csharp
+const string ProviderOwnedExecuting
+```
+
+Provider-owned write-path execution already translated one provider-facing command shape.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedrisk"></a>
+
+##### `ProviderOwnedRisk`
+
+```csharp
+const string ProviderOwnedRisk
+```
+
+Provider-owned write-path execution currently remains risky.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The durable command journal currently exposes recovered recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-recoveryblocked"></a>
+
+##### `RecoveryBlocked`
+
+```csharp
+const string RecoveryBlocked
+```
+
+Scheduler recovery remains blocked by missing durable evidence.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-recoveryneeded"></a>
+
+##### `RecoveryNeeded`
+
+```csharp
+const string RecoveryNeeded
+```
+
+The durable shared scheduler currently still needs durable recovery hardening.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-recoveryready"></a>
+
+##### `RecoveryReady`
+
+```csharp
+const string RecoveryReady
+```
+
+Scheduler recovery is ready for safe orchestration.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-schedulerconflicted"></a>
+
+##### `SchedulerConflicted`
+
+```csharp
+const string SchedulerConflicted
+```
+
+The durable shared scheduler currently remains conflicted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-schedulerscheduled"></a>
+
+##### `SchedulerScheduled`
+
+```csharp
+const string SchedulerScheduled
+```
+
+The durable shared scheduler currently keeps one bounded retry scheduled.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-schedulerunscheduled"></a>
+
+##### `SchedulerUnscheduled`
+
+```csharp
+const string SchedulerUnscheduled
+```
+
+The durable shared scheduler currently does not need another scheduled step.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources`
+
+Defines the stable source identifiers used by managed-connector provider execution-orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-commandexecution"></a>
+
+##### `CommandExecution`
+
+```csharp
+const string CommandExecution
+```
+
+The provider execution-orchestration answer was derived primarily from the latest command-execution outcome.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-commandjournal"></a>
+
+##### `CommandJournal`
+
+```csharp
+const string CommandJournal
+```
+
+The provider execution-orchestration answer was derived primarily from command-journal truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-durablesharedschedulerorchestration"></a>
+
+##### `DurableSharedSchedulerOrchestration`
+
+```csharp
+const string DurableSharedSchedulerOrchestration
+```
+
+The provider execution-orchestration answer was derived primarily from durable shared scheduler-orchestration truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-executionadapter"></a>
+
+##### `ExecutionAdapter`
+
+```csharp
+const string ExecutionAdapter
+```
+
+The provider execution-orchestration answer was derived primarily from execution-adapter truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-providerownedwritepathexecution"></a>
+
+##### `ProviderOwnedWritePathExecution`
+
+```csharp
+const string ProviderOwnedWritePathExecution
+```
+
+The provider execution-orchestration answer was derived primarily from provider-owned write-path execution truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-schedulerrecoveryexecutionhardening"></a>
+
+##### `SchedulerRecoveryExecutionHardening`
+
+```csharp
+const string SchedulerRecoveryExecutionHardening
+```
+
+The provider execution-orchestration answer was derived primarily from scheduler recovery and execution-hardening truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The provider execution-orchestration answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates`
+
+Defines the stable state identifiers used by managed-connector provider execution-orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Provider execution orchestration does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Provider execution orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationblocked"></a>
+
+##### `OrchestrationBlocked`
+
+```csharp
+const string OrchestrationBlocked
+```
+
+Provider execution orchestration remains blocked by shared runtime policy, scheduler, or orchestration truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationcompleted"></a>
+
+##### `OrchestrationCompleted`
+
+```csharp
+const string OrchestrationCompleted
+```
+
+Provider execution orchestration no longer needs an additional provider-facing orchestration step on the shared lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationexecuting"></a>
+
+##### `OrchestrationExecuting`
+
+```csharp
+const string OrchestrationExecuting
+```
+
+Provider execution orchestration is currently executing one provider-facing orchestration step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationready"></a>
+
+##### `OrchestrationReady`
+
+```csharp
+const string OrchestrationReady
+```
+
+Provider execution orchestration is currently ready on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationrisk"></a>
+
+##### `OrchestrationRisk`
+
+```csharp
+const string OrchestrationRisk
+```
+
+Provider execution orchestration currently remains risky because broader shared runtime truth is not safe enough yet.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus`
+
+Describes the current operator-facing managed-connector provider execution-orchestration posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus(string state, string description)
+```
+
+Creates a new managed-connector provider execution-orchestration answer.
+
+Parameters:
+- `state`: The stable provider execution-orchestration state, such as `not-applicable`, `operator-only`, `orchestration-ready`, `orchestration-blocked`, `orchestration-executing`, `orchestration-completed`, or `orchestration-risk`.
+- `description`: An optional operator-facing provider execution-orchestration summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-adapterfingerprint"></a>
+
+##### `AdapterFingerprint`
+
+```csharp
+string AdapterFingerprint { get; set; }
+```
+
+Gets the deterministic execution-adapter fingerprint currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-adapterid"></a>
+
+##### `AdapterId`
+
+```csharp
+string AdapterId { get; set; }
+```
+
+Gets the stable provider execution-adapter identifier currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-canorchestrateproviderexecutiononcurrentnode"></a>
+
+##### `CanOrchestrateProviderExecutionOnCurrentNode`
+
+```csharp
+bool CanOrchestrateProviderExecutionOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can orchestrate provider execution safely.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active provider execution-orchestration categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable provider execution-orchestration categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current managed-connector command-journal state that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing provider execution-orchestration summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-durablesharedschedulerorchestrationstate"></a>
+
+##### `DurableSharedSchedulerOrchestrationState`
+
+```csharp
+string DurableSharedSchedulerOrchestrationState { get; set; }
+```
+
+Gets the current durable shared scheduler-orchestration state that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-executionadapterstate"></a>
+
+##### `ExecutionAdapterState`
+
+```csharp
+string ExecutionAdapterState { get; set; }
+```
+
+Gets the current managed-connector execution-adapter state that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-hascommandjournalevidence"></a>
+
+##### `HasCommandJournalEvidence`
+
+```csharp
+bool HasCommandJournalEvidence { get; set; }
+```
+
+Gets a value indicating whether the current command journal already exposes provider-execution evidence.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current provider execution orchestration targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether provider execution orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationblocked"></a>
+
+##### `IsOrchestrationBlocked`
+
+```csharp
+bool IsOrchestrationBlocked { get; }
+```
+
+Gets a value indicating whether provider execution orchestration currently remains blocked.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationcompleted"></a>
+
+##### `IsOrchestrationCompleted`
+
+```csharp
+bool IsOrchestrationCompleted { get; }
+```
+
+Gets a value indicating whether provider execution orchestration no longer needs another provider-facing orchestration step.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationexecuting"></a>
+
+##### `IsOrchestrationExecuting`
+
+```csharp
+bool IsOrchestrationExecuting { get; }
+```
+
+Gets a value indicating whether provider execution orchestration is currently executing one provider-facing orchestration step.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationready"></a>
+
+##### `IsOrchestrationReady`
+
+```csharp
+bool IsOrchestrationReady { get; }
+```
+
+Gets a value indicating whether provider execution orchestration is currently ready.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationrisk"></a>
+
+##### `IsOrchestrationRisk`
+
+```csharp
+bool IsOrchestrationRisk { get; }
+```
+
+Gets a value indicating whether provider execution orchestration currently remains risky.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestattemptid"></a>
+
+##### `LatestAttemptId`
+
+```csharp
+string LatestAttemptId { get; set; }
+```
+
+Gets the stable latest recorded command-execution attempt identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestcommandexecutioninvocationsourceid"></a>
+
+##### `LatestCommandExecutionInvocationSourceId`
+
+```csharp
+string LatestCommandExecutionInvocationSourceId { get; set; }
+```
+
+Gets the invocation-source identifier of the latest recorded command-execution outcome.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestcommandexecutionstate"></a>
+
+##### `LatestCommandExecutionState`
+
+```csharp
+string LatestCommandExecutionState { get; set; }
+```
+
+Gets the latest recorded managed-connector command-execution state visible to provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestexecutionfingerprint"></a>
+
+##### `LatestExecutionFingerprint`
+
+```csharp
+string LatestExecutionFingerprint { get; set; }
+```
+
+Gets the deterministic latest recorded execution fingerprint currently visible to provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-pollingintervalseconds"></a>
+
+##### `PollingIntervalSeconds`
+
+```csharp
+int PollingIntervalSeconds { get; set; }
+```
+
+Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared provider-execution changes currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; set; }
+```
+
+Gets the best available provider identifier currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-providerownedwritepathexecutionstate"></a>
+
+##### `ProviderOwnedWritePathExecutionState`
+
+```csharp
+string ProviderOwnedWritePathExecutionState { get; set; }
+```
+
+Gets the current provider-owned write-path execution state that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current provider execution orchestration still requires explicit approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-retryexecutionpolicystate"></a>
+
+##### `RetryExecutionPolicyState`
+
+```csharp
+string RetryExecutionPolicyState { get; set; }
+```
+
+Gets the current managed-connector retry-execution policy state that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-schedulerid"></a>
+
+##### `SchedulerId`
+
+```csharp
+string SchedulerId { get; set; }
+```
+
+Gets the stable shared scheduler identifier currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-schedulerkind"></a>
+
+##### `SchedulerKind`
+
+```csharp
+string SchedulerKind { get; set; }
+```
+
+Gets the stable shared scheduler kind currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-schedulerrecoveryexecutionhardeningstate"></a>
+
+##### `SchedulerRecoveryExecutionHardeningState`
+
+```csharp
+string SchedulerRecoveryExecutionHardeningState { get; set; }
+```
+
+Gets the current scheduler recovery and execution-hardening state that informed provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier currently associated with provider execution orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector provider execution-orchestration state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current provider execution orchestration would still apply one or more shared write-path changes.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories`
@@ -34145,6 +35253,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `preflightState`: The stable managed-connector preflight state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderexecutionorchestrationcategory-system-string"></a>
+
+##### `GetByManagedConnectorProviderExecutionOrchestrationCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderExecutionOrchestrationCategory(string providerExecutionOrchestrationCategory)
+```
+
+Gets the CDC capture execution runtimes whose current provider execution-orchestration answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider execution-orchestration category.
+
+Parameters:
+- `providerExecutionOrchestrationCategory`: The stable provider execution-orchestration category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderexecutionorchestrationoperationid-system-string"></a>
+
+##### `GetByManagedConnectorProviderExecutionOrchestrationOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderExecutionOrchestrationOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current provider execution-orchestration answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable provider execution-orchestration operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderexecutionorchestrationstate-system-string"></a>
+
+##### `GetByManagedConnectorProviderExecutionOrchestrationState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderExecutionOrchestrationState(string providerExecutionOrchestrationState)
+```
+
+Gets the CDC capture execution runtimes whose current provider execution-orchestration answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider execution-orchestration state.
+
+Parameters:
+- `providerExecutionOrchestrationState`: The stable provider execution-orchestration state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderownedwritepathexecutioncategory-system-string"></a>
 

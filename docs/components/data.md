@@ -670,6 +670,21 @@ distributed retry orchestration plus richer cross-node idempotency hardening plu
 multi-node lease execution plus durable shared scheduler orchestration truth instead of inventing a
 Debezium-only status registry.
 
+That same shared execution-runtime story now also keeps managed-connector broader provider
+execution orchestration explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderExecutionOrchestration` publishes
+stable `not-applicable` / `operator-only` / `orchestration-ready` / `orchestration-blocked` /
+`orchestration-executing` / `orchestration-completed` / `orchestration-risk` posture together
+with operation/source, provider-owned write-path plus execution-adapter plus latest-command plus
+retry-policy plus command-journal plus durable shared scheduler plus scheduler-recovery state,
+deterministic fingerprints, adapter/provider metadata, and
+`CanOrchestrateProviderExecutionOnCurrentNode`. The shared execution-runtime catalog derives that
+answer from the existing provider-owned write-path, execution-adapter, latest command-execution,
+retry-execution-policy, bounded command-journal, durable shared scheduler, and scheduler recovery
+truth, and the shared data pack now gates both `ManagedConnectorAutomaticRetryHostedService` and
+automatic command invocations through that one orchestration answer instead of scattering broader
+provider orchestration checks across host code.
+
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
 keeps `Cephalon.Data` honest: it now owns the shared in-process execution substrate plus the shared

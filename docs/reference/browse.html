@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-24T01:07:47.4974985+00:00",
+  "GeneratedAtUtc": "2026-04-24T01:58:33.6413489+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 485
+      "TypeCount": 489
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -674,7 +674,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 205
+      "TypeCount": 209
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3313,7 +3313,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 41,
+        "Properties": 42,
         "Methods": 0
       }
     },
@@ -4709,6 +4709,66 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 18,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector provider execution-orchestration answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 36,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "Summary": "Defines the stable source identifiers used by managed-connector provider execution-orchestration answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector provider execution-orchestration answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "Summary": "Describes the current operator-facing managed-connector provider execution-orchestration posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 53,
         "Methods": 0
       }
     },
@@ -8429,7 +8489,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 78
+        "Methods": 81
       }
     },
     {
@@ -15211,6 +15271,17 @@
     {
       "DisplayName": "ActiveReporterId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-activereporterid",
+      "Signature": "string ActiveReporterId { get; set; }",
+      "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
+    },
+    {
+      "DisplayName": "ActiveReporterId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15315,6 +15386,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-activereporterleaseexpiresatutc",
+      "Signature": "DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when the active reporter lease expires when one is known."
+    },
+    {
+      "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-activereporterleaseexpiresatutc",
       "Signature": "DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }",
       "Summary": "Gets the UTC timestamp when the active reporter lease expires when one is known."
     },
@@ -15607,6 +15689,17 @@
     {
       "DisplayName": "AdapterFingerprint",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-adapterfingerprint",
+      "Signature": "string AdapterFingerprint { get; set; }",
+      "Summary": "Gets the deterministic execution-adapter fingerprint currently associated with provider execution orchestration."
+    },
+    {
+      "DisplayName": "AdapterFingerprint",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15647,6 +15740,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-adapterid",
       "Signature": "string AdapterId { get; set; }",
       "Summary": "Gets the stable provider execution-adapter identifier currently associated with the execution runtime."
+    },
+    {
+      "DisplayName": "AdapterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-adapterid",
+      "Signature": "string AdapterId { get; set; }",
+      "Summary": "Gets the stable provider execution-adapter identifier currently associated with provider execution orchestration."
     },
     {
       "DisplayName": "AdapterId",
@@ -18555,6 +18659,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18980,6 +19095,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-approvalrequired",
       "Signature": "const string ApprovalRequired",
       "Summary": "The next intended follow-through would still require an approval or safety gate before engine execution."
+    },
+    {
+      "DisplayName": "ApprovalRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-approvalrequired",
+      "Signature": "const string ApprovalRequired",
+      "Summary": "The current provider execution lane still requires explicit approval."
     },
     {
       "DisplayName": "ApprovalRequired",
@@ -22524,6 +22650,17 @@
       "Summary": "Gets a value indicating whether a generic ingress or traffic manager can materialize this selected endpoint directly."
     },
     {
+      "DisplayName": "CanOrchestrateProviderExecutionOnCurrentNode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-canorchestrateproviderexecutiononcurrentnode",
+      "Signature": "bool CanOrchestrateProviderExecutionOnCurrentNode { get; set; }",
+      "Summary": "Gets a value indicating whether the current node can orchestrate provider execution safely."
+    },
+    {
       "DisplayName": "CanPrepareFutureExecutionLane",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus",
@@ -23285,6 +23422,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active provider execution-orchestration categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -23556,6 +23704,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable preflight categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable provider execution-orchestration categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -23954,6 +24113,17 @@
       "Summary": "Creates a new managed-connector preflight answer."
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector provider execution-orchestration answer."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
@@ -24293,6 +24463,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with provider execution orchestration."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -26145,6 +26326,17 @@
     {
       "DisplayName": "CommandExecution",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-commandexecution",
+      "Signature": "const string CommandExecution",
+      "Summary": "The provider execution-orchestration answer was derived primarily from the latest command-execution outcome."
+    },
+    {
+      "DisplayName": "CommandExecution",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26299,6 +26491,17 @@
     {
       "DisplayName": "CommandFingerprint",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-commandfingerprint",
+      "Signature": "string CommandFingerprint { get; set; }",
+      "Summary": "Gets the deterministic command fingerprint currently associated with provider execution orchestration."
+    },
+    {
+      "DisplayName": "CommandFingerprint",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26429,6 +26632,17 @@
       "Summary": "The automatic background retry execution answer was derived primarily from the bounded command journal."
     },
     {
+      "DisplayName": "CommandJournal",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-commandjournal",
+      "Signature": "const string CommandJournal",
+      "Summary": "The provider execution-orchestration answer was derived primarily from command-journal truth."
+    },
+    {
       "DisplayName": "CommandJournalDurability",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningSources",
@@ -26539,6 +26753,17 @@
       "Summary": "Gets the current managed-connector command-journal durability state that informed scheduler recovery and execution hardening."
     },
     {
+      "DisplayName": "CommandJournalEvidence",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-commandjournalevidence",
+      "Signature": "const string CommandJournalEvidence",
+      "Summary": "The command journal currently exposes retained evidence for provider execution orchestration."
+    },
+    {
       "DisplayName": "CommandJournalSourceId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -26603,6 +26828,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-commandjournalstate",
       "Signature": "string CommandJournalState { get; set; }",
       "Summary": "Gets the current managed-connector bounded command-journal state that informed distributed retry lease posture."
+    },
+    {
+      "DisplayName": "CommandJournalState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-commandjournalstate",
+      "Signature": "string CommandJournalState { get; set; }",
+      "Summary": "Gets the current managed-connector command-journal state that informed provider execution orchestration."
     },
     {
       "DisplayName": "CommandRetry",
@@ -27355,6 +27591,17 @@
     {
       "DisplayName": "ConnectClusterId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-connectclusterid",
+      "Signature": "string ConnectClusterId { get; set; }",
+      "Summary": "Gets the best available connector-cluster identifier currently associated with provider execution orchestration."
+    },
+    {
+      "DisplayName": "ConnectClusterId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27747,6 +27994,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-connectorclass",
       "Signature": "string ConnectorClass { get; set; }",
       "Summary": "Gets the upstream connector-class identifier when one is known."
+    },
+    {
+      "DisplayName": "ConnectorClass",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-connectorclass",
+      "Signature": "string ConnectorClass { get; set; }",
+      "Summary": "Gets the best available connector-class identifier currently associated with provider execution orchestration."
     },
     {
       "DisplayName": "ConnectorClass",
@@ -28620,6 +28878,17 @@
     {
       "DisplayName": "CoordinationOwnerId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-coordinationownerid",
+      "Signature": "string CoordinationOwnerId { get; set; }",
+      "Summary": "Gets the host-owned coordination owner identifier when one is known."
+    },
+    {
+      "DisplayName": "CoordinationOwnerId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -29357,6 +29626,17 @@
     {
       "DisplayName": "CurrentNodeBlocked",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-currentnodeblocked",
+      "Signature": "const string CurrentNodeBlocked",
+      "Summary": "The current node cannot yet orchestrate provider execution safely."
+    },
+    {
+      "DisplayName": "CurrentNodeBlocked",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -29430,6 +29710,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-currentnodeexecutable",
       "Signature": "const string CurrentNodeExecutable",
       "Summary": "The current node can execute automatic retry safely for the current hardening answer."
+    },
+    {
+      "DisplayName": "CurrentNodeOrchestratable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-currentnodeorchestratable",
+      "Signature": "const string CurrentNodeOrchestratable",
+      "Summary": "The current node can orchestrate provider execution safely."
     },
     {
       "DisplayName": "CurrentNodeSchedulable",
@@ -31620,6 +31911,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing provider execution-orchestration summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -32573,6 +32875,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalcategories-destructiveoperation",
       "Signature": "const string DestructiveOperation",
       "Summary": "The current intended follow-through would still perform a destructive operation such as delete."
+    },
+    {
+      "DisplayName": "DestructiveOperation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-destructiveoperation",
+      "Signature": "const string DestructiveOperation",
+      "Summary": "The current provider execution lane still targets a destructive operation."
     },
     {
       "DisplayName": "DestructiveOperation",
@@ -34645,6 +34958,17 @@
     {
       "DisplayName": "DurableJournalConfigured",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-durablejournalconfigured",
+      "Signature": "const string DurableJournalConfigured",
+      "Summary": "A durable command-journal store is configured for the runtime."
+    },
+    {
+      "DisplayName": "DurableJournalConfigured",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -34711,6 +35035,17 @@
     {
       "DisplayName": "DurableSharedSchedulerOrchestration",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-durablesharedschedulerorchestration",
+      "Signature": "const string DurableSharedSchedulerOrchestration",
+      "Summary": "The provider execution-orchestration answer was derived primarily from durable shared scheduler-orchestration truth."
+    },
+    {
+      "DisplayName": "DurableSharedSchedulerOrchestration",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -34718,6 +35053,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningsources-durablesharedschedulerorchestration",
       "Signature": "const string DurableSharedSchedulerOrchestration",
       "Summary": "The scheduler recovery and execution-hardening answer was derived primarily from durable shared scheduler orchestration truth."
+    },
+    {
+      "DisplayName": "DurableSharedSchedulerOrchestrationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-durablesharedschedulerorchestrationstate",
+      "Signature": "string DurableSharedSchedulerOrchestrationState { get; set; }",
+      "Summary": "Gets the current durable shared scheduler-orchestration state that informed provider execution orchestration."
     },
     {
       "DisplayName": "DurableSharedSchedulerOrchestrationState",
@@ -37769,6 +38115,17 @@
     {
       "DisplayName": "ExecutionAdapter",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-executionadapter",
+      "Signature": "const string ExecutionAdapter",
+      "Summary": "The provider execution-orchestration answer was derived primarily from execution-adapter truth."
+    },
+    {
+      "DisplayName": "ExecutionAdapter",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -37853,6 +38210,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-executionadapterstate",
       "Signature": "string ExecutionAdapterState { get; set; }",
       "Summary": "Gets the current managed-connector execution-adapter state that informed command retry."
+    },
+    {
+      "DisplayName": "ExecutionAdapterState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-executionadapterstate",
+      "Signature": "string ExecutionAdapterState { get; set; }",
+      "Summary": "Gets the current managed-connector execution-adapter state that informed provider execution orchestration."
     },
     {
       "DisplayName": "ExecutionAdapterState",
@@ -38242,6 +38610,17 @@
     {
       "DisplayName": "ExecutionHardened",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-executionhardened",
+      "Signature": "const string ExecutionHardened",
+      "Summary": "Scheduler execution truth currently looks hardened enough for orchestration."
+    },
+    {
+      "DisplayName": "ExecutionHardened",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -38605,6 +38984,17 @@
     {
       "DisplayName": "ExecutionOwnership",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-executionownership",
+      "Signature": "string ExecutionOwnership { get; set; }",
+      "Summary": "Gets the operator-facing execution-ownership mode that informed provider execution orchestration."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -38645,6 +39035,17 @@
       "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executionownership",
       "Signature": "string ExecutionOwnership { get; set; }",
       "Summary": "Gets or sets the execution-ownership mode published for the connector runtime."
+    },
+    {
+      "DisplayName": "ExecutionRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-executionrisk",
+      "Signature": "const string ExecutionRisk",
+      "Summary": "Scheduler execution truth currently remains risky."
     },
     {
       "DisplayName": "ExecutionRisk",
@@ -38825,6 +39226,17 @@
     {
       "DisplayName": "ExecutionRuntimeId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with provider execution orchestration."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -38953,6 +39365,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-executiontopology",
       "Signature": "string ExecutionTopology { get; set; }",
       "Summary": "Gets the operator-facing execution-topology classification that informed broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets the operator-facing execution-topology classification that informed provider execution orchestration."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -42519,6 +42942,39 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector preflight answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorProviderExecutionOrchestrationCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderexecutionorchestrationcategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderExecutionOrchestrationCategory(string providerExecutionOrchestrationCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider execution-orchestration answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderExecutionOrchestrationOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderexecutionorchestrationoperationid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderExecutionOrchestrationOperationId(string operationId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider execution-orchestration answer currently targets the requested operation."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorProviderExecutionOrchestrationState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorproviderexecutionorchestrationstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorProviderExecutionOrchestrationState(string providerExecutionOrchestrationState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current provider execution-orchestration answer matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorProviderOwnedWritePathExecutionCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -44391,6 +44847,17 @@
     {
       "DisplayName": "HasActiveReporterLease",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-hasactivereporterlease",
+      "Signature": "bool HasActiveReporterLease { get; }",
+      "Summary": "Gets a value indicating whether the runtime currently exposes one active reporter lease."
+    },
+    {
+      "DisplayName": "HasActiveReporterLease",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44464,6 +44931,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-hascephalonratelimiting-system-iserviceprovider-system-string-system-string",
       "Signature": "bool HasCephalonRateLimiting(this IServiceProvider services, string transportId, string behaviorId)",
       "Summary": "Determines whether the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier actively enforces a limiter."
+    },
+    {
+      "DisplayName": "HasCommandJournalEvidence",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-hascommandjournalevidence",
+      "Signature": "bool HasCommandJournalEvidence { get; set; }",
+      "Summary": "Gets a value indicating whether the current command journal already exposes provider-execution evidence."
     },
     {
       "DisplayName": "HasCommandTarget",
@@ -44682,6 +45160,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-hasdurablestoreconfigured",
+      "Signature": "bool HasDurableStoreConfigured { get; set; }",
+      "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
+    },
+    {
+      "DisplayName": "HasDurableStoreConfigured",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-hasdurablestoreconfigured",
       "Signature": "bool HasDurableStoreConfigured { get; set; }",
       "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
     },
@@ -45084,6 +45573,17 @@
     {
       "DisplayName": "HasPersistedRecordedHistory",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-haspersistedrecordedhistory",
+      "Signature": "bool HasPersistedRecordedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history."
+    },
+    {
+      "DisplayName": "HasPersistedRecordedHistory",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -45265,6 +45765,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-hasrecoveredpersistedhistory",
+      "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the current process recovered persisted command history for this runtime."
+    },
+    {
+      "DisplayName": "HasRecoveredPersistedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-hasrecoveredpersistedhistory",
       "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
       "Summary": "Gets a value indicating whether the current process recovered persisted command history for this runtime."
     },
@@ -49187,6 +49698,17 @@
     {
       "DisplayName": "InMemoryJournalOnly",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-inmemoryjournalonly",
+      "Signature": "const string InMemoryJournalOnly",
+      "Summary": "Provider execution orchestration currently depends on in-memory history only."
+    },
+    {
+      "DisplayName": "InMemoryJournalOnly",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -50078,6 +50600,17 @@
     {
       "DisplayName": "IsDestructiveOperation",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isdestructiveoperation",
+      "Signature": "bool IsDestructiveOperation { get; set; }",
+      "Summary": "Gets a value indicating whether the current provider execution orchestration targets a destructive connector operation."
+    },
+    {
+      "DisplayName": "IsDestructiveOperation",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -50793,6 +51326,17 @@
     {
       "DisplayName": "IsOperatorOnly",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether provider execution orchestration still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -50833,6 +51377,61 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-isoperatorrequestinvocation",
       "Signature": "bool IsOperatorRequestInvocation { get; }",
       "Summary": "Gets a value indicating whether the request was recorded from an explicit operator-initiated request."
+    },
+    {
+      "DisplayName": "IsOrchestrationBlocked",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationblocked",
+      "Signature": "bool IsOrchestrationBlocked { get; }",
+      "Summary": "Gets a value indicating whether provider execution orchestration currently remains blocked."
+    },
+    {
+      "DisplayName": "IsOrchestrationCompleted",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationcompleted",
+      "Signature": "bool IsOrchestrationCompleted { get; }",
+      "Summary": "Gets a value indicating whether provider execution orchestration no longer needs another provider-facing orchestration step."
+    },
+    {
+      "DisplayName": "IsOrchestrationExecuting",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationexecuting",
+      "Signature": "bool IsOrchestrationExecuting { get; }",
+      "Summary": "Gets a value indicating whether provider execution orchestration is currently executing one provider-facing orchestration step."
+    },
+    {
+      "DisplayName": "IsOrchestrationReady",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationready",
+      "Signature": "bool IsOrchestrationReady { get; }",
+      "Summary": "Gets a value indicating whether provider execution orchestration is currently ready."
+    },
+    {
+      "DisplayName": "IsOrchestrationRisk",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-isorchestrationrisk",
+      "Signature": "bool IsOrchestrationRisk { get; }",
+      "Summary": "Gets a value indicating whether provider execution orchestration currently remains risky."
     },
     {
       "DisplayName": "IsOutOfPolicy",
@@ -52817,6 +53416,17 @@
     {
       "DisplayName": "LatestAttemptId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestattemptid",
+      "Signature": "string LatestAttemptId { get; set; }",
+      "Summary": "Gets the stable latest recorded command-execution attempt identifier when one exists."
+    },
+    {
+      "DisplayName": "LatestAttemptId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -53103,6 +53713,17 @@
     {
       "DisplayName": "LatestCommandExecutionInvocationSourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestcommandexecutioninvocationsourceid",
+      "Signature": "string LatestCommandExecutionInvocationSourceId { get; set; }",
+      "Summary": "Gets the invocation-source identifier of the latest recorded command-execution outcome."
+    },
+    {
+      "DisplayName": "LatestCommandExecutionInvocationSourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -53176,6 +53797,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-latestcommandexecutionstate",
       "Signature": "string LatestCommandExecutionState { get; set; }",
       "Summary": "Gets the latest recorded managed-connector command-execution state visible to cross-node idempotency hardening."
+    },
+    {
+      "DisplayName": "LatestCommandExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestcommandexecutionstate",
+      "Signature": "string LatestCommandExecutionState { get; set; }",
+      "Summary": "Gets the latest recorded managed-connector command-execution state visible to provider execution orchestration."
     },
     {
       "DisplayName": "LatestCommandExecutionState",
@@ -53345,6 +53977,17 @@
     {
       "DisplayName": "LatestExecutionFingerprint",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestexecutionfingerprint",
+      "Signature": "string LatestExecutionFingerprint { get; set; }",
+      "Summary": "Gets the deterministic latest recorded execution fingerprint currently visible to provider execution orchestration."
+    },
+    {
+      "DisplayName": "LatestExecutionFingerprint",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -53506,6 +54149,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-latestrecordedatutc",
       "Signature": "DateTimeOffset? LatestRecordedAtUtc { get; set; }",
       "Summary": "Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed the retry posture."
+    },
+    {
+      "DisplayName": "LatestRecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-latestrecordedatutc",
+      "Signature": "DateTimeOffset? LatestRecordedAtUtc { get; set; }",
+      "Summary": "Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed provider execution orchestration."
     },
     {
       "DisplayName": "LatestRecordedAtUtc",
@@ -54553,6 +55207,17 @@
       "Summary": "Gets the operator-facing managed-connector preflight posture derived from coverage, remediation, governance, drift, action planning, and write-path readiness."
     },
     {
+      "DisplayName": "ManagedConnectorProviderExecutionOrchestration",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorproviderexecutionorchestration",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus ManagedConnectorProviderExecutionOrchestration { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector broader provider execution-orchestration posture derived from provider-owned write-path execution, command-journal, scheduler, and recovery truth."
+    },
+    {
       "DisplayName": "ManagedConnectorProviderOwnedWritePathExecution",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -54846,6 +55511,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -59655,6 +60331,17 @@
       "Summary": "No managed-connector command-execution outcome has been recorded yet for the current retry posture."
     },
     {
+      "DisplayName": "NoRecordedCommand",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-norecordedcommand",
+      "Signature": "const string NoRecordedCommand",
+      "Summary": "No command-journal evidence has been recorded yet."
+    },
+    {
       "DisplayName": "NotAllowedAuthoringStyle",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointAuthoringPolicySuppressionKind",
@@ -59895,6 +60582,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstates-notapplicable",
       "Signature": "const string NotApplicable",
       "Summary": "The execution runtime does not currently represent a managed connector."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "Provider execution orchestration does not currently apply to the execution runtime."
     },
     {
       "DisplayName": "NotApplicable",
@@ -61164,6 +61862,17 @@
     {
       "DisplayName": "OperationId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier currently associated with provider execution orchestration."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61483,6 +62192,28 @@
     {
       "DisplayName": "OperatorOnly",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Provider execution orchestration still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Provider execution orchestration still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61620,6 +62351,116 @@
       "FileName": "cephalon-data-oracle.md",
       "AnchorId": "member-m-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-ctor",
       "Signature": "OracleLogMinerCaptureOptions()"
+    },
+    {
+      "DisplayName": "OrchestrationBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationblocked",
+      "Signature": "const string OrchestrationBlocked",
+      "Summary": "Provider execution orchestration remains blocked."
+    },
+    {
+      "DisplayName": "OrchestrationBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationblocked",
+      "Signature": "const string OrchestrationBlocked",
+      "Summary": "Provider execution orchestration remains blocked by shared runtime policy, scheduler, or orchestration truth."
+    },
+    {
+      "DisplayName": "OrchestrationCompleted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationcompleted",
+      "Signature": "const string OrchestrationCompleted",
+      "Summary": "Provider execution orchestration no longer needs another provider-facing orchestration step."
+    },
+    {
+      "DisplayName": "OrchestrationCompleted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationcompleted",
+      "Signature": "const string OrchestrationCompleted",
+      "Summary": "Provider execution orchestration no longer needs an additional provider-facing orchestration step on the shared lane."
+    },
+    {
+      "DisplayName": "OrchestrationExecuting",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationexecuting",
+      "Signature": "const string OrchestrationExecuting",
+      "Summary": "Provider execution orchestration is currently executing one provider-facing orchestration step."
+    },
+    {
+      "DisplayName": "OrchestrationExecuting",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationexecuting",
+      "Signature": "const string OrchestrationExecuting",
+      "Summary": "Provider execution orchestration is currently executing one provider-facing orchestration step."
+    },
+    {
+      "DisplayName": "OrchestrationReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationready",
+      "Signature": "const string OrchestrationReady",
+      "Summary": "Provider execution orchestration is currently ready on the shared lane."
+    },
+    {
+      "DisplayName": "OrchestrationReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationready",
+      "Signature": "const string OrchestrationReady",
+      "Summary": "Provider execution orchestration is currently ready on the shared runtime surface."
+    },
+    {
+      "DisplayName": "OrchestrationRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-orchestrationrisk",
+      "Signature": "const string OrchestrationRisk",
+      "Summary": "Provider execution orchestration currently remains risky."
+    },
+    {
+      "DisplayName": "OrchestrationRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstates-orchestrationrisk",
+      "Signature": "const string OrchestrationRisk",
+      "Summary": "Provider execution orchestration currently remains risky because broader shared runtime truth is not safe enough yet."
     },
     {
       "DisplayName": "Order",
@@ -63670,6 +64511,17 @@
     {
       "DisplayName": "PersistedHistory",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-persistedhistory",
+      "Signature": "const string PersistedHistory",
+      "Summary": "The durable command journal currently exposes persisted recorded history."
+    },
+    {
+      "DisplayName": "PersistedHistory",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -64154,6 +65006,17 @@
     {
       "DisplayName": "PollingIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets the bounded retry scheduler polling interval, in seconds, when one is configured."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -64511,6 +65374,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-potentialchangecount",
       "Signature": "int PotentialChangeCount { get; set; }",
       "Summary": "Gets the number of visible potential shared write-path changes in the current execution intent."
+    },
+    {
+      "DisplayName": "PotentialChangeCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-potentialchangecount",
+      "Signature": "int PotentialChangeCount { get; set; }",
+      "Summary": "Gets the number of visible potential shared provider-execution changes currently associated with provider execution orchestration."
     },
     {
       "DisplayName": "PotentialChangeCount",
@@ -65692,6 +66566,17 @@
     {
       "DisplayName": "ProviderBlocked",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerblocked",
+      "Signature": "const string ProviderBlocked",
+      "Summary": "Provider-owned write-path execution remains blocked."
+    },
+    {
+      "DisplayName": "ProviderBlocked",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -65714,6 +66599,17 @@
     {
       "DisplayName": "ProviderCommandAdapted",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandadapted",
+      "Signature": "const string ProviderCommandAdapted",
+      "Summary": "The latest provider execution translated into a provider-facing command shape."
+    },
+    {
+      "DisplayName": "ProviderCommandAdapted",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -65721,6 +66617,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandadapted",
       "Signature": "const string ProviderCommandAdapted",
       "Summary": "The latest provider-owned command translated into a provider-facing command shape."
+    },
+    {
+      "DisplayName": "ProviderCommandBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandblocked",
+      "Signature": "const string ProviderCommandBlocked",
+      "Summary": "The latest provider execution remained blocked."
     },
     {
       "DisplayName": "ProviderCommandBlocked",
@@ -65736,6 +66643,17 @@
     {
       "DisplayName": "ProviderCommandFailed",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandfailed",
+      "Signature": "const string ProviderCommandFailed",
+      "Summary": "The latest provider execution failed while Cephalon translated provider command shape."
+    },
+    {
+      "DisplayName": "ProviderCommandFailed",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -65743,6 +66661,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandfailed",
       "Signature": "const string ProviderCommandFailed",
       "Summary": "The latest provider-owned command failed while Cephalon translated it."
+    },
+    {
+      "DisplayName": "ProviderCommandNoOp",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandnoop",
+      "Signature": "const string ProviderCommandNoOp",
+      "Summary": "The latest provider execution determined that no provider command is required."
     },
     {
       "DisplayName": "ProviderCommandNoOp",
@@ -65758,6 +66687,17 @@
     {
       "DisplayName": "ProviderCommandOperatorOnly",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandoperatoronly",
+      "Signature": "const string ProviderCommandOperatorOnly",
+      "Summary": "The latest provider execution remained operator-owned."
+    },
+    {
+      "DisplayName": "ProviderCommandOperatorOnly",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -65769,6 +66709,17 @@
     {
       "DisplayName": "ProviderCommandUnavailable",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandunavailable",
+      "Signature": "const string ProviderCommandUnavailable",
+      "Summary": "The latest provider execution could not resolve a provider adapter."
+    },
+    {
+      "DisplayName": "ProviderCommandUnavailable",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -65776,6 +66727,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandunavailable",
       "Signature": "const string ProviderCommandUnavailable",
       "Summary": "The latest provider-owned command could not resolve a provider execution adapter."
+    },
+    {
+      "DisplayName": "ProviderExecutable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerexecutable",
+      "Signature": "const string ProviderExecutable",
+      "Summary": "Provider-owned write-path execution is currently ready."
     },
     {
       "DisplayName": "ProviderExecutable",
@@ -65820,6 +66782,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-providerexecutionfailed",
       "Signature": "const string ProviderExecutionFailed",
       "Summary": "The latest matching command-execution outcome failed while Cephalon was translating the command."
+    },
+    {
+      "DisplayName": "ProviderExecutionOrchestration",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerexecutionorchestration",
+      "Signature": "const string ProviderExecutionOrchestration",
+      "Summary": "The runtime participates in the provider execution-orchestration lane."
     },
     {
       "DisplayName": "ProviderExecutionUnavailable",
@@ -65875,6 +66848,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-providerid",
       "Signature": "string ProviderId { get; set; }",
       "Summary": "Gets the provider identifier associated with the command when one was available."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-providerid",
+      "Signature": "string ProviderId { get; set; }",
+      "Summary": "Gets the best available provider identifier currently associated with provider execution orchestration."
     },
     {
       "DisplayName": "ProviderId",
@@ -66099,6 +67083,17 @@
     {
       "DisplayName": "ProviderOwnedCompleted",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedcompleted",
+      "Signature": "const string ProviderOwnedCompleted",
+      "Summary": "Provider-owned write-path execution no longer needs another provider command."
+    },
+    {
+      "DisplayName": "ProviderOwnedCompleted",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -66117,6 +67112,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerownedcompleted",
       "Signature": "const string ProviderOwnedCompleted",
       "Summary": "Provider-owned write-path execution no longer needs an additional provider command on the shared lane."
+    },
+    {
+      "DisplayName": "ProviderOwnedExecuting",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedexecuting",
+      "Signature": "const string ProviderOwnedExecuting",
+      "Summary": "Provider-owned write-path execution already translated one provider-facing command shape."
     },
     {
       "DisplayName": "ProviderOwnedExecuting",
@@ -66143,6 +67149,17 @@
     {
       "DisplayName": "ProviderOwnedRisk",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedrisk",
+      "Signature": "const string ProviderOwnedRisk",
+      "Summary": "Provider-owned write-path execution currently remains risky."
+    },
+    {
+      "DisplayName": "ProviderOwnedRisk",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -66165,6 +67182,17 @@
     {
       "DisplayName": "ProviderOwnedWritePathExecution",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-providerownedwritepathexecution",
+      "Signature": "const string ProviderOwnedWritePathExecution",
+      "Summary": "The provider execution-orchestration answer was derived primarily from provider-owned write-path execution truth."
+    },
+    {
+      "DisplayName": "ProviderOwnedWritePathExecution",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -66172,6 +67200,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providerownedwritepathexecution",
       "Signature": "const string ProviderOwnedWritePathExecution",
       "Summary": "The runtime participates in the provider-owned write-path execution lane."
+    },
+    {
+      "DisplayName": "ProviderOwnedWritePathExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-providerownedwritepathexecutionstate",
+      "Signature": "string ProviderOwnedWritePathExecutionState { get; set; }",
+      "Summary": "Gets the current provider-owned write-path execution state that informed provider execution orchestration."
     },
     {
       "DisplayName": "ProviderResults",
@@ -67397,6 +68436,17 @@
     {
       "DisplayName": "RecoveredHistory",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-recoveredhistory",
+      "Signature": "const string RecoveredHistory",
+      "Summary": "The durable command journal currently exposes recovered recorded history."
+    },
+    {
+      "DisplayName": "RecoveredHistory",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -67404,6 +68454,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-recoveredhistory",
       "Signature": "const string RecoveredHistory",
       "Summary": "The durable command journal currently exposes recovered recorded history."
+    },
+    {
+      "DisplayName": "RecoveryBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-recoveryblocked",
+      "Signature": "const string RecoveryBlocked",
+      "Summary": "Scheduler recovery remains blocked by missing durable evidence."
     },
     {
       "DisplayName": "RecoveryBlocked",
@@ -67492,6 +68553,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-recoveryneeded",
       "Signature": "const string RecoveryNeeded",
       "Summary": "Durable shared scheduler orchestration still needs durable journal recovery or persistence hardening."
+    },
+    {
+      "DisplayName": "RecoveryNeeded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-recoveryneeded",
+      "Signature": "const string RecoveryNeeded",
+      "Summary": "The durable shared scheduler currently still needs durable recovery hardening."
+    },
+    {
+      "DisplayName": "RecoveryReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-recoveryready",
+      "Signature": "const string RecoveryReady",
+      "Summary": "Scheduler recovery is ready for safe orchestration."
     },
     {
       "DisplayName": "RecoveryReady",
@@ -70191,6 +71274,17 @@
     {
       "DisplayName": "RequiresExplicitApproval",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-requiresexplicitapproval",
+      "Signature": "bool RequiresExplicitApproval { get; set; }",
+      "Summary": "Gets a value indicating whether the current provider execution orchestration still requires explicit approval."
+    },
+    {
+      "DisplayName": "RequiresExplicitApproval",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -72204,6 +73298,17 @@
     {
       "DisplayName": "RetryExecutionPolicyState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-retryexecutionpolicystate",
+      "Signature": "string RetryExecutionPolicyState { get; set; }",
+      "Summary": "Gets the current managed-connector retry-execution policy state that informed provider execution orchestration."
+    },
+    {
+      "DisplayName": "RetryExecutionPolicyState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -72299,6 +73404,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-retryfingerprint",
       "Signature": "string RetryFingerprint { get; set; }",
       "Summary": "Gets the deterministic retry fingerprint currently associated with broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "RetryFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-retryfingerprint",
+      "Signature": "string RetryFingerprint { get; set; }",
+      "Summary": "Gets the deterministic retry fingerprint currently associated with provider execution orchestration."
     },
     {
       "DisplayName": "RetryFingerprint",
@@ -74096,6 +75212,17 @@
     {
       "DisplayName": "SchedulerConflicted",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-schedulerconflicted",
+      "Signature": "const string SchedulerConflicted",
+      "Summary": "The durable shared scheduler currently remains conflicted."
+    },
+    {
+      "DisplayName": "SchedulerConflicted",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -74184,6 +75311,17 @@
     {
       "DisplayName": "SchedulerId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-schedulerid",
+      "Signature": "string SchedulerId { get; set; }",
+      "Summary": "Gets the stable shared scheduler identifier currently associated with provider execution orchestration."
+    },
+    {
+      "DisplayName": "SchedulerId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -74228,6 +75366,17 @@
     {
       "DisplayName": "SchedulerKind",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-schedulerkind",
+      "Signature": "string SchedulerKind { get; set; }",
+      "Summary": "Gets the stable shared scheduler kind currently associated with provider execution orchestration."
+    },
+    {
+      "DisplayName": "SchedulerKind",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -74246,6 +75395,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerleaseblocked",
       "Signature": "const string SchedulerLeaseBlocked",
       "Summary": "The durable shared scheduler currently remains blocked by broader lease truth."
+    },
+    {
+      "DisplayName": "SchedulerRecoveryExecutionHardening",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-schedulerrecoveryexecutionhardening",
+      "Signature": "const string SchedulerRecoveryExecutionHardening",
+      "Summary": "The provider execution-orchestration answer was derived primarily from scheduler recovery and execution-hardening truth."
     },
     {
       "DisplayName": "SchedulerRecoveryExecutionHardening",
@@ -74272,6 +75432,17 @@
     {
       "DisplayName": "SchedulerRecoveryExecutionHardeningState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-schedulerrecoveryexecutionhardeningstate",
+      "Signature": "string SchedulerRecoveryExecutionHardeningState { get; set; }",
+      "Summary": "Gets the current scheduler recovery and execution-hardening state that informed provider execution orchestration."
+    },
+    {
+      "DisplayName": "SchedulerRecoveryExecutionHardeningState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -74283,6 +75454,17 @@
     {
       "DisplayName": "SchedulerScheduled",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-schedulerscheduled",
+      "Signature": "const string SchedulerScheduled",
+      "Summary": "The durable shared scheduler currently keeps one bounded retry scheduled."
+    },
+    {
+      "DisplayName": "SchedulerScheduled",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -74290,6 +75472,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerscheduled",
       "Signature": "const string SchedulerScheduled",
       "Summary": "The durable shared scheduler currently keeps one bounded retry scheduled."
+    },
+    {
+      "DisplayName": "SchedulerUnscheduled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-schedulerunscheduled",
+      "Signature": "const string SchedulerUnscheduled",
+      "Summary": "The durable shared scheduler currently does not need another scheduled step."
     },
     {
       "DisplayName": "SchedulerUnscheduled",
@@ -76131,6 +77324,17 @@
     {
       "DisplayName": "SourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive provider execution orchestration."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -77018,6 +78222,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-sourceproviderid",
       "Signature": "string SourceProviderId { get; set; }",
       "Summary": "Gets the upstream source-provider identifier when one is known."
+    },
+    {
+      "DisplayName": "SourceProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-sourceproviderid",
+      "Signature": "string SourceProviderId { get; set; }",
+      "Summary": "Gets the best available source-provider identifier currently associated with provider execution orchestration."
     },
     {
       "DisplayName": "SourceProviderId",
@@ -77929,6 +79144,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightstatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector preflight state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector provider execution-orchestration state."
     },
     {
       "DisplayName": "State",
@@ -82872,6 +84098,17 @@
     {
       "DisplayName": "Unknown",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The provider execution-orchestration answer does not currently resolve to one specific source."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionSources",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -84540,6 +85777,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-wouldapplychanges",
       "Signature": "bool WouldApplyChanges { get; set; }",
       "Summary": "Gets a value indicating whether the current execution intent would still apply one or more shared write-path changes."
+    },
+    {
+      "DisplayName": "WouldApplyChanges",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationstatus-wouldapplychanges",
+      "Signature": "bool WouldApplyChanges { get; set; }",
+      "Summary": "Gets a value indicating whether the current provider execution orchestration would still apply one or more shared write-path changes."
     },
     {
       "DisplayName": "WouldApplyChanges",

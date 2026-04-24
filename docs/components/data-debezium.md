@@ -709,11 +709,29 @@ distributed scheduler, or second coordinator.
   and `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-write-path-execution` on
   that same shared route family instead of branching into a Debezium-only control-plane endpoint
   set
+- the `ENG-194` follow-through keeps that same bounded retry and command lane broader
+  provider-execution-orchestration-aware:
+  `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorProviderExecutionOrchestration` now
+  publishes stable `not-applicable`, `operator-only`, `orchestration-ready`,
+  `orchestration-blocked`, `orchestration-executing`, `orchestration-completed`, and
+  `orchestration-risk` posture together with operation/source, provider-owned write-path plus
+  execution-adapter plus latest-command plus retry-policy plus command-journal plus durable shared
+  scheduler plus scheduler-recovery state, deterministic fingerprints, adapter/provider metadata,
+  and `CanOrchestrateProviderExecutionOnCurrentNode`, so the shared execution-runtime catalog can
+  gate both `ManagedConnectorAutomaticRetryHostedService` and automatic command execution through
+  one merged provider execution orchestration answer instead of trusting provider-owned write-path
+  truth alone when the broader orchestration lane still reports blocked or risky
+- ASP.NET Core now maps
+  `/engine/cdc-capture-runtimes/provider-execution-orchestrations/{providerExecutionOrchestrationState}`,
+  `/engine/cdc-capture-runtimes/provider-execution-orchestrations/categories/{providerExecutionOrchestrationCategory}`,
+  `/engine/cdc-capture-runtimes/provider-execution-orchestrations/operations/{operationId}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-execution-orchestration` on that
+  same shared route family instead of branching into a Debezium-only orchestration endpoint set
 - bounded automatic background retry execution still remains shared in-process truth, and the
-  shipped broader provider-owned write-path execution posture still does not mean Cephalon already
-  owns durable distributed command journals, durable distributed schedulers, full Kafka Connect
-  provisioning/reconciliation ownership, or full provider-owned control-plane execution
-  orchestration
+  shipped broader provider-owned write-path execution posture plus broader provider execution
+  orchestration posture still does not mean Cephalon already owns durable distributed command
+  journals, durable distributed schedulers, full Kafka Connect provisioning/reconciliation
+  ownership, or full provider-owned control-plane execution orchestration
 
 ## Not shipped in these slices
 
@@ -721,7 +739,7 @@ This pack intentionally still does not claim:
 
 - Kafka Connect or Debezium REST API provisioning, configuration mutation, and apply-and-reconcile ownership
 - broader managed-connector control-plane ownership beyond the shipped shared provider-owned
-  write-path execution posture
+  write-path execution posture plus the shipped shared provider execution orchestration posture
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
 - durable distributed command journals, durable distributed retry schedulers, or full idempotency
@@ -729,7 +747,8 @@ This pack intentionally still does not claim:
   bounded automatic background retry plus coordination posture plus distributed retry lease truth
   plus distributed retry orchestration truth plus richer cross-node idempotency hardening plus
   broader multi-node lease execution plus durable shared scheduler orchestration plus scheduler
-  recovery hardening plus broader provider-owned write-path execution posture
+  recovery hardening plus broader provider-owned write-path execution posture plus broader
+  provider execution orchestration posture
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

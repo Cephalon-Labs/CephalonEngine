@@ -550,6 +550,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderOwnedWritePathExecutionOperationId(string operationId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider execution-orchestration answer matches the requested state.
+    /// </summary>
+    /// <param name="providerExecutionOrchestrationState">The stable provider execution-orchestration state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider execution-orchestration state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderExecutionOrchestrationState(string providerExecutionOrchestrationState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider execution-orchestration answer includes the requested category.
+    /// </summary>
+    /// <param name="providerExecutionOrchestrationCategory">The stable provider execution-orchestration category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that provider execution-orchestration category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderExecutionOrchestrationCategory(string providerExecutionOrchestrationCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current provider execution-orchestration answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable provider execution-orchestration operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorProviderExecutionOrchestrationOperationId(string operationId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

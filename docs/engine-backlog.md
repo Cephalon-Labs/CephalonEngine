@@ -3123,6 +3123,104 @@ Delivered:
   composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference
   docs publish script
 
+### ENG-194 Phase 13 managed-connector broader provider execution orchestration hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, `ENG-185`, `ENG-186`, `ENG-187`, `ENG-188`, `ENG-189`, `ENG-190`, `ENG-191`,
+  `ENG-192`, and `ENG-193` already shipped shared coverage, remediation, governance,
+  desired-versus-observed drift, action-planning, write-path readiness, preflight, dry-run,
+  execution-intent, execution-approval, command-envelope, command-issuance, provider
+  execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry execution, automatic background retry
+  coordination, durable command-journal, distributed retry lease, distributed retry orchestration,
+  richer cross-node idempotency hardening, broader multi-node lease-execution, durable shared
+  scheduler-orchestration, scheduler recovery/execution-hardening, and broader provider-owned
+  write-path truth, but operators still lacked one shared answer for whether the broader provider
+  execution orchestration lane itself was ready, blocked, executing, completed, or risky on the
+  current node
+- the next follow-through needed to keep broader provider execution orchestration additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only provider
+  orchestration registry, second coordinator, or second command lane
+- later provider-owned control-plane ownership still needed one truthful shared orchestration
+  answer grounded in provider-owned write-path, execution-adapter, command-execution,
+  retry-policy, command-journal, durable scheduler, and recovery truth instead of forcing hosts or
+  provider packs to re-derive orchestration posture outside the shared runtime catalog
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector provider execution orchestration
+  contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`,
+  `operator-only`, `orchestration-ready`, `orchestration-blocked`, `orchestration-executing`,
+  `orchestration-completed`, and `orchestration-risk` posture together with categories,
+  execution-runtime and capture identity, ownership/topology, operation/source, provider-owned
+  write-path plus execution-adapter plus latest-command plus retry-policy plus command-journal
+  plus durable shared scheduler plus scheduler-recovery state, deterministic fingerprints,
+  adapter/provider metadata, and `CanOrchestrateProviderExecutionOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive provider execution orchestration state,
+  category, and operation filters while deriving that posture from the same shared provider-owned
+  write-path, execution-adapter, latest command-execution, retry-policy, command-journal, durable
+  shared scheduler, and scheduler-recovery truth instead of forcing hosts or providers to invent
+  another orchestration planner
+- the shared data pack now feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  `ManagedConnectorCommandExecutor` invocations through that broader provider execution
+  orchestration answer so bounded background retry execution no longer trusts provider-owned
+  write-path truth alone when the merged orchestration lane still reports `orchestration-blocked`
+  or `orchestration-risk`
+- ASP.NET Core publishes those same provider execution orchestration filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down and operation
+  filters, and the orchestration answer stays additive beside the existing coordination, lease,
+  hardening, orchestration, lease-execution, scheduler, recovery, command, and provider
+  execution surfaces instead of branching into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later provider-owned control-plane ownership remains separate
+  follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorProviderExecutionOrchestration`
+- `Cephalon.Data` now derives managed-connector provider execution orchestration posture from
+  merged provider-owned write-path execution, execution-adapter, latest command-execution,
+  retry-execution-policy, bounded command-journal, durable shared scheduler, and scheduler
+  recovery truth, including `orchestration-ready`, `orchestration-blocked`,
+  `orchestration-executing`, `orchestration-completed`, and `orchestration-risk` answers, and
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorProviderExecutionOrchestrationState(...)`,
+  `GetByManagedConnectorProviderExecutionOrchestrationCategory(...)`, and
+  `GetByManagedConnectorProviderExecutionOrchestrationOperationId(...)`
+- `Cephalon.Data` now also feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  invocations in `ManagedConnectorCommandExecutor` through that broader provider execution
+  orchestration answer so bounded background retry execution no longer depends on provider-owned
+  write-path truth alone when the merged provider answer still reports `orchestration-blocked` or
+  `orchestration-risk`
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/provider-execution-orchestrations/{providerExecutionOrchestrationState}`,
+  `/engine/cdc-capture-runtimes/provider-execution-orchestrations/categories/{providerExecutionOrchestrationCategory}`,
+  `/engine/cdc-capture-runtimes/provider-execution-orchestrations/operations/{operationId}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/provider-execution-orchestration` so host
+  routes stay aligned with the same shared coordination, lease, orchestration, scheduler,
+  recovery, command, provider-owned write-path, and provider execution story
+- `Cephalon.Data.Debezium` now participates in that broader shared provider orchestration lane
+  through the existing managed-connector runtime and command surface while targeted coverage proves
+  `orchestration-ready`, `orchestration-executing`, and `orchestration-risk` posture without
+  claiming a Debezium-only control-plane ownership subsystem
+- targeted coverage now proves the broader provider execution orchestration baseline through
+  composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference
+  docs publish script
+
 ### ENG-192 Phase 13 managed-connector scheduler recovery / execution hardening baseline
 
 Status: done
