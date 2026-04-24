@@ -390,6 +390,9 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Deployment-mode shipping baseline: Stable shipping floor 'net10.0', readiness lane 'net11.0' (assessment-only).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Trim support contract: not-claimed. Trimming is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0 and stays on the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated local orchestration assets: ./compose.yaml and ./otel-collector-config.yaml are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated compose baseline: ./compose.yaml keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Dockerfile baseline: ./Dockerfile uses sdk:10.0 and aspnet:10.0 for the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
@@ -466,6 +469,9 @@ public sealed class CliApplicationTests
 
             Assert.Equal(0, exitCode);
             Assert.Contains("[warn] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net11.0 and stays on the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated local orchestration assets: ./compose.yaml and ./otel-collector-config.yaml are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated compose baseline: ./compose.yaml keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated Dockerfile baseline: ./Dockerfile uses sdk:11.0 and aspnet:11.0 for the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
@@ -661,6 +667,63 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedLocalOrchestrationAssetsAreMissing()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-missing-local-orchestration-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            includeLocalOrchestrationAssets: false);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated local orchestration assets: Missing generated local orchestration assets: ./compose.yaml, ./otel-collector-config.yaml.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task RunAsyncDoctorFailsWhenGeneratedPublishedDeploymentAssetsAreMissing()
     {
         var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-missing-published-assets-{Guid.NewGuid():N}");
@@ -762,6 +825,84 @@ public sealed class CliApplicationTests
 
             Assert.Equal(1, exitCode);
             Assert.Contains("[error] Generated Dockerfile baseline: ./Dockerfile uses sdk:11.0 and aspnet:11.0, but ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedLocalOrchestrationBaselinesDrift()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-local-orchestration-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            composeFileContents: """
+                services:
+                  acme-store:
+                    build:
+                      context: .
+                    environment:
+                      DOTNET_ENVIRONMENT: Production
+                      Engine__Observability__Telemetry__Endpoint: http://legacy-collector:4318
+                  otel-collector:
+                    image: otel/opentelemetry-collector-contrib:0.149.0
+                """,
+            otelCollectorConfigContents: """
+                receivers:
+                  otlp:
+                    protocols:
+                      grpc:
+                        endpoint: 0.0.0.0:4317
+
+                exporters:
+                  logging: {}
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated compose baseline: ./compose.yaml no longer keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml no longer keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -1474,6 +1615,9 @@ public sealed class CliApplicationTests
         bool publishSingleFile = false,
         bool includeDeploymentAssets = true,
         bool includePublishedDeploymentAssets = true,
+        bool includeLocalOrchestrationAssets = true,
+        string? composeFileContents = null,
+        string? otelCollectorConfigContents = null,
         string? dockerSdkImageTag = null,
         string? dockerAspNetImageTag = null,
         string? windowsServiceInstallScriptContents = null,
@@ -1535,6 +1679,84 @@ public sealed class CliApplicationTests
             </Project>
             """);
         File.WriteAllText(Path.Combine(appRootPath, "src", "Acme.Store.Host", "appsettings.json"), "{}");
+
+        if (includeLocalOrchestrationAssets)
+        {
+            File.WriteAllText(
+                Path.Combine(appRootPath, "compose.yaml"),
+                composeFileContents ?? """
+                services:
+                  acme-store:
+                    build:
+                      context: .
+                      dockerfile: Dockerfile
+                    environment:
+                      ASPNETCORE_HTTP_PORTS: 8080
+                      DOTNET_ENVIRONMENT: Container
+                      Engine__Observability__Telemetry__Provider: OpenTelemetry
+                      Engine__Observability__Telemetry__Protocol: otlp/http
+                      Engine__Observability__Telemetry__Endpoint: http://otel-collector:4318
+                    ports:
+                      - "8080:8080"
+                    depends_on:
+                      - otel-collector
+
+                  otel-collector:
+                    image: otel/opentelemetry-collector-contrib:0.149.0
+                    command:
+                      - "--config=/etc/otelcol-contrib/config.yaml"
+                    volumes:
+                      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+                    ports:
+                      - "13133:13133"
+                """);
+            File.WriteAllText(
+                Path.Combine(appRootPath, "otel-collector-config.yaml"),
+                otelCollectorConfigContents ?? """
+                extensions:
+                  health_check:
+                    endpoint: 0.0.0.0:13133
+
+                receivers:
+                  otlp:
+                    protocols:
+                      http:
+                        endpoint: 0.0.0.0:4318
+
+                processors:
+                  batch: {}
+
+                exporters:
+                  debug:
+                    verbosity: normal
+
+                service:
+                  extensions:
+                    - health_check
+                  pipelines:
+                    logs:
+                      receivers:
+                        - otlp
+                      processors:
+                        - batch
+                      exporters:
+                        - debug
+                    metrics:
+                      receivers:
+                        - otlp
+                      processors:
+                        - batch
+                      exporters:
+                        - debug
+                    traces:
+                      receivers:
+                        - otlp
+                      processors:
+                        - batch
+                      exporters:
+                        - debug
+                """);
+        }
 
         if (includeDeploymentAssets)
         {

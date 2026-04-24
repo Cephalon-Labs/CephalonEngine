@@ -192,6 +192,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("PublishTrimmed", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("PublishAot", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("PublishSingleFile", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("local orchestration assets", gettingStarted, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("otel-collector-config.yaml", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-publish.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("container-image-publishing.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", gettingStarted, StringComparison.Ordinal);
@@ -461,6 +463,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deploy/kubernetes", scaffoldingComponentDoc, StringComparison.Ordinal);
         Assert.Contains("deploy/linux/systemd", scaffoldingComponentDoc, StringComparison.Ordinal);
         Assert.Contains("container assets", cliComponentDoc, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("local orchestration assets", cliComponentDoc, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("self-hosted and hosted deployment assets", cliComponentDoc, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("docker compose up --build", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("NuGet.config", cliComponentDoc, StringComparison.Ordinal);
@@ -473,6 +476,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("Kubernetes", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("systemd-analyze", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("otel-collector-config.yaml", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("local orchestration assets", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("docker compose up --build", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", cliPackageReadme, StringComparison.Ordinal);
@@ -484,6 +488,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deploy/kubernetes", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/linux/systemd", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("otel-collector-config.yaml", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("local orchestration assets", templatePackReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("endpoint unset", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("NuGet.config", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", templatePackReadme, StringComparison.Ordinal);

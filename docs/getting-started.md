@@ -104,6 +104,9 @@ After scaffolding, rerun doctor against the generated app root:
 - the generated Windows Service, IIS, Azure App Service, and Linux `systemd` deployment assets that back the published-output self-hosted and hosted deployment paths
 - the generated `Dockerfile` plus the shipped container-image, Azure Container Apps, and Kubernetes deployment assets
 - the generated Dockerfile SDK/runtime image tags against the generated host target framework baseline
+- the generated local orchestration assets `compose.yaml` and `otel-collector-config.yaml`
+- the generated compose baseline against the shipped Dockerfile, OTLP collector handoff, and current local container defaults
+- the generated OpenTelemetry collector baseline against `health_check`, `otlp/http` on `4318`, and the debug-exporter pipeline shape
 - generated `PublishTrimmed`, `PublishAot`, and `PublishSingleFile` posture against the current `not-claimed` support contract
 
 Expected success characteristics:
@@ -111,12 +114,13 @@ Expected success characteristics:
 - the generated-app checks show `[ok]`
 - a generated host that stays on `net10.0` shows `[ok]` for the stable shipping floor
 - a generated host that keeps the scaffolded Windows Service, IIS, Azure App Service, Linux `systemd`, and container deployment assets shows `[ok]` for self-hosted and hosted deployment assets plus Dockerfile alignment
+- a generated host that keeps the scaffolded local orchestration assets plus the shipped `compose.yaml` and `otel-collector-config.yaml` baseline shows `[ok]` for generated local orchestration assets and the compose plus collector baseline checks
 - a generated host on `net11.0` or publish settings that enable trim / Native AOT / single-file show `[warn]` so teams can see readiness-only or out-of-contract posture before publish and deployment work
-- a generated app that drops the shipped self-hosted and hosted deployment assets, drops the container deployment assets, or retargets Docker base images away from the host baseline shows `[error]`
+- a generated app that drops the shipped self-hosted and hosted deployment assets, drops the container deployment assets, drops the generated local orchestration assets, drifts `compose.yaml` or `otel-collector-config.yaml`, or retargets Docker base images away from the host baseline shows `[error]`
 - a generated host that targets something outside the current contract shows `[error]`
 - the command ends with `Set-Location`, `dotnet restore`, and `dotnet run` next steps that are copy/paste-ready for that app root
 
-If the command reports a generated-app failure, fix the missing bootstrap asset, generated self-hosted and hosted deployment assets, or package-source problem first, then rerun `cephalon doctor --app-root ./Acme.Store` before build, publish, or deployment work.
+If the command reports a generated-app failure, fix the missing bootstrap asset, generated self-hosted and hosted deployment assets, generated local orchestration assets, compose or collector baseline drift, or package-source problem first, then rerun `cephalon doctor --app-root ./Acme.Store` before build, publish, or deployment work.
 
 ## Optional Published-Output Path
 
@@ -276,7 +280,7 @@ The generated scaffold now ships a Docker Desktop / WSL-friendly compose baselin
 docker compose -f ./Acme.Store/compose.yaml up --build
 ```
 
-That runs the generated host on `http://localhost:8080` with a local OTLP collector sidecar. Seed `./Acme.Store/.cephalon/packages` or repoint `./Acme.Store/NuGet.config` before the first build. Inspect the same `/engine/*`, `/health/*`, and `/scalar` routes against that containerized host.
+That runs the generated host on `http://localhost:8080` with a local OTLP collector sidecar. Seed `./Acme.Store/.cephalon/packages` or repoint `./Acme.Store/NuGet.config` before the first build, then rerun `cephalon doctor --app-root ./Acme.Store` so the generated local orchestration assets plus `compose.yaml` and `otel-collector-config.yaml` baseline stay truthful before the first `docker compose up --build`. Inspect the same `/engine/*`, `/health/*`, and `/scalar` routes against that containerized host.
 
 ## Optional Template-Pack Path
 

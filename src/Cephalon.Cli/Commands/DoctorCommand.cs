@@ -36,6 +36,12 @@ internal static class DoctorCommand
         Path.Combine("deploy", "kubernetes", "service.yaml")
     ];
 
+    private static readonly string[] RequiredGeneratedLocalOrchestrationAssetRelativePaths =
+    [
+        "compose.yaml",
+        "otel-collector-config.yaml"
+    ];
+
     private static readonly string[] RequiredGeneratedPublishedDeploymentAssetRelativePaths =
     [
         Path.Combine("deploy", "windows-service", "install-service.ps1"),
@@ -674,6 +680,10 @@ internal static class DoctorCommand
         DeploymentModeSupportContract? supportContract,
         ICollection<DoctorCheck> checks)
     {
+        EvaluateGeneratedLocalOrchestrationAssets(generatedAppRootPath, checks);
+        EvaluateGeneratedComposeBaseline(generatedAppRootPath, checks);
+        EvaluateGeneratedOtelCollectorBaseline(generatedAppRootPath, checks);
+
         var missingRelativePaths = RequiredGeneratedContainerDeploymentAssetRelativePaths
             .Where(relativePath => !File.Exists(Path.Combine(generatedAppRootPath, relativePath)))
             .Select(relativePath => ToDisplayRelativePath(generatedAppRootPath, Path.Combine(generatedAppRootPath, relativePath)))
@@ -770,6 +780,129 @@ internal static class DoctorCommand
         EvaluateGeneratedIisBaseline(generatedAppRootPath, generatedAppId, checks);
         EvaluateAzureAppServiceBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
         EvaluateGeneratedLinuxSystemdBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
+    }
+
+    private static void EvaluateGeneratedLocalOrchestrationAssets(
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        var missingRelativePaths = RequiredGeneratedLocalOrchestrationAssetRelativePaths
+            .Where(relativePath => !File.Exists(Path.Combine(generatedAppRootPath, relativePath)))
+            .Select(relativePath => ToDisplayRelativePath(generatedAppRootPath, Path.Combine(generatedAppRootPath, relativePath)))
+            .ToArray();
+
+        if (missingRelativePaths.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated local orchestration assets",
+                $"Missing generated local orchestration assets: {string.Join(", ", missingRelativePaths)}.",
+                "Restore the generated compose and OTLP collector assets or regenerate the app before replaying the local `docker compose up --build` path."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated local orchestration assets",
+            "./compose.yaml and ./otel-collector-config.yaml are present.",
+            null));
+    }
+
+    private static void EvaluateGeneratedComposeBaseline(
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        var composePath = Path.Combine(generatedAppRootPath, "compose.yaml");
+        if (!File.Exists(composePath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedTextAsset(
+                composePath,
+                generatedAppRootPath,
+                "Generated compose baseline",
+                "Fix the generated compose.yaml file before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var composeContents))
+        {
+            return;
+        }
+
+        if (!ContainsAllFragments(
+                composeContents,
+                "dockerfile: Dockerfile",
+                "ASPNETCORE_HTTP_PORTS: 8080",
+                "DOTNET_ENVIRONMENT: Container",
+                "Engine__Observability__Telemetry__Protocol: otlp/http",
+                "Engine__Observability__Telemetry__Endpoint: http://otel-collector:4318",
+                "depends_on:",
+                "- otel-collector",
+                "otel/opentelemetry-collector-contrib:",
+                "./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro"))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated compose baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, composePath)} no longer keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.",
+                "Restore the generated compose.yaml file so the Dockerfile, container environment, OTLP endpoint, and collector mount stay aligned with the current local runtime path."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated compose baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, composePath)} keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.",
+            null));
+    }
+
+    private static void EvaluateGeneratedOtelCollectorBaseline(
+        string generatedAppRootPath,
+        ICollection<DoctorCheck> checks)
+    {
+        var collectorConfigPath = Path.Combine(generatedAppRootPath, "otel-collector-config.yaml");
+        if (!File.Exists(collectorConfigPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedTextAsset(
+                collectorConfigPath,
+                generatedAppRootPath,
+                "Generated OpenTelemetry collector baseline",
+                "Fix the generated OTLP collector config before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var collectorConfigContents))
+        {
+            return;
+        }
+
+        if (!ContainsAllFragments(
+                collectorConfigContents,
+                "health_check:",
+                "endpoint: 0.0.0.0:13133",
+                "otlp:",
+                "http:",
+                "endpoint: 0.0.0.0:4318",
+                "batch: {}",
+                "debug:",
+                "logs:",
+                "metrics:",
+                "traces:"))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated OpenTelemetry collector baseline",
+                $"{ToDisplayRelativePath(generatedAppRootPath, collectorConfigPath)} no longer keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.",
+                "Restore the generated otel-collector-config.yaml file so the local OTLP handoff and collector health defaults stay aligned with the current container-runtime path."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Generated OpenTelemetry collector baseline",
+            $"{ToDisplayRelativePath(generatedAppRootPath, collectorConfigPath)} keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.",
+            null));
     }
 
     private static void EvaluateGeneratedPublishedDeploymentAssets(
@@ -1167,6 +1300,11 @@ internal static class DoctorCommand
         }
 
         return null;
+    }
+
+    private static bool ContainsAllFragments(string contents, params string[] fragments)
+    {
+        return fragments.All(fragment => contents.Contains(fragment, StringComparison.Ordinal));
     }
 
     private static bool TryReadGeneratedTextAsset(
