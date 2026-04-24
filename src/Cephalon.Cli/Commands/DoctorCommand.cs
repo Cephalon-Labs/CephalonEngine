@@ -12,6 +12,8 @@ internal static class DoctorCommand
     private const string RequiredTargetFramework = "net10.0";
     private const int RequiredMajorVersion = 10;
     private const string TemplatePackPackageId = "Cephalon.TemplatePack";
+    private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
+    private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -20,6 +22,18 @@ internal static class DoctorCommand
         "cephalon-microservice",
         "cephalon-module",
         "cephalon-rest-module"
+    ];
+
+    private static readonly string[] RequiredGeneratedDeploymentAssetRelativePaths =
+    [
+        "Dockerfile",
+        Path.Combine("deploy", "container-image", "publish-image.ps1"),
+        Path.Combine("deploy", "azure-container-apps", "deploy-up.ps1"),
+        Path.Combine("deploy", "kubernetes", "apply.ps1"),
+        Path.Combine("deploy", "kubernetes", "kustomization.yaml"),
+        Path.Combine("deploy", "kubernetes", "namespace.yaml"),
+        Path.Combine("deploy", "kubernetes", "deployment.yaml"),
+        Path.Combine("deploy", "kubernetes", "service.yaml")
     ];
 
     /// <summary>
@@ -489,6 +503,7 @@ internal static class DoctorCommand
 
         var selectedHostProject = hostProjects[0];
         EvaluateGeneratedAppSupportContract(selectedHostProject, resolvedAppRootPath, supportContract, checks);
+        EvaluateGeneratedAppDeploymentAssets(selectedHostProject, resolvedAppRootPath, supportContract, checks);
 
         var missingPublishProfileProjects = hostProjects
             .Where(project => !File.Exists(project.PublishProfilePath))
@@ -643,6 +658,103 @@ internal static class DoctorCommand
             hostProject.PublishProfilePath);
     }
 
+    private static void EvaluateGeneratedAppDeploymentAssets(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        DeploymentModeSupportContract? supportContract,
+        ICollection<DoctorCheck> checks)
+    {
+        var missingRelativePaths = RequiredGeneratedDeploymentAssetRelativePaths
+            .Where(relativePath => !File.Exists(Path.Combine(generatedAppRootPath, relativePath)))
+            .Select(relativePath => ToDisplayRelativePath(generatedAppRootPath, Path.Combine(generatedAppRootPath, relativePath)))
+            .ToArray();
+
+        if (missingRelativePaths.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated deployment assets",
+                $"Missing generated deployment assets: {string.Join(", ", missingRelativePaths)}.",
+                "Restore the generated Dockerfile plus container deployment assets or regenerate the app before replaying container-image, Azure Container Apps, or Kubernetes flows."));
+        }
+        else
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Generated deployment assets",
+                "./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.",
+                null));
+        }
+
+        var dockerfilePath = Path.Combine(generatedAppRootPath, "Dockerfile");
+        if (!File.Exists(dockerfilePath))
+        {
+            return;
+        }
+
+        XDocument projectDocument;
+        try
+        {
+            projectDocument = XDocument.Load(hostProject.ProjectPath);
+        }
+        catch
+        {
+            return;
+        }
+
+        var targetFrameworks = ExtractTargetFrameworks(projectDocument);
+        var deploymentBaseline = ResolveGeneratedDeploymentBaseline(targetFrameworks, supportContract);
+        if (deploymentBaseline is null)
+        {
+            return;
+        }
+
+        string[] dockerfileLines;
+        try
+        {
+            dockerfileLines = File.ReadAllLines(dockerfilePath);
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated Dockerfile baseline",
+                $"Could not inspect {ToDisplayRelativePath(generatedAppRootPath, dockerfilePath)}: {exception.Message}",
+                "Fix the generated Dockerfile before rerunning `cephalon doctor --app-root`."));
+            return;
+        }
+
+        var sdkTag = ExtractDotNetDockerImageTag(dockerfileLines, DotNetSdkDockerImagePrefix);
+        var aspNetTag = ExtractDotNetDockerImageTag(dockerfileLines, DotNetAspNetDockerImagePrefix);
+        var dockerfileDisplayPath = ToDisplayRelativePath(generatedAppRootPath, dockerfilePath);
+        if (string.IsNullOrWhiteSpace(sdkTag) || string.IsNullOrWhiteSpace(aspNetTag))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated Dockerfile baseline",
+                $"{dockerfileDisplayPath} does not keep the generated `mcr.microsoft.com/dotnet/sdk:*` and `mcr.microsoft.com/dotnet/aspnet:*` base images intact.",
+                "Restore the scaffolded Dockerfile baseline or retarget it deliberately before relying on generated container deployment assets."));
+            return;
+        }
+
+        if (!string.Equals(sdkTag, deploymentBaseline.ExpectedImageTag, StringComparison.OrdinalIgnoreCase) ||
+            !string.Equals(aspNetTag, deploymentBaseline.ExpectedImageTag, StringComparison.OrdinalIgnoreCase))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated Dockerfile baseline",
+                $"{dockerfileDisplayPath} uses sdk:{sdkTag} and aspnet:{aspNetTag}, but {ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)} targets {deploymentBaseline.TargetFramework}.",
+                $"Restore the Dockerfile base images to `{deploymentBaseline.ExpectedImageTag}` or retarget the generated host project before replaying container deployment flows."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            deploymentBaseline.AlignedSeverity,
+            "Generated Dockerfile baseline",
+            $"{dockerfileDisplayPath} uses sdk:{sdkTag} and aspnet:{aspNetTag} {deploymentBaseline.AlignedDetail}.",
+            deploymentBaseline.AlignedGuidance));
+    }
+
     private static void AddGeneratedAppDeploymentModeCheck(
         ICollection<DoctorCheck> checks,
         string generatedAppRootPath,
@@ -716,6 +828,113 @@ internal static class DoctorCommand
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(value => value, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+    }
+
+    private static GeneratedDeploymentBaseline? ResolveGeneratedDeploymentBaseline(
+        string[] targetFrameworks,
+        DeploymentModeSupportContract? supportContract)
+    {
+        if (targetFrameworks.Length == 0)
+        {
+            return null;
+        }
+
+        if (supportContract is null)
+        {
+            var targetFramework = targetFrameworks[0];
+            return BuildGeneratedDeploymentBaseline(
+                targetFramework,
+                DoctorCheckSeverity.Pass,
+                $"for host target framework {targetFramework}.",
+                null);
+        }
+
+        var stableTargetFramework = supportContract.ShippingBaseline.StableTargetFramework;
+        if (targetFrameworks.Any(targetFramework => string.Equals(targetFramework, stableTargetFramework, StringComparison.OrdinalIgnoreCase)))
+        {
+            return BuildGeneratedDeploymentBaseline(
+                stableTargetFramework,
+                DoctorCheckSeverity.Pass,
+                "for the stable shipping floor.",
+                null);
+        }
+
+        var readinessLaneTargetFramework = supportContract.ShippingBaseline.ReadinessLaneTargetFramework;
+        if (targetFrameworks.Any(targetFramework => string.Equals(targetFramework, readinessLaneTargetFramework, StringComparison.OrdinalIgnoreCase)))
+        {
+            return BuildGeneratedDeploymentBaseline(
+                readinessLaneTargetFramework,
+                DoctorCheckSeverity.Warning,
+                "for the assessment-only readiness lane.",
+                $"Keep `{stableTargetFramework}` for supported external adoption, or treat `{readinessLaneTargetFramework}` as readiness-only until the support contract changes.");
+        }
+
+        return null;
+    }
+
+    private static GeneratedDeploymentBaseline? BuildGeneratedDeploymentBaseline(
+        string targetFramework,
+        DoctorCheckSeverity alignedSeverity,
+        string alignedDetail,
+        string? alignedGuidance)
+    {
+        var imageTag = TryGetDotNetContainerImageTag(targetFramework);
+        return string.IsNullOrWhiteSpace(imageTag)
+            ? null
+            : new GeneratedDeploymentBaseline(
+                targetFramework,
+                imageTag,
+                alignedSeverity,
+                alignedDetail,
+                alignedGuidance);
+    }
+
+    private static string? TryGetDotNetContainerImageTag(string targetFramework)
+    {
+        if (string.IsNullOrWhiteSpace(targetFramework))
+        {
+            return null;
+        }
+
+        var normalized = targetFramework.Trim();
+        if (!normalized.StartsWith("net", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var suffix = normalized[3..];
+        var tagCharacters = suffix
+            .TakeWhile(character => char.IsDigit(character) || character == '.')
+            .ToArray();
+
+        return tagCharacters.Length == 0
+            ? null
+            : new string(tagCharacters);
+    }
+
+    private static string? ExtractDotNetDockerImageTag(IEnumerable<string> dockerfileLines, string prefix)
+    {
+        foreach (var line in dockerfileLines)
+        {
+            var trimmed = line.Trim();
+            if (!trimmed.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var remainder = trimmed[prefix.Length..].Trim();
+            if (string.IsNullOrWhiteSpace(remainder))
+            {
+                return null;
+            }
+
+            var separatorIndex = remainder.IndexOfAny([' ', '\t']);
+            return separatorIndex >= 0
+                ? remainder[..separatorIndex].Trim()
+                : remainder;
+        }
+
+        return null;
     }
 
     private static MsBuildPropertyObservation? ResolveMsBuildPropertyObservation(
@@ -1102,6 +1321,13 @@ internal static class DoctorCommand
         string ProjectPath,
         string AppSettingsPath,
         string PublishProfilePath);
+
+    private sealed record GeneratedDeploymentBaseline(
+        string TargetFramework,
+        string ExpectedImageTag,
+        DoctorCheckSeverity AlignedSeverity,
+        string AlignedDetail,
+        string? AlignedGuidance);
 
     private sealed record MsBuildPropertyObservation(
         string Value,

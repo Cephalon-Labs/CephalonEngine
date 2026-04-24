@@ -980,6 +980,31 @@ Completed work:
 - aligned the adoption docs and package READMEs so generated-app doctor now explicitly documents target-framework and publish-claim validation alongside the earlier bootstrap checks
 - extended focused tooling coverage so stable-floor generated apps stay green, readiness-lane plus unclaimed publish-mode apps warn truthfully, and out-of-contract generated hosts fail doctor with the expected error posture
 
+### ENG-213 Generated app doctor deployment-asset alignment baseline
+
+Status: done
+
+Why:
+
+- `ENG-212` made generated-app doctor truthful about target-framework and publish-mode support posture, but external adopters could still drift the generated Dockerfile or remove shipped container deployment assets without the same command path warning them before container-image, Azure Container Apps, or Kubernetes work
+- `cephalon doctor --app-root <path>` was already the generated-app bootstrap and support-contract command, so it was the sharpest place to verify the generated deployment assets instead of inventing another validation surface
+- generated-app verification should answer whether the scaffolded container deployment shape still matches the generated host baseline before teams rely on hosted container deployment flows
+
+Acceptance:
+
+- `cephalon doctor --app-root <path>` validates the generated `Dockerfile` plus the shipped container-image, Azure Container Apps, and Kubernetes deployment assets
+- generated-app doctor compares the generated Dockerfile SDK and ASP.NET base-image tags against the generated host target framework baseline
+- stable-floor Dockerfile alignment emits `[ok]`, readiness-lane Dockerfile alignment emits `[warn]`, and missing or drifted deployment assets emit `[error]` with a failing doctor exit code
+- the root README, getting-started guide, CLI docs, deployment-mode-support guide, CLI package README, and template-pack README stay aligned with the same generated deployment-asset doctor story
+- focused tooling coverage proves aligned deployment assets, readiness-lane Dockerfile posture, missing deployment assets, and drifted Dockerfile image tags on the same doctor path
+
+Completed work:
+
+- extended `DoctorCommand` so generated-app doctor now validates the shipped `Dockerfile` plus the container-image, Azure Container Apps, and Kubernetes deployment assets as part of the generated-app bootstrap answer
+- added generated Dockerfile baseline checks that compare SDK and ASP.NET base-image tags against the generated host target framework while preserving stable-floor versus readiness-lane posture in doctor output
+- aligned `README.md`, `docs/getting-started.md`, `docs/deployment-mode-support.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated deployment-asset doctor flow
+- extended focused CLI and documentation coverage for aligned deployment assets, readiness-lane Dockerfile posture, missing deployment assets, and drifted Dockerfile base-image tags
+
 ### ENG-209 Generated app bootstrap doctor follow-through baseline
 
 Status: done
@@ -7842,6 +7867,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-210 deployment-mode support contract baseline: the repo now ships `scripts/deployment-mode-support.json`, readiness reports now validate project-detected trim / Native AOT / single-file posture against that manifest, and the support docs now keep the same manifest-backed statement aligned across readiness, compatibility, and package-publishing guidance — **Shipped** · focused readiness and documentation coverage
 - ENG-211 doctor support-contract follow-through baseline: `Cephalon.Cli` now packages that same deployment-mode support manifest, `cephalon doctor` now echoes the stable shipping floor plus the `.NET 11` assessment-only readiness lane and keeps trim / Native AOT / single-file `not-claimed` posture visible from the same first-run command path, and the adoption docs plus CLI/template-pack readmes now stay aligned with that CLI-surfaced support-contract story — **Shipped** · focused CLI and documentation coverage
 - ENG-212 generated app doctor support-contract follow-through baseline: `cephalon doctor --app-root <path>` now carries that same packaged support contract into generated-app validation by comparing the scaffolded host target framework against the stable `net10.0` shipping floor plus the `.NET 11` assessment-only readiness lane, reading effective `PublishTrimmed`, `PublishAot`, and `PublishSingleFile` settings from the generated host project plus publish profile, and keeping stable-floor, readiness-lane, unclaimed publish-mode, and out-of-contract posture visible from the same generated-app bootstrap doctor path — **Shipped** · focused CLI and documentation coverage
+- ENG-213 generated app doctor deployment-asset alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Dockerfile` plus the shipped container-image, Azure Container Apps, and Kubernetes deployment assets, compares generated Dockerfile SDK/runtime base-image tags against the generated host target framework baseline, and keeps stable-floor versus readiness-lane deployment-asset posture visible from the same generated-app bootstrap doctor path before container deployment work begins — **Shipped** · focused CLI and documentation coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153

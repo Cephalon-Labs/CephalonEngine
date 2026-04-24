@@ -390,6 +390,8 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Deployment-mode shipping baseline: Stable shipping floor 'net10.0', readiness lane 'net11.0' (assessment-only).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Trim support contract: not-claimed. Trimming is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0 and stays on the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Dockerfile baseline: ./Dockerfile uses sdk:10.0 and aspnet:10.0 for the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app trim posture: PublishTrimmed is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app Native AOT posture: PublishAot is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app single-file posture: PublishSingleFile is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
@@ -459,6 +461,8 @@ public sealed class CliApplicationTests
 
             Assert.Equal(0, exitCode);
             Assert.Contains("[warn] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net11.0 and stays on the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Generated Dockerfile baseline: ./Dockerfile uses sdk:11.0 and aspnet:11.0 for the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app trim posture: PublishTrimmed=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app Native AOT posture: PublishAot=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app single-file posture: PublishSingleFile=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
@@ -577,6 +581,121 @@ public sealed class CliApplicationTests
             Assert.Contains("[error] Generated publish profile: Missing `CephalonFolder.pubxml` for: ./src/Acme.Store.Host/Acme.Store.Host.csproj.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
             Assert.Contains($"cephalon doctor --app-root {QuotePowerShellArgument(appRootPath)}", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedAppDeploymentAssetsAreMissing()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-missing-deploy-assets-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            includeDeploymentAssets: false);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated deployment assets: Missing generated deployment assets: ./Dockerfile, ./deploy/container-image/publish-image.ps1, ./deploy/azure-container-apps/deploy-up.ps1, ./deploy/kubernetes/apply.ps1, ./deploy/kubernetes/kustomization.yaml, ./deploy/kubernetes/namespace.yaml, ./deploy/kubernetes/deployment.yaml, ./deploy/kubernetes/service.yaml.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedDockerfileDriftsFromHostTargetFramework()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-dockerfile-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            dockerSdkImageTag: "11.0",
+            dockerAspNetImageTag: "11.0");
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated Dockerfile baseline: ./Dockerfile uses sdk:11.0 and aspnet:11.0, but ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
         {
@@ -1204,7 +1323,10 @@ public sealed class CliApplicationTests
         string targetFramework = "net10.0",
         bool publishTrimmed = false,
         bool publishAot = false,
-        bool publishSingleFile = false)
+        bool publishSingleFile = false,
+        bool includeDeploymentAssets = true,
+        string? dockerSdkImageTag = null,
+        string? dockerAspNetImageTag = null)
     {
         Directory.CreateDirectory(appRootPath);
         Directory.CreateDirectory(Path.Combine(appRootPath, ".cephalon", "packages"));
@@ -1261,6 +1383,37 @@ public sealed class CliApplicationTests
             """);
         File.WriteAllText(Path.Combine(appRootPath, "src", "Acme.Store.Host", "appsettings.json"), "{}");
 
+        if (includeDeploymentAssets)
+        {
+            Directory.CreateDirectory(Path.Combine(appRootPath, "deploy", "container-image"));
+            Directory.CreateDirectory(Path.Combine(appRootPath, "deploy", "azure-container-apps"));
+            Directory.CreateDirectory(Path.Combine(appRootPath, "deploy", "kubernetes"));
+
+            var resolvedDockerSdkImageTag = dockerSdkImageTag ?? GetExpectedDockerImageTag(targetFramework);
+            var resolvedDockerAspNetImageTag = dockerAspNetImageTag ?? GetExpectedDockerImageTag(targetFramework);
+
+            File.WriteAllText(
+                Path.Combine(appRootPath, "Dockerfile"),
+                $$"""
+                FROM mcr.microsoft.com/dotnet/sdk:{{resolvedDockerSdkImageTag}} AS build
+                WORKDIR /src
+                COPY . .
+                RUN dotnet publish src/Acme.Store.Host/Acme.Store.Host.csproj -c Release -o /app/publish /p:UseAppHost=false
+
+                FROM mcr.microsoft.com/dotnet/aspnet:{{resolvedDockerAspNetImageTag}} AS final
+                WORKDIR /app
+                COPY --from=build /app/publish .
+                ENTRYPOINT ["dotnet", "Acme.Store.Host.dll"]
+                """);
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "container-image", "publish-image.ps1"), "Write-Output 'publish-image'");
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "azure-container-apps", "deploy-up.ps1"), "Write-Output 'deploy-up'");
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "apply.ps1"), "Write-Output 'apply'");
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "kustomization.yaml"), "resources: []");
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "namespace.yaml"), "apiVersion: v1");
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "deployment.yaml"), "apiVersion: apps/v1");
+            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "service.yaml"), "apiVersion: v1");
+        }
+
         if (includePublishProfile)
         {
             var publishProfilesPath = Path.Combine(appRootPath, "src", "Acme.Store.Host", "Properties", "PublishProfiles");
@@ -1294,6 +1447,21 @@ public sealed class CliApplicationTests
 
             File.WriteAllText(Path.Combine(publishProfilesPath, "CephalonFolder.pubxml"), publishProfileContents);
         }
+    }
+
+    private static string GetExpectedDockerImageTag(string targetFramework)
+    {
+        var normalized = targetFramework.StartsWith("net", StringComparison.OrdinalIgnoreCase)
+            ? targetFramework[3..]
+            : targetFramework;
+
+        var tagCharacters = normalized
+            .TakeWhile(character => char.IsDigit(character) || character == '.')
+            .ToArray();
+
+        return tagCharacters.Length == 0
+            ? "10.0"
+            : new string(tagCharacters);
     }
 
     private static string QuotePowerShellArgument(string value)
