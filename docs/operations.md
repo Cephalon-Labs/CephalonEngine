@@ -52,6 +52,14 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-signed-package-governance.ps1
 ```
 
+For the matching certificate-chain trust replay, run:
+
+```powershell
+pwsh ./scripts/validate-signed-package-certificate-chain-governance.ps1
+```
+
+That lane reuses the same external-adoption path but patches `Engine:Trust:TrustedSignatureCertificates` plus `Engine:Trust:TrustedSignatureCertificateAuthorities`, then proves `/engine/packages`, `/engine/trust-policy`, and `/engine/snapshot` expose `trusted-certificate-chain` verification plus the signing `certificateThumbprint`.
+
 See `docs/external-package-lifecycle.md` for the corresponding detached-signature and trust-governance guidance.
 
 ## Generated-app Windows Service smoke

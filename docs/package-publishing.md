@@ -102,6 +102,8 @@ For the scenario-driven external replay of that same staged-package path, use `p
 
 For the matching higher-assurance detached-signature replay, use `pwsh ./scripts/validate-signed-package-governance.ps1`. It repacks `Cephalon.ReferenceModule.Operations` with a deterministic detached signature, stages the signed `.nupkg`, patches stricter `Engine:PackagePolicy` plus `Engine:Trust:TrustedSignaturePublicKeys`, validates the same runtime/package surfaces, and then proves a tampered signed package is denied when signature verification is required.
 
+For the matching certificate-chain trust replay, use `pwsh ./scripts/validate-signed-package-certificate-chain-governance.ps1`. It keeps the same signed-package path, but patches `Engine:Trust:TrustedSignatureCertificates` plus `Engine:Trust:TrustedSignatureCertificateAuthorities` and proves the runtime/package surfaces expose `trusted-certificate-chain` verification plus the signing `certificateThumbprint`.
+
 ## Output
 
 The publish script writes package artifacts to `artifacts/packages-release/` by default:

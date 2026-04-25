@@ -3,6 +3,8 @@ param(
     [string]$HostUrl = "http://127.0.0.1:18084",
     [int]$TimeoutSeconds = 120,
     [string]$Configuration = "Release",
+    [ValidateSet("PublicKey", "CertificateChain")]
+    [string]$SignatureTrustMode = "PublicKey",
     [switch]$SkipPackageBuild,
     [switch]$KeepOutput
 )
@@ -12,7 +14,9 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $publishPackagesScriptPath = Join-Path $repoRoot "scripts\publish-package-artifacts.ps1"
-$tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("cephalon-signed-package-governance-" + [Guid]::NewGuid().ToString("N"))
+$signatureTrustModeName = $SignatureTrustMode.ToLowerInvariant()
+$signatureTrustModeToken = if ($SignatureTrustMode -eq "CertificateChain") { "certchain" } else { "pubkey" }
+$tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("cephalon-signed-governance-$signatureTrustModeToken-" + [Guid]::NewGuid().ToString("N"))
 $packageFeedPath = Join-Path $tempRoot "package-feed"
 $referencePackageArtifactsPath = Join-Path $tempRoot "reference-packages"
 $signedPackageArtifactsPath = Join-Path $tempRoot "signed-packages"
@@ -191,7 +195,21 @@ function Resolve-PackageAssemblyPathInExtraction {
     throw "Could not determine the package assembly path for '$declaredAssemblyPath' inside '$ExtractionPath'."
 }
 
-function New-SigningMaterial {
+function Normalize-CertificateThumbprint {
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [string]$Value
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return [string]::Empty
+    }
+
+    return $Value.Replace(" ", [string]::Empty, [System.StringComparison]::Ordinal).ToLowerInvariant()
+}
+
+function New-PublicKeySigningMaterial {
     param(
         [Parameter(Mandatory = $true)]
         [string]$OutputDirectory
@@ -216,11 +234,129 @@ function New-SigningMaterial {
     }
 
     return [pscustomobject]@{
+        TrustMode = "PublicKey"
+        VerificationSource = "trusted-public-key"
         KeyId = $keyId
         Signer = $signer
         Fingerprint = $fingerprint
         PrivateKeyPath = $privateKeyPath
         PublicKeyPath = $publicKeyPath
+        SigningCertificatePath = $null
+        RootCertificatePath = $null
+        CertificateThumbprint = [string]::Empty
+    }
+}
+
+function New-CertificateChainSigningMaterial {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$OutputDirectory
+    )
+
+    New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
+
+    $keyId = "cephalon-labs-signing-cert"
+    $signer = "Cephalon Labs Build"
+    $privateKeyPath = Join-Path $OutputDirectory "trusted-signing-cert.private.pem"
+    $signingCertificatePath = Join-Path $OutputDirectory "trusted-signing-cert.pem"
+    $rootCertificatePath = Join-Path $OutputDirectory "trusted-root-cert.pem"
+
+    $rootKey = [System.Security.Cryptography.RSA]::Create(2048)
+    try {
+        $rootRequest = [System.Security.Cryptography.X509Certificates.CertificateRequest]::new(
+            "CN=Cephalon Test Root",
+            $rootKey,
+            [System.Security.Cryptography.HashAlgorithmName]::SHA256,
+            [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
+        $rootRequest.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true, $false, 0, $true))
+        $rootRequest.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension]::new($rootRequest.PublicKey, $false))
+        $rootCertificate = $rootRequest.CreateSelfSigned(
+            [System.DateTimeOffset]::UtcNow.AddDays(-1),
+            [System.DateTimeOffset]::UtcNow.AddYears(10))
+
+        try {
+            $signingKey = [System.Security.Cryptography.RSA]::Create(2048)
+            try {
+                $signingRequest = [System.Security.Cryptography.X509Certificates.CertificateRequest]::new(
+                    "CN=Cephalon Labs Signing",
+                    $signingKey,
+                    [System.Security.Cryptography.HashAlgorithmName]::SHA256,
+                    [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
+                $signingRequest.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false, $false, 0, $true))
+                $signingRequest.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature, $true))
+                $signingRequest.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension]::new($signingRequest.PublicKey, $false))
+
+                $serialNumber = New-Object byte[] 16
+                [System.Security.Cryptography.RandomNumberGenerator]::Fill($serialNumber)
+                $issuedCertificate = $signingRequest.Create(
+                    $rootCertificate,
+                    [System.DateTimeOffset]::UtcNow.AddDays(-1),
+                    [System.DateTimeOffset]::UtcNow.AddYears(2),
+                    $serialNumber)
+
+                try {
+                    $signingCertificateWithKey = [System.Security.Cryptography.X509Certificates.RSACertificateExtensions]::CopyWithPrivateKey(
+                        $issuedCertificate,
+                        [System.Security.Cryptography.RSA]$signingKey)
+                    try {
+                        $publicKeyBytes = $signingKey.ExportSubjectPublicKeyInfo()
+                        $fingerprint = [Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData($publicKeyBytes)).ToLowerInvariant()
+                        $certificateThumbprint = Normalize-CertificateThumbprint -Value $signingCertificateWithKey.Thumbprint
+
+                        [System.IO.File]::WriteAllText($privateKeyPath, $signingKey.ExportPkcs8PrivateKeyPem())
+                        [System.IO.File]::WriteAllText($signingCertificatePath, $signingCertificateWithKey.ExportCertificatePem())
+                        [System.IO.File]::WriteAllText($rootCertificatePath, $rootCertificate.ExportCertificatePem())
+                    }
+                    finally {
+                        $signingCertificateWithKey.Dispose()
+                    }
+                }
+                finally {
+                    $issuedCertificate.Dispose()
+                }
+            }
+            finally {
+                $signingKey.Dispose()
+            }
+        }
+        finally {
+            $rootCertificate.Dispose()
+        }
+    }
+    finally {
+        $rootKey.Dispose()
+    }
+
+    return [pscustomobject]@{
+        TrustMode = "CertificateChain"
+        VerificationSource = "trusted-certificate-chain"
+        KeyId = $keyId
+        Signer = $signer
+        Fingerprint = $fingerprint
+        PrivateKeyPath = $privateKeyPath
+        PublicKeyPath = $null
+        SigningCertificatePath = $signingCertificatePath
+        RootCertificatePath = $rootCertificatePath
+        CertificateThumbprint = $certificateThumbprint
+    }
+}
+
+function New-SigningMaterial {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$OutputDirectory,
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("PublicKey", "CertificateChain")]
+        [string]$TrustMode
+    )
+
+    switch ($TrustMode) {
+        "CertificateChain" {
+            return New-CertificateChainSigningMaterial -OutputDirectory $OutputDirectory
+        }
+        default {
+            return New-PublicKeySigningMaterial -OutputDirectory $OutputDirectory
+        }
     }
 }
 
@@ -329,9 +465,7 @@ function Set-SignedPackagePolicyConfiguration {
         [Parameter(Mandatory = $true)]
         [string]$PluginsRootPath,
         [Parameter(Mandatory = $true)]
-        [string]$TrustedPublicKeyPath,
-        [Parameter(Mandatory = $true)]
-        [string]$KeyId
+        [pscustomobject]$SigningMaterial
     )
 
     $configuration = Get-Content -LiteralPath $ConfigurationPath -Raw | ConvertFrom-Json -Depth 20
@@ -362,11 +496,25 @@ function Set-SignedPackagePolicyConfiguration {
             RequireSignatureVerification = $true
         }) -Force
 
-    $configuration.Engine | Add-Member -NotePropertyName Trust -NotePropertyValue ([pscustomobject]@{
-            RequireTrustedPackages = $true
-            TrustedSignaturePublicKeys = [pscustomobject]@{}
-        }) -Force
-    $configuration.Engine.Trust.TrustedSignaturePublicKeys | Add-Member -NotePropertyName $KeyId -NotePropertyValue $TrustedPublicKeyPath -Force
+    $trustConfiguration = [ordered]@{
+        RequireTrustedPackages = $true
+    }
+
+    switch ($SigningMaterial.TrustMode) {
+        "CertificateChain" {
+            $trustedCertificates = [ordered]@{}
+            $trustedCertificates[$SigningMaterial.KeyId] = $SigningMaterial.SigningCertificatePath
+            $trustConfiguration["TrustedSignatureCertificates"] = $trustedCertificates
+            $trustConfiguration["TrustedSignatureCertificateAuthorities"] = @($SigningMaterial.RootCertificatePath)
+        }
+        default {
+            $trustedPublicKeys = [ordered]@{}
+            $trustedPublicKeys[$SigningMaterial.KeyId] = $SigningMaterial.PublicKeyPath
+            $trustConfiguration["TrustedSignaturePublicKeys"] = $trustedPublicKeys
+        }
+    }
+
+    $configuration.Engine | Add-Member -NotePropertyName Trust -NotePropertyValue ([pscustomobject]$trustConfiguration) -Force
 
     $configuration | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $ConfigurationPath -Encoding utf8
 }
@@ -500,8 +648,22 @@ function Assert-SignedPackageRuntimeTruth {
         throw "Expected the staged package signature entry to be marked verified."
     }
 
-    if ($packageSignature.verificationSource -ne "trusted-public-key") {
-        throw "Expected the staged package signature to verify through 'trusted-public-key', but found '$($packageSignature.verificationSource)'."
+    if ($packageSignature.verificationSource -ne $SigningMaterial.VerificationSource) {
+        throw "Expected the staged package signature to verify through '$($SigningMaterial.VerificationSource)', but found '$($packageSignature.verificationSource)'."
+    }
+
+    if ($SigningMaterial.TrustMode -eq "CertificateChain") {
+        if ($package.signatureCertificateThumbprint -ne $SigningMaterial.CertificateThumbprint) {
+            throw "Expected /engine/packages to expose certificate thumbprint '$($SigningMaterial.CertificateThumbprint)', but found '$($package.signatureCertificateThumbprint)'."
+        }
+
+        if ($packageSignature.certificateThumbprint -ne $SigningMaterial.CertificateThumbprint) {
+            throw "Expected the staged package signature to expose certificate thumbprint '$($SigningMaterial.CertificateThumbprint)', but found '$($packageSignature.certificateThumbprint)'."
+        }
+
+        if (-not $packageSignature.verificationReason.Contains("certificate-chain validation", [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Expected the staged package signature to mention certificate-chain validation, but found '$($packageSignature.verificationReason)'."
+        }
     }
 
     $packagePolicy = Invoke-RestMethod -Uri "$HostUrl/engine/package-policy" -TimeoutSec 15
@@ -525,7 +687,16 @@ function Assert-SignedPackageRuntimeTruth {
         throw "Expected /engine/trust-policy to require trusted packages."
     }
 
-    if (-not ($trustPolicy.policy.trustedSignaturePublicKeys.PSObject.Properties.Name -contains $SigningMaterial.KeyId)) {
+    if ($SigningMaterial.TrustMode -eq "CertificateChain") {
+        if (-not ($trustPolicy.policy.trustedSignatureCertificates.PSObject.Properties.Name -contains $SigningMaterial.KeyId)) {
+            throw "Expected /engine/trust-policy to include the trusted signing certificate '$($SigningMaterial.KeyId)'."
+        }
+
+        if (-not (@($trustPolicy.policy.trustedSignatureCertificateAuthorities) -contains $SigningMaterial.RootCertificatePath)) {
+            throw "Expected /engine/trust-policy to include the trusted signing certificate authority '$($SigningMaterial.RootCertificatePath)'."
+        }
+    }
+    elseif (-not ($trustPolicy.policy.trustedSignaturePublicKeys.PSObject.Properties.Name -contains $SigningMaterial.KeyId)) {
         throw "Expected /engine/trust-policy to include the trusted signing key '$($SigningMaterial.KeyId)'."
     }
 
@@ -549,14 +720,32 @@ function Assert-SignedPackageRuntimeTruth {
         throw "Expected /engine/trust-policy to expose a verified signature entry for the trusted signing key."
     }
 
-    if ($trustSignature.verificationSource -ne "trusted-public-key") {
-        throw "Expected /engine/trust-policy to expose 'trusted-public-key' as the verification source."
+    if ($trustSignature.verificationSource -ne $SigningMaterial.VerificationSource) {
+        throw "Expected /engine/trust-policy to expose '$($SigningMaterial.VerificationSource)' as the verification source."
+    }
+
+    if ($SigningMaterial.TrustMode -eq "CertificateChain") {
+        if ($trustDecision.signatureCertificateThumbprint -ne $SigningMaterial.CertificateThumbprint) {
+            throw "Expected /engine/trust-policy to expose certificate thumbprint '$($SigningMaterial.CertificateThumbprint)', but found '$($trustDecision.signatureCertificateThumbprint)'."
+        }
+
+        if ($trustSignature.certificateThumbprint -ne $SigningMaterial.CertificateThumbprint) {
+            throw "Expected /engine/trust-policy to expose signer certificate thumbprint '$($SigningMaterial.CertificateThumbprint)', but found '$($trustSignature.certificateThumbprint)'."
+        }
+
+        if (-not $trustSignature.reason.Contains("certificate-chain validation", [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Expected /engine/trust-policy to mention certificate-chain validation, but found '$($trustSignature.reason)'."
+        }
     }
 
     $snapshot = Invoke-RestMethod -Uri "$HostUrl/engine/snapshot" -TimeoutSec 15
     $snapshotPackage = @($snapshot.manifest.packages) | Where-Object { $_.id -eq "reference-operations" } | Select-Object -First 1
     if ($null -eq $snapshotPackage -or -not $snapshotPackage.isTrusted -or -not $snapshotPackage.isSignatureVerified) {
         throw "Expected /engine/snapshot to expose the trusted, verified staged package."
+    }
+
+    if ($SigningMaterial.TrustMode -eq "CertificateChain" -and $snapshotPackage.signatureCertificateThumbprint -ne $SigningMaterial.CertificateThumbprint) {
+        throw "Expected /engine/snapshot to expose certificate thumbprint '$($SigningMaterial.CertificateThumbprint)', but found '$($snapshotPackage.signatureCertificateThumbprint)'."
     }
 
     $snapshotModule = @($snapshot.manifest.modules) | Where-Object {
@@ -651,7 +840,7 @@ try {
 
     Write-Host ""
     Write-Host "Generating trusted signing material..." -ForegroundColor Cyan
-    $signingMaterial = New-SigningMaterial -OutputDirectory $signingMaterialsPath
+    $signingMaterial = New-SigningMaterial -OutputDirectory $signingMaterialsPath -TrustMode $SignatureTrustMode
 
     Write-Host ""
     Write-Host "Creating trusted and tampered detached-signature package variants..." -ForegroundColor Cyan
@@ -734,8 +923,7 @@ try {
     Set-SignedPackagePolicyConfiguration `
         -ConfigurationPath $appModelConfigurationPath `
         -PluginsRootPath $pluginsRootPath `
-        -TrustedPublicKeyPath $signingMaterial.PublicKeyPath `
-        -KeyId $signingMaterial.KeyId
+        -SigningMaterial $signingMaterial
 
     Write-Host ""
     Write-Host "Replaying generated-app doctor checks through the installed CLI..." -ForegroundColor Cyan
@@ -824,7 +1012,16 @@ try {
     Write-Host "Reference module package artifact: $referencePackagePath" -ForegroundColor Cyan
     Write-Host "Trusted signed package artifact: $trustedSignedPackagePath" -ForegroundColor Cyan
     Write-Host "Tampered signed package artifact: $tamperedSignedPackagePath" -ForegroundColor Cyan
-    Write-Host "Trusted signing key: $($signingMaterial.PublicKeyPath)" -ForegroundColor Cyan
+    switch ($signingMaterial.TrustMode) {
+        "CertificateChain" {
+            Write-Host "Trusted signing certificate: $($signingMaterial.SigningCertificatePath)" -ForegroundColor Cyan
+            Write-Host "Trusted root certificate: $($signingMaterial.RootCertificatePath)" -ForegroundColor Cyan
+            Write-Host "Trusted certificate thumbprint: $($signingMaterial.CertificateThumbprint)" -ForegroundColor Cyan
+        }
+        default {
+            Write-Host "Trusted signing key: $($signingMaterial.PublicKeyPath)" -ForegroundColor Cyan
+        }
+    }
     Write-Host "Installed tool path: $toolPath" -ForegroundColor Cyan
     Write-Host "NuGet package cache: $nuGetPackagesPath" -ForegroundColor Cyan
     Write-Host "Generated app root: $generatedRoot" -ForegroundColor Cyan

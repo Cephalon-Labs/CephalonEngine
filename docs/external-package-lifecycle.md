@@ -6,6 +6,7 @@ Use it together with [Module authoring](module-authoring.md) when you are shippi
 
 For the repo-native replay of this full out-of-tree path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`.
 For the matching detached-signature and publisher or signer trust replay, use `pwsh ./scripts/validate-signed-package-governance.ps1`.
+For the matching certificate-chain trust replay, use `pwsh ./scripts/validate-signed-package-certificate-chain-governance.ps1`.
 
 ## What this proves
 
@@ -13,7 +14,7 @@ For the matching detached-signature and publisher or signer trust replay, use `p
 - the published artifact can be staged into a loadable package directory with `cephalon package stage`
 - a host can load that staged package through `Engine:Discovery:PackageDirectories`
 - `Engine:PackagePolicy` and `Engine:Trust` can govern the load
-- detached signatures can be required and verified through `Engine:Trust:TrustedSignaturePublicKeys`
+- detached signatures can be required and verified through `Engine:Trust:TrustedSignaturePublicKeys` or `Engine:Trust:TrustedSignatureCertificates` plus `Engine:Trust:TrustedSignatureCertificateAuthorities`
 - tampered signed packages can be denied before their module code becomes active
 - `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot` expose the truth of what loaded
 
@@ -145,12 +146,37 @@ This keeps package governance tied to the exact signing key instead of a broader
 - `/engine/snapshot` should mirror the same verified package truth in the merged runtime view
 - a tampered signed package should fail startup when `RequireSignatureVerification` is enabled
 
+If you prefer certificate-chain trust instead of a trusted public-key file, keep the same package-policy settings but swap the trust block to:
+
+```json
+{
+  "Engine": {
+    "Trust": {
+      "RequireTrustedPackages": true,
+      "TrustedSignatureCertificates": {
+        "cephalon-labs-signing-cert": "keys/cephalon-labs-signing-cert.pem"
+      },
+      "TrustedSignatureCertificateAuthorities": [
+        "keys/cephalon-labs-root.pem"
+      ]
+    }
+  }
+}
+```
+
+Under that certificate-chain posture:
+
+- `/engine/packages` should surface `verificationSource: trusted-certificate-chain` plus `signatureCertificateThumbprint`
+- `/engine/trust-policy` should surface the trusted signing certificate map plus the trusted certificate-authority list
+- `/engine/snapshot` should mirror the same `trusted-certificate-chain` and certificate-thumbprint truth in the merged runtime view
+
 ## Operational notes
 
 - use `cephalon.package.json` as the operator-readable contract for version, compatibility, publisher, provenance, signature, and integrity metadata
 - prefer `Engine:PackagePolicy` when hosts must reject ambiguous raw assembly loads
 - prefer `Engine:Trust` publisher, signer, certificate, or checksum rules when package governance matters
-- prefer `Engine:Trust:TrustedSignaturePublicKeys` plus `RequireSignatureVerification` when detached signing should be enforced instead of treated as optional metadata
+- prefer `Engine:Trust:TrustedSignaturePublicKeys` plus `RequireSignatureVerification` when detached signing should be enforced through an explicit trusted signer key
+- prefer `Engine:Trust:TrustedSignatureCertificates` plus `Engine:Trust:TrustedSignatureCertificateAuthorities` when detached signing should be enforced through a trusted signing certificate chain and surfaced as `trusted-certificate-chain` with a `certificateThumbprint`
 - keep package directories explicit and stable so operators can reason about what the host is allowed to load
 - if you republish a package and want to replace an existing staged directory, rerun `cephalon package stage` with `--force`
 
