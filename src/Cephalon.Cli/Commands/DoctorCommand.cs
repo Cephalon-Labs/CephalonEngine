@@ -228,6 +228,30 @@ internal static class DoctorCommand
         "targetPort: http"
     ];
 
+    private static readonly string[] RequiredGeneratedWindowsServiceRemoveScriptMarkers =
+    [
+        "Get-Service -Name $ServiceName",
+        "Stop-Service -Name $ServiceName",
+        "sc.exe delete $ServiceName",
+        "Windows Service '$ServiceName' deleted successfully."
+    ];
+
+    private static readonly string[] RequiredGeneratedIisRemoveScriptMarkers =
+    [
+        "$stopSiteArguments = @(\"stop\", \"site\", \"/site.name:$SiteName\")",
+        "$deleteSiteArguments = @(\"delete\", \"site\", \"/site.name:$SiteName\")",
+        "$deleteAppPoolArguments = @(\"delete\", \"apppool\", \"/apppool.name:$AppPoolName\")",
+        "IIS site '$SiteName' and app pool '$AppPoolName' deleted successfully."
+    ];
+
+    private static readonly string[] RequiredGeneratedLinuxSystemdEnvironmentFileMarkers =
+    [
+        "DOTNET_ENVIRONMENT=Production",
+        "ASPNETCORE_URLS=http://0.0.0.0:8080",
+        "# Engine__Observability__Telemetry__Endpoint=http://localhost:4318",
+        "# Engine__Observability__Telemetry__ExportTraces=true"
+    ];
+
     /// <summary>
     /// Executes the doctor command with the supplied options.
     /// </summary>
@@ -1247,6 +1271,9 @@ internal static class DoctorCommand
         EvaluateGeneratedIisBaseline(generatedAppRootPath, generatedAppId, checks);
         EvaluateAzureAppServiceBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
         EvaluateGeneratedLinuxSystemdBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
+        EvaluateGeneratedWindowsServiceTeardownBaseline(generatedAppRootPath, generatedAppId, checks);
+        EvaluateGeneratedIisTeardownBaseline(generatedAppRootPath, generatedAppId, checks);
+        EvaluateGeneratedLinuxSystemdEnvironmentBaseline(generatedAppRootPath, generatedAppId, checks);
     }
 
     private static void EvaluateGeneratedGuidanceDocsBaseline(
@@ -2395,6 +2422,55 @@ internal static class DoctorCommand
             "Generated Linux systemd baseline",
             $"{ToDisplayRelativePath(generatedAppRootPath, serviceFilePath)} keeps the generated Linux systemd unit aligned with {generatedAppId} and {expectedHostAssemblyName}.",
             null));
+    }
+
+    private static void EvaluateGeneratedWindowsServiceTeardownBaseline(
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var removeScriptPath = Path.Combine(generatedAppRootPath, "deploy", "windows-service", "remove-service.ps1");
+        EvaluateGeneratedScriptBaseline(
+            removeScriptPath,
+            generatedAppRootPath,
+            "Generated Windows Service teardown baseline",
+            RequiredGeneratedWindowsServiceRemoveScriptMarkers,
+            $"{ToDisplayRelativePath(generatedAppRootPath, removeScriptPath)} keeps the generated Windows Service stop/delete flow explicit for {generatedAppId}.",
+            "Restore the generated Windows Service remove script so the service stop/delete flow stays aligned with the current app root.",
+            checks);
+    }
+
+    private static void EvaluateGeneratedIisTeardownBaseline(
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var removeScriptPath = Path.Combine(generatedAppRootPath, "deploy", "iis", "remove-site.ps1");
+        EvaluateGeneratedScriptBaseline(
+            removeScriptPath,
+            generatedAppRootPath,
+            "Generated IIS teardown baseline",
+            RequiredGeneratedIisRemoveScriptMarkers,
+            $"{ToDisplayRelativePath(generatedAppRootPath, removeScriptPath)} keeps the generated IIS stop/delete flow explicit for {generatedAppId}.",
+            "Restore the generated IIS remove script so the site/app-pool teardown flow stays aligned with the current app root.",
+            checks);
+    }
+
+    private static void EvaluateGeneratedLinuxSystemdEnvironmentBaseline(
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var environmentFilePath = Path.Combine(generatedAppRootPath, "deploy", "linux", "systemd", $"{generatedAppId}.env");
+        EvaluateGeneratedTextAssetBaseline(
+            environmentFilePath,
+            generatedAppRootPath,
+            "Generated Linux systemd environment baseline",
+            RequiredGeneratedLinuxSystemdEnvironmentFileMarkers,
+            $"{ToDisplayRelativePath(generatedAppRootPath, environmentFilePath)} keeps the generated Linux systemd environment defaults explicit for {generatedAppId}.",
+            "no longer keeps the generated Linux systemd environment baseline explicit for",
+            "Restore the generated Linux systemd environment file so the default environment and telemetry override hints stay aligned with the current app root.",
+            checks);
     }
 
     private static void AddGeneratedAppDeploymentModeCheck(

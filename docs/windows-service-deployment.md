@@ -71,6 +71,8 @@ To remove the service later:
 pwsh ./Acme.Store/deploy/windows-service/remove-service.ps1
 ```
 
+`cephalon doctor --app-root ./Acme.Store` now also validates that `deploy/windows-service/remove-service.ps1` keeps the generated `Get-Service`, `Stop-Service`, and `sc.exe delete` teardown flow explicit before teams rely on that removal path.
+
 Once the service is running, inspect:
 
 - `/engine`

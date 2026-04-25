@@ -213,8 +213,10 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deploy/container-image/publish-image.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("windows-service-deployment.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-windows-service.ps1", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("deploy/windows-service/remove-service.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("iis-deployment.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-iis.ps1", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("deploy/iis/remove-site.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("azure-app-service-deployment.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-app-service.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("azure-container-apps-deployment.md", gettingStarted, StringComparison.Ordinal);
@@ -237,6 +239,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-generated-app-kubernetes.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("linux-systemd-deployment.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-systemd.ps1", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("deploy/linux/systemd/Acme.Store.env", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("dotnet new list cephalon", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CompositionSmokeTests.cs", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("BehaviorSpecifications.cs", gettingStarted, StringComparison.Ordinal);
@@ -247,10 +250,12 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deploy/windows-service/README.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("deploy/windows-service/install-service.ps1", generatedAppPublishing, StringComparison.Ordinal);
+        Assert.Contains("deploy/windows-service/remove-service.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("windows-service-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("deploy/container-image/publish-image.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("container-image-publishing.md", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("deploy/iis/install-site.ps1", generatedAppPublishing, StringComparison.Ordinal);
+        Assert.Contains("deploy/iis/remove-site.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("iis-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("deploy/azure-app-service/deploy-zip.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("azure-app-service-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
@@ -262,6 +267,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("self-hosted and hosted deployment assets", generatedAppPublishing, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("linux-systemd-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
+        Assert.Contains("Acme.Store.env", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("dotnet publish", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("deploy/container-image", containerImagePublishing, StringComparison.Ordinal);
         Assert.Contains("publish-image.ps1", containerImagePublishing, StringComparison.Ordinal);
@@ -270,9 +276,11 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-generated-app-windows-service.ps1", windowsServiceDeployment, StringComparison.Ordinal);
         Assert.Contains("sc.exe create", windowsServiceDeployment, StringComparison.Ordinal);
         Assert.Contains("install-service.ps1", windowsServiceDeployment, StringComparison.Ordinal);
+        Assert.Contains("remove-service.ps1", windowsServiceDeployment, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-iis.ps1", iisDeployment, StringComparison.Ordinal);
         Assert.Contains("AspNetCoreModuleV2", iisDeployment, StringComparison.Ordinal);
         Assert.Contains("install-site.ps1", iisDeployment, StringComparison.Ordinal);
+        Assert.Contains("remove-site.ps1", iisDeployment, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-app-service.ps1", azureAppServiceDeployment, StringComparison.Ordinal);
         Assert.Contains("WEBSITE_RUN_FROM_PACKAGE=1", azureAppServiceDeployment, StringComparison.Ordinal);
         Assert.Contains("az webapp deploy", azureAppServiceDeployment, StringComparison.Ordinal);
@@ -284,6 +292,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("ClusterIP", kubernetesDeployment, StringComparison.Ordinal);
         Assert.Contains("systemd-analyze verify", linuxSystemdDeployment, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-systemd.ps1", linuxSystemdDeployment, StringComparison.Ordinal);
+        Assert.Contains(".env", linuxSystemdDeployment, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
@@ -302,6 +311,9 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddOpenApi.json", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("AddReferenceDocs.json", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("self-hosted and hosted deployment assets", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("deploy/windows-service/remove-service.ps1", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("deploy/iis/remove-site.ps1", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("deploy/linux/systemd/Acme.Store.env", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/container-image/publish-image.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/azure-container-apps/deploy-up.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/apply.ps1", cliPackageReadme, StringComparison.Ordinal);

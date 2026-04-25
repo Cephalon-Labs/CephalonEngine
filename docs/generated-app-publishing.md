@@ -39,6 +39,7 @@ Generated app roots from `cephalon new` and the app-focused `dotnet new cephalon
 
 That means the published-output path is now part of the generated app contract rather than an implicit `dotnet publish` guess.
 The Azure Container Apps and Kubernetes assets ship alongside that same generated host root, but they stay source/Dockerfile-based rather than depending on the published-output folder.
+`cephalon doctor --app-root <path>` now also checks that the generated Windows Service teardown script, IIS teardown script, and Linux `systemd` environment file (`deploy/linux/systemd/Acme.Store.env` in the scaffolded examples) still stay aligned with that published-output contract before teams replay those install or removal flows literally.
 
 ## Prerequisites
 

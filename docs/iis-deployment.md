@@ -68,6 +68,8 @@ To remove the site later:
 pwsh ./Acme.Store/deploy/iis/remove-site.ps1
 ```
 
+`cephalon doctor --app-root ./Acme.Store` now also validates that `deploy/iis/remove-site.ps1` keeps the generated `stop site`, `delete site`, and `delete apppool` teardown flow explicit before teams rely on that IIS removal path.
+
 Once the site is running, inspect:
 
 - `/engine`

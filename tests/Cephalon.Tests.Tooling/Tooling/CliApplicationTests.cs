@@ -109,10 +109,20 @@ public sealed class CliApplicationTests
             Assert.Contains("--contentRoot", windowsInstallScript, StringComparison.Ordinal);
             Assert.Contains("Acme.Store.Service.dll", windowsInstallScript, StringComparison.Ordinal);
 
+            var windowsRemoveScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "windows-service", "remove-service.ps1"));
+            Assert.Contains("Get-Service -Name $ServiceName", windowsRemoveScript, StringComparison.Ordinal);
+            Assert.Contains("Stop-Service -Name $ServiceName", windowsRemoveScript, StringComparison.Ordinal);
+            Assert.Contains("sc.exe delete $ServiceName", windowsRemoveScript, StringComparison.Ordinal);
+
             var iisInstallScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "iis", "install-site.ps1"));
             Assert.Contains("add apppool", iisInstallScript, StringComparison.Ordinal);
             Assert.Contains("add site", iisInstallScript, StringComparison.Ordinal);
             Assert.Contains("C:\\inetpub\\sites\\Acme.Store\\current", iisInstallScript, StringComparison.Ordinal);
+
+            var iisRemoveScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "iis", "remove-site.ps1"));
+            Assert.Contains("$stopSiteArguments", iisRemoveScript, StringComparison.Ordinal);
+            Assert.Contains("$deleteSiteArguments", iisRemoveScript, StringComparison.Ordinal);
+            Assert.Contains("$deleteAppPoolArguments", iisRemoveScript, StringComparison.Ordinal);
 
             var azureAppServiceDeployScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "azure-app-service", "deploy-zip.ps1"));
             Assert.Contains("WEBSITE_RUN_FROM_PACKAGE=1", azureAppServiceDeployScript, StringComparison.Ordinal);
@@ -177,6 +187,11 @@ public sealed class CliApplicationTests
             Assert.Contains("EnvironmentFile=-/etc/cephalon/Acme.Store.env", systemdService, StringComparison.Ordinal);
             Assert.Contains("ExecStart=/usr/bin/env dotnet /opt/Acme.Store/current/Acme.Store.Service.dll", systemdService, StringComparison.Ordinal);
             Assert.Contains("DynamicUser=true", systemdService, StringComparison.Ordinal);
+
+            var systemdEnvironment = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "linux", "systemd", "Acme.Store.env"));
+            Assert.Contains("DOTNET_ENVIRONMENT=Production", systemdEnvironment, StringComparison.Ordinal);
+            Assert.Contains("ASPNETCORE_URLS=http://0.0.0.0:8080", systemdEnvironment, StringComparison.Ordinal);
+            Assert.Contains("Engine__Observability__Telemetry__Endpoint=http://localhost:4318", systemdEnvironment, StringComparison.Ordinal);
 
             var generatedReadme = await File.ReadAllTextAsync(Path.Combine(outputPath, "README.md"));
             Assert.Contains("NuGet.config", generatedReadme, StringComparison.Ordinal);
@@ -483,6 +498,9 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Windows Service teardown baseline: ./deploy/windows-service/remove-service.ps1 keeps the generated Windows Service stop/delete flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated IIS teardown baseline: ./deploy/iis/remove-site.ps1 keeps the generated IIS stop/delete flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Linux systemd environment baseline: ./deploy/linux/systemd/Acme.Store.env keeps the generated Linux systemd environment defaults explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./.cephalon/packages/README.md, ./src/Acme.Store.Host/Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated root guidance baseline: ./README.md keeps generated package-source, split-config, publish, deployment, and local-orchestration guidance explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated local package feed guidance baseline: ./.cephalon/packages/README.md keeps generated local package-feed bootstrap, publish-package-artifacts.ps1, and shared-feed replacement guidance explicit.", stdout.ToString(), StringComparison.Ordinal);
@@ -588,6 +606,9 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Windows Service teardown baseline: ./deploy/windows-service/remove-service.ps1 keeps the generated Windows Service stop/delete flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated IIS teardown baseline: ./deploy/iis/remove-site.ps1 keeps the generated IIS stop/delete flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Linux systemd environment baseline: ./deploy/linux/systemd/Acme.Store.env keeps the generated Linux systemd environment defaults explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./.cephalon/packages/README.md, ./src/Acme.Store.Host/Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated root guidance baseline: ./README.md keeps generated package-source, split-config, publish, deployment, and local-orchestration guidance explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated local package feed guidance baseline: ./.cephalon/packages/README.md keeps generated local package-feed bootstrap, publish-package-artifacts.ps1, and shared-feed replacement guidance explicit.", stdout.ToString(), StringComparison.Ordinal);
@@ -1873,9 +1894,15 @@ public sealed class CliApplicationTests
             windowsServiceInstallScriptContents: """
                 sc.exe create Acme.Store binPath= "dotnet Legacy.Store.Host.dll"
                 """,
+            windowsServiceRemoveScriptContents: """
+                Write-Output "legacy remove"
+                """,
             iisInstallScriptContents: """
                 $siteName = "Legacy.Store"
                 Write-Output $siteName
+                """,
+            iisRemoveScriptContents: """
+                Write-Output "legacy teardown"
                 """,
             azureAppServiceDeployScriptContents: """
                 $appName = "Legacy.Store"
@@ -1891,6 +1918,9 @@ public sealed class CliApplicationTests
 
                 [Install]
                 WantedBy=multi-user.target
+                """,
+            linuxSystemdEnvironmentContents: """
+                ASPNETCORE_URLS=http://127.0.0.1:5000
                 """);
 
         CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
@@ -1927,6 +1957,9 @@ public sealed class CliApplicationTests
             Assert.Contains("[error] Generated IIS baseline: ./deploy/iis/install-site.ps1 no longer keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[error] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 no longer keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[error] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service no longer keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Windows Service teardown baseline: ./deploy/windows-service/remove-service.ps1 no longer keeps the generated deployment-script baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated IIS teardown baseline: ./deploy/iis/remove-site.ps1 no longer keeps the generated deployment-script baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Linux systemd environment baseline: ./deploy/linux/systemd/Acme.Store.env no longer keeps the generated Linux systemd environment baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -2590,9 +2623,12 @@ public sealed class CliApplicationTests
         string? kubernetesDeploymentContents = null,
         string? kubernetesServiceContents = null,
         string? windowsServiceInstallScriptContents = null,
+        string? windowsServiceRemoveScriptContents = null,
         string? iisInstallScriptContents = null,
+        string? iisRemoveScriptContents = null,
         string? azureAppServiceDeployScriptContents = null,
         string? linuxSystemdServiceContents = null,
+        string? linuxSystemdEnvironmentContents = null,
         bool includeGeneratedGuidanceDocsAssets = true,
         string? appReadmeContents = null,
         string? localPackageFeedReadmeContents = null,
@@ -3379,7 +3415,14 @@ public sealed class CliApplicationTests
                 $publishedHostAssembly = "Acme.Store.Host.dll"
                 sc.exe create $serviceName binPath= "dotnet $publishedHostAssembly"
                 """);
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "windows-service", "remove-service.ps1"), "sc.exe delete Acme.Store");
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "windows-service", "remove-service.ps1"),
+                windowsServiceRemoveScriptContents ?? """
+                $existingService = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+                Stop-Service -Name $ServiceName -Force -ErrorAction SilentlyContinue
+                sc.exe delete $ServiceName
+                Write-Host "Windows Service '$ServiceName' deleted successfully."
+                """);
             File.WriteAllText(
                 Path.Combine(appRootPath, "deploy", "iis", "install-site.ps1"),
                 iisInstallScriptContents ?? """
@@ -3387,7 +3430,14 @@ public sealed class CliApplicationTests
                 $webConfigPath = "web.config"
                 Write-Output "$siteName $webConfigPath"
                 """);
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "iis", "remove-site.ps1"), "Write-Output 'remove-site'");
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "iis", "remove-site.ps1"),
+                iisRemoveScriptContents ?? """
+                $stopSiteArguments = @("stop", "site", "/site.name:$SiteName")
+                $deleteSiteArguments = @("delete", "site", "/site.name:$SiteName")
+                $deleteAppPoolArguments = @("delete", "apppool", "/apppool.name:$AppPoolName")
+                Write-Host "IIS site '$SiteName' and app pool '$AppPoolName' deleted successfully."
+                """);
             File.WriteAllText(
                 Path.Combine(appRootPath, "deploy", "azure-app-service", "deploy-zip.ps1"),
                 azureAppServiceDeployScriptContents ?? """
@@ -3410,7 +3460,14 @@ public sealed class CliApplicationTests
                 [Install]
                 WantedBy=multi-user.target
                 """);
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "linux", "systemd", "Acme.Store.env"), "ASPNETCORE_URLS=http://0.0.0.0:8080");
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "linux", "systemd", "Acme.Store.env"),
+                linuxSystemdEnvironmentContents ?? """
+                DOTNET_ENVIRONMENT=Production
+                ASPNETCORE_URLS=http://0.0.0.0:8080
+                # Engine__Observability__Telemetry__Endpoint=http://localhost:4318
+                # Engine__Observability__Telemetry__ExportTraces=true
+                """);
 
             if (includeGeneratedGuidanceDocsAssets)
             {

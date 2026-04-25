@@ -52,6 +52,8 @@ The generated `.env` file starts with safe defaults for:
 - `ASPNETCORE_URLS=http://0.0.0.0:8080`
 - optional commented OpenTelemetry settings for a local or self-hosted collector path
 
+`cephalon doctor --app-root ./Acme.Store` now also validates that `deploy/linux/systemd/Acme.Store.env` keeps those generated environment and commented telemetry defaults explicit before teams rely on the shipped `systemd` install baseline.
+
 ## Verify and enable the service
 
 On the Linux target, verify and install the unit with:
