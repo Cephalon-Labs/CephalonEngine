@@ -120,20 +120,35 @@ public sealed class CliApplicationTests
             Assert.Contains("azure-app-service.zip", azureAppServiceDeployScript, StringComparison.Ordinal);
 
             var containerImagePublishScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "container-image", "publish-image.ps1"));
+            Assert.Contains("replace-with-registry/acme-store:latest", containerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("NuGet.config", containerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("Get-DockerBuildArguments", containerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("Format-Command -Command \"docker\"", containerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("@(\"push\", $tag)", containerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("Push skipped. Re-run with -Push", containerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("Container image publishing completed successfully.", containerImagePublishScript, StringComparison.Ordinal);
 
             var azureContainerAppsDeployScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "azure-container-apps", "deploy-up.ps1"));
+            Assert.Contains("acme-store", azureContainerAppsDeployScript, StringComparison.Ordinal);
+            Assert.Contains(@"src\Acme.Store.Service\Acme.Store.Service.csproj", azureContainerAppsDeployScript, StringComparison.Ordinal);
+            Assert.Contains("NuGet.config", azureContainerAppsDeployScript, StringComparison.Ordinal);
             Assert.Contains("az @upArguments", azureContainerAppsDeployScript, StringComparison.Ordinal);
             Assert.Contains("--source", azureContainerAppsDeployScript, StringComparison.Ordinal);
             Assert.Contains("ASPNETCORE_HTTP_PORTS=8080", azureContainerAppsDeployScript, StringComparison.Ordinal);
+            Assert.Contains("DOTNET_ENVIRONMENT=Production", azureContainerAppsDeployScript, StringComparison.Ordinal);
 
             var kubernetesApplyScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "apply.ps1"));
+            Assert.Contains("replace-with-registry/acme-store:latest", kubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("acme-store", kubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("NuGet.config", kubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("rendered-manifest.yaml", kubernetesApplyScript, StringComparison.Ordinal);
             Assert.Contains("kubectl", kubernetesApplyScript, StringComparison.Ordinal);
             Assert.Contains("kustomize", kubernetesApplyScript, StringComparison.Ordinal);
             Assert.Contains("Kubernetes deployment apply completed successfully.", kubernetesApplyScript, StringComparison.Ordinal);
+
+            var kubernetesKustomization = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "kustomization.yaml"));
+            Assert.Contains("namespace: acme-store", kubernetesKustomization, StringComparison.Ordinal);
+            Assert.Contains("deployment.yaml", kubernetesKustomization, StringComparison.Ordinal);
 
             var kubernetesDeployment = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "deployment.yaml"));
             Assert.Contains("replace-with-registry/acme-store:latest", kubernetesDeployment, StringComparison.Ordinal);
@@ -438,6 +453,9 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Dockerfile baseline: ./Dockerfile uses sdk:10.0 and aspnet:10.0 for the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated container image script baseline: ./deploy/container-image/publish-image.ps1 keeps the generated Dockerfile, NuGet.config, image placeholder, and preview/push flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Azure Container Apps script baseline: ./deploy/azure-container-apps/deploy-up.ps1 keeps the generated source-root, host-project, and az containerapp up defaults explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes apply script baseline: ./deploy/kubernetes/apply.ps1 keeps the generated namespace, image placeholder, manifest root, and kubectl kustomize/apply flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Windows Service baseline: ./deploy/windows-service/install-service.ps1 keeps the generated Windows Service install flow aligned with Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
@@ -536,6 +554,9 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated Dockerfile baseline: ./Dockerfile uses sdk:11.0 and aspnet:11.0 for the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated container image script baseline: ./deploy/container-image/publish-image.ps1 keeps the generated Dockerfile, NuGet.config, image placeholder, and preview/push flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Azure Container Apps script baseline: ./deploy/azure-container-apps/deploy-up.ps1 keeps the generated source-root, host-project, and az containerapp up defaults explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes apply script baseline: ./deploy/kubernetes/apply.ps1 keeps the generated namespace, image placeholder, manifest root, and kubectl kustomize/apply flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Windows Service baseline: ./deploy/windows-service/install-service.ps1 keeps the generated Windows Service install flow aligned with Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
@@ -1057,6 +1078,79 @@ public sealed class CliApplicationTests
 
             Assert.Equal(1, exitCode);
             Assert.Contains("[error] Generated deployment assets: Missing generated deployment assets: ./Dockerfile, ./deploy/container-image/publish-image.ps1, ./deploy/azure-container-apps/deploy-up.ps1, ./deploy/kubernetes/apply.ps1, ./deploy/kubernetes/kustomization.yaml, ./deploy/kubernetes/namespace.yaml, ./deploy/kubernetes/deployment.yaml, ./deploy/kubernetes/service.yaml.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedContainerDeploymentScriptBaselinesDrift()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-container-script-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            containerImagePublishScriptContents: """
+                param([string]$Image = "replace-with-registry/acme-store:latest")
+                Write-Output $Image
+                """,
+            azureContainerAppsDeployScriptContents: """
+                param([string]$AppName = "acme-store")
+                Write-Output $AppName
+                """,
+            kubernetesApplyScriptContents: """
+                param([string]$Namespace = "acme-store")
+                Write-Output $Namespace
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated container image script baseline: ./deploy/container-image/publish-image.ps1 no longer keeps the generated deployment-script baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Get-DockerBuildArguments", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Azure Container Apps script baseline: ./deploy/azure-container-apps/deploy-up.ps1 no longer keeps the generated deployment-script baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("az @upArguments", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Kubernetes apply script baseline: ./deploy/kubernetes/apply.ps1 no longer keeps the generated deployment-script baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("rendered-manifest.yaml", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -2367,6 +2461,13 @@ public sealed class CliApplicationTests
         string? otelCollectorConfigContents = null,
         string? dockerSdkImageTag = null,
         string? dockerAspNetImageTag = null,
+        string? containerImagePublishScriptContents = null,
+        string? azureContainerAppsDeployScriptContents = null,
+        string? kubernetesApplyScriptContents = null,
+        string? kubernetesKustomizationContents = null,
+        string? kubernetesNamespaceContents = null,
+        string? kubernetesDeploymentContents = null,
+        string? kubernetesServiceContents = null,
         string? windowsServiceInstallScriptContents = null,
         string? iisInstallScriptContents = null,
         string? azureAppServiceDeployScriptContents = null,
@@ -2896,13 +2997,162 @@ public sealed class CliApplicationTests
                 COPY --from=build /app/publish .
                 ENTRYPOINT ["dotnet", "Acme.Store.Host.dll"]
                 """);
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "container-image", "publish-image.ps1"), "Write-Output 'publish-image'");
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "azure-container-apps", "deploy-up.ps1"), "Write-Output 'deploy-up'");
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "apply.ps1"), "Write-Output 'apply'");
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "kustomization.yaml"), "resources: []");
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "namespace.yaml"), "apiVersion: v1");
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "deployment.yaml"), "apiVersion: apps/v1");
-            File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "service.yaml"), "apiVersion: v1");
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "container-image", "publish-image.ps1"),
+                containerImagePublishScriptContents ?? """
+                param(
+                    [string]$Image = "replace-with-registry/acme-store:latest",
+                    [string[]]$AdditionalTags = @(),
+                    [string]$SourceRoot = (Join-Path (Join-Path $PSScriptRoot "..\..") "."),
+                    [string]$DockerfilePath = (Join-Path (Join-Path $PSScriptRoot "..\..") "Dockerfile"),
+                    [switch]$Push,
+                    [switch]$Preview
+                )
+
+                function Get-DockerBuildArguments {
+                    param(
+                        [string]$ResolvedSourceRoot,
+                        [string]$ResolvedDockerfilePath,
+                        [string[]]$ImageTags
+                    )
+
+                    $arguments = @("build", "-f", $ResolvedDockerfilePath)
+                    foreach ($tag in $ImageTags) {
+                        $arguments += @("-t", $tag)
+                    }
+
+                    $arguments += $ResolvedSourceRoot
+                    return $arguments
+                }
+
+                $resolvedSourceRoot = (Resolve-Path -LiteralPath $SourceRoot).Path
+                $resolvedDockerfilePath = (Resolve-Path -LiteralPath $DockerfilePath).Path
+                $nuGetConfigPath = Join-Path $resolvedSourceRoot "NuGet.config"
+                $imageTags = @($Image) + $AdditionalTags
+                $buildArguments = Get-DockerBuildArguments -ResolvedSourceRoot $resolvedSourceRoot -ResolvedDockerfilePath $resolvedDockerfilePath -ImageTags $imageTags
+
+                if ($Preview) {
+                    Write-Host (Format-Command -Command "docker" -Arguments $buildArguments)
+                    Write-Host "Push skipped. Re-run with -Push when the target registry is ready."
+                    return
+                }
+
+                if ($Push) {
+                    foreach ($tag in $imageTags) {
+                        & docker @("push", $tag)
+                    }
+                }
+
+                Write-Host "Container image publishing completed successfully."
+                """);
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "azure-container-apps", "deploy-up.ps1"),
+                azureContainerAppsDeployScriptContents ?? """
+                param(
+                    [string]$ResourceGroupName = "replace-with-resource-group",
+                    [string]$AppName = "acme-store",
+                    [string]$Location = "replace-with-azure-region",
+                    [string]$SourceRoot = (Join-Path (Join-Path $PSScriptRoot "..\..") "."),
+                    [string[]]$EnvironmentVariables = @(
+                        "ASPNETCORE_HTTP_PORTS=8080",
+                        "DOTNET_ENVIRONMENT=Production"),
+                    [switch]$Preview
+                )
+
+                $resolvedSourceRoot = (Resolve-Path -LiteralPath $SourceRoot).Path
+                $dockerfilePath = Join-Path $resolvedSourceRoot "Dockerfile"
+                $nuGetConfigPath = Join-Path $resolvedSourceRoot "NuGet.config"
+                $hostProjectPath = Join-Path $resolvedSourceRoot "src\Acme.Store.Host\Acme.Store.Host.csproj"
+                $upArguments = @("containerapp", "up", "--name", $AppName, "--resource-group", $ResourceGroupName, "--location", $Location, "--source", $resolvedSourceRoot, "--env-vars") + $EnvironmentVariables
+
+                if ($Preview) {
+                    Write-Host "Detected generated host project: $hostProjectPath"
+                    Write-Host "Preview only."
+                    Write-Host "az @upArguments"
+                    return
+                }
+
+                & az @upArguments
+                Write-Host "Azure Container Apps deployment completed successfully."
+                """);
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "kubernetes", "apply.ps1"),
+                kubernetesApplyScriptContents ?? """
+                param(
+                    [string]$Image = "replace-with-registry/acme-store:latest",
+                    [string]$Namespace = "acme-store",
+                    [string]$SourceRoot = (Join-Path (Join-Path $PSScriptRoot "..\..") "."),
+                    [string]$ManifestRoot = $PSScriptRoot,
+                    [switch]$Preview
+                )
+
+                $resolvedSourceRoot = (Resolve-Path -LiteralPath $SourceRoot).Path
+                $resolvedManifestRoot = (Resolve-Path -LiteralPath $ManifestRoot).Path
+                $dockerfilePath = Join-Path $resolvedSourceRoot "Dockerfile"
+                $nuGetConfigPath = Join-Path $resolvedSourceRoot "NuGet.config"
+                $kustomizationPath = Join-Path $resolvedManifestRoot "kustomization.yaml"
+                $namespacePath = Join-Path $resolvedManifestRoot "namespace.yaml"
+                $deploymentPath = Join-Path $resolvedManifestRoot "deployment.yaml"
+                $servicePath = Join-Path $resolvedManifestRoot "service.yaml"
+                $manifestPath = Join-Path $resolvedManifestRoot "rendered-manifest.yaml"
+
+                if ($Preview) {
+                    & kubectl @("kustomize", ".")
+                    return
+                }
+
+                & kubectl @("apply", "-f", $manifestPath)
+                Write-Host "Kubernetes deployment apply completed successfully."
+                """);
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "kubernetes", "kustomization.yaml"),
+                kubernetesKustomizationContents ?? """
+                apiVersion: kustomize.config.k8s.io/v1beta1
+                kind: Kustomization
+                namespace: acme-store
+                resources:
+                - namespace.yaml
+                - deployment.yaml
+                - service.yaml
+                """);
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "kubernetes", "namespace.yaml"),
+                kubernetesNamespaceContents ?? """
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: acme-store
+                """);
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "kubernetes", "deployment.yaml"),
+                kubernetesDeploymentContents ?? """
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: acme-store
+                spec:
+                  template:
+                    spec:
+                      containers:
+                      - name: acme-store
+                        image: replace-with-registry/acme-store:latest
+                        readinessProbe:
+                          httpGet:
+                            path: /health/ready
+                        livenessProbe:
+                          httpGet:
+                            path: /health/live
+                """);
+            File.WriteAllText(
+                Path.Combine(appRootPath, "deploy", "kubernetes", "service.yaml"),
+                kubernetesServiceContents ?? """
+                apiVersion: v1
+                kind: Service
+                metadata:
+                  name: acme-store
+                spec:
+                  type: ClusterIP
+                """);
 
             if (includeGeneratedGuidanceDocsAssets)
             {

@@ -1,4 +1,5 @@
 using Cephalon.Cli.Console;
+using System.Text;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 
@@ -137,6 +138,40 @@ internal static class DoctorCommand
         "publish-package-artifacts.ps1",
         "replace the `cephalon` package source",
         "Dockerfile and compose path use the same restore configuration automatically."
+    ];
+
+    private static readonly string[] RequiredGeneratedContainerImageScriptMarkers =
+    [
+        "Dockerfile",
+        "NuGet.config",
+        "Get-DockerBuildArguments",
+        "Format-Command -Command \"docker\"",
+        "Container image publishing completed successfully.",
+        "Push skipped. Re-run with -Push"
+    ];
+
+    private static readonly string[] RequiredGeneratedAzureContainerAppsScriptMarkers =
+    [
+        "Dockerfile",
+        "NuGet.config",
+        "az @upArguments",
+        "--source",
+        "ASPNETCORE_HTTP_PORTS=8080",
+        "DOTNET_ENVIRONMENT=Production",
+        "Azure Container Apps deployment completed successfully."
+    ];
+
+    private static readonly string[] RequiredGeneratedKubernetesApplyScriptMarkers =
+    [
+        "NuGet.config",
+        "kustomization.yaml",
+        "namespace.yaml",
+        "deployment.yaml",
+        "service.yaml",
+        "rendered-manifest.yaml",
+        "kubectl",
+        "kustomize",
+        "Kubernetes deployment apply completed successfully."
     ];
 
     /// <summary>
@@ -1151,6 +1186,7 @@ internal static class DoctorCommand
             deploymentBaseline.AlignedGuidance));
 
         var generatedAppId = ResolveGeneratedAppId(solutionPath, generatedAppRootPath);
+        EvaluateGeneratedContainerDeploymentScriptBaselines(hostProject, generatedAppRootPath, generatedAppId, checks);
         EvaluateGeneratedPublishedDeploymentAssets(generatedAppRootPath, generatedAppId, checks);
         EvaluateGeneratedWindowsServiceBaseline(hostProject, generatedAppRootPath, checks);
         EvaluateGeneratedIisBaseline(generatedAppRootPath, generatedAppId, checks);
@@ -1338,6 +1374,100 @@ internal static class DoctorCommand
                 DoctorCheckSeverity.Failure,
                 title,
                 $"{ToDisplayRelativePath(generatedAppRootPath, guidePath)} no longer keeps explicit generated guidance for: {string.Join(", ", missingSnippets)}.",
+                failureGuidance));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            title,
+            successDetail,
+            null));
+    }
+
+    private static void EvaluateGeneratedContainerDeploymentScriptBaselines(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var generatedContainerResourceName = BuildGeneratedKubernetesResourceName(generatedAppId);
+        var generatedContainerImagePlaceholder = BuildGeneratedContainerImagePlaceholder(generatedAppId);
+        var generatedContainerAppName = BuildGeneratedAzureContainerAppName(generatedAppId);
+        var generatedHostProjectName = Path.GetFileNameWithoutExtension(hostProject.ProjectPath);
+        var generatedHostProjectRelativePath = Path.Combine("src", generatedHostProjectName, $"{generatedHostProjectName}.csproj");
+
+        EvaluateGeneratedScriptBaseline(
+            Path.Combine(generatedAppRootPath, "deploy", "container-image", "publish-image.ps1"),
+            generatedAppRootPath,
+            "Generated container image script baseline",
+            RequiredGeneratedContainerImageScriptMarkers
+                .Append(generatedContainerImagePlaceholder)
+                .ToArray(),
+            $"./deploy/container-image/publish-image.ps1 keeps the generated Dockerfile, NuGet.config, image placeholder, and preview/push flow explicit for {generatedAppId}.",
+            "Restore the generated container-image publish script so the provider-neutral build, preview, and push flow stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedScriptBaseline(
+            Path.Combine(generatedAppRootPath, "deploy", "azure-container-apps", "deploy-up.ps1"),
+            generatedAppRootPath,
+            "Generated Azure Container Apps script baseline",
+            RequiredGeneratedAzureContainerAppsScriptMarkers
+                .Append(generatedContainerAppName)
+                .Append(generatedHostProjectRelativePath)
+                .ToArray(),
+            $"./deploy/azure-container-apps/deploy-up.ps1 keeps the generated source-root, host-project, and az containerapp up defaults explicit for {generatedAppId}.",
+            "Restore the generated Azure Container Apps deploy script so the source-deploy flow stays aligned with the current app root and host identity.",
+            checks);
+
+        EvaluateGeneratedScriptBaseline(
+            Path.Combine(generatedAppRootPath, "deploy", "kubernetes", "apply.ps1"),
+            generatedAppRootPath,
+            "Generated Kubernetes apply script baseline",
+            RequiredGeneratedKubernetesApplyScriptMarkers
+                .Append(generatedContainerResourceName)
+                .Append(generatedContainerImagePlaceholder)
+                .ToArray(),
+            $"./deploy/kubernetes/apply.ps1 keeps the generated namespace, image placeholder, manifest root, and kubectl kustomize/apply flow explicit for {generatedAppId}.",
+            "Restore the generated Kubernetes apply script so the manifest preview and apply flow stays aligned with the current app root.",
+            checks);
+    }
+
+    private static void EvaluateGeneratedScriptBaseline(
+        string scriptPath,
+        string generatedAppRootPath,
+        string title,
+        IReadOnlyList<string> requiredSnippets,
+        string successDetail,
+        string failureGuidance,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(scriptPath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedTextAsset(
+                scriptPath,
+                generatedAppRootPath,
+                title,
+                $"Fix {ToDisplayRelativePath(generatedAppRootPath, scriptPath)} before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var scriptContents))
+        {
+            return;
+        }
+
+        var missingSnippets = requiredSnippets
+            .Where(snippet => scriptContents.IndexOf(snippet, StringComparison.OrdinalIgnoreCase) < 0)
+            .ToArray();
+
+        if (missingSnippets.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                title,
+                $"{ToDisplayRelativePath(generatedAppRootPath, scriptPath)} no longer keeps the generated deployment-script baseline explicit for: {string.Join(", ", missingSnippets)}.",
                 failureGuidance));
             return;
         }
@@ -2356,6 +2486,95 @@ internal static class DoctorCommand
         }
 
         return null;
+    }
+
+    private static string BuildGeneratedAzureContainerAppName(string generatedAppId)
+    {
+        var slug = BuildGeneratedDeploymentSlug(generatedAppId, "cephalon-app");
+        if (!char.IsLetter(slug[0]))
+        {
+            slug = $"c-{slug}";
+        }
+
+        return TrimGeneratedDeploymentSlug(slug, 31, requireLeadingAlphaNumeric: false, fallbackValue: "cephalon-app");
+    }
+
+    private static string BuildGeneratedKubernetesResourceName(string generatedAppId)
+    {
+        var slug = BuildGeneratedDeploymentSlug(generatedAppId, "cephalon-app");
+        return TrimGeneratedDeploymentSlug(slug, 63, requireLeadingAlphaNumeric: true, fallbackValue: "cephalon-app");
+    }
+
+    private static string BuildGeneratedContainerImagePlaceholder(string generatedAppId)
+    {
+        return $"replace-with-registry/{BuildGeneratedKubernetesResourceName(generatedAppId)}:latest";
+    }
+
+    private static string BuildGeneratedDeploymentSlug(string value, string fallbackValue)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return fallbackValue;
+        }
+
+        var builder = new StringBuilder();
+        var previousWasSeparator = false;
+
+        foreach (var character in value.Trim())
+        {
+            if (char.IsLetterOrDigit(character))
+            {
+                builder.Append(char.ToLowerInvariant(character));
+                previousWasSeparator = false;
+            }
+            else if (!previousWasSeparator)
+            {
+                builder.Append('-');
+                previousWasSeparator = true;
+            }
+        }
+
+        var slug = builder.ToString().Trim('-');
+        while (slug.Contains("--", StringComparison.Ordinal))
+        {
+            slug = slug.Replace("--", "-", StringComparison.Ordinal);
+        }
+
+        return string.IsNullOrWhiteSpace(slug) ? fallbackValue : slug;
+    }
+
+    private static string TrimGeneratedDeploymentSlug(
+        string slug,
+        int maxLength,
+        bool requireLeadingAlphaNumeric,
+        string fallbackValue)
+    {
+        var normalized = slug;
+        if (normalized.Length > maxLength)
+        {
+            normalized = normalized[..maxLength].TrimEnd('-');
+        }
+
+        if (string.IsNullOrWhiteSpace(normalized))
+        {
+            return fallbackValue;
+        }
+
+        if (requireLeadingAlphaNumeric && !char.IsLetterOrDigit(normalized[0]))
+        {
+            normalized = $"app-{normalized}";
+            if (normalized.Length > maxLength)
+            {
+                normalized = normalized[..maxLength].TrimEnd('-');
+            }
+        }
+
+        if (!char.IsLetterOrDigit(normalized[^1]))
+        {
+            normalized = normalized.TrimEnd('-');
+        }
+
+        return string.IsNullOrWhiteSpace(normalized) ? fallbackValue : normalized;
     }
 
     private static bool ContainsAllFragments(string contents, params string[] fragments)
