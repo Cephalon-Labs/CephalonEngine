@@ -174,6 +174,60 @@ internal static class DoctorCommand
         "Kubernetes deployment apply completed successfully."
     ];
 
+    private static readonly string[] RequiredGeneratedKubernetesKustomizationManifestMarkers =
+    [
+        "apiVersion: kustomize.config.k8s.io/v1beta1",
+        "kind: Kustomization",
+        "resources:",
+        "- namespace.yaml",
+        "- deployment.yaml",
+        "- service.yaml"
+    ];
+
+    private static readonly string[] RequiredGeneratedKubernetesNamespaceManifestMarkers =
+    [
+        "apiVersion: v1",
+        "kind: Namespace",
+        "labels:",
+        "app.kubernetes.io/part-of: cephalon"
+    ];
+
+    private static readonly string[] RequiredGeneratedKubernetesDeploymentManifestMarkers =
+    [
+        "apiVersion: apps/v1",
+        "kind: Deployment",
+        "app.kubernetes.io/part-of: cephalon",
+        "app.kubernetes.io/component: host",
+        "imagePullPolicy: IfNotPresent",
+        "containerPort: 8080",
+        "name: http",
+        "- name: ASPNETCORE_HTTP_PORTS",
+        "value: \"8080\"",
+        "- name: DOTNET_ENVIRONMENT",
+        "value: Production",
+        "readinessProbe:",
+        "/health/ready",
+        "livenessProbe:",
+        "/health/live",
+        "startupProbe:",
+        "resources:",
+        "requests:",
+        "limits:"
+    ];
+
+    private static readonly string[] RequiredGeneratedKubernetesServiceManifestMarkers =
+    [
+        "apiVersion: v1",
+        "kind: Service",
+        "app.kubernetes.io/part-of: cephalon",
+        "app.kubernetes.io/component: host",
+        "type: ClusterIP",
+        "selector:",
+        "- name: http",
+        "port: 80",
+        "targetPort: http"
+    ];
+
     /// <summary>
     /// Executes the doctor command with the supplied options.
     /// </summary>
@@ -1187,6 +1241,7 @@ internal static class DoctorCommand
 
         var generatedAppId = ResolveGeneratedAppId(solutionPath, generatedAppRootPath);
         EvaluateGeneratedContainerDeploymentScriptBaselines(hostProject, generatedAppRootPath, generatedAppId, checks);
+        EvaluateGeneratedKubernetesManifestBaselines(generatedAppRootPath, generatedAppId, checks);
         EvaluateGeneratedPublishedDeploymentAssets(generatedAppRootPath, generatedAppId, checks);
         EvaluateGeneratedWindowsServiceBaseline(hostProject, generatedAppRootPath, checks);
         EvaluateGeneratedIisBaseline(generatedAppRootPath, generatedAppId, checks);
@@ -1348,41 +1403,15 @@ internal static class DoctorCommand
         string failureGuidance,
         ICollection<DoctorCheck> checks)
     {
-        if (!File.Exists(guidePath))
-        {
-            return;
-        }
-
-        if (!TryReadGeneratedTextAsset(
-                guidePath,
-                generatedAppRootPath,
-                title,
-                $"Fix {ToDisplayRelativePath(generatedAppRootPath, guidePath)} before rerunning `cephalon doctor --app-root`.",
-                checks,
-                out var guideContents))
-        {
-            return;
-        }
-
-        var missingSnippets = requiredSnippets
-            .Where(snippet => guideContents.IndexOf(snippet, StringComparison.OrdinalIgnoreCase) < 0)
-            .ToArray();
-
-        if (missingSnippets.Length > 0)
-        {
-            checks.Add(new DoctorCheck(
-                DoctorCheckSeverity.Failure,
-                title,
-                $"{ToDisplayRelativePath(generatedAppRootPath, guidePath)} no longer keeps explicit generated guidance for: {string.Join(", ", missingSnippets)}.",
-                failureGuidance));
-            return;
-        }
-
-        checks.Add(new DoctorCheck(
-            DoctorCheckSeverity.Pass,
+        EvaluateGeneratedTextAssetBaseline(
+            guidePath,
+            generatedAppRootPath,
             title,
+            requiredSnippets,
             successDetail,
-            null));
+            "no longer keeps explicit generated guidance for",
+            failureGuidance,
+            checks);
     }
 
     private static void EvaluateGeneratedContainerDeploymentScriptBaselines(
@@ -1433,6 +1462,67 @@ internal static class DoctorCommand
             checks);
     }
 
+    private static void EvaluateGeneratedKubernetesManifestBaselines(
+        string generatedAppRootPath,
+        string generatedAppId,
+        ICollection<DoctorCheck> checks)
+    {
+        var generatedContainerResourceName = BuildGeneratedKubernetesResourceName(generatedAppId);
+        var generatedContainerImagePlaceholder = BuildGeneratedContainerImagePlaceholder(generatedAppId);
+
+        EvaluateGeneratedTextAssetBaseline(
+            Path.Combine(generatedAppRootPath, "deploy", "kubernetes", "kustomization.yaml"),
+            generatedAppRootPath,
+            "Generated Kubernetes kustomization baseline",
+            RequiredGeneratedKubernetesKustomizationManifestMarkers
+                .Append($"namespace: {generatedContainerResourceName}")
+                .ToArray(),
+            $"./deploy/kubernetes/kustomization.yaml keeps the generated namespace plus namespace/deployment/service manifest set explicit for {generatedAppId}.",
+            "no longer keeps the generated Kubernetes manifest baseline explicit for",
+            "Restore the generated kustomization.yaml file so the Kubernetes manifest-set contract stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedTextAssetBaseline(
+            Path.Combine(generatedAppRootPath, "deploy", "kubernetes", "namespace.yaml"),
+            generatedAppRootPath,
+            "Generated Kubernetes namespace baseline",
+            RequiredGeneratedKubernetesNamespaceManifestMarkers
+                .Append($"name: {generatedContainerResourceName}")
+                .Append($"app.kubernetes.io/name: {generatedContainerResourceName}")
+                .ToArray(),
+            $"./deploy/kubernetes/namespace.yaml keeps the generated namespace identity and labels explicit for {generatedAppId}.",
+            "no longer keeps the generated Kubernetes manifest baseline explicit for",
+            "Restore the generated namespace.yaml file so the Kubernetes namespace identity and labels stay aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedTextAssetBaseline(
+            Path.Combine(generatedAppRootPath, "deploy", "kubernetes", "deployment.yaml"),
+            generatedAppRootPath,
+            "Generated Kubernetes deployment baseline",
+            RequiredGeneratedKubernetesDeploymentManifestMarkers
+                .Append($"name: {generatedContainerResourceName}")
+                .Append($"app.kubernetes.io/name: {generatedContainerResourceName}")
+                .Append(generatedContainerImagePlaceholder)
+                .ToArray(),
+            $"./deploy/kubernetes/deployment.yaml keeps the generated container image, env, probe, and resource contract explicit for {generatedAppId}.",
+            "no longer keeps the generated Kubernetes manifest baseline explicit for",
+            "Restore the generated deployment.yaml file so the Kubernetes host workload contract stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedTextAssetBaseline(
+            Path.Combine(generatedAppRootPath, "deploy", "kubernetes", "service.yaml"),
+            generatedAppRootPath,
+            "Generated Kubernetes service baseline",
+            RequiredGeneratedKubernetesServiceManifestMarkers
+                .Append($"name: {generatedContainerResourceName}")
+                .Append($"app.kubernetes.io/name: {generatedContainerResourceName}")
+                .ToArray(),
+            $"./deploy/kubernetes/service.yaml keeps the generated ClusterIP service contract explicit for {generatedAppId}.",
+            "no longer keeps the generated Kubernetes manifest baseline explicit for",
+            "Restore the generated service.yaml file so the Kubernetes service contract stays aligned with the current app root.",
+            checks);
+    }
+
     private static void EvaluateGeneratedScriptBaseline(
         string scriptPath,
         string generatedAppRootPath,
@@ -1442,24 +1532,46 @@ internal static class DoctorCommand
         string failureGuidance,
         ICollection<DoctorCheck> checks)
     {
-        if (!File.Exists(scriptPath))
+        EvaluateGeneratedTextAssetBaseline(
+            scriptPath,
+            generatedAppRootPath,
+            title,
+            requiredSnippets,
+            successDetail,
+            "no longer keeps the generated deployment-script baseline explicit for",
+            failureGuidance,
+            checks);
+    }
+
+    private static void EvaluateGeneratedTextAssetBaseline(
+        string assetPath,
+        string generatedAppRootPath,
+        string title,
+        IReadOnlyList<string> requiredSnippets,
+        string successDetail,
+        string failureDetailPrefix,
+        string failureGuidance,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(assetPath))
         {
             return;
         }
 
+        var assetDisplayPath = ToDisplayRelativePath(generatedAppRootPath, assetPath);
         if (!TryReadGeneratedTextAsset(
-                scriptPath,
+                assetPath,
                 generatedAppRootPath,
                 title,
-                $"Fix {ToDisplayRelativePath(generatedAppRootPath, scriptPath)} before rerunning `cephalon doctor --app-root`.",
+                $"Fix {assetDisplayPath} before rerunning `cephalon doctor --app-root`.",
                 checks,
-                out var scriptContents))
+                out var assetContents))
         {
             return;
         }
 
         var missingSnippets = requiredSnippets
-            .Where(snippet => scriptContents.IndexOf(snippet, StringComparison.OrdinalIgnoreCase) < 0)
+            .Where(snippet => assetContents.IndexOf(snippet, StringComparison.OrdinalIgnoreCase) < 0)
             .ToArray();
 
         if (missingSnippets.Length > 0)
@@ -1467,7 +1579,7 @@ internal static class DoctorCommand
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
                 title,
-                $"{ToDisplayRelativePath(generatedAppRootPath, scriptPath)} no longer keeps the generated deployment-script baseline explicit for: {string.Join(", ", missingSnippets)}.",
+                $"{assetDisplayPath} {failureDetailPrefix}: {string.Join(", ", missingSnippets)}.",
                 failureGuidance));
             return;
         }

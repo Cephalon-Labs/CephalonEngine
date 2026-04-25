@@ -148,12 +148,30 @@ public sealed class CliApplicationTests
 
             var kubernetesKustomization = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "kustomization.yaml"));
             Assert.Contains("namespace: acme-store", kubernetesKustomization, StringComparison.Ordinal);
+            Assert.Contains("namespace.yaml", kubernetesKustomization, StringComparison.Ordinal);
             Assert.Contains("deployment.yaml", kubernetesKustomization, StringComparison.Ordinal);
+            Assert.Contains("service.yaml", kubernetesKustomization, StringComparison.Ordinal);
+
+            var kubernetesNamespace = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "namespace.yaml"));
+            Assert.Contains("name: acme-store", kubernetesNamespace, StringComparison.Ordinal);
+            Assert.Contains("app.kubernetes.io/name: acme-store", kubernetesNamespace, StringComparison.Ordinal);
+            Assert.Contains("app.kubernetes.io/part-of: cephalon", kubernetesNamespace, StringComparison.Ordinal);
 
             var kubernetesDeployment = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "deployment.yaml"));
             Assert.Contains("replace-with-registry/acme-store:latest", kubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("app.kubernetes.io/component: host", kubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("imagePullPolicy: IfNotPresent", kubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("containerPort: 8080", kubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("ASPNETCORE_HTTP_PORTS", kubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("DOTNET_ENVIRONMENT", kubernetesDeployment, StringComparison.Ordinal);
             Assert.Contains("/health/ready", kubernetesDeployment, StringComparison.Ordinal);
             Assert.Contains("/health/live", kubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("startupProbe", kubernetesDeployment, StringComparison.Ordinal);
+
+            var kubernetesService = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "service.yaml"));
+            Assert.Contains("type: ClusterIP", kubernetesService, StringComparison.Ordinal);
+            Assert.Contains("app.kubernetes.io/component: host", kubernetesService, StringComparison.Ordinal);
+            Assert.Contains("targetPort: http", kubernetesService, StringComparison.Ordinal);
 
             var systemdService = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "linux", "systemd", "Acme.Store.service"));
             Assert.Contains("EnvironmentFile=-/etc/cephalon/Acme.Store.env", systemdService, StringComparison.Ordinal);
@@ -456,6 +474,10 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated container image script baseline: ./deploy/container-image/publish-image.ps1 keeps the generated Dockerfile, NuGet.config, image placeholder, and preview/push flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Azure Container Apps script baseline: ./deploy/azure-container-apps/deploy-up.ps1 keeps the generated source-root, host-project, and az containerapp up defaults explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Kubernetes apply script baseline: ./deploy/kubernetes/apply.ps1 keeps the generated namespace, image placeholder, manifest root, and kubectl kustomize/apply flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes kustomization baseline: ./deploy/kubernetes/kustomization.yaml keeps the generated namespace plus namespace/deployment/service manifest set explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes namespace baseline: ./deploy/kubernetes/namespace.yaml keeps the generated namespace identity and labels explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes deployment baseline: ./deploy/kubernetes/deployment.yaml keeps the generated container image, env, probe, and resource contract explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes service baseline: ./deploy/kubernetes/service.yaml keeps the generated ClusterIP service contract explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Windows Service baseline: ./deploy/windows-service/install-service.ps1 keeps the generated Windows Service install flow aligned with Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
@@ -557,6 +579,10 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated container image script baseline: ./deploy/container-image/publish-image.ps1 keeps the generated Dockerfile, NuGet.config, image placeholder, and preview/push flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Azure Container Apps script baseline: ./deploy/azure-container-apps/deploy-up.ps1 keeps the generated source-root, host-project, and az containerapp up defaults explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Kubernetes apply script baseline: ./deploy/kubernetes/apply.ps1 keeps the generated namespace, image placeholder, manifest root, and kubectl kustomize/apply flow explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes kustomization baseline: ./deploy/kubernetes/kustomization.yaml keeps the generated namespace plus namespace/deployment/service manifest set explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes namespace baseline: ./deploy/kubernetes/namespace.yaml keeps the generated namespace identity and labels explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes deployment baseline: ./deploy/kubernetes/deployment.yaml keeps the generated container image, env, probe, and resource contract explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Kubernetes service baseline: ./deploy/kubernetes/service.yaml keeps the generated ClusterIP service contract explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Windows Service baseline: ./deploy/windows-service/install-service.ps1 keeps the generated Windows Service install flow aligned with Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
@@ -1151,6 +1177,101 @@ public sealed class CliApplicationTests
             Assert.Contains("az @upArguments", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[error] Generated Kubernetes apply script baseline: ./deploy/kubernetes/apply.ps1 no longer keeps the generated deployment-script baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("rendered-manifest.yaml", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedKubernetesManifestBaselinesDrift()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-kubernetes-manifest-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            kubernetesKustomizationContents: """
+                apiVersion: kustomize.config.k8s.io/v1beta1
+                kind: Kustomization
+                resources:
+                - deployment.yaml
+                """,
+            kubernetesNamespaceContents: """
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: legacy-store
+                """,
+            kubernetesDeploymentContents: """
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: legacy-store
+                spec:
+                  template:
+                    spec:
+                      containers:
+                      - name: legacy-store
+                        image: replace-with-registry/legacy-store:stable
+                """,
+            kubernetesServiceContents: """
+                apiVersion: v1
+                kind: Service
+                metadata:
+                  name: legacy-store
+                spec:
+                  type: NodePort
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated Kubernetes kustomization baseline: ./deploy/kubernetes/kustomization.yaml no longer keeps the generated Kubernetes manifest baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("namespace: acme-store", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Kubernetes namespace baseline: ./deploy/kubernetes/namespace.yaml no longer keeps the generated Kubernetes manifest baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("app.kubernetes.io/part-of: cephalon", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Kubernetes deployment baseline: ./deploy/kubernetes/deployment.yaml no longer keeps the generated Kubernetes manifest baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("ASPNETCORE_HTTP_PORTS", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated Kubernetes service baseline: ./deploy/kubernetes/service.yaml no longer keeps the generated Kubernetes manifest baseline explicit for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("targetPort: http", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -3122,6 +3243,9 @@ public sealed class CliApplicationTests
                 kind: Namespace
                 metadata:
                   name: acme-store
+                  labels:
+                    app.kubernetes.io/name: acme-store
+                    app.kubernetes.io/part-of: cephalon
                 """);
             File.WriteAllText(
                 Path.Combine(appRootPath, "deploy", "kubernetes", "deployment.yaml"),
@@ -3130,18 +3254,65 @@ public sealed class CliApplicationTests
                 kind: Deployment
                 metadata:
                   name: acme-store
+                  labels:
+                    app.kubernetes.io/name: acme-store
+                    app.kubernetes.io/part-of: cephalon
+                    app.kubernetes.io/component: host
                 spec:
+                  replicas: 1
+                  selector:
+                    matchLabels:
+                      app.kubernetes.io/name: acme-store
+                      app.kubernetes.io/component: host
                   template:
+                    metadata:
+                      labels:
+                        app.kubernetes.io/name: acme-store
+                        app.kubernetes.io/part-of: cephalon
+                        app.kubernetes.io/component: host
                     spec:
                       containers:
                       - name: acme-store
                         image: replace-with-registry/acme-store:latest
+                        imagePullPolicy: IfNotPresent
+                        ports:
+                        - containerPort: 8080
+                          name: http
+                        env:
+                        - name: ASPNETCORE_HTTP_PORTS
+                          value: "8080"
+                        - name: DOTNET_ENVIRONMENT
+                          value: Production
                         readinessProbe:
                           httpGet:
                             path: /health/ready
+                            port: http
+                          initialDelaySeconds: 5
+                          periodSeconds: 10
+                          timeoutSeconds: 5
+                          failureThreshold: 3
                         livenessProbe:
                           httpGet:
                             path: /health/live
+                            port: http
+                          initialDelaySeconds: 15
+                          periodSeconds: 20
+                          timeoutSeconds: 5
+                          failureThreshold: 3
+                        startupProbe:
+                          httpGet:
+                            path: /health/ready
+                            port: http
+                          periodSeconds: 5
+                          timeoutSeconds: 5
+                          failureThreshold: 24
+                        resources:
+                          requests:
+                            cpu: 100m
+                            memory: 128Mi
+                          limits:
+                            cpu: 500m
+                            memory: 512Mi
                 """);
             File.WriteAllText(
                 Path.Combine(appRootPath, "deploy", "kubernetes", "service.yaml"),
@@ -3150,8 +3321,19 @@ public sealed class CliApplicationTests
                 kind: Service
                 metadata:
                   name: acme-store
+                  labels:
+                    app.kubernetes.io/name: acme-store
+                    app.kubernetes.io/part-of: cephalon
+                    app.kubernetes.io/component: host
                 spec:
                   type: ClusterIP
+                  selector:
+                    app.kubernetes.io/name: acme-store
+                    app.kubernetes.io/component: host
+                  ports:
+                  - name: http
+                    port: 80
+                    targetPort: http
                 """);
 
             if (includeGeneratedGuidanceDocsAssets)
