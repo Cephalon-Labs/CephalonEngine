@@ -53,6 +53,8 @@ $generatedRoot = (Resolve-Path ./Acme.Store).Path
 pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath (Join-Path $generatedRoot '.cephalon/packages')
 ```
 
+That seeding flow now preserves the generated `./.cephalon/packages/README.md` guidance so teams can refresh package artifacts into the local feed without losing the scaffolded bootstrap instructions that `cephalon doctor --app-root <path>` also validates.
+
 ## Publish the host
 
 For scaffolded multi-project apps from `cephalon new`:
@@ -96,6 +98,14 @@ Before you replay the generated Windows Service, IIS, Azure App Service, or Linu
 From this published-output baseline, teams can continue into the shipped Windows Service, IIS, Azure App Service, or Linux `systemd` install surfaces without changing the generated host shape. For the source/Dockerfile-based hosted container paths, continue with the generated `deploy/container-image/*` assets and [Container image publishing](container-image-publishing.md), then into the generated `deploy/azure-container-apps/*` assets and [Azure Container Apps deployment](azure-container-apps-deployment.md), or with the generated `deploy/kubernetes/*` assets and [Kubernetes deployment](kubernetes-deployment.md).
 
 ## Optional repo-native validation script
+
+If you want the broader external cold-start replay first, use:
+
+```powershell
+pwsh ./scripts/validate-generated-app-adoption.ps1
+```
+
+That scenario-driven script installs `Cephalon.Cli` from a temporary package feed, runs `cephalon doctor`, scaffolds a fresh app outside the repository, seeds the generated local package feed, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates the runtime routes before you decide whether you need the published-output-specific replay below.
 
 To replay the full generated-app publish baseline from the Cephalon repository in one command, run:
 

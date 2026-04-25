@@ -344,6 +344,8 @@ public sealed class TemplatePackTests
             Assert.Contains("builder.AddCephalonProjectConfigurations();", programContents, StringComparison.Ordinal);
             Assert.DoesNotContain("builder.Configuration.AddEnvironmentVariables();", programContents, StringComparison.Ordinal);
             Assert.Contains("builder.AddCephalon(engine =>", programContents, StringComparison.Ordinal);
+            Assert.Contains("engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>", programContents, StringComparison.Ordinal);
+            Assert.Contains("behaviors.AddHttpBehaviorBindings();", programContents, StringComparison.Ordinal);
             Assert.Contains("engine.AddSfidIds();", programContents, StringComparison.Ordinal);
             Assert.Contains("engine.AddAudit();", programContents, StringComparison.Ordinal);
             Assert.Contains("builder.Configuration.GetSection(\"Serilog\").Exists()", programContents, StringComparison.Ordinal);

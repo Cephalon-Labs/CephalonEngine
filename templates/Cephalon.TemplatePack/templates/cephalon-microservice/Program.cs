@@ -1,5 +1,7 @@
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Audit.Registration;
+using Cephalon.Behaviors.Hosting;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Ids.Sfid.Registration;
 using Cephalon.Observability.Hosting;
 using Cephalon.Observability.OpenTelemetry.Hosting;
@@ -21,6 +23,10 @@ builder.Host.UseWindowsService();
 
 builder.AddCephalon(engine =>
 {
+    engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+    {
+        behaviors.AddHttpBehaviorBindings();
+    });
     engine.AddSfidIds();
     engine.AddAudit();
 });

@@ -118,6 +118,12 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("Cephalon.AspNetCore.GraphQL", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.JsonRpc", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Observability.Serilog", packageProps.Contents, StringComparison.Ordinal);
+
+        var hostProject = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Explorer.Host/Acme.Explorer.Host.csproj");
+        Assert.Contains("<Content Update=\"Configurations\\**\\*.json\">", hostProject.Contents, StringComparison.Ordinal);
+        Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", hostProject.Contents, StringComparison.Ordinal);
         Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Serilog.Sinks.Console", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Version=\"9.1.0-preview\"", packageProps.Contents, StringComparison.Ordinal);
@@ -587,6 +593,12 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("ConfigureRestBehaviors", moduleFile.Contents, StringComparison.Ordinal);
         Assert.Contains("MapProfile<GetPlatformStatusBehavior>()", moduleFile.Contents, StringComparison.Ordinal);
         Assert.Contains("[BehaviorRestProfile(BehaviorRestMethod.Get, \"/status\", ApiVersionMajor = 1)]", moduleFile.Contents, StringComparison.Ordinal);
+
+        var hostProgram = Assert.Single(scaffold.Files, file => file.Path == "src/Acme.RestStarter.Host/Program.cs");
+        Assert.Contains("using Cephalon.Behaviors.Hosting;", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("using Cephalon.Behaviors.Http.Hosting;", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("behaviors.AddHttpBehaviorBindings();", hostProgram.Contents, StringComparison.Ordinal);
 
         var readme = Assert.Single(scaffold.Files, file => file.Path == "README.md");
         Assert.Contains("/scalar", readme.Contents, StringComparison.Ordinal);

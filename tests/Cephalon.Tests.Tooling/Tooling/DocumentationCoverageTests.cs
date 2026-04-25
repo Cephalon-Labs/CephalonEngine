@@ -208,6 +208,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("local orchestration assets", gettingStarted, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("otel-collector-config.yaml", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-publish.ps1", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("validate-generated-app-adoption.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("container-image-publishing.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("deploy/container-image/publish-image.ps1", gettingStarted, StringComparison.Ordinal);
@@ -229,12 +230,16 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deploy/kubernetes/deployment.yaml", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/service.yaml", gettingStarted, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-generated-app-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/kustomization.yaml", rootReadme, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("validate-generated-app-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/kustomization.yaml", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-generated-app-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/namespace.yaml", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-generated-app-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/deployment.yaml", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-kubernetes.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("linux-systemd-deployment.md", gettingStarted, StringComparison.Ordinal);
@@ -264,6 +269,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deploy/kubernetes/apply.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("kubernetes-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-publish.ps1", generatedAppPublishing, StringComparison.Ordinal);
+        Assert.Contains("validate-generated-app-adoption.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("self-hosted and hosted deployment assets", generatedAppPublishing, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("linux-systemd-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
@@ -502,6 +508,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("/health/ready", containerRuntime, StringComparison.Ordinal);
         Assert.Contains("validate-container-runtime.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-publish.ps1", operations, StringComparison.Ordinal);
+        Assert.Contains("validate-generated-app-adoption.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-windows-service.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-iis.ps1", operations, StringComparison.Ordinal);

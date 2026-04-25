@@ -70,25 +70,24 @@ internal static class DoctorCommand
     [
         ("builder.AddCephalonProjectConfigurations();", "AddCephalonProjectConfigurations"),
         ("builder.Host.UseWindowsService();", "UseWindowsService"),
-        ("builder.AddCephalon(engine =>", "AddCephalon"),
-        ("engine.AddSfidIds();", "AddSfidIds"),
-        ("engine.AddAudit();", "AddAudit"),
         ("builder.Services.AddCephalonObservability(builder.Configuration);", "AddCephalonObservability"),
         ("builder.Configuration.GetSection(\"Serilog\").Exists()", "Serilog clear-provider guard"),
         ("builder.Logging.ClearProviders();", "ClearProviders"),
         ("builder.AddCephalonSerilog();", "AddCephalonSerilog"),
         ("builder.AddCephalonOpenTelemetry();", "AddCephalonOpenTelemetry"),
-        ("app.UseExceptionHandler();", "UseExceptionHandler"),
         ("app.MapCephalon();", "MapCephalon"),
         ("app.Run();", "Run")
+    ];
+
+    private static readonly (string Snippet, string Requirement)[] RequiredGeneratedHostBehaviorBootstrapProgramMarkers =
+    [
+        ("engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>", "AddBehaviors"),
+        ("behaviors.AddHttpBehaviorBindings();", "AddHttpBehaviorBindings")
     ];
 
     private static readonly string[] RequiredGeneratedHostProjectPackageReferences =
     [
         "Cephalon.AspNetCore",
-        "Cephalon.Audit",
-        "Cephalon.Behaviors.Http",
-        "Cephalon.Ids.Sfid",
         "Cephalon.Observability",
         "Cephalon.Observability.OpenTelemetry",
         "Cephalon.Observability.Serilog",
@@ -96,7 +95,7 @@ internal static class DoctorCommand
         "Serilog.Sinks.Console"
     ];
 
-    private const string GeneratedConfigurationsContentInclude = "Configurations/**/*.json";
+    private const string GeneratedConfigurationsContentPath = "Configurations/**/*.json";
     private const string GeneratedBehaviorSpecificationSearchPattern = "*BehaviorSpecifications.cs";
     private const string GeneratedCompositionSmokeTestMethodMarker = "Generated_scaffold_has_a_test_harness_ready_for_real_composition_checks";
     private const string GeneratedBehaviorSpecificationGivenMarker = "Given_";
@@ -939,25 +938,40 @@ internal static class DoctorCommand
                      checks,
                      out var programContents))
         {
-            var missingRequirements = RequiredGeneratedHostBootstrapProgramMarkers
+            var missingRequirements = new List<string>(
+                RequiredGeneratedHostBootstrapProgramMarkers
                 .Where(marker => programContents.IndexOf(marker.Snippet, StringComparison.Ordinal) < 0)
                 .Select(marker => marker.Requirement)
-                .ToArray();
+                .ToArray());
 
-            if (missingRequirements.Length > 0)
+            if (programContents.IndexOf("builder.AddCephalon();", StringComparison.Ordinal) < 0 &&
+                programContents.IndexOf("builder.AddCephalon(engine =>", StringComparison.Ordinal) < 0)
+            {
+                missingRequirements.Add("AddCephalon");
+            }
+
+            if (GeneratedAppUsesBehaviorHttpBootstrap(generatedAppRootPath))
+            {
+                missingRequirements.AddRange(
+                    RequiredGeneratedHostBehaviorBootstrapProgramMarkers
+                        .Where(marker => programContents.IndexOf(marker.Snippet, StringComparison.Ordinal) < 0)
+                        .Select(marker => marker.Requirement));
+            }
+
+            if (missingRequirements.Count > 0)
             {
                 checks.Add(new DoctorCheck(
                     DoctorCheckSeverity.Failure,
                     "Generated host bootstrap source baseline",
-                    $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProgramPath)} no longer keeps the generated Cephalon host bootstrap explicit for: {string.Join(", ", missingRequirements)}.",
-                    "Restore the generated Program.cs file so AddCephalonProjectConfigurations, observability wiring, and MapCephalon stay explicit in the scaffolded host bootstrap."));
+                    $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProgramPath)} no longer keeps the generated Cephalon host bootstrap explicit for: {string.Join(", ", missingRequirements.Distinct(StringComparer.Ordinal))}.",
+                    "Restore the generated Program.cs file so AddCephalonProjectConfigurations, behavior and observability wiring, and MapCephalon stay explicit in the scaffolded host bootstrap."));
             }
             else
             {
                 checks.Add(new DoctorCheck(
                     DoctorCheckSeverity.Pass,
                     "Generated host bootstrap source baseline",
-                    $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProgramPath)} keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, observability wiring, and MapCephalon().",
+                    $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProgramPath)} keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, behavior and observability wiring, and MapCephalon().",
                     null));
             }
         }
@@ -995,8 +1009,8 @@ internal static class DoctorCommand
             .FirstOrDefault(element =>
                 string.Equals(element.Name.LocalName, "Content", StringComparison.Ordinal) &&
                 string.Equals(
-                    NormalizeMsBuildPath((string?)element.Attribute("Include")),
-                    GeneratedConfigurationsContentInclude,
+                    NormalizeMsBuildPath((string?)element.Attribute("Include") ?? (string?)element.Attribute("Update")),
+                    GeneratedConfigurationsContentPath,
                     StringComparison.Ordinal));
 
         var copyToOutputDirectory = generatedConfigurationsContentItem?
@@ -1018,7 +1032,7 @@ internal static class DoctorCommand
 
         if (generatedConfigurationsContentItem is null)
         {
-            baselineIssues.Add($"missing Content Include=\"{GeneratedConfigurationsContentInclude}\"");
+            baselineIssues.Add($"missing Content Include/Update=\"{GeneratedConfigurationsContentPath}\"");
         }
         else
         {
@@ -1038,7 +1052,7 @@ internal static class DoctorCommand
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
                 "Generated host project baseline",
-                $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)} no longer keeps the generated package references or `{GeneratedConfigurationsContentInclude}` copy/publish baseline explicit ({string.Join("; ", baselineIssues)}).",
+                $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)} no longer keeps the generated package references or `{GeneratedConfigurationsContentPath}` copy/publish baseline explicit ({string.Join("; ", baselineIssues)}).",
                 "Restore the generated host project package references and Configurations/**/*.json copy/publish items before teams rely on scaffolded runtime and deployment defaults."));
             return;
         }
@@ -1046,8 +1060,34 @@ internal static class DoctorCommand
         checks.Add(new DoctorCheck(
             DoctorCheckSeverity.Pass,
             "Generated host project baseline",
-            $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)} keeps the generated package references and `{GeneratedConfigurationsContentInclude}` copy/publish baseline explicit.",
+            $"{ToDisplayRelativePath(generatedAppRootPath, hostProject.ProjectPath)} keeps the generated package references and `{GeneratedConfigurationsContentPath}` copy/publish baseline explicit.",
             null));
+    }
+
+    private static bool GeneratedAppUsesBehaviorHttpBootstrap(string generatedAppRootPath)
+    {
+        var srcRootPath = Path.Combine(generatedAppRootPath, "src");
+        if (!Directory.Exists(srcRootPath))
+        {
+            return false;
+        }
+
+        foreach (var projectPath in Directory.EnumerateFiles(srcRootPath, "*.csproj", SearchOption.AllDirectories))
+        {
+            try
+            {
+                if (File.ReadAllText(projectPath).Contains("Cephalon.Behaviors.Http", StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                // Fall back to other generated projects when one file cannot be inspected.
+            }
+        }
+
+        return false;
     }
 
     private static void EvaluateGeneratedTestHarnessBaseline(

@@ -623,7 +623,7 @@ docker compose up --build
         {
             builder.AppendLine();
             builder.AppendLine("  <ItemGroup>");
-            builder.AppendLine("    <Content Include=\"Configurations\\**\\*.json\">");
+            builder.AppendLine("    <Content Update=\"Configurations\\**\\*.json\">");
             builder.AppendLine("      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>");
             builder.AppendLine("      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>");
             builder.AppendLine("    </Content>");
@@ -736,6 +736,16 @@ docker compose up --build
         {
             usingLines.Add("using Cephalon.AspNetCore.GraphQL.Hosting;");
             registrationLines.Add("builder.AddGraphQLTransport();");
+        }
+
+        if (HasRestApiTransport(appProfile))
+        {
+            usingLines.Add("using Cephalon.Behaviors.Hosting;");
+            usingLines.Add("using Cephalon.Behaviors.Http.Hosting;");
+            engineRegistrationLines.Add("    engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>");
+            engineRegistrationLines.Add("    {");
+            engineRegistrationLines.Add("        behaviors.AddHttpBehaviorBindings();");
+            engineRegistrationLines.Add("    });");
         }
 
         if (ShouldGenerateDataPack(appProfile))

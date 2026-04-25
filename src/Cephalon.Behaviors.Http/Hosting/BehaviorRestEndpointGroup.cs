@@ -522,7 +522,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapGet(
             pattern,
-            (HttpContext context, BehaviorDispatcher dispatcher) =>
+            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
                 InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
@@ -544,7 +544,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapPost(
             pattern,
-            (HttpContext context, BehaviorDispatcher dispatcher) =>
+            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
@@ -566,7 +566,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapPut(
             pattern,
-            (HttpContext context, BehaviorDispatcher dispatcher) =>
+            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
@@ -589,7 +589,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         var builder = group.Routes.MapMethods(
             pattern,
             ["PATCH"],
-            (HttpContext context, BehaviorDispatcher dispatcher) =>
+            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
@@ -611,7 +611,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapDelete(
             pattern,
-            (HttpContext context, BehaviorDispatcher dispatcher) =>
+            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
                 InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,

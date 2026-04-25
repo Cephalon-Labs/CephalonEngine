@@ -144,6 +144,25 @@ Expected success characteristics:
 
 If the command reports a generated-app failure, fix the missing bootstrap asset, generated split-config asset or baseline drift, generated guidance docs or local package-feed guidance drift, generated documentation-surface asset, generated self-hosted and hosted deployment assets, generated teardown or environment baseline drift, generated container deployment-script or Kubernetes manifest baseline drift, generated local orchestration assets, compose or collector baseline drift, or package-source problem first, then rerun `cephalon doctor --app-root ./Acme.Store` before build, publish, or deployment work.
 
+## Repo-native cold-start replay
+
+If you want one repo-native replay of the external-adoption path from a clean temporary workspace, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-adoption.ps1
+```
+
+That script:
+
+- publishes a temporary repo-local package feed
+- installs `Cephalon.Cli` into a temporary tool path with `dotnet tool install`
+- runs `cephalon doctor`
+- scaffolds a fresh app outside the repository
+- seeds the generated `./.cephalon/packages` folder while keeping the generated `README.md` guidance intact
+- reruns `cephalon doctor --app-root <path>`
+- runs `dotnet restore`, `dotnet build`, and `dotnet run`
+- validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`
+
 ## Optional Published-Output Path
 
 Generated host projects now also include `Properties/PublishProfiles/CephalonFolder.pubxml`.

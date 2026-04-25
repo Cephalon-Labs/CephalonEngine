@@ -2,7 +2,8 @@ param(
     [string]$Configuration = "Release",
     [string]$OutputPath = "artifacts/packages-release",
     [string]$DotNetWorkingDirectory,
-    [switch]$SkipBuild
+    [switch]$SkipBuild,
+    [string[]]$ProjectPaths
 )
 
 Set-StrictMode -Version Latest
@@ -137,6 +138,40 @@ function Get-PackageKind {
 }
 
 function Get-ReleasePackageProjects {
+    param(
+        [string[]]$SelectedProjectPaths
+    )
+
+    if ($SelectedProjectPaths -and $SelectedProjectPaths.Count -gt 0) {
+        $selectedProjects = [System.Collections.Generic.List[string]]::new()
+
+        foreach ($selectedProjectPath in $SelectedProjectPaths) {
+            foreach ($selectedProjectToken in @($selectedProjectPath -split ',')) {
+                if ([string]::IsNullOrWhiteSpace($selectedProjectToken)) {
+                    continue
+                }
+
+                $resolvedProjectPath = Resolve-FullPath -Path $selectedProjectToken.Trim()
+                if (-not (Test-Path -LiteralPath $resolvedProjectPath -PathType Leaf)) {
+                    throw "Selected project '$selectedProjectToken' was not found."
+                }
+
+                if (-not $resolvedProjectPath.EndsWith(".csproj", [System.StringComparison]::OrdinalIgnoreCase)) {
+                    throw "Selected project '$selectedProjectToken' must point to a .csproj file."
+                }
+
+                $content = Get-Content -LiteralPath $resolvedProjectPath -Raw
+                if ($content -match '<IsPackable>\s*false\s*</IsPackable>') {
+                    throw "Selected project '$selectedProjectToken' is marked IsPackable=false."
+                }
+
+                $selectedProjects.Add($resolvedProjectPath)
+            }
+        }
+
+        return $selectedProjects.ToArray() | Sort-Object -Unique
+    }
+
     $projects = [System.Collections.Generic.List[string]]::new()
 
     foreach ($srcDirectory in Get-ChildItem -Path (Join-Path $repoRoot "src") -Directory -Filter "Cephalon.*" | Sort-Object Name) {
@@ -166,10 +201,22 @@ function Get-ReleasePackageProjects {
 
 $resolvedOutputPath = Resolve-FullPath -Path $OutputPath
 New-Item -ItemType Directory -Path $resolvedOutputPath -Force | Out-Null
+$preservedOutputFiles = [System.Collections.Generic.Dictionary[string, string]]::new([System.StringComparer]::Ordinal)
+foreach ($preservedFileName in @("README.md")) {
+    $preservedFilePath = Join-Path $resolvedOutputPath $preservedFileName
+    if (Test-Path -LiteralPath $preservedFilePath -PathType Leaf) {
+        $preservedOutputFiles[$preservedFileName] = Get-Content -LiteralPath $preservedFilePath -Raw
+    }
+}
+
 Get-ChildItem -LiteralPath $resolvedOutputPath -Force | Remove-Item -Recurse -Force
 
+foreach ($preservedOutputFile in $preservedOutputFiles.GetEnumerator()) {
+    Set-Content -LiteralPath (Join-Path $resolvedOutputPath $preservedOutputFile.Key) -Value $preservedOutputFile.Value -Encoding utf8
+}
+
 $artifacts = [System.Collections.Generic.List[object]]::new()
-$projects = Get-ReleasePackageProjects
+$projects = Get-ReleasePackageProjects -SelectedProjectPaths $ProjectPaths
 $sourceRepository = Invoke-Git -Arguments @("-C", $repoRoot, "remote", "get-url", "origin")
 $sourceRevision = Invoke-Git -Arguments @("-C", $repoRoot, "rev-parse", "HEAD")
 

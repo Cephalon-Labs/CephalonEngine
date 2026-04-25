@@ -107,6 +107,113 @@ public sealed class PackagePublishingTests
     }
 
     [Fact]
+    public void ReleasePackagePublishingScriptPreservesExistingReadmeInOutputPath()
+    {
+        var scriptPath = RepositoryPaths.GetFile("scripts", "publish-package-artifacts.ps1");
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-package-artifacts-preserve-readme-{Guid.NewGuid():N}");
+        var readmePath = Path.Combine(outputPath, "README.md");
+
+        Directory.CreateDirectory(outputPath);
+        File.WriteAllText(readmePath, """
+            # Cephalon local package feed
+
+            Keep this README in place when package artifacts are refreshed into the generated app feed.
+            """);
+
+        try
+        {
+            var result = RunProcess(
+                GetPowerShellExecutable(),
+                $"-File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild",
+                workingDirectory: Path.GetDirectoryName(scriptPath)!);
+
+            Assert.True(
+                result.ExitCode == 0,
+                $"publish-package-artifacts.ps1 failed with exit code {result.ExitCode}.{Environment.NewLine}Output:{Environment.NewLine}{result.Output}{Environment.NewLine}Error:{Environment.NewLine}{result.Error}");
+
+            Assert.True(File.Exists(readmePath), "Expected the existing README to stay in the output path.");
+            var readmeContents = File.ReadAllText(readmePath);
+            Assert.Contains("Cephalon local package feed", readmeContents, StringComparison.Ordinal);
+            Assert.Contains(
+                Directory.GetFiles(outputPath, "*.nupkg", SearchOption.TopDirectoryOnly),
+                path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
+        }
+        finally
+        {
+            if (Directory.Exists(outputPath))
+            {
+                Directory.Delete(outputPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void ReleasePackagePublishingScriptCanFocusOnExplicitProjectPaths()
+    {
+        var scriptPath = RepositoryPaths.GetFile("scripts", "publish-package-artifacts.ps1");
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-package-artifacts-focused-{Guid.NewGuid():N}");
+        var abstractionsProject = RepositoryPaths.GetFile("src", "Cephalon.Abstractions", "Cephalon.Abstractions.csproj");
+        var cliProject = RepositoryPaths.GetFile("src", "Cephalon.Cli", "Cephalon.Cli.csproj");
+
+        Directory.CreateDirectory(outputPath);
+
+        try
+        {
+            var abstractionsBuildResult = RunProcess(
+                "dotnet",
+                $"build \"{abstractionsProject}\" -c {GetCurrentBuildConfiguration()} --no-restore -m:1 /p:UseSharedCompilation=false",
+                workingDirectory: RepositoryPaths.GetRepositoryRoot());
+
+            Assert.Equal(0, abstractionsBuildResult.ExitCode);
+
+            var cliBuildResult = RunProcess(
+                "dotnet",
+                $"build \"{cliProject}\" -c {GetCurrentBuildConfiguration()} --no-restore -m:1 /p:UseSharedCompilation=false",
+                workingDirectory: RepositoryPaths.GetRepositoryRoot());
+
+            Assert.Equal(0, cliBuildResult.ExitCode);
+
+            var result = RunProcess(
+                GetPowerShellExecutable(),
+                $"-File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild -ProjectPaths \"{abstractionsProject}\",\"{cliProject}\"",
+                workingDirectory: Path.GetDirectoryName(scriptPath)!);
+
+            Assert.True(
+                result.ExitCode == 0,
+                $"publish-package-artifacts.ps1 failed with exit code {result.ExitCode}.{Environment.NewLine}Output:{Environment.NewLine}{result.Output}{Environment.NewLine}Error:{Environment.NewLine}{result.Error}");
+
+            var packageFiles = Directory.GetFiles(outputPath, "*.nupkg", SearchOption.TopDirectoryOnly)
+                .Select(Path.GetFileName)
+                .Where(name => !name!.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase))
+                .OrderBy(name => name, StringComparer.Ordinal)
+                .ToArray();
+
+            Assert.Equal(2, packageFiles.Length);
+            Assert.Contains(packageFiles, name => name!.StartsWith("Cephalon.Abstractions.", StringComparison.Ordinal));
+            Assert.Contains(packageFiles, name => name!.StartsWith("Cephalon.Cli.", StringComparison.Ordinal));
+
+            var manifestPath = Path.Combine(outputPath, "package-artifacts-manifest.json");
+            var manifest = Assert.IsType<JsonObject>(JsonNode.Parse(File.ReadAllText(manifestPath)));
+            var artifacts = Assert.IsType<JsonArray>(manifest["Artifacts"]);
+
+            Assert.Equal(2, artifacts.Count);
+            Assert.Contains(
+                artifacts.Select(node => Assert.IsType<JsonObject>(node)["Project"]?.GetValue<string>()),
+                project => string.Equals(project, "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj", StringComparison.Ordinal));
+            Assert.Contains(
+                artifacts.Select(node => Assert.IsType<JsonObject>(node)["Project"]?.GetValue<string>()),
+                project => string.Equals(project, "src/Cephalon.Cli/Cephalon.Cli.csproj", StringComparison.Ordinal));
+        }
+        finally
+        {
+            if (Directory.Exists(outputPath))
+            {
+                Directory.Delete(outputPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public void CliPackageIsPackedAsADotNetToolAndRunsHelpFromALocalInstall()
     {
         var repositoryRoot = RepositoryPaths.GetRepositoryRoot();

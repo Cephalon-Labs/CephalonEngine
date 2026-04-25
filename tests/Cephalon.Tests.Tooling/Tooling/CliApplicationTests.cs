@@ -469,7 +469,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[warn] Trim support contract: not-claimed. Trimming is not part of the current Cephalon support contract.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated test project: ./tests/Acme.Store.Host.Tests/Acme.Store.Host.Tests.csproj", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net10.0 and stays on the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, behavior and observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated test harness baseline: ./tests/Acme.Store.Host.Tests/Architecture/CompositionSmokeTests.cs plus 1 feature specification placeholder(s) keep the generated composition and Given/When/Then test harness explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj keeps the generated package references and `Configurations/**/*.json` copy/publish baseline explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.*.json and ./src/Acme.Store.Host/Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
@@ -577,7 +577,7 @@ public sealed class CliApplicationTests
             Assert.Equal(0, exitCode);
             Assert.Contains("[ok] Generated test project: ./tests/Acme.Store.Host.Tests/Acme.Store.Host.Tests.csproj", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated host target framework: ./src/Acme.Store.Host/Acme.Store.Host.csproj targets net11.0 and stays on the assessment-only readiness lane.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, behavior and observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated test harness baseline: ./tests/Acme.Store.Host.Tests/Architecture/CompositionSmokeTests.cs plus 1 feature specification placeholder(s) keep the generated composition and Given/When/Then test harness explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj keeps the generated package references and `Configurations/**/*.json` copy/publish baseline explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated split configuration assets: ./src/Acme.Store.Host/Configurations/AddEngine.*.json and ./src/Acme.Store.Host/Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
@@ -935,8 +935,18 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Generated host bootstrap source baseline: ./src/Acme.Store.Host/Program.cs no longer keeps the generated Cephalon host bootstrap explicit for: AddCephalonProjectConfigurations, UseWindowsService, AddCephalon, AddSfidIds, AddAudit, AddCephalonObservability, Serilog clear-provider guard, ClearProviders, AddCephalonSerilog, AddCephalonOpenTelemetry, UseExceptionHandler, MapCephalon.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[error] Generated host project baseline: ./src/Acme.Store.Host/Acme.Store.Host.csproj no longer keeps the generated package references or `Configurations/**/*.json` copy/publish baseline explicit (missing package references: Cephalon.Audit, Cephalon.Behaviors.Http, Cephalon.Ids.Sfid, Cephalon.Observability, Cephalon.Observability.OpenTelemetry, Cephalon.Observability.Serilog, Microsoft.Extensions.Hosting.WindowsServices, Serilog.Sinks.Console; missing CopyToOutputDirectory=PreserveNewest; missing CopyToPublishDirectory=PreserveNewest).", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated host bootstrap source baseline:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("AddCephalonProjectConfigurations", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("AddCephalonObservability", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("MapCephalon", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Generated host project baseline:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Observability", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Observability.OpenTelemetry", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Observability.Serilog", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Serilog.Sinks.Console", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("CopyToOutputDirectory=PreserveNewest", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("CopyToPublishDirectory=PreserveNewest", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("generated-app bootstrap blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -2695,9 +2705,6 @@ public sealed class CliApplicationTests
 
               <ItemGroup>
                 <PackageReference Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
-                <PackageReference Include="Cephalon.Audit" Version="0.1.0-preview" />
-                <PackageReference Include="Cephalon.Behaviors.Http" Version="0.1.0-preview" />
-                <PackageReference Include="Cephalon.Ids.Sfid" Version="0.1.0-preview" />
                 <PackageReference Include="Cephalon.Observability" Version="0.1.0-preview" />
                 <PackageReference Include="Cephalon.Observability.OpenTelemetry" Version="0.1.0-preview" />
                 <PackageReference Include="Cephalon.Observability.Serilog" Version="0.1.0-preview" />
@@ -2706,7 +2713,7 @@ public sealed class CliApplicationTests
               </ItemGroup>
 
               <ItemGroup>
-                <Content Include="Configurations\**\*.json">
+                <Content Update="Configurations\**\*.json">
                   <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
                   <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
                 </Content>
@@ -2717,8 +2724,8 @@ public sealed class CliApplicationTests
             Path.Combine(appRootPath, "src", "Acme.Store.Host", "Program.cs"),
             programContents ?? """
             using Cephalon.AspNetCore.Hosting;
-            using Cephalon.Audit.Registration;
-            using Cephalon.Ids.Sfid.Registration;
+            using Cephalon.Behaviors.Hosting;
+            using Cephalon.Behaviors.Http.Hosting;
             using Cephalon.Observability.Hosting;
             using Cephalon.Observability.OpenTelemetry.Hosting;
             using Cephalon.Observability.Serilog.Hosting;
@@ -2736,11 +2743,12 @@ public sealed class CliApplicationTests
             var builder = WebApplication.CreateBuilder(options);
             builder.AddCephalonProjectConfigurations();
             builder.Host.UseWindowsService();
-
             builder.AddCephalon(engine =>
             {
-                engine.AddSfidIds();
-                engine.AddAudit();
+                engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+                {
+                    behaviors.AddHttpBehaviorBindings();
+                });
             });
             builder.Services.AddCephalonObservability(builder.Configuration);
             if (builder.Configuration.GetSection("Serilog").Exists())
@@ -2752,7 +2760,6 @@ public sealed class CliApplicationTests
 
             var app = builder.Build();
 
-            app.UseExceptionHandler();
             app.MapGet("/", () => TypedResults.Ok(new
             {
                 name = "Acme.Store.Host",

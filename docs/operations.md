@@ -1,6 +1,6 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 21, 2026`.
+This document captures the current operational surface for Cephalon as of `April 25, 2026`.
 
 For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
 
@@ -13,6 +13,16 @@ pwsh ./scripts/validate-generated-app-publish.ps1
 ```
 
 See `docs/generated-app-publishing.md` for the corresponding publish-profile and published-output guidance.
+
+## Generated-app cold-start adoption smoke
+
+For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, runs `cephalon doctor`, scaffolds a fresh app outside the repository, seeds the generated local package feed, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-adoption.ps1
+```
+
+See `docs/getting-started.md` for the corresponding install, doctor, scaffold, seed, restore, and first-run guidance.
 
 ## Generated-app Windows Service smoke
 
