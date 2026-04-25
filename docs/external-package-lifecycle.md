@@ -5,6 +5,7 @@ This guide shows the operator-facing baseline for taking a Cephalon module packa
 Use it together with [Module authoring](module-authoring.md) when you are shipping independently distributed Cephalon packages.
 
 For the repo-native replay of this full out-of-tree path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`.
+For the matching detached-signature and publisher or signer trust replay, use `pwsh ./scripts/validate-signed-package-governance.ps1`.
 
 ## What this proves
 
@@ -12,6 +13,8 @@ For the repo-native replay of this full out-of-tree path, use `pwsh ./scripts/va
 - the published artifact can be staged into a loadable package directory with `cephalon package stage`
 - a host can load that staged package through `Engine:Discovery:PackageDirectories`
 - `Engine:PackagePolicy` and `Engine:Trust` can govern the load
+- detached signatures can be required and verified through `Engine:Trust:TrustedSignaturePublicKeys`
+- tampered signed packages can be denied before their module code becomes active
 - `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot` expose the truth of what loaded
 
 ## 1. Publish the module artifact
@@ -107,11 +110,47 @@ What you should see:
 - `/engine/trust-policy` shows `RequireTrustedPackages` plus the trusted publisher rule
 - `/engine/snapshot` shows the trusted package and its active module in the merged runtime view
 
+## 5. Require detached signatures when provenance matters
+
+When a host needs cryptographic trust instead of publisher-only trust, tighten package policy and trust configuration so detached signatures become mandatory:
+
+```json
+{
+  "Engine": {
+    "PackagePolicy": {
+      "AllowAssemblyPathPackages": false,
+      "RequireVersion": true,
+      "RequireMinimumEngineVersion": true,
+      "RequireSupportedTargetFrameworks": true,
+      "RequirePublisherId": true,
+      "RequireSignatureFingerprint": true,
+      "RequireSignatureKeyId": true,
+      "RequireSignatureValue": true,
+      "RequireSignatureVerification": true
+    },
+    "Trust": {
+      "RequireTrustedPackages": true,
+      "TrustedSignaturePublicKeys": {
+        "cephalon-labs-build": "keys/cephalon-labs-build.public.pem"
+      }
+    }
+  }
+}
+```
+
+This keeps package governance tied to the exact signing key instead of a broader publisher allow-list. Under that stricter posture:
+
+- `/engine/packages` should surface the publisher, signer, `signatureKeyId`, `signatureFingerprint`, `isSignatureVerified`, `signatureVerificationReason`, and trust reason for the loaded package
+- `/engine/trust-policy` should surface the trusted public-key map that made the verification possible
+- `/engine/snapshot` should mirror the same verified package truth in the merged runtime view
+- a tampered signed package should fail startup when `RequireSignatureVerification` is enabled
+
 ## Operational notes
 
 - use `cephalon.package.json` as the operator-readable contract for version, compatibility, publisher, provenance, signature, and integrity metadata
 - prefer `Engine:PackagePolicy` when hosts must reject ambiguous raw assembly loads
 - prefer `Engine:Trust` publisher, signer, certificate, or checksum rules when package governance matters
+- prefer `Engine:Trust:TrustedSignaturePublicKeys` plus `RequireSignatureVerification` when detached signing should be enforced instead of treated as optional metadata
 - keep package directories explicit and stable so operators can reason about what the host is allowed to load
 - if you republish a package and want to replace an existing staged directory, rerun `cephalon package stage` with `--force`
 

@@ -100,6 +100,8 @@ For the full author -> publish -> trust -> load -> inspect walkthrough, see [Ext
 
 For the scenario-driven external replay of that same staged-package path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`. It scaffolds a fresh app outside the repository, stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, and validates `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, `/engine/snapshot`, and `/api/operations/status`.
 
+For the matching higher-assurance detached-signature replay, use `pwsh ./scripts/validate-signed-package-governance.ps1`. It repacks `Cephalon.ReferenceModule.Operations` with a deterministic detached signature, stages the signed `.nupkg`, patches stricter `Engine:PackagePolicy` plus `Engine:Trust:TrustedSignaturePublicKeys`, validates the same runtime/package surfaces, and then proves a tampered signed package is denied when signature verification is required.
+
 ## Output
 
 The publish script writes package artifacts to `artifacts/packages-release/` by default:

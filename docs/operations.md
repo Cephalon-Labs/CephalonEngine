@@ -32,11 +32,27 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-template-pack-adoption.ps1
 ```
 
+See `docs/getting-started.md` for the corresponding template-pack install, doctor, scaffold, and first-run guidance.
+
+## Out-of-tree package parity smoke
+
+For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, run:
+
 ```powershell
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
 ```
 
-See `docs/getting-started.md` for the corresponding template-pack install, doctor, scaffold, and first-run guidance.
+See `docs/external-package-lifecycle.md` for the corresponding stage, trust, and inspect guidance.
+
+## Signed package governance smoke
+
+For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, repacks `Cephalon.ReferenceModule.Operations` with a deterministic detached signature, stages the signed package through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus stricter `Engine:PackagePolicy` and `Engine:Trust:TrustedSignaturePublicKeys`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, then proves the same host rejects a tampered signed package when signature verification is required, run:
+
+```powershell
+pwsh ./scripts/validate-signed-package-governance.ps1
+```
+
+See `docs/external-package-lifecycle.md` for the corresponding detached-signature and trust-governance guidance.
 
 ## Generated-app Windows Service smoke
 
