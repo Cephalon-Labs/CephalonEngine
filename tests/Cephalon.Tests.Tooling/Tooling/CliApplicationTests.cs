@@ -139,6 +139,30 @@ public sealed class CliApplicationTests
             Assert.Contains("ExecStart=/usr/bin/env dotnet /opt/Acme.Store/current/Acme.Store.Service.dll", systemdService, StringComparison.Ordinal);
             Assert.Contains("DynamicUser=true", systemdService, StringComparison.Ordinal);
 
+            var generatedReadme = await File.ReadAllTextAsync(Path.Combine(outputPath, "README.md"));
+            Assert.Contains("NuGet.config", generatedReadme, StringComparison.Ordinal);
+            Assert.Contains("Configurations/Add*.json", generatedReadme, StringComparison.Ordinal);
+            Assert.Contains("Configurations/Observability/Development.json", generatedReadme, StringComparison.Ordinal);
+            Assert.Contains("CephalonFolder.pubxml", generatedReadme, StringComparison.Ordinal);
+            Assert.Contains("deploy/windows-service/README.md", generatedReadme, StringComparison.Ordinal);
+            Assert.Contains("deploy/container-image/README.md", generatedReadme, StringComparison.Ordinal);
+            Assert.Contains("docker compose up --build", generatedReadme, StringComparison.Ordinal);
+
+            var configurationReadme = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "README.md"));
+            Assert.Contains("Configurations/Add*.json", configurationReadme, StringComparison.Ordinal);
+            Assert.Contains("Configurations/{group}/{Environment}.json", configurationReadme, StringComparison.Ordinal);
+            Assert.Contains("AddCephalonProjectConfigurations()", configurationReadme, StringComparison.Ordinal);
+
+            var windowsServiceReadme = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "windows-service", "README.md"));
+            Assert.Contains("install-service.ps1", windowsServiceReadme, StringComparison.Ordinal);
+            Assert.Contains("remove-service.ps1", windowsServiceReadme, StringComparison.Ordinal);
+            Assert.Contains("CephalonFolder.pubxml", windowsServiceReadme, StringComparison.Ordinal);
+
+            var containerImageReadme = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "container-image", "README.md"));
+            Assert.Contains("publish-image.ps1", containerImageReadme, StringComparison.Ordinal);
+            Assert.Contains("Dockerfile", containerImageReadme, StringComparison.Ordinal);
+            Assert.Contains("docker login", containerImageReadme, StringComparison.Ordinal);
+
             Assert.Equal("{}", (await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.json"))).Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
             Assert.Equal("{}", (await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.Development.json"))).Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
             var observabilityDevelopment = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "Observability", "Development.json"));
@@ -413,6 +437,11 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./src/Acme.Store.Host/Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated root guidance baseline: ./README.md keeps generated package-source, split-config, publish, deployment, and local-orchestration guidance explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated configuration guidance baseline: ./src/Acme.Store.Host/Configurations/README.md keeps generated Add*.json, grouped override, and AddCephalonProjectConfigurations() guidance explicit.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated Windows Service guide baseline: ./deploy/windows-service/README.md keeps generated Windows Service publish, install, and removal guidance explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated container image guide baseline: ./deploy/container-image/README.md keeps generated Dockerfile build and publish-image.ps1 guidance explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app trim posture: PublishTrimmed is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app Native AOT posture: PublishAot is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app single-file posture: PublishSingleFile is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
@@ -505,11 +534,135 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./src/Acme.Store.Host/Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated root guidance baseline: ./README.md keeps generated package-source, split-config, publish, deployment, and local-orchestration guidance explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app trim posture: PublishTrimmed=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app Native AOT posture: PublishAot=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app single-file posture: PublishSingleFile=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Environment and generated app bootstrap are ready for Cephalon.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedGuidanceDocsAssetsAreMissing()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-guides-missing-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            includeGeneratedGuidanceDocsAssets: false);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated guidance docs assets: Missing generated guidance docs assets:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("./README.md", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("./src/Acme.Store.Host/Configurations/README.md", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon doctor found 1 required issue(s).", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedRootGuidanceDrifts()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-guides-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            appReadmeContents: """
+                # Acme.Store
+
+                This README was rewritten and no longer keeps the generated adoption guidance explicit.
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated root guidance baseline: ./README.md no longer keeps explicit generated guidance for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("NuGet.config", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Configurations/Add*.json", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon doctor found 1 required issue(s).", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
         {
@@ -2146,7 +2299,17 @@ public sealed class CliApplicationTests
         string? windowsServiceInstallScriptContents = null,
         string? iisInstallScriptContents = null,
         string? azureAppServiceDeployScriptContents = null,
-        string? linuxSystemdServiceContents = null)
+        string? linuxSystemdServiceContents = null,
+        bool includeGeneratedGuidanceDocsAssets = true,
+        string? appReadmeContents = null,
+        string? configurationReadmeContents = null,
+        string? windowsServiceGuideContents = null,
+        string? iisGuideContents = null,
+        string? azureAppServiceGuideContents = null,
+        string? containerImageGuideContents = null,
+        string? azureContainerAppsGuideContents = null,
+        string? kubernetesGuideContents = null,
+        string? linuxSystemdGuideContents = null)
     {
         Directory.CreateDirectory(appRootPath);
         Directory.CreateDirectory(Path.Combine(appRootPath, ".cephalon", "packages"));
@@ -2327,6 +2490,45 @@ public sealed class CliApplicationTests
         if (includeGeneratedSplitConfigurationAssets || includeDocumentationSurfaceAssets)
         {
             Directory.CreateDirectory(configurationsPath);
+        }
+
+        if (includeGeneratedGuidanceDocsAssets)
+        {
+            File.WriteAllText(
+                Path.Combine(appRootPath, "README.md"),
+                appReadmeContents ?? """
+                # Acme.Store
+
+                Generated app guidance for Acme.Store.
+
+                - NuGet.config
+                - .cephalon/packages
+                - Configurations/Add*.json
+                - Configurations/Observability/Development.json
+                - CephalonFolder.pubxml
+                - deploy/windows-service/README.md
+                - deploy/iis/README.md
+                - deploy/azure-app-service/README.md
+                - deploy/container-image/README.md
+                - deploy/azure-container-apps/README.md
+                - deploy/kubernetes/README.md
+                - deploy/linux/systemd/README.md
+
+                Run docker compose up --build after packages are reachable, then inspect /engine/snapshot.
+                """);
+
+            Directory.CreateDirectory(configurationsPath);
+            File.WriteAllText(
+                Path.Combine(configurationsPath, "README.md"),
+                configurationReadmeContents ?? """
+                # Host Configuration
+
+                Keep Cephalon defaults in Configurations/Add*.json.
+                Add grouped overrides under Configurations/{group}/{Environment}.json.
+                Keep appsettings.json and appsettings.{Environment}.json for project overrides.
+                Configurations/Observability/Development.json already seeds the development override.
+                Program.cs loads this through AddCephalonProjectConfigurations().
+                """);
         }
 
         if (includeGeneratedSplitConfigurationAssets)
@@ -2615,6 +2817,34 @@ public sealed class CliApplicationTests
             File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "namespace.yaml"), "apiVersion: v1");
             File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "deployment.yaml"), "apiVersion: apps/v1");
             File.WriteAllText(Path.Combine(appRootPath, "deploy", "kubernetes", "service.yaml"), "apiVersion: v1");
+
+            if (includeGeneratedGuidanceDocsAssets)
+            {
+                File.WriteAllText(
+                    Path.Combine(appRootPath, "deploy", "container-image", "README.md"),
+                    containerImageGuideContents ?? """
+                    # Container image publishing
+
+                    Use publish-image.ps1 with the generated Dockerfile.
+                    Run docker login before you use -Push.
+                    """);
+                File.WriteAllText(
+                    Path.Combine(appRootPath, "deploy", "azure-container-apps", "README.md"),
+                    azureContainerAppsGuideContents ?? """
+                    # Azure Container Apps deployment
+
+                    Use deploy-up.ps1 from the generated app root.
+                    The generated Dockerfile stays part of the az containerapp up --source flow.
+                    """);
+                File.WriteAllText(
+                    Path.Combine(appRootPath, "deploy", "kubernetes", "README.md"),
+                    kubernetesGuideContents ?? """
+                    # Kubernetes deployment
+
+                    Use apply.ps1 with kustomization.yaml, deployment.yaml, and service.yaml.
+                    Preview the generated manifest with kubectl kustomize before apply.
+                    """);
+            }
         }
 
         if (includePublishedDeploymentAssets)
@@ -2663,6 +2893,38 @@ public sealed class CliApplicationTests
                 WantedBy=multi-user.target
                 """);
             File.WriteAllText(Path.Combine(appRootPath, "deploy", "linux", "systemd", "Acme.Store.env"), "ASPNETCORE_URLS=http://0.0.0.0:8080");
+
+            if (includeGeneratedGuidanceDocsAssets)
+            {
+                File.WriteAllText(
+                    Path.Combine(appRootPath, "deploy", "windows-service", "README.md"),
+                    windowsServiceGuideContents ?? """
+                    # Windows Service deployment
+
+                    Publish through CephalonFolder.pubxml, then use install-service.ps1 and remove-service.ps1 for Acme.Store.
+                    """);
+                File.WriteAllText(
+                    Path.Combine(appRootPath, "deploy", "iis", "README.md"),
+                    iisGuideContents ?? """
+                    # IIS deployment
+
+                    Use install-site.ps1 and remove-site.ps1 for Acme.Store and keep web.config with the published output.
+                    """);
+                File.WriteAllText(
+                    Path.Combine(appRootPath, "deploy", "azure-app-service", "README.md"),
+                    azureAppServiceGuideContents ?? """
+                    # Azure App Service deployment
+
+                    Use deploy-zip.ps1 to push azure-app-service.zip for Acme.Store.
+                    """);
+                File.WriteAllText(
+                    Path.Combine(appRootPath, "deploy", "linux", "systemd", "README.md"),
+                    linuxSystemdGuideContents ?? """
+                    # Linux systemd deployment
+
+                    Install Acme.Store.service and Acme.Store.env, then manage the service with systemctl for Acme.Store.
+                    """);
+            }
         }
 
         if (includePublishProfile)

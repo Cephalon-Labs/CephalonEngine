@@ -226,6 +226,9 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("BehaviorSpecifications.cs", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Given/When/Then", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("test harness", gettingStarted, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("generated guidance docs", gettingStarted, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Configurations/README.md", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("deploy/windows-service/README.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("deploy/windows-service/install-service.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("windows-service-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
@@ -303,6 +306,9 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("CompositionSmokeTests.cs", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("BehaviorSpecifications.cs", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("Given/When/Then", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("generated guidance docs", cliPackageReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Configurations/README.md", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("deploy/windows-service/README.md", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --app-root ./Acme.Store", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deployment-mode support contract", templatePackReadme, StringComparison.OrdinalIgnoreCase);
@@ -318,6 +324,14 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("self-hosted and hosted deployment assets", templatePackReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("generated host target framework", templatePackReadme, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("generated Dockerfile baseline", templatePackReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("generated guidance docs", templatePackReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Configurations/README.md", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("deploy/windows-service/README.md", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("generated guidance docs", cliComponentDoc, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Configurations/README.md", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("deploy/windows-service/README.md", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("generated guidance docs", rootReadme, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Configurations/README.md", rootReadme, StringComparison.Ordinal);
         Assert.Contains("dotnet new list cephalon", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("generated-app-publishing.md", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("container-image-publishing.md", templatePackReadme, StringComparison.Ordinal);

@@ -102,6 +102,34 @@ internal static class DoctorCommand
     private const string GeneratedBehaviorSpecificationPlaceholderMarker = "then_replace_this_placeholder_with_the_first_failing_specification";
     private const string PreserveNewestValue = "PreserveNewest";
 
+    private static readonly string[] RequiredGeneratedRootGuideMarkers =
+    [
+        "NuGet.config",
+        ".cephalon/packages",
+        "Configurations/Add*.json",
+        "Configurations/Observability/Development.json",
+        "CephalonFolder.pubxml",
+        "deploy/windows-service/README.md",
+        "deploy/iis/README.md",
+        "deploy/azure-app-service/README.md",
+        "deploy/container-image/README.md",
+        "deploy/azure-container-apps/README.md",
+        "deploy/kubernetes/README.md",
+        "deploy/linux/systemd/README.md",
+        "docker compose up --build",
+        "/engine/snapshot"
+    ];
+
+    private static readonly string[] RequiredGeneratedConfigurationGuideMarkers =
+    [
+        "Configurations/Add*.json",
+        "Configurations/{group}/{Environment}.json",
+        "appsettings.json",
+        "appsettings.{Environment}.json",
+        "Configurations/Observability/Development.json",
+        "AddCephalonProjectConfigurations()"
+    ];
+
     /// <summary>
     /// Executes the doctor command with the supplied options.
     /// </summary>
@@ -613,6 +641,7 @@ internal static class DoctorCommand
         EvaluateGeneratedSplitConfigurationAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedDocumentationSurfaceAssets(selectedHostProject, resolvedAppRootPath, checks);
         EvaluateGeneratedAppDeploymentAssets(selectedHostProject, resolvedAppRootPath, solutionPath, supportContract, checks);
+        EvaluateGeneratedGuidanceDocsBaseline(selectedHostProject, resolvedAppRootPath, solutionPath, checks);
 
         var missingPublishProfileProjects = hostProjects
             .Where(project => !File.Exists(project.PublishProfilePath))
@@ -1118,6 +1147,186 @@ internal static class DoctorCommand
         EvaluateGeneratedIisBaseline(generatedAppRootPath, generatedAppId, checks);
         EvaluateAzureAppServiceBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
         EvaluateGeneratedLinuxSystemdBaseline(hostProject, generatedAppRootPath, generatedAppId, checks);
+    }
+
+    private static void EvaluateGeneratedGuidanceDocsBaseline(
+        GeneratedHostProject hostProject,
+        string generatedAppRootPath,
+        string? solutionPath,
+        ICollection<DoctorCheck> checks)
+    {
+        var generatedAppId = ResolveGeneratedAppId(solutionPath, generatedAppRootPath);
+        var rootGuidePath = Path.Combine(generatedAppRootPath, "README.md");
+        var configurationGuidePath = Path.Combine(hostProject.DirectoryPath, "Configurations", "README.md");
+        var windowsServiceGuidePath = Path.Combine(generatedAppRootPath, "deploy", "windows-service", "README.md");
+        var iisGuidePath = Path.Combine(generatedAppRootPath, "deploy", "iis", "README.md");
+        var azureAppServiceGuidePath = Path.Combine(generatedAppRootPath, "deploy", "azure-app-service", "README.md");
+        var containerImageGuidePath = Path.Combine(generatedAppRootPath, "deploy", "container-image", "README.md");
+        var azureContainerAppsGuidePath = Path.Combine(generatedAppRootPath, "deploy", "azure-container-apps", "README.md");
+        var kubernetesGuidePath = Path.Combine(generatedAppRootPath, "deploy", "kubernetes", "README.md");
+        var linuxSystemdGuidePath = Path.Combine(generatedAppRootPath, "deploy", "linux", "systemd", "README.md");
+
+        var guidanceDocPaths = new[]
+        {
+            rootGuidePath,
+            configurationGuidePath,
+            windowsServiceGuidePath,
+            iisGuidePath,
+            azureAppServiceGuidePath,
+            containerImageGuidePath,
+            azureContainerAppsGuidePath,
+            kubernetesGuidePath,
+            linuxSystemdGuidePath
+        };
+
+        var missingRelativePaths = guidanceDocPaths
+            .Where(path => !File.Exists(path))
+            .Select(path => ToDisplayRelativePath(generatedAppRootPath, path))
+            .ToArray();
+
+        if (missingRelativePaths.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Generated guidance docs assets",
+                $"Missing generated guidance docs assets: {string.Join(", ", missingRelativePaths)}.",
+                "Restore the generated README guidance assets or regenerate the app before teams follow the scaffolded run, publish, or deployment instructions."));
+        }
+        else
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Generated guidance docs assets",
+                $"{ToDisplayRelativePath(generatedAppRootPath, rootGuidePath)}, {ToDisplayRelativePath(generatedAppRootPath, configurationGuidePath)}, and deploy/*/README.md guidance assets are present.",
+                null));
+        }
+
+        EvaluateGeneratedGuideBaseline(
+            rootGuidePath,
+            generatedAppRootPath,
+            "Generated root guidance baseline",
+            RequiredGeneratedRootGuideMarkers.Append(generatedAppId).ToArray(),
+            $"{ToDisplayRelativePath(generatedAppRootPath, rootGuidePath)} keeps generated package-source, split-config, publish, deployment, and local-orchestration guidance explicit for {generatedAppId}.",
+            "Restore the generated root README so the scaffolded adoption path stays explicit before teams edit the app or replay deployment flows.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            configurationGuidePath,
+            generatedAppRootPath,
+            "Generated configuration guidance baseline",
+            RequiredGeneratedConfigurationGuideMarkers,
+            $"{ToDisplayRelativePath(generatedAppRootPath, configurationGuidePath)} keeps generated Add*.json, grouped override, and AddCephalonProjectConfigurations() guidance explicit.",
+            "Restore the generated Configurations/README.md file so split project configuration guidance stays explicit for external adopters.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            windowsServiceGuidePath,
+            generatedAppRootPath,
+            "Generated Windows Service guide baseline",
+            ["install-service.ps1", "remove-service.ps1", "CephalonFolder.pubxml", generatedAppId],
+            $"{ToDisplayRelativePath(generatedAppRootPath, windowsServiceGuidePath)} keeps generated Windows Service publish, install, and removal guidance explicit for {generatedAppId}.",
+            "Restore the generated Windows Service README so the published-output and service-manager guidance stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            iisGuidePath,
+            generatedAppRootPath,
+            "Generated IIS guide baseline",
+            ["install-site.ps1", "remove-site.ps1", "web.config", generatedAppId],
+            $"{ToDisplayRelativePath(generatedAppRootPath, iisGuidePath)} keeps generated IIS publish, install, and removal guidance explicit for {generatedAppId}.",
+            "Restore the generated IIS README so the hosted Windows site/app-pool guidance stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            azureAppServiceGuidePath,
+            generatedAppRootPath,
+            "Generated Azure App Service guide baseline",
+            ["deploy-zip.ps1", "azure-app-service.zip", generatedAppId],
+            $"{ToDisplayRelativePath(generatedAppRootPath, azureAppServiceGuidePath)} keeps generated Azure App Service publish and ZIP-deploy guidance explicit for {generatedAppId}.",
+            "Restore the generated Azure App Service README so the ZIP packaging and deploy guidance stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            containerImageGuidePath,
+            generatedAppRootPath,
+            "Generated container image guide baseline",
+            ["publish-image.ps1", "Dockerfile", "docker login", "-Push"],
+            $"{ToDisplayRelativePath(generatedAppRootPath, containerImageGuidePath)} keeps generated Dockerfile build and publish-image.ps1 guidance explicit.",
+            "Restore the generated container-image README so the provider-neutral build, tag, and push guidance stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            azureContainerAppsGuidePath,
+            generatedAppRootPath,
+            "Generated Azure Container Apps guide baseline",
+            ["deploy-up.ps1", "Dockerfile", "az containerapp up", "--source"],
+            $"{ToDisplayRelativePath(generatedAppRootPath, azureContainerAppsGuidePath)} keeps generated Dockerfile source-deploy guidance explicit through deploy-up.ps1.",
+            "Restore the generated Azure Container Apps README so the hosted source-deploy guidance stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            kubernetesGuidePath,
+            generatedAppRootPath,
+            "Generated Kubernetes guide baseline",
+            ["apply.ps1", "kustomization.yaml", "deployment.yaml", "service.yaml", "kubectl kustomize"],
+            $"{ToDisplayRelativePath(generatedAppRootPath, kubernetesGuidePath)} keeps generated apply.ps1, kustomization.yaml, deployment.yaml, and service.yaml guidance explicit.",
+            "Restore the generated Kubernetes README so the manifest preview and apply guidance stays aligned with the current app root.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            linuxSystemdGuidePath,
+            generatedAppRootPath,
+            "Generated Linux systemd guide baseline",
+            [$"{generatedAppId}.service", $"{generatedAppId}.env", generatedAppId, "systemctl"],
+            $"{ToDisplayRelativePath(generatedAppRootPath, linuxSystemdGuidePath)} keeps generated Linux service-manager guidance explicit for {generatedAppId}.",
+            "Restore the generated Linux systemd README so the published-output and service-manager guidance stays aligned with the current app root.",
+            checks);
+    }
+
+    private static void EvaluateGeneratedGuideBaseline(
+        string guidePath,
+        string generatedAppRootPath,
+        string title,
+        IReadOnlyList<string> requiredSnippets,
+        string successDetail,
+        string failureGuidance,
+        ICollection<DoctorCheck> checks)
+    {
+        if (!File.Exists(guidePath))
+        {
+            return;
+        }
+
+        if (!TryReadGeneratedTextAsset(
+                guidePath,
+                generatedAppRootPath,
+                title,
+                $"Fix {ToDisplayRelativePath(generatedAppRootPath, guidePath)} before rerunning `cephalon doctor --app-root`.",
+                checks,
+                out var guideContents))
+        {
+            return;
+        }
+
+        var missingSnippets = requiredSnippets
+            .Where(snippet => guideContents.IndexOf(snippet, StringComparison.OrdinalIgnoreCase) < 0)
+            .ToArray();
+
+        if (missingSnippets.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                title,
+                $"{ToDisplayRelativePath(generatedAppRootPath, guidePath)} no longer keeps explicit generated guidance for: {string.Join(", ", missingSnippets)}.",
+                failureGuidance));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            title,
+            successDetail,
+            null));
     }
 
     private static void EvaluateGeneratedDocumentationSurfaceAssets(

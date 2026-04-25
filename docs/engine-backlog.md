@@ -1139,6 +1139,35 @@ Completed work:
 - aligned `README.md`, `docs/getting-started.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated starter test-harness doctor flow
 - extended focused CLI and documentation coverage for aligned starter tests and drifted composition smoke or behavior-specification placeholders on the same doctor path
 
+### ENG-220 Generated app doctor guidance-doc alignment baseline
+
+Status: done
+Estimate: 5
+Completed: April 25, 2026
+
+Why:
+
+- generated app starters already ship human-facing `README.md`, `Configurations/README.md`, and `deploy/*/README.md` guidance, but `cephalon doctor --app-root <path>` still had no truthful way to warn when those scaffolded instructions drifted away from the current package-source, split-config, publish, or deployment contract
+- phase-7 external adoption depends on those scaffolded docs as much as the scripts they reference, because external teams will often follow the generated guidance before they inspect the repo docs
+- the generated-app doctor path already owned bootstrap, support-contract, split-config, docs-surface, deployment-asset, orchestration, and starter-test truth, so it was the sharpest place to keep the scaffolded human-facing guidance explicit instead of inventing a separate docs-verification command
+
+Acceptance:
+
+- `cephalon doctor --app-root <path>` validates the generated root `README.md`, `src/<Host>/Configurations/README.md`, and generated deployment `README.md` assets under `deploy/`
+- generated-app doctor verifies that the root README still keeps explicit package-source, split-config, publish, deployment, and local-orchestration guidance for the current generated app id
+- generated-app doctor verifies that the configuration README still keeps explicit `Configurations/Add*.json`, grouped override, and `AddCephalonProjectConfigurations()` guidance
+- generated-app doctor verifies that the Windows Service, IIS, Azure App Service, container-image, Azure Container Apps, Kubernetes, and Linux `systemd` READMEs still keep explicit generated run/publish/deploy instructions aligned with the current app root
+- aligned guidance docs emit `[ok]`, while missing or drifted generated guidance docs emit `[error]` with a failing doctor exit code
+- the root README, getting-started guide, CLI docs, CLI package README, and template-pack README stay aligned with the same generated guidance-doc doctor story
+- focused tooling coverage proves aligned generated guidance docs plus missing or drifted guidance-doc baselines on the same doctor path
+
+Completed work:
+
+- extended `DoctorCommand` so generated-app doctor now validates the scaffolded root `README.md`, `Configurations/README.md`, and generated deployment `README.md` assets as part of the same generated-app bootstrap answer
+- added generated guidance-doc baseline checks that compare root package-source/split-config/publish/deploy/orchestration guidance plus configuration and deployment guide seams against the scaffolded doctor contract before teams follow those docs literally
+- aligned `README.md`, `docs/getting-started.md`, `docs/components/cli.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the generated guidance-doc doctor flow
+- extended focused CLI and documentation coverage for aligned generated guidance docs, missing guidance-doc assets, and drifted root guidance on the same doctor path
+
 ### ENG-213 Generated app doctor deployment-asset alignment baseline
 
 Status: done
@@ -8033,6 +8062,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-217 generated app doctor split-config alignment baseline: `cephalon doctor --app-root <path>` now validates the generated `Configurations/AddEngine.*.json` assets plus `Configurations/Observability/Development.json`, compares the scaffolded app-model, engine-feature, observability, localization, and development Serilog defaults against explicit split-config baselines, and keeps generated runtime plus docs plus telemetry configuration posture visible from the same generated-app bootstrap doctor path before teams rely on those defaults — **Shipped** · focused CLI and documentation coverage
 - ENG-218 generated app doctor host-bootstrap alignment baseline: `cephalon doctor --app-root <path>` now validates the scaffolded `Program.cs` bootstrap source plus the generated host-project `PackageReference` set and `Configurations/**/*.json` copy/publish baseline, compares explicit `AddCephalonProjectConfigurations`, observability wiring, and `MapCephalon` seams against that scaffolded host bootstrap, and keeps host startup plus build/publish bootstrap posture visible from the same generated-app bootstrap doctor path before teams rely on edited startup code — **Shipped** · focused CLI and documentation coverage
 - ENG-219 generated app doctor test-harness alignment baseline: `cephalon doctor --app-root <path>` now validates the generated test project plus scaffolded `Architecture/CompositionSmokeTests.cs` and `Features/*BehaviorSpecifications.cs` placeholders, compares starter composition smoke plus Given/When/Then seams against the shipped scaffold contract, and keeps generated starter-test posture visible from the same generated-app bootstrap doctor path before teams replace those files with real specs — **Shipped** · focused CLI and documentation coverage
+- ENG-220 generated app doctor guidance-doc alignment baseline: `cephalon doctor --app-root <path>` now validates the generated root `README.md`, `Configurations/README.md`, and `deploy/*/README.md` guidance assets, compares scaffolded package-source, split-config, publish, deployment, and local-orchestration instructions against the shipped doctor contract, and keeps generated human-facing run/publish/deploy guidance visible from the same generated-app bootstrap doctor path before teams follow those docs literally — **Shipped** · focused CLI and documentation coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
