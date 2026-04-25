@@ -98,6 +98,8 @@ That command stages the selected `lib/<tfm>` surface plus `cephalon.package.json
 
 For the full author -> publish -> trust -> load -> inspect walkthrough, see [External package lifecycle](external-package-lifecycle.md).
 
+For the scenario-driven external replay of that same staged-package path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`. It scaffolds a fresh app outside the repository, stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, and validates `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, `/engine/snapshot`, and `/api/operations/status`.
+
 ## Output
 
 The publish script writes package artifacts to `artifacts/packages-release/` by default:

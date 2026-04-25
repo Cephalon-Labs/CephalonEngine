@@ -163,6 +163,7 @@ The split files load before the normal `appsettings.json` and `appsettings.{Envi
   .\.tools\cephalon\cephalon doctor --app-root ./Acme.Store
   pwsh ./scripts/validate-generated-app-adoption.ps1
   pwsh ./scripts/validate-template-pack-adoption.ps1
+  pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
   .\.tools\cephalon\cephalon --help
   pwsh ./scripts/publish-package-artifacts.ps1 -SkipBuild
   dotnet run --project src/Cephalon.Cli -- docs publish --root .
@@ -202,6 +203,8 @@ If you are adopting Cephalon from a clean machine or package source, start with 
 For the scenario-driven external cold-start replay of that same path, use `pwsh ./scripts/validate-generated-app-adoption.ps1`. It publishes a temporary package feed, installs `Cephalon.Cli` with `dotnet tool install`, runs `cephalon doctor`, scaffolds a fresh app outside the repository, seeds the generated `./.cephalon/packages` folder while preserving the generated `README.md` guidance, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`.
 
 For the matching `dotnet new` parity replay, use `pwsh ./scripts/validate-template-pack-adoption.ps1`. It publishes the same temporary feed plus `Cephalon.TemplatePack`, installs the template pack into an isolated custom hive, reruns `cephalon doctor` with that custom hive wired through `CEPHALON_DOCTOR_TEMPLATE_HIVE`, scaffolds a project-root starter outside the repository, seeds the generated `./.cephalon/packages` feed, reruns `cephalon doctor --app-root`, restores, builds, runs, and probes the generated host from the template-pack path.
+
+For the matching out-of-tree package parity replay, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`. It publishes the same temporary feed, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot` from the staged-package path.
 
 If you want the published-output baseline for a freshly generated app, continue with [docs/generated-app-publishing.md](docs/generated-app-publishing.md). That guide walks through the shipped `CephalonFolder.pubxml` publish profile, deterministic `artifacts/publish/*` output, and the optional `pwsh ./scripts/validate-generated-app-publish.ps1` replay.
 

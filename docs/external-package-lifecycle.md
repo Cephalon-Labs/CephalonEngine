@@ -4,6 +4,8 @@ This guide shows the operator-facing baseline for taking a Cephalon module packa
 
 Use it together with [Module authoring](module-authoring.md) when you are shipping independently distributed Cephalon packages.
 
+For the repo-native replay of this full out-of-tree path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`.
+
 ## What this proves
 
 - a module can be packed as a published `.nupkg`
@@ -118,3 +120,4 @@ What you should see:
 - [Module authoring](module-authoring.md)
 - [Package publishing](package-publishing.md)
 - [Getting started](getting-started.md)
+- [Operations](operations.md)

@@ -210,6 +210,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-generated-app-publish.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-adoption.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-template-pack-adoption.ps1", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("container-image-publishing.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("deploy/container-image/publish-image.ps1", gettingStarted, StringComparison.Ordinal);
@@ -233,18 +234,22 @@ public sealed class DocumentationCoverageTests
         Assert.Contains(".cephalon/packages/README.md", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-template-pack-adoption.ps1", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/kustomization.yaml", rootReadme, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("validate-template-pack-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/kustomization.yaml", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("validate-template-pack-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/namespace.yaml", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-template-pack-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/deployment.yaml", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-kubernetes.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("linux-systemd-deployment.md", gettingStarted, StringComparison.Ordinal);
@@ -472,16 +477,21 @@ public sealed class DocumentationCoverageTests
 
         Assert.Contains("[External package lifecycle](external-package-lifecycle.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon package stage", packagePublishing, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", packagePublishing, StringComparison.Ordinal);
         Assert.Contains("external-package-lifecycle.md", packagePublishing, StringComparison.Ordinal);
         Assert.Contains("cephalon package stage", moduleAuthoring, StringComparison.Ordinal);
         Assert.Contains("Engine:PackagePolicy", packageLifecycle, StringComparison.Ordinal);
         Assert.Contains("Engine:Trust", packageLifecycle, StringComparison.Ordinal);
         Assert.Contains("cephalon package stage", packageLifecycle, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", packageLifecycle, StringComparison.Ordinal);
         Assert.Contains("/engine/packages", packageLifecycle, StringComparison.Ordinal);
         Assert.Contains("cephalon package stage", referenceModuleReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", referenceModuleReadme, StringComparison.Ordinal);
         Assert.Contains("Engine:Discovery", referenceModuleReadme, StringComparison.Ordinal);
         Assert.Contains("external package staging", cliComponentDoc, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("cephalon package stage", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -514,6 +524,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-container-runtime.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-publish.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-adoption.ps1", operations, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-windows-service.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-iis.ps1", operations, StringComparison.Ordinal);
@@ -530,6 +541,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("docs/kubernetes-deployment.md", rootReadme, StringComparison.Ordinal);
         Assert.Contains("docs/linux-systemd-deployment.md", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-container-runtime.ps1", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-out-of-tree-package-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-windows-service.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-iis.ps1", rootReadme, StringComparison.Ordinal);

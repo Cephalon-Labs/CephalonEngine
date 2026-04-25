@@ -32,6 +32,10 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-template-pack-adoption.ps1
 ```
 
+```powershell
+pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
+```
+
 See `docs/getting-started.md` for the corresponding template-pack install, doctor, scaffold, and first-run guidance.
 
 ## Generated-app Windows Service smoke
