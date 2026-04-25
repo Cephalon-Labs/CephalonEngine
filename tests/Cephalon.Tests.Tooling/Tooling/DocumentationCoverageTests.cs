@@ -193,6 +193,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("MapCephalon", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("PackageReference", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains(".cephalon/packages/README.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Configurations/AddEngine.*.json", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Configurations/Observability/Development.json", gettingStarted, StringComparison.Ordinal);
@@ -218,6 +219,10 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("azure-container-apps-deployment.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-apps.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("kubernetes-deployment.md", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains(".cephalon/packages/README.md", rootReadme, StringComparison.Ordinal);
+        Assert.Contains(".cephalon/packages/README.md", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains(".cephalon/packages/README.md", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains(".cephalon/packages/README.md", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-kubernetes.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("linux-systemd-deployment.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-systemd.ps1", gettingStarted, StringComparison.Ordinal);

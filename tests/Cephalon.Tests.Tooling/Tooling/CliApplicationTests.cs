@@ -93,6 +93,12 @@ public sealed class CliApplicationTests
             Assert.Contains("./.cephalon/packages", nuGetConfig, StringComparison.Ordinal);
             Assert.Contains("packageSourceMapping", nuGetConfig, StringComparison.Ordinal);
 
+            var localPackageFeedReadme = await File.ReadAllTextAsync(Path.Combine(outputPath, ".cephalon", "packages", "README.md"));
+            Assert.Contains("NuGet.config", localPackageFeedReadme, StringComparison.Ordinal);
+            Assert.Contains("publish-package-artifacts.ps1", localPackageFeedReadme, StringComparison.Ordinal);
+            Assert.Contains("replace the `cephalon` package source", localPackageFeedReadme, StringComparison.Ordinal);
+            Assert.Contains("Dockerfile and compose path use the same restore configuration automatically.", localPackageFeedReadme, StringComparison.Ordinal);
+
             var publishProfile = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Properties", "PublishProfiles", "CephalonFolder.pubxml"));
             Assert.Contains("PublishDir", publishProfile, StringComparison.Ordinal);
             Assert.Contains("UseAppHost>false", publishProfile, StringComparison.Ordinal);
@@ -437,8 +443,9 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./src/Acme.Store.Host/Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./.cephalon/packages/README.md, ./src/Acme.Store.Host/Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated root guidance baseline: ./README.md keeps generated package-source, split-config, publish, deployment, and local-orchestration guidance explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated local package feed guidance baseline: ./.cephalon/packages/README.md keeps generated local package-feed bootstrap, publish-package-artifacts.ps1, and shared-feed replacement guidance explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated configuration guidance baseline: ./src/Acme.Store.Host/Configurations/README.md keeps generated Add*.json, grouped override, and AddCephalonProjectConfigurations() guidance explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Windows Service guide baseline: ./deploy/windows-service/README.md keeps generated Windows Service publish, install, and removal guidance explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated container image guide baseline: ./deploy/container-image/README.md keeps generated Dockerfile build and publish-image.ps1 guidance explicit.", stdout.ToString(), StringComparison.Ordinal);
@@ -534,8 +541,9 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated IIS baseline: ./deploy/iis/install-site.ps1 keeps the generated IIS site/app-pool defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Azure App Service baseline: ./deploy/azure-app-service/deploy-zip.ps1 keeps the generated ZIP package and published host defaults aligned with Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated Linux systemd baseline: ./deploy/linux/systemd/Acme.Store.service keeps the generated Linux systemd unit aligned with Acme.Store and Acme.Store.Host.dll.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./src/Acme.Store.Host/Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./.cephalon/packages/README.md, ./src/Acme.Store.Host/Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated root guidance baseline: ./README.md keeps generated package-source, split-config, publish, deployment, and local-orchestration guidance explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated local package feed guidance baseline: ./.cephalon/packages/README.md keeps generated local package-feed bootstrap, publish-package-artifacts.ps1, and shared-feed replacement guidance explicit.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app trim posture: PublishTrimmed=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app Native AOT posture: PublishAot=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Generated app single-file posture: PublishSingleFile=true in ./src/Acme.Store.Host/Properties/PublishProfiles/CephalonFolder.pubxml, but the support contract remains not-claimed.", stdout.ToString(), StringComparison.Ordinal);
@@ -598,6 +606,7 @@ public sealed class CliApplicationTests
             Assert.Equal(1, exitCode);
             Assert.Contains("[error] Generated guidance docs assets: Missing generated guidance docs assets:", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("./README.md", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("./.cephalon/packages/README.md", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("./src/Acme.Store.Host/Configurations/README.md", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Cephalon doctor found 1 required issue(s).", stderr.ToString(), StringComparison.Ordinal);
         }
@@ -662,6 +671,68 @@ public sealed class CliApplicationTests
             Assert.Contains("[error] Generated root guidance baseline: ./README.md no longer keeps explicit generated guidance for:", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("NuGet.config", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Configurations/Add*.json", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon doctor found 1 required issue(s).", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenGeneratedLocalPackageFeedGuidanceDrifts()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-local-feed-guides-drift-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            localPackageFeedReadmeContents: """
+                # Local packages
+
+                This file no longer explains how to seed the generated feed.
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Generated local package feed guidance baseline: ./.cephalon/packages/README.md no longer keeps explicit generated guidance for:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("publish-package-artifacts.ps1", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Cephalon doctor found 1 required issue(s).", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -2302,6 +2373,7 @@ public sealed class CliApplicationTests
         string? linuxSystemdServiceContents = null,
         bool includeGeneratedGuidanceDocsAssets = true,
         string? appReadmeContents = null,
+        string? localPackageFeedReadmeContents = null,
         string? configurationReadmeContents = null,
         string? windowsServiceGuideContents = null,
         string? iisGuideContents = null,
@@ -2348,7 +2420,6 @@ public sealed class CliApplicationTests
             """);
 
         var localPackageFeedPath = Path.Combine(appRootPath, ".cephalon", "packages");
-        File.WriteAllText(Path.Combine(localPackageFeedPath, "README.md"), "# Placeholder");
         if (includeLocalPackages)
         {
             File.WriteAllBytes(Path.Combine(localPackageFeedPath, "Cephalon.AspNetCore.0.1.0-preview.nupkg"), []);
@@ -2515,6 +2586,21 @@ public sealed class CliApplicationTests
                 - deploy/linux/systemd/README.md
 
                 Run docker compose up --build after packages are reachable, then inspect /engine/snapshot.
+                """);
+            File.WriteAllText(
+                Path.Combine(localPackageFeedPath, "README.md"),
+                localPackageFeedReadmeContents ?? """
+                # Cephalon local package feed
+
+                `NuGet.config` points `Cephalon*` package restore at this directory by default so generated apps can build before you publish Cephalon packages to a shared feed.
+
+                Populate this directory from the Cephalon repository with:
+
+                ```powershell
+                pwsh <path-to-cephalon-repo>/scripts/publish-package-artifacts.ps1 -OutputPath <absolute-path-to-this-folder>
+                ```
+
+                If your team already publishes Cephalon packages to a shared source, replace the `cephalon` package source in `NuGet.config` instead. The Dockerfile and compose path use the same restore configuration automatically.
                 """);
 
             Directory.CreateDirectory(configurationsPath);

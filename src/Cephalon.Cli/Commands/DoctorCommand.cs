@@ -130,6 +130,15 @@ internal static class DoctorCommand
         "AddCephalonProjectConfigurations()"
     ];
 
+    private static readonly string[] RequiredGeneratedLocalPackageFeedGuideMarkers =
+    [
+        "Cephalon local package feed",
+        "NuGet.config",
+        "publish-package-artifacts.ps1",
+        "replace the `cephalon` package source",
+        "Dockerfile and compose path use the same restore configuration automatically."
+    ];
+
     /// <summary>
     /// Executes the doctor command with the supplied options.
     /// </summary>
@@ -1157,6 +1166,7 @@ internal static class DoctorCommand
     {
         var generatedAppId = ResolveGeneratedAppId(solutionPath, generatedAppRootPath);
         var rootGuidePath = Path.Combine(generatedAppRootPath, "README.md");
+        var localPackageFeedGuidePath = Path.Combine(generatedAppRootPath, ".cephalon", "packages", "README.md");
         var configurationGuidePath = Path.Combine(hostProject.DirectoryPath, "Configurations", "README.md");
         var windowsServiceGuidePath = Path.Combine(generatedAppRootPath, "deploy", "windows-service", "README.md");
         var iisGuidePath = Path.Combine(generatedAppRootPath, "deploy", "iis", "README.md");
@@ -1169,6 +1179,7 @@ internal static class DoctorCommand
         var guidanceDocPaths = new[]
         {
             rootGuidePath,
+            localPackageFeedGuidePath,
             configurationGuidePath,
             windowsServiceGuidePath,
             iisGuidePath,
@@ -1197,7 +1208,7 @@ internal static class DoctorCommand
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Pass,
                 "Generated guidance docs assets",
-                $"{ToDisplayRelativePath(generatedAppRootPath, rootGuidePath)}, {ToDisplayRelativePath(generatedAppRootPath, configurationGuidePath)}, and deploy/*/README.md guidance assets are present.",
+                $"{ToDisplayRelativePath(generatedAppRootPath, rootGuidePath)}, {ToDisplayRelativePath(generatedAppRootPath, localPackageFeedGuidePath)}, {ToDisplayRelativePath(generatedAppRootPath, configurationGuidePath)}, and deploy/*/README.md guidance assets are present.",
                 null));
         }
 
@@ -1208,6 +1219,15 @@ internal static class DoctorCommand
             RequiredGeneratedRootGuideMarkers.Append(generatedAppId).ToArray(),
             $"{ToDisplayRelativePath(generatedAppRootPath, rootGuidePath)} keeps generated package-source, split-config, publish, deployment, and local-orchestration guidance explicit for {generatedAppId}.",
             "Restore the generated root README so the scaffolded adoption path stays explicit before teams edit the app or replay deployment flows.",
+            checks);
+
+        EvaluateGeneratedGuideBaseline(
+            localPackageFeedGuidePath,
+            generatedAppRootPath,
+            "Generated local package feed guidance baseline",
+            RequiredGeneratedLocalPackageFeedGuideMarkers,
+            $"{ToDisplayRelativePath(generatedAppRootPath, localPackageFeedGuidePath)} keeps generated local package-feed bootstrap, publish-package-artifacts.ps1, and shared-feed replacement guidance explicit.",
+            "Restore the generated .cephalon/packages/README.md file so local package-feed bootstrap guidance stays explicit before teams seed packages or replace the cephalon package source.",
             checks);
 
         EvaluateGeneratedGuideBaseline(
