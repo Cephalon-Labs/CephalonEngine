@@ -11,17 +11,18 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The next backlog slice is therefore about making maturity and ownership explicit before more mixed-maturity expansion lands.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline and first eventing execution proof landed.
 
 Current focus:
 
-- classify major surfaces through [Engine surface maturity audit](engine-surface-maturity-audit.md)
-- harden `Cephalon.Eventing`, `Cephalon.Agentics`, and `Cephalon.Retrieval` with one narrow managed vertical proof each before widening catalog breadth
+- keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
+- treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
+- harden `Cephalon.Agentics` and `Cephalon.Retrieval` with one narrow managed vertical proof each before widening catalog breadth
 - keep `Cephalon.MultiTenancy` core narrow and move broader governance workflows into a companion-track plan
 
-### ENG-225 Engine surface maturity model and audit baseline
+### ENG-230 Engine surface maturity model and audit baseline
 
-Status: planned
+Status: done
 Estimate: 5
 
 Why:
@@ -29,15 +30,15 @@ Why:
 - the repo now mixes taxonomy, runtime-truth, and execution-owning surfaces across core engine, technology packs, and provider packs
 - downstream package consumers need explicit ownership language before more packages and templates ship outside the repo
 
-Planned outcome:
+Delivered:
 
 - establish the `M0` through `M4` maturity model and ownership vocabulary for Cephalon surfaces
 - classify the current major surfaces in a repo-owned audit
 - align docs hub, roadmap, backlog, governance, and project-memory language around the same truth
 
-### ENG-226 Truthful managed event-subscription execution baseline
+### ENG-231 Truthful managed event-subscription execution baseline
 
-Status: planned
+Status: done
 Estimate: 13
 
 Why:
@@ -45,13 +46,18 @@ Why:
 - `Cephalon.Eventing` already provides channel descriptors and runtime truth, but it still documents that subscription execution ownership is not yet guaranteed
 - the next useful proof is one real managed subscription execution path, not more descriptor breadth
 
-Planned outcome:
+Delivered:
 
-- add one truthful managed execution story for event subscriptions, retries, and execution ownership
-- keep application-managed versus Cephalon-managed behavior explicit in runtime surfaces and docs
-- prove the path with docs, sample coverage, and operator-facing runtime answers
+- add host-agnostic managed subscription execution contracts and binding vocabulary through `IEventSubscriptionExecutor`, `EventSubscriptionExecutionContext`, and execution-binding descriptors so the core pack can stay adapter-neutral while still projecting runtime ownership truthfully
+- keep application-managed versus runtime-bound behavior explicit in `event-subscriptions` through `dispatchRuntime`, `subscriptionRuntime`, `executionRuntimeId`, `executionOwnership`, `executionMode`, and `binding.*` metadata
+- let `Cephalon.Eventing.Wolverine` opt into one real `wolverine-managed` execution lane through `EnableSubscriptionExecution`, fixed-delay retry scheduling, `eventing.subscribe`, richer `wolverine-adapter` runtime state, and the existing staged-publication dispatch path
+- prove the path with focused composition, hosting, tooling, and regenerated reference-doc coverage
 
-### ENG-227 Agentics tool execution and run-state baseline
+Follow-up later:
+
+- broader inbound broker-consumption ownership, richer retry-policy vocabulary, and non-Wolverine managed subscription proofs remain future work
+
+### ENG-232 Agentics tool execution and run-state baseline
 
 Status: planned
 Estimate: 13
@@ -67,7 +73,7 @@ Planned outcome:
 - publish approval, audit, or policy hooks needed to keep that loop operator-safe
 - prove the slice with runtime surfaces and at least one adoption-quality sample
 
-### ENG-228 Retrieval indexing, query execution, and freshness baseline
+### ENG-233 Retrieval indexing, query execution, and freshness baseline
 
 Status: planned
 Estimate: 13
@@ -83,7 +89,7 @@ Planned outcome:
 - surface freshness and runtime posture truthfully through the existing operator story
 - prove the slice with one provider-backed sample and matching docs
 
-### ENG-229 Multi-tenancy governance, membership, and domain workflow companion split
+### ENG-234 Multi-tenancy governance, membership, and domain workflow companion split
 
 Status: planned
 Estimate: 8
@@ -1685,7 +1691,7 @@ Delivered:
 - the `event-dispatches` technology surface now also projects configured dispatch-runtime descriptor metadata per outbox path, and the `wolverine-adapter` surface now aggregates latest outcome, retry-pending count, and report totals so operators can see both configuration truth and live runtime follow-through without stitching several surfaces together by hand
 - `Cephalon.Eventing.Wolverine` now also contributes its own diagnostics convention so `/engine/diagnostics` and the runtime snapshot advertise the stable `4300-4305` Wolverine dispatch-loop event ids alongside the shared eventing diagnostics range
 - `Cephalon.Eventing.Wolverine` now also exposes `System.Diagnostics.ActivitySource` (`Cephalon.Eventing.Wolverine.Dispatch`) and `System.Diagnostics.Metrics.Meter` instrumentation for the dispatch loop, with Activity spans per dispatch item (tagged with message_id, event_type, channel_id, dispatch_attempt, correlation_id, tenant_id) and counters for attempts, successes, failures, retries plus a histogram for dispatch duration in milliseconds — enabling OpenTelemetry-instrumented hosts to capture distributed traces and metrics without additional adapter code
-- `eventing.subscriptions` still exposes declared subscription descriptors rather than a pack-owned bus runner, while `eventing.subscribe` remains intentionally absent until a real subscription/dispatch runtime exists instead of over-claiming bus behavior
+- at that point `eventing.subscriptions` still exposed declared subscription descriptors rather than a pack-owned bus runner, and `eventing.subscribe` remained intentionally absent until a real subscription/dispatch runtime existed instead of over-claiming bus behavior; `ENG-231` later adds the first truthful companion-managed case
 - decision lock: phase 8 will treat `Cephalon.Eventing.Wolverine` as the official first-class adapter path, keep `MassTransit` as the tracked-later candidate once that first path is proven, and leave `MediatR`, `LiteBus`, `NServiceBus`, and `SlimMessageBus` as consumer-owned coexistence choices unless a later bridge or adapter package is explicitly shipped
 - coexistence rule: one flow should have one durable-messaging owner, so consumer apps should not layer Cephalon-managed durable messaging semantics and a second bus/runtime on the same publish/consume path
 Follow-up later:
@@ -7833,23 +7839,23 @@ Upcoming sequence from the April 2026 maturity reset:
 
 ### Sprint 42
 
-- ENG-225 Engine surface maturity model and audit baseline
+- ENG-230 Engine surface maturity model and audit baseline
 
 ### Sprint 43
 
-- ENG-226 Truthful managed event-subscription execution baseline
+- ENG-231 Truthful managed event-subscription execution baseline
 
 ### Sprint 44
 
-- ENG-227 Agentics tool execution and run-state baseline
+- ENG-232 Agentics tool execution and run-state baseline
 
 ### Sprint 45
 
-- ENG-228 Retrieval indexing, query execution, and freshness baseline
+- ENG-233 Retrieval indexing, query execution, and freshness baseline
 
 ### Later / not scheduled yet
 
-- ENG-229 Multi-tenancy governance, membership, and domain workflow companion split
+- ENG-234 Multi-tenancy governance, membership, and domain workflow companion split
 
 ### Foundation Sprint 1
 

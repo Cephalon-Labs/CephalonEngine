@@ -7,6 +7,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 - `Cephalon.Eventing.Wolverine.Configuration`
 - `Cephalon.Eventing.Wolverine.Registration`
+- `Cephalon.Eventing.Wolverine.Services`
 
 <a id="namespace-cephalon-eventing-wolverine-configuration"></a>
 
@@ -97,6 +98,16 @@ bool EnableRuntimeSurface { get; set; }
 
 Gets or sets a value indicating whether the pack should publish its runtime surface into Cephalon technology introspection.
 
+<a id="member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-enablesubscriptionexecution"></a>
+
+##### `EnableSubscriptionExecution`
+
+```csharp
+bool EnableSubscriptionExecution { get; set; }
+```
+
+Gets or sets a value indicating whether the pack should execute declared event subscriptions through the Wolverine-managed staged-event dispatch path. Defaults to `false`.
+
 <a id="member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-retrydelayseconds"></a>
 
 ##### `RetryDelaySeconds`
@@ -106,6 +117,16 @@ int RetryDelaySeconds { get; set; }
 ```
 
 Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
+
+<a id="member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-subscriptionretrydelayseconds"></a>
+
+##### `SubscriptionRetryDelaySeconds`
+
+```csharp
+int SubscriptionRetryDelaySeconds { get; set; }
+```
+
+Gets or sets the number of seconds the Wolverine-managed subscription execution path should wait before requeueing a failed subscription attempt.
 
 <a id="namespace-cephalon-eventing-wolverine-registration"></a>
 
@@ -139,3 +160,100 @@ Returns: The same engine builder for fluent composition.
 Parameters:
 - `builder`: The engine builder to extend.
 - `configure`: An optional callback that configures the host-owned Wolverine eventing options, including the opt-in managed dispatch loop.
+
+<a id="namespace-cephalon-eventing-wolverine-services"></a>
+
+## Namespace Cephalon.Eventing.Wolverine.Services
+
+<a id="type-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler"></a>
+
+### `WolverineManagedEventSubscriptionExecutionHandler`
+
+Infrastructure retry handler used by the Wolverine eventing pack for managed subscription executions.
+
+#### Declaration
+```csharp
+public sealed class WolverineManagedEventSubscriptionExecutionHandler
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler-ctor"></a>
+
+##### `WolverineManagedEventSubscriptionExecutionHandler`
+
+```csharp
+WolverineManagedEventSubscriptionExecutionHandler()
+```
+
+Initializes a new instance of the `WolverineManagedEventSubscriptionExecutionHandler` class.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler-handle-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-wolverine-envelope-system-iserviceprovider-wolverine-imessagebus-system-threading-cancellationtoken"></a>
+
+##### `Handle`
+
+```csharp
+Task Handle(WolverineManagedEventSubscriptionExecutionRequest request, Envelope envelope, IServiceProvider services, IMessageBus messageBus, CancellationToken cancellationToken)
+```
+
+Replays one managed subscription execution attempt from Wolverine's scheduled-message pipeline.
+
+Returns: A task that completes when the managed retry attempt finishes.
+
+Parameters:
+- `request`: The infrastructure retry message describing the managed subscription attempt.
+- `envelope`: The Wolverine envelope that carries retry-attempt metadata.
+- `services`: The current service provider scope.
+- `messageBus`: The active Wolverine message bus.
+- `cancellationToken`: The cancellation token for the current retry attempt.
+
+<a id="type-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest"></a>
+
+### `WolverineManagedEventSubscriptionExecutionRequest`
+
+Infrastructure message used by the Wolverine eventing pack to requeue managed subscription executions.
+
+#### Declaration
+```csharp
+public sealed class WolverineManagedEventSubscriptionExecutionRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication"></a>
+
+##### `WolverineManagedEventSubscriptionExecutionRequest`
+
+```csharp
+WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication)
+```
+
+Creates a new infrastructure retry message for one managed event-subscription execution.
+
+Parameters:
+- `subscriptionId`: The declared subscription identifier that should be retried.
+- `publication`: The staged publication that should be delivered to the subscription.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-publication"></a>
+
+##### `Publication`
+
+```csharp
+EventPublication Publication { get; }
+```
+
+Gets the staged publication that should be delivered to the managed subscription.
+
+<a id="member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-subscriptionid"></a>
+
+##### `SubscriptionId`
+
+```csharp
+string SubscriptionId { get; }
+```
+
+Gets the declared subscription identifier that should be executed.

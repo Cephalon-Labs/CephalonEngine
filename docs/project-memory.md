@@ -287,6 +287,7 @@ Current standing examples from this collaboration:
 
 - keep important collaboration memory in `docs/project-memory.md`
 - keep the durable planning workflow explicit through `docs/planning-governance.md`; meaningful work must stay aligned across repo docs, GitHub Project tracking, sprint placement, validation expectations, and commit-reference history
+- once an `ENG-*` id is part of the durable project record, treat it as immutable; future planning resets should allocate fresh ids instead of reusing shipped history
 - treat internet-backed research as the default follow-through for sub-agent learning tasks when accuracy or freshness matters
 - when making reusable framework or package-family decisions, default to official Microsoft or NuGet guidance for library design, compatibility, analyzers, packaging, Source Link, and publishing hygiene before inventing a repo-local convention
 - package-family decisions should optimize for long-term discoverability and upgrade safety: prefer a coherent `Cephalon.*` taxonomy, complete NuGet metadata, Source Link, symbols, SemVer, package-validation baselines, and trusted publishing rather than treating packaging as an afterthought

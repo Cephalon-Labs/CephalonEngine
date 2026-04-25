@@ -72,7 +72,8 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 | `Cephalon.Behaviors.Http` metadata-only REST profiles | REST profile shorthand over behavior surfaces | `application-managed` | `M1` | Either keep them explicitly metadata-only or prove a managed authoring/runtime lane |
 | `Cephalon.Data` shared CDC runtime plus provider-native pumps | Shared and provider-native data execution truth | `cephalon-managed` plus `provider-managed` | `M3` | More package-level external adoption proof and operator docs per provider family |
 | `Cephalon.Edge.KubernetesGateway` and `Cephalon.Edge.Traefik` | Provider-specific control-plane automation | `provider-managed` | `M3` | More adoption-quality samples and package publishing guidance outside the repo |
-| `Cephalon.Eventing` core package | Channel descriptors and event runtime truth | `application-managed` today | `M1` | One truthful managed execution path for subscriptions, retries, and runtime ownership |
+| `Cephalon.Eventing` core package | Channel descriptors, staged publication, subscription runtime truth, and managed-execution binding vocabulary | mixed: `application-managed` baseline plus companion-bound execution truth | `M1` | Keep the adapter-neutral execution seam narrow and truthful without claiming generic broker/inbox ownership in the core pack |
+| `Cephalon.Eventing.Wolverine` | Official Wolverine-managed staged dispatch and subscription execution baseline | `provider-managed` | `M2` | Broaden inbound-consumption, retry-policy, and operator-automation proof only when the runtime truly owns those paths |
 | `Cephalon.Agentics` | Tool descriptors and agent-workload runtime surface | `application-managed` today | `M1` | Tool execution, run-state, approval/audit hooks, and one sample that proves the loop end to end |
 | `Cephalon.Retrieval` | Knowledge collection descriptors and retrieval runtime surface | `application-managed` today | `M1` | Indexing, query execution, freshness/runtime state, and one provider-backed sample |
 | `Cephalon.MultiTenancy` core package | Narrow tenant-resolution and runtime truth baseline | mixed: `cephalon-managed` core, broader workflows still `application-managed` | `M2` | Preserve the narrow core and move governance/member/domain flows into a companion track instead of bloating the base pack |
@@ -81,7 +82,7 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 
 - stop expanding descriptor-first surfaces inside mixed-maturity families unless the work is explicitly labeled `M0` or `M1`
 - do not describe `M0` or `M1` packages as if they already own execution, orchestration, or provisioning
-- prefer one narrow vertical proof slice over broad catalog expansion in `Cephalon.Eventing`, `Cephalon.Agentics`, and `Cephalon.Retrieval`
+- treat `Cephalon.Eventing.Wolverine` as the first current managed vertical proof for the eventing family, and prefer the same narrow-proof approach over broad catalog expansion in `Cephalon.Agentics` and `Cephalon.Retrieval`
 - keep `Cephalon.MultiTenancy` intentionally thin in the base package; add broader governance workflows through companion-track planning instead of turning the core into a monolith
 - use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
@@ -89,23 +90,23 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 
 ### Sprint 42
 
-- `ENG-225` Engine surface maturity model and audit baseline
+- `ENG-230` Engine surface maturity model and audit baseline
 
 ### Sprint 43
 
-- `ENG-226` Truthful managed event-subscription execution baseline
+- `ENG-231` Truthful managed event-subscription execution baseline
 
 ### Sprint 44
 
-- `ENG-227` Agentics tool execution and run-state baseline
+- `ENG-232` Agentics tool execution and run-state baseline
 
 ### Sprint 45
 
-- `ENG-228` Retrieval indexing, query execution, and freshness baseline
+- `ENG-233` Retrieval indexing, query execution, and freshness baseline
 
 ### Later / not scheduled yet
 
-- `ENG-229` Multi-tenancy governance, membership, and domain workflow companion split
+- `ENG-234` Multi-tenancy governance, membership, and domain workflow companion split
 
 ## Promotion checklist
 

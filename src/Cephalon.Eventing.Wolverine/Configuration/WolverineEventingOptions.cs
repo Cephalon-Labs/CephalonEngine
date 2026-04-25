@@ -30,6 +30,11 @@ public sealed class WolverineEventingOptions
     public bool EnableDispatchLoop { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the pack should execute declared event subscriptions through the Wolverine-managed staged-event dispatch path. Defaults to <see langword="false" />.
+    /// </summary>
+    public bool EnableSubscriptionExecution { get; set; }
+
+    /// <summary>
     /// Gets or sets the maximum number of staged events the Wolverine-owned dispatch loop should read per polling cycle.
     /// </summary>
     public int DispatchBatchSize { get; set; } = 25;
@@ -43,6 +48,11 @@ public sealed class WolverineEventingOptions
     /// Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
     /// </summary>
     public int RetryDelaySeconds { get; set; } = 30;
+
+    /// <summary>
+    /// Gets or sets the number of seconds the Wolverine-managed subscription execution path should wait before requeueing a failed subscription attempt.
+    /// </summary>
+    public int SubscriptionRetryDelaySeconds { get; set; } = 30;
 
     /// <summary>
     /// Gets or sets an optional callback that can extend Wolverine host wiring before the runtime starts.

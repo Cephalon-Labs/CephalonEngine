@@ -27,7 +27,9 @@ internal sealed class TechnologyPackContributionModule : ModuleBase, IExecutionG
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton<ManagedAuditProjectorProbe>();
         services.AddSingleton<IAgentToolContributor, ContributedAgentToolContributor>();
+        services.AddSingleton<IEventSubscriptionExecutor, ContributedAuditProjectorExecutor>();
         services.AddSingleton<IKnowledgeCollectionContributor, ContributedKnowledgeCollectionContributor>();
         services.AddSingleton<IEventChannelContributor, ContributedEventChannelContributor>();
         services.AddSingleton<IEventSubscriptionContributor, ContributedEventSubscriptionContributor>();
@@ -145,6 +147,115 @@ internal sealed class ContributedEventSubscriptionContributor : IEventSubscripti
             handlerId: "compliance-audit-projector",
             deliveryMode: "background-service",
             tags: ["audit", "module"]));
+    }
+}
+
+internal sealed class ManagedAuditProjectorProbe
+{
+    private readonly Lock gate = new();
+    private int failuresRemaining;
+    private int successfulAttempts;
+    private int totalAttempts;
+    private string? lastMessageId;
+
+    public int FailuresRemaining
+    {
+        get
+        {
+            lock (gate)
+            {
+                return failuresRemaining;
+            }
+        }
+
+        set
+        {
+            lock (gate)
+            {
+                failuresRemaining = Math.Max(0, value);
+            }
+        }
+    }
+
+    public int SuccessfulAttempts
+    {
+        get
+        {
+            lock (gate)
+            {
+                return successfulAttempts;
+            }
+        }
+    }
+
+    public int TotalAttempts
+    {
+        get
+        {
+            lock (gate)
+            {
+                return totalAttempts;
+            }
+        }
+    }
+
+    public string? LastMessageId
+    {
+        get
+        {
+            lock (gate)
+            {
+                return lastMessageId;
+            }
+        }
+    }
+
+    public bool ConsumeFailure()
+    {
+        lock (gate)
+        {
+            if (failuresRemaining <= 0)
+            {
+                return false;
+            }
+
+            failuresRemaining--;
+            return true;
+        }
+    }
+
+    public void RecordAttempt(EventSubscriptionExecutionContext context, bool succeeded)
+    {
+        lock (gate)
+        {
+            totalAttempts++;
+            lastMessageId = context.Publication.Id;
+            if (succeeded)
+            {
+                successfulAttempts++;
+            }
+        }
+    }
+}
+
+internal sealed class ContributedAuditProjectorExecutor(ManagedAuditProjectorProbe probe) : IEventSubscriptionExecutor
+{
+    public string SubscriptionId => "audit-projector";
+
+    public ValueTask ExecuteAsync(
+        EventSubscriptionExecutionContext context,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (probe.ConsumeFailure())
+        {
+            probe.RecordAttempt(context, succeeded: false);
+            throw new InvalidOperationException("Managed audit projector requested a retry.");
+        }
+
+        probe.RecordAttempt(context, succeeded: true);
+        return ValueTask.CompletedTask;
     }
 }
 

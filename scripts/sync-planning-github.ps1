@@ -725,6 +725,10 @@ function Test-IsManagedLabel {
 function Get-PhaseLabelName {
     param($PhaseNumber)
 
+    if ($null -eq $PhaseNumber -or [string]::IsNullOrWhiteSpace([string]$PhaseNumber)) {
+        return $null
+    }
+
     switch ([int]$PhaseNumber) {
         0 { return "phase:0-foundation" }
         1 { return "phase:1-sdk-hardening" }
@@ -741,6 +745,10 @@ function Get-PhaseLabelName {
 function Get-PhaseLabelDescription {
     param($PhaseNumber)
 
+    if ($null -eq $PhaseNumber -or [string]::IsNullOrWhiteSpace([string]$PhaseNumber)) {
+        return $null
+    }
+
     switch ([int]$PhaseNumber) {
         0 { return "Planning work aligned to Phase 0 foundation hardening." }
         1 { return "Planning work aligned to Phase 1 SDK hardening and adoption." }
@@ -756,6 +764,10 @@ function Get-PhaseLabelDescription {
 
 function Get-PhaseLabelColor {
     param($PhaseNumber)
+
+    if ($null -eq $PhaseNumber -or [string]::IsNullOrWhiteSpace([string]$PhaseNumber)) {
+        return $null
+    }
 
     switch ([int]$PhaseNumber) {
         0 { return "5319e7" }
@@ -2799,7 +2811,7 @@ function Get-RepositoryIssues {
         "issue", "list",
         "--repo", $RepositoryFullName,
         "--state", "all",
-        "--limit", "200",
+        "--limit", "5000",
         "--json", "id,number,title,state,body,url,milestone,assignees,labels"
     )
 }

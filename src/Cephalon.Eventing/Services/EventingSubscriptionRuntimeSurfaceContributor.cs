@@ -9,6 +9,7 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
     IEventSubscriptionCatalog catalog,
     IInboxCatalog inboxes,
+    EventSubscriptionExecutionBindingCatalog executionBindings,
     IEventSubscriptionRuntimeCatalog runtimeStates,
     IRuntime runtime,
     IExecutionRuntimeCatalog executionGraphs,
@@ -36,6 +37,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
                     hostedExecutionStateIndex,
                     executionGraphStateIndex,
                     executionGraphs,
+                    executionBindings,
                     runtimeStates))
                 .ToArray());
     }
@@ -46,12 +48,14 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
         Dictionary<string, RuntimeHostedExecutionState> hostedExecutionStateIndex,
         Dictionary<string, RuntimeExecutionGraphState> executionGraphStateIndex,
         IExecutionRuntimeCatalog executionGraphs,
+        EventSubscriptionExecutionBindingCatalog executionBindings,
         IEventSubscriptionRuntimeCatalog runtimeStates)
     {
         var linkedInboxes = inboxes.Inboxes
             .Where(inbox => SupportsChannel(inbox, subscription.ChannelId))
             .OrderBy(static inbox => inbox.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var executionBinding = executionBindings.GetBySubscriptionId(subscription.Id);
         var linkedHostedExecutions = hostedExecutionLinks.TryGetValue(subscription.Id, out var matches)
             ? matches
             : [];
@@ -61,17 +65,45 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
             ["channelId"] = subscription.ChannelId,
             ["handlerId"] = subscription.HandlerId,
             ["deliveryMode"] = subscription.DeliveryMode,
-            ["dispatchRuntime"] = linkedHostedExecutions.Count > 0 || hasRuntimeState ? "application-managed" : "not-configured",
+            ["dispatchRuntime"] = executionBinding is not null
+                ? executionBinding.ExecutionOwnership
+                : linkedHostedExecutions.Count > 0 || hasRuntimeState
+                    ? "application-managed"
+                    : "not-configured",
             ["inbox"] = linkedInboxes.Length > 0 ? "available" : "not-configured",
             ["inboxLink"] = linkedInboxes.Length > 0 ? "application-managed" : "not-configured",
             ["runtimeState"] = hasRuntimeState ? "reported" : "not-reported",
-            ["subscriptionRuntime"] = linkedHostedExecutions.Count > 0
-                ? "hosted-execution-linked"
-                : hasRuntimeState
-                    ? "application-managed-state"
-                    : "not-configured",
+            ["subscriptionRuntime"] = executionBinding is not null
+                ? "runtime-bound"
+                : linkedHostedExecutions.Count > 0
+                    ? "hosted-execution-linked"
+                    : hasRuntimeState
+                        ? "application-managed-state"
+                        : "not-configured",
             ["tags"] = string.Join(",", subscription.Tags)
         };
+
+        if (executionBinding is not null)
+        {
+            metadata["executionRuntimeId"] = executionBinding.ExecutionRuntimeId;
+            metadata["executionOwnership"] = executionBinding.ExecutionOwnership;
+            metadata["executionMode"] = executionBinding.ExecutionMode;
+
+            if (executionBinding.Metadata.Count > 0)
+            {
+                metadata["bindingMetadataKeys"] = string.Join(
+                    ",",
+                    executionBinding.Metadata.Keys.OrderBy(static key => key, StringComparer.OrdinalIgnoreCase));
+
+                foreach (var pair in executionBinding.Metadata.OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase))
+                {
+                    if (!string.IsNullOrWhiteSpace(pair.Key))
+                    {
+                        metadata[$"binding.{pair.Key.Trim()}"] = pair.Value;
+                    }
+                }
+            }
+        }
 
         if (linkedInboxes.Length > 0)
         {

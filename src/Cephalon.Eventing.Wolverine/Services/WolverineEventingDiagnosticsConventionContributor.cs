@@ -51,6 +51,13 @@ internal static class WolverineEventingDiagnosticsConventions
         MessageTemplate: "Wolverine-managed event dispatch metrics recorded.",
         Description: "Emitted when dispatch metrics (attempts, successes, failures, retries, duration) are recorded through the OpenTelemetry-compatible meter.");
 
+    public static readonly DiagnosticEventDefinition SubscriptionObservationProjectionFailed = new(
+        Id: 4306,
+        Name: "WolverineSubscriptionObservationProjectionFailed",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Wolverine-managed subscription execution could not project runtime observation '{Outcome}' for subscription '{SubscriptionId}'.",
+        Description: "Emitted when the Wolverine-managed subscription execution path cannot write its runtime observation back into the shared Cephalon subscription reporting surface.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.Eventing.Wolverine",
         LoggerCategoryPrefix: "Cephalon.Eventing.Wolverine",
@@ -62,6 +69,7 @@ internal static class WolverineEventingDiagnosticsConventions
             DispatchReadFailed,
             DispatchObservationProjectionFailed,
             DispatchActivityStarted,
-            DispatchMetricsRecorded
+            DispatchMetricsRecorded,
+            SubscriptionObservationProjectionFailed
         ]);
 }

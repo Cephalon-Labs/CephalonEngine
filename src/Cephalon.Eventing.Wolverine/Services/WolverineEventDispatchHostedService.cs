@@ -93,6 +93,7 @@ internal sealed class WolverineEventDispatchHostedService(
         var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
         var runtimeReporter = scope.ServiceProvider.GetRequiredService<IEventDispatchRuntimeReporter>();
         var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+        var managedSubscriptions = scope.ServiceProvider.GetService<WolverineManagedEventSubscriptionDispatcher>();
 
         try
         {
@@ -113,7 +114,7 @@ internal sealed class WolverineEventDispatchHostedService(
         foreach (var pendingDispatch in pendingDispatches)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await DispatchAsync(pendingDispatch, dispatchStore, runtimeReporter, messageBus, cancellationToken).ConfigureAwait(false);
+            await DispatchAsync(pendingDispatch, dispatchStore, runtimeReporter, messageBus, managedSubscriptions, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -122,11 +123,13 @@ internal sealed class WolverineEventDispatchHostedService(
         IEventDispatchStore dispatchStore,
         IEventDispatchRuntimeReporter runtimeReporter,
         IMessageBus messageBus,
+        WolverineManagedEventSubscriptionDispatcher? managedSubscriptions,
         CancellationToken cancellationToken)
     {
         var attempt = checked(item.DispatchAttemptCount + 1);
         var deliveryOptions = CreateDeliveryOptions(item, attempt);
         var publication = CreatePublication(item);
+        var managedSubscriptionCount = managedSubscriptions?.CountForChannel(item.ChannelId) ?? 0;
 
         using var activity = WolverineDispatchInstrumentation.Source.StartActivity(
             "wolverine.dispatch",
@@ -158,13 +161,13 @@ internal sealed class WolverineEventDispatchHostedService(
                 item,
                 attempt,
                 EventDispatchExecutionOutcomes.Started,
-                metadata: CreateObservationMetadata(item, deliveryOptions)),
+                metadata: CreateObservationMetadata(item, deliveryOptions, managedSubscriptionCount)),
             cancellationToken).ConfigureAwait(false);
 
         try
         {
             var destinations = messageBus.PreviewSubscriptions(publication, deliveryOptions);
-            if (destinations.Count == 0)
+            if (destinations.Count == 0 && managedSubscriptionCount == 0)
             {
                 WolverineDispatchInstrumentation.DispatchRetries.Add(1);
                 activity?.SetTag("cephalon.dispatch_result", "no-destinations");
@@ -178,12 +181,21 @@ internal sealed class WolverineEventDispatchHostedService(
                         attempt,
                         "Wolverine does not have any configured destinations for Cephalon event publications.",
                         deliveryOptions,
+                        managedSubscriptionCount,
                         null),
                     cancellationToken).ConfigureAwait(false);
                 return;
             }
 
-            await messageBus.PublishAsync(publication, deliveryOptions).ConfigureAwait(false);
+            if (destinations.Count > 0)
+            {
+                await messageBus.PublishAsync(publication, deliveryOptions).ConfigureAwait(false);
+            }
+
+            if (managedSubscriptionCount > 0)
+            {
+                await managedSubscriptions!.DispatchAsync(publication, messageBus, cancellationToken).ConfigureAwait(false);
+            }
 
             stopwatch.Stop();
             WolverineDispatchInstrumentation.DispatchSuccesses.Add(1);
@@ -197,7 +209,7 @@ internal sealed class WolverineEventDispatchHostedService(
                     item,
                     attempt,
                     EventDispatchExecutionOutcomes.Succeeded,
-                    metadata: CreateObservationMetadata(item, deliveryOptions)),
+                    metadata: CreateObservationMetadata(item, deliveryOptions, managedSubscriptionCount)),
                 cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -216,7 +228,7 @@ internal sealed class WolverineEventDispatchHostedService(
             await ApplyObservationAsync(
                 dispatchStore,
                 runtimeReporter,
-                CreateRetryReport(item, attempt, exception.Message, deliveryOptions, exception),
+                CreateRetryReport(item, attempt, exception.Message, deliveryOptions, managedSubscriptionCount, exception),
                 cancellationToken).ConfigureAwait(false);
         }
     }
@@ -248,12 +260,14 @@ internal sealed class WolverineEventDispatchHostedService(
         int attempt,
         string error,
         DeliveryOptions deliveryOptions,
+        int managedSubscriptionCount,
         Exception? exception)
     {
         var nextRetryAtUtc = DateTimeOffset.UtcNow.AddSeconds(Math.Max(1, options.RetryDelaySeconds));
         var retryMetadata = CreateObservationMetadata(
             item,
             deliveryOptions,
+            managedSubscriptionCount,
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["nextRetryAtUtc"] = nextRetryAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
@@ -342,8 +356,12 @@ internal sealed class WolverineEventDispatchHostedService(
     private static Dictionary<string, string> CreateObservationMetadata(
         EventDispatchItem item,
         DeliveryOptions deliveryOptions,
+        int managedSubscriptionCount,
         IReadOnlyDictionary<string, string>? overrides = null)
     {
+        var deliveryMode = managedSubscriptionCount > 0
+            ? "publish-and-subscribe"
+            : "publish";
         var metadata = new Dictionary<string, string>(item.Metadata, StringComparer.OrdinalIgnoreCase)
         {
             ["publisherId"] = WolverineEventingRuntimeIds.PublisherId,
@@ -351,11 +369,12 @@ internal sealed class WolverineEventDispatchHostedService(
             ["dispatchBridge"] = "wolverine-managed",
             ["dispatchOwnership"] = "wolverine-managed",
             ["dispatchMode"] = "publish-event-publication",
-            ["deliveryMode"] = "publish",
+            ["deliveryMode"] = deliveryMode,
             ["transport"] = "wolverine",
             ["channelId"] = item.ChannelId,
             ["contentType"] = item.ContentType ?? "not-configured",
-            ["headerCount"] = deliveryOptions.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture)
+            ["headerCount"] = deliveryOptions.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["managedSubscriptionCount"] = managedSubscriptionCount.ToString(System.Globalization.CultureInfo.InvariantCulture)
         };
 
         if (!string.IsNullOrWhiteSpace(item.TenantId))

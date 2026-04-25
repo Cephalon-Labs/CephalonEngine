@@ -1,9 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Data.EntityFramework.Registration;
 using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Manifest;
 using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
 using Cephalon.Eventing.Wolverine.Registration;
@@ -125,5 +127,99 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("wolverine-dispatch-loop", snapshot.EventDispatchRuntimes[0].Id);
         Assert.Equal(1, snapshot.EventDispatchRuntimes[0].Summary.TotalReports);
         Assert.Equal("entity-framework-outbox", snapshot.EventDispatchStates[0].OutboxId);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesManagedWolverineSubscriptionExecutionCapabilityAndRuntimeSurfaces()
+    {
+        var databaseName = $"cephalon-hosting-event-subscriptions-{Guid.NewGuid():N}";
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                data: new DataSettings(
+                    provider: "EntityFramework",
+                    outboxEnabled: true),
+                messaging: new MessagingSettings(provider: "Wolverine")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+            });
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+            engine.AddWolverineEventing(options =>
+            {
+                options.EnableDispatchLoop = true;
+                options.EnableSubscriptionExecution = true;
+                options.DispatchBatchSize = 5;
+                options.DispatchPollingIntervalSeconds = 2;
+                options.RetryDelaySeconds = 20;
+                options.SubscriptionRetryDelaySeconds = 45;
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(capabilities);
+        var managedCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("wolverine-managed", managedCapability.Metadata["executionOwnership"]);
+        Assert.Equal("message-handler", managedCapability.Metadata["executionMode"]);
+        Assert.Equal("wolverine-subscription-execution", managedCapability.Metadata["executionRuntimeId"]);
+        Assert.Equal("wolverine-dispatch-loop", managedCapability.Metadata["triggerRuntimeId"]);
+        Assert.Equal("fixed-delay", managedCapability.Metadata["retryPolicy"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var managedSubscription = Assert.Single(subscriptionSurface.Entries, entry => entry.Id == "audit-projector");
+        Assert.Equal("audit", managedSubscription.Metadata["channelId"]);
+        Assert.Equal("wolverine-managed", managedSubscription.Metadata["dispatchRuntime"]);
+        Assert.Equal("runtime-bound", managedSubscription.Metadata["subscriptionRuntime"]);
+        Assert.Equal("wolverine-subscription-execution", managedSubscription.Metadata["executionRuntimeId"]);
+        Assert.Equal("wolverine-managed", managedSubscription.Metadata["executionOwnership"]);
+        Assert.Equal("message-handler", managedSubscription.Metadata["executionMode"]);
+        Assert.Equal("wolverine", managedSubscription.Metadata["binding.adapter"]);
+        Assert.Equal("wolverine-dispatch-loop", managedSubscription.Metadata["binding.trigger"]);
+        Assert.Equal("fixed-delay", managedSubscription.Metadata["binding.retryPolicy"]);
+        Assert.Equal("45", managedSubscription.Metadata["binding.retryDelaySeconds"]);
+        Assert.Equal("audit-projector-pump", managedSubscription.Metadata["hostedExecutionId"]);
+        Assert.Equal("audit-subscription-flow", managedSubscription.Metadata["executionGraphId"]);
+
+        var adapterSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var adapterEntry = Assert.Single(adapterSurface.Entries);
+        Assert.Equal("wolverine-managed", adapterEntry.Metadata["dispatchBridge"]);
+        Assert.Equal("wolverine-managed", adapterEntry.Metadata["subscriptionExecution"]);
+        Assert.Equal("wolverine-subscription-execution", adapterEntry.Metadata["subscriptionExecutionRuntimeId"]);
+        Assert.Equal("1", adapterEntry.Metadata["managedSubscriptionCount"]);
+        Assert.Equal("audit-projector", adapterEntry.Metadata["managedSubscriptionIds"]);
+        Assert.Equal("45", adapterEntry.Metadata["subscriptionRetryDelaySeconds"]);
+
+        Assert.NotNull(snapshot);
+        var snapshotSubscription = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "audit-projector");
+        Assert.Equal("wolverine-managed", snapshotSubscription.Metadata["dispatchRuntime"]);
+        Assert.Equal("runtime-bound", snapshotSubscription.Metadata["subscriptionRuntime"]);
+        var snapshotAdapter = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "wolverine-adapter").Entries);
+        Assert.Equal("wolverine-managed", snapshotAdapter.Metadata["subscriptionExecution"]);
+        Assert.Equal("1", snapshotAdapter.Metadata["managedSubscriptionCount"]);
     }
 }

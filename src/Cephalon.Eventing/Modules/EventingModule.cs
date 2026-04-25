@@ -30,6 +30,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasDispatchStore;
     private bool hasDispatchRuntimeContributors;
     private bool hasInboxPath;
+    private bool hasManagedSubscriptionExecutionBindings;
     private bool hasSubscriptionContributors;
     private bool hasPublishingPath;
 
@@ -62,6 +63,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
         hasInboxPath = services.Any(static descriptor => descriptor.ServiceType == typeof(IInbox));
+        hasManagedSubscriptionExecutionBindings = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutionBindingContributor));
         hasSubscriptionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionContributor));
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, EventingDiagnosticsConventionContributor>());
@@ -70,6 +72,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         if (options.EnableSubscriptions)
         {
             services.TryAddSingleton<IEventSubscriptionCatalog, EventSubscriptionCatalog>();
+            services.TryAddSingleton<EventSubscriptionExecutionBindingCatalog>();
             services.TryAddSingleton<EventSubscriptionRuntimeCatalog>();
             services.TryAddSingleton<IEventSubscriptionRuntimeCatalog>(static provider => provider.GetRequiredService<EventSubscriptionRuntimeCatalog>());
             services.TryAddSingleton<IEventSubscriptionRuntimeReporter>(static provider => provider.GetRequiredService<EventSubscriptionRuntimeCatalog>());
@@ -131,7 +134,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                 metadata: new Dictionary<string, string>
                 {
                     ["technology"] = "event-driven-integration",
-                    ["dispatchRuntime"] = "not-configured",
+                    ["dispatchRuntime"] = hasManagedSubscriptionExecutionBindings ? "configured" : "not-configured",
                     ["inbox"] = hasInboxPath ? "available" : "not-configured",
                     ["runtimeState"] = "available"
                 }));

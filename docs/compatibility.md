@@ -10,6 +10,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 | Target framework baseline | the `TargetFramework` used by shipped `src/Cephalon.*` projects | CLI defaults, scaffolded project files, generated module manifests, template project files, sample/reference-module projects, and docs examples |
 | Blueprint, pattern, technology, and transport identifiers | the runtime/app-model contracts in `Cephalon.Abstractions` and `Cephalon.Engine` | scaffold plans, CLI parsing/help text, template coverage, samples, and hand-authored docs |
 | Package manifest contract | `cephalon.package.json` plus engine package-loading and policy enforcement | scaffolded module output, template module starters, reference modules, module-authoring docs, operations docs, and trust/package-policy guidance |
+| Technology-pack execution ownership contract | the public execution/binding contracts and capability/runtime surfaces shipped by technology packs and adapters | component docs, package-surface tests, reference-doc output, operator/runtime guidance, and roadmap/backlog/maturity-audit planning truth |
 | REST authoring and governance contract | the module-owned projection, runtime-catalog, and governance surfaces in `Cephalon.Behaviors.Http` and `Cephalon.AspNetCore` | REST-enabled `Cephalon.Scaffolding` output, `cephalon-monolith` / `cephalon-slice` / `cephalon-microservice`, `cephalon-rest-behavior-module`, `cephalon-rest-module`, blueprint samples, REST strategy docs, module-authoring docs, component docs, runtime/operator guidance, and host governance config examples |
 | Reference-doc publishing flow | `Cephalon.ReferenceDocs`, the CLI docs commands, and the host `ReferenceDocs` section | scaffolded host appsettings/readmes, docs-publish command help, hosted docs guidance, and docs examples |
 | Release package-artifact flow | `scripts/publish-package-artifacts.ps1`, `scripts/validate-release.ps1`, and the release-validation workflow | intended packable project set, shared NuGet metadata/readme defaults, CLI tool packaging, release checksum/provenance metadata, artifact uploads, and package-publishing docs |
@@ -49,6 +50,12 @@ This guide describes the compatibility contract that must stay aligned across Ce
 - `Cephalon.Cli` is the richer generation and docs-publishing shell over the same contracts
 - `Cephalon.TemplatePack` is the lightweight install surface for the same shipped blueprint family and module starter conventions
 - when blueprint, transport, docs-hosting, or package-manifest behavior changes, update all affected surfaces together instead of letting one generator path drift
+
+### Technology-pack execution ownership
+
+- when a technology pack moves from descriptor-only or application-managed behavior into a real managed execution lane, update the public contracts, component docs, capability metadata, runtime-surface metadata, reference docs, and package-surface expectations together
+- keep execution ownership explicit in both public contracts and runtime metadata; do not let a pack read as `cephalon-managed` or `provider-managed` unless the implementation truly owns the path
+- keep narrow managed proofs honest about their trigger path and boundaries, for example when an adapter-managed execution lane depends on an existing staged-publication flow instead of a generic inbound broker story
 
 ### REST authoring and governance
 

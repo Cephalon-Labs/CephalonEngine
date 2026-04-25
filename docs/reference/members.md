@@ -1521,6 +1521,9 @@ Browse the published API surface by public member.
 - [Attempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-attempt): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the dispatch attempt number associated with this observation.
   - `int Attempt { get; }`
+- [Attempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-attempt): `Properties` on `EventSubscriptionExecutionContext` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the current managed execution attempt number.
+  - `int Attempt { get; }`
 - [Attempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-attempt): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the application-managed attempt number associated with this observation.
   - `int Attempt { get; }`
@@ -6936,6 +6939,9 @@ Browse the published API surface by public member.
 - [EnableSnapshots](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enablesnapshots): `Properties` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EnableSnapshots&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
   - Gets or sets a value indicating whether snapshot-aware paths are enabled.
   - `bool EnableSnapshots { get; set; }`
+- [EnableSubscriptionExecution](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-enablesubscriptionexecution): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=EnableSubscriptionExecution&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
+  - Gets or sets a value indicating whether the pack should execute declared event subscriptions through the Wolverine-managed staged-event dispatch path. Defaults to `false`.
+  - `bool EnableSubscriptionExecution { get; set; }`
 - [EnableSubscriptions](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enablesubscriptions): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnableSubscriptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets a value indicating whether subscription features are enabled.
   - `bool EnableSubscriptions { get; set; }`
@@ -7221,6 +7227,12 @@ Browse the published API surface by public member.
 - [EventSubscriptionDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event subscription descriptor.
   - `EventSubscriptionDescriptor(string id, string displayName, string description, string channelId, string handlerId, string deliveryMode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [EventSubscriptionExecutionBindingDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionExecutionBindingDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionExecutionBindingDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a new managed execution binding descriptor for a declared event subscription.
+  - `EventSubscriptionExecutionBindingDescriptor(string subscriptionId, string executionRuntimeId, string executionOwnership, string executionMode, IReadOnlyDictionary<string, string> metadata)`
+- [EventSubscriptionExecutionContext](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionexecutioncontext-ctor-cephalon-eventing-services-eventsubscriptiondescriptor-cephalon-eventing-services-eventpublication-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionExecutionContext` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionExecutionContext&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a new managed event-subscription execution context.
+  - `EventSubscriptionExecutionContext(EventSubscriptionDescriptor subscription, EventPublication publication, int attempt, IReadOnlyDictionary<string, string> metadata)`
 - [EventSubscriptionExecutionReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionExecutionReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new execution report for a declared event subscription.
   - `EventSubscriptionExecutionReport(string subscriptionId, string outcome, DateTimeOffset observedAtUtc, string messageId, int attempt, string error, IReadOnlyDictionary<string, string> metadata)`
@@ -7332,6 +7344,9 @@ Browse the published API surface by public member.
 - [ExecuteAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-executeasync-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-system-threading-cancellationtoken): `Methods` on `ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Translates one shared managed-connector command request into a provider-facing command shape.
   - `ValueTask<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> ExecuteAsync(CdcCaptureExecutionRuntimeDescriptor runtime, string operationId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest request, CancellationToken cancellationToken)`
+- [ExecuteAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptionexecutor-executeasync-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken): `Methods` on `IEventSubscriptionExecutor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Executes the managed subscription against the supplied publication context.
+  - `ValueTask ExecuteAsync(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)`
 - [ExecuteAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ireadstore-executeasync-1-cephalon-abstractions-data-iquery-0-system-threading-cancellationtoken): `Methods` on `IReadStore` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Executes the supplied query on the read side.
   - `ValueTask<TResult> ExecuteAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken)`
@@ -7569,6 +7584,9 @@ Browse the published API surface by public member.
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-executionmode): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the replay mode used by the active runtime.
   - `string ExecutionMode { get; }`
+- [ExecutionMode](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionmode): `Properties` on `EventSubscriptionExecutionBindingDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the operator-facing execution mode for the binding.
+  - `string ExecutionMode { get; }`
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-executionmode): `Properties` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the execution ownership mode for the outbox.
   - `string ExecutionMode { get; }`
@@ -7641,6 +7659,9 @@ Browse the published API surface by public member.
 - [ExecutionOwnership](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executionownership): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the execution-ownership mode published for the connector runtime.
   - `string ExecutionOwnership { get; set; }`
+- [ExecutionOwnership](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionownership): `Properties` on `EventSubscriptionExecutionBindingDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the operator-facing ownership mode for the managed execution runtime.
+  - `string ExecutionOwnership { get; }`
 - [ExecutionRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-executionrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Scheduler execution truth currently remains risky.
   - `const string ExecutionRisk`
@@ -7731,6 +7752,9 @@ Browse the published API surface by public member.
 - [ExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-executionruntimeid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable execution-runtime identifier currently associated with scheduler recovery and execution hardening.
   - `string ExecutionRuntimeId { get; set; }`
+- [ExecutionRuntimeId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionruntimeid): `Properties` on `EventSubscriptionExecutionBindingDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExecutionRuntimeId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the operator-facing managed execution-runtime identifier.
+  - `string ExecutionRuntimeId { get; }`
 - [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executiontopology): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing topology classification for the effective execution runtime.
   - `string ExecutionTopology { get; }`
@@ -9192,6 +9216,9 @@ Browse the published API surface by public member.
 - [GetEnabled](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getenabled): `Methods` on `IFeatureFlagRuntimeCatalog` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets all feature flags that are enabled before targeting is applied.
   - `IReadOnlyList<FeatureFlagDescriptor> GetEnabled()`
+- [GetExecutionBindings](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptionexecutionbindingcontributor-getexecutionbindings): `Methods` on `IEventSubscriptionExecutionBindingContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetExecutionBindings&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Returns the managed execution bindings owned by the contributor.
+  - `IReadOnlyList<EventSubscriptionExecutionBindingDescriptor> GetExecutionBindings()`
 - [GetFailedPublications](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getfailedpublications): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetFailedPublications&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported publication-state entries whose latest observation is failed.
   - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetFailedPublications()`
@@ -9402,6 +9429,9 @@ Browse the published API surface by public member.
 
 ## H
 
+- [Handle](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler-handle-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-wolverine-envelope-system-iserviceprovider-wolverine-imessagebus-system-threading-cancellationtoken): `Methods` on `WolverineManagedEventSubscriptionExecutionHandler` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=Handle&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
+  - Replays one managed subscription execution attempt from Wolverine's scheduled-message pipeline.
+  - `Task Handle(WolverineManagedEventSubscriptionExecutionRequest request, Envelope envelope, IServiceProvider services, IMessageBus messageBus, CancellationToken cancellationToken)`
 - [HandleAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-iappbehavior-2-handleasync-0-cephalon-abstractions-behaviors-ibehaviorcontext-system-threading-cancellationtoken): `Methods` on `IAppBehavior<TIn, TOut>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=HandleAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Handles the behavior input and returns the output.
   - `Task<TOut> HandleAsync(TIn input, IBehaviorContext context, CancellationToken ct)`
@@ -13665,6 +13695,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-metadata): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets normalized metadata associated with the subscription.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-metadata): `Properties` on `EventSubscriptionExecutionBindingDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets operator-facing metadata associated with the binding.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-metadata): `Properties` on `EventSubscriptionExecutionContext` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets operator-facing metadata associated with the current execution attempt.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-metadata): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets optional operator-facing metadata captured alongside the observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -17382,6 +17418,12 @@ Browse the published API surface by public member.
 - [Publication](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-publication): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Publication&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest publication posture answer reported for the capture.
   - `CdcCapturePublicationStatus Publication { get; set; }`
+- [Publication](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-publication): `Properties` on `EventSubscriptionExecutionContext` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Publication&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the staged publication being delivered to the managed subscription.
+  - `EventPublication Publication { get; }`
+- [Publication](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-publication): `Properties` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=Publication&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
+  - Gets the staged publication that should be delivered to the managed subscription.
+  - `EventPublication Publication { get; }`
 - [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The stable publication identifier declared by the choreography step.
   - `string PublicationId { get; set; }`
@@ -21292,12 +21334,27 @@ Browse the published API surface by public member.
 - [SubjectVersion](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectversion): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SubjectVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The version associated with the event subject when available.
   - `string SubjectVersion { get; set; }`
+- [Subscription](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-subscription): `Properties` on `EventSubscriptionExecutionContext` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Subscription&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the declared subscription that is currently being executed.
+  - `EventSubscriptionDescriptor Subscription { get; }`
+- [SubscriptionId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-subscriptionid): `Properties` on `EventSubscriptionExecutionBindingDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable declared subscription identifier.
+  - `string SubscriptionId { get; }`
 - [SubscriptionId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-subscriptionid): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable declared subscription identifier.
   - `string SubscriptionId { get; }`
 - [SubscriptionId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-subscriptionid): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The stable declared subscription identifier.
   - `string SubscriptionId { get; set; }`
+- [SubscriptionId](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventsubscriptionexecutor-subscriptionid): `Properties` on `IEventSubscriptionExecutor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable declared subscription identifier owned by this executor.
+  - `string SubscriptionId { get; }`
+- [SubscriptionId](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-subscriptionid): `Properties` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
+  - Gets the declared subscription identifier that should be executed.
+  - `string SubscriptionId { get; }`
+- [SubscriptionRetryDelaySeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-subscriptionretrydelayseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=SubscriptionRetryDelaySeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
+  - Gets or sets the number of seconds the Wolverine-managed subscription execution path should wait before requeueing a failed subscription attempt.
+  - `int SubscriptionRetryDelaySeconds { get; set; }`
 - [Subscriptions](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-subscriptions): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=Subscriptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets the host-defined event subscription descriptors that should be available to the eventing runtime.
   - `IList<EventSubscriptionDescriptor> Subscriptions { get; }`
@@ -22855,6 +22912,12 @@ Browse the published API surface by public member.
 - [WolverineEventingOptions](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-ctor): `Constructors` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=WolverineEventingOptions&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Initializes a new instance of the `WolverineEventingOptions` class.
   - `WolverineEventingOptions()`
+- [WolverineManagedEventSubscriptionExecutionHandler](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler-ctor): `Constructors` on `WolverineManagedEventSubscriptionExecutionHandler` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=WolverineManagedEventSubscriptionExecutionHandler&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
+  - Initializes a new instance of the `WolverineManagedEventSubscriptionExecutionHandler` class.
+  - `WolverineManagedEventSubscriptionExecutionHandler()`
+- [WolverineManagedEventSubscriptionExecutionRequest](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication): `Constructors` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=WolverineManagedEventSubscriptionExecutionRequest&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
+  - Creates a new infrastructure retry message for one managed event-subscription execution.
+  - `WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication)`
 - [WorkerCapacity](cephalon-ids-sfid.md#member-p-cephalon-ids-sfid-configuration-sfididoptions-workercapacity): `Properties` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=WorkerCapacity&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Gets the optional worker-capacity override supplied to the generator.
   - `int? WorkerCapacity { get; set; }`

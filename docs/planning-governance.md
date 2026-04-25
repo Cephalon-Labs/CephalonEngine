@@ -94,6 +94,14 @@ They still need to be labeled explicitly.
 
 Do not use execution-oriented language for a surface unless the package actually owns an execution or provisioning path.
 
+## Planning identifier rule
+
+Once an `ENG-*` id is assigned in repo docs or GitHub Project tracking, treat it as immutable.
+
+Do not reuse historical ids for a new planning wave, even if the earlier slice is already shipped or the later plan feels conceptually cleaner.
+
+If sequencing changes, allocate a fresh id and update roadmap, backlog, issue titles, iteration placement, and card metadata together.
+
 ## Required GitHub Project card fields
 
 When a work item is tracked in GitHub Project, populate these fields when they apply:

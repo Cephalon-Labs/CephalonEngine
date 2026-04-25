@@ -32,6 +32,7 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
     private readonly WolverineEventingOptions options = CreateOptions(configureOptions);
     private bool hasDispatchStore;
     private bool hasDispatchRuntimeReporter;
+    private bool hasSubscriptionExecutors;
 
     public override ModuleDescriptor Descriptor => DescriptorInstance;
 
@@ -44,6 +45,14 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, WolverineEventingDiagnosticsConventionContributor>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventDispatchRuntimeContributor, WolverineEventingDispatchRuntimeContributor>());
+        }
+
+        if (options.EnableSubscriptionExecution)
+        {
+            services.TryAddSingleton<WolverineManagedEventSubscriptionExecutorCatalog>();
+            services.TryAddSingleton<WolverineManagedEventSubscriptionExecutionProcessor>();
+            services.TryAddSingleton<WolverineManagedEventSubscriptionDispatcher>();
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventSubscriptionExecutionBindingContributor, WolverineManagedEventSubscriptionExecutorCatalog>());
         }
     }
 
@@ -147,6 +156,7 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
 
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeReporter = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeReporter));
+        hasSubscriptionExecutors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutor));
         if (options.EnableDispatchLoop && !hasDispatchStore)
         {
             throw new InvalidOperationException(
@@ -159,9 +169,35 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
                 "Wolverine-managed dispatch requires the core eventing publishing path to be active. Add Cephalon.Eventing with publishing enabled before enabling EnableDispatchLoop.");
         }
 
+        if (options.EnableSubscriptionExecution && !options.EnableDispatchLoop)
+        {
+            throw new InvalidOperationException(
+                "The current Wolverine-managed subscription execution baseline depends on EnableDispatchLoop. Enable the staged-event dispatch loop before turning on EnableSubscriptionExecution.");
+        }
+
+        if (options.EnableSubscriptionExecution && !options.EnableHostWiring)
+        {
+            throw new InvalidOperationException(
+                "Wolverine-managed subscription execution requires EnableHostWiring because the pack has to register the internal retry handler types into Wolverine.");
+        }
+
+        if (options.EnableSubscriptionExecution && !hasSubscriptionExecutors)
+        {
+            throw new InvalidOperationException(
+                "Wolverine-managed subscription execution requires at least one IEventSubscriptionExecutor. Register a managed executor before enabling EnableSubscriptionExecution.");
+        }
+
         if (options.EnableHostWiring)
         {
-            services.AddWolverine(ExtensionDiscovery.ManualOnly, wolverine => options.ConfigureHost?.Invoke(wolverine));
+            services.AddWolverine(ExtensionDiscovery.ManualOnly, wolverine =>
+            {
+                if (options.EnableSubscriptionExecution)
+                {
+                    wolverine.Discovery.IncludeType<WolverineManagedEventSubscriptionExecutionHandler>();
+                }
+
+                options.ConfigureHost?.Invoke(wolverine);
+            });
         }
 
         if (options.EnableDispatchLoop)
@@ -188,17 +224,18 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
         capabilities.Add(new Capability(
             key: "eventing.wolverine",
             displayName: "Wolverine Eventing Adapter",
-            description: "Registers Wolverine as the official first-class host integration path for Cephalon event-driven workloads.",
-            metadata: new Dictionary<string, string>
-            {
-                ["technology"] = "event-driven-integration",
-                ["adapter"] = "wolverine",
-                ["hostWiring"] = options.EnableHostWiring ? "configured" : "disabled",
-                ["dispatchBridge"] = options.EnableDispatchLoop && hasDispatchStore ? "wolverine-managed" : "consumer-managed",
-                ["dispatchRuntime"] = options.EnableDispatchLoop && hasDispatchStore ? "configured" : "not-configured",
-                ["dispatchLoop"] = options.EnableDispatchLoop ? "enabled" : "disabled",
-                ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured"
-            }));
+                description: "Registers Wolverine as the official first-class host integration path for Cephalon event-driven workloads.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["adapter"] = "wolverine",
+                    ["hostWiring"] = options.EnableHostWiring ? "configured" : "disabled",
+                    ["dispatchBridge"] = options.EnableDispatchLoop && hasDispatchStore ? "wolverine-managed" : "consumer-managed",
+                    ["dispatchRuntime"] = options.EnableDispatchLoop && hasDispatchStore ? "configured" : "not-configured",
+                    ["subscriptionExecution"] = options.EnableSubscriptionExecution && hasSubscriptionExecutors ? "wolverine-managed" : "not-configured",
+                    ["dispatchLoop"] = options.EnableDispatchLoop ? "enabled" : "disabled",
+                    ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured"
+                }));
 
         if (options.EnableDispatchLoop)
         {
@@ -216,6 +253,24 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
                     ["hostedExecutionId"] = WolverineEventingRuntimeIds.HostedExecutionId,
                     ["executionGraphId"] = WolverineEventingRuntimeIds.ExecutionGraphId,
                     ["publisherId"] = WolverineEventingRuntimeIds.PublisherId
+                }));
+        }
+
+        if (options.EnableSubscriptionExecution)
+        {
+            capabilities.Add(new Capability(
+                key: "eventing.subscribe",
+                displayName: "Managed Event Subscription Execution",
+                description: "Executes declared event subscriptions through the Wolverine-managed staged-event dispatch path with runtime-owned retry scheduling.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["adapter"] = "wolverine",
+                    ["executionOwnership"] = "wolverine-managed",
+                    ["executionMode"] = "message-handler",
+                    ["executionRuntimeId"] = WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId,
+                    ["triggerRuntimeId"] = WolverineEventingRuntimeIds.DispatchRuntimeId,
+                    ["retryPolicy"] = "fixed-delay"
                 }));
         }
     }

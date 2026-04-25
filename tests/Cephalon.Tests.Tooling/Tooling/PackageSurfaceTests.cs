@@ -901,6 +901,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Eventing.Services.EventDispatchExecutionOutcomes),
             typeof(global::Cephalon.Eventing.Services.EventDispatchExecutionReport),
             typeof(global::Cephalon.Eventing.Services.EventPublication),
+            typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor),
+            typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionContext),
             typeof(global::Cephalon.Eventing.Registration.EventingEngineBuilderExtensions),
             typeof(global::Cephalon.Eventing.Services.EventChannelDescriptor),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes),
@@ -914,6 +916,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Eventing.Services.IEventDispatchRuntimeRegistry),
             typeof(global::Cephalon.Eventing.Services.IEventDispatchRuntimeReporter),
             typeof(global::Cephalon.Eventing.Services.IEventSubscriptionCatalog),
+            typeof(global::Cephalon.Eventing.Services.IEventSubscriptionExecutionBindingContributor),
+            typeof(global::Cephalon.Eventing.Services.IEventSubscriptionExecutor),
             typeof(global::Cephalon.Eventing.Services.IEventSubscriptionContributor),
             typeof(global::Cephalon.Eventing.Services.IEventSubscriptionRegistry),
             typeof(global::Cephalon.Eventing.Services.IEventPublisher),
@@ -953,6 +957,8 @@ public sealed class PackageSurfaceTests
         AssertExportedTypes(
             typeof(global::Cephalon.Eventing.Wolverine.Registration.WolverineEventingEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions),
+            typeof(global::Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionHandler),
+            typeof(global::Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionRequest),
             typeof(global::Cephalon.Eventing.Wolverine.Registration.WolverineEventingEngineBuilderExtensions));
     }
 

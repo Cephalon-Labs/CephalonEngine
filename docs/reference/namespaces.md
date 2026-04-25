@@ -330,7 +330,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Eventing.Services`
 
-- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 22 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 26 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 
 ## `Cephalon.Eventing.Wolverine.Configuration`
 
@@ -339,6 +339,10 @@ Browse the published API surface by namespace.
 ## `Cephalon.Eventing.Wolverine.Registration`
 
 - [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md#namespace-cephalon-eventing-wolverine-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Registration)
+
+## `Cephalon.Eventing.Wolverine.Services`
+
+- [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md#namespace-cephalon-eventing-wolverine-services): 2 public types [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services)
 
 ## `Cephalon.EventSourcing.Configuration`
 

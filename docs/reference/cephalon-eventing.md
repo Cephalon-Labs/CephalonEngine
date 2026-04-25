@@ -788,6 +788,159 @@ IReadOnlyList<string> Tags { get; }
 
 Gets the normalized tag set associated with the subscription.
 
+<a id="type-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor"></a>
+
+### `EventSubscriptionExecutionBindingDescriptor`
+
+Describes how a declared event subscription binds to a managed execution runtime.
+
+#### Declaration
+```csharp
+public sealed class EventSubscriptionExecutionBindingDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventSubscriptionExecutionBindingDescriptor`
+
+```csharp
+EventSubscriptionExecutionBindingDescriptor(string subscriptionId, string executionRuntimeId, string executionOwnership, string executionMode, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new managed execution binding descriptor for a declared event subscription.
+
+Parameters:
+- `subscriptionId`: The stable declared subscription identifier.
+- `executionRuntimeId`: The operator-facing managed execution-runtime identifier.
+- `executionOwnership`: The operator-facing ownership mode for the execution runtime.
+- `executionMode`: The operator-facing execution mode for the binding.
+- `metadata`: Optional operator-facing metadata associated with the binding.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+string ExecutionMode { get; }
+```
+
+Gets the operator-facing execution mode for the binding.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; }
+```
+
+Gets the operator-facing ownership mode for the managed execution runtime.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; }
+```
+
+Gets the operator-facing managed execution-runtime identifier.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the binding.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-subscriptionid"></a>
+
+##### `SubscriptionId`
+
+```csharp
+string SubscriptionId { get; }
+```
+
+Gets the stable declared subscription identifier.
+
+<a id="type-cephalon-eventing-services-eventsubscriptionexecutioncontext"></a>
+
+### `EventSubscriptionExecutionContext`
+
+Describes the host-agnostic execution context delivered to a managed event-subscription executor.
+
+#### Declaration
+```csharp
+public sealed class EventSubscriptionExecutionContext
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutioncontext-ctor-cephalon-eventing-services-eventsubscriptiondescriptor-cephalon-eventing-services-eventpublication-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventSubscriptionExecutionContext`
+
+```csharp
+EventSubscriptionExecutionContext(EventSubscriptionDescriptor subscription, EventPublication publication, int attempt, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new managed event-subscription execution context.
+
+Parameters:
+- `subscription`: The declared subscription that is being executed.
+- `publication`: The staged publication being delivered to the subscription.
+- `attempt`: The current managed execution attempt.
+- `metadata`: Optional operator-facing metadata associated with the current execution attempt.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-attempt"></a>
+
+##### `Attempt`
+
+```csharp
+int Attempt { get; }
+```
+
+Gets the current managed execution attempt number.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the current execution attempt.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-publication"></a>
+
+##### `Publication`
+
+```csharp
+EventPublication Publication { get; }
+```
+
+Gets the staged publication being delivered to the managed subscription.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-subscription"></a>
+
+##### `Subscription`
+
+```csharp
+EventSubscriptionDescriptor Subscription { get; }
+```
+
+Gets the declared subscription that is currently being executed.
+
 <a id="type-cephalon-eventing-services-eventsubscriptionexecutionoutcomes"></a>
 
 ### `EventSubscriptionExecutionOutcomes`
@@ -1477,6 +1630,72 @@ Registers one or more event subscription descriptors with the supplied registry.
 
 Parameters:
 - `subscriptions`: The registry that collects contributed subscription descriptors.
+
+<a id="type-cephalon-eventing-services-ieventsubscriptionexecutionbindingcontributor"></a>
+
+### `IEventSubscriptionExecutionBindingContributor`
+
+Contributes one or more managed execution bindings for declared event subscriptions.
+
+#### Declaration
+```csharp
+public interface IEventSubscriptionExecutionBindingContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventsubscriptionexecutionbindingcontributor-getexecutionbindings"></a>
+
+##### `GetExecutionBindings`
+
+```csharp
+IReadOnlyList<EventSubscriptionExecutionBindingDescriptor> GetExecutionBindings()
+```
+
+Returns the managed execution bindings owned by the contributor.
+
+Returns: The managed execution bindings for declared subscriptions.
+
+<a id="type-cephalon-eventing-services-ieventsubscriptionexecutor"></a>
+
+### `IEventSubscriptionExecutor`
+
+Executes one declared event subscription through a pack-owned managed runtime.
+
+#### Declaration
+```csharp
+public interface IEventSubscriptionExecutor
+```
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventsubscriptionexecutor-subscriptionid"></a>
+
+##### `SubscriptionId`
+
+```csharp
+string SubscriptionId { get; }
+```
+
+Gets the stable declared subscription identifier owned by this executor.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventsubscriptionexecutor-executeasync-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken"></a>
+
+##### `ExecuteAsync`
+
+```csharp
+ValueTask ExecuteAsync(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)
+```
+
+Executes the managed subscription against the supplied publication context.
+
+Returns: A task that completes when the managed subscription attempt finishes.
+
+Parameters:
+- `context`: The host-agnostic execution context for the current subscription attempt.
+- `cancellationToken`: The cancellation token for the current execution attempt.
 
 <a id="type-cephalon-eventing-services-ieventsubscriptionregistry"></a>
 

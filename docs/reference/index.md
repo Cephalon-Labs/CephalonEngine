@@ -22,7 +22,7 @@ Quick links:
 
 - [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
 - [Cephalon.Edge](cephalon-edge.md): Edge-native delivery runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge)
-- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 24 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
+- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 28 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
 - [Cephalon.Retrieval](cephalon-retrieval.md): Knowledge retrieval runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Retrieval)
 
 ### Hosts
@@ -71,7 +71,7 @@ Quick links:
 - [Cephalon.Audit](cephalon-audit.md): Host-agnostic audit recording baseline with audit-store cataloging for Cephalon runtimes. Contains 4 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Audit)
 - [Cephalon.Data](cephalon-data.md): Runtime-neutral data dispatching services for Cephalon workloads. Contains 3 namespaces and 8 public types. [Browse](browse.html?assembly=Cephalon.Data)
 - [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md): Entity Framework Core read/write, inbox, and outbox integration for Cephalon data workloads. Contains 4 namespaces and 11 public types. [Browse](browse.html?assembly=Cephalon.Data.EntityFramework)
-- [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md): Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine)
+- [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md): Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads. Contains 3 namespaces and 4 public types. [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine)
 - [Cephalon.Identity](cephalon-identity.md): Host-agnostic identity and authorization baseline for Cephalon runtimes. Contains 3 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Identity)
 - [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md): ASP.NET Core host adapter for Cephalon identity and authorization workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore)
 - [Cephalon.Ids.Sfid](cephalon-ids-sfid.md): Official Sfid.Net-backed identifier generation for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Ids.Sfid)

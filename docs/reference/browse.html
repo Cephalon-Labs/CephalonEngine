@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-24T19:33:33.4979278+00:00",
+  "GeneratedAtUtc": "2026-04-25T20:15:34.2797715+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -263,7 +263,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 3,
-      "TypeCount": 24
+      "TypeCount": 28
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -278,8 +278,8 @@
       "Category": "Phase 8 Companion Packs",
       "Description": "Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads.",
       "FileName": "cephalon-eventing-wolverine.md",
-      "NamespaceCount": 2,
-      "TypeCount": 2
+      "NamespaceCount": 3,
+      "TypeCount": 4
     },
     {
       "AssemblyName": "Cephalon.EventSourcing",
@@ -1199,7 +1199,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 22
+      "TypeCount": 26
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -1214,6 +1214,13 @@
       "FileName": "cephalon-eventing-wolverine.md",
       "AnchorId": "namespace-cephalon-eventing-wolverine-registration",
       "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "namespace-cephalon-eventing-wolverine-services",
+      "TypeCount": 2
     },
     {
       "NamespaceName": "Cephalon.EventSourcing.Configuration",
@@ -7803,6 +7810,36 @@
       }
     },
     {
+      "DisplayName": "EventSubscriptionExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor",
+      "Declaration": "public sealed class EventSubscriptionExecutionBindingDescriptor",
+      "Summary": "Describes how a declared event subscription binds to a managed execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventSubscriptionExecutionContext",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionexecutioncontext",
+      "Declaration": "public sealed class EventSubscriptionExecutionContext",
+      "Summary": "Describes the host-agnostic execution context delivered to a managed event-subscription executor.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventSubscriptionExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -10064,6 +10101,36 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSubscriptionExecutionBindingContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventsubscriptionexecutionbindingcontributor",
+      "Declaration": "public interface IEventSubscriptionExecutionBindingContributor",
+      "Summary": "Contributes one or more managed execution bindings for declared event subscriptions.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSubscriptionExecutor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventsubscriptionexecutor",
+      "Declaration": "public interface IEventSubscriptionExecutor",
+      "Summary": "Executes one declared event subscription through a pack-owned managed runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
         "Methods": 1
       }
     },
@@ -14938,7 +15005,37 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "WolverineManagedEventSubscriptionExecutionHandler",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "type-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler",
+      "Declaration": "public sealed class WolverineManagedEventSubscriptionExecutionHandler",
+      "Summary": "Infrastructure retry handler used by the Wolverine eventing pack for managed subscription executions.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "WolverineManagedEventSubscriptionExecutionRequest",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "type-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest",
+      "Declaration": "public sealed class WolverineManagedEventSubscriptionExecutionRequest",
+      "Summary": "Infrastructure message used by the Wolverine eventing pack to requeue managed subscription executions.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
         "Methods": 0
       }
     },
@@ -20543,6 +20640,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchexecutionreport-attempt",
       "Signature": "int Attempt { get; }",
       "Summary": "Gets the dispatch attempt number associated with this observation."
+    },
+    {
+      "DisplayName": "Attempt",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionContext",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-attempt",
+      "Signature": "int Attempt { get; }",
+      "Summary": "Gets the current managed execution attempt number."
     },
     {
       "DisplayName": "Attempt",
@@ -40364,6 +40472,17 @@
       "Summary": "Gets or sets a value indicating whether snapshot-aware paths are enabled."
     },
     {
+      "DisplayName": "EnableSubscriptionExecution",
+      "Category": "Properties",
+      "DeclaringTypeName": "WolverineEventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-enablesubscriptionexecution",
+      "Signature": "bool EnableSubscriptionExecution { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the pack should execute declared event subscriptions through the Wolverine-managed staged-event dispatch path. Defaults to \u0060false\u0060."
+    },
+    {
       "DisplayName": "EnableSubscriptions",
       "Category": "Properties",
       "DeclaringTypeName": "EventingOptions",
@@ -41409,6 +41528,28 @@
       "Summary": "Creates a new event subscription descriptor."
     },
     {
+      "DisplayName": "EventSubscriptionExecutionBindingDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventSubscriptionExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventSubscriptionExecutionBindingDescriptor(string subscriptionId, string executionRuntimeId, string executionOwnership, string executionMode, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new managed execution binding descriptor for a declared event subscription."
+    },
+    {
+      "DisplayName": "EventSubscriptionExecutionContext",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventSubscriptionExecutionContext",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionexecutioncontext-ctor-cephalon-eventing-services-eventsubscriptiondescriptor-cephalon-eventing-services-eventpublication-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventSubscriptionExecutionContext(EventSubscriptionDescriptor subscription, EventPublication publication, int attempt, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new managed event-subscription execution context."
+    },
+    {
       "DisplayName": "EventSubscriptionExecutionReport",
       "Category": "Constructors",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
@@ -41814,6 +41955,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorexecutionadapter-executeasync-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CCdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult\u003E ExecuteAsync(CdcCaptureExecutionRuntimeDescriptor runtime, string operationId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest request, CancellationToken cancellationToken)",
       "Summary": "Translates one shared managed-connector command request into a provider-facing command shape."
+    },
+    {
+      "DisplayName": "ExecuteAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSubscriptionExecutor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptionexecutor-executeasync-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken",
+      "Signature": "ValueTask ExecuteAsync(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)",
+      "Summary": "Executes the managed subscription against the supplied publication context."
     },
     {
       "DisplayName": "ExecuteAsync",
@@ -42687,6 +42839,17 @@
     {
       "DisplayName": "ExecutionMode",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionmode",
+      "Signature": "string ExecutionMode { get; }",
+      "Summary": "Gets the operator-facing execution mode for the binding."
+    },
+    {
+      "DisplayName": "ExecutionMode",
+      "Category": "Properties",
       "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42947,6 +43110,17 @@
       "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executionownership",
       "Signature": "string ExecutionOwnership { get; set; }",
       "Summary": "Gets or sets the execution-ownership mode published for the connector runtime."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionownership",
+      "Signature": "string ExecutionOwnership { get; }",
+      "Summary": "Gets the operator-facing ownership mode for the managed execution runtime."
     },
     {
       "DisplayName": "ExecutionRisk",
@@ -43277,6 +43451,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-executionruntimeid",
       "Signature": "string ExecutionRuntimeId { get; set; }",
       "Summary": "Gets the stable execution-runtime identifier currently associated with scheduler recovery and execution hardening."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; }",
+      "Summary": "Gets the operator-facing managed execution-runtime identifier."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -48614,6 +48799,17 @@
       "Summary": "Gets all feature flags that are enabled before targeting is applied."
     },
     {
+      "DisplayName": "GetExecutionBindings",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSubscriptionExecutionBindingContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptionexecutionbindingcontributor-getexecutionbindings",
+      "Signature": "IReadOnlyList\u003CEventSubscriptionExecutionBindingDescriptor\u003E GetExecutionBindings()",
+      "Summary": "Returns the managed execution bindings owned by the contributor."
+    },
+    {
       "DisplayName": "GetFailedPublications",
       "Category": "Methods",
       "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
@@ -49371,6 +49567,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-technologydescriptor-guidance",
       "Signature": "IReadOnlyList\u003Cstring\u003E Guidance { get; }",
       "Summary": "Gets the guidance entries associated with the technology."
+    },
+    {
+      "DisplayName": "Handle",
+      "Category": "Methods",
+      "DeclaringTypeName": "WolverineManagedEventSubscriptionExecutionHandler",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler-handle-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-wolverine-envelope-system-iserviceprovider-wolverine-imessagebus-system-threading-cancellationtoken",
+      "Signature": "Task Handle(WolverineManagedEventSubscriptionExecutionRequest request, Envelope envelope, IServiceProvider services, IMessageBus messageBus, CancellationToken cancellationToken)",
+      "Summary": "Replays one managed subscription execution attempt from Wolverine\u0027s scheduled-message pipeline."
     },
     {
       "DisplayName": "HandleAsync",
@@ -64951,6 +65158,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the binding."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionContext",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the current execution attempt."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -78559,6 +78788,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-publication",
       "Signature": "CdcCapturePublicationStatus Publication { get; set; }",
       "Summary": "The latest publication posture answer reported for the capture."
+    },
+    {
+      "DisplayName": "Publication",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionContext",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-publication",
+      "Signature": "EventPublication Publication { get; }",
+      "Summary": "Gets the staged publication being delivered to the managed subscription."
+    },
+    {
+      "DisplayName": "Publication",
+      "Category": "Properties",
+      "DeclaringTypeName": "WolverineManagedEventSubscriptionExecutionRequest",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-publication",
+      "Signature": "EventPublication Publication { get; }",
+      "Summary": "Gets the staged publication that should be delivered to the managed subscription."
     },
     {
       "DisplayName": "PublicationId",
@@ -92870,6 +93121,28 @@
       "Summary": "The version associated with the event subject when available."
     },
     {
+      "DisplayName": "Subscription",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionContext",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-subscription",
+      "Signature": "EventSubscriptionDescriptor Subscription { get; }",
+      "Summary": "Gets the declared subscription that is currently being executed."
+    },
+    {
+      "DisplayName": "SubscriptionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-subscriptionid",
+      "Signature": "string SubscriptionId { get; }",
+      "Summary": "Gets the stable declared subscription identifier."
+    },
+    {
       "DisplayName": "SubscriptionId",
       "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
@@ -92890,6 +93163,39 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-subscriptionid",
       "Signature": "string SubscriptionId { get; set; }",
       "Summary": "The stable declared subscription identifier."
+    },
+    {
+      "DisplayName": "SubscriptionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventSubscriptionExecutor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventsubscriptionexecutor-subscriptionid",
+      "Signature": "string SubscriptionId { get; }",
+      "Summary": "Gets the stable declared subscription identifier owned by this executor."
+    },
+    {
+      "DisplayName": "SubscriptionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "WolverineManagedEventSubscriptionExecutionRequest",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-subscriptionid",
+      "Signature": "string SubscriptionId { get; }",
+      "Summary": "Gets the declared subscription identifier that should be executed."
+    },
+    {
+      "DisplayName": "SubscriptionRetryDelaySeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "WolverineEventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-subscriptionretrydelayseconds",
+      "Signature": "int SubscriptionRetryDelaySeconds { get; set; }",
+      "Summary": "Gets or sets the number of seconds the Wolverine-managed subscription execution path should wait before requeueing a failed subscription attempt."
     },
     {
       "DisplayName": "Subscriptions",
@@ -98555,6 +98861,28 @@
       "AnchorId": "member-m-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-ctor",
       "Signature": "WolverineEventingOptions()",
       "Summary": "Initializes a new instance of the \u0060WolverineEventingOptions\u0060 class."
+    },
+    {
+      "DisplayName": "WolverineManagedEventSubscriptionExecutionHandler",
+      "Category": "Constructors",
+      "DeclaringTypeName": "WolverineManagedEventSubscriptionExecutionHandler",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler-ctor",
+      "Signature": "WolverineManagedEventSubscriptionExecutionHandler()",
+      "Summary": "Initializes a new instance of the \u0060WolverineManagedEventSubscriptionExecutionHandler\u0060 class."
+    },
+    {
+      "DisplayName": "WolverineManagedEventSubscriptionExecutionRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "WolverineManagedEventSubscriptionExecutionRequest",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication",
+      "Signature": "WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication)",
+      "Summary": "Creates a new infrastructure retry message for one managed event-subscription execution."
     },
     {
       "DisplayName": "WorkerCapacity",
