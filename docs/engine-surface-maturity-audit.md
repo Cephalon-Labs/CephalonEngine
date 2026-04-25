@@ -1,0 +1,132 @@
+# Engine Surface Maturity Audit
+
+Surface maturity in this document reflects the repository state as of `April 26, 2026`.
+
+## Why this document exists
+
+Cephalon now ships a mix of:
+
+- taxonomy and descriptor surfaces
+- truthful runtime catalogs
+- managed execution or provisioning runtimes
+- adoption-ready tooling and operator experiences
+
+That is healthy, but only if the repository says which kind of value each surface provides.
+
+The current risk is not "metadata exists." The risk is letting descriptor-first work read like execution ownership when the package does not yet own the runtime path.
+
+This audit is the repo-owned answer for that distinction.
+
+## Surface maturity model
+
+Every meaningful package or public/runtime surface should declare a current maturity target.
+
+### `M0` Taxonomy
+
+- defines vocabulary, descriptors, or selection semantics
+- may shape scaffolding or planning language
+- does not claim runtime ownership by itself
+
+### `M1` Catalog + runtime truth
+
+- publishes truthful descriptors, catalogs, runtime snapshots, or introspection
+- may validate configuration or authored intent
+- still does not claim managed execution or provisioning ownership
+
+### `M2` Managed execution or provisioning
+
+- owns one real execution, orchestration, or provisioning path
+- publishes runtime state for that path
+- documents boundaries, failure modes, and ownership clearly
+
+### `M3` Operator automation
+
+- supports real operator workflows, reconciliation, or automation loops
+- exposes drill-down routes, lifecycle posture, and remediation-friendly runtime answers
+- proves recovery, drift, or live-state handling beyond a happy path
+
+### `M4` Adoption proof
+
+- includes adoption-quality docs, samples/templates, and validation evidence
+- is ready to be described as a shipped baseline for downstream teams
+- keeps docs, runtime truth, tests, and packaging aligned
+
+## Ownership modes
+
+Maturity and ownership are related but different. Every surface should also describe who owns the real work:
+
+- `taxonomy-only`: vocabulary or modeling only
+- `application-managed`: consumer code or another runtime executes the work; Cephalon models or observes it
+- `cephalon-managed`: Cephalon owns the execution or provisioning path
+- `provider-managed`: a provider-specific Cephalon pack owns the execution or provisioning path
+
+Intentional `taxonomy-only` and `application-managed` surfaces are valid. They just need to be labeled honestly.
+
+## Current audit
+
+| Surface | Primary role | Ownership mode | Current maturity | Next proof needed |
+| --- | --- | --- | --- | --- |
+| `Cephalon.Engine` app model, manifest, runtime introspection, policy composition | Core runtime contract and composition | `cephalon-managed` | `M4` | Keep compatibility, docs, and generated surfaces aligned as new packs land |
+| `Cephalon.Cli`, `Cephalon.Scaffolding`, `Cephalon.TemplatePack`, `Cephalon.ReferenceDocs` | Adoption and packaging surface | `cephalon-managed` | `M4` | Maintain package/version/template/reference-doc alignment |
+| `Cephalon.Behaviors` core runtime and durable execution | Behavior execution substrate | `cephalon-managed` | `M4` | Continue adoption polish and guardrail coverage rather than adding parallel execution stories |
+| `Cephalon.Behaviors.Http` metadata-only REST profiles | REST profile shorthand over behavior surfaces | `application-managed` | `M1` | Either keep them explicitly metadata-only or prove a managed authoring/runtime lane |
+| `Cephalon.Data` shared CDC runtime plus provider-native pumps | Shared and provider-native data execution truth | `cephalon-managed` plus `provider-managed` | `M3` | More package-level external adoption proof and operator docs per provider family |
+| `Cephalon.Edge.KubernetesGateway` and `Cephalon.Edge.Traefik` | Provider-specific control-plane automation | `provider-managed` | `M3` | More adoption-quality samples and package publishing guidance outside the repo |
+| `Cephalon.Eventing` core package | Channel descriptors and event runtime truth | `application-managed` today | `M1` | One truthful managed execution path for subscriptions, retries, and runtime ownership |
+| `Cephalon.Agentics` | Tool descriptors and agent-workload runtime surface | `application-managed` today | `M1` | Tool execution, run-state, approval/audit hooks, and one sample that proves the loop end to end |
+| `Cephalon.Retrieval` | Knowledge collection descriptors and retrieval runtime surface | `application-managed` today | `M1` | Indexing, query execution, freshness/runtime state, and one provider-backed sample |
+| `Cephalon.MultiTenancy` core package | Narrow tenant-resolution and runtime truth baseline | mixed: `cephalon-managed` core, broader workflows still `application-managed` | `M2` | Preserve the narrow core and move governance/member/domain flows into a companion track instead of bloating the base pack |
+
+## Immediate planning consequences
+
+- stop expanding descriptor-first surfaces inside mixed-maturity families unless the work is explicitly labeled `M0` or `M1`
+- do not describe `M0` or `M1` packages as if they already own execution, orchestration, or provisioning
+- prefer one narrow vertical proof slice over broad catalog expansion in `Cephalon.Eventing`, `Cephalon.Agentics`, and `Cephalon.Retrieval`
+- keep `Cephalon.MultiTenancy` intentionally thin in the base package; add broader governance workflows through companion-track planning instead of turning the core into a monolith
+- use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
+
+## Planned next sequence
+
+### Sprint 42
+
+- `ENG-225` Engine surface maturity model and audit baseline
+
+### Sprint 43
+
+- `ENG-226` Truthful managed event-subscription execution baseline
+
+### Sprint 44
+
+- `ENG-227` Agentics tool execution and run-state baseline
+
+### Sprint 45
+
+- `ENG-228` Retrieval indexing, query execution, and freshness baseline
+
+### Later / not scheduled yet
+
+- `ENG-229` Multi-tenancy governance, membership, and domain workflow companion split
+
+## Promotion checklist
+
+Before a surface claims the next maturity level, confirm the proof is real:
+
+1. `M0 -> M1`: truthful runtime or catalog answer exists and docs say what is not owned yet.
+2. `M1 -> M2`: one managed path exists end to end, including runtime state, failure posture, and ownership language.
+3. `M2 -> M3`: operators can observe, reconcile, or remediate the path without relying on hidden knowledge.
+4. `M3 -> M4`: samples, package docs, validation, compatibility/readiness guidance, and planning truth all match the shipped behavior.
+
+## Definition of done for future planning
+
+When a new runtime or package surface lands, the same slice should update:
+
+- source
+- component docs
+- this audit when maturity or ownership changes
+- roadmap and backlog entries
+- compatibility or readiness docs if the public/package contract changes
+- samples, tests, and benchmarks when the claimed maturity requires them
+
+The goal is not to force every surface to become `M4`.
+
+The goal is to make each surface honest, intentional, and easy to adopt.

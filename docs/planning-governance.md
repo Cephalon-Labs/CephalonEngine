@@ -77,6 +77,23 @@ In practice, that means:
 - project fields stay populated
 - commits that materially advance the work are referenced from the card
 
+## Surface maturity declaration rule
+
+Every meaningful package, runtime surface, or planning slice should declare:
+
+- its primary product role
+- its ownership mode
+- its current target maturity
+- the proof required before it can claim the next maturity level
+
+Use [Engine surface maturity audit](engine-surface-maturity-audit.md) as the repo-owned vocabulary for that declaration.
+
+Intentional `M0` taxonomy work and `M1` catalog/runtime-truth work are allowed.
+
+They still need to be labeled explicitly.
+
+Do not use execution-oriented language for a surface unless the package actually owns an execution or provisioning path.
+
 ## Required GitHub Project card fields
 
 When a work item is tracked in GitHub Project, populate these fields when they apply:
@@ -125,6 +142,7 @@ Typical examples:
 - change in scope or direction: update [Project memory](project-memory.md)
 - change in task state, estimate, or sprint placement: update [Engine backlog](engine-backlog.md)
 - change in milestone or implementation order: update [Engine roadmap](engine-roadmap.md)
+- change in surface maturity or runtime-ownership claims: update [Engine surface maturity audit](engine-surface-maturity-audit.md) and the affected component docs
 - change in framework baseline or support-claim posture: update [Project memory](project-memory.md), [.NET 11 readiness](dotnet11-readiness.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)
 - change in shipped behavior: update affected feature or component docs
 - change in ops or adoption contract: update operations and getting-started docs
@@ -220,6 +238,7 @@ Before you consider a task ready, confirm:
 - docs updated
 - roadmap truthful
 - backlog truthful
+- surface maturity and ownership truth captured
 - sprint or iteration truthful
 - framework and support claims truthful
 - GitHub Project card updated
@@ -230,6 +249,7 @@ Before you consider a task ready, confirm:
 ## Related docs
 
 - [Docs hub](README.md)
+- [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - [Project memory](project-memory.md)
 - [Engine roadmap](engine-roadmap.md)
 - [Engine backlog](engine-backlog.md)

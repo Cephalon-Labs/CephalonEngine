@@ -1,6 +1,103 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 22, 2026`.
+Backlog status in this document reflects the repository state as of `April 26, 2026`.
+
+## Current planning reset (April 2026)
+
+The repo now contains a healthy but mixed set of surfaces:
+
+- intentional taxonomy and descriptor work
+- truthful runtime catalogs
+- managed execution and provisioning runtimes
+- adoption-ready tooling
+
+The next backlog slice is therefore about making maturity and ownership explicit before more mixed-maturity expansion lands.
+
+Current focus:
+
+- classify major surfaces through [Engine surface maturity audit](engine-surface-maturity-audit.md)
+- harden `Cephalon.Eventing`, `Cephalon.Agentics`, and `Cephalon.Retrieval` with one narrow managed vertical proof each before widening catalog breadth
+- keep `Cephalon.MultiTenancy` core narrow and move broader governance workflows into a companion-track plan
+
+### ENG-225 Engine surface maturity model and audit baseline
+
+Status: planned
+Estimate: 5
+
+Why:
+
+- the repo now mixes taxonomy, runtime-truth, and execution-owning surfaces across core engine, technology packs, and provider packs
+- downstream package consumers need explicit ownership language before more packages and templates ship outside the repo
+
+Planned outcome:
+
+- establish the `M0` through `M4` maturity model and ownership vocabulary for Cephalon surfaces
+- classify the current major surfaces in a repo-owned audit
+- align docs hub, roadmap, backlog, governance, and project-memory language around the same truth
+
+### ENG-226 Truthful managed event-subscription execution baseline
+
+Status: planned
+Estimate: 13
+
+Why:
+
+- `Cephalon.Eventing` already provides channel descriptors and runtime truth, but it still documents that subscription execution ownership is not yet guaranteed
+- the next useful proof is one real managed subscription execution path, not more descriptor breadth
+
+Planned outcome:
+
+- add one truthful managed execution story for event subscriptions, retries, and execution ownership
+- keep application-managed versus Cephalon-managed behavior explicit in runtime surfaces and docs
+- prove the path with docs, sample coverage, and operator-facing runtime answers
+
+### ENG-227 Agentics tool execution and run-state baseline
+
+Status: planned
+Estimate: 13
+
+Why:
+
+- `Cephalon.Agentics` is currently valuable as a tool-descriptor and runtime-surface pack, but it still stops short of tool execution ownership
+- downstream teams need one honest vertical slice before the pack grows more catalogs or helper APIs
+
+Planned outcome:
+
+- add one managed tool-execution loop with run-state truth
+- publish approval, audit, or policy hooks needed to keep that loop operator-safe
+- prove the slice with runtime surfaces and at least one adoption-quality sample
+
+### ENG-228 Retrieval indexing, query execution, and freshness baseline
+
+Status: planned
+Estimate: 13
+
+Why:
+
+- `Cephalon.Retrieval` currently models knowledge collections and retrieval surface truth, but it does not yet own indexing or query execution
+- the next useful step is one real retrieval lane with freshness semantics, not broader collection metadata
+
+Planned outcome:
+
+- add one managed indexing and query execution path
+- surface freshness and runtime posture truthfully through the existing operator story
+- prove the slice with one provider-backed sample and matching docs
+
+### ENG-229 Multi-tenancy governance, membership, and domain workflow companion split
+
+Status: planned
+Estimate: 8
+
+Why:
+
+- `Cephalon.MultiTenancy` already has a truthful narrow runtime slice, but broader governance and membership workflows would blur its adoption story if they land in the base package
+- the repo needs a companion-track plan that preserves the thin core while making future governance work intentional
+
+Planned outcome:
+
+- keep the base package focused on tenant resolution and current runtime truth
+- define the companion-track boundary for membership, invite, domain, and governance workflows
+- align component docs and planning language so teams understand what belongs in the core versus the future companion surface
 
 ## Completed foundation work
 
@@ -7731,6 +7828,28 @@ Delivered:
 ## Sprint history and next 4 sprints
 
 Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.
+
+Upcoming sequence from the April 2026 maturity reset:
+
+### Sprint 42
+
+- ENG-225 Engine surface maturity model and audit baseline
+
+### Sprint 43
+
+- ENG-226 Truthful managed event-subscription execution baseline
+
+### Sprint 44
+
+- ENG-227 Agentics tool execution and run-state baseline
+
+### Sprint 45
+
+- ENG-228 Retrieval indexing, query execution, and freshness baseline
+
+### Later / not scheduled yet
+
+- ENG-229 Multi-tenancy governance, membership, and domain workflow companion split
 
 ### Foundation Sprint 1
 

@@ -1,6 +1,6 @@
 # Cephalon Project Memory
 
-Project memory in this document reflects the repository state observed on `April 25, 2026`.
+Project memory in this document reflects the repository state observed on `April 26, 2026`.
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
 
@@ -31,20 +31,24 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 
 ## Long-term engine direction
 
+- the active north star is to build the best engine we can across architecture, runtime, tooling, packaging, documentation, and operational quality so developers can install Cephalon into many project shapes instead of adapting to one fixed app shell
 - Cephalon should continue evolving as a reusable engine/framework that developers install into many project shapes, not as a single opinionated app shell
-- current shipping should stay on `net10.0`, but official planning should assume Microsoft's annual November .NET cadence, `.NET 10` LTS support through `November 14, 2028`, and `.NET 11` as the next major release currently in preview on `April 18, 2026` with final release expected in `November 2026`
+- current shipping should stay on `net10.0`, but official planning should assume Microsoft's annual November .NET cadence, `.NET 10` LTS support through `November 14, 2028`, and `.NET 11` as the next major release currently in Preview 3 on `April 26, 2026` with final release expected in `November 2026`
 - future-proofing should prefer a deliberate `.NET 11` readiness lane over premature preview-only adoption: keep `net10.0` as the stable shipping floor while reviewing new platform features, APIs, analyzers, and runtime behaviors early enough that Cephalon can migrate intentionally instead of reactively
 - release validation should continue emitting a framework-readiness report, while higher-SDK workflow lanes should validate future compatibility without mutating the repo-root `global.json` pin or silently changing the public baseline
-- treat the currently observed `.NET 11` preview wave as assessment-only input for framework planning, not as a stable dependency baseline; as of `April 18, 2026`, Microsoft has shipped Preview 1 on `February 10, 2026`, Preview 2 on `March 10, 2026`, and Preview 3 on `April 14, 2026`, while stable Cephalon packages should continue targeting `net10.0` until an intentional migration lane is validated
+- treat the currently observed `.NET 11` preview wave as assessment-only input for framework planning, not as a stable dependency baseline; as of `April 26, 2026`, Microsoft has shipped Preview 1 on `February 10, 2026`, Preview 2 on `March 10, 2026`, and Preview 3 on `April 14, 2026`, while stable Cephalon packages should continue targeting `net10.0` until an intentional migration lane is validated
 - optimize for 3/5/8/10/15/20/30+ year adaptability by keeping the core host-agnostic, runtime truth introspectable, package boundaries explicit, and future workloads additive through companion packs instead of baking one architectural era directly into the engine
+- long-range planning should actively forecast how software may evolve over the next 3/5/8/10/15/20/30+ years and turn that forecast into engine primitives, package boundaries, runtime contracts, and migration lanes rather than waiting for external trends to force reactive redesign
 - assume the next decades of software will keep pushing toward AI-assisted authoring, lower-ceremony application assembly, stronger policy/governance requirements, hybrid cloud plus edge execution, and deploy-anywhere constraints such as trimming, single-file, containers, and Native AOT; Cephalon should answer those shifts through additive runtime primitives, generated/projected surfaces, and introspectable policy contracts instead of one locked-in application style
 - reduce consumer code aggressively: architecture, transport, host, and policy changes should prefer engine configuration, module composition, scaffold/runtime contracts, and generated low-code surfaces over app-local rewrites
+- consumer projects should be able to change architecture, transport mix, topology, and other major runtime choices through engine-owned composition, configuration, and projected surfaces without having to rewrite their application code each time
 - NuGet publication should stay discoverable and layered: keep a coherent package family around abstractions, engine core, host adapters, technology packs, provider packs, observability packs, tooling, scaffolding, templates, and samples/reference modules without collapsing everything into one monolith
+- NuGet publication is part of the product design, not release afterthought: package naming, taxonomy, split count, metadata, and search discoverability should be designed deliberately for framework adoption and long-term upgrade safety
 - NuGet publication should follow official library/package guidance: reserve and protect the `Cephalon.*` prefix when eligible, split packages only when the assemblies are independently useful, keep package metadata/README/tags/repository information complete, ship Source Link plus symbols, and use trusted publishing instead of long-lived manual secrets when the release flow is formalized
 - public API design should follow Microsoft library and framework guidance for reusable .NET libraries: keep constructors lightweight, prefer constructor injection and stable `Add{Group}` registration entry points, keep naming consistent, document public contracts with XML comments, and use the least-cost extensibility mechanism that preserves future evolution
 - compatibility discipline should stay high because Cephalon is a framework, not an app: avoid binary breaking changes in low-level packages unless the long-term design gain is worth a deliberate break, prefer additive opt-in settings and obsoletion over silent contract churn, and treat package dependencies as part of the public contract
 - framework-quality gates should keep expanding beyond unit tests: use analyzers and `.editorconfig` as policy, keep package validation baselines for public surface drift, keep NuGet vulnerability/supply-chain checks visible, and add truthful trimming/AOT/single-file readiness analysis where Cephalon claims those deployment modes
-- while the engine remains in POC, prefer materially better architecture, design patterns, packaging, code quality, or developer ergonomics over preserving transitional shapes that would weaken the long-term framework
+- while the engine remains in POC, prefer materially better architecture, design patterns, packaging, code quality, developer ergonomics, or newly invented engine primitives over preserving transitional shapes that would weaken the long-term framework
 - treat performance, security, usability, reliability, maintainability, scalability, flexibility, compatibility, data integrity, availability, auditability, and compliance as first-class engine qualities rather than later hardening chores
 
 ## Repo shape at a glance
@@ -193,6 +197,13 @@ The repository uses two documentation layers on purpose:
 
 This distinction matters. Hand-authored docs should explain ownership, usage, architecture, and adoption. XML comments should explain supported public API behavior precisely enough for reference generation.
 
+- treat the hand-authored docs graph as the primary human contract and `docs/reference/*` as the generated API layer underneath it, not the other way around
+- before changing a package or subsystem, use `docs/components/README.md` as the map into the relevant component documentation before drilling directly into source
+- contributors should read the relevant `docs/*` material first and use broader software-world knowledge to shape the engine; the docs are new enough that they may and should evolve together with the code
+- when changing source, inspect the related docs graph every time; do not patch source and leave the nearby hand-authored docs drifting behind
+- if work touches a public surface, runtime surface, or package surface, review the source, component docs, compatibility docs, readiness/validation docs, and planning docs together as one change surface
+- if the current docs conflict with a better engine shape during the POC and invention phase, update `docs + source + planning truth` together in the same slice instead of preserving stale documentation just because it existed first
+
 ## Planning memory
 
 The roadmap and backlog indicate that Cephalon has already shipped large parts of its foundation, adoption hardening, operational baseline, package-loading baseline, execution/orchestration baseline, and solution-level platform baseline.
@@ -202,6 +213,9 @@ The near-term planning center has shifted away from "start the engine" and towar
 - hardening and truthfulness across shipped surfaces
 - resilience and migration patterns
 - keeping docs, templates, CLI behavior, scaffolding, package metadata, and runtime contracts aligned
+- every meaningful package or runtime surface now needs an explicit maturity and ownership label through `docs/engine-surface-maturity-audit.md`: `M0` through `M4` plus `taxonomy-only`, `application-managed`, `cephalon-managed`, or `provider-managed`
+- intentional descriptor-only or catalog-only work is allowed, but it should stay explicitly labeled as `M0` or `M1` instead of reading like partial execution ownership
+- mixed-maturity families should prefer one narrow vertical proof slice before expanding descriptor breadth again
 
 Recent roadmap memory worth keeping in mind:
 
@@ -253,11 +267,14 @@ Recent roadmap memory worth keeping in mind:
 These are explicit working agreements from the current collaboration and should be extended as new standing decisions are made.
 
 - when the team settles on an approach, plan, recurring workflow, or repeated command pattern, record it in project memory so it does not rely on thread-local recall alone
+- when planning or docs start to imply that a package is runtime-ready, verify whether the surface is `taxonomy-only`, `application-managed`, `cephalon-managed`, or `provider-managed` before widening the claim
+- do not add descriptor-first breadth to mixed-maturity runtime packs unless the slice is intentionally labeled `M0` or `M1`, or it carries a concrete proof path to `M2` and beyond
 - when deeper or version-sensitive external research is needed, especially around `.NET`, `.NET 10`, libraries, frameworks, support policy, or official guidance, use internet research instead of relying only on prior model knowledge
-- when recording .NET planning decisions, prefer exact release and support dates over relative wording; the current official planning anchor is `.NET 10` LTS released on `November 11, 2025` with support through `November 14, 2028`, while `.NET 11` is in preview on `April 18, 2026` with final release expected in `November 2026`
+- when recording .NET planning decisions, prefer exact release and support dates over relative wording; the current official planning anchor is `.NET 10` LTS released on `November 11, 2025` with support through `November 14, 2028`, while `.NET 11` is in Preview 3 on `April 26, 2026` with final release expected in `November 2026`
 - when using preview-era `.NET` guidance for Cephalon planning, record the exact preview state and keep the decision boundary explicit: previews are for compatibility assessment, benchmarks, analyzer review, and migration rehearsal, while stable Cephalon packages stay on the current supported shipping floor until the migration lane is intentionally approved
 - when delegating research work to sub-agents, prefer primary and official sources first, then synthesize the result back into repo context for Cephalon-specific decisions
 - for meaningful work, prefer using sub-agents in complementary roles when that improves the outcome, for example business/product framing, architecture, design patterns, documentation, planning cards, quality review, testing, benchmarking, or other task-shaped specialties
+- sub-agents may be used freely when they materially improve the outcome; there is no artificial cap on how many architecture, documentation, quality, research, benchmarking, or planning helpers can collaborate on Cephalon work
 - let sub-agents collaborate as a working group rather than as isolated note takers; they can cross-check one another's reasoning, surface tradeoffs, and help review the same change from different perspectives before the final decision lands
 - sub-agents may use internet research when it helps them validate framework guidance, technical options, benchmarks, security practices, documentation, or other external references that matter to the decision
 - repo-local memory is the reliable cross-thread source of truth; agreements that matter beyond the current thread should be written down here or in another repo-owned document
@@ -276,6 +293,7 @@ Current standing examples from this collaboration:
 - future-facing Cephalon work should reduce end-user code by moving variability into engine-owned configuration, projected low-code surfaces, module/package composition, and runtime truth instead of requiring app projects to rewrite architecture decisions locally
 - when a coding task is complete and the change is validated, stage only the intended files, create a commit, keep `master` updated as the integration branch, push the finished work to GitHub, and leave project docs aligned with the shipped behavior
 - when a code change affects documented behavior, inspect the related `docs/*` graph and update every impacted hand-authored document that references that surface instead of patching only one nearby page
+- when work touches a public/runtime/package surface, check the live source together with `docs/components/*`, `docs/compatibility.md`, readiness or validation docs, and planning docs before deciding that the change is complete
 - when database-topology operator guidance becomes a stable reusable runtime answer, move it into an engine-owned route and snapshot contract first, then let the showcase sample consume that answer and add only sample-specific adaptation
 - GitHub Project cards should contain enough narrative detail for a reader to understand the work without extra thread context, and they should populate the standard fields `Assignee`, `Label`, `Type`, `Project`, `Estimate`, `Iteration`, `Test`, `Benchmark`, `Milestone`, and `Relationship` when cross-card references exist
 - when a commit materially advances a GitHub Project card, add a card comment that records what changed and references the commit id so the card keeps a readable implementation history

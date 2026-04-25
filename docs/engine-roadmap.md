@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `April 22, 2026`.
+Planning baseline in this document reflects the repository state as of `April 26, 2026`.
 
 ## Target outcome
 
@@ -47,6 +47,24 @@ That changes the plan materially:
 - we do need an “adopt this safely outside the repo” phase
 - we should prioritize SDK hardening, templates, samples, and operational polish before advanced platform features
 - public-surface hardening and compatibility guidance now sit inside that shipped SDK-adoption baseline rather than as vague follow-up work
+
+## Current planning reset (April 2026)
+
+The repository now has enough shipped runtime to separate three kinds of surface explicitly:
+
+- taxonomy-only vocabulary
+- catalog plus runtime truth
+- managed execution or provisioning ownership
+
+That distinction matters because some technology packs already own real execution or control-plane loops, while others currently stop at descriptors, catalogs, and truthful introspection.
+
+The next planning wave is therefore not "add more descriptors everywhere." It is:
+
+- make surface maturity explicit through [Engine surface maturity audit](engine-surface-maturity-audit.md)
+- keep intentional `M0` and `M1` surfaces honest instead of letting them read like unfinished `M2` work
+- prove one narrow managed vertical slice in mixed-maturity families before widening catalog breadth
+- keep `Cephalon.MultiTenancy` core narrow and move broader governance/member/domain workflows into a companion-track plan instead of bloating the base package
+- use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
 ## Sprint alignment
 
@@ -177,7 +195,11 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 40–41 (Phase 13)`: `ENG-171` now closes the next shared follow-through on that same external runtime story through managed-connector action-planning posture on `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorActionPlan`, merged remediation-plus-governance-plus-drift derivation in the shared execution-runtime catalog, and runtime-first `/engine/cdc-capture-runtimes/action-plans/*` plus `/engine/cdc-capture-runtimes/actions/*` drill-downs without inventing a Debezium-only action-planning registry
 - `Sprint 40–41 (Phase 13)`: `ENG-172` now closes the next shared follow-through on that same external runtime story through managed-connector write-path readiness posture on `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorWritePathReadiness`, merged coverage-plus-remediation-plus-governance-plus-drift-plus-action-planning derivation in the shared execution-runtime catalog, and runtime-first `/engine/cdc-capture-runtimes/write-path-readiness/*` drill-downs without inventing a Debezium-only readiness registry
 - `Sprint 40–41 (Phase 13)`: `ENG-150` now adds richer provider-native condition semantics on the shared cell traffic runtime story, while `ENG-151` now broadens dependency-aware teardown on that same runtime story by publishing `cleanupStrategy` plus primary/dependency cleanup breakdowns, keeping Kubernetes Gateway explicitly `primary-only` for owned `HTTPRoute` sweeps, and letting Traefik remove safe owned `Middleware` plus `TLSOption` dependents on the same shared plus provider-specific surfaces; broader provider-side teardown families and additional CDC execution topologies remain planned
-- `Later / not scheduled yet`: further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
+- `Sprint 42`: planned `ENG-225` engine surface maturity model and audit baseline so package ownership and proof levels become explicit before more mixed-maturity expansion lands
+- `Sprint 43`: planned `ENG-226` truthful managed event-subscription execution baseline so `Cephalon.Eventing` proves one managed execution story instead of widening descriptor breadth first
+- `Sprint 44`: planned `ENG-227` agentics tool execution and run-state baseline so `Cephalon.Agentics` grows from catalog truth into one real runtime loop
+- `Sprint 45`: planned `ENG-228` retrieval indexing, query execution, and freshness baseline so `Cephalon.Retrieval` proves one provider-backed managed retrieval lane
+- `Later / not scheduled yet`: planned `ENG-229` multi-tenancy governance, membership, and domain workflow companion split, further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
 
@@ -189,6 +211,9 @@ The project board now tracks both delivered work and upcoming work through expli
 - make every new runtime feature observable, testable, and benchmarkable
 - prove one relational-first golden path before widening provider-family or hybrid-runtime claims
 - keep orchestration additive and delay distributed runners until package loading, lifecycle, and policy are strong enough
+- make every mixed-maturity family declare whether a surface is `taxonomy-only`, `application-managed`, `cephalon-managed`, or `provider-managed` before broadening the claim
+- prefer one narrow managed vertical proof over broad descriptor growth in `Cephalon.Eventing`, `Cephalon.Agentics`, and `Cephalon.Retrieval`
+- treat intentional metadata-only or catalog-only work as valid only when docs, planning, and runtime surfaces label it honestly
 
 ## Phase 0: Foundation shipped
 

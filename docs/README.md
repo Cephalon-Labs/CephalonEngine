@@ -27,6 +27,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Database topology](database-topology.md)
 - [Component catalog](components/README.md)
+- [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - [Compatibility](compatibility.md)
 - [Deployment-mode support](deployment-mode-support.md)
 - [.NET 11 readiness](dotnet11-readiness.md)
@@ -78,6 +79,7 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 ## Planning
 
 - [Planning governance](planning-governance.md)
+- [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - [Engine roadmap](engine-roadmap.md)
 - [Engine backlog](engine-backlog.md)
 - framework-baseline and support-claim changes should stay aligned with [.NET 11 readiness](dotnet11-readiness.md), [Deployment-mode support](deployment-mode-support.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)
