@@ -17,7 +17,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 ### `WolverineEventingOptions`
 
-Describes the host-owned options for the official Wolverine eventing companion pack.
+Describes the host-owned options for the optional Wolverine eventing companion pack.
 
 #### Declaration
 ```csharp
@@ -136,7 +136,7 @@ Gets or sets the number of seconds the Wolverine-managed subscription execution 
 
 ### `WolverineEventingEngineBuilderExtensions`
 
-Registers the official Wolverine eventing companion pack with an `EngineBuilder`.
+Registers the optional Wolverine eventing companion pack with an `EngineBuilder`.
 
 #### Declaration
 ```csharp

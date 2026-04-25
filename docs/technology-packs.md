@@ -48,7 +48,7 @@ Current baseline packages:
   - runtime services and capability activation for `EventDrivenIntegration`
   - registers `IEventChannelCatalog` when the profile is selected
 - `Cephalon.Eventing.Wolverine`
-  - official first-class adapter path for managed dispatch over `EventDrivenIntegration`
+  - optional companion adapter proof for managed dispatch over `EventDrivenIntegration`
   - projects runtime truth for the current Wolverine-backed outbox and dispatch loop without turning Wolverine into an engine-core dependency
 - `Cephalon.Retrieval`
   - runtime services and capability activation for `KnowledgeRetrieval`

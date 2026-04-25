@@ -5,7 +5,7 @@ using Cephalon.Eventing.Wolverine.Modules;
 namespace Cephalon.Eventing.Wolverine.Registration;
 
 /// <summary>
-/// Registers the official Wolverine eventing companion pack with an <see cref="EngineBuilder" />.
+/// Registers the optional Wolverine eventing companion pack with an <see cref="EngineBuilder" />.
 /// </summary>
 public static class WolverineEventingEngineBuilderExtensions
 {

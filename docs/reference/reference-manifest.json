@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-25T20:15:34.2797715+00:00",
+  "GeneratedAtUtc": "2026-04-25T21:45:23.2842239+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -14883,7 +14883,7 @@
       "FileName": "cephalon-eventing-wolverine.md",
       "AnchorId": "type-cephalon-eventing-wolverine-registration-wolverineeventingenginebuilderextensions",
       "Declaration": "public static class WolverineEventingEngineBuilderExtensions",
-      "Summary": "Registers the official Wolverine eventing companion pack with an \u0060EngineBuilder\u0060.",
+      "Summary": "Registers the optional Wolverine eventing companion pack with an \u0060EngineBuilder\u0060.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -14898,7 +14898,7 @@
       "FileName": "cephalon-eventing-wolverine.md",
       "AnchorId": "type-cephalon-eventing-wolverine-configuration-wolverineeventingoptions",
       "Declaration": "public sealed class WolverineEventingOptions",
-      "Summary": "Describes the host-owned options for the official Wolverine eventing companion pack.",
+      "Summary": "Describes the host-owned options for the optional Wolverine eventing companion pack.",
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,

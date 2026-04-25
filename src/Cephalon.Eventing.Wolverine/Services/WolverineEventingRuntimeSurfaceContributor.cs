@@ -101,13 +101,13 @@ internal sealed class WolverineEventingRuntimeSurfaceContributor(
             technologyId: "event-driven-integration",
             surfaceId: "wolverine-adapter",
             displayName: "Wolverine Adapter",
-            description: "Official Wolverine host-wiring surface for Cephalon event-driven workloads.",
+            description: "Optional Wolverine host-wiring surface for Cephalon event-driven workloads.",
             entries:
             [
                 new TechnologyRuntimeEntry(
                     id: "wolverine-eventing",
                     displayName: "Wolverine Eventing",
-                    description: "Wires the official Wolverine runtime into the current host while Cephalon keeps dispatch-bridge truth explicit.",
+                    description: "Wires the optional Wolverine runtime into the current host while Cephalon keeps dispatch-bridge truth explicit.",
                     metadata: new Dictionary<string, string>
                     {
                         ["adapter"] = "wolverine",

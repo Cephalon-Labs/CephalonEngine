@@ -1645,7 +1645,7 @@ Delivered:
 - when `EventDrivenIntegration` is active, the Entity Framework pack now also projects application-managed inbox stores into the `event-driven-integration` technology surface instead of claiming handler dispatch or retry ownership that does not exist yet
 - declared event-subscription metadata can now also report when an application-managed inbox store is available for idempotency follow-through without pretending that `Cephalon.Eventing` executes or retries those handlers yet
 - when `EventDrivenIntegration` is active and a real outbox path exists, `Cephalon.Eventing` can now accept `EventPublication` requests through `IEventPublisher` and stage them into the active outbox instead of advertising publish support without a concrete handoff path
-- `Cephalon.Data.EntityFramework` now also exposes an adapter-neutral Entity Framework-backed `IEventDispatchStore` so later first-class adapters can read pending staged outbox rows and apply durable dispatch outcomes without skipping around the Cephalon outbox contract
+- `Cephalon.Data.EntityFramework` now also exposes an adapter-neutral Entity Framework-backed `IEventDispatchStore` so later shipped companion adapters can read pending staged outbox rows and apply durable dispatch outcomes without skipping around the Cephalon outbox contract
 - package-surface tests, reference-doc tests, component docs, and solution/test-project wiring now include `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid`
 - `Cephalon.Data.EntityFramework` now also implements `IProjectionContributor` and registers EF-backed projection descriptors when `RegisterProjections` is enabled, plus a `data.projections.entity-framework` capability and a `projections` runtime surface under `data-management` so operators can see active projection infrastructure through `/engine/technology-surfaces` and `/engine/projections`
 
@@ -1664,8 +1664,8 @@ Why:
 
 - the shipped `Cephalon.Eventing` surface already models channels and runtime answers, but it does not yet expose the fuller publisher/subscriber and outbox bridge story the next feature wave needs
 - the outbox baseline is incomplete unless Cephalon can tell an operator what was published, subscribed, retried, or blocked
-- Wolverine is the current first-class adapter path, `MassTransit` is the tracked-later strategic candidate, and the engine contract must stay runtime-neutral
-- we need one clear first-class adapter path instead of diluting the phase-8 baseline across several bus frameworks at once
+- Wolverine is the current shipped optional companion proof, `MassTransit` is the tracked-later strategic candidate, and the engine contract must stay runtime-neutral
+- we need one clear companion proof instead of diluting the phase-8 baseline across several bus frameworks at once, but that proof must stay optional for consumer apps
 
 Acceptance:
 
@@ -1684,20 +1684,20 @@ Delivered:
 - declared subscription entries can now also link to hosted-execution descriptors, execution graphs, and runtime-story state through hosted-execution metadata, which gives a truthful application-managed execution answer without claiming that `Cephalon.Eventing` itself owns dispatch
 - `Cephalon.Eventing` now also exposes public application-managed subscription runtime-state contracts through `EventSubscriptionExecutionReport`, `EventSubscriptionRuntimeState`, `IEventSubscriptionRuntimeReporter`, and `IEventSubscriptionRuntimeCatalog`, and `event-subscriptions` now projects that reported state plus operator-facing `reported.*` metadata alongside inbox, hosted-execution, execution-graph, and runtime-story linkage
 - `Cephalon.Eventing` now also exposes public application-managed outbox-dispatch runtime-state contracts through `EventDispatchExecutionReport`, `EventDispatchRuntimeState`, `IEventDispatchRuntimeReporter`, and `IEventDispatchRuntimeCatalog`, and `event-dispatches` now projects that reported state plus operator-facing `reported.*` metadata on top of the staged outbox-backed publication path
-- `Cephalon.Eventing` now also exposes the public `EventDispatchItem` plus `IEventDispatchStore` contract so later first-class adapters can read pending staged events and apply durable dispatch outcomes without binding the contract to Wolverine-specific APIs
+- `Cephalon.Eventing` now also exposes the public `EventDispatchItem` plus `IEventDispatchStore` contract so later shipped companion adapters can read pending staged events and apply durable dispatch outcomes without binding the contract to Wolverine-specific APIs
 - `Cephalon.Eventing` now publishes a stable diagnostics convention for staged publications plus application-managed subscription and publication-dispatch outcomes, and the engine now keeps technology runtime surfaces live enough for that reported state to show up after startup instead of freezing at the first catalog resolution
 - the current Entity Framework outbox baseline now persists `next_attempt_at_utc` alongside `dispatch_attempt_count` and `dispatched_at_utc`, so the runtime-neutral dispatch-store contract can honor delayed retry intent instead of re-reading every retried row immediately
-- `Cephalon.Eventing.Wolverine` now exists as the official first-class adapter slice with the `eventing.wolverine` capability plus the `wolverine-adapter` runtime surface, and it truthfully supports two modes: a host-wiring-only baseline that reports `dispatchBridge = consumer-managed`, plus an opt-in `wolverine-managed` durable staged-dispatch loop on top of `IEventDispatchStore`
+- `Cephalon.Eventing.Wolverine` now exists as a shipped optional companion slice with the `eventing.wolverine` capability plus the `wolverine-adapter` runtime surface, and it truthfully supports two modes: a host-wiring-only baseline that reports `dispatchBridge = consumer-managed`, plus an opt-in `wolverine-managed` durable staged-dispatch loop on top of `IEventDispatchStore`
 - the `event-dispatches` technology surface now also projects configured dispatch-runtime descriptor metadata per outbox path, and the `wolverine-adapter` surface now aggregates latest outcome, retry-pending count, and report totals so operators can see both configuration truth and live runtime follow-through without stitching several surfaces together by hand
 - `Cephalon.Eventing.Wolverine` now also contributes its own diagnostics convention so `/engine/diagnostics` and the runtime snapshot advertise the stable `4300-4305` Wolverine dispatch-loop event ids alongside the shared eventing diagnostics range
 - `Cephalon.Eventing.Wolverine` now also exposes `System.Diagnostics.ActivitySource` (`Cephalon.Eventing.Wolverine.Dispatch`) and `System.Diagnostics.Metrics.Meter` instrumentation for the dispatch loop, with Activity spans per dispatch item (tagged with message_id, event_type, channel_id, dispatch_attempt, correlation_id, tenant_id) and counters for attempts, successes, failures, retries plus a histogram for dispatch duration in milliseconds — enabling OpenTelemetry-instrumented hosts to capture distributed traces and metrics without additional adapter code
 - at that point `eventing.subscriptions` still exposed declared subscription descriptors rather than a pack-owned bus runner, and `eventing.subscribe` remained intentionally absent until a real subscription/dispatch runtime existed instead of over-claiming bus behavior; `ENG-231` later adds the first truthful companion-managed case
-- decision lock: phase 8 will treat `Cephalon.Eventing.Wolverine` as the official first-class adapter path, keep `MassTransit` as the tracked-later candidate once that first path is proven, and leave `MediatR`, `LiteBus`, `NServiceBus`, and `SlimMessageBus` as consumer-owned coexistence choices unless a later bridge or adapter package is explicitly shipped
+- current direction: phase 8 treats `Cephalon.Eventing.Wolverine` as the first shipped optional companion proof, keeps `MassTransit` as the tracked-later candidate once the engine-owned contract and that proof are strong enough, and leaves `MediatR`, `LiteBus`, `NServiceBus`, and `SlimMessageBus` as consumer-owned coexistence choices unless a later bridge or adapter package is explicitly shipped
 - coexistence rule: one flow should have one durable-messaging owner, so consumer apps should not layer Cephalon-managed durable messaging semantics and a second bus/runtime on the same publish/consume path
 Follow-up later:
 
 - subscription/handler-execution truth beyond the current declarative and application-managed reporting model
-- `MassTransit` as tracked-later strategic candidate once the Wolverine path is proven
+- `MassTransit` or another companion adapter as a tracked-later strategic candidate once the engine-owned contract and current Wolverine proof are proven strongly enough
 
 ### ENG-051 Identity and authorization companion baseline
 
@@ -7812,7 +7812,7 @@ Why:
 - the current eventing baseline could report live dispatch state, but its descriptor and state read contracts still lived in `Cephalon.Eventing` instead of the host-agnostic abstraction layer that other runtime catalogs use
 - `/engine/snapshot` still stopped short of exposing a first-class event-dispatch runtime answer even though operators already needed to understand both configured dispatch ownership and the latest reported state
 - ASP.NET Core hosts still lacked direct `/engine/*` operator routes for event-dispatch runtimes and live dispatch state, which forced tooling to reconstruct answers indirectly from broader technology surfaces
-- the showcase sample had the pieces for outbox-backed publication, but it did not yet prove the official Wolverine-managed dispatch path and the new operator routes end to end
+- the showcase sample had the pieces for outbox-backed publication, but it did not yet prove the optional Wolverine-managed dispatch path and the new operator routes end to end
 
 Acceptance:
 
@@ -7820,7 +7820,7 @@ Acceptance:
 - `/engine/snapshot` carries additive `EventDispatchRuntimes` and `EventDispatchStates` answers when the corresponding catalogs are active
 - ASP.NET Core hosts expose `/engine/event-dispatch-runtimes`, `/engine/event-dispatch-runtimes/{dispatchRuntimeId}`, `/engine/event-dispatches`, and `/engine/event-dispatches/{outboxId}`
 - `Cephalon.Eventing.Wolverine` projects its managed loop through the new operator surfaces without leaking Wolverine APIs into the abstraction layer
-- the showcase sample wires the official Wolverine path so hosting tests can prove the new routes and runtime snapshot truthfully
+- the showcase sample wires one optional Wolverine path so hosting tests can prove the new routes and runtime snapshot truthfully without turning Wolverine into an engine requirement
 
 Delivered:
 
@@ -7828,7 +7828,7 @@ Delivered:
 - `Cephalon.Eventing` now keeps registration, reporting, and catalog implementation in the companion pack while consuming the abstraction-layer contracts for public reads, including a dedicated `EventDispatchRuntimeDescriptorCatalog`
 - `Cephalon.Engine` now projects additive `EventDispatchRuntimes` and `EventDispatchStates` into `RuntimeIntrospectionSnapshot` through optional service resolution so the engine core stays additive and host-agnostic
 - `Cephalon.AspNetCore` now exposes `/engine/event-dispatch-runtimes`, `/engine/event-dispatch-runtimes/{dispatchRuntimeId}`, `/engine/event-dispatches`, and `/engine/event-dispatches/{outboxId}` as direct operator routes
-- `Cephalon.Eventing.Wolverine` now reports its managed dispatch loop through the new runtime-descriptor/state surfaces without holding scoped dependencies incorrectly in singleton services, and the showcase sample now wires the official Wolverine pack so those routes stay truthful end to end
+- `Cephalon.Eventing.Wolverine` now reports its managed dispatch loop through the new runtime-descriptor/state surfaces without holding scoped dependencies incorrectly in singleton services, and the showcase sample now wires the optional Wolverine pack so those routes stay truthful end to end
 - hosting, composition, tooling, reference-doc, and showcase coverage now lock the new operator contract plus the moved public surface
 
 ## Sprint history and next 4 sprints
@@ -8237,7 +8237,7 @@ Upcoming sequence from the April 2026 maturity reset:
 
 ### Sprint 31 follow-through
 
-- ENG-069 event-dispatch runtime operator surfaces: host-agnostic event-dispatch runtime/state read contracts now live in `Cephalon.Abstractions`, `/engine/snapshot` now carries `EventDispatchRuntimes` plus `EventDispatchStates`, ASP.NET Core now exposes `/engine/event-dispatch-runtimes` and `/engine/event-dispatches`, `Cephalon.Eventing.Wolverine` now projects its managed loop through those routes truthfully, and the showcase sample now wires the official Wolverine path end to end — **Shipped**
+- ENG-069 event-dispatch runtime operator surfaces: host-agnostic event-dispatch runtime/state read contracts now live in `Cephalon.Abstractions`, `/engine/snapshot` now carries `EventDispatchRuntimes` plus `EventDispatchStates`, ASP.NET Core now exposes `/engine/event-dispatch-runtimes` and `/engine/event-dispatches`, `Cephalon.Eventing.Wolverine` now projects its managed loop through those routes truthfully, and the showcase sample now wires one optional Wolverine path end to end — **Shipped**
 - ENG-070 outbox dispatch-ownership baseline: the engine now enriches `OutboxDescriptor` with a first-class `DispatchPolicy`, `IOutboxDispatchPolicyCatalog` now resolves `disabled`, `consumer-managed`, and runtime-managed ownership without leaking eventing internals into `Cephalon.Engine`, managed dispatch runtimes now declare explicit `OutboxIds`, and `/engine/outboxes`, `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, and the showcase sample now agree on the same execution owner truth — **Shipped**
 - ENG-071 event-dispatch runtime summary and broader provider dispatch-store baseline: `EventDispatchRuntimeDescriptor` now carries a canonical aggregate `Summary`, runtime descriptors are live-enriched from reported dispatch state instead of leaving each consumer to re-aggregate that data ad hoc, the `wolverine-adapter` and shared eventing technology surfaces now reuse that same summary truth, and the MongoDB, Redis, Elasticsearch, and OpenSearch outbox packs now register `IEventDispatchStore` alongside their staged outboxes so the runtime-neutral managed-dispatch path is no longer limited to Entity Framework — **Shipped**
 - ENG-072 graph/vector outbox dispatch-store follow-through: `Cephalon.Data.Neo4j` and `Cephalon.Data.Qdrant` now also register provider-native `IEventDispatchStore` implementations alongside their staged outboxes, the same outbox descriptors now resolve to `consumer-managed` when the eventing technology is active, and composition coverage now locks that graph/vector baseline explicitly while Cassandra, ClickHouse, and NATS remained tracked as separate storage-model follow-through work at that point — **Shipped**

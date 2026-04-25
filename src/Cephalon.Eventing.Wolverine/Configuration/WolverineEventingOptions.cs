@@ -3,7 +3,7 @@ using Wolverine;
 namespace Cephalon.Eventing.Wolverine.Configuration;
 
 /// <summary>
-/// Describes the host-owned options for the official Wolverine eventing companion pack.
+/// Describes the host-owned options for the optional Wolverine eventing companion pack.
 /// </summary>
 public sealed class WolverineEventingOptions
 {

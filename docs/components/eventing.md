@@ -77,12 +77,13 @@ ClickHouse is now an explicit unsupported-by-design branch instead of a hidden p
 
 Current Cephalon direction for messaging adapters:
 
-- `Cephalon.Eventing.Wolverine` is the current official first-class adapter path and now supports host wiring, an opt-in `wolverine-managed` durable dispatch loop on top of `IEventDispatchStore`, and the first truthful runtime-bound subscription execution baseline on top of the same staged-publication path
-- `MassTransit` is the tracked-later adapter candidate once the `Wolverine` path and the underlying runtime-neutral contract are proven strongly enough to justify a second official adapter
-- other messaging libraries such as `MediatR`, `LiteBus`, `NServiceBus`, and `SlimMessageBus` are allowed in consumer apps, but they are consumer-owned integrations rather than first-class Cephalon adapters in the current phase
+- `Cephalon.Eventing.Wolverine` is the current shipped optional companion adapter proof and now supports host wiring, an opt-in `wolverine-managed` durable dispatch loop on top of `IEventDispatchStore`, and the first truthful runtime-bound subscription execution baseline on top of the same staged-publication path
+- `MassTransit` is the tracked-later companion adapter candidate once the engine-owned runtime-neutral contract and the current Wolverine proof are strong enough to justify a second shipped adapter package
+- other messaging libraries such as `MediatR`, `LiteBus`, `NServiceBus`, and `SlimMessageBus` are allowed in consumer apps, but they are consumer-owned integrations rather than shipped Cephalon companion adapters in the current phase
 - Cephalon should not claim runtime truth for those consumer-owned integrations unless a dedicated bridge or adapter package actually projects that state back into the engine surfaces
+- engine readiness should come from `Cephalon.Eventing` owning the runtime-neutral contracts and truthful operator surfaces; companion adapters are optional ways for a consumer app to activate one managed runtime on top of those seams
 - one message flow should have one durable-messaging owner; avoid mixing Cephalon/Wolverine-managed outbox, inbox, retry, or dispatch semantics with a second durable bus/runtime for the same flow
-- adapter-owned diagnostics conventions should be projected through `/engine/diagnostics` when a first-class adapter emits stable event ids, which the current Wolverine slice now does for its managed dispatch loop
+- adapter-owned diagnostics conventions should be projected through `/engine/diagnostics` when a shipped companion adapter emits stable event ids, which the current Wolverine slice now does for its managed dispatch loop
 
 ## Related docs
 

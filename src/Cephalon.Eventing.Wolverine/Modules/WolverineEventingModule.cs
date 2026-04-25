@@ -19,7 +19,7 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "wolverine-eventing",
         displayName: "Wolverine Eventing",
-        description: "Official Wolverine host wiring for Cephalon event-driven integration workloads.",
+        description: "Optional Wolverine host wiring for Cephalon event-driven integration workloads.",
         tags: ["technology", "eventing", "wolverine"],
         version: "1.0.0",
         metadata: new Dictionary<string, string>
@@ -224,7 +224,7 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
         capabilities.Add(new Capability(
             key: "eventing.wolverine",
             displayName: "Wolverine Eventing Adapter",
-                description: "Registers Wolverine as the official first-class host integration path for Cephalon event-driven workloads.",
+                description: "Registers Wolverine as an optional host integration path for Cephalon event-driven workloads.",
                 metadata: new Dictionary<string, string>
                 {
                     ["technology"] = "event-driven-integration",

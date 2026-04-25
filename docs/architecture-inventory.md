@@ -199,7 +199,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 
 - `eventing-runtime` — Eventing Runtime (`Cephalon.Eventing`): companion runtime services for event-driven integration workloads.
 - `eventing-behaviors` — Eventing Behaviors (`Cephalon.Eventing.Behaviors`): explicit saga choreography bridge into the shared eventing publish path.
-- `wolverine-eventing` — Wolverine Eventing (`Cephalon.Eventing.Wolverine`): official Wolverine host wiring for event-driven integration workloads.
+- `wolverine-eventing` — Wolverine Eventing (`Cephalon.Eventing.Wolverine`): optional Wolverine host wiring for event-driven integration workloads.
 - `agentics-runtime` — Agentics Runtime (`Cephalon.Agentics`): companion runtime services for agentic workloads.
 - `edge-runtime` — Edge Runtime (`Cephalon.Edge`): companion runtime services for edge-native delivery workloads.
 - `knowledge-retrieval-runtime` — Knowledge Retrieval Runtime (`Cephalon.Retrieval`): companion runtime services for retrieval-heavy applications.

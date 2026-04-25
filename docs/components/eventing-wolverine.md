@@ -1,13 +1,13 @@
 # Cephalon.Eventing.Wolverine
 
-`Cephalon.Eventing.Wolverine` is the official first-class Wolverine companion package for Cephalon event-driven workloads.
+`Cephalon.Eventing.Wolverine` is an optional Wolverine companion package for Cephalon event-driven workloads.
 
 ## What it owns
 
-- wires the official `WolverineFx` runtime into a Cephalon host when `EventDrivenIntegration` is active
+- wires the optional `WolverineFx` runtime into a Cephalon host when `EventDrivenIntegration` is active
 - keeps Wolverine-specific host registration out of `Cephalon.Engine` and `Cephalon.Eventing`
 - exposes a dedicated `wolverine-adapter` runtime surface under `event-driven-integration`
-- publishes the `eventing.wolverine` capability so operators can see when the official adapter path is active
+- publishes the `eventing.wolverine` capability so operators can see when the optional adapter choice is active
 - defaults to `dispatchBridge = consumer-managed` when the pack is only being used for host wiring and runtime-surface projection
 - can opt into a `wolverine-managed` durable dispatch loop on top of `IEventDispatchStore` by enabling `EnableDispatchLoop`
 - can opt into `wolverine-managed` declared subscription execution on top of that staged-event dispatch loop by enabling `EnableSubscriptionExecution`
@@ -34,7 +34,7 @@
 
 ## How it fits
 
-This package is intentionally thin, but it is no longer just a passive host-wiring shim. Cephalon now has an official Wolverine path that can be selected and introspected without pushing Wolverine APIs into the engine core, and it can optionally own both the durable staged-event dispatch loop and one truthful managed subscription-execution lane when the app deliberately enables that behavior.
+This package is intentionally thin, but it is no longer just a passive host-wiring shim. Cephalon now has a shipped Wolverine companion path that can be selected and introspected without pushing Wolverine APIs into the engine core, and it can optionally own both the durable staged-event dispatch loop and one truthful managed subscription-execution lane when the app deliberately enables that behavior.
 
 Today the pack does three concrete things truthfully. First, it registers Wolverine host wiring and projects that choice back into Cephalon runtime introspection through `eventing.wolverine` and the `wolverine-adapter` surface. Second, when `EnableDispatchLoop` is turned on and a real `IEventDispatchStore` is available, it runs a hosted `wolverine-managed` dispatch pump that reads staged `EventPublication` payloads, publishes them through Wolverine, records durable dispatch outcomes, and reports execution/runtime metadata back through the shared eventing surfaces. Third, when `EnableSubscriptionExecution` is turned on, `EnableDispatchLoop` is already active, `EnableHostWiring` is left on, and at least one declared `IEventSubscriptionExecutor` is registered, the same staged-publication flow can trigger `wolverine-managed` execution of matching declared subscriptions with fixed-delay retry scheduling through Wolverine's own scheduled-message pipeline. That bridge is no longer limited to the Entity Framework outbox baseline; the current MongoDB, Redis, Elasticsearch, OpenSearch, Neo4j, Qdrant, and NATS outbox packs now register the same runtime-neutral dispatch-store contract as well.
 
@@ -53,6 +53,8 @@ That means the package now has three truthful operating modes:
 - baseline mode: Wolverine host wiring is active, while durable dispatch remains consumer-managed
 - managed-loop mode: Wolverine owns the staged-event dispatch loop and reports `dispatchBridge = wolverine-managed`
 - managed-subscription mode: Wolverine owns execution for the declared subscriptions that have registered `IEventSubscriptionExecutor` implementations, with retry scheduling surfaced as part of the same runtime story
+
+Those modes are optional companion behavior, not the definition of engine completeness. The engine side of that readiness lives in the runtime-neutral contracts and surfaces owned by `Cephalon.Eventing`; consumer apps can choose to install this companion, skip it, or later adopt a different companion pack without changing the core eventing contract itself.
 
 The current managed-subscription baseline is intentionally narrow. It is triggered from the staged `EventPublication` dispatch flow rather than an arbitrary inbound broker-consumption path, it only owns subscriptions that have declared executors, and it currently uses a fixed-delay retry policy over Wolverine scheduled messages rather than a broader broker-owned retry vocabulary. The remaining work is therefore not to invent a first durable bridge from scratch, but to deepen observability, richer retry/runtime answers, broader provider-native dispatch-store follow-through where a pack can truthfully persist dispatch outcomes, richer inbound-consumption stories when they are real, and later broker-specific follow-through on top of the same `IEventDispatchStore`, `IEventSubscriptionExecutor`, and `IEventSubscriptionRuntimeReporter` contract set. ClickHouse now stays explicit about the opposite answer: its outbox is visible to the runtime as `DispatchPolicy.PolicyId = unsupported` with `ExecutionMode = disabled`, so the Wolverine bridge and the shared eventing surfaces do not pretend the current analytics-first storage model already owns mutable dispatch state.
 
