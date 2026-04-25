@@ -365,6 +365,8 @@ public sealed class TemplatePackTests
             var appModelSettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddEngine.AppModel.json"));
             Assert.Contains("\"Blueprint\": \"modular-monolith\"", appModelSettings, StringComparison.Ordinal);
             Assert.Contains("\"strategy-pattern\"", appModelSettings, StringComparison.Ordinal);
+            Assert.Contains("\"Technologies\": [", appModelSettings, StringComparison.Ordinal);
+            Assert.DoesNotContain("\"data\"", appModelSettings, StringComparison.OrdinalIgnoreCase);
             Assert.Contains("\"rest-api\"", appModelSettings, StringComparison.Ordinal);
 
             var dataSettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddEngine.Data.json"));
@@ -456,17 +458,37 @@ public sealed class TemplatePackTests
             Assert.Contains("Get-DockerBuildArguments", generatedContainerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("Format-Command -Command \"docker\"", generatedContainerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("@(\"push\", $tag)", generatedContainerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("replace-with-registry/acme-store:latest", generatedContainerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("Container image publishing completed successfully.", generatedContainerImagePublishScript, StringComparison.Ordinal);
+
+            var generatedAzureContainerAppsDeployScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "azure-container-apps", "deploy-up.ps1"));
+            Assert.Contains("[string]$AppName = \"acme-store\"", generatedAzureContainerAppsDeployScript, StringComparison.Ordinal);
+            Assert.Contains("Acme.Store.csproj", generatedAzureContainerAppsDeployScript, StringComparison.Ordinal);
 
             var generatedKubernetesApplyScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "kubernetes", "apply.ps1"));
             Assert.Contains("kubectl", generatedKubernetesApplyScript, StringComparison.Ordinal);
             Assert.Contains("kustomize", generatedKubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("[string]$Image = \"replace-with-registry/acme-store:latest\"", generatedKubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("[string]$Namespace = \"acme-store\"", generatedKubernetesApplyScript, StringComparison.Ordinal);
             Assert.Contains("Kubernetes deployment apply completed successfully.", generatedKubernetesApplyScript, StringComparison.Ordinal);
 
+            var generatedKubernetesKustomization = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "kubernetes", "kustomization.yaml"));
+            Assert.Contains("namespace: acme-store", generatedKubernetesKustomization, StringComparison.Ordinal);
+
+            var generatedKubernetesNamespace = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "kubernetes", "namespace.yaml"));
+            Assert.Contains("name: acme-store", generatedKubernetesNamespace, StringComparison.Ordinal);
+            Assert.Contains("app.kubernetes.io/name: acme-store", generatedKubernetesNamespace, StringComparison.Ordinal);
+
             var generatedKubernetesDeployment = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "kubernetes", "deployment.yaml"));
-            Assert.Contains("replace-with-registry/cephalon-template-app:latest", generatedKubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("name: acme-store", generatedKubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("app.kubernetes.io/name: acme-store", generatedKubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("replace-with-registry/acme-store:latest", generatedKubernetesDeployment, StringComparison.Ordinal);
             Assert.Contains("/health/ready", generatedKubernetesDeployment, StringComparison.Ordinal);
             Assert.Contains("/health/live", generatedKubernetesDeployment, StringComparison.Ordinal);
+
+            var generatedKubernetesService = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "kubernetes", "service.yaml"));
+            Assert.Contains("name: acme-store", generatedKubernetesService, StringComparison.Ordinal);
+            Assert.Contains("app.kubernetes.io/name: acme-store", generatedKubernetesService, StringComparison.Ordinal);
 
             var generatedSystemdService = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "linux", "systemd", "Acme.Store.service"));
             Assert.Contains("EnvironmentFile=-/etc/cephalon/Acme.Store.env", generatedSystemdService, StringComparison.Ordinal);

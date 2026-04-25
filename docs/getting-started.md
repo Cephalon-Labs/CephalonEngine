@@ -163,6 +163,14 @@ That script:
 - runs `dotnet restore`, `dotnet build`, and `dotnet run`
 - validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`
 
+For the matching `dotnet new` replay, run:
+
+```powershell
+pwsh ./scripts/validate-template-pack-adoption.ps1
+```
+
+That script publishes the same temporary feed plus `Cephalon.TemplatePack`, installs the template pack into an isolated custom hive, reruns `cephalon doctor` with `CEPHALON_DOCTOR_TEMPLATE_HIVE` set, scaffolds a fresh project-root starter outside the repository, seeds the generated `./.cephalon/packages` folder, reruns `cephalon doctor --app-root <path>`, restores, builds, runs, and probes the generated host from the template-pack path.
+
 ## Optional Published-Output Path
 
 Generated host projects now also include `Properties/PublishProfiles/CephalonFolder.pubxml`.
@@ -341,10 +349,12 @@ dotnet new list cephalon
 ```
 
 `cephalon doctor` should then report the template-pack check as `[ok]`.
+When you scaffold an app starter from that path, `cephalon doctor --app-root ./Acme.Store.TemplateStarter` now accepts the project-root template layout too, so the same generated bootstrap, package-source, deployment-asset, and route-readiness checks stay available even without the `.slnx` plus `src/` layout used by `cephalon new`.
 The `dotnet new` app starters also emit the same `NuGet.config`, `./.cephalon/packages/README.md`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/<App>.service`, `deploy/linux/systemd/<App>.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml` baseline.
 The template starters also emit the same structured phase-8 `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections, using canonical ids and the same low-ceremony `Sfid` plus `Audit` starter path as `cephalon new`.
 When those app starters include `RestApi`, their public starter modules now also begin on `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` plus `MapProfile<TBehavior>()`, keeping `dotnet new` aligned with the shipped engine-first REST boundary.
 The template pack also ships module starters, including `cephalon-module`, `cephalon-rest-module`, and `cephalon-rest-behavior-module`, so package authors can start from either a host-agnostic module, a generic REST module, or the recommended behavior-backed REST module path without leaving the `dotnet new` flow.
+For a repo-native cold-start proof of that full template-pack path, use `pwsh ./scripts/validate-template-pack-adoption.ps1`.
 For the settled engine-first REST baseline, start with `cephalon-rest-behavior-module` for behavior-backed public APIs, then continue with `docs/module-authoring.md` and `docs/architecture/rest-endpoint-authoring-strategy.md` so route ownership and host governance stay aligned with the shipped runtime model.
 
 ## Next Docs

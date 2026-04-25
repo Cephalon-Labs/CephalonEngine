@@ -6,6 +6,10 @@
         "CephalonTemplateApp"
       ]
     },
+    "Patterns": [
+      "shared-foundation"
+    ],
+    "Technologies": [],
     "Transports": [
       "rest-api"
     ]

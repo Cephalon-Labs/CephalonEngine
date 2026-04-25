@@ -7,8 +7,10 @@
       ]
     },
     "Patterns": [
+      "shared-foundation",
       "strategy-pattern"
     ],
+    "Technologies": [],
     "Transports": [
       "rest-api"
     ]

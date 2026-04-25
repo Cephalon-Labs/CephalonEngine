@@ -375,6 +375,59 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task RunAsyncDoctorUsesConfiguredTemplateHiveForTemplatePackCommands()
+    {
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+        var customHivePath = Path.Combine(Path.GetTempPath(), "cephalon template hive");
+        var previousTemplateHivePath = Environment.GetEnvironmentVariable("CEPHALON_DOCTOR_TEMPLATE_HIVE");
+        var observedTemplateListCommand = false;
+
+        Environment.SetEnvironmentVariable("CEPHALON_DOCTOR_TEMPLATE_HIVE", customHivePath);
+        CommandProcessRunner.RunOverride = (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon", "--debug:custom-hive", var hivePath] when string.Equals(hivePath, customHivePath, StringComparison.Ordinal) => CaptureTemplateListHit(),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+
+            CommandProcessResult CaptureTemplateListHit()
+            {
+                observedTemplateListCommand = true;
+                return new CommandProcessResult(103, "No templates found matching: 'cephalon'.", string.Empty);
+            }
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(["doctor"], stdout, stderr);
+
+            Assert.Equal(0, exitCode);
+            Assert.True(observedTemplateListCommand);
+            Assert.Contains($"[warn] Cephalon template pack: No Cephalon templates were found by `dotnet new list cephalon --debug:custom-hive \"{customHivePath}\"`.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains($"dotnet new install Cephalon.TemplatePack --debug:custom-hive \"{customHivePath}\"", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains($"dotnet new cephalon-monolith -n Acme.Store.TemplateStarter --debug:custom-hive \"{customHivePath}\"", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("CEPHALON_DOCTOR_TEMPLATE_HIVE", previousTemplateHivePath);
+            CommandProcessRunner.RunOverride = null;
+        }
+    }
+
+    [Fact]
     public async Task RunAsyncDoctorFailsWhenRequiredSdkSelectionIsTooOld()
     {
         var stdout = new StringWriter();
@@ -516,6 +569,82 @@ public sealed class CliApplicationTests
             Assert.Contains($"Set-Location {QuotePowerShellArgument(appRootPath)}", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("dotnet restore ./Acme.Store.slnx", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("dotnet run --project ./src/Acme.Store.Host/Acme.Store.Host.csproj", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorValidatesTemplatePackGeneratedAppBootstrap()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-template-app-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateTemplatePackDoctorAppRoot(appRootPath, "Acme.Store");
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(0, exitCode);
+            Assert.Contains($"[ok] Generated app root: {appRootPath}", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated app solution: Template-pack project-root layout via ./Acme.Store.csproj.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated package baseline: ./Acme.Store.csproj keeps direct Cephalon package versions explicit:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon.AspNetCore 0.1.0-preview", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Cephalon package source: ./.cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Cephalon local package feed: 1 package(s) found under ./.cephalon/packages.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host project: ./Acme.Store.csproj", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated test project: Template-pack project-root starters do not emit a default `tests/` project.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host target framework: ./Acme.Store.csproj targets net10.0 and stays on the stable shipping floor.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host bootstrap source baseline: ./Program.cs keeps the generated Cephalon host bootstrap explicit with AddCephalonProjectConfigurations, behavior and observability wiring, and MapCephalon().", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated host project baseline: ./Acme.Store.csproj keeps the generated package references and `Configurations/**/*.json` copy/publish baseline explicit.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated split configuration assets: ./Configurations/AddEngine.*.json and ./Configurations/Observability/Development.json are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated local orchestration assets: ./compose.yaml and ./otel-collector-config.yaml are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated deployment assets: ./Dockerfile plus container-image, Azure Container Apps, and Kubernetes deployment assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated self-hosted and hosted deployment assets: ./deploy/windows-service, ./deploy/iis, ./deploy/azure-app-service, and ./deploy/linux/systemd assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated guidance docs assets: ./README.md, ./.cephalon/packages/README.md, ./Configurations/README.md, and deploy/*/README.md guidance assets are present.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated app trim posture: PublishTrimmed is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated app Native AOT posture: PublishAot is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated app single-file posture: PublishSingleFile is not enabled in the generated app bootstrap.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated publish profile: ./Properties/PublishProfiles/CephalonFolder.pubxml", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Environment and generated app bootstrap are ready for Cephalon.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains($"Set-Location {QuotePowerShellArgument(appRootPath)}", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("dotnet restore ./Acme.Store.csproj", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("dotnet run --project ./Acme.Store.csproj", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
         }
         finally
@@ -3541,6 +3670,69 @@ public sealed class CliApplicationTests
                 """;
 
             File.WriteAllText(Path.Combine(publishProfilesPath, "CephalonFolder.pubxml"), publishProfileContents);
+        }
+    }
+
+    private static void CreateTemplatePackDoctorAppRoot(string appRootPath, string appName)
+    {
+        var templateRoot = RepositoryPaths.GetDirectory(
+            "templates",
+            "Cephalon.TemplatePack",
+            "templates",
+            "cephalon-modular-monolith");
+        var normalizedAppName = appName.Replace(" ", string.Empty, StringComparison.Ordinal);
+        var appSlug = normalizedAppName.Replace('.', '-').ToLowerInvariant();
+
+        CopyDirectory(templateRoot, appRootPath);
+
+        var originalProjectPath = Path.Combine(appRootPath, "CephalonTemplateApp.csproj");
+        var renamedProjectPath = Path.Combine(appRootPath, $"{normalizedAppName}.csproj");
+        File.Move(originalProjectPath, renamedProjectPath);
+
+        var systemdRoot = Path.Combine(appRootPath, "deploy", "linux", "systemd");
+        File.Move(
+            Path.Combine(systemdRoot, "CephalonTemplateApp.service"),
+            Path.Combine(systemdRoot, $"{normalizedAppName}.service"));
+        File.Move(
+            Path.Combine(systemdRoot, "CephalonTemplateApp.env"),
+            Path.Combine(systemdRoot, $"{normalizedAppName}.env"));
+
+        foreach (var filePath in Directory.GetFiles(appRootPath, "*", SearchOption.AllDirectories))
+        {
+            if (Path.GetExtension(filePath).Equals(".nupkg", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var contents = File.ReadAllText(filePath);
+            contents = contents.Replace("CephalonTemplateApp", normalizedAppName, StringComparison.Ordinal);
+            contents = contents.Replace("cephalon-template-app", appSlug, StringComparison.Ordinal);
+            File.WriteAllText(filePath, contents);
+        }
+
+        var localPackageFeedPath = Path.Combine(appRootPath, ".cephalon", "packages");
+        Directory.CreateDirectory(localPackageFeedPath);
+        File.WriteAllText(
+            Path.Combine(localPackageFeedPath, "Cephalon.AspNetCore.0.1.0-preview.nupkg"),
+            "template-pack doctor fixture");
+    }
+
+    private static void CopyDirectory(string sourcePath, string destinationPath)
+    {
+        Directory.CreateDirectory(destinationPath);
+
+        foreach (var directoryPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+        {
+            var relativeDirectoryPath = Path.GetRelativePath(sourcePath, directoryPath);
+            Directory.CreateDirectory(Path.Combine(destinationPath, relativeDirectoryPath));
+        }
+
+        foreach (var filePath in Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories))
+        {
+            var relativeFilePath = Path.GetRelativePath(sourcePath, filePath);
+            var destinationFilePath = Path.Combine(destinationPath, relativeFilePath);
+            Directory.CreateDirectory(Path.GetDirectoryName(destinationFilePath)!);
+            File.Copy(filePath, destinationFilePath, overwrite: true);
         }
     }
 

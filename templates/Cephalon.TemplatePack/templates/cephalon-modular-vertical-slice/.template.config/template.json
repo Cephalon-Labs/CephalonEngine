@@ -7,6 +7,29 @@
   "shortName": "cephalon-slice",
   "sourceName": "CephalonTemplateApp",
   "preferNameDirectory": true,
+  "symbols": {
+    "deploymentSlugBase": {
+      "type": "derived",
+      "valueSource": "name",
+      "valueTransform": "DeploymentSlugTransform"
+    },
+    "deploymentSlug": {
+      "type": "generated",
+      "generator": "casing",
+      "parameters": {
+        "source": "deploymentSlugBase",
+        "toLower": true
+      },
+      "replaces": "cephalon-template-app"
+    }
+  },
+  "forms": {
+    "DeploymentSlugTransform": {
+      "identifier": "replace",
+      "pattern": "[^A-Za-z0-9]+",
+      "replacement": "-"
+    }
+  },
   "tags": {
     "language": "C#",
     "type": "project"

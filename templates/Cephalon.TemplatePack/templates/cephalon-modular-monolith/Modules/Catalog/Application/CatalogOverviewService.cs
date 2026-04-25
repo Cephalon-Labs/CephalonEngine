@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CephalonTemplateApp.Modules.Catalog.Domain;
 
 namespace CephalonTemplateApp.Modules.Catalog.Application;

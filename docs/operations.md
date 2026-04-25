@@ -24,6 +24,16 @@ pwsh ./scripts/validate-generated-app-adoption.ps1
 
 See `docs/getting-started.md` for the corresponding install, doctor, scaffold, seed, restore, and first-run guidance.
 
+## Template-pack cold-start adoption smoke
+
+For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, installs `Cephalon.TemplatePack` into an isolated custom hive, reruns `cephalon doctor` with that custom hive visible, scaffolds a fresh `dotnet new cephalon-monolith` starter outside the repository, seeds the generated local package feed, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`, run:
+
+```powershell
+pwsh ./scripts/validate-template-pack-adoption.ps1
+```
+
+See `docs/getting-started.md` for the corresponding template-pack install, doctor, scaffold, and first-run guidance.
+
 ## Generated-app Windows Service smoke
 
 For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, publishes the generated host, and previews the shipped Windows Service install/remove scripts against the published output without requiring admin rights, run:
