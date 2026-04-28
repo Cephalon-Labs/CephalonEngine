@@ -220,7 +220,7 @@ internal sealed class TenantDomainOwnershipProofPollingRunner(
 
         metadata[TenantDomainOwnershipProofPollingMetadataKeys.ProofPollingRunnerOwnership] = "cephalon-managed";
         metadata[TenantDomainOwnershipProofPollingMetadataKeys.ExternalProofPollingOwnership] = "cephalon-managed";
-        metadata[TenantDomainOwnershipProofPollingMetadataKeys.BackgroundProofPollingOwnership] = "application-managed";
+        metadata[TenantDomainOwnershipProofPollingMetadataKeys.BackgroundProofPollingOwnership] = ResolveBackgroundProofPollingOwnership(request);
         metadata["pollingTenantId"] = domainOwnership.TenantId;
         metadata["pollingVerificationMethod"] = domainOwnership.VerificationMethod;
         return metadata;
@@ -228,9 +228,7 @@ internal sealed class TenantDomainOwnershipProofPollingRunner(
 
     private int ResolveBatchLimit(TenantDomainOwnershipProofPollingRequest request)
     {
-        return request.MaxItems ?? (options.DomainOwnershipProofPollingMaxItems <= 0
-            ? 50
-            : options.DomainOwnershipProofPollingMaxItems);
+        return TenantDomainOwnershipProofPollingConfiguration.ResolveBatchLimit(options, request.MaxItems);
     }
 
     private TenantDomainOwnershipProofPollingResult CreateResult(
@@ -296,7 +294,7 @@ internal sealed class TenantDomainOwnershipProofPollingRunner(
         metadata[TenantDomainOwnershipProofPollingMetadataKeys.LastProofPollingSource] = request.Source ?? "proof-polling-runner";
         metadata[TenantDomainOwnershipProofPollingMetadataKeys.ProofPollingRunnerOwnership] = options.EnableDomainOwnershipProofPollingRunner ? "cephalon-managed" : "not-configured";
         metadata[TenantDomainOwnershipProofPollingMetadataKeys.ExternalProofPollingOwnership] = options.EnableDomainOwnershipProofPollingRunner ? "cephalon-managed" : "application-managed";
-        metadata[TenantDomainOwnershipProofPollingMetadataKeys.BackgroundProofPollingOwnership] = "application-managed";
+        metadata[TenantDomainOwnershipProofPollingMetadataKeys.BackgroundProofPollingOwnership] = ResolveBackgroundProofPollingOwnership(request);
         metadata[TenantDomainOwnershipProofPollingMetadataKeys.CandidateCount] = candidateCount.ToString(CultureInfo.InvariantCulture);
         metadata[TenantDomainOwnershipProofPollingMetadataKeys.VerificationCount] = verificationCount.ToString(CultureInfo.InvariantCulture);
         metadata[TenantDomainOwnershipProofPollingMetadataKeys.SkippedCount] = skippedCount.ToString(CultureInfo.InvariantCulture);
@@ -316,5 +314,15 @@ internal sealed class TenantDomainOwnershipProofPollingRunner(
         }
 
         return metadata;
+    }
+
+    private static string ResolveBackgroundProofPollingOwnership(TenantDomainOwnershipProofPollingRequest request)
+    {
+        return request.Metadata.TryGetValue(
+            TenantDomainOwnershipProofPollingMetadataKeys.BackgroundProofPollingOwnership,
+            out var ownership) &&
+            !string.IsNullOrWhiteSpace(ownership)
+                ? ownership.Trim()
+                : "application-managed";
     }
 }

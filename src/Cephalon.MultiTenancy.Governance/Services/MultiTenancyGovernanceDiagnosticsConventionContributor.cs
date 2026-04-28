@@ -220,10 +220,38 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Denied tenant domain ownership proof polling. Outcome: {Outcome}. Reason: {Reason}.",
         Description: "Emitted when the governance companion cannot run a tenant-domain ownership proof polling pass.");
 
+    public static readonly DiagnosticEventDefinition DomainOwnershipProofBackgroundPollingStarted = new(
+        Id: 4540,
+        Name: "TenantDomainOwnershipProofBackgroundPollingStarted",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Started tenant domain ownership proof background polling. Interval: {IntervalSeconds}s. Batch limit: {BatchLimit}.",
+        Description: "Emitted when the governance companion starts automatic background tenant-domain ownership proof polling.");
+
+    public static readonly DiagnosticEventDefinition DomainOwnershipProofBackgroundPollingCompleted = new(
+        Id: 4541,
+        Name: "TenantDomainOwnershipProofBackgroundPollingCompleted",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Completed tenant domain ownership proof background polling. Outcome: {Outcome}. Attempts: {VerificationCount}. Verified: {VerifiedCount}. Rejected: {RejectedCount}. Failed: {FailedCount}.",
+        Description: "Emitted when the governance companion completes one automatic background tenant-domain ownership proof polling pass.");
+
+    public static readonly DiagnosticEventDefinition DomainOwnershipProofBackgroundPollingFailed = new(
+        Id: 4542,
+        Name: "TenantDomainOwnershipProofBackgroundPollingFailed",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Failed tenant domain ownership proof background polling before a polling result was produced. Reason: {Reason}.",
+        Description: "Emitted when automatic background tenant-domain ownership proof polling fails before producing a polling result.");
+
+    public static readonly DiagnosticEventDefinition DomainOwnershipProofBackgroundPollingStopped = new(
+        Id: 4543,
+        Name: "TenantDomainOwnershipProofBackgroundPollingStopped",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Stopped tenant domain ownership proof background polling.",
+        Description: "Emitted when the governance companion stops automatic background tenant-domain ownership proof polling.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -255,7 +283,11 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             DomainOwnershipDnsTxtProofCollected,
             DomainOwnershipDnsTxtProofCollectionDenied,
             DomainOwnershipProofPollingCompleted,
-            DomainOwnershipProofPollingDenied
+            DomainOwnershipProofPollingDenied,
+            DomainOwnershipProofBackgroundPollingStarted,
+            DomainOwnershipProofBackgroundPollingCompleted,
+            DomainOwnershipProofBackgroundPollingFailed,
+            DomainOwnershipProofBackgroundPollingStopped
         ]);
 }
 
@@ -500,6 +532,38 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPollingDenied.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPollingDenied.Name),
             MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPollingDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, int, int, Exception?> DomainOwnershipProofBackgroundPollingStartedMessage =
+        LoggerMessage.Define<int, int>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStarted.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStarted.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStarted.MessageTemplate);
+
+    private static readonly Action<ILogger, string, int, int, int, int, Exception?> DomainOwnershipProofBackgroundPollingCompletedMessage =
+        LoggerMessage.Define<string, int, int, int, int>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingCompleted.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingCompleted.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingCompleted.MessageTemplate);
+
+    private static readonly Action<ILogger, string, Exception?> DomainOwnershipProofBackgroundPollingFailedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingFailed.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingFailed.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingFailed.MessageTemplate);
+
+    private static readonly Action<ILogger, Exception?> DomainOwnershipProofBackgroundPollingStoppedMessage =
+        LoggerMessage.Define(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStopped.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStopped.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStopped.MessageTemplate);
 
     public static void MembershipEvaluationAllowed(
         ILogger logger,
@@ -820,5 +884,41 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         DomainOwnershipProofPollingDeniedMessage(logger, outcome, reason, exception);
+    }
+
+    public static void DomainOwnershipProofBackgroundPollingStarted(
+        ILogger logger,
+        int intervalSeconds,
+        int batchLimit,
+        Exception? exception)
+    {
+        DomainOwnershipProofBackgroundPollingStartedMessage(logger, intervalSeconds, batchLimit, exception);
+    }
+
+    public static void DomainOwnershipProofBackgroundPollingCompleted(
+        ILogger logger,
+        string outcome,
+        int verificationCount,
+        int verifiedCount,
+        int rejectedCount,
+        int failedCount,
+        Exception? exception)
+    {
+        DomainOwnershipProofBackgroundPollingCompletedMessage(logger, outcome, verificationCount, verifiedCount, rejectedCount, failedCount, exception);
+    }
+
+    public static void DomainOwnershipProofBackgroundPollingFailed(
+        ILogger logger,
+        string reason,
+        Exception? exception)
+    {
+        DomainOwnershipProofBackgroundPollingFailedMessage(logger, reason, exception);
+    }
+
+    public static void DomainOwnershipProofBackgroundPollingStopped(
+        ILogger logger,
+        Exception? exception)
+    {
+        DomainOwnershipProofBackgroundPollingStoppedMessage(logger, exception);
     }
 }

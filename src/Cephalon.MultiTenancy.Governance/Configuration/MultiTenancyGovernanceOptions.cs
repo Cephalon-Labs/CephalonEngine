@@ -104,6 +104,35 @@ public sealed class MultiTenancyGovernanceOptions
     public int DomainOwnershipProofPollingMaxItems { get; set; } = 50;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership proof polling hosted service is active.
+    /// </summary>
+    /// <remarks>
+    /// This option is disabled by default so installing the governance package never starts recurring
+    /// HTTP or DNS proof checks without an explicit host decision. When enabled, the hosted service schedules
+    /// the bounded proof polling runner; it still does not publish DNS records, host HTTP proof files, or mutate
+    /// provider control planes.
+    /// </remarks>
+    public bool EnableDomainOwnershipProofBackgroundPolling { get; set; }
+
+    /// <summary>
+    /// Gets or sets the proof background polling interval, in seconds.
+    /// </summary>
+    /// <remarks>
+    /// Values less than one are coerced to the default interval.
+    /// </remarks>
+    public int DomainOwnershipProofBackgroundPollingIntervalSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether proof background polling should run once during hosted-service startup.
+    /// </summary>
+    public bool DomainOwnershipProofBackgroundPollingRunOnStartup { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the source recorded on proof polling requests created by the background polling hosted service.
+    /// </summary>
+    public string DomainOwnershipProofBackgroundPollingSource { get; set; } = "background-proof-polling";
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
     /// </summary>
     public bool EnableGovernanceActionDecision { get; set; } = true;

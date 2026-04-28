@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T21:31:34.2019067+00:00",
+  "GeneratedAtUtc": "2026-04-28T21:59:17.8734061+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -232,7 +232,7 @@
       "Description": "Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 89
+      "TypeCount": 91
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1258,7 +1258,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 87
+      "TypeCount": 89
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11561,6 +11561,21 @@
       }
     },
     {
+      "DisplayName": "ITenantDomainOwnershipProofPollingRuntimeCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantdomainownershipproofpollingruntimecatalog",
+      "Declaration": "public interface ITenantDomainOwnershipProofPollingRuntimeCatalog",
+      "Summary": "Exposes runtime state for tenant-domain ownership proof polling.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "ITenantDomainOwnershipProofPublicationPlanner",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -12651,7 +12666,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 30,
+        "Properties": 34,
         "Methods": 0
       }
     },
@@ -15877,6 +15892,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot",
+      "Declaration": "public sealed class TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "Summary": "Describes the latest runtime state of tenant-domain ownership proof polling.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 20,
         "Methods": 0
       }
     },
@@ -24763,6 +24793,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-batchlimit",
       "Signature": "int BatchLimit { get; }",
       "Summary": "Gets the effective maximum number of declarations this pass could poll."
+    },
+    {
+      "DisplayName": "BatchLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-batchlimit",
+      "Signature": "int BatchLimit { get; }",
+      "Summary": "Gets the effective proof polling batch limit."
     },
     {
       "DisplayName": "BearerToken",
@@ -35919,6 +35960,17 @@
       "Summary": "Gets the tenant context currently active for the ambient runtime scope."
     },
     {
+      "DisplayName": "Current",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantDomainOwnershipProofPollingRuntimeCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantdomainownershipproofpollingruntimecatalog-current",
+      "Signature": "TenantDomainOwnershipProofPollingRuntimeSnapshot Current { get; }",
+      "Summary": "Gets the latest tenant-domain ownership proof polling runtime snapshot."
+    },
+    {
       "DisplayName": "CurrentNodeBlocked",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories",
@@ -41878,6 +41930,17 @@
       "Summary": "Metadata key for the DNS TXT record value fingerprint."
     },
     {
+      "DisplayName": "DnsTxtResolverConfigured",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-dnstxtresolverconfigured",
+      "Signature": "bool DnsTxtResolverConfigured { get; }",
+      "Summary": "Gets a value indicating whether DNS TXT proof collection has an explicit resolver endpoint."
+    },
+    {
       "DisplayName": "DnsTxtResolverEndpoint",
       "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofPollingRequest",
@@ -42327,6 +42390,39 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershiphttpproofcollectiontimeoutseconds",
       "Signature": "int DomainOwnershipHttpProofCollectionTimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the default timeout, in seconds, used by HTTP proof collection."
+    },
+    {
+      "DisplayName": "DomainOwnershipProofBackgroundPollingIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofbackgroundpollingintervalseconds",
+      "Signature": "int DomainOwnershipProofBackgroundPollingIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the proof background polling interval, in seconds."
+    },
+    {
+      "DisplayName": "DomainOwnershipProofBackgroundPollingRunOnStartup",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofbackgroundpollingrunonstartup",
+      "Signature": "bool DomainOwnershipProofBackgroundPollingRunOnStartup { get; set; }",
+      "Summary": "Gets or sets a value indicating whether proof background polling should run once during hosted-service startup."
+    },
+    {
+      "DisplayName": "DomainOwnershipProofBackgroundPollingSource",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofbackgroundpollingsource",
+      "Signature": "string DomainOwnershipProofBackgroundPollingSource { get; set; }",
+      "Summary": "Gets or sets the source recorded on proof polling requests created by the background polling hosted service."
     },
     {
       "DisplayName": "DomainOwnershipProofChallengeDnsTxtRecordPrefix",
@@ -44597,6 +44693,17 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-enabled",
+      "Signature": "bool Enabled { get; }",
+      "Summary": "Gets a value indicating whether automatic background proof polling is effectively enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "TimeoutSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44692,6 +44799,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershiphttpproofcollection",
       "Signature": "bool EnableDomainOwnershipHttpProofCollection { get; set; }",
       "Summary": "Gets or sets a value indicating whether the built-in tenant-domain ownership HTTP proof collector is active."
+    },
+    {
+      "DisplayName": "EnableDomainOwnershipProofBackgroundPolling",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofbackgroundpolling",
+      "Signature": "bool EnableDomainOwnershipProofBackgroundPolling { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the built-in tenant-domain ownership proof polling hosted service is active."
     },
     {
       "DisplayName": "EnableDomainOwnershipProofChallengeIssuance",
@@ -49345,6 +49463,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-failedmigrationtargetcount",
       "Signature": "int FailedMigrationTargetCount { get; }",
       "Summary": "Gets the number of migration targets currently reporting \u0060Failed\u0060."
+    },
+    {
+      "DisplayName": "FailedRunCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-failedruncount",
+      "Signature": "long FailedRunCount { get; }",
+      "Summary": "Gets the number of background polling passes that failed before producing a polling result."
     },
     {
       "DisplayName": "FailFast",
@@ -61293,6 +61422,17 @@
       "Summary": "Identifies an intelligence-oriented technology."
     },
     {
+      "DisplayName": "IntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-intervalseconds",
+      "Signature": "int IntervalSeconds { get; }",
+      "Summary": "Gets the effective background polling interval in seconds."
+    },
+    {
       "DisplayName": "Invalid",
       "Category": "Methods",
       "DeclaringTypeName": "BehaviorResult",
@@ -65451,6 +65591,17 @@
       "Summary": "The last reported application-managed attempt number."
     },
     {
+      "DisplayName": "LastCandidateCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastcandidatecount",
+      "Signature": "int LastCandidateCount { get; }",
+      "Summary": "Gets the latest candidate count."
+    },
+    {
       "DisplayName": "LastCapturedChangeCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
@@ -65548,6 +65699,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastcheckpoint",
       "Signature": "string LastCheckpoint { get; set; }",
       "Summary": "The latest provider-facing checkpoint or cursor when one was reported."
+    },
+    {
+      "DisplayName": "LastCompletedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastcompletedatutc",
+      "Signature": "DateTimeOffset? LastCompletedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the latest background polling pass completed or failed."
     },
     {
       "DisplayName": "LastConflictedAtUtc",
@@ -65856,6 +66018,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lasterror",
       "Signature": "string LastError { get; set; }",
       "Summary": "The latest operator-facing error summary when the publication handoff reported a failure."
+    },
+    {
+      "DisplayName": "LastError",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lasterror",
+      "Signature": "string LastError { get; }",
+      "Summary": "Gets the latest unhandled background polling error message."
+    },
+    {
+      "DisplayName": "LastFailedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastfailedcount",
+      "Signature": "int LastFailedCount { get; }",
+      "Summary": "Gets the latest failed-attempt count."
     },
     {
       "DisplayName": "LastFailure",
@@ -66397,6 +66581,17 @@
       "Summary": "The last reported publication outcome identifier when one exists."
     },
     {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastoutcome",
+      "Signature": "string LastOutcome { get; }",
+      "Summary": "Gets the latest proof polling outcome."
+    },
+    {
       "DisplayName": "LastOutputSummary",
       "Category": "Properties",
       "DeclaringTypeName": "AgentToolRunState",
@@ -66870,6 +67065,17 @@
       "Summary": "The number of matches returned by the latest query."
     },
     {
+      "DisplayName": "LastReason",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastreason",
+      "Signature": "string LastReason { get; }",
+      "Summary": "Gets the latest operator-facing proof polling reason."
+    },
+    {
       "DisplayName": "LastRecoveredAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -66890,6 +67096,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastrecoveryerror",
       "Signature": "string LastRecoveryError { get; set; }",
       "Summary": "Gets the latest durable journal recovery error when one exists."
+    },
+    {
+      "DisplayName": "LastRejectedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastrejectedcount",
+      "Signature": "int LastRejectedCount { get; }",
+      "Summary": "Gets the latest rejected count."
     },
     {
       "DisplayName": "LastReplayedVersion",
@@ -66969,6 +67186,17 @@
       "Summary": "The last reported durable-execution stage identifier when one exists."
     },
     {
+      "DisplayName": "LastStartedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-laststartedatutc",
+      "Signature": "DateTimeOffset? LastStartedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the latest background polling pass started."
+    },
+    {
       "DisplayName": "LastStepCompleted",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -67000,6 +67228,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-lasttakeoverobservedatutc",
       "Signature": "DateTimeOffset? LastTakeoverObservedAtUtc { get; set; }",
       "Summary": "Gets the UTC timestamp when the current reporter most recently took over after the previous lease expired."
+    },
+    {
+      "DisplayName": "LastVerificationCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastverificationcount",
+      "Signature": "int LastVerificationCount { get; }",
+      "Summary": "Gets the latest verification-attempt count."
+    },
+    {
+      "DisplayName": "LastVerifiedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastverifiedcount",
+      "Signature": "int LastVerifiedCount { get; }",
+      "Summary": "Gets the latest verified count."
     },
     {
       "DisplayName": "LatestAttemptId",
@@ -73127,6 +73377,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional result metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional runtime metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -80339,6 +80600,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-ownership",
       "Signature": "string Ownership { get; }",
       "Summary": "Gets the ownership mode for the store implementation."
+    },
+    {
+      "DisplayName": "Ownership",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-ownership",
+      "Signature": "string Ownership { get; }",
+      "Summary": "Gets the automatic background proof polling ownership mode."
     },
     {
       "DisplayName": "OwnershipActive",
@@ -96388,6 +96660,17 @@
       "Summary": "Runs the reference docs generator for the supplied arguments and writers."
     },
     {
+      "DisplayName": "RunCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-runcount",
+      "Signature": "long RunCount { get; }",
+      "Summary": "Gets the number of background polling passes that reached a completed or failed terminal state."
+    },
+    {
       "DisplayName": "RunId",
       "Category": "Properties",
       "DeclaringTypeName": "AgentToolExecutionContext",
@@ -96496,6 +96779,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-databasemigrationstatus-running",
       "Signature": "const DatabaseMigrationStatus Running",
       "Summary": "The migration target is currently executing."
+    },
+    {
+      "DisplayName": "RunOnStartup",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-runonstartup",
+      "Signature": "bool RunOnStartup { get; }",
+      "Summary": "Gets a value indicating whether background proof polling runs once during hosted-service startup."
     },
     {
       "DisplayName": "Runs",
@@ -103613,6 +103907,17 @@
       "Summary": "Gets or sets a value indicating whether the response is successful."
     },
     {
+      "DisplayName": "SuccessfulRunCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-successfulruncount",
+      "Signature": "long SuccessfulRunCount { get; }",
+      "Summary": "Gets the number of background polling passes that completed without an unhandled failure."
+    },
+    {
       "DisplayName": "SuccessStatusCodes",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
@@ -105492,6 +105797,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-ctor-system-string-system-boolean-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "TenantDomainOwnershipProofPollingResult(string outcome, bool polled, DateTimeOffset ranAtUtc, int candidateCount, int verificationCount, int skippedCount, int verifiedCount, int rejectedCount, int failedCount, int batchLimit, IReadOnlyList\u003CTenantDomainOwnershipProofVerificationResult\u003E verificationResults, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a tenant-domain ownership proof polling result."
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-ctor-system-boolean-system-string-system-int32-system-int32-system-boolean-system-boolean-system-int64-system-int64-system-int64-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipProofPollingRuntimeSnapshot(bool enabled, string ownership, int intervalSeconds, int batchLimit, bool runOnStartup, bool dnsTxtResolverConfigured, long runCount, long successfulRunCount, long failedRunCount, DateTimeOffset? lastStartedAtUtc, DateTimeOffset? lastCompletedAtUtc, string lastOutcome, string lastReason, int lastCandidateCount, int lastVerificationCount, int lastVerifiedCount, int lastRejectedCount, int lastFailedCount, string lastError, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-domain ownership proof polling runtime snapshot."
     },
     {
       "DisplayName": "TenantDomainOwnershipProofPublicationPlanRequest",

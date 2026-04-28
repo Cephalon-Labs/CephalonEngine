@@ -8,6 +8,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
     MultiTenancyGovernanceOptions options,
     ITenantDomainOwnershipCatalog catalog,
     ITenantDomainOwnershipStore domainOwnershipStore,
+    ITenantDomainOwnershipProofPollingRuntimeCatalog proofPollingRuntimeCatalog,
     IEnumerable<ITenantDomainOwnershipContributor> contributors) : ITechnologyRuntimeContributor
 {
     private readonly ITenantDomainOwnershipContributor[] contributors = contributors.ToArray();
@@ -29,7 +30,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             technologyId: "multi-tenancy",
             surfaceId: "tenant-domain-ownership",
             displayName: "Tenant Domain Ownership",
-            description: "Projects tenant-domain ownership catalog, Cephalon-managed declared-domain validation, and in-process verification workflow truth from the governance companion pack.",
+            description: "Projects tenant-domain ownership catalog, Cephalon-managed declared-domain validation, in-process verification workflow truth, and background proof-polling runtime state from the governance companion pack.",
             entries: entries);
     }
 
@@ -62,6 +63,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             options.EnableDomainOwnershipVerificationWorkflow;
         var proofPollingRunnerEnabled = options.EnableDomainOwnershipProofPollingRunner &&
             proofVerificationRunnerEnabled;
+        var backgroundProofPolling = proofPollingRuntimeCatalog.Current;
         var dnsHttpProofCollectionOwnership = httpProofCollectionEnabled && dnsTxtProofCollectionConfigured
             ? "cephalon-managed"
             : httpProofCollectionEnabled || dnsTxtProofCollectionConfigured
@@ -108,8 +110,23 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["proofPollingRunnerEnabled"] = proofPollingRunnerEnabled.ToString().ToLowerInvariant(),
             ["proofPollingRunnerOwnership"] = proofPollingRunnerOwnership,
             ["externalProofPollingOwnership"] = externalProofPollingOwnership,
-            ["backgroundProofPollingOwnership"] = "application-managed",
-            ["proofPollingDefaultBatchLimit"] = (options.DomainOwnershipProofPollingMaxItems <= 0 ? 50 : options.DomainOwnershipProofPollingMaxItems).ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingEnabled"] = backgroundProofPolling.Enabled.ToString().ToLowerInvariant(),
+            ["backgroundProofPollingOwnership"] = backgroundProofPolling.Ownership,
+            ["backgroundProofPollingIntervalSeconds"] = backgroundProofPolling.IntervalSeconds.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingBatchLimit"] = backgroundProofPolling.BatchLimit.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingRunOnStartup"] = backgroundProofPolling.RunOnStartup.ToString().ToLowerInvariant(),
+            ["backgroundProofPollingDnsTxtResolverConfigured"] = backgroundProofPolling.DnsTxtResolverConfigured.ToString().ToLowerInvariant(),
+            ["backgroundProofPollingRunCount"] = backgroundProofPolling.RunCount.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingSuccessfulRunCount"] = backgroundProofPolling.SuccessfulRunCount.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingFailedRunCount"] = backgroundProofPolling.FailedRunCount.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingLastOutcome"] = backgroundProofPolling.LastOutcome ?? "none",
+            ["backgroundProofPollingLastReason"] = backgroundProofPolling.LastReason ?? "none",
+            ["backgroundProofPollingLastCandidateCount"] = backgroundProofPolling.LastCandidateCount.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingLastVerificationCount"] = backgroundProofPolling.LastVerificationCount.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingLastVerifiedCount"] = backgroundProofPolling.LastVerifiedCount.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingLastRejectedCount"] = backgroundProofPolling.LastRejectedCount.ToString(CultureInfo.InvariantCulture),
+            ["backgroundProofPollingLastFailedCount"] = backgroundProofPolling.LastFailedCount.ToString(CultureInfo.InvariantCulture),
+            ["proofPollingDefaultBatchLimit"] = TenantDomainOwnershipProofPollingConfiguration.ResolveBatchLimit(options).ToString(CultureInfo.InvariantCulture),
             ["proofPublicationOwnership"] = "application-managed",
             ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
@@ -119,10 +136,25 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["verificationMethodBreakdown"] = verificationMethodBreakdown.Length == 0 ? "none" : string.Join(",", verificationMethodBreakdown)
         };
 
+        if (backgroundProofPolling.LastStartedAtUtc is not null)
+        {
+            metadata["backgroundProofPollingLastStartedAtUtc"] = backgroundProofPolling.LastStartedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture);
+        }
+
+        if (backgroundProofPolling.LastCompletedAtUtc is not null)
+        {
+            metadata["backgroundProofPollingLastCompletedAtUtc"] = backgroundProofPolling.LastCompletedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture);
+        }
+
+        if (!string.IsNullOrWhiteSpace(backgroundProofPolling.LastError))
+        {
+            metadata["backgroundProofPollingLastError"] = backgroundProofPolling.LastError;
+        }
+
         return new TechnologyRuntimeEntry(
             id: "tenant-domain-ownership-runtime",
             displayName: "Tenant Domain Ownership Runtime",
-            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, managed proof-publication planning ownership, managed HTTP proof-collection ownership, configured DNS TXT proof-collection ownership, managed proof-verification runner ownership, and managed on-demand proof-polling runner ownership.",
+            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, managed proof-publication planning ownership, managed HTTP proof-collection ownership, configured DNS TXT proof-collection ownership, managed proof-verification runner ownership, managed on-demand proof-polling runner ownership, and automatic background proof-polling runtime state.",
             metadata: metadata);
     }
 

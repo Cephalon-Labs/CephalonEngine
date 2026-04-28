@@ -102,6 +102,38 @@ int DomainOwnershipHttpProofCollectionTimeoutSeconds { get; set; }
 
 Gets or sets the default timeout, in seconds, used by HTTP proof collection.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofbackgroundpollingintervalseconds"></a>
+
+##### `DomainOwnershipProofBackgroundPollingIntervalSeconds`
+
+```csharp
+int DomainOwnershipProofBackgroundPollingIntervalSeconds { get; set; }
+```
+
+Gets or sets the proof background polling interval, in seconds.
+
+Remarks: Values less than one are coerced to the default interval.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofbackgroundpollingrunonstartup"></a>
+
+##### `DomainOwnershipProofBackgroundPollingRunOnStartup`
+
+```csharp
+bool DomainOwnershipProofBackgroundPollingRunOnStartup { get; set; }
+```
+
+Gets or sets a value indicating whether proof background polling should run once during hosted-service startup.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofbackgroundpollingsource"></a>
+
+##### `DomainOwnershipProofBackgroundPollingSource`
+
+```csharp
+string DomainOwnershipProofBackgroundPollingSource { get; set; }
+```
+
+Gets or sets the source recorded on proof polling requests created by the background polling hosted service.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofchallengednstxtrecordprefix"></a>
 
 ##### `DomainOwnershipProofChallengeDnsTxtRecordPrefix`
@@ -171,6 +203,18 @@ bool EnableDomainOwnershipHttpProofCollection { get; set; }
 ```
 
 Gets or sets a value indicating whether the built-in tenant-domain ownership HTTP proof collector is active.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofbackgroundpolling"></a>
+
+##### `EnableDomainOwnershipProofBackgroundPolling`
+
+```csharp
+bool EnableDomainOwnershipProofBackgroundPolling { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-domain ownership proof polling hosted service is active.
+
+Remarks: This option is disabled by default so installing the governance package never starts recurring HTTP or DNS proof checks without an explicit host decision. When enabled, the hosted service schedules the bounded proof polling runner; it still does not publish DNS records, host HTTP proof files, or mutate provider control planes.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofchallengeissuance"></a>
 
@@ -632,6 +676,31 @@ Returns: The aggregate polling result plus the nested verification attempts.
 Parameters:
 - `request`: The proof polling request.
 - `cancellationToken`: A token that cancels the polling pass.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofpollingruntimecatalog"></a>
+
+### `ITenantDomainOwnershipProofPollingRuntimeCatalog`
+
+Exposes runtime state for tenant-domain ownership proof polling.
+
+Remarks: The catalog reports the background polling hosted-service posture. It does not represent DNS or HTTP proof publication ownership.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipProofPollingRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantdomainownershipproofpollingruntimecatalog-current"></a>
+
+##### `Current`
+
+```csharp
+TenantDomainOwnershipProofPollingRuntimeSnapshot Current { get; }
+```
+
+Gets the latest tenant-domain ownership proof polling runtime snapshot.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofpublicationplanner"></a>
 
@@ -4852,6 +4921,253 @@ int VerifiedCount { get; }
 ```
 
 Gets the number of declarations verified by the polling pass.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot"></a>
+
+### `TenantDomainOwnershipProofPollingRuntimeSnapshot`
+
+Describes the latest runtime state of tenant-domain ownership proof polling.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofPollingRuntimeSnapshot
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-ctor-system-boolean-system-string-system-int32-system-int32-system-boolean-system-boolean-system-int64-system-int64-system-int64-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofPollingRuntimeSnapshot`
+
+```csharp
+TenantDomainOwnershipProofPollingRuntimeSnapshot(bool enabled, string ownership, int intervalSeconds, int batchLimit, bool runOnStartup, bool dnsTxtResolverConfigured, long runCount, long successfulRunCount, long failedRunCount, DateTimeOffset? lastStartedAtUtc, DateTimeOffset? lastCompletedAtUtc, string lastOutcome, string lastReason, int lastCandidateCount, int lastVerificationCount, int lastVerifiedCount, int lastRejectedCount, int lastFailedCount, string lastError, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof polling runtime snapshot.
+
+Parameters:
+- `enabled`: A value indicating whether automatic background proof polling is effectively enabled.
+- `ownership`: The automatic background proof polling ownership mode.
+- `intervalSeconds`: The effective background polling interval in seconds.
+- `batchLimit`: The effective proof polling batch limit.
+- `runOnStartup`: A value indicating whether background proof polling runs once during hosted-service startup.
+- `dnsTxtResolverConfigured`: A value indicating whether DNS TXT proof collection has an explicit resolver endpoint.
+- `runCount`: The number of background polling passes that reached a completed or failed terminal state.
+- `successfulRunCount`: The number of background polling passes that completed without an unhandled failure.
+- `failedRunCount`: The number of background polling passes that failed before producing a polling result.
+- `lastStartedAtUtc`: The UTC timestamp when the latest background polling pass started.
+- `lastCompletedAtUtc`: The UTC timestamp when the latest background polling pass completed or failed.
+- `lastOutcome`: The latest proof polling outcome.
+- `lastReason`: The latest operator-facing proof polling reason.
+- `lastCandidateCount`: The latest candidate count.
+- `lastVerificationCount`: The latest verification-attempt count.
+- `lastVerifiedCount`: The latest verified count.
+- `lastRejectedCount`: The latest rejected count.
+- `lastFailedCount`: The latest failed-attempt count.
+- `lastError`: The latest unhandled background polling error message.
+- `metadata`: Optional runtime metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-batchlimit"></a>
+
+##### `BatchLimit`
+
+```csharp
+int BatchLimit { get; }
+```
+
+Gets the effective proof polling batch limit.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-dnstxtresolverconfigured"></a>
+
+##### `DnsTxtResolverConfigured`
+
+```csharp
+bool DnsTxtResolverConfigured { get; }
+```
+
+Gets a value indicating whether DNS TXT proof collection has an explicit resolver endpoint.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool Enabled { get; }
+```
+
+Gets a value indicating whether automatic background proof polling is effectively enabled.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-failedruncount"></a>
+
+##### `FailedRunCount`
+
+```csharp
+long FailedRunCount { get; }
+```
+
+Gets the number of background polling passes that failed before producing a polling result.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-intervalseconds"></a>
+
+##### `IntervalSeconds`
+
+```csharp
+int IntervalSeconds { get; }
+```
+
+Gets the effective background polling interval in seconds.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastcandidatecount"></a>
+
+##### `LastCandidateCount`
+
+```csharp
+int LastCandidateCount { get; }
+```
+
+Gets the latest candidate count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastcompletedatutc"></a>
+
+##### `LastCompletedAtUtc`
+
+```csharp
+DateTimeOffset? LastCompletedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the latest background polling pass completed or failed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; }
+```
+
+Gets the latest unhandled background polling error message.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastfailedcount"></a>
+
+##### `LastFailedCount`
+
+```csharp
+int LastFailedCount { get; }
+```
+
+Gets the latest failed-attempt count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; }
+```
+
+Gets the latest proof polling outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastreason"></a>
+
+##### `LastReason`
+
+```csharp
+string LastReason { get; }
+```
+
+Gets the latest operator-facing proof polling reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastrejectedcount"></a>
+
+##### `LastRejectedCount`
+
+```csharp
+int LastRejectedCount { get; }
+```
+
+Gets the latest rejected count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-laststartedatutc"></a>
+
+##### `LastStartedAtUtc`
+
+```csharp
+DateTimeOffset? LastStartedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the latest background polling pass started.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastverificationcount"></a>
+
+##### `LastVerificationCount`
+
+```csharp
+int LastVerificationCount { get; }
+```
+
+Gets the latest verification-attempt count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastverifiedcount"></a>
+
+##### `LastVerifiedCount`
+
+```csharp
+int LastVerifiedCount { get; }
+```
+
+Gets the latest verified count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional runtime metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; }
+```
+
+Gets the automatic background proof polling ownership mode.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-runcount"></a>
+
+##### `RunCount`
+
+```csharp
+long RunCount { get; }
+```
+
+Gets the number of background polling passes that reached a completed or failed terminal state.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-runonstartup"></a>
+
+##### `RunOnStartup`
+
+```csharp
+bool RunOnStartup { get; }
+```
+
+Gets a value indicating whether background proof polling runs once during hosted-service startup.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-successfulruncount"></a>
+
+##### `SuccessfulRunCount`
+
+```csharp
+long SuccessfulRunCount { get; }
+```
+
+Gets the number of background polling passes that completed without an unhandled failure.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys"></a>
 
