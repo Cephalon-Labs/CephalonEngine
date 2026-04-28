@@ -408,6 +408,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md#namespace-cephalon-multitenancy-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Configuration)
 
+## `Cephalon.MultiTenancy.Governance.AspNetCore.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.AspNetCore](cephalon-multitenancy-governance-aspnetcore.md#namespace-cephalon-multitenancy-governance-aspnetcore-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.AspNetCore](cephalon-multitenancy-governance-aspnetcore.md#namespace-cephalon-multitenancy-governance-aspnetcore-hosting): 3 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting)
+
 ## `Cephalon.MultiTenancy.Governance.Configuration`
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration)
@@ -418,7 +426,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.MultiTenancy.Governance.Services`
 
-- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 89 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)
+- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 96 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)
 
 ## `Cephalon.MultiTenancy.Registration`
 

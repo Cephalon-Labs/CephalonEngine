@@ -248,10 +248,24 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Stopped tenant domain ownership proof background polling.",
         Description: "Emitted when the governance companion stops automatic background tenant-domain ownership proof polling.");
 
+    public static readonly DiagnosticEventDefinition DomainOwnershipHttpProofPublished = new(
+        Id: 4544,
+        Name: "TenantDomainOwnershipHttpProofPublished",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Published tenant domain ownership HTTP proof file for tenant '{TenantId}' and domain '{DomainName}' at path '{HttpFilePath}'.",
+        Description: "Emitted when the governance companion materializes and records an HTTP proof file for host-adapter serving.");
+
+    public static readonly DiagnosticEventDefinition DomainOwnershipHttpProofPublicationDenied = new(
+        Id: 4545,
+        Name: "TenantDomainOwnershipHttpProofPublicationDenied",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Denied tenant domain ownership HTTP proof publication for tenant '{TenantId}' and domain '{DomainName}'. Outcome: {Outcome}. Reason: {Reason}.",
+        Description: "Emitted when the governance companion cannot materialize or record an HTTP proof file.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP proof publication, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -287,7 +301,9 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             DomainOwnershipProofBackgroundPollingStarted,
             DomainOwnershipProofBackgroundPollingCompleted,
             DomainOwnershipProofBackgroundPollingFailed,
-            DomainOwnershipProofBackgroundPollingStopped
+            DomainOwnershipProofBackgroundPollingStopped,
+            DomainOwnershipHttpProofPublished,
+            DomainOwnershipHttpProofPublicationDenied
         ]);
 }
 
@@ -564,6 +580,22 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStopped.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStopped.Name),
             MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofBackgroundPollingStopped.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, Exception?> DomainOwnershipHttpProofPublishedMessage =
+        LoggerMessage.Define<string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipHttpProofPublished.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipHttpProofPublished.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipHttpProofPublished.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> DomainOwnershipHttpProofPublicationDeniedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipHttpProofPublicationDenied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipHttpProofPublicationDenied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipHttpProofPublicationDenied.MessageTemplate);
 
     public static void MembershipEvaluationAllowed(
         ILogger logger,
@@ -920,5 +952,26 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         DomainOwnershipProofBackgroundPollingStoppedMessage(logger, exception);
+    }
+
+    public static void DomainOwnershipHttpProofPublished(
+        ILogger logger,
+        string tenantId,
+        string domainName,
+        string httpFilePath,
+        Exception? exception)
+    {
+        DomainOwnershipHttpProofPublishedMessage(logger, tenantId, domainName, httpFilePath, exception);
+    }
+
+    public static void DomainOwnershipHttpProofPublicationDenied(
+        ILogger logger,
+        string tenantId,
+        string domainName,
+        string outcome,
+        string reason,
+        Exception? exception)
+    {
+        DomainOwnershipHttpProofPublicationDeniedMessage(logger, tenantId, domainName, outcome, reason, exception);
     }
 }

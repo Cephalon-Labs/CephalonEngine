@@ -75,6 +75,16 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableDomainOwnershipProofPublicationPlanning { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership HTTP proof publisher is active.
+    /// </summary>
+    /// <remarks>
+    /// The governance package materializes and records HTTP proof-file publication state. It does not map an ASP.NET Core
+    /// endpoint by itself; HTTP serving stays in the ASP.NET Core adapter so the core package remains host-agnostic.
+    /// DNS records and provider control-plane mutations remain outside this option.
+    /// </remarks>
+    public bool EnableDomainOwnershipHttpProofPublication { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-domain ownership HTTP proof collector is active.
     /// </summary>
     public bool EnableDomainOwnershipHttpProofCollection { get; set; } = true;

@@ -9,6 +9,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
     ITenantDomainOwnershipCatalog catalog,
     ITenantDomainOwnershipStore domainOwnershipStore,
     ITenantDomainOwnershipProofPollingRuntimeCatalog proofPollingRuntimeCatalog,
+    ITenantDomainOwnershipHttpProofPublicationCatalog httpProofPublicationCatalog,
     IEnumerable<ITenantDomainOwnershipContributor> contributors) : ITechnologyRuntimeContributor
 {
     private readonly ITenantDomainOwnershipContributor[] contributors = contributors.ToArray();
@@ -50,6 +51,8 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
             options.EnableDomainOwnershipVerificationWorkflow;
+        var httpProofPublicationEnabled = options.EnableDomainOwnershipHttpProofPublication &&
+            options.EnableDomainOwnershipProofPublicationPlanning;
         var dnsTxtProofCollectionEnabled = options.EnableDomainOwnershipDnsTxtProofCollection &&
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
@@ -71,6 +74,9 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
                 : "application-managed";
         var proofPollingRunnerOwnership = proofPollingRunnerEnabled ? "cephalon-managed" : "not-configured";
         var externalProofPollingOwnership = proofPollingRunnerEnabled ? "cephalon-managed" : "application-managed";
+        var publishedHttpProofs = httpProofPublicationCatalog.PublishedProofs;
+        var httpProofPublicationOwnership = httpProofPublicationEnabled ? "cephalon-managed" : "not-configured";
+        var proofPublicationOwnership = httpProofPublicationEnabled ? "mixed" : "application-managed";
 
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -100,6 +106,9 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["proofChallengeGenerationOwnership"] = options.EnableDomainOwnershipProofChallengeIssuance ? "cephalon-managed" : "not-configured",
             ["proofPublicationPlanningEnabled"] = options.EnableDomainOwnershipProofPublicationPlanning.ToString().ToLowerInvariant(),
             ["proofPublicationPlanningOwnership"] = options.EnableDomainOwnershipProofPublicationPlanning ? "cephalon-managed" : "not-configured",
+            ["httpProofPublicationEnabled"] = httpProofPublicationEnabled.ToString().ToLowerInvariant(),
+            ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
+            ["httpProofPublicationCount"] = publishedHttpProofs.Count.ToString(CultureInfo.InvariantCulture),
             ["httpProofCollectionEnabled"] = httpProofCollectionEnabled.ToString().ToLowerInvariant(),
             ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
             ["dnsTxtProofCollectionEnabled"] = dnsTxtProofCollectionEnabled.ToString().ToLowerInvariant(),
@@ -127,7 +136,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["backgroundProofPollingLastRejectedCount"] = backgroundProofPolling.LastRejectedCount.ToString(CultureInfo.InvariantCulture),
             ["backgroundProofPollingLastFailedCount"] = backgroundProofPolling.LastFailedCount.ToString(CultureInfo.InvariantCulture),
             ["proofPollingDefaultBatchLimit"] = TenantDomainOwnershipProofPollingConfiguration.ResolveBatchLimit(options).ToString(CultureInfo.InvariantCulture),
-            ["proofPublicationOwnership"] = "application-managed",
+            ["proofPublicationOwnership"] = proofPublicationOwnership,
             ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["verificationExecutionOwnership"] = "application-managed",
@@ -154,7 +163,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-domain-ownership-runtime",
             displayName: "Tenant Domain Ownership Runtime",
-            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, managed proof-publication planning ownership, managed HTTP proof-collection ownership, configured DNS TXT proof-collection ownership, managed proof-verification runner ownership, managed on-demand proof-polling runner ownership, and automatic background proof-polling runtime state.",
+            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, managed proof-publication planning ownership, managed HTTP proof-publication ownership, managed HTTP proof-collection ownership, configured DNS TXT proof-collection ownership, managed proof-verification runner ownership, managed on-demand proof-polling runner ownership, and automatic background proof-polling runtime state.",
             metadata: metadata);
     }
 

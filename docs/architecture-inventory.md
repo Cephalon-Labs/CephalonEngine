@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Inventory
 
-Architecture inventory in this document reflects the repository state as of `April 28, 2026`.
+Architecture inventory in this document reflects the repository state as of `April 29, 2026`.
 
 Cross-references: `docs/architecture.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -108,7 +108,7 @@ Technologies are additive workload profiles that prepare the runtime for specifi
 - `edge-native-delivery` — Edge-Native Delivery (Deployment): prepares the app for browser, device, edge, and intermittently connected deployment scenarios. Aliases: `EdgeNativeDelivery`, `EdgeNative`, `Edge`. Package hint: `Cephalon.Edge`.
 - `serverless-hosting` — Serverless Hosting (Deployment): prepares the app for event-triggered or function-style hosting without changing the host-agnostic core runtime model. Aliases: `ServerlessHosting`, `Serverless`.
 - `identity-access` — Identity Access (Security): prepares the app for configurable authentication and authorization flows such as RBAC, ABAC, and policy evaluation. Aliases: `IdentityAccess`, `Identity`. Package hint: `Cephalon.Identity`.
-- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain/action companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`.
+- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain/action companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`, `Cephalon.MultiTenancy.Governance.AspNetCore`.
 - `hybrid-cloud-runtime` — Hybrid Cloud Runtime (Platform): prepares the app for mixed on-premises, edge, and cloud deployment handoffs without changing the engine core. Aliases: `HybridCloudRuntime`, `HybridCloud`.
 - `service-mesh-integration` — Service Mesh Integration (Platform): prepares the app for additive service-mesh coordination, policy handoff, and traffic-governance guidance. Aliases: `ServiceMeshIntegration`, `ServiceMesh`.
 
@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -338,7 +338,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 
 - `identity.authorization` — Identity Authorization
 
-### Multi-tenancy capabilities (18)
+### Multi-tenancy capabilities (19)
 
 - `tenancy.resolution` — Tenant Resolution
 - `tenancy.membership.catalog` — Tenant Membership Catalog
@@ -353,6 +353,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `tenancy.domain-ownership.workflow` — Tenant Domain Ownership Verification Workflow
 - `tenancy.domain-ownership.proof-challenge` — Tenant Domain Ownership Proof Challenge
 - `tenancy.domain-ownership.proof-publication-plan` — Tenant Domain Ownership Proof Publication Plan
+- `tenancy.domain-ownership.http-proof-publication` — Tenant Domain Ownership HTTP Proof Publication
 - `tenancy.domain-ownership.proof-evaluation` — Tenant Domain Ownership Proof Evaluation
 - `tenancy.domain-ownership.http-proof-collection` — Tenant Domain Ownership HTTP Proof Collection
 - `tenancy.domain-ownership.dns-txt-proof-collection` — Tenant Domain Ownership DNS TXT Proof Collection
@@ -474,7 +475,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog, store, and evaluation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, and validation posture from `Cephalon.MultiTenancy.Governance`
-- `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, proof-evaluation, HTTP proof collection, configured DNS TXT proof collection, proof-verification runner, bounded proof-polling runner, and opt-in background proof-polling posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, HTTP proof publication, proof-evaluation, HTTP proof collection, configured DNS TXT proof collection, proof-verification runner, bounded proof-polling runner, and opt-in background proof-polling posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 
 ### Audit
@@ -619,7 +620,7 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Transports: **6** + 3 messaging bindings = **9**
 - Execution strategies: **7**
 - Modules: 6 core + 14 data + 10 event-sourcing + 6 specialized + 1 identifier = **37**
-- Capabilities: **79+**
+- Capabilities: **80+**
 - Data abstractions: **24+** interfaces
 - Diagnostics sources: **10**
 - Dependency health probes: **18**

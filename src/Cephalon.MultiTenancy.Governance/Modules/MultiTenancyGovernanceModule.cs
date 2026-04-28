@@ -70,6 +70,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofEvaluator>>(NullLogger<TenantDomainOwnershipProofEvaluator>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofChallengeIssuer>>(NullLogger<TenantDomainOwnershipProofChallengeIssuer>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofPublicationPlanner>>(NullLogger<TenantDomainOwnershipProofPublicationPlanner>.Instance);
+        services.TryAddSingleton<ILogger<TenantDomainOwnershipHttpProofPublisher>>(NullLogger<TenantDomainOwnershipHttpProofPublisher>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipHttpProofCollector>>(NullLogger<TenantDomainOwnershipHttpProofCollector>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipDnsTxtProofCollector>>(NullLogger<TenantDomainOwnershipDnsTxtProofCollector>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofVerificationRunner>>(NullLogger<TenantDomainOwnershipProofVerificationRunner>.Instance);
@@ -99,6 +100,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
         services.TryAddSingleton<ITenantInvitationCatalog, TenantInvitationCatalog>();
         services.TryAddSingleton<ITenantDomainOwnershipCatalog, TenantDomainOwnershipCatalog>();
+        services.TryAddSingleton<ITenantDomainOwnershipHttpProofPublicationCatalog, TenantDomainOwnershipHttpProofPublicationCatalog>();
         services.TryAddSingleton<ITenantGovernanceActionCatalog, TenantGovernanceActionCatalog>();
 
         if (options.EnableMembershipEvaluation)
@@ -134,6 +136,12 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         if (options.EnableDomainOwnershipProofPublicationPlanning)
         {
             services.TryAddSingleton<ITenantDomainOwnershipProofPublicationPlanner, TenantDomainOwnershipProofPublicationPlanner>();
+        }
+
+        if (options.EnableDomainOwnershipHttpProofPublication &&
+            options.EnableDomainOwnershipProofPublicationPlanning)
+        {
+            services.TryAddSingleton<ITenantDomainOwnershipHttpProofPublisher, TenantDomainOwnershipHttpProofPublisher>();
         }
 
         if (options.EnableDomainOwnershipHttpProofCollection &&
@@ -207,6 +215,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
             options.EnableDomainOwnershipVerificationWorkflow;
+        var httpProofPublicationEnabled = options.EnableDomainOwnershipHttpProofPublication &&
+            options.EnableDomainOwnershipProofPublicationPlanning;
         var dnsTxtProofCollectionEnabled = options.EnableDomainOwnershipDnsTxtProofCollection &&
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
@@ -227,6 +237,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         var proofPollingRunnerOwnership = proofPollingRunnerEnabled ? "cephalon-managed" : "not-configured";
         var externalProofPollingOwnership = proofPollingRunnerEnabled ? "cephalon-managed" : "application-managed";
         var backgroundProofPollingOwnership = TenantDomainOwnershipProofPollingConfiguration.ResolveBackgroundPollingOwnership(options);
+        var httpProofPublicationOwnership = httpProofPublicationEnabled ? "cephalon-managed" : "not-configured";
+        var proofPublicationOwnership = httpProofPublicationEnabled ? "mixed" : "application-managed";
 
         capabilities.Add(new Capability(
             key: "tenancy.membership.catalog",
@@ -377,7 +389,9 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["backgroundProofPollingEnabled"] = backgroundProofPollingEnabled.ToString().ToLowerInvariant(),
                     ["backgroundProofPollingIntervalSeconds"] = backgroundProofPollingIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                     ["backgroundProofPollingBatchLimit"] = backgroundProofPollingBatchLimit.ToString(CultureInfo.InvariantCulture),
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
                     ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = externalProofPollingOwnership,
@@ -404,6 +418,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["backgroundProofPollingEnabled"] = backgroundProofPollingEnabled.ToString().ToLowerInvariant(),
                     ["backgroundProofPollingIntervalSeconds"] = backgroundProofPollingIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                     ["backgroundProofPollingBatchLimit"] = backgroundProofPollingBatchLimit.ToString(CultureInfo.InvariantCulture),
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
                     ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
                     ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
@@ -432,7 +448,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["backgroundProofPollingEnabled"] = backgroundProofPollingEnabled.ToString().ToLowerInvariant(),
                     ["backgroundProofPollingIntervalSeconds"] = backgroundProofPollingIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                     ["backgroundProofPollingBatchLimit"] = backgroundProofPollingBatchLimit.ToString(CultureInfo.InvariantCulture),
-                    ["proofPublicationOwnership"] = "application-managed",
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
                     ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
                     ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
@@ -461,7 +478,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["backgroundProofPollingEnabled"] = backgroundProofPollingEnabled.ToString().ToLowerInvariant(),
                     ["backgroundProofPollingIntervalSeconds"] = backgroundProofPollingIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                     ["backgroundProofPollingBatchLimit"] = backgroundProofPollingBatchLimit.ToString(CultureInfo.InvariantCulture),
-                    ["proofPublicationOwnership"] = "application-managed",
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
                     ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
                     ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
@@ -469,6 +487,25 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["backgroundProofPollingOwnership"] = backgroundProofPollingOwnership,
                     ["dnsHttpProofCollectionOwnership"] = dnsHttpProofCollectionOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-domain-ownership"
+                }));
+        }
+
+        if (httpProofPublicationEnabled)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.domain-ownership.http-proof-publication",
+                displayName: "Tenant Domain Ownership HTTP Proof Publication",
+                description: "Materializes and records HTTP proof-file publication state so host adapters can serve tenant-domain ownership proof files.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["httpProofPublicationOwnership"] = "cephalon-managed",
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["dnsProofPublicationOwnership"] = "application-managed",
+                    ["providerMutationOwnership"] = "application-managed",
                     ["runtimeSurface"] = "tenant-domain-ownership"
                 }));
         }
@@ -494,7 +531,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = externalProofPollingOwnership,
                     ["backgroundProofPollingOwnership"] = backgroundProofPollingOwnership,
-                    ["proofPublicationOwnership"] = "application-managed",
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
                     ["runtimeSurface"] = "tenant-domain-ownership"
                 }));
@@ -521,7 +559,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = externalProofPollingOwnership,
                     ["backgroundProofPollingOwnership"] = backgroundProofPollingOwnership,
-                    ["proofPublicationOwnership"] = "application-managed",
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
                     ["runtimeSurface"] = "tenant-domain-ownership"
                 }));
@@ -548,7 +587,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = externalProofPollingOwnership,
                     ["backgroundProofPollingOwnership"] = backgroundProofPollingOwnership,
-                    ["proofPublicationOwnership"] = "application-managed",
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
                     ["runtimeSurface"] = "tenant-domain-ownership"
                 }));
@@ -575,7 +615,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["backgroundProofPollingOwnership"] = backgroundProofPollingOwnership,
                     ["backgroundProofPollingIntervalSeconds"] = backgroundProofPollingIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                     ["backgroundProofPollingBatchLimit"] = backgroundProofPollingBatchLimit.ToString(CultureInfo.InvariantCulture),
-                    ["proofPublicationOwnership"] = "application-managed",
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
                     ["defaultBatchLimit"] = backgroundProofPollingBatchLimit.ToString(CultureInfo.InvariantCulture),
                     ["runtimeSurface"] = "tenant-domain-ownership"
@@ -603,7 +644,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["defaultBatchLimit"] = backgroundProofPollingBatchLimit.ToString(CultureInfo.InvariantCulture),
                     ["backgroundProofPollingBatchLimit"] = backgroundProofPollingBatchLimit.ToString(CultureInfo.InvariantCulture),
                     ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
-                    ["proofPublicationOwnership"] = "application-managed",
+                    ["proofPublicationOwnership"] = proofPublicationOwnership,
+                    ["httpProofPublicationOwnership"] = httpProofPublicationOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
                     ["runtimeSurface"] = "tenant-domain-ownership"
                 }));

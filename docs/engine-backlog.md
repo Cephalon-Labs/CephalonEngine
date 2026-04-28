@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, and opt-in governance domain-ownership automatic background proof-polling proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, and governance domain-ownership HTTP file proof-publication proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, remediation execution beyond state transitions, actual DNS/HTTP proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -385,7 +385,7 @@ Follow-up later:
 - configured on-demand DNS TXT proof collection is now covered by `ENG-250`
 - bounded on-demand proof polling is now covered by `ENG-251`
 - automatic background proof polling is now covered by `ENG-252`
-- actual DNS/HTTP proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; HTTP file proof publication was then narrowed and shipped in `ENG-253`
 
 ### ENG-247 Multi-tenancy governance domain ownership proof publication planning baseline
 
@@ -395,7 +395,7 @@ Estimate: 8
 Why:
 
 - after `ENG-246`, `Cephalon.MultiTenancy.Governance` could issue expected proof values and DNS TXT / HTTP file hints, but consumers still had to assemble exact publication instructions and track that planning step themselves
-- the smallest honest next proof is a host-agnostic publication planner that turns issued challenge metadata into deterministic DNS TXT or HTTP file instructions, optionally records planning metadata through the existing domain-ownership store, and keeps actual DNS/HTTP mutation or hosting outside the engine
+- the smallest honest next proof is a host-agnostic publication planner that turns issued challenge metadata into deterministic DNS TXT or HTTP file instructions, optionally records planning metadata through the existing domain-ownership store, and keeps actual DNS mutation plus HTTP hosting outside the engine at that slice boundary; HTTP file hosting was later narrowed and shipped in `ENG-253`
 
 Delivered:
 
@@ -411,7 +411,7 @@ Follow-up later:
 - configured on-demand DNS TXT proof collection is now covered by `ENG-250`
 - bounded on-demand proof polling is now covered by `ENG-251`
 - automatic background proof polling is now covered by `ENG-252`
-- actual DNS/HTTP proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; HTTP file proof publication was then narrowed and shipped in `ENG-253`
 
 ### ENG-248 Multi-tenancy governance domain ownership HTTP proof collection baseline
 
@@ -432,7 +432,7 @@ Delivered:
 
 Follow-up later:
 
-- actual DNS/HTTP proof publication, provider-backed collection/mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; DNS TXT proof collection was then narrowed and shipped in `ENG-250`, bounded on-demand proof polling was then narrowed and shipped in `ENG-251`, and automatic background proof polling was then narrowed and shipped in `ENG-252`
+- actual DNS proof publication, provider-backed collection/mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; DNS TXT proof collection was then narrowed and shipped in `ENG-250`, bounded on-demand proof polling was then narrowed and shipped in `ENG-251`, automatic background proof polling was then narrowed and shipped in `ENG-252`, and HTTP file proof publication was then narrowed and shipped in `ENG-253`
 
 ### ENG-249 Multi-tenancy governance domain ownership proof verification runner baseline
 
@@ -453,7 +453,7 @@ Delivered:
 
 Follow-up later:
 
-- actual DNS/HTTP proof publication, provider-backed collection/mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; DNS TXT proof collection was then narrowed and shipped in `ENG-250`, bounded on-demand proof polling was then narrowed and shipped in `ENG-251`, and automatic background proof polling was then narrowed and shipped in `ENG-252`
+- actual DNS proof publication, provider-backed collection/mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; DNS TXT proof collection was then narrowed and shipped in `ENG-250`, bounded on-demand proof polling was then narrowed and shipped in `ENG-251`, automatic background proof polling was then narrowed and shipped in `ENG-252`, and HTTP file proof publication was then narrowed and shipped in `ENG-253`
 
 ### ENG-250 Multi-tenancy governance domain ownership DNS TXT proof collection baseline
 
@@ -477,7 +477,7 @@ Follow-up later:
 
 - bounded on-demand proof polling is now covered by `ENG-251`
 - automatic background proof polling is now covered by `ENG-252`
-- actual DNS/HTTP proof publication, provider-backed collection/mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- actual DNS proof publication, provider-backed collection/mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; HTTP file proof publication was then narrowed and shipped in `ENG-253`
 
 ### ENG-251 Multi-tenancy governance domain ownership proof polling runner baseline
 
@@ -487,7 +487,7 @@ Estimate: 8
 Why:
 
 - after `ENG-250`, the verification runner could collect HTTP file and configured DNS TXT proofs, but consumer apps still had to write the loop that selected pending or rejected declarations and retried them safely
-- the smallest honest next proof is a bounded on-demand polling runner that owns the selection/orchestration loop while still leaving automatic scheduling, actual DNS/HTTP publication, and provider mutation outside the package
+- the smallest honest next proof is a bounded on-demand polling runner that owns the selection/orchestration loop while still leaving automatic scheduling, DNS publication, HTTP publication, and provider mutation outside the package at that slice boundary; automatic scheduling later shipped in `ENG-252` and HTTP file proof publication later shipped in `ENG-253`
 
 Delivered:
 
@@ -499,7 +499,7 @@ Delivered:
 Follow-up later:
 
 - automatic background proof polling is now covered by `ENG-252`
-- actual DNS/HTTP proof publication, provider-backed collection/mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- actual DNS proof publication, provider-backed collection/mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; HTTP file proof publication was then narrowed and shipped in `ENG-253`
 
 ### ENG-252 Multi-tenancy governance automatic background proof polling baseline
 
@@ -520,7 +520,28 @@ Delivered:
 
 Follow-up later:
 
-- actual DNS/HTTP proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths; HTTP file proof publication is now covered by `ENG-253`
+
+### ENG-253 Multi-tenancy governance HTTP proof publication baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-252`, `Cephalon.MultiTenancy.Governance` could issue, plan, collect, evaluate, poll, and schedule tenant-domain ownership proofs, but consumer apps still had to host the actual HTTP proof file themselves
+- the smallest honest next proof is host-agnostic HTTP proof publication state plus an optional ASP.NET Core serving adapter, without claiming DNS mutation, provider control-plane mutation, tenant-admin workflow, or public onboarding
+
+Delivered:
+
+- add public `ITenantDomainOwnershipHttpProofPublisher`, `ITenantDomainOwnershipHttpProofPublicationCatalog`, publication request/result/descriptor/outcome contracts, and safe publication metadata keys
+- materialize HTTP file proof publication from the existing publication planner into the domain-ownership store, publish `tenancy.domain-ownership.http-proof-publication`, HTTP publication ownership/count runtime metadata, and stable diagnostics `4544-4545`
+- add `Cephalon.MultiTenancy.Governance.AspNetCore` with opt-in `MapCephalonTenantDomainOwnershipHttpProofs()` routing so ASP.NET Core hosts can serve published proof files from the host-agnostic catalog
+- prove the slice with focused composition, hosting, package-surface, reference-doc, pack, and docs/source/planning alignment
+
+Follow-up later:
+
+- actual DNS proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
 
 ## Completed foundation work
 
@@ -8346,9 +8367,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-252 Multi-tenancy governance automatic background proof polling baseline (shipped)
 
+### Sprint 65
+
+- ENG-253 Multi-tenancy governance HTTP proof publication baseline (shipped)
+
 ### Later / not scheduled yet
 
-- actual DNS/HTTP proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, identity-provider synchronization, public onboarding, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, identity-provider synchronization, public onboarding, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ### Foundation Sprint 1
 

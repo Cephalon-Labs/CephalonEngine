@@ -1198,6 +1198,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantGovernanceActionWorkflow),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipCatalog),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipContributor),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipHttpProofPublicationCatalog),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipHttpProofPublisher),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipRegistry),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipStore),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipValidator),
@@ -1229,6 +1231,11 @@ public sealed class PackageSurfaceTests
               typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipProofPublicationPlanOutcomes),
               typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipProofPublicationPlanRequest),
               typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipProofPublicationPlanResult),
+              typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipHttpProofPublicationDescriptor),
+              typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipHttpProofPublicationMetadataKeys),
+              typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipHttpProofPublicationOutcomes),
+              typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipHttpProofPublicationRequest),
+              typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipHttpProofPublicationResult),
               typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipHttpProofCollectionMetadataKeys),
               typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipHttpProofCollectionOutcomes),
               typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipHttpProofCollectionRequest),
@@ -1279,6 +1286,17 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantMembershipEvaluationRequest),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantMembershipEvaluationResult),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantMembershipStatuses));
+    }
+
+    [Fact]
+    public void MultiTenancyGovernanceAspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.MultiTenancyGovernanceAspNetCoreServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Configuration.MultiTenancyGovernanceAspNetCoreOptions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.MultiTenancyGovernanceAspNetCoreServiceCollectionExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.MultiTenancyGovernanceAspNetCoreWebApplicationBuilderExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.TenantDomainOwnershipHttpProofEndpointRouteBuilderExtensions));
     }
 
     [Fact]

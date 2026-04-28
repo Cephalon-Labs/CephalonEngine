@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T21:59:17.8734061+00:00",
+  "GeneratedAtUtc": "2026-04-28T22:37:42.6169685+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -229,10 +229,18 @@
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "Category": "Phase 8 Companion Packs",
-      "Description": "Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads.",
+      "Description": "Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 91
+      "TypeCount": 98
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "Category": "Phase 8 Companion Packs",
+      "Description": "ASP.NET Core HTTP proof publication adapter for Cephalon multi-tenancy governance workloads.",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "NamespaceCount": 2,
+      "TypeCount": 4
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1240,6 +1248,20 @@
       "TypeCount": 1
     },
     {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-aspnetcore-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-aspnetcore-hosting",
+      "TypeCount": 3
+    },
+    {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
@@ -1258,7 +1280,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 89
+      "TypeCount": 96
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11516,6 +11538,36 @@
       }
     },
     {
+      "DisplayName": "ITenantDomainOwnershipHttpProofPublicationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofpublicationcatalog",
+      "Declaration": "public interface ITenantDomainOwnershipHttpProofPublicationCatalog",
+      "Summary": "Exposes tenant-domain ownership HTTP proof files materialized by the governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ITenantDomainOwnershipHttpProofPublisher",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofpublisher",
+      "Declaration": "public interface ITenantDomainOwnershipHttpProofPublisher",
+      "Summary": "Publishes tenant-domain ownership HTTP proof-file state inside the governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantDomainOwnershipProofChallengeIssuer",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -12641,6 +12693,51 @@
       }
     },
     {
+      "DisplayName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions",
+      "Declaration": "public sealed class MultiTenancyGovernanceAspNetCoreOptions",
+      "Summary": "Configures ASP.NET Core-specific tenant-domain ownership governance endpoints.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MultiTenancyGovernanceAspNetCoreServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-aspnetcore-hosting-multitenancygovernanceaspnetcoreservicecollectionextensions",
+      "Declaration": "public static class MultiTenancyGovernanceAspNetCoreServiceCollectionExtensions",
+      "Summary": "Registers the ASP.NET Core governance adapter services used by Cephalon multi-tenancy governance.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MultiTenancyGovernanceAspNetCoreWebApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-aspnetcore-hosting-multitenancygovernanceaspnetcorewebapplicationbuilderextensions",
+      "Declaration": "public static class MultiTenancyGovernanceAspNetCoreWebApplicationBuilderExtensions",
+      "Summary": "Registers the ASP.NET Core multi-tenancy governance adapter on a \u0060WebApplicationBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "MultiTenancyGovernanceEngineBuilderExtensions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Registration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -12666,7 +12763,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 34,
+        "Properties": 35,
         "Methods": 0
       }
     },
@@ -15716,6 +15813,96 @@
       }
     },
     {
+      "DisplayName": "TenantDomainOwnershipHttpProofEndpointRouteBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantdomainownershiphttpproofendpointroutebuilderextensions",
+      "Declaration": "public static class TenantDomainOwnershipHttpProofEndpointRouteBuilderExtensions",
+      "Summary": "Maps ASP.NET Core endpoints for tenant-domain ownership HTTP proof files published by Cephalon governance.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor",
+      "Declaration": "public sealed class TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "Summary": "Describes one tenant-domain ownership HTTP proof file published by Cephalon governance.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys",
+      "Declaration": "public static class TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "Summary": "Stable metadata keys written by tenant-domain ownership HTTP proof publication.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 10,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipHttpProofPublicationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes",
+      "Declaration": "public static class TenantDomainOwnershipHttpProofPublicationOutcomes",
+      "Summary": "Stable tenant-domain ownership HTTP proof publication outcomes.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest",
+      "Declaration": "public sealed class TenantDomainOwnershipHttpProofPublicationRequest",
+      "Summary": "Describes a tenant-domain ownership HTTP proof publication request.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult",
+      "Declaration": "public sealed class TenantDomainOwnershipHttpProofPublicationResult",
+      "Summary": "Describes the result of tenant-domain ownership HTTP proof publication.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "TenantDomainOwnershipProofChallengeMetadataKeys",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -18296,6 +18483,17 @@
     {
       "DisplayName": "Actor",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-actor",
+      "Signature": "string Actor { get; }",
+      "Summary": "Gets the actor that requested HTTP proof publication when known."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -19645,6 +19843,28 @@
       "AnchorId": "member-m-cephalon-observability-mqttdependencies-hosting-mqttdependencyhealthservicecollectionextensions-addcephalonmqttdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonMqttDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CMqttDependencyHealthOptions\u003E configure)",
       "Summary": "Adds MQTT dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonMultiTenancyGovernanceAspNetCore",
+      "Category": "Methods",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-aspnetcore-hosting-multitenancygovernanceaspnetcoreservicecollectionextensions-addcephalonmultitenancygovernanceaspnetcore-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions",
+      "Signature": "IServiceCollection AddCephalonMultiTenancyGovernanceAspNetCore(this IServiceCollection services, IConfiguration configuration, Action\u003CMultiTenancyGovernanceAspNetCoreOptions\u003E configure)",
+      "Summary": "Adds the Cephalon ASP.NET Core multi-tenancy governance adapter to the service collection."
+    },
+    {
+      "DisplayName": "AddCephalonMultiTenancyGovernanceAspNetCore",
+      "Category": "Methods",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreWebApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-aspnetcore-hosting-multitenancygovernanceaspnetcorewebapplicationbuilderextensions-addcephalonmultitenancygovernanceaspnetcore-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions",
+      "Signature": "WebApplicationBuilder AddCephalonMultiTenancyGovernanceAspNetCore(this WebApplicationBuilder builder, Action\u003CMultiTenancyGovernanceAspNetCoreOptions\u003E configure)",
+      "Summary": "Adds the Cephalon ASP.NET Core multi-tenancy governance adapter to the target application builder."
     },
     {
       "DisplayName": "AddCephalonMySqlDependencyHealth",
@@ -23301,6 +23521,17 @@
     {
       "DisplayName": "AtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-atutc",
+      "Signature": "DateTimeOffset? AtUtc { get; }",
+      "Summary": "Gets the UTC timestamp used for publication."
+    },
+    {
+      "DisplayName": "AtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -26278,6 +26509,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-bulkheadsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32",
       "Signature": "BulkheadSettings(bool? enabled, int? maxConcurrentExecutions, int? maxQueuedActions)",
       "Summary": "Initializes a new instance of the \u0060BulkheadSettings\u0060 class."
+    },
+    {
+      "DisplayName": "CacheControlHeader",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-cachecontrolheader",
+      "Signature": "string CacheControlHeader { get; set; }",
+      "Summary": "Gets or sets the cache-control header written for served proof files."
     },
     {
       "DisplayName": "CacheEnabled",
@@ -35346,6 +35588,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for HTTP proof publication."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -40436,6 +40689,17 @@
     {
       "DisplayName": "Disabled",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-disabled",
+      "Signature": "const string Disabled",
+      "Summary": "HTTP proof publication was disabled."
+    },
+    {
+      "DisplayName": "Disabled",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -42108,6 +42372,39 @@
     {
       "DisplayName": "DomainName",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-domainname",
+      "Signature": "string DomainName { get; }",
+      "Summary": "Gets the canonical domain name that should serve the proof file."
+    },
+    {
+      "DisplayName": "DomainName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-domainname",
+      "Signature": "string DomainName { get; }",
+      "Summary": "Gets the canonical domain name that should publish the HTTP proof file."
+    },
+    {
+      "DisplayName": "DomainName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-domainname",
+      "Signature": "string DomainName { get; }",
+      "Summary": "Gets the canonical domain name that was evaluated."
+    },
+    {
+      "DisplayName": "DomainName",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -42269,6 +42566,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-domainownership",
       "Signature": "TenantDomainOwnershipDescriptor DomainOwnership { get; }",
       "Summary": "Gets the matching or resulting domain ownership descriptor when one exists."
+    },
+    {
+      "DisplayName": "DomainOwnership",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-domainownership",
+      "Signature": "TenantDomainOwnershipDescriptor DomainOwnership { get; }",
+      "Summary": "Gets the resulting domain ownership descriptor when one exists."
     },
     {
       "DisplayName": "DomainOwnership",
@@ -44801,6 +45109,17 @@
       "Summary": "Gets or sets a value indicating whether the built-in tenant-domain ownership HTTP proof collector is active."
     },
     {
+      "DisplayName": "EnableDomainOwnershipHttpProofPublication",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershiphttpproofpublication",
+      "Signature": "bool EnableDomainOwnershipHttpProofPublication { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the built-in tenant-domain ownership HTTP proof publisher is active."
+    },
+    {
       "DisplayName": "EnableDomainOwnershipProofBackgroundPolling",
       "Category": "Properties",
       "DeclaringTypeName": "MultiTenancyGovernanceOptions",
@@ -44942,6 +45261,17 @@
       "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-enablehostwiring",
       "Signature": "bool EnableHostWiring { get; set; }",
       "Summary": "Gets or sets a value indicating whether the pack should register Wolverine host wiring into the current service collection."
+    },
+    {
+      "DisplayName": "EnableHttpProofPublicationEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enablehttpproofpublicationendpoint",
+      "Signature": "bool EnableHttpProofPublicationEndpoint { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the HTTP proof publication endpoint should be mapped."
     },
     {
       "DisplayName": "EnableIngestion",
@@ -46790,6 +47120,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtransportids",
       "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTransportIds { get; }",
       "Summary": "Gets the explicitly excluded transport identifiers."
+    },
+    {
+      "DisplayName": "ExcludeFromDescription",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludefromdescription",
+      "Signature": "bool ExcludeFromDescription { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the proof endpoint should be excluded from OpenAPI descriptions."
     },
     {
       "DisplayName": "ExecuteAsync",
@@ -50556,6 +50897,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "MultiTenancyGovernanceAspNetCoreOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Reads ASP.NET Core governance adapter options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "MultiTenancyRuntimeOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy",
@@ -51608,6 +51960,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyhealthisolationid-system-string",
       "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E GetByHealthIsolationId(string healthIsolationId)",
       "Summary": "Gets all effective cell traffic-automation answers that reference the requested health-isolation identifier."
+    },
+    {
+      "DisplayName": "GetByHostAndPath",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantDomainOwnershipHttpProofPublicationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofpublicationcatalog-getbyhostandpath-system-string-system-string",
+      "Signature": "TenantDomainOwnershipHttpProofPublicationDescriptor GetByHostAndPath(string hostName, string httpFilePath)",
+      "Summary": "Finds a published HTTP proof file by request host and path."
     },
     {
       "DisplayName": "GetById",
@@ -58959,6 +59322,28 @@
     },
     {
       "DisplayName": "HttpContentType",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-httpcontenttype",
+      "Signature": "string HttpContentType { get; }",
+      "Summary": "Gets the content type used when serving the proof file."
+    },
+    {
+      "DisplayName": "HttpContentType",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-httpcontenttype",
+      "Signature": "string HttpContentType { get; }",
+      "Summary": "Gets the content type used when serving the proof file."
+    },
+    {
+      "DisplayName": "HttpContentType",
       "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipProofPublicationPlanMetadataKeys",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
@@ -59015,6 +59400,28 @@
     {
       "DisplayName": "HttpFileContent",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-httpfilecontent",
+      "Signature": "string HttpFileContent { get; }",
+      "Summary": "Gets the public proof-file content."
+    },
+    {
+      "DisplayName": "HttpFileContent",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-httpfilecontent",
+      "Signature": "string HttpFileContent { get; }",
+      "Summary": "Gets the public proof-file content."
+    },
+    {
+      "DisplayName": "HttpFileContent",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofPublicationPlanResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -59033,6 +59440,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-httpfilecontentfingerprint",
       "Signature": "const string HttpFileContentFingerprint",
       "Summary": "Metadata key for the HTTP file content fingerprint."
+    },
+    {
+      "DisplayName": "HttpFilePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-httpfilepath",
+      "Signature": "string HttpFilePath { get; }",
+      "Summary": "Gets the HTTP path where the proof file is served."
+    },
+    {
+      "DisplayName": "HttpFilePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-httpfilepath",
+      "Signature": "string HttpFilePath { get; }",
+      "Summary": "Gets the HTTP path where the proof file is served."
     },
     {
       "DisplayName": "HttpFilePath",
@@ -59143,6 +59572,61 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-httpproofcollectionresult",
       "Signature": "TenantDomainOwnershipHttpProofCollectionResult HttpProofCollectionResult { get; }",
       "Summary": "Gets the nested HTTP proof collection result when one ran."
+    },
+    {
+      "DisplayName": "HttpProofPublicationContentFingerprint",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-httpproofpublicationcontentfingerprint",
+      "Signature": "const string HttpProofPublicationContentFingerprint",
+      "Summary": "Metadata key for the SHA-256 fingerprint of the published proof-file content."
+    },
+    {
+      "DisplayName": "HttpProofPublicationContentType",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-httpproofpublicationcontenttype",
+      "Signature": "const string HttpProofPublicationContentType",
+      "Summary": "Metadata key for the HTTP content type used by the published proof file."
+    },
+    {
+      "DisplayName": "HttpProofPublicationOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-httpproofpublicationownership",
+      "Signature": "const string HttpProofPublicationOwnership",
+      "Summary": "Metadata key that identifies Cephalon as the HTTP proof publication owner."
+    },
+    {
+      "DisplayName": "HttpProofPublicationPath",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-httpproofpublicationpath",
+      "Signature": "const string HttpProofPublicationPath",
+      "Summary": "Metadata key for the HTTP path where the proof file is published."
+    },
+    {
+      "DisplayName": "HttpProofPublicationServedBy",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-httpproofpublicationservedby",
+      "Signature": "const string HttpProofPublicationServedBy",
+      "Summary": "Metadata key that identifies the component responsible for serving the proof file."
     },
     {
       "DisplayName": "HttpRequestResponseLoggingOptions",
@@ -66207,6 +66691,61 @@
       "Summary": "Metadata key for the URI used to collect the HTTP proof."
     },
     {
+      "DisplayName": "LastHttpProofPublicationActor",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-lasthttpproofpublicationactor",
+      "Signature": "const string LastHttpProofPublicationActor",
+      "Summary": "Metadata key for the actor that requested HTTP proof publication."
+    },
+    {
+      "DisplayName": "LastHttpProofPublicationCorrelationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-lasthttpproofpublicationcorrelationid",
+      "Signature": "const string LastHttpProofPublicationCorrelationId",
+      "Summary": "Metadata key for the HTTP proof publication correlation identifier."
+    },
+    {
+      "DisplayName": "LastHttpProofPublicationOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-lasthttpproofpublicationoutcome",
+      "Signature": "const string LastHttpProofPublicationOutcome",
+      "Summary": "Metadata key for the last HTTP proof publication outcome."
+    },
+    {
+      "DisplayName": "LastHttpProofPublicationSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-lasthttpproofpublicationsource",
+      "Signature": "const string LastHttpProofPublicationSource",
+      "Summary": "Metadata key for the source that requested HTTP proof publication."
+    },
+    {
+      "DisplayName": "LastHttpProofPublishedAtUtc",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationmetadatakeys-lasthttpproofpublishedatutc",
+      "Signature": "const string LastHttpProofPublishedAtUtc",
+      "Summary": "Metadata key for the UTC timestamp when HTTP proof publication was recorded."
+    },
+    {
       "DisplayName": "LastHttpStatusCode",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -70266,6 +70805,17 @@
       "Summary": "Maps Cephalon runtime, diagnostics, transport, and documentation endpoints onto the application."
     },
     {
+      "DisplayName": "MapCephalonTenantDomainOwnershipHttpProofs",
+      "Category": "Methods",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofEndpointRouteBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantdomainownershiphttpproofendpointroutebuilderextensions-mapcephalontenantdomainownershiphttpproofs-microsoft-aspnetcore-routing-iendpointroutebuilder",
+      "Signature": "IEndpointRouteBuilder MapCephalonTenantDomainOwnershipHttpProofs(this IEndpointRouteBuilder endpoints)",
+      "Summary": "Maps the tenant-domain ownership HTTP proof publication endpoint."
+    },
+    {
       "DisplayName": "MapEndpoints",
       "Category": "Methods",
       "DeclaringTypeName": "IEndpointModule",
@@ -73315,6 +73865,39 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional publication metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional HTTP proof publication metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional result metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -74257,6 +74840,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-missingexpectedproof",
       "Signature": "const string MissingExpectedProof",
       "Summary": "Expected proof metadata is missing and challenge issuance was not available or not requested."
+    },
+    {
+      "DisplayName": "MissingHttpFilePublicationPlan",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-missinghttpfilepublicationplan",
+      "Signature": "const string MissingHttpFilePublicationPlan",
+      "Summary": "The publication plan did not include HTTP proof-file instructions."
     },
     {
       "DisplayName": "MissingManagementMode",
@@ -75236,6 +75830,17 @@
       "AnchorId": "member-p-cephalon-engine-technologies-builtintechnologies-multitenancy",
       "Signature": "TechnologyDescriptor MultiTenancy { get; }",
       "Summary": "Gets the built-in multi-tenancy technology profile."
+    },
+    {
+      "DisplayName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-ctor",
+      "Signature": "MultiTenancyGovernanceAspNetCoreOptions()",
+      "Summary": "Initializes a new instance of the \u0060MultiTenancyGovernanceAspNetCoreOptions\u0060 class."
     },
     {
       "DisplayName": "MultiTenancyGovernanceOptions",
@@ -80131,6 +80736,17 @@
     {
       "DisplayName": "Outcome",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable HTTP proof publication outcome."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -84331,6 +84947,28 @@
     {
       "DisplayName": "ProofFingerprint",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-prooffingerprint",
+      "Signature": "string ProofFingerprint { get; }",
+      "Summary": "Gets the SHA-256 fingerprint of the proof-file content."
+    },
+    {
+      "DisplayName": "ProofFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-prooffingerprint",
+      "Signature": "string ProofFingerprint { get; }",
+      "Summary": "Gets the SHA-256 fingerprint of the proof-file content."
+    },
+    {
+      "DisplayName": "ProofFingerprint",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofPublicationPlanResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -87860,6 +88498,17 @@
       "Summary": "Gets the nested publication plan result when one ran."
     },
     {
+      "DisplayName": "PublicationPlanUnavailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-publicationplanunavailable",
+      "Signature": "const string PublicationPlanUnavailable",
+      "Summary": "The proof publication planner did not produce a usable plan."
+    },
+    {
       "DisplayName": "PublishAsync",
       "Category": "Methods",
       "DeclaringTypeName": "IEventPublisher",
@@ -87871,6 +88520,17 @@
       "Summary": "Publishes one integration event through the active eventing runtime."
     },
     {
+      "DisplayName": "PublishAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantDomainOwnershipHttpProofPublisher",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofpublisher-publishasync-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CTenantDomainOwnershipHttpProofPublicationResult\u003E PublishAsync(TenantDomainOwnershipHttpProofPublicationRequest request, CancellationToken cancellationToken)",
+      "Summary": "Materializes an HTTP proof-file publication from an issued tenant-domain ownership proof challenge."
+    },
+    {
       "DisplayName": "Published",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointCandidateStatus",
@@ -87880,6 +88540,50 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-restendpointcandidatestatus-published",
       "Signature": "const RestEndpointCandidateStatus Published",
       "Summary": "The candidate is published into the active public REST surface."
+    },
+    {
+      "DisplayName": "Published",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-published",
+      "Signature": "const string Published",
+      "Summary": "The HTTP proof file was materialized and recorded."
+    },
+    {
+      "DisplayName": "Published",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-published",
+      "Signature": "bool Published { get; }",
+      "Summary": "Gets a value indicating whether the HTTP proof file was materialized."
+    },
+    {
+      "DisplayName": "PublishedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-publishedatutc",
+      "Signature": "DateTimeOffset PublishedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when publication was recorded."
+    },
+    {
+      "DisplayName": "PublishedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-publishedatutc",
+      "Signature": "DateTimeOffset PublishedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp used for publication."
     },
     {
       "DisplayName": "PublishedCandidateIds",
@@ -87924,6 +88628,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-publishedcandidateids",
       "Signature": "IReadOnlyList\u003Cstring\u003E PublishedCandidateIds { get; }",
       "Summary": "Gets the candidate identifiers that remain published for this behavior."
+    },
+    {
+      "DisplayName": "PublishedProofs",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantDomainOwnershipHttpProofPublicationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofpublicationcatalog-publishedproofs",
+      "Signature": "IReadOnlyList\u003CTenantDomainOwnershipHttpProofPublicationDescriptor\u003E PublishedProofs { get; }",
+      "Summary": "Gets the HTTP proof files currently published by the governance companion pack."
     },
     {
       "DisplayName": "PublisherDisplayName",
@@ -88639,6 +89354,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-reason",
       "Signature": "string Reason { get; }",
       "Summary": "Gets the operator-facing HTTP proof collection reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing HTTP proof publication reason."
     },
     {
       "DisplayName": "Reason",
@@ -89391,6 +90117,17 @@
     {
       "DisplayName": "Recorded",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-recorded",
+      "Signature": "bool Recorded { get; }",
+      "Summary": "Gets a value indicating whether publication metadata was recorded."
+    },
+    {
+      "DisplayName": "Recorded",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofPublicationPlanResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -89431,6 +90168,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-recordplan",
       "Signature": "bool RecordPlan { get; }",
       "Summary": "Gets a value indicating whether the plan should be recorded in domain ownership metadata."
+    },
+    {
+      "DisplayName": "RecordPublication",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-recordpublication",
+      "Signature": "bool RecordPublication { get; }",
+      "Summary": "Gets a value indicating whether publication metadata should be recorded."
     },
     {
       "DisplayName": "RecordPublicationPlan",
@@ -96354,6 +97102,17 @@
     {
       "DisplayName": "RoutePattern",
       "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-routepattern",
+      "Signature": "string RoutePattern { get; set; }",
+      "Summary": "Gets or sets the endpoint route pattern used for published HTTP proof files."
+    },
+    {
+      "DisplayName": "RoutePattern",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenApiEndpointOptions",
       "NamespaceName": "Cephalon.AspNetCore.Documentation",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -99786,6 +100545,17 @@
     {
       "DisplayName": "Source",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-source",
+      "Signature": "string Source { get; }",
+      "Summary": "Gets the source that requested HTTP proof publication."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -102974,6 +103744,17 @@
     {
       "DisplayName": "StoreFailed",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-storefailed",
+      "Signature": "const string StoreFailed",
+      "Summary": "Publication state could not be stored."
+    },
+    {
+      "DisplayName": "StoreFailed",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -105733,6 +106514,39 @@
       "Summary": "Creates a tenant-domain ownership HTTP proof collection result."
     },
     {
+      "DisplayName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipHttpProofPublicationDescriptor(string tenantId, string domainName, string httpFilePath, string httpFileContent, string httpContentType, string proofFingerprint, DateTimeOffset publishedAtUtc, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-domain ownership HTTP proof publication descriptor."
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipHttpProofPublicationRequest(string tenantId, string domainName, string source, string actor, DateTimeOffset? atUtc, string correlationId, bool recordPublication, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-domain ownership HTTP proof publication request."
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-ctor-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipHttpProofPublicationResult(string tenantId, string domainName, string outcome, bool published, bool recorded, DateTimeOffset publishedAtUtc, string httpFilePath, string httpFileContent, string httpContentType, string proofFingerprint, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-domain ownership HTTP proof publication result."
+    },
+    {
       "DisplayName": "TenantDomainOwnershipProofChallengeRequest",
       "Category": "Constructors",
       "DeclaringTypeName": "TenantDomainOwnershipProofChallengeRequest",
@@ -106224,6 +107038,39 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that was evaluated."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationdescriptor-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that owns the domain declaration."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationrequest-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that owns the domain declaration."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationresult-tenantid",
       "Signature": "string TenantId { get; }",
       "Summary": "Gets the tenant identifier that was evaluated."
     },

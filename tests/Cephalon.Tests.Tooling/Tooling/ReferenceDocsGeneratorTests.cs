@@ -96,13 +96,15 @@ public sealed class ReferenceDocsGeneratorTests
             rootPath: GetRepositoryRoot(),
             outputPath: outputPath,
             configuration: GetCurrentBuildConfiguration(),
-            assemblies: ["Cephalon.AspNetCore"]);
+            assemblies: ["Cephalon.AspNetCore", "Cephalon.MultiTenancy.Governance.AspNetCore"]);
 
         var rendered = ReferenceDocsGenerator.Generate(request);
         var hostPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-aspnetcore.md");
+        var governanceHostPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-multitenancy-governance-aspnetcore.md");
 
         Assert.Contains("EngineWebApplicationExtensions", hostPage.Contents, StringComparison.Ordinal);
         Assert.Contains("ITransportRouteMapper", hostPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapCephalonTenantDomainOwnershipHttpProofs", governanceHostPage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -398,6 +400,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("TenantDomainOwnershipProofChallengeResult", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipProofChallengeMetadataKeys", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("ITenantDomainOwnershipProofPublicationPlanner", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("ITenantDomainOwnershipHttpProofPublisher", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipProofPublicationPlanOutcomes", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipProofPublicationPlanRequest", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipProofPublicationPlanResult", governancePage.Contents, StringComparison.Ordinal);
@@ -434,6 +437,23 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("ITenantGovernanceActionStore", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("ITenantGovernanceActionWorkflow", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantGovernanceActionWorkflowRequest", governancePage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForMultiTenancyGovernanceAspNetCoreAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-multi-tenancy-governance-aspnetcore-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.MultiTenancy.Governance.AspNetCore"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var governanceAspNetCorePage = Assert.Single(rendered.Files, file => file.Path == "cephalon-multitenancy-governance-aspnetcore.md");
+
+        Assert.Contains("MultiTenancyGovernanceAspNetCoreOptions", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapCephalonTenantDomainOwnershipHttpProofs", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -490,6 +510,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Identity.AspNetCore",
                 "Cephalon.Ids.Sfid",
                 "Cephalon.MultiTenancy",
+                "Cephalon.MultiTenancy.Governance.AspNetCore",
                 "Cephalon.MultiTenancy.Governance",
                 "Cephalon.Observability",
                 "Cephalon.Observability.CassandraDependencies",
@@ -570,6 +591,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-audit.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-identity-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-data-mysql.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-data-debezium.md");
@@ -617,6 +639,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.AspNetCore", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance", StringComparison.Ordinal));
