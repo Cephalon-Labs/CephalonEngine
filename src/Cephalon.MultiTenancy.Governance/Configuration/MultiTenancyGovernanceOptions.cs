@@ -80,6 +80,11 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableDomainOwnershipHttpProofCollection { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership proof verification runner is active.
+    /// </summary>
+    public bool EnableDomainOwnershipProofVerificationRunner { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
     /// </summary>
     public bool EnableGovernanceActionDecision { get; set; } = true;

@@ -420,6 +420,9 @@ Browse the published API surface by public member.
 - [Actor](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-actor): `Properties` on `TenantDomainOwnershipProofPublicationPlanRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the actor that requested publication planning when known.
   - `string Actor { get; }`
+- [Actor](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-actor): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the actor that requested the verification run when known.
+  - `string Actor { get; }`
 - [Actor](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-actor): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the actor that requested the workflow transition when known.
   - `string Actor { get; }`
@@ -1197,6 +1200,9 @@ Browse the published API surface by public member.
 - [AlreadyVerified](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes-alreadyverified): `Fields` on `TenantDomainOwnershipProofChallengeOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AlreadyVerified&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The domain is already verified and does not need a new challenge.
   - `const string AlreadyVerified`
+- [AlreadyVerified](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-alreadyverified): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AlreadyVerified&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The domain ownership declaration was already verified and no new proof run was needed.
+  - `const string AlreadyVerified`
 - [AntiCorruptionLayer](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-anticorruptionlayer): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=AntiCorruptionLayer&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the anti-corruption-layer pattern.
   - `PatternDescriptor AntiCorruptionLayer { get; }`
@@ -1772,6 +1778,9 @@ Browse the published API surface by public member.
   - `DateTimeOffset? AtUtc { get; }`
 - [AtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-atutc): `Properties` on `TenantDomainOwnershipProofPublicationPlanRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp used for publication planning.
+  - `DateTimeOffset? AtUtc { get; }`
+- [AtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-atutc): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp used by the run.
   - `DateTimeOffset? AtUtc { get; }`
 - [AtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-atutc): `Properties` on `TenantDomainOwnershipValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp used for expiration evaluation.
@@ -3453,9 +3462,21 @@ Browse the published API surface by public member.
 - [CertificateThumbprint](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-certificatethumbprint): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CertificateThumbprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The signing certificate thumbprint used during verification, when certificate-backed trust was used.
   - `string CertificateThumbprint { get; set; }`
+- [ChallengeFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-challengefailed): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ChallengeFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Challenge issuance failed before proof verification could proceed.
+  - `const string ChallengeFailed`
 - [ChallengeFingerprint](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-challengefingerprint): `Properties` on `TenantDomainOwnershipProofChallengeResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ChallengeFingerprint&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the SHA-256 fingerprint of the challenge value.
   - `string ChallengeFingerprint { get; }`
+- [ChallengeIssued](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-challengeissued): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ChallengeIssued&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - A new or refreshed proof challenge was issued and publication instructions were produced.
+  - `const string ChallengeIssued`
+- [ChallengeIssued](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-challengeissued): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ChallengeIssued&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the run issued a proof challenge.
+  - `bool ChallengeIssued { get; }`
+- [ChallengeResult](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-challengeresult): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ChallengeResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the nested proof challenge result when one ran.
+  - `TenantDomainOwnershipProofChallengeResult ChallengeResult { get; }`
 - [ChallengeValue](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-challengevalue): `Properties` on `TenantDomainOwnershipProofChallengeRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ChallengeValue&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets an optional caller-supplied challenge value.
   - `string ChallengeValue { get; }`
@@ -3753,11 +3774,17 @@ Browse the published API surface by public member.
 - [CollectedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-collectedatutc): `Properties` on `TenantDomainOwnershipHttpProofCollectionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CollectedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when collection executed.
   - `DateTimeOffset CollectedAtUtc { get; }`
+- [CollectHttpProof](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-collecthttpproof): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CollectHttpProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the runner should use the built-in HTTP proof collector for HTTP file declarations.
+  - `bool CollectHttpProof { get; }`
 - [Collection](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-collection): `Properties` on `KnowledgeDocumentProviderContext` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Collection&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the collection being indexed.
   - `KnowledgeCollectionDescriptor Collection { get; }`
 - [CollectionBaseUri](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-collectionbaseuri): `Properties` on `TenantDomainOwnershipHttpProofCollectionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CollectionBaseUri&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional base URI used for collection.
+  - `Uri CollectionBaseUri { get; }`
+- [CollectionBaseUri](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-collectionbaseuri): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CollectionBaseUri&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional base URI used by HTTP file proof collection.
   - `Uri CollectionBaseUri { get; }`
 - [CollectionId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-iknowledgedocumentprovider-collectionid): `Properties` on `IKnowledgeDocumentProvider` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the collection identifier served by this provider.
@@ -4985,6 +5012,9 @@ Browse the published API surface by public member.
   - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-correlationid): `Properties` on `TenantDomainOwnershipProofPublicationPlanRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional correlation identifier for publication planning.
+  - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-correlationid): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional correlation identifier for the run.
   - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-correlationid): `Properties` on `TenantDomainOwnershipValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional correlation identifier for the validation.
@@ -6363,6 +6393,9 @@ Browse the published API surface by public member.
 - [Disabled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-disabled): `Fields` on `TenantDomainOwnershipProofPublicationPlanOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Disabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Publication planning is disabled by governance options.
   - `const string Disabled`
+- [Disabled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-disabled): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Disabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Proof verification runner execution is disabled by governance options.
+  - `const string Disabled`
 - [Disabled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-disabled): `Fields` on `TenantDomainOwnershipValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Disabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Domain ownership validation is disabled by host configuration.
   - `const string Disabled`
@@ -6717,6 +6750,9 @@ Browse the published API surface by public member.
 - [DnsTxtProofCollectionOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-dnstxtproofcollectionownership): `Fields` on `TenantDomainOwnershipHttpProofCollectionMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DnsTxtProofCollectionOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key that keeps DNS TXT proof collection ownership explicit.
   - `const string DnsTxtProofCollectionOwnership`
+- [DnsTxtProofCollectionOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-dnstxtproofcollectionownership): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DnsTxtProofCollectionOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for DNS TXT proof collection ownership.
+  - `const string DnsTxtProofCollectionOwnership`
 - [DnsTxtRecordName](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-dnstxtrecordname): `Fields` on `TenantDomainOwnershipProofChallengeMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DnsTxtRecordName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key for the DNS TXT record name where the challenge should be published.
   - `const string DnsTxtRecordName`
@@ -6789,6 +6825,12 @@ Browse the published API surface by public member.
 - [DomainName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-domainname): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the canonical domain name that was evaluated.
   - `string DomainName { get; }`
+- [DomainName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-domainname): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the canonical domain name being verified.
+  - `string DomainName { get; }`
+- [DomainName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-domainname): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the canonical domain name that was evaluated.
+  - `string DomainName { get; }`
 - [DomainName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-domainname): `Properties` on `TenantDomainOwnershipValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the canonical domain name to validate.
   - `string DomainName { get; }`
@@ -6811,6 +6853,9 @@ Browse the published API surface by public member.
   - Gets the matching or resulting domain ownership descriptor when one exists.
   - `TenantDomainOwnershipDescriptor DomainOwnership { get; }`
 - [DomainOwnership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-domainownership): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the matching or resulting domain ownership descriptor when one exists.
+  - `TenantDomainOwnershipDescriptor DomainOwnership { get; }`
+- [DomainOwnership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-domainownership): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the matching or resulting domain ownership descriptor when one exists.
   - `TenantDomainOwnershipDescriptor DomainOwnership { get; }`
 - [DomainOwnership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-domainownership): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
@@ -7473,6 +7518,9 @@ Browse the published API surface by public member.
 - [EnableDomainOwnershipProofPublicationPlanning](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofpublicationplanning): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableDomainOwnershipProofPublicationPlanning&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in tenant-domain ownership proof publication planner is active.
   - `bool EnableDomainOwnershipProofPublicationPlanning { get; set; }`
+- [EnableDomainOwnershipProofVerificationRunner](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofverificationrunner): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableDomainOwnershipProofVerificationRunner&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets a value indicating whether the built-in tenant-domain ownership proof verification runner is active.
+  - `bool EnableDomainOwnershipProofVerificationRunner { get; set; }`
 - [EnableDomainOwnershipValidation](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipvalidation): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableDomainOwnershipValidation&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in tenant-domain ownership validator is active.
   - `bool EnableDomainOwnershipValidation { get; set; }`
@@ -7773,8 +7821,14 @@ Browse the published API surface by public member.
 - [EvaluationFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-evaluationfailed): `Fields` on `TenantDomainOwnershipHttpProofCollectionOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EvaluationFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - HTTP content was collected, but proof evaluation did not apply a terminal workflow outcome.
   - `const string EvaluationFailed`
+- [EvaluationFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-evaluationfailed): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EvaluationFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Proof evaluation failed before a terminal workflow outcome could be applied.
+  - `const string EvaluationFailed`
 - [EvaluationResult](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-evaluationresult): `Properties` on `TenantDomainOwnershipHttpProofCollectionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EvaluationResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the proof-evaluation result produced after collection.
+  - `TenantDomainOwnershipProofEvaluationResult EvaluationResult { get; }`
+- [EvaluationResult](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-evaluationresult): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EvaluationResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the nested proof evaluation result when one ran.
   - `TenantDomainOwnershipProofEvaluationResult EvaluationResult { get; }`
 - [EventChannelDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventchanneldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventChannelDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event channel descriptor.
@@ -8571,6 +8625,9 @@ Browse the published API surface by public member.
 - [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-expiresatutc): `Properties` on `TenantDomainOwnershipProofEvaluationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional UTC timestamp when the ownership declaration expires.
   - `DateTimeOffset? ExpiresAtUtc { get; }`
+- [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-expiresatutc): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional UTC timestamp applied if proof evaluation verifies the declaration.
+  - `DateTimeOffset? ExpiresAtUtc { get; }`
 - [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-expiresatutc): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional UTC timestamp when the ownership declaration expires.
   - `DateTimeOffset? ExpiresAtUtc { get; }`
@@ -8606,6 +8663,9 @@ Browse the published API surface by public member.
   - `bool ExportTraces { get; set; }`
 - [ExternalProofPollingOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-externalproofpollingownership): `Fields` on `TenantDomainOwnershipHttpProofCollectionMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExternalProofPollingOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key that keeps background proof polling ownership explicit.
+  - `const string ExternalProofPollingOwnership`
+- [ExternalProofPollingOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-externalproofpollingownership): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExternalProofPollingOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for external proof polling ownership.
   - `const string ExternalProofPollingOwnership`
 - [ExternalPublicationOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-externalpublicationownership): `Fields` on `TenantDomainOwnershipProofPublicationPlanMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExternalPublicationOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key that keeps external publication ownership explicit.
@@ -11277,6 +11337,12 @@ Browse the published API surface by public member.
 - [Hostnames](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-hostnames): `Properties` on `KubernetesGatewayTrafficRouteOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=Hostnames&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets the optional hostnames published by the projected HTTPRoute.
   - `IList<string> Hostnames { get; }`
+- [HttpCollectionFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-httpcollectionfailed): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=HttpCollectionFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - HTTP proof collection failed before a proof could be evaluated.
+  - `const string HttpCollectionFailed`
+- [HttpCollectionUnavailable](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-httpcollectionunavailable): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=HttpCollectionUnavailable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - HTTP proof collection is required but the built-in collector is not registered.
+  - `const string HttpCollectionUnavailable`
 - [HttpContentType](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-httpcontenttype): `Fields` on `TenantDomainOwnershipProofPublicationPlanMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=HttpContentType&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key for the HTTP content type used by the publication plan.
   - `const string HttpContentType`
@@ -11319,6 +11385,12 @@ Browse the published API surface by public member.
 - [HttpProofCollectionOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-httpproofcollectionownership): `Fields` on `TenantDomainOwnershipHttpProofCollectionMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=HttpProofCollectionOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key that identifies Cephalon as the HTTP proof collection owner.
   - `const string HttpProofCollectionOwnership`
+- [HttpProofCollectionOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-httpproofcollectionownership): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=HttpProofCollectionOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for HTTP proof collection ownership.
+  - `const string HttpProofCollectionOwnership`
+- [HttpProofCollectionResult](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-httpproofcollectionresult): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=HttpProofCollectionResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the nested HTTP proof collection result when one ran.
+  - `TenantDomainOwnershipHttpProofCollectionResult HttpProofCollectionResult { get; }`
 - [HttpRequestResponseLoggingOptions](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-ctor): `Constructors` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=HttpRequestResponseLoggingOptions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Creates request and response logging options with body capture disabled by default.
   - `HttpRequestResponseLoggingOptions()`
@@ -12813,6 +12885,9 @@ Browse the published API surface by public member.
 - [IssueAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofchallengeissuer-issueasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-system-threading-cancellationtoken): `Methods` on `ITenantDomainOwnershipProofChallengeIssuer` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IssueAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Issues or refreshes a proof challenge for a tenant-domain ownership declaration.
   - `ValueTask<TenantDomainOwnershipProofChallengeResult> IssueAsync(TenantDomainOwnershipProofChallengeRequest request, CancellationToken cancellationToken)`
+- [IssueChallengeWhenMissingExpectedProof](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-issuechallengewhenmissingexpectedproof): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IssueChallengeWhenMissingExpectedProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the runner should issue a challenge when expected proof metadata is missing.
+  - `bool IssueChallengeWhenMissingExpectedProof { get; }`
 - [Issued](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancecategories-issued): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Issued&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command issuance has been marked as issued on the shared issuance lane.
   - `const string Issued`
@@ -13356,6 +13431,33 @@ Browse the published API surface by public member.
 - [LastProofPublicationPlanSource](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-lastproofpublicationplansource): `Fields` on `TenantDomainOwnershipProofPublicationPlanMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofPublicationPlanSource&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key for the source that requested publication planning.
   - `const string LastProofPublicationPlanSource`
+- [LastProofVerificationActor](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationactor): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationActor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the actor that requested the latest proof verification run.
+  - `const string LastProofVerificationActor`
+- [LastProofVerificationChallengeOutcome](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationchallengeoutcome): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationChallengeOutcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the challenge issuance outcome observed by the latest proof verification run.
+  - `const string LastProofVerificationChallengeOutcome`
+- [LastProofVerificationCorrelationId](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationcorrelationid): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationCorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the correlation identifier attached to the latest proof verification run.
+  - `const string LastProofVerificationCorrelationId`
+- [LastProofVerificationEvaluationOutcome](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationevaluationoutcome): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationEvaluationOutcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the proof evaluation outcome observed by the latest proof verification run.
+  - `const string LastProofVerificationEvaluationOutcome`
+- [LastProofVerificationHttpCollectionOutcome](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationhttpcollectionoutcome): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationHttpCollectionOutcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the HTTP proof collection outcome observed by the latest proof verification run.
+  - `const string LastProofVerificationHttpCollectionOutcome`
+- [LastProofVerificationOutcome](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationoutcome): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationOutcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the latest proof verification runner outcome.
+  - `const string LastProofVerificationOutcome`
+- [LastProofVerificationPublicationPlanOutcome](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationpublicationplanoutcome): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationPublicationPlanOutcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the publication planning outcome observed by the latest proof verification run.
+  - `const string LastProofVerificationPublicationPlanOutcome`
+- [LastProofVerificationRanAtUtc](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationranatutc): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationRanAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the UTC timestamp when the latest proof verification run executed.
+  - `const string LastProofVerificationRanAtUtc`
+- [LastProofVerificationSource](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationsource): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastProofVerificationSource&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for the source that requested the latest proof verification run.
+  - `const string LastProofVerificationSource`
 - [LastPublisherType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastpublishertype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastPublisherType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The last concrete publisher implementation type that accepted or rejected the publication when one was reported.
   - `string LastPublisherType { get; set; }`
@@ -15072,6 +15174,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-metadata): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets optional result metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-metadata): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional proof verification runner metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-metadata): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional result metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-metadata): `Properties` on `TenantDomainOwnershipValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets optional request metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -15291,6 +15399,9 @@ Browse the published API surface by public member.
 - [MissingExpectedProof](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-missingexpectedproof): `Fields` on `TenantDomainOwnershipProofPublicationPlanOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MissingExpectedProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Expected proof metadata is missing from the tenant-domain ownership declaration.
   - `const string MissingExpectedProof`
+- [MissingExpectedProof](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-missingexpectedproof): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MissingExpectedProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Expected proof metadata is missing and challenge issuance was not available or not requested.
+  - `const string MissingExpectedProof`
 - [MissingManagementMode](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancecategories-missingmanagementmode): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MissingManagementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime does not currently declare a managed-connector management mode.
   - `const string MissingManagementMode`
@@ -15302,6 +15413,9 @@ Browse the published API surface by public member.
   - `const string MissingMaterializerId`
 - [MissingObservedProof](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-missingobservedproof): `Fields` on `TenantDomainOwnershipProofEvaluationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MissingObservedProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The request did not contain an observed proof value to evaluate.
+  - `const string MissingObservedProof`
+- [MissingObservedProof](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-missingobservedproof): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MissingObservedProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - No observed proof was supplied and no built-in collector can collect the requested method.
   - `const string MissingObservedProof`
 - [MissingProviderId](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-missingproviderid): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MissingProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime does not currently expose one provider identifier.
@@ -16111,6 +16225,9 @@ Browse the published API surface by public member.
 - [NotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-notfound): `Fields` on `TenantDomainOwnershipProofPublicationPlanOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - No tenant-domain ownership declaration matched the supplied tenant and domain.
   - `const string NotFound`
+- [NotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-notfound): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - No tenant-domain ownership declaration matched the supplied tenant and domain.
+  - `const string NotFound`
 - [NotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-notfound): `Fields` on `TenantDomainOwnershipValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - No domain ownership descriptor matched the supplied domain.
   - `const string NotFound`
@@ -16224,6 +16341,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> ObservedEdgeNodeIds { get; set; }`
 - [ObservedProof](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-observedproof): `Properties` on `TenantDomainOwnershipProofEvaluationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservedProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the proof value observed by the application or provider pack.
+  - `string ObservedProof { get; }`
+- [ObservedProof](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-observedproof): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservedProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional observed proof supplied by an application or provider pack.
   - `string ObservedProof { get; }`
 - [ObservedProofFingerprint](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-observedprooffingerprint): `Properties` on `TenantDomainOwnershipHttpProofCollectionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservedProofFingerprint&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the SHA-256 fingerprint of the collected proof body.
@@ -16870,6 +16990,9 @@ Browse the published API surface by public member.
   - `string Outcome { get; }`
 - [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-outcome): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable publication planning outcome.
+  - `string Outcome { get; }`
+- [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-outcome): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable proof verification runner outcome.
   - `string Outcome { get; }`
 - [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-outcome): `Properties` on `TenantDomainOwnershipValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable validation outcome.
@@ -17982,6 +18105,12 @@ Browse the published API surface by public member.
 - [ProofChallengeOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-proofchallengeownership): `Fields` on `TenantDomainOwnershipProofChallengeMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProofChallengeOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key that identifies Cephalon as the challenge issuance owner.
   - `const string ProofChallengeOwnership`
+- [ProofCollected](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-proofcollected): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProofCollected&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the run collected proof content.
+  - `bool ProofCollected { get; }`
+- [ProofEvaluated](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-proofevaluated): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProofEvaluated&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the run evaluated observed proof.
+  - `bool ProofEvaluated { get; }`
 - [ProofEvaluationOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-proofevaluationownership): `Fields` on `TenantDomainOwnershipProofMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProofEvaluationOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Ownership marker for proof evaluation performed by the governance companion.
   - `const string ProofEvaluationOwnership`
@@ -17994,6 +18123,9 @@ Browse the published API surface by public member.
 - [ProofValue](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-proofvalue): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProofValue&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the public proof value to publish.
   - `string ProofValue { get; }`
+- [ProofVerificationRunnerOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-proofverificationrunnerownership): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProofVerificationRunnerOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key for proof verification runner ownership.
+  - `const string ProofVerificationRunnerOwnership`
 - [PropertyName](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointbindingdescriptor-propertyname): `Properties` on `RestEndpointBindingDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=PropertyName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the target request-model property name.
   - `string PropertyName { get; }`
@@ -18921,8 +19053,20 @@ Browse the published API surface by public member.
 - [PublicationName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-publicationname): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=PublicationName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the PostgreSQL publication that should emit the tracked table changes.
   - `string PublicationName { get; set; }`
+- [PublicationPlanFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-publicationplanfailed): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Publication planning failed before proof verification could proceed.
+  - `const string PublicationPlanFailed`
+- [PublicationPlanned](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-publicationplanned): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanned&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Publication instructions were produced, but no observed proof was available to evaluate.
+  - `const string PublicationPlanned`
+- [PublicationPlanned](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-publicationplanned): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanned&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the run generated publication instructions.
+  - `bool PublicationPlanned { get; }`
 - [PublicationPlanResult](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-publicationplanresult): `Properties` on `TenantDomainOwnershipHttpProofCollectionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the publication-plan result used by collection.
+  - `TenantDomainOwnershipProofPublicationPlanResult PublicationPlanResult { get; }`
+- [PublicationPlanResult](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-publicationplanresult): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the nested publication plan result when one ran.
   - `TenantDomainOwnershipProofPublicationPlanResult PublicationPlanResult { get; }`
 - [PublishAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventpublisher-publishasync-cephalon-eventing-services-eventpublication-system-threading-cancellationtoken): `Methods` on `IEventPublisher` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublishAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Publishes one integration event through the active eventing runtime.
@@ -19011,6 +19155,9 @@ Browse the published API surface by public member.
 - [RabbitMqDependencyHealthOptions](cephalon-observability-rabbitmqdependencies.md#member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-ctor): `Constructors` on `RabbitMqDependencyHealthOptions` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=RabbitMqDependencyHealthOptions&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
   - Initializes a new instance of the `RabbitMqDependencyHealthOptions` class.
   - `RabbitMqDependencyHealthOptions()`
+- [RanAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-ranatutc): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RanAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when the runner executed.
+  - `DateTimeOffset RanAtUtc { get; }`
 - [RateLimiting](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-ratelimiting): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimiting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the rate-limiting override requested for the targeted surface.
   - `RateLimitingSelection RateLimiting { get; }`
@@ -19142,6 +19289,9 @@ Browse the published API surface by public member.
   - `string Reason { get; }`
 - [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-reason): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the operator-facing publication planning reason.
+  - `string Reason { get; }`
+- [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-reason): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the operator-facing proof verification reason.
   - `string Reason { get; }`
 - [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-reason): `Properties` on `TenantDomainOwnershipValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing validation reason.
@@ -19346,6 +19496,9 @@ Browse the published API surface by public member.
   - `bool RecordPlan { get; }`
 - [RecordPublicationPlan](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-recordpublicationplan): `Properties` on `TenantDomainOwnershipHttpProofCollectionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RecordPublicationPlan&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether the publication plan should be recorded before collection.
+  - `bool RecordPublicationPlan { get; }`
+- [RecordPublicationPlan](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-recordpublicationplan): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RecordPublicationPlan&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether publication planning metadata should be recorded.
   - `bool RecordPublicationPlan { get; }`
 - [Recovered](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-recovered): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Recovered&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal was recovered from a durable persistence store after startup.
@@ -19650,6 +19803,12 @@ Browse the published API surface by public member.
 - [Rejected](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-rejected): `Fields` on `TenantDomainOwnershipProofEvaluationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Rejected&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The observed proof did not match the expected proof and the domain ownership was rejected.
   - `const string Rejected`
+- [Rejected](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-rejected): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Rejected&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The observed proof mismatched and the domain ownership declaration was rejected.
+  - `const string Rejected`
+- [Rejected](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-rejected): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Rejected&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the run rejected the declaration.
+  - `bool Rejected { get; }`
 - [Rejected](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-rejected): `Fields` on `TenantDomainOwnershipStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Rejected&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The tenant domain ownership proof was rejected.
   - `const string Rejected`
@@ -22128,6 +22287,9 @@ Browse the published API surface by public member.
 - [Source](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-source): `Properties` on `TenantDomainOwnershipProofPublicationPlanRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Source&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the source that requested publication planning.
   - `string Source { get; }`
+- [Source](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-source): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Source&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the source that requested the verification run.
+  - `string Source { get; }`
 - [Source](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantresolutionresult-source): `Properties` on `TenantResolutionResult` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=Source&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the source or strategy that produced the result when one is known.
   - `string Source { get; }`
@@ -22981,6 +23143,9 @@ Browse the published API surface by public member.
 - [StoreFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-storefailed): `Fields` on `TenantDomainOwnershipProofPublicationPlanOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Runtime state could not be persisted.
   - `const string StoreFailed`
+- [StoreFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-storefailed): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Runtime state could not be persisted.
+  - `const string StoreFailed`
 - [StoreFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-storefailed): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested workflow transition could not be persisted.
   - `const string StoreFailed`
@@ -23737,6 +23902,12 @@ Browse the published API surface by public member.
 - [TenantDomainOwnershipProofPublicationPlanResult](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantDomainOwnershipProofPublicationPlanResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a tenant-domain ownership proof publication planning result.
   - `TenantDomainOwnershipProofPublicationPlanResult(string tenantId, string domainName, string verificationMethod, string outcome, bool planned, bool recorded, DateTimeOffset plannedAtUtc, string proofValue, string proofFingerprint, string dnsTxtRecordName, string dnsTxtRecordValue, string httpFilePath, string httpFileContent, string httpContentType, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)`
+- [TenantDomainOwnershipProofVerificationRequest](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-ctor-system-string-system-string-system-string-system-string-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-boolean-system-boolean-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantDomainOwnershipProofVerificationRequest&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a tenant-domain ownership proof verification runner request.
+  - `TenantDomainOwnershipProofVerificationRequest(string tenantId, string domainName, string verificationMethod, string observedProof, Uri collectionBaseUri, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, bool issueChallengeWhenMissingExpectedProof, bool collectHttpProof, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary<string, string> metadata)`
+- [TenantDomainOwnershipProofVerificationResult](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-datetimeoffset-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantDomainOwnershipProofVerificationResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a tenant-domain ownership proof verification runner result.
+  - `TenantDomainOwnershipProofVerificationResult(string tenantId, string domainName, string verificationMethod, string outcome, bool verified, bool rejected, bool challengeIssued, bool publicationPlanned, bool proofCollected, bool proofEvaluated, DateTimeOffset ranAtUtc, TenantDomainOwnershipProofChallengeResult challengeResult, TenantDomainOwnershipProofPublicationPlanResult publicationPlanResult, TenantDomainOwnershipHttpProofCollectionResult httpProofCollectionResult, TenantDomainOwnershipProofEvaluationResult evaluationResult, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)`
 - [TenantDomainOwnershipValidationRequest](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-ctor-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantDomainOwnershipValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantDomainOwnershipValidationRequest&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a tenant-domain ownership validation request.
   - `TenantDomainOwnershipValidationRequest(string tenantId, string domainName, DateTimeOffset? atUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)`
@@ -23851,6 +24022,12 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-tenantid): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant identifier that was evaluated.
   - `string TenantId { get; }`
+- [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-tenantid): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant identifier that owns the domain declaration.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-tenantid): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant identifier that was evaluated.
+  - `string TenantId { get; }`
 - [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-tenantid): `Properties` on `TenantDomainOwnershipValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant identifier to validate.
   - `string TenantId { get; }`
@@ -23932,6 +24109,9 @@ Browse the published API surface by public member.
 - [TenantMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-tenantmismatch): `Fields` on `TenantDomainOwnershipProofPublicationPlanOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The domain is already declared for a different tenant.
   - `const string TenantMismatch`
+- [TenantMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-tenantmismatch): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - A declaration for the supplied domain belongs to a different tenant.
+  - `const string TenantMismatch`
 - [TenantMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-tenantmismatch): `Fields` on `TenantDomainOwnershipValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The domain exists but belongs to a different tenant.
   - `const string TenantMismatch`
@@ -23981,6 +24161,9 @@ Browse the published API surface by public member.
   - Gets the timeout settings resolved for the app.
   - `TimeoutSettings Timeout { get; }`
 - [Timeout](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-timeout): `Properties` on `TenantDomainOwnershipHttpProofCollectionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Timeout&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional per-request HTTP collection timeout.
+  - `TimeSpan? Timeout { get; }`
+- [Timeout](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-timeout): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Timeout&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional per-request HTTP collection timeout.
   - `TimeSpan? Timeout { get; }`
 - [TimeoutSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-timeoutselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TimeoutSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
@@ -24658,6 +24841,9 @@ Browse the published API surface by public member.
 - [UnsupportedVerificationMethod](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-unsupportedverificationmethod): `Fields` on `TenantDomainOwnershipProofPublicationPlanOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=UnsupportedVerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The verification method does not have built-in publication instructions.
   - `const string UnsupportedVerificationMethod`
+- [UnsupportedVerificationMethod](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-unsupportedverificationmethod): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=UnsupportedVerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The requested verification method is not supported by the runner.
+  - `const string UnsupportedVerificationMethod`
 - [Upsert](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantdomainownershipstore-upsert-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor): `Methods` on `ITenantDomainOwnershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Upsert&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates or replaces one stored runtime tenant-domain ownership declaration.
   - `void Upsert(TenantDomainOwnershipDescriptor domainOwnership)`
@@ -24928,6 +25114,12 @@ Browse the published API surface by public member.
 - [VerificationMethod](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-verificationmethod): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the verification method used for publication planning.
   - `string VerificationMethod { get; }`
+- [VerificationMethod](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-verificationmethod): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional verification method boundary.
+  - `string VerificationMethod { get; }`
+- [VerificationMethod](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-verificationmethod): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the verification method used by the runner.
+  - `string VerificationMethod { get; }`
 - [VerificationMethod](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-verificationmethod): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional verification method boundary.
   - `string VerificationMethod { get; }`
@@ -24942,6 +25134,9 @@ Browse the published API surface by public member.
   - `const string VerificationMethodMismatch`
 - [VerificationMethodMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-verificationmethodmismatch): `Fields` on `TenantDomainOwnershipProofPublicationPlanOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethodMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested verification method does not match the existing declaration.
+  - `const string VerificationMethodMismatch`
+- [VerificationMethodMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-verificationmethodmismatch): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethodMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The matching domain ownership declaration uses a different verification method.
   - `const string VerificationMethodMismatch`
 - [VerificationMethodMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-verificationmethodmismatch): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethodMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The matching tenant-domain ownership declaration uses a different verification method.
@@ -24958,6 +25153,12 @@ Browse the published API surface by public member.
 - [Verified](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-verified): `Fields` on `TenantDomainOwnershipProofEvaluationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Verified&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The observed proof matched the expected proof and the domain ownership was verified.
   - `const string Verified`
+- [Verified](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-verified): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Verified&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The observed proof matched and the domain ownership declaration was verified.
+  - `const string Verified`
+- [Verified](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-verified): `Properties` on `TenantDomainOwnershipProofVerificationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Verified&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the run verified the declaration.
+  - `bool Verified { get; }`
 - [Verified](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-verified): `Fields` on `TenantDomainOwnershipStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Verified&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The tenant domain ownership has been verified and can be validated.
   - `const string Verified`
@@ -24967,6 +25168,9 @@ Browse the published API surface by public member.
 - [Verify](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-verify): `Fields` on `TenantDomainOwnershipVerificationWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Verify&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Marks a pending tenant-domain ownership declaration as verified.
   - `const string Verify`
+- [VerifyAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofverificationrunner-verifyasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-system-threading-cancellationtoken): `Methods` on `ITenantDomainOwnershipProofVerificationRunner` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerifyAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Runs one tenant-domain ownership proof verification attempt.
+  - `ValueTask<TenantDomainOwnershipProofVerificationResult> VerifyAsync(TenantDomainOwnershipProofVerificationRequest request, CancellationToken cancellationToken)`
 - [Version](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-version): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Version&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the declared module version, when one is available.
   - `string Version { get; }`

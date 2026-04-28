@@ -407,6 +407,11 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("TenantDomainOwnershipHttpProofCollectionRequest", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipHttpProofCollectionResult", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipHttpProofCollectionMetadataKeys", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("ITenantDomainOwnershipProofVerificationRunner", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantDomainOwnershipProofVerificationOutcomes", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantDomainOwnershipProofVerificationRequest", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantDomainOwnershipProofVerificationResult", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantDomainOwnershipProofVerificationMetadataKeys", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipProofEvaluationOutcomes", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipProofEvaluationRequest", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantDomainOwnershipProofEvaluationResult", governancePage.Contents, StringComparison.Ordinal);
