@@ -50,6 +50,16 @@ IList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }
 
 Gets the host-defined tenant-domain ownership descriptors available to the governance runtime.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipstorefilepath"></a>
+
+##### `DomainOwnershipStoreFilePath`
+
+```csharp
+string DomainOwnershipStoreFilePath { get; set; }
+```
+
+Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipvalidation"></a>
 
 ##### `EnableDomainOwnershipValidation`
@@ -218,7 +228,7 @@ public interface ITenantDomainOwnershipCatalog
 IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }
 ```
 
-Gets the effective domain ownership set after host options and module contributors have both been applied.
+Gets the effective domain ownership set after runtime storage, host options, and module contributors have been applied.
 
 #### Methods
 
@@ -319,6 +329,84 @@ Adds a tenant-domain ownership descriptor to the registry.
 
 Parameters:
 - `domainOwnership`: The domain ownership descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipstore"></a>
+
+### `ITenantDomainOwnershipStore`
+
+Stores runtime tenant-domain ownership declarations managed by the multi-tenancy governance companion pack.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipStore
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of stored runtime tenant-domain ownership declarations.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-domainownerships"></a>
+
+##### `DomainOwnerships`
+
+```csharp
+IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }
+```
+
+Gets the stored runtime tenant-domain ownership declarations.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-isdurable"></a>
+
+##### `IsDurable`
+
+```csharp
+bool IsDurable { get; }
+```
+
+Gets a value indicating whether tenant-domain ownership state survives process restarts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; }
+```
+
+Gets the ownership mode for the store implementation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-storekind"></a>
+
+##### `StoreKind`
+
+```csharp
+string StoreKind { get; }
+```
+
+Gets the operator-facing store kind.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipstore-upsert-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor"></a>
+
+##### `Upsert`
+
+```csharp
+void Upsert(TenantDomainOwnershipDescriptor domainOwnership)
+```
+
+Creates or replaces one stored runtime tenant-domain ownership declaration.
+
+Parameters:
+- `domainOwnership`: The tenant-domain ownership declaration to store.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipvalidator"></a>
 

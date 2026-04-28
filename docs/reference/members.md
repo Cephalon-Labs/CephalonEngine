@@ -4908,6 +4908,9 @@ Browse the published API surface by public member.
 - [Count](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-count): `Properties` on `CdcCaptureReporterCoordinationBreakdownEntry` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Count&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of CDC captures currently reporting the bucket.
   - `int Count { get; }`
+- [Count](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-count): `Properties` on `ITenantDomainOwnershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the number of stored runtime tenant-domain ownership declarations.
+  - `int Count { get; }`
 - [Count](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-count): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of stored runtime tenant-governance actions.
   - `int Count { get; }`
@@ -6622,11 +6625,17 @@ Browse the published API surface by public member.
   - A governance action that changes declared tenant-domain ownership posture.
   - `const string DomainOwnership`
 - [DomainOwnerships](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantdomainownershipcatalog-domainownerships): `Properties` on `ITenantDomainOwnershipCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnerships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
-  - Gets the effective domain ownership set after host options and module contributors have both been applied.
+  - Gets the effective domain ownership set after runtime storage, host options, and module contributors have been applied.
+  - `IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }`
+- [DomainOwnerships](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-domainownerships): `Properties` on `ITenantDomainOwnershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnerships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stored runtime tenant-domain ownership declarations.
   - `IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }`
 - [DomainOwnerships](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownerships): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnerships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets the host-defined tenant-domain ownership descriptors available to the governance runtime.
   - `IList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }`
+- [DomainOwnershipStoreFilePath](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipstorefilepath): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnershipStoreFilePath&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.
+  - `string DomainOwnershipStoreFilePath { get; set; }`
 - [Domains](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantcontext-domains): `Properties` on `TenantContext` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=Domains&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the domains associated with the tenant.
   - `IReadOnlyList<string> Domains { get; }`
@@ -11973,6 +11982,9 @@ Browse the published API surface by public member.
 - [IsDurable](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isdurable): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current durability answer already provides restart-safe retained history.
   - `bool IsDurable { get; }`
+- [IsDurable](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-isdurable): `Properties` on `ITenantDomainOwnershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether tenant-domain ownership state survives process restarts.
+  - `bool IsDurable { get; }`
 - [IsDurable](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-isdurable): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether action state survives process restarts.
   - `bool IsDurable { get; }`
@@ -16457,6 +16469,9 @@ Browse the published API surface by public member.
 - [Ownership](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-ownership): `Fields` on `CellTrafficAutomationMaterializationConditionCategories` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ownership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - A condition that describes ownership posture for a materialized resource.
   - `const string Ownership`
+- [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-ownership): `Properties` on `ITenantDomainOwnershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the ownership mode for the store implementation.
+  - `string Ownership { get; }`
 - [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-ownership): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the ownership mode for the store implementation.
   - `string Ownership { get; }`
@@ -22366,6 +22381,9 @@ Browse the published API surface by public member.
 - [StoreFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-storefailed): `Fields` on `TenantGovernanceActionWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested workflow transition could not be persisted.
   - `const string StoreFailed`
+- [StoreKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-storekind): `Properties` on `ITenantDomainOwnershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the operator-facing store kind.
+  - `string StoreKind { get; }`
 - [StoreKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-storekind): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the operator-facing store kind.
   - `string StoreKind { get; }`
@@ -23944,6 +23962,9 @@ Browse the published API surface by public member.
 - [Unsupported](cephalon-abstractions.md#member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-unsupported-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unsupported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates an explicit unsupported dispatch policy for an outbox that can stage messages but does not currently support Cephalon-managed mutable dispatch-state ownership.
   - `OutboxDispatchPolicyDescriptor Unsupported(string outboxId, string description, IReadOnlyDictionary<string, string> metadata)`
+- [Upsert](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantdomainownershipstore-upsert-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor): `Methods` on `ITenantDomainOwnershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Upsert&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates or replaces one stored runtime tenant-domain ownership declaration.
+  - `void Upsert(TenantDomainOwnershipDescriptor domainOwnership)`
 - [Upsert](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-upsert-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor): `Methods` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Upsert&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates or replaces one stored runtime tenant-governance action.
   - `void Upsert(TenantGovernanceActionDescriptor action)`

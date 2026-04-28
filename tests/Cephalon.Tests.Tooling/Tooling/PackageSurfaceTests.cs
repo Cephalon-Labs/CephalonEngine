@@ -1199,6 +1199,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipCatalog),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipContributor),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipRegistry),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipStore),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantDomainOwnershipValidator),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantInvitationCatalog),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantInvitationContributor),

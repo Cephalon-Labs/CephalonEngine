@@ -2175,6 +2175,11 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["ownership"] == "cephalon-managed" &&
                 entry.Metadata["package"] == "Cephalon.MultiTenancy.Governance" &&
                 entry.Metadata["domainOwnershipCount"] == "1" &&
+                entry.Metadata["runtimeDomainOwnershipCount"] == "0" &&
+                entry.Metadata["domainOwnershipStoreKind"] == "in-memory" &&
+                entry.Metadata["domainOwnershipStoreDurable"] == "false" &&
+                entry.Metadata["domainOwnershipStoreOwnership"] == "cephalon-managed" &&
+                entry.Metadata["durableStoreOwnership"] == "application-managed" &&
                 entry.Metadata["validationOwnership"] == "cephalon-managed" &&
                 entry.Metadata["verificationExecutionOwnership"] == "application-managed");
         Assert.Contains(

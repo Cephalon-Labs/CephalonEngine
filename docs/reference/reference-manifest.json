@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T18:05:52.209129+00:00",
+  "GeneratedAtUtc": "2026-04-28T18:19:16.0828974+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -232,7 +232,7 @@
       "Description": "Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 48
+      "TypeCount": 49
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1258,7 +1258,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 46
+      "TypeCount": 47
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11501,6 +11501,21 @@
       }
     },
     {
+      "DisplayName": "ITenantDomainOwnershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantdomainownershipstore",
+      "Declaration": "public interface ITenantDomainOwnershipStore",
+      "Summary": "Stores runtime tenant-domain ownership declarations managed by the multi-tenancy governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantDomainOwnershipValidator",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -12516,7 +12531,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 13,
         "Methods": 0
       }
     },
@@ -34107,6 +34122,17 @@
     {
       "DisplayName": "Count",
       "Category": "Properties",
+      "DeclaringTypeName": "ITenantDomainOwnershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-count",
+      "Signature": "int Count { get; }",
+      "Summary": "Gets the number of stored runtime tenant-domain ownership declarations."
+    },
+    {
+      "DisplayName": "Count",
+      "Category": "Properties",
       "DeclaringTypeName": "ITenantGovernanceActionStore",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -40391,7 +40417,18 @@
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantdomainownershipcatalog-domainownerships",
       "Signature": "IReadOnlyList\u003CTenantDomainOwnershipDescriptor\u003E DomainOwnerships { get; }",
-      "Summary": "Gets the effective domain ownership set after host options and module contributors have both been applied."
+      "Summary": "Gets the effective domain ownership set after runtime storage, host options, and module contributors have been applied."
+    },
+    {
+      "DisplayName": "DomainOwnerships",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantDomainOwnershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-domainownerships",
+      "Signature": "IReadOnlyList\u003CTenantDomainOwnershipDescriptor\u003E DomainOwnerships { get; }",
+      "Summary": "Gets the stored runtime tenant-domain ownership declarations."
     },
     {
       "DisplayName": "DomainOwnerships",
@@ -40403,6 +40440,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownerships",
       "Signature": "IList\u003CTenantDomainOwnershipDescriptor\u003E DomainOwnerships { get; }",
       "Summary": "Gets the host-defined tenant-domain ownership descriptors available to the governance runtime."
+    },
+    {
+      "DisplayName": "DomainOwnershipStoreFilePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipstorefilepath",
+      "Signature": "string DomainOwnershipStoreFilePath { get; set; }",
+      "Summary": "Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state."
     },
     {
       "DisplayName": "Domains",
@@ -59954,6 +60002,17 @@
     {
       "DisplayName": "IsDurable",
       "Category": "Properties",
+      "DeclaringTypeName": "ITenantDomainOwnershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-isdurable",
+      "Signature": "bool IsDurable { get; }",
+      "Summary": "Gets a value indicating whether tenant-domain ownership state survives process restarts."
+    },
+    {
+      "DisplayName": "IsDurable",
+      "Category": "Properties",
       "DeclaringTypeName": "ITenantGovernanceActionStore",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -76336,6 +76395,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-ownership",
       "Signature": "const string Ownership",
       "Summary": "A condition that describes ownership posture for a materialized resource."
+    },
+    {
+      "DisplayName": "Ownership",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantDomainOwnershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-ownership",
+      "Signature": "string Ownership { get; }",
+      "Summary": "Gets the ownership mode for the store implementation."
     },
     {
       "DisplayName": "Ownership",
@@ -97973,6 +98043,17 @@
     {
       "DisplayName": "StoreKind",
       "Category": "Properties",
+      "DeclaringTypeName": "ITenantDomainOwnershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantdomainownershipstore-storekind",
+      "Signature": "string StoreKind { get; }",
+      "Summary": "Gets the operator-facing store kind."
+    },
+    {
+      "DisplayName": "StoreKind",
+      "Category": "Properties",
       "DeclaringTypeName": "ITenantGovernanceActionStore",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -103733,6 +103814,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-unsupported-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "OutboxDispatchPolicyDescriptor Unsupported(string outboxId, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates an explicit unsupported dispatch policy for an outbox that can stage messages but does not currently support Cephalon-managed mutable dispatch-state ownership."
+    },
+    {
+      "DisplayName": "Upsert",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantDomainOwnershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantdomainownershipstore-upsert-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor",
+      "Signature": "void Upsert(TenantDomainOwnershipDescriptor domainOwnership)",
+      "Summary": "Creates or replaces one stored runtime tenant-domain ownership declaration."
     },
     {
       "DisplayName": "Upsert",

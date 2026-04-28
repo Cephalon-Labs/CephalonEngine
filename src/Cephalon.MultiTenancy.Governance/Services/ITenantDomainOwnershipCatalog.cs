@@ -6,7 +6,7 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 public interface ITenantDomainOwnershipCatalog
 {
     /// <summary>
-    /// Gets the effective domain ownership set after host options and module contributors have both been applied.
+    /// Gets the effective domain ownership set after runtime storage, host options, and module contributors have been applied.
     /// </summary>
     IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }
 

@@ -71,6 +71,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             static serviceProvider => TenantMembershipStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantInvitationStore>(
             static serviceProvider => TenantInvitationStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
+        services.TryAddSingleton<ITenantDomainOwnershipStore>(
+            static serviceProvider => TenantDomainOwnershipStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantGovernanceActionStore>(
             static serviceProvider => TenantGovernanceActionStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
@@ -219,6 +221,21 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["runtimeSurface"] = "tenant-domain-ownership",
                 ["configuredDomainOwnershipCount"] = options.DomainOwnerships.Count.ToString(CultureInfo.InvariantCulture),
                 ["hasDomainOwnershipContributors"] = hasDomainOwnershipContributors.ToString().ToLowerInvariant()
+            }));
+
+        capabilities.Add(new Capability(
+            key: "tenancy.domain-ownership.store",
+            displayName: "Tenant Domain Ownership Store",
+            description: "Stores runtime tenant-domain ownership declarations managed by the multi-tenancy governance companion pack.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "multi-tenancy",
+                ["package"] = "Cephalon.MultiTenancy.Governance",
+                ["ownership"] = "cephalon-managed",
+                ["runtimeSurface"] = "tenant-domain-ownership",
+                ["storeKind"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "in-memory" : "file",
+                ["storeDurable"] = (!string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath)).ToString().ToLowerInvariant(),
+                ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed"
             }));
 
         if (options.EnableDomainOwnershipValidation)

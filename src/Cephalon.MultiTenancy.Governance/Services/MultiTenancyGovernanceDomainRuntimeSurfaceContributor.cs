@@ -7,18 +7,20 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
     MultiTenancyGovernanceOptions options,
     ITenantDomainOwnershipCatalog catalog,
+    ITenantDomainOwnershipStore domainOwnershipStore,
     IEnumerable<ITenantDomainOwnershipContributor> contributors) : ITechnologyRuntimeContributor
 {
     private readonly ITenantDomainOwnershipContributor[] contributors = contributors.ToArray();
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var domainOwnerships = catalog.DomainOwnerships;
         var entries = new List<TechnologyRuntimeEntry>
         {
-            CreateSummaryEntry()
+            CreateSummaryEntry(domainOwnerships)
         };
 
-        entries.AddRange(catalog.DomainOwnerships
+        entries.AddRange(domainOwnerships
             .GroupBy(static domainOwnership => domainOwnership.TenantId, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
             .Select(CreateTenantEntry));
@@ -31,14 +33,14 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             entries: entries);
     }
 
-    private TechnologyRuntimeEntry CreateSummaryEntry()
+    private TechnologyRuntimeEntry CreateSummaryEntry(IReadOnlyList<TenantDomainOwnershipDescriptor> domainOwnerships)
     {
-        var statusBreakdown = catalog.DomainOwnerships
+        var statusBreakdown = domainOwnerships
             .GroupBy(static domainOwnership => domainOwnership.Status, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
             .Select(static group => $"{group.Key}:{group.Count().ToString(CultureInfo.InvariantCulture)}")
             .ToArray();
-        var verificationMethodBreakdown = catalog.DomainOwnerships
+        var verificationMethodBreakdown = domainOwnerships
             .GroupBy(static domainOwnership => domainOwnership.VerificationMethod, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
             .Select(static group => $"{group.Key}:{group.Count().ToString(CultureInfo.InvariantCulture)}")
@@ -48,17 +50,22 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
         {
             ["ownership"] = "cephalon-managed",
             ["package"] = "Cephalon.MultiTenancy.Governance",
-            ["runtimeState"] = catalog.DomainOwnerships.Count > 0 ? "configured" : "empty",
-            ["domainOwnershipCount"] = catalog.DomainOwnerships.Count.ToString(CultureInfo.InvariantCulture),
-            ["tenantCount"] = catalog.DomainOwnerships
+            ["runtimeState"] = domainOwnerships.Count > 0 ? "configured" : "empty",
+            ["domainOwnershipCount"] = domainOwnerships.Count.ToString(CultureInfo.InvariantCulture),
+            ["tenantCount"] = domainOwnerships
                 .Select(static domainOwnership => domainOwnership.TenantId)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Count()
                 .ToString(CultureInfo.InvariantCulture),
             ["contributorCount"] = contributors.Length.ToString(CultureInfo.InvariantCulture),
             ["configuredDomainOwnershipCount"] = options.DomainOwnerships.Count.ToString(CultureInfo.InvariantCulture),
+            ["runtimeDomainOwnershipCount"] = domainOwnershipStore.Count.ToString(CultureInfo.InvariantCulture),
+            ["domainOwnershipStoreKind"] = domainOwnershipStore.StoreKind,
+            ["domainOwnershipStoreDurable"] = domainOwnershipStore.IsDurable.ToString().ToLowerInvariant(),
+            ["domainOwnershipStoreOwnership"] = domainOwnershipStore.Ownership,
             ["validationEnabled"] = options.EnableDomainOwnershipValidation.ToString().ToLowerInvariant(),
             ["validationOwnership"] = options.EnableDomainOwnershipValidation ? "cephalon-managed" : "not-configured",
+            ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["verificationExecutionOwnership"] = "application-managed",
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown),
@@ -68,7 +75,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-domain-ownership-runtime",
             displayName: "Tenant Domain Ownership Runtime",
-            description: "Summarizes declared domain ownership catalog size, contributor count, status posture, verification-method posture, and managed validation ownership.",
+            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, and managed validation ownership.",
             metadata: metadata);
     }
 

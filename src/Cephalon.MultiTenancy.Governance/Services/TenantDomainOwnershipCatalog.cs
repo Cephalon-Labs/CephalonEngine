@@ -4,16 +4,17 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 
 internal sealed class TenantDomainOwnershipCatalog : ITenantDomainOwnershipCatalog
 {
-    private readonly Dictionary<string, TenantDomainOwnershipDescriptor[]> byTenantId;
-    private readonly Dictionary<string, TenantDomainOwnershipDescriptor[]> byDomainName;
-    private readonly Dictionary<string, TenantDomainOwnershipDescriptor[]> byTenantAndDomain;
+    private readonly TenantDomainOwnershipDescriptor[] configuredDomainOwnerships;
+    private readonly ITenantDomainOwnershipStore domainOwnershipStore;
 
     public TenantDomainOwnershipCatalog(
         MultiTenancyGovernanceOptions options,
-        IEnumerable<ITenantDomainOwnershipContributor> contributors)
+        IEnumerable<ITenantDomainOwnershipContributor> contributors,
+        ITenantDomainOwnershipStore domainOwnershipStore)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(contributors);
+        ArgumentNullException.ThrowIfNull(domainOwnershipStore);
 
         var registry = new TenantDomainOwnershipRegistry();
         foreach (var domainOwnership in options.DomainOwnerships)
@@ -26,47 +27,31 @@ internal sealed class TenantDomainOwnershipCatalog : ITenantDomainOwnershipCatal
             contributor.RegisterDomainOwnerships(registry);
         }
 
-        DomainOwnerships = registry.Build();
-        byTenantId = DomainOwnerships
-            .GroupBy(static domainOwnership => domainOwnership.TenantId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byDomainName = DomainOwnerships
-            .GroupBy(static domainOwnership => domainOwnership.DomainName, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byTenantAndDomain = DomainOwnerships
-            .GroupBy(
-                static domainOwnership => CreateTenantDomainKey(domainOwnership.TenantId, domainOwnership.DomainName),
-                StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+        configuredDomainOwnerships = [.. registry.Build()];
+        this.domainOwnershipStore = domainOwnershipStore;
     }
 
-    public IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }
+    public IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships => BuildDomainOwnerships();
 
     public IReadOnlyList<TenantDomainOwnershipDescriptor> GetByTenantId(string tenantId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
-        return byTenantId.TryGetValue(tenantId.Trim(), out var domainOwnerships)
-            ? domainOwnerships
-            : [];
+        return DomainOwnerships
+            .Where(domainOwnership => string.Equals(domainOwnership.TenantId, tenantId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantDomainOwnershipDescriptor> GetByDomainName(string domainName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(domainName);
 
-        return byDomainName.TryGetValue(TenantDomainOwnershipDescriptor.NormalizeDomainName(domainName), out var domainOwnerships)
-            ? domainOwnerships
-            : [];
+        return DomainOwnerships
+            .Where(domainOwnership => string.Equals(
+                domainOwnership.DomainName,
+                TenantDomainOwnershipDescriptor.NormalizeDomainName(domainName),
+                StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantDomainOwnershipDescriptor> GetByTenantAndDomain(string tenantId, string domainName)
@@ -74,9 +59,28 @@ internal sealed class TenantDomainOwnershipCatalog : ITenantDomainOwnershipCatal
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
         ArgumentException.ThrowIfNullOrWhiteSpace(domainName);
 
-        return byTenantAndDomain.TryGetValue(CreateTenantDomainKey(tenantId, domainName), out var domainOwnerships)
-            ? domainOwnerships
-            : [];
+        return DomainOwnerships
+            .Where(domainOwnership => string.Equals(
+                CreateTenantDomainKey(domainOwnership.TenantId, domainOwnership.DomainName),
+                CreateTenantDomainKey(tenantId, domainName),
+                StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+    }
+
+    private IReadOnlyList<TenantDomainOwnershipDescriptor> BuildDomainOwnerships()
+    {
+        var registry = new TenantDomainOwnershipRegistry();
+        foreach (var domainOwnership in domainOwnershipStore.DomainOwnerships)
+        {
+            registry.Add(domainOwnership);
+        }
+
+        foreach (var domainOwnership in configuredDomainOwnerships)
+        {
+            registry.Add(domainOwnership);
+        }
+
+        return registry.Build();
     }
 
     private static string CreateTenantDomainKey(string tenantId, string domainName)
