@@ -13,15 +13,11 @@ internal sealed class MultiTenancyGovernanceBoundaryRuntimeSurfaceContributor : 
             technologyId: TechnologyId,
             surfaceId: "tenant-governance-boundaries",
             displayName: "Tenant Governance Boundaries",
-            description: "Projects the split between the shipped tenant-resolution core and future tenant-governance companion workflows.",
+            description: "Projects the split between the shipped tenant-resolution core and tenant-governance companion workflows.",
             entries:
             [
                 CreateCoreEntry(),
-                CreateCompanionEntry(
-                    id: "tenant-membership",
-                    displayName: "Tenant Membership",
-                    description: "User, group, role, and organization membership workflows for tenants.",
-                    futureSurfaceId: "tenant-memberships"),
+                CreateMembershipEntry(),
                 CreateCompanionEntry(
                     id: "tenant-invitations",
                     displayName: "Tenant Invitations",
@@ -55,6 +51,28 @@ internal sealed class MultiTenancyGovernanceBoundaryRuntimeSurfaceContributor : 
                 ["surfaceId"] = "tenant-resolution",
                 ["capabilityKey"] = "tenancy.resolution",
                 ["basePackageScope"] = "tenant-resolution,ambient-context"
+            });
+    }
+
+    private static TechnologyRuntimeEntry CreateMembershipEntry()
+    {
+        return new TechnologyRuntimeEntry(
+            id: "tenant-membership",
+            displayName: "Tenant Membership",
+            description: "User, group, role, and organization membership workflows for tenants.",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ownership"] = "companion-shipped",
+                ["plannedOwnership"] = "companion-available",
+                ["basePackageOwnership"] = "not-owned",
+                ["basePackageRuntimeState"] = "not-configured",
+                ["companionPackage"] = FutureCompanionPackage,
+                ["suggestedPackage"] = FutureCompanionPackage,
+                ["runtimeState"] = "requires-companion-registration",
+                ["surfaceId"] = "tenant-memberships",
+                ["maturity"] = "M2",
+                ["capabilityKey"] = "tenancy.membership.catalog,tenancy.membership.evaluation",
+                ["notes"] = "Cephalon.MultiTenancy intentionally does not execute membership workflows; install and register Cephalon.MultiTenancy.Governance for the shipped catalog and evaluation proof."
             });
     }
 

@@ -76,14 +76,15 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 | `Cephalon.Eventing.Wolverine` | Optional Wolverine-managed staged dispatch and subscription execution baseline | `provider-managed` | `M2` | Broaden inbound-consumption, retry-policy, and operator-automation proof only when the runtime truly owns those paths |
 | `Cephalon.Agentics` | Tool descriptors, managed tool dispatch, and agent-workload runtime surface | mixed: `application-managed` descriptors plus `cephalon-managed` dispatcher/run-state baseline | `M2` | Broader operator automation, retry/queue semantics, memory persistence, and provider-specific AI orchestration only after a package truly owns those paths |
 | `Cephalon.Retrieval` | Knowledge collection descriptors plus managed lexical indexing, query execution, and freshness state | mixed: `application-managed` source documents plus `cephalon-managed` index/query baseline | `M2` | Provider-specific vector/search engines, durable or distributed indexes, reindex automation, and operator remediation only after a package truly owns those paths |
-| `Cephalon.MultiTenancy` core package | Narrow tenant-resolution plus explicit governance-boundary runtime truth | mixed: `cephalon-managed` tenant-resolution core plus `taxonomy-only` companion-boundary entries for broader workflows | `M2` | Build the future `Cephalon.MultiTenancy.Governance` companion only when it owns membership, invitation, domain, or governance workflows end to end |
+| `Cephalon.MultiTenancy` core package | Narrow tenant-resolution plus explicit governance-boundary runtime truth | mixed: `cephalon-managed` tenant-resolution core plus boundary entries for companion-owned or planned workflows | `M2` | Keep the base package focused on resolution while companion packages own concrete governance workflows |
+| `Cephalon.MultiTenancy.Governance` | Tenant membership catalog, membership evaluation, and governance runtime surface | `cephalon-managed` membership catalog and evaluation proof | `M2` | Invitation, domain ownership, approval/remediation, durable membership storage, identity-provider synchronization, and tenant administration only when the package truly owns those paths |
 
 ## Immediate planning consequences
 
 - stop expanding descriptor-first surfaces inside mixed-maturity families unless the work is explicitly labeled `M0` or `M1`
 - do not describe `M0` or `M1` packages as if they already own execution, orchestration, or provisioning
 - treat `Cephalon.Eventing.Wolverine`, the `Cephalon.Agentics` dispatcher/run-state lane, and the `Cephalon.Retrieval` lexical index/query/freshness lane as current managed vertical proofs instead of widening descriptor breadth before ownership is real
-- keep `Cephalon.MultiTenancy` intentionally thin in the base package; its `tenant-governance-boundaries` surface now labels broader governance workflows as taxonomy-only companion-planned work instead of turning the core into a monolith
+- keep `Cephalon.MultiTenancy` intentionally thin in the base package; `Cephalon.MultiTenancy.Governance` now owns the first membership catalog/evaluation proof, while broader governance workflows remain explicitly outside the current claim
 - use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
 ## Planned next sequence
@@ -108,9 +109,13 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 
 - `ENG-234` Multi-tenancy governance, membership, and domain workflow companion split (shipped)
 
+### Sprint 47
+
+- `ENG-235` Multi-tenancy governance membership evaluation baseline (shipped)
+
 ### Later / not scheduled yet
 
-- first concrete `Cephalon.MultiTenancy.Governance` workflow proof when membership, invitation, domain ownership, or governance automation needs package-owned runtime behavior
+- invitation, domain ownership, approval/remediation, durable membership storage, identity-provider synchronization, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ## Promotion checklist
 

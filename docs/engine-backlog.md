@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, and multi-tenancy governance-boundary split landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, and first governance membership evaluation proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while the actual governance workflow companion remains a later package-owned proof
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns the first membership catalog/evaluation proof and broader governance workflows remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -113,12 +113,33 @@ Why:
 Delivered:
 
 - keep the base package focused on tenant resolution and current runtime truth through the existing `tenant-resolution` surface
-- add `tenant-governance-boundaries` so membership, invite, domain, and governance workflows are visible as taxonomy-only companion-planned boundaries instead of implied runtime ownership
+- add `tenant-governance-boundaries` so membership, invite, domain, and governance workflows are visible outside base-package runtime ownership instead of being implied inside `Cephalon.MultiTenancy`
 - align component, technology-pack, compatibility, operations, architecture, maturity-audit, roadmap, backlog, and project-memory docs so teams understand what belongs in the core versus the future companion surface
 
 Follow-up later:
 
-- create a concrete `Cephalon.MultiTenancy.Governance` package only when it owns membership, invitation, domain-ownership, approval, remediation, or tenant-administration workflows end to end
+- use `Cephalon.MultiTenancy.Governance` for concrete workflow proofs when membership, invitation, domain-ownership, approval, remediation, or tenant-administration paths are owned end to end
+
+### ENG-235 Multi-tenancy governance membership evaluation baseline
+
+Status: done
+Estimate: 13
+
+Why:
+
+- after `ENG-234`, the base package had a truthful companion boundary, but the governance lane still needed one concrete runtime proof before it should grow broader workflow descriptors
+- tenant membership is the smallest useful governance slice because it can be host-agnostic, module-contributed, introspectable, and evaluated without taking over identity-provider or backoffice concerns
+
+Delivered:
+
+- add `Cephalon.MultiTenancy.Governance` as a separate companion package with `AddMultiTenancyGovernance(...)`, `MultiTenancyGovernanceOptions`, and the `multi-tenancy-governance` module
+- add membership descriptors, contributor/registry/catalog contracts, and a deterministic `ITenantMembershipEvaluator` with allowed, no-membership, suspended, expired, missing-role, and disabled outcomes
+- publish `tenancy.membership.catalog`, `tenancy.membership.evaluation`, stable diagnostics `4510-4511`, and the `tenant-memberships` technology runtime surface with aggregate membership, tenant, contributor, role, and principal-kind posture
+- prove the slice with focused composition, hosting, package-surface, and docs/source/planning alignment
+
+Follow-up later:
+
+- invitations, domain ownership validation, approval/remediation workflows, durable membership stores, identity-provider synchronization, and tenant administration remain future governance slices until the package truly owns those paths
 
 ## Completed foundation work
 
@@ -7872,9 +7893,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-234 Multi-tenancy governance, membership, and domain workflow companion split (shipped)
 
+### Sprint 47
+
+- ENG-235 Multi-tenancy governance membership evaluation baseline (shipped)
+
 ### Later / not scheduled yet
 
-- first concrete `Cephalon.MultiTenancy.Governance` workflow proof when membership, invitation, domain ownership, or governance automation needs package-owned runtime behavior
+- invitations, domain ownership, approval/remediation, durable membership stores, identity-provider synchronization, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ### Foundation Sprint 1
 

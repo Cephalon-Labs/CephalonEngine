@@ -169,7 +169,7 @@ GraphQL prefix family (`/graphql`, `/graphql/schema`, `/graphql-sse`, `/graphql-
 
 `Cephalon.Cli` is the user-facing shell over scaffolding and documentation workflows. `CliApplication` is the stable entry point, while the individual command handlers and option objects remain internal implementation details. It parses blueprint, transport, pattern, module, and feature selections for app generation, and it also publishes, enables, validates, and opens generated reference-doc surfaces.
 
-`Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, and `Cephalon.Edge` are the current baseline technology companion packages. They show the preferred pattern for future workloads that need reusable runtime services without bloating the engine core. `Cephalon.MultiTenancy` now keeps tenant resolution in the base pack while exposing future membership, invitation, domain-ownership, and governance workflows as companion-planned taxonomy-only boundaries. `Cephalon.Eventing.Behaviors` now sits beside that baseline as an explicit bridge companion pack: it lets behavior-authored saga choreography hand off into the shared eventing publish path without making either baseline package absorb the other's contract ownership.
+`Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, and `Cephalon.Edge` are the current baseline technology companion packages. They show the preferred pattern for future workloads that need reusable runtime services without bloating the engine core. `Cephalon.MultiTenancy` now keeps tenant resolution in the base pack while `Cephalon.MultiTenancy.Governance` owns the first concrete membership catalog/evaluation companion proof; invitations, domain ownership, approval/remediation, and tenant-administration workflows stay explicitly outside the current proof until a package owns them. `Cephalon.Eventing.Behaviors` now sits beside that baseline as an explicit bridge companion pack: it lets behavior-authored saga choreography hand off into the shared eventing publish path without making either baseline package absorb the other's contract ownership.
 
 `templates/Cephalon.TemplatePack` is the installable `dotnet new` companion surface. It packages the current shipped blueprint starters as lightweight templates for teams that want a fast entry point without using the repo-local CLI.
 
@@ -295,6 +295,14 @@ Companion adapter packages:
 - `src/Cephalon.Retrieval/Modules` -> `Cephalon.Retrieval.Modules`
 - `src/Cephalon.Retrieval/Registration` -> `Cephalon.Retrieval.Registration`
 - `src/Cephalon.Retrieval/Services` -> `Cephalon.Retrieval.Services`
+- `src/Cephalon.MultiTenancy/Configuration` -> `Cephalon.MultiTenancy.Configuration`
+- `src/Cephalon.MultiTenancy/Modules` -> `Cephalon.MultiTenancy.Modules`
+- `src/Cephalon.MultiTenancy/Registration` -> `Cephalon.MultiTenancy.Registration`
+- `src/Cephalon.MultiTenancy/Services` -> `Cephalon.MultiTenancy.Services`
+- `src/Cephalon.MultiTenancy.Governance/Configuration` -> `Cephalon.MultiTenancy.Governance.Configuration`
+- `src/Cephalon.MultiTenancy.Governance/Modules` -> `Cephalon.MultiTenancy.Governance.Modules`
+- `src/Cephalon.MultiTenancy.Governance/Registration` -> `Cephalon.MultiTenancy.Governance.Registration`
+- `src/Cephalon.MultiTenancy.Governance/Services` -> `Cephalon.MultiTenancy.Governance.Services`
 - `src/Cephalon.Scaffolding/Generation` -> `Cephalon.Scaffolding.Generation`
 - `src/Cephalon.Scaffolding/IO` -> `Cephalon.Scaffolding.IO`
 - `templates/Cephalon.TemplatePack/templates` -> installable `dotnet new` blueprint templates
@@ -332,7 +340,7 @@ Companion adapter packages:
 - module-owned queryable data products can now be inspected through `IDataProductCatalog`, `/engine/data-products`, and `/engine/snapshot` without inventing a host-only data mesh registry
 - module-owned CDC captures can now be inspected through `ICdcCaptureCatalog`, `ICdcCaptureRuntimeStateCatalog`, `/engine/cdc-captures`, `/engine/cdc-captures/runtime`, and `/engine/snapshot`, with explicit `OutboxId` linkage, typed freshness/lag/publication posture, linked `OutboxDispatchState` when the publication path reports it, and validation against active source modules and outboxes instead of a host-only sync registry
 - merged operator-facing runtime introspection should come from `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` instead of recomposing manifest, status, technology surfaces, diagnostics conventions, and lifecycle story data ad hoc in hosts
-- future-tech runtime primitives should live in companion packages such as `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, or `Cephalon.Edge`
+- future-tech runtime primitives should live in companion packages such as `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`, or `Cephalon.Edge`
 - installed modules should extend shipped technology packs through pack-specific contributor services instead of hardcoding host-owned descriptor lists
 - engine options can disable modules and capabilities through `Engine:Options`
 - engine observability conventions can be tuned through `Engine:Observability`

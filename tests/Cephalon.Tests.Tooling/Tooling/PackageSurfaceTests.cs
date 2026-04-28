@@ -1184,6 +1184,24 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void MultiTenancyGovernanceAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Governance.Registration.MultiTenancyGovernanceEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Governance.Configuration.MultiTenancyGovernanceOptions),
+            typeof(global::Cephalon.MultiTenancy.Governance.Registration.MultiTenancyGovernanceEngineBuilderExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipCatalog),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipContributor),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipEvaluator),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipRegistry),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantMembershipDescriptor),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantMembershipEvaluationOutcomes),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantMembershipEvaluationRequest),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantMembershipEvaluationResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantMembershipStatuses));
+    }
+
+    [Fact]
     public void AuditAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

@@ -64,10 +64,12 @@ public sealed class MultiTenancyPackTests
         Assert.Equal("configured", tenancyEntry.Metadata["tenantKeyResolution"]);
         Assert.Equal("cephalon-managed", resolutionCore.Metadata["ownership"]);
         Assert.Equal("tenant-resolution", resolutionCore.Metadata["surfaceId"]);
-        Assert.Equal("taxonomy-only", membershipBoundary.Metadata["ownership"]);
-        Assert.Equal("companion-planned", membershipBoundary.Metadata["plannedOwnership"]);
+        Assert.Equal("companion-shipped", membershipBoundary.Metadata["ownership"]);
+        Assert.Equal("companion-available", membershipBoundary.Metadata["plannedOwnership"]);
         Assert.Equal("not-owned", membershipBoundary.Metadata["basePackageOwnership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", membershipBoundary.Metadata["suggestedPackage"]);
+        Assert.Equal("tenant-memberships", membershipBoundary.Metadata["surfaceId"]);
+        Assert.Equal("requires-companion-registration", membershipBoundary.Metadata["runtimeState"]);
         Assert.Equal(4500, diagnosticsConvention.MinimumEventId);
         Assert.Equal(4502, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4500 && entry.Name == "TenantResolved");

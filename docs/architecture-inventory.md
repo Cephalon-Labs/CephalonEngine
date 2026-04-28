@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Inventory
 
-Architecture inventory in this document reflects the repository state as of `April 22, 2026`.
+Architecture inventory in this document reflects the repository state as of `April 28, 2026`.
 
 Cross-references: `docs/architecture.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -108,7 +108,7 @@ Technologies are additive workload profiles that prepare the runtime for specifi
 - `edge-native-delivery` — Edge-Native Delivery (Deployment): prepares the app for browser, device, edge, and intermittently connected deployment scenarios. Aliases: `EdgeNativeDelivery`, `EdgeNative`, `Edge`. Package hint: `Cephalon.Edge`.
 - `serverless-hosting` — Serverless Hosting (Deployment): prepares the app for event-triggered or function-style hosting without changing the host-agnostic core runtime model. Aliases: `ServerlessHosting`, `Serverless`.
 - `identity-access` — Identity Access (Security): prepares the app for configurable authentication and authorization flows such as RBAC, ABAC, and policy evaluation. Aliases: `IdentityAccess`, `Identity`. Package hint: `Cephalon.Identity`.
-- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and future governance/member/domain companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hint: `Cephalon.MultiTenancy`.
+- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`.
 - `hybrid-cloud-runtime` — Hybrid Cloud Runtime (Platform): prepares the app for mixed on-premises, edge, and cloud deployment handoffs without changing the engine core. Aliases: `HybridCloudRuntime`, `HybridCloud`.
 - `service-mesh-integration` — Service Mesh Integration (Platform): prepares the app for additive service-mesh coordination, policy handoff, and traffic-governance guidance. Aliases: `ServiceMeshIntegration`, `ServiceMesh`.
 
@@ -156,7 +156,7 @@ Execution strategies define how behaviors execute under a given pattern.
 
 Modules are the primary composition unit. Each module registers services, capabilities, and lifecycle hooks.
 
-### Core foundation modules (6)
+### Core foundation modules (7)
 
 - `behaviors` — Behaviors (`Cephalon.Behaviors`): ABT foundation with behavior topology, dispatch, and compatibility matrix.
 - `data-runtime` — Data Runtime (`Cephalon.Data`): runtime-neutral command and query dispatching for data workloads.
@@ -164,6 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog, membership evaluation, and governance runtime-surface proof.
 
 ### Data provider modules (14)
 
@@ -337,9 +338,11 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 
 - `identity.authorization` — Identity Authorization
 
-### Multi-tenancy capabilities (1)
+### Multi-tenancy capabilities (3)
 
 - `tenancy.resolution` — Tenant Resolution
+- `tenancy.membership.catalog` — Tenant Membership Catalog
+- `tenancy.membership.evaluation` — Tenant Membership Evaluation
 
 ### Agentics capabilities (4)
 
@@ -427,8 +430,11 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 
 - `ITenantContextAccessor` — ambient tenant context
 - `ITenantResolver` — tenant resolution interface
+- `ITenantMembershipCatalog` — merged tenant-membership read model
+- `ITenantMembershipEvaluator` — active tenant-membership and role evaluation
 - `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
-- `tenant-governance-boundaries` technology surface — taxonomy-only boundary for future membership, invitation, domain-ownership, and governance companion workflows
+- `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
+- `tenant-memberships` technology surface — Cephalon-managed membership catalog and evaluation posture from `Cephalon.MultiTenancy.Governance`
 
 ### Audit
 
@@ -451,6 +457,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Wolverine Eventing (`Cephalon.Eventing.Wolverine`) — event IDs 4300–4305
 - Identity (`Cephalon.Identity`) — event IDs 4400–4401
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
+- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4511
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
 
@@ -571,9 +578,9 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Transports: **6** + 3 messaging bindings = **9**
 - Execution strategies: **7**
 - Modules: 6 core + 14 data + 10 event-sourcing + 6 specialized + 1 identifier = **37**
-- Capabilities: **76+**
+- Capabilities: **78+**
 - Data abstractions: **24+** interfaces
-- Diagnostics sources: **9**
+- Diagnostics sources: **10**
 - Dependency health probes: **18**
 - Cloud/platform exporters: **14**
 - Host adapters: **6**

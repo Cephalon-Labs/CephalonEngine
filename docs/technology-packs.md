@@ -59,7 +59,11 @@ Current baseline packages:
 - `Cephalon.MultiTenancy`
   - runtime services and capability activation for `MultiTenancy`
   - registers `ITenantResolver` and `ITenantContextAccessor` when the profile is selected
-  - projects `tenant-resolution` for the shipped core and `tenant-governance-boundaries` for taxonomy-only future companion workflows
+  - projects `tenant-resolution` for the shipped core and `tenant-governance-boundaries` for companion-owned or companion-planned governance workflows
+- `Cephalon.MultiTenancy.Governance`
+  - tenant-governance companion pack for `MultiTenancy`
+  - registers `ITenantMembershipCatalog` and `ITenantMembershipEvaluator` when membership evaluation is enabled
+  - projects `tenant-memberships` for the Cephalon-managed membership catalog and evaluation proof
 - `Cephalon.Edge`
   - runtime services and capability activation for `EdgeNativeDelivery`
   - registers `IEdgeNodeCatalog` when the profile is selected
@@ -130,6 +134,15 @@ builder.AddCephalon(engine =>
             domains: ["acme.example.test"]));
     });
 
+    engine.AddMultiTenancyGovernance(options =>
+    {
+        options.Memberships.Add(new TenantMembershipDescriptor(
+            tenantId: "tenant-001",
+            principalId: "user-001",
+            displayName: "Acme Admin",
+            roles: ["admin", "member"]));
+    });
+
     engine.AddEventing(options =>
     {
         options.Channels.Add(new EventChannelDescriptor(
@@ -194,6 +207,11 @@ Shipped pack-specific extension points:
   - `ITenantResolver` for host-neutral tenant resolution
   - `ITenantContextAccessor` for ambient tenant context in the current async flow
   - `MultiTenancyRuntimeOptions` for configuration-driven tenants, domains, default tenant, and resolver enablement
+- `Cephalon.MultiTenancy.Governance`
+  - `ITenantMembershipContributor` and `ITenantMembershipRegistry` for module-contributed memberships
+  - `ITenantMembershipCatalog` for the merged membership read model
+  - `ITenantMembershipEvaluator` for the current Cephalon-managed membership evaluation path
+  - `MultiTenancyGovernanceOptions` for host-defined memberships and evaluation enablement
 - `Cephalon.Eventing`
   - `IEventChannelContributor` and `IEventChannelRegistry`
 - `Cephalon.Edge`
@@ -213,7 +231,7 @@ When execution is enabled, `Cephalon.Agentics` also owns one narrow tool-dispatc
 
 When ingestion and querying are enabled, `Cephalon.Retrieval` now owns one narrow lexical retrieval loop. Modules still own the source material through `IKnowledgeDocumentProvider`, while the pack owns indexing, bounded query execution, index state, and freshness reporting for registered collections. Runtime surfaces report `indexingOwnership`, `queryOwnership`, provider readiness, latest index outcome, document count, query count, freshness state, and a query fingerprint rather than raw query text. That is the boundary of the current managed proof; vector databases, embeddings, distributed indexes, durable search clusters, rerankers, provider-specific semantic search, and reindex automation remain future companion work unless another package explicitly owns them.
 
-When multi-tenancy is selected, `Cephalon.MultiTenancy` owns one narrow tenant-resolution loop. The base package resolves configured tenant ids, tenant keys, host names, defaults, and single-tenant fallback through `ITenantResolver`, then exposes the ambient answer through `ITenantContextAccessor` and the `tenant-resolution` surface. Membership, invitation, domain-ownership, and tenant-governance workflows are not executed by the base package; they are taxonomy-only entries in `tenant-governance-boundaries` with `plannedOwnership = companion-planned` until a package such as `Cephalon.MultiTenancy.Governance` owns those workflows explicitly.
+When multi-tenancy is selected, `Cephalon.MultiTenancy` owns one narrow tenant-resolution loop. The base package resolves configured tenant ids, tenant keys, host names, defaults, and single-tenant fallback through `ITenantResolver`, then exposes the ambient answer through `ITenantContextAccessor` and the `tenant-resolution` surface. `Cephalon.MultiTenancy.Governance` now owns the first concrete companion proof beside that base package: modules or hosts contribute `TenantMembershipDescriptor` values, the pack merges them into `ITenantMembershipCatalog`, and `ITenantMembershipEvaluator` evaluates active, suspended, expired, missing-role, or disabled membership outcomes. Invitation, domain-ownership, approval, remediation, durable membership storage, and tenant-administration workflows remain outside the current managed proof until the governance package owns those paths explicitly.
 
 Runtime introspection contract:
 
@@ -224,7 +242,7 @@ Runtime introspection contract:
 - `IRuntimeIntrospectionSnapshotProvider`
   - engine-level abstraction for reading one operator-facing snapshot that combines the runtime manifest, runtime status, and active technology-pack surfaces
 - `GET /engine/technology-surfaces`
-  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys, live execution-graph and hosted-execution state, managed execution readiness, and latest run-state truth when those links or reports exist; retrieval collections now also surface provider readiness, indexing/query ownership, freshness state, document counts, query counts, latest run outcomes, and query fingerprints when indexed or queried; multi-tenancy now surfaces both the active tenant-resolution answer and taxonomy-only governance companion boundaries
+  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys, live execution-graph and hosted-execution state, managed execution readiness, and latest run-state truth when those links or reports exist; retrieval collections now also surface provider readiness, indexing/query ownership, freshness state, document counts, query counts, latest run outcomes, and query fingerprints when indexed or queried; multi-tenancy now surfaces the active tenant-resolution answer, governance companion boundaries, and the concrete `tenant-memberships` membership catalog/evaluation proof when the governance pack is installed
 - `GET /engine/snapshot`
   - returns the broader runtime introspection snapshot when operators need manifest, runtime status, and technology-pack surfaces in one payload
 

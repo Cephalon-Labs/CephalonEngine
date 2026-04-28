@@ -408,6 +408,18 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md#namespace-cephalon-multitenancy-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Configuration)
 
+## `Cephalon.MultiTenancy.Governance.Configuration`
+
+- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.Registration`
+
+- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Registration)
+
+## `Cephalon.MultiTenancy.Governance.Services`
+
+- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 9 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)
+
 ## `Cephalon.MultiTenancy.Registration`
 
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md#namespace-cephalon-multitenancy-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Registration)

@@ -63,7 +63,7 @@ The next planning wave is therefore not "add more descriptors everywhere." It is
 - make surface maturity explicit through [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - keep intentional `M0` and `M1` surfaces honest instead of letting them read like unfinished `M2` work
 - prove one narrow managed vertical slice in mixed-maturity families before widening catalog breadth; the eventing/Wolverine, agentics dispatcher, and retrieval lexical index/query lanes are current examples
-- keep `Cephalon.MultiTenancy` core narrow; its governance-boundary surface now marks membership, invitation, domain-ownership, and governance workflows as taxonomy-only companion-planned work instead of bloating the base package
+- keep `Cephalon.MultiTenancy` core narrow; `Cephalon.MultiTenancy.Governance` now owns the first membership catalog/evaluation proof while invitation, domain-ownership, approval/remediation, and tenant-administration workflows remain later companion-owned work
 - use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
 ## Sprint alignment
@@ -200,7 +200,8 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 44`: shipped `ENG-232` agentics tool execution and run-state baseline so `Cephalon.Agentics` grows from catalog truth into one real dispatcher/run-state loop
 - `Sprint 45`: shipped `ENG-233` retrieval indexing, query execution, and freshness baseline so `Cephalon.Retrieval` grows from collection catalog truth into one provider-fed lexical index/query/freshness loop
 - `Sprint 46`: shipped `ENG-234` multi-tenancy governance, membership, and domain workflow companion split so `Cephalon.MultiTenancy` stays focused on tenant resolution while the broader workflow lane is explicit and companion-planned
-- `Later / not scheduled yet`: first concrete `Cephalon.MultiTenancy.Governance` workflow proof, further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
+- `Sprint 47`: shipped `ENG-235` multi-tenancy governance membership evaluation baseline so `Cephalon.MultiTenancy.Governance` owns the first concrete membership catalog/evaluation runtime proof without pulling broader governance workflows into the base package
+- `Later / not scheduled yet`: invitation, domain-ownership, approval/remediation, durable membership storage, identity-provider synchronization, and tenant-administration proof for `Cephalon.MultiTenancy.Governance`, further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
 

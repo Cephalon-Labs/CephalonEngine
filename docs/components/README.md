@@ -80,6 +80,7 @@ See also: [Docs hub](../README.md)
 - [Cephalon.Identity.AspNetCore](identity-aspnetcore.md)
 - [Cephalon.Ids.Sfid](ids-sfid.md)
 - [Cephalon.MultiTenancy](multi-tenancy.md)
+- [Cephalon.MultiTenancy.Governance](multi-tenancy-governance.md)
 
 ## Tooling and adoption
 
