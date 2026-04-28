@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Description>Tenant membership and invitation governance companion package for Cephalon multi-tenancy workloads.</Description>
+    <Description>Tenant membership, invitation, and declared domain-ownership governance companion package for Cephalon multi-tenancy workloads.</Description>
   </PropertyGroup>
 
   <ItemGroup>

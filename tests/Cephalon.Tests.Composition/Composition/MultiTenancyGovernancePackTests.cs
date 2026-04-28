@@ -57,6 +57,21 @@ public sealed class MultiTenancyGovernancePackTests
                     roles: ["member"],
                     status: TenantInvitationStatuses.Revoked,
                     sourceModuleId: "platform-test"));
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "Acme.Example.",
+                    displayName: "Acme Primary Domain",
+                    status: TenantDomainOwnershipStatuses.Verified,
+                    verificationMethod: TenantDomainVerificationMethods.DnsTxt,
+                    verifiedAtUtc: new DateTimeOffset(2026, 04, 01, 0, 0, 0, TimeSpan.Zero),
+                    sourceModuleId: "platform-test"));
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "pending.example",
+                    displayName: "Pending Domain",
+                    status: TenantDomainOwnershipStatuses.Pending,
+                    verificationMethod: TenantDomainVerificationMethods.HttpFile,
+                    sourceModuleId: "platform-test"));
             });
         });
 
@@ -65,15 +80,20 @@ public sealed class MultiTenancyGovernancePackTests
         var evaluator = provider.GetRequiredService<ITenantMembershipEvaluator>();
         var invitationCatalog = provider.GetRequiredService<ITenantInvitationCatalog>();
         var invitationValidator = provider.GetRequiredService<ITenantInvitationValidator>();
+        var domainCatalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
+        var domainValidator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
         var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
         var membershipsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-memberships");
         var invitationsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-invitations");
+        var domainsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-domain-ownership");
         var summaryEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership-runtime");
         var tenantEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership:tenant-001");
         var invitationSummaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
         var tenantInvitationEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitations:tenant-001");
+        var domainSummaryEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership-runtime");
+        var tenantDomainEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership:tenant-001");
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.MultiTenancy.Governance"));
 
         var allowed = await evaluator.EvaluateAsync(new TenantMembershipEvaluationRequest(
@@ -97,13 +117,24 @@ public sealed class MultiTenancyGovernancePackTests
             tenantId: "tenant-001",
             invitationId: "invite-002",
             atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+        var validDomain = await domainValidator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-001",
+            domainName: "ACME.EXAMPLE.",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+        var pendingDomain = await domainValidator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-001",
+            domainName: "pending.example",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
 
         Assert.Equal(2, catalog.Memberships.Count);
         Assert.Equal(2, invitationCatalog.Invitations.Count);
+        Assert.Equal(2, domainCatalog.DomainOwnerships.Count);
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.evaluation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.validation");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.catalog");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.validation");
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", summaryEntry.Metadata["package"]);
         Assert.Equal("2", summaryEntry.Metadata["membershipCount"]);
@@ -123,6 +154,18 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("1", tenantInvitationEntry.Metadata["pendingInvitationCount"]);
         Assert.Equal("1", tenantInvitationEntry.Metadata["revokedInvitationCount"]);
         Assert.Equal("member", tenantInvitationEntry.Metadata["roles"]);
+        Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["ownership"]);
+        Assert.Equal("Cephalon.MultiTenancy.Governance", domainSummaryEntry.Metadata["package"]);
+        Assert.Equal("2", domainSummaryEntry.Metadata["domainOwnershipCount"]);
+        Assert.Equal("true", domainSummaryEntry.Metadata["validationEnabled"]);
+        Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["validationOwnership"]);
+        Assert.Equal("application-managed", domainSummaryEntry.Metadata["verificationExecutionOwnership"]);
+        Assert.Equal("pending:1,verified:1", domainSummaryEntry.Metadata["statusBreakdown"]);
+        Assert.Equal("dns-txt:1,http-file:1", domainSummaryEntry.Metadata["verificationMethodBreakdown"]);
+        Assert.Equal("2", tenantDomainEntry.Metadata["domainOwnershipCount"]);
+        Assert.Equal("1", tenantDomainEntry.Metadata["verifiedDomainOwnershipCount"]);
+        Assert.Equal("1", tenantDomainEntry.Metadata["pendingDomainOwnershipCount"]);
+        Assert.Equal("dns-txt:1,http-file:1", tenantDomainEntry.Metadata["verificationMethodBreakdown"]);
         Assert.True(allowed.Allowed);
         Assert.Equal(TenantMembershipEvaluationOutcomes.Allowed, allowed.Outcome);
         Assert.False(missingRole.Allowed);
@@ -134,12 +177,19 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(TenantInvitationValidationOutcomes.Valid, validInvitation.Outcome);
         Assert.False(revokedInvitation.Valid);
         Assert.Equal(TenantInvitationValidationOutcomes.Revoked, revokedInvitation.Outcome);
+        Assert.True(validDomain.Valid);
+        Assert.Equal("acme.example", validDomain.DomainName);
+        Assert.Equal(TenantDomainOwnershipValidationOutcomes.Valid, validDomain.Outcome);
+        Assert.False(pendingDomain.Valid);
+        Assert.Equal(TenantDomainOwnershipValidationOutcomes.Pending, pendingDomain.Outcome);
         Assert.Equal(4510, diagnosticsConvention.MinimumEventId);
-        Assert.Equal(4513, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4515, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4513 && entry.Name == "TenantInvitationValidationDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4514 && entry.Name == "TenantDomainOwnershipValidationAllowed");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4515 && entry.Name == "TenantDomainOwnershipValidationDenied");
     }
 
     [Fact]
@@ -322,6 +372,88 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(TenantInvitationValidationOutcomes.Valid, serviceResult.Outcome);
     }
 
+    [Fact]
+    public async Task TenantDomainOwnershipCatalogMergesContributorDomains()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ITenantDomainOwnershipContributor>(new TestTenantDomainOwnershipContributor());
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "app.example",
+                    status: TenantDomainOwnershipStatuses.Verified,
+                    verificationMethod: TenantDomainVerificationMethods.DnsTxt));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var domainsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-domain-ownership");
+        var summaryEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership-runtime");
+
+        Assert.Equal(2, catalog.DomainOwnerships.Count);
+        Assert.Single(catalog.GetByTenantId("tenant-002"));
+        Assert.Single(catalog.GetByDomainName("Docs.Example."));
+        Assert.Single(catalog.GetByTenantAndDomain("tenant-002", "DOCS.EXAMPLE"));
+        Assert.Empty(catalog.GetByTenantAndDomain("tenant-001", "docs.example"));
+        Assert.Equal("1", summaryEntry.Metadata["contributorCount"]);
+        Assert.Contains(domainsSurface.Entries, entry =>
+            entry.Id == "tenant-domain-ownership:tenant-002" &&
+            entry.Metadata["verificationMethodBreakdown"] == "http-file:1");
+    }
+
+    [Fact]
+    public async Task TenantDomainOwnershipValidationPreventsCrossTenantDomainUse()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "shared.example",
+                    status: TenantDomainOwnershipStatuses.Verified,
+                    verificationMethod: TenantDomainVerificationMethods.DnsTxt));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var validator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
+
+        var mismatchResult = await validator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-002",
+            domainName: "SHARED.EXAMPLE.",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+        var validResult = await validator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-001",
+            domainName: "shared.example",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+
+        Assert.False(mismatchResult.Valid);
+        Assert.Equal("shared.example", mismatchResult.DomainName);
+        Assert.Equal(TenantDomainOwnershipValidationOutcomes.TenantMismatch, mismatchResult.Outcome);
+        Assert.True(validResult.Valid);
+        Assert.Equal(TenantDomainOwnershipValidationOutcomes.Valid, validResult.Outcome);
+    }
+
     private sealed class TestTenantMembershipContributor : ITenantMembershipContributor
     {
         public void RegisterMemberships(ITenantMembershipRegistry memberships)
@@ -345,6 +477,19 @@ public sealed class MultiTenancyGovernancePackTests
                 inviteeId: "group-001",
                 inviteeKind: "group",
                 roles: ["support"],
+                sourceModuleId: "test-module"));
+        }
+    }
+
+    private sealed class TestTenantDomainOwnershipContributor : ITenantDomainOwnershipContributor
+    {
+        public void RegisterDomainOwnerships(ITenantDomainOwnershipRegistry domainOwnerships)
+        {
+            domainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                tenantId: "tenant-002",
+                domainName: "docs.example",
+                status: TenantDomainOwnershipStatuses.Verified,
+                verificationMethod: TenantDomainVerificationMethods.HttpFile,
                 sourceModuleId: "test-module"));
         }
     }

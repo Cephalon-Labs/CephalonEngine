@@ -19,11 +19,7 @@ internal sealed class MultiTenancyGovernanceBoundaryRuntimeSurfaceContributor : 
                 CreateCoreEntry(),
                 CreateMembershipEntry(),
                 CreateInvitationEntry(),
-                CreateCompanionEntry(
-                    id: "tenant-domain-ownership",
-                    displayName: "Tenant Domain Ownership",
-                    description: "Domain claim, verification, conflict, and lifecycle workflows for tenant-owned domains.",
-                    futureSurfaceId: "tenant-domain-ownership"),
+                CreateDomainOwnershipEntry(),
                 CreateCompanionEntry(
                     id: "tenant-governance-workflows",
                     displayName: "Tenant Governance Workflows",
@@ -91,6 +87,28 @@ internal sealed class MultiTenancyGovernanceBoundaryRuntimeSurfaceContributor : 
                 ["maturity"] = "M2",
                 ["capabilityKey"] = "tenancy.invitation.catalog,tenancy.invitation.validation",
                 ["notes"] = "Cephalon.MultiTenancy intentionally does not execute invitation workflows; install and register Cephalon.MultiTenancy.Governance for the shipped catalog and validation proof."
+            });
+    }
+
+    private static TechnologyRuntimeEntry CreateDomainOwnershipEntry()
+    {
+        return new TechnologyRuntimeEntry(
+            id: "tenant-domain-ownership",
+            displayName: "Tenant Domain Ownership",
+            description: "Declared domain ownership catalog and validation workflows for tenant-owned domains.",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ownership"] = "companion-shipped",
+                ["plannedOwnership"] = "companion-available",
+                ["basePackageOwnership"] = "not-owned",
+                ["basePackageRuntimeState"] = "not-configured",
+                ["companionPackage"] = FutureCompanionPackage,
+                ["suggestedPackage"] = FutureCompanionPackage,
+                ["runtimeState"] = "requires-companion-registration",
+                ["surfaceId"] = "tenant-domain-ownership",
+                ["maturity"] = "M2",
+                ["capabilityKey"] = "tenancy.domain-ownership.catalog,tenancy.domain-ownership.validation",
+                ["notes"] = "Cephalon.MultiTenancy intentionally does not validate domain ownership; install and register Cephalon.MultiTenancy.Governance for the shipped declared-domain catalog and validation proof."
             });
     }
 

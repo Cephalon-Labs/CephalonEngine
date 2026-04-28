@@ -29,6 +29,11 @@ public sealed class MultiTenancyGovernanceOptions
     public IList<TenantInvitationDescriptor> Invitations { get; } = [];
 
     /// <summary>
+    /// Gets the host-defined tenant-domain ownership descriptors available to the governance runtime.
+    /// </summary>
+    public IList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; } = [];
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in membership evaluator is active.
     /// </summary>
     public bool EnableMembershipEvaluation { get; set; } = true;
@@ -37,4 +42,9 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets a value indicating whether the built-in invitation validator is active.
     /// </summary>
     public bool EnableInvitationValidation { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership validator is active.
+    /// </summary>
+    public bool EnableDomainOwnershipValidation { get; set; } = true;
 }

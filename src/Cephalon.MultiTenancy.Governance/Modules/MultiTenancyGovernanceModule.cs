@@ -18,8 +18,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "multi-tenancy-governance",
         displayName: "Multi-Tenancy Governance",
-        description: "Tenant membership catalog and evaluation runtime for Cephalon multi-tenancy workloads.",
-        tags: ["tenant", "membership", "governance"],
+        description: "Tenant membership, invitation, and declared domain-ownership governance runtime for Cephalon multi-tenancy workloads.",
+        tags: ["tenant", "membership", "invitation", "domain-ownership", "governance"],
         version: "1.0.0",
         metadata: new Dictionary<string, string>
         {
@@ -30,6 +30,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
 
     private bool hasMembershipContributors;
     private bool hasInvitationContributors;
+    private bool hasDomainOwnershipContributors;
 
     public override ModuleDescriptor Descriptor => DescriptorInstance;
 
@@ -57,11 +58,14 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
 
         hasMembershipContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantMembershipContributor));
         hasInvitationContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantInvitationContributor));
+        hasDomainOwnershipContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantDomainOwnershipContributor));
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<ILogger<TenantMembershipEvaluator>>(NullLogger<TenantMembershipEvaluator>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationValidator>>(NullLogger<TenantInvitationValidator>.Instance);
+        services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
         services.TryAddSingleton<ITenantInvitationCatalog, TenantInvitationCatalog>();
+        services.TryAddSingleton<ITenantDomainOwnershipCatalog, TenantDomainOwnershipCatalog>();
 
         if (options.EnableMembershipEvaluation)
         {
@@ -73,8 +77,14 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             services.TryAddSingleton<ITenantInvitationValidator, TenantInvitationValidator>();
         }
 
+        if (options.EnableDomainOwnershipValidation)
+        {
+            services.TryAddSingleton<ITenantDomainOwnershipValidator, TenantDomainOwnershipValidator>();
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceInvitationRuntimeSurfaceContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceDomainRuntimeSurfaceContributor>());
     }
 
     public void RegisterTechnologyCapabilities(ICapabilityRegistry capabilities, TechnologySelection technologies)
@@ -142,6 +152,35 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["package"] = "Cephalon.MultiTenancy.Governance",
                     ["executionOwnership"] = "cephalon-managed",
                     ["runtimeSurface"] = "tenant-invitations"
+                }));
+        }
+
+        capabilities.Add(new Capability(
+            key: "tenancy.domain-ownership.catalog",
+            displayName: "Tenant Domain Ownership Catalog",
+            description: "Exposes declared tenant-domain ownership descriptors through the multi-tenancy governance companion pack.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "multi-tenancy",
+                ["package"] = "Cephalon.MultiTenancy.Governance",
+                ["ownership"] = "cephalon-managed",
+                ["runtimeSurface"] = "tenant-domain-ownership",
+                ["configuredDomainOwnershipCount"] = options.DomainOwnerships.Count.ToString(CultureInfo.InvariantCulture),
+                ["hasDomainOwnershipContributors"] = hasDomainOwnershipContributors.ToString().ToLowerInvariant()
+            }));
+
+        if (options.EnableDomainOwnershipValidation)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.domain-ownership.validation",
+                displayName: "Tenant Domain Ownership Validation",
+                description: "Validates whether a declared tenant domain belongs to the requested tenant and is verified, unexpired, and active.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-domain-ownership"
                 }));
         }
     }

@@ -1240,16 +1240,17 @@ When `MultiTenancy` is selected and `Cephalon.MultiTenancy` is registered, `GET 
 Current payload highlights:
 
 - `tenant-resolution` reports configured tenant count, configured tenant ids, default tenant id, domain-resolution posture, tenant-key posture, resolver count, ambient-context accessor count, and the enabled resolution strategies
-- `tenant-governance-boundaries` reports the shipped `tenant-resolution-core` as `cephalon-managed`, marks tenant membership and tenant invitations as shipped companion-owned lanes that require `Cephalon.MultiTenancy.Governance` registration, and keeps domain ownership plus broader governance workflows as `taxonomy-only` boundary entries
+- `tenant-governance-boundaries` reports the shipped `tenant-resolution-core` as `cephalon-managed`, marks tenant membership, tenant invitations, and declared tenant-domain ownership as shipped companion-owned lanes that require `Cephalon.MultiTenancy.Governance` registration, and keeps broader governance workflows as `taxonomy-only` boundary entries
 - `tenant-memberships` reports the governance companion's Cephalon-managed membership catalog and evaluation posture, including membership count, tenant count, contributor count, configured membership count, evaluation ownership, per-tenant status counts, role summaries, principal-kind breakdowns, and contributing module ids without exposing individual principal identifiers
 - `tenant-invitations` reports the governance companion's Cephalon-managed invitation catalog and validation posture, including invitation count, tenant count, contributor count, configured invitation count, validation ownership, status breakdown, per-tenant status counts, role summaries, invitee-kind breakdowns, and contributing module ids without exposing individual invitee identifiers
-- boundary entries outside the current membership and invitation proofs still carry `plannedOwnership = companion-planned`, `basePackageOwnership = not-owned`, and `suggestedPackage = Cephalon.MultiTenancy.Governance` so operators can distinguish current runtime ownership from planned companion work
+- `tenant-domain-ownership` reports the governance companion's Cephalon-managed declared domain-ownership catalog and validation posture, including domain ownership count, tenant count, contributor count, configured domain count, validation ownership, status breakdown, verification-method breakdown, and contributing module ids without exposing individual domain names
+- boundary entries outside the current membership, invitation, and declared domain-ownership proofs still carry `plannedOwnership = companion-planned`, `basePackageOwnership = not-owned`, and `suggestedPackage = Cephalon.MultiTenancy.Governance` so operators can distinguish current runtime ownership from planned companion work
 
 Current note:
 
 - the base package owns tenant resolution and ambient tenant context only
-- the governance companion currently owns tenant membership cataloging/evaluation and tenant invitation cataloging/validation
-- domain verification, approval, remediation, durable membership/invitation stores, invitation delivery, identity-provider synchronization, and backoffice/public-site tenant orchestration remain future companion work until a package owns those paths explicitly
+- the governance companion currently owns tenant membership cataloging/evaluation, tenant invitation cataloging/validation, and declared tenant-domain ownership cataloging/validation
+- DNS/HTTP domain verification execution, approval, remediation, durable membership/invitation/domain stores, invitation delivery, identity-provider synchronization, and backoffice/public-site tenant orchestration remain future companion work until a package owns those paths explicitly
 
 ## Data product surface
 

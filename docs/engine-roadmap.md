@@ -63,7 +63,7 @@ The next planning wave is therefore not "add more descriptors everywhere." It is
 - make surface maturity explicit through [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - keep intentional `M0` and `M1` surfaces honest instead of letting them read like unfinished `M2` work
 - prove one narrow managed vertical slice in mixed-maturity families before widening catalog breadth; the eventing/Wolverine, agentics dispatcher, and retrieval lexical index/query lanes are current examples
-- keep `Cephalon.MultiTenancy` core narrow; `Cephalon.MultiTenancy.Governance` now owns membership catalog/evaluation plus invitation catalog/validation proofs while domain-ownership, approval/remediation, durable governance storage, identity-provider synchronization, and tenant-administration workflows remain later companion-owned work
+- keep `Cephalon.MultiTenancy` core narrow; `Cephalon.MultiTenancy.Governance` now owns membership catalog/evaluation, invitation catalog/validation, and declared domain-ownership catalog/validation proofs while DNS/HTTP verification execution, approval/remediation, durable governance storage, identity-provider synchronization, and tenant-administration workflows remain later companion-owned work
 - use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
 ## Sprint alignment
@@ -202,7 +202,8 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 46`: shipped `ENG-234` multi-tenancy governance, membership, and domain workflow companion split so `Cephalon.MultiTenancy` stays focused on tenant resolution while the broader workflow lane is explicit and companion-planned
 - `Sprint 47`: shipped `ENG-235` multi-tenancy governance membership evaluation baseline so `Cephalon.MultiTenancy.Governance` owns the first concrete membership catalog/evaluation runtime proof without pulling broader governance workflows into the base package
 - `Sprint 48`: shipped `ENG-236` multi-tenancy governance invitation validation baseline so `Cephalon.MultiTenancy.Governance` owns the first concrete invitation catalog/validation runtime proof without taking over delivery, durable storage, public onboarding, or identity-provider synchronization
-- `Later / not scheduled yet`: domain-ownership, approval/remediation, durable membership and invitation storage, invitation delivery, identity-provider synchronization, and tenant-administration proof for `Cephalon.MultiTenancy.Governance`, further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
+- `Sprint 49`: shipped `ENG-237` multi-tenancy governance domain ownership validation baseline so `Cephalon.MultiTenancy.Governance` owns declared domain-ownership catalog/validation without taking over DNS/HTTP verification execution, durable storage, public onboarding, or tenant administration
+- `Later / not scheduled yet`: DNS/HTTP domain verification execution, approval/remediation, durable membership/invitation/domain storage, invitation delivery, identity-provider synchronization, and tenant-administration proof for `Cephalon.MultiTenancy.Governance`, further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
 

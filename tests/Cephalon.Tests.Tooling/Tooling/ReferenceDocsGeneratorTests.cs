@@ -385,6 +385,8 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("ITenantMembershipEvaluator", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantInvitationDescriptor", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("ITenantInvitationValidator", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantDomainOwnershipDescriptor", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("ITenantDomainOwnershipValidator", governancePage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]

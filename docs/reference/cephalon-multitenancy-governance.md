@@ -40,6 +40,26 @@ Initializes a new instance of the `MultiTenancyGovernanceOptions` class.
 
 #### Properties
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownerships"></a>
+
+##### `DomainOwnerships`
+
+```csharp
+IList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }
+```
+
+Gets the host-defined tenant-domain ownership descriptors available to the governance runtime.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipvalidation"></a>
+
+##### `EnableDomainOwnershipValidation`
+
+```csharp
+bool EnableDomainOwnershipValidation { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-domain ownership validator is active.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationvalidation"></a>
 
 ##### `EnableInvitationValidation`
@@ -116,6 +136,158 @@ Parameters:
 <a id="namespace-cephalon-multitenancy-governance-services"></a>
 
 ## Namespace Cephalon.MultiTenancy.Governance.Services
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipcatalog"></a>
+
+### `ITenantDomainOwnershipCatalog`
+
+Exposes the merged tenant-domain ownership set available to the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantdomainownershipcatalog-domainownerships"></a>
+
+##### `DomainOwnerships`
+
+```csharp
+IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; }
+```
+
+Gets the effective domain ownership set after host options and module contributors have both been applied.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipcatalog-getbydomainname-system-string"></a>
+
+##### `GetByDomainName`
+
+```csharp
+IReadOnlyList<TenantDomainOwnershipDescriptor> GetByDomainName(string domainName)
+```
+
+Gets domain ownership descriptors by canonical domain name across all tenants.
+
+Returns: The matching domain ownership descriptors.
+
+Parameters:
+- `domainName`: The domain name to resolve.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipcatalog-getbytenantanddomain-system-string-system-string"></a>
+
+##### `GetByTenantAndDomain`
+
+```csharp
+IReadOnlyList<TenantDomainOwnershipDescriptor> GetByTenantAndDomain(string tenantId, string domainName)
+```
+
+Gets domain ownership descriptors by tenant and domain name.
+
+Returns: The matching domain ownership descriptors.
+
+Parameters:
+- `tenantId`: The tenant identifier to resolve.
+- `domainName`: The domain name to resolve.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipcatalog-getbytenantid-system-string"></a>
+
+##### `GetByTenantId`
+
+```csharp
+IReadOnlyList<TenantDomainOwnershipDescriptor> GetByTenantId(string tenantId)
+```
+
+Gets domain ownership descriptors for one tenant.
+
+Returns: The matching domain ownership descriptors.
+
+Parameters:
+- `tenantId`: The tenant identifier to resolve.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipcontributor"></a>
+
+### `ITenantDomainOwnershipContributor`
+
+Allows a module to contribute tenant-domain ownership descriptors into the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipcontributor-registerdomainownerships-cephalon-multitenancy-governance-services-itenantdomainownershipregistry"></a>
+
+##### `RegisterDomainOwnerships`
+
+```csharp
+void RegisterDomainOwnerships(ITenantDomainOwnershipRegistry domainOwnerships)
+```
+
+Registers one or more tenant-domain ownership descriptors with the supplied registry.
+
+Parameters:
+- `domainOwnerships`: The registry that collects contributed domain ownership descriptors.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipregistry"></a>
+
+### `ITenantDomainOwnershipRegistry`
+
+Collects tenant-domain ownership descriptors contributed to the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipregistry-add-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(TenantDomainOwnershipDescriptor domainOwnership)
+```
+
+Adds a tenant-domain ownership descriptor to the registry.
+
+Parameters:
+- `domainOwnership`: The domain ownership descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipvalidator"></a>
+
+### `ITenantDomainOwnershipValidator`
+
+Validates declared tenant-domain ownership against the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipValidator
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipvalidator-validateasync-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-system-threading-cancellationtoken"></a>
+
+##### `ValidateAsync`
+
+```csharp
+ValueTask<TenantDomainOwnershipValidationResult> ValidateAsync(TenantDomainOwnershipValidationRequest request, CancellationToken cancellationToken)
+```
+
+Validates a tenant-domain ownership request.
+
+Returns: The validation result.
+
+Parameters:
+- `request`: The validation request.
+- `cancellationToken`: A token that cancels validation.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationcatalog"></a>
 
@@ -452,6 +624,528 @@ Adds a tenant-membership descriptor to the registry.
 
 Parameters:
 - `membership`: The membership descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor"></a>
+
+### `TenantDomainOwnershipDescriptor`
+
+Describes one declared domain ownership relationship for a tenant.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipDescriptor`
+
+```csharp
+TenantDomainOwnershipDescriptor(string tenantId, string domainName, string displayName, string status, string verificationMethod, DateTimeOffset? verifiedAtUtc, DateTimeOffset? expiresAtUtc, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership descriptor.
+
+Parameters:
+- `tenantId`: The stable tenant identifier.
+- `domainName`: The domain name claimed by the tenant.
+- `displayName`: The optional operator-facing domain name.
+- `status`: The domain ownership status.
+- `verificationMethod`: The verification method associated with the descriptor.
+- `verifiedAtUtc`: The UTC timestamp when ownership was verified.
+- `expiresAtUtc`: The UTC timestamp when ownership expires.
+- `sourceModuleId`: The module that contributed the domain ownership descriptor when one is known.
+- `metadata`: Optional operator-facing metadata attached to the descriptor.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing domain name.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name claimed by the tenant.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the UTC timestamp when ownership expires.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata attached to the descriptor.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that contributed the domain ownership descriptor when one is known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the domain ownership status.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the stable tenant identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the verification method associated with the descriptor.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-verifiedatutc"></a>
+
+##### `VerifiedAtUtc`
+
+```csharp
+DateTimeOffset? VerifiedAtUtc { get; }
+```
+
+Gets the UTC timestamp when ownership was verified.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses"></a>
+
+### `TenantDomainOwnershipStatuses`
+
+Defines stable tenant-domain ownership statuses understood by the governance runtime.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipStatuses
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-expired"></a>
+
+##### `Expired`
+
+```csharp
+const string Expired
+```
+
+The tenant domain ownership is no longer within its valid time window.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-pending"></a>
+
+##### `Pending`
+
+```csharp
+const string Pending
+```
+
+The tenant domain ownership is declared but not yet verified.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const string Rejected
+```
+
+The tenant domain ownership proof was rejected.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-suspended"></a>
+
+##### `Suspended`
+
+```csharp
+const string Suspended
+```
+
+The tenant domain ownership has been suspended.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-verified"></a>
+
+##### `Verified`
+
+```csharp
+const string Verified
+```
+
+The tenant domain ownership has been verified and can be validated.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes"></a>
+
+### `TenantDomainOwnershipValidationOutcomes`
+
+Defines stable outcomes returned by tenant-domain ownership validation.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipValidationOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Domain ownership validation is disabled by host configuration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-expired"></a>
+
+##### `Expired`
+
+```csharp
+const string Expired
+```
+
+The domain ownership descriptor is expired or outside its valid time window.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No domain ownership descriptor matched the supplied domain.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-pending"></a>
+
+##### `Pending`
+
+```csharp
+const string Pending
+```
+
+The domain ownership descriptor is still pending verification.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const string Rejected
+```
+
+The domain ownership descriptor was rejected.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-suspended"></a>
+
+##### `Suspended`
+
+```csharp
+const string Suspended
+```
+
+The domain ownership descriptor is suspended.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+The domain exists but belongs to a different tenant.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-valid"></a>
+
+##### `Valid`
+
+```csharp
+const string Valid
+```
+
+The domain ownership descriptor is verified and satisfies the validation request.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest"></a>
+
+### `TenantDomainOwnershipValidationRequest`
+
+Describes one request to validate declared tenant-domain ownership.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipValidationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-ctor-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipValidationRequest`
+
+```csharp
+TenantDomainOwnershipValidationRequest(string tenantId, string domainName, DateTimeOffset? atUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership validation request.
+
+Parameters:
+- `tenantId`: The tenant identifier to validate.
+- `domainName`: The domain name to validate.
+- `atUtc`: The UTC timestamp used for expiration evaluation. The runtime clock is used when omitted.
+- `correlationId`: The optional correlation identifier for the validation.
+- `metadata`: Optional request metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for expiration evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the validation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name to validate.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional request metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier to validate.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult"></a>
+
+### `TenantDomainOwnershipValidationResult`
+
+Describes the result of one tenant-domain ownership validation.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipValidationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-ctor-system-string-system-string-system-string-system-boolean-system-datetimeoffset-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipValidationResult`
+
+```csharp
+TenantDomainOwnershipValidationResult(string tenantId, string domainName, string outcome, bool valid, DateTimeOffset validatedAtUtc, TenantDomainOwnershipDescriptor matchedDomainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership validation result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was validated.
+- `domainName`: The canonical domain name that was validated.
+- `outcome`: The stable validation outcome.
+- `valid`: A value indicating whether validation granted domain ownership use.
+- `validatedAtUtc`: The UTC timestamp when validation executed.
+- `matchedDomainOwnership`: The matching domain ownership descriptor considered by validation.
+- `reason`: The optional operator-facing validation reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that was validated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-matcheddomainownership"></a>
+
+##### `MatchedDomainOwnership`
+
+```csharp
+TenantDomainOwnershipDescriptor MatchedDomainOwnership { get; }
+```
+
+Gets the matching domain ownership descriptor considered by validation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable validation outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the optional operator-facing validation reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was validated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-valid"></a>
+
+##### `Valid`
+
+```csharp
+bool Valid { get; }
+```
+
+Gets a value indicating whether validation granted domain ownership use.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-validatedatutc"></a>
+
+##### `ValidatedAtUtc`
+
+```csharp
+DateTimeOffset ValidatedAtUtc { get; }
+```
+
+Gets the UTC timestamp when validation executed.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainverificationmethods"></a>
+
+### `TenantDomainVerificationMethods`
+
+Defines stable verification-method labels for tenant domain ownership descriptors.
+
+#### Declaration
+```csharp
+public static class TenantDomainVerificationMethods
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainverificationmethods-dnstxt"></a>
+
+##### `DnsTxt`
+
+```csharp
+const string DnsTxt
+```
+
+Domain ownership is expected to be verified by a DNS TXT record.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainverificationmethods-httpfile"></a>
+
+##### `HttpFile`
+
+```csharp
+const string HttpFile
+```
+
+Domain ownership is expected to be verified by an HTTP file or well-known endpoint.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainverificationmethods-manual"></a>
+
+##### `Manual`
+
+```csharp
+const string Manual
+```
+
+Domain ownership was verified by an operator or another trusted manual process.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdescriptor"></a>
 
