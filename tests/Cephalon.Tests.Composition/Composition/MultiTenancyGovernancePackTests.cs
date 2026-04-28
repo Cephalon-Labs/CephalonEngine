@@ -107,6 +107,7 @@ public sealed class MultiTenancyGovernancePackTests
         var domainProofEvaluator = provider.GetRequiredService<ITenantDomainOwnershipProofEvaluator>();
         var domainProofChallengeIssuer = provider.GetRequiredService<ITenantDomainOwnershipProofChallengeIssuer>();
         var domainProofPublicationPlanner = provider.GetRequiredService<ITenantDomainOwnershipProofPublicationPlanner>();
+        var domainHttpProofCollector = provider.GetRequiredService<ITenantDomainOwnershipHttpProofCollector>();
         var governanceActionCatalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
         var governanceActionDecider = provider.GetRequiredService<ITenantGovernanceActionDecider>();
         var governanceActionWorkflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
@@ -185,13 +186,21 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.validation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.workflow");
-        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.proof-evaluation");
+        var proofEvaluationCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.proof-evaluation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.proof-challenge");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.proof-publication-plan");
+        var httpProofCollectionCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.http-proof-collection");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.decision");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.workflow");
+        Assert.Equal("mixed", proofEvaluationCapability.Metadata["proofCollectionOwnership"]);
+        Assert.Equal("cephalon-managed", proofEvaluationCapability.Metadata["httpProofCollectionOwnership"]);
+        Assert.Equal("application-managed", proofEvaluationCapability.Metadata["dnsTxtProofCollectionOwnership"]);
+        Assert.Equal("application-managed", proofEvaluationCapability.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("cephalon-managed", httpProofCollectionCapability.Metadata["httpProofCollectionOwnership"]);
+        Assert.Equal("application-managed", httpProofCollectionCapability.Metadata["dnsTxtProofCollectionOwnership"]);
+        Assert.Equal("application-managed", httpProofCollectionCapability.Metadata["externalProofPollingOwnership"]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", summaryEntry.Metadata["package"]);
         Assert.Equal("2", summaryEntry.Metadata["membershipCount"]);
@@ -240,9 +249,13 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["proofChallengeGenerationOwnership"]);
         Assert.Equal("true", domainSummaryEntry.Metadata["proofPublicationPlanningEnabled"]);
         Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["proofPublicationPlanningOwnership"]);
+        Assert.Equal("true", domainSummaryEntry.Metadata["httpProofCollectionEnabled"]);
+        Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["httpProofCollectionOwnership"]);
+        Assert.Equal("application-managed", domainSummaryEntry.Metadata["dnsTxtProofCollectionOwnership"]);
+        Assert.Equal("application-managed", domainSummaryEntry.Metadata["externalProofPollingOwnership"]);
         Assert.Equal("application-managed", domainSummaryEntry.Metadata["proofPublicationOwnership"]);
         Assert.Equal("application-managed", domainSummaryEntry.Metadata["verificationExecutionOwnership"]);
-        Assert.Equal("application-managed", domainSummaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
+        Assert.Equal("mixed", domainSummaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
         Assert.Equal("pending:1,verified:1", domainSummaryEntry.Metadata["statusBreakdown"]);
         Assert.Equal("dns-txt:1,http-file:1", domainSummaryEntry.Metadata["verificationMethodBreakdown"]);
         Assert.Equal("2", tenantDomainEntry.Metadata["domainOwnershipCount"]);
@@ -293,8 +306,9 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.NotNull(domainProofEvaluator);
         Assert.NotNull(domainProofChallengeIssuer);
         Assert.NotNull(domainProofPublicationPlanner);
+        Assert.NotNull(domainHttpProofCollector);
         Assert.NotNull(governanceActionWorkflow);
-        Assert.Equal(4531, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4533, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
@@ -317,6 +331,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4529 && entry.Name == "TenantDomainOwnershipProofChallengeDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4530 && entry.Name == "TenantDomainOwnershipProofPublicationPlanned");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4531 && entry.Name == "TenantDomainOwnershipProofPublicationPlanDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4532 && entry.Name == "TenantDomainOwnershipHttpProofCollected");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4533 && entry.Name == "TenantDomainOwnershipHttpProofCollectionDenied");
     }
 
     [Fact]
@@ -1060,7 +1076,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("1", summaryEntry.Metadata["runtimeDomainOwnershipCount"]);
         Assert.Equal("true", summaryEntry.Metadata["verificationWorkflowEnabled"]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["verificationWorkflowOwnership"]);
-        Assert.Equal("application-managed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
+        Assert.Equal("mixed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
         Assert.Equal("verified:1", summaryEntry.Metadata["statusBreakdown"]);
         Assert.Equal("1", tenantEntry.Metadata["verifiedDomainOwnershipCount"]);
     }
@@ -1145,7 +1161,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("true", summaryEntry.Metadata["proofChallengeIssuanceEnabled"]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["proofChallengeIssuanceOwnership"]);
         Assert.Equal("application-managed", summaryEntry.Metadata["proofPublicationOwnership"]);
-        Assert.Equal("application-managed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
+        Assert.Equal("mixed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
     }
 
     [Fact]
@@ -1385,7 +1401,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("true", summaryEntry.Metadata["proofPublicationPlanningEnabled"]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["proofPublicationPlanningOwnership"]);
         Assert.Equal("application-managed", summaryEntry.Metadata["proofPublicationOwnership"]);
-        Assert.Equal("application-managed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
+        Assert.Equal("mixed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
     }
 
     [Fact]
@@ -1563,6 +1579,146 @@ public sealed class MultiTenancyGovernancePackTests
     }
 
     [Fact]
+    public async Task TenantDomainOwnershipHttpProofCollectorCollectsPublishedHttpProofAndEvaluatesIt()
+    {
+        var handler = new TestHttpProofMessageHandler(static _ => new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+        {
+            Content = new StringContent("http-proof-token")
+        });
+        var services = new ServiceCollection();
+        services.AddSingleton(new HttpClient(handler)
+        {
+            Timeout = Timeout.InfiniteTimeSpan
+        });
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var issuer = provider.GetRequiredService<ITenantDomainOwnershipProofChallengeIssuer>();
+        var collector = provider.GetRequiredService<ITenantDomainOwnershipHttpProofCollector>();
+        var validator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
+        var catalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var challenge = await issuer.IssueAsync(new TenantDomainOwnershipProofChallengeRequest(
+            tenantId: "tenant-001",
+            domainName: "Collect.Example.",
+            verificationMethod: TenantDomainVerificationMethods.HttpFile,
+            challengeValue: "http-proof-token",
+            httpFilePath: "tenant-proof.txt",
+            source: "operator-portal",
+            actor: "operator-001",
+            correlationId: "corr-http-challenge-001",
+            atUtc: new DateTimeOffset(2026, 04, 29, 8, 0, 0, TimeSpan.Zero)));
+        var collection = await collector.CollectAsync(new TenantDomainOwnershipHttpProofCollectionRequest(
+            tenantId: "tenant-001",
+            domainName: "collect.example",
+            collectionBaseUri: new Uri("https://collect.example"),
+            source: "http-proof-collector-test",
+            actor: "operator-001",
+            atUtc: new DateTimeOffset(2026, 04, 29, 8, 5, 0, TimeSpan.Zero),
+            expiresAtUtc: new DateTimeOffset(2026, 05, 29, 8, 5, 0, TimeSpan.Zero),
+            correlationId: "corr-http-collection-001"));
+        var validation = await validator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-001",
+            domainName: "collect.example",
+            atUtc: new DateTimeOffset(2026, 04, 29, 8, 10, 0, TimeSpan.Zero)));
+        var domainOwnership = Assert.Single(catalog.DomainOwnerships);
+        var domainsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-domain-ownership");
+        var summaryEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership-runtime");
+
+        Assert.True(challenge.Issued);
+        Assert.True(collection.Collected);
+        Assert.True(collection.Evaluated);
+        Assert.Equal(TenantDomainOwnershipHttpProofCollectionOutcomes.Collected, collection.Outcome);
+        Assert.Equal(TenantDomainOwnershipProofEvaluationOutcomes.Verified, collection.EvaluationResult?.Outcome);
+        Assert.Equal(new Uri("https://collect.example/tenant-proof.txt"), collection.CollectionUri);
+        Assert.Equal(new Uri("https://collect.example/tenant-proof.txt"), Assert.Single(handler.RequestedUris));
+        Assert.Equal(200, collection.StatusCode);
+        Assert.Equal(16, collection.ContentLength);
+        Assert.True(validation.Valid);
+        Assert.Equal(TenantDomainOwnershipStatuses.Verified, domainOwnership.Status);
+        Assert.Equal(TenantDomainOwnershipHttpProofCollectionOutcomes.Collected, domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionOutcome]);
+        Assert.Equal("http-proof-collector-test", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionSource]);
+        Assert.Equal("operator-001", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionActor]);
+        Assert.Equal("corr-http-collection-001", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionCorrelationId]);
+        Assert.Equal("https://collect.example/tenant-proof.txt", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionUri]);
+        Assert.Equal("200", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionStatusCode]);
+        Assert.Equal("16", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionContentLength]);
+        Assert.Equal(collection.ObservedProofFingerprint, domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionObservedFingerprint]);
+        Assert.Equal("cephalon-managed", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.HttpProofCollectionOwnership]);
+        Assert.Equal("application-managed", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.DnsTxtProofCollectionOwnership]);
+        Assert.Equal("application-managed", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.ExternalProofPollingOwnership]);
+        Assert.Equal("cephalon-managed", summaryEntry.Metadata["httpProofCollectionOwnership"]);
+        Assert.Equal("application-managed", summaryEntry.Metadata["dnsTxtProofCollectionOwnership"]);
+        Assert.Equal("application-managed", summaryEntry.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("mixed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
+    }
+
+    [Fact]
+    public async Task TenantDomainOwnershipHttpProofCollectorReportsCollectionFailuresWithoutMutatingEvaluationState()
+    {
+        var handler = new TestHttpProofMessageHandler(static _ => new HttpResponseMessage(System.Net.HttpStatusCode.NotFound));
+        var services = new ServiceCollection();
+        services.AddSingleton(new HttpClient(handler)
+        {
+            Timeout = Timeout.InfiniteTimeSpan
+        });
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var issuer = provider.GetRequiredService<ITenantDomainOwnershipProofChallengeIssuer>();
+        var collector = provider.GetRequiredService<ITenantDomainOwnershipHttpProofCollector>();
+        var catalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
+
+        var challenge = await issuer.IssueAsync(new TenantDomainOwnershipProofChallengeRequest(
+            tenantId: "tenant-001",
+            domainName: "missing-http-proof.example",
+            verificationMethod: TenantDomainVerificationMethods.HttpFile,
+            challengeValue: "http-proof-token",
+            httpFilePath: "tenant-proof.txt"));
+        var statusFailure = await collector.CollectAsync(new TenantDomainOwnershipHttpProofCollectionRequest(
+            tenantId: "tenant-001",
+            domainName: "missing-http-proof.example",
+            collectionBaseUri: new Uri("https://missing-http-proof.example"),
+            atUtc: new DateTimeOffset(2026, 04, 29, 8, 20, 0, TimeSpan.Zero)));
+        var unsupported = await collector.CollectAsync(new TenantDomainOwnershipHttpProofCollectionRequest(
+            tenantId: "tenant-001",
+            domainName: "missing-http-proof.example",
+            verificationMethod: TenantDomainVerificationMethods.DnsTxt,
+            atUtc: new DateTimeOffset(2026, 04, 29, 8, 25, 0, TimeSpan.Zero)));
+        var domainOwnership = Assert.Single(catalog.DomainOwnerships);
+
+        Assert.True(challenge.Issued);
+        Assert.False(statusFailure.Collected);
+        Assert.False(statusFailure.Evaluated);
+        Assert.Equal(TenantDomainOwnershipHttpProofCollectionOutcomes.UnexpectedStatusCode, statusFailure.Outcome);
+        Assert.Equal(404, statusFailure.StatusCode);
+        Assert.NotNull(statusFailure.PublicationPlanResult);
+        Assert.Equal(TenantDomainOwnershipHttpProofCollectionOutcomes.UnsupportedVerificationMethod, unsupported.Outcome);
+        Assert.Single(handler.RequestedUris);
+        Assert.Equal(TenantDomainOwnershipStatuses.Pending, domainOwnership.Status);
+        Assert.False(domainOwnership.Metadata.ContainsKey(TenantDomainOwnershipProofMetadataKeys.LastProofEvaluationOutcome));
+    }
+
+    [Fact]
     public async Task TenantDomainOwnershipProofEvaluatorVerifiesMatchingReportedProofAndUpdatesCatalog()
     {
         var services = new ServiceCollection();
@@ -1625,7 +1781,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.DoesNotContain(domainOwnership.Metadata, pair => string.Equals(pair.Value, "cephalon-proof-token", StringComparison.Ordinal));
         Assert.Equal("true", summaryEntry.Metadata["proofEvaluationEnabled"]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["proofEvaluationOwnership"]);
-        Assert.Equal("application-managed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
+        Assert.Equal("mixed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
     }
 
     [Fact]
@@ -2396,6 +2552,19 @@ public sealed class MultiTenancyGovernancePackTests
                 subjectId: "docs.example",
                 status: TenantGovernanceActionStatuses.Remediated,
                 sourceModuleId: "test-module"));
+        }
+    }
+
+    private sealed class TestHttpProofMessageHandler(Func<HttpRequestMessage, HttpResponseMessage> handler) : HttpMessageHandler
+    {
+        public List<Uri> RequestedUris { get; } = [];
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            RequestedUris.Add(request.RequestUri!);
+            return Task.FromResult(handler(request));
         }
     }
 

@@ -40,6 +40,36 @@ Initializes a new instance of the `MultiTenancyGovernanceOptions` class.
 
 #### Properties
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-allowinsecuredomainownershiphttpproofcollection"></a>
+
+##### `AllowInsecureDomainOwnershipHttpProofCollection`
+
+```csharp
+bool AllowInsecureDomainOwnershipHttpProofCollection { get; set; }
+```
+
+Gets or sets a value indicating whether HTTP proof collection may use non-HTTPS URLs.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershiphttpproofcollectionmaxresponsebytes"></a>
+
+##### `DomainOwnershipHttpProofCollectionMaxResponseBytes`
+
+```csharp
+int DomainOwnershipHttpProofCollectionMaxResponseBytes { get; set; }
+```
+
+Gets or sets the maximum response body size, in bytes, accepted by HTTP proof collection.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershiphttpproofcollectiontimeoutseconds"></a>
+
+##### `DomainOwnershipHttpProofCollectionTimeoutSeconds`
+
+```csharp
+int DomainOwnershipHttpProofCollectionTimeoutSeconds { get; set; }
+```
+
+Gets or sets the default timeout, in seconds, used by HTTP proof collection.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofchallengednstxtrecordprefix"></a>
 
 ##### `DomainOwnershipProofChallengeDnsTxtRecordPrefix`
@@ -79,6 +109,16 @@ string DomainOwnershipStoreFilePath { get; set; }
 ```
 
 Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershiphttpproofcollection"></a>
+
+##### `EnableDomainOwnershipHttpProofCollection`
+
+```csharp
+bool EnableDomainOwnershipHttpProofCollection { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-domain ownership HTTP proof collector is active.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofchallengeissuance"></a>
 
@@ -363,6 +403,37 @@ Registers one or more tenant-domain ownership descriptors with the supplied regi
 
 Parameters:
 - `domainOwnerships`: The registry that collects contributed domain ownership descriptors.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofcollector"></a>
+
+### `ITenantDomainOwnershipHttpProofCollector`
+
+Collects tenant-domain ownership HTTP file proof evidence and evaluates the collected proof through the governance workflow.
+
+Remarks: The collector owns the on-demand HTTP file proof collection path for declarations that use `HttpFile`. It does not publish the proof file, mutate DNS records, collect DNS TXT values, or run background polling.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipHttpProofCollector
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofcollector-collectasync-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-system-threading-cancellationtoken"></a>
+
+##### `CollectAsync`
+
+```csharp
+ValueTask<TenantDomainOwnershipHttpProofCollectionResult> CollectAsync(TenantDomainOwnershipHttpProofCollectionRequest request, CancellationToken cancellationToken)
+```
+
+Collects and evaluates one tenant-domain ownership HTTP file proof.
+
+Returns: The collection result and nested proof-evaluation outcome.
+
+Parameters:
+- `request`: The HTTP proof collection request.
+- `cancellationToken`: A token that cancels collection before the proof evaluator is invoked.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofchallengeissuer"></a>
 
@@ -1495,6 +1566,674 @@ DateTimeOffset? VerifiedAtUtc { get; }
 ```
 
 Gets the UTC timestamp when ownership was verified.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys"></a>
+
+### `TenantDomainOwnershipHttpProofCollectionMetadataKeys`
+
+Stable metadata keys written by tenant-domain ownership HTTP proof collection.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipHttpProofCollectionMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-dnstxtproofcollectionownership"></a>
+
+##### `DnsTxtProofCollectionOwnership`
+
+```csharp
+const string DnsTxtProofCollectionOwnership
+```
+
+Metadata key that keeps DNS TXT proof collection ownership explicit.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-externalproofpollingownership"></a>
+
+##### `ExternalProofPollingOwnership`
+
+```csharp
+const string ExternalProofPollingOwnership
+```
+
+Metadata key that keeps background proof polling ownership explicit.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-httpproofcollectionownership"></a>
+
+##### `HttpProofCollectionOwnership`
+
+```csharp
+const string HttpProofCollectionOwnership
+```
+
+Metadata key that identifies Cephalon as the HTTP proof collection owner.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectedatutc"></a>
+
+##### `LastHttpProofCollectedAtUtc`
+
+```csharp
+const string LastHttpProofCollectedAtUtc
+```
+
+Metadata key for the UTC timestamp when HTTP proof collection executed.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectionactor"></a>
+
+##### `LastHttpProofCollectionActor`
+
+```csharp
+const string LastHttpProofCollectionActor
+```
+
+Metadata key for the actor that requested HTTP proof collection when known.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectioncontentlength"></a>
+
+##### `LastHttpProofCollectionContentLength`
+
+```csharp
+const string LastHttpProofCollectionContentLength
+```
+
+Metadata key for the collected HTTP proof response body length.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectioncorrelationid"></a>
+
+##### `LastHttpProofCollectionCorrelationId`
+
+```csharp
+const string LastHttpProofCollectionCorrelationId
+```
+
+Metadata key for the HTTP proof collection correlation identifier.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectionobservedfingerprint"></a>
+
+##### `LastHttpProofCollectionObservedFingerprint`
+
+```csharp
+const string LastHttpProofCollectionObservedFingerprint
+```
+
+Metadata key for the SHA-256 fingerprint of the collected HTTP proof body.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectionoutcome"></a>
+
+##### `LastHttpProofCollectionOutcome`
+
+```csharp
+const string LastHttpProofCollectionOutcome
+```
+
+Metadata key for the last HTTP proof collection outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectionpublicationplanoutcome"></a>
+
+##### `LastHttpProofCollectionPublicationPlanOutcome`
+
+```csharp
+const string LastHttpProofCollectionPublicationPlanOutcome
+```
+
+Metadata key for the nested publication-plan outcome used by collection.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectionsource"></a>
+
+##### `LastHttpProofCollectionSource`
+
+```csharp
+const string LastHttpProofCollectionSource
+```
+
+Metadata key for the source that requested HTTP proof collection.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectionstatuscode"></a>
+
+##### `LastHttpProofCollectionStatusCode`
+
+```csharp
+const string LastHttpProofCollectionStatusCode
+```
+
+Metadata key for the HTTP status code returned by the proof endpoint.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-lasthttpproofcollectionuri"></a>
+
+##### `LastHttpProofCollectionUri`
+
+```csharp
+const string LastHttpProofCollectionUri
+```
+
+Metadata key for the URI used to collect the HTTP proof.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes"></a>
+
+### `TenantDomainOwnershipHttpProofCollectionOutcomes`
+
+Stable tenant-domain ownership HTTP proof collection outcome labels.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipHttpProofCollectionOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-collected"></a>
+
+##### `Collected`
+
+```csharp
+const string Collected
+```
+
+HTTP proof content was collected and proof evaluation reached a terminal workflow outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+HTTP proof collection is disabled by governance options.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-emptyresponse"></a>
+
+##### `EmptyResponse`
+
+```csharp
+const string EmptyResponse
+```
+
+The HTTP proof endpoint returned an empty response body.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-evaluationfailed"></a>
+
+##### `EvaluationFailed`
+
+```csharp
+const string EvaluationFailed
+```
+
+HTTP content was collected, but proof evaluation did not apply a terminal workflow outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-invaliduri"></a>
+
+##### `InvalidUri`
+
+```csharp
+const string InvalidUri
+```
+
+The resolved HTTP proof collection URI is invalid or unsafe for the requested domain.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-missingexpectedproof"></a>
+
+##### `MissingExpectedProof`
+
+```csharp
+const string MissingExpectedProof
+```
+
+Expected proof metadata is missing from the tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-missingpublicationplan"></a>
+
+##### `MissingPublicationPlan`
+
+```csharp
+const string MissingPublicationPlan
+```
+
+Publication planning did not provide an HTTP file path and expected proof content.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No tenant-domain ownership declaration matched the supplied tenant and domain.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-requestfailed"></a>
+
+##### `RequestFailed`
+
+```csharp
+const string RequestFailed
+```
+
+The HTTP proof endpoint could not be reached or timed out.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-responsetoolarge"></a>
+
+##### `ResponseTooLarge`
+
+```csharp
+const string ResponseTooLarge
+```
+
+The HTTP proof endpoint response body exceeded the configured collection size limit.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+Publication-plan metadata could not be recorded before collection.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+A declaration for the supplied domain belongs to a different tenant.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-unexpectedstatuscode"></a>
+
+##### `UnexpectedStatusCode`
+
+```csharp
+const string UnexpectedStatusCode
+```
+
+The HTTP proof endpoint returned a non-success status code.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-unsupportedverificationmethod"></a>
+
+##### `UnsupportedVerificationMethod`
+
+```csharp
+const string UnsupportedVerificationMethod
+```
+
+The verification method cannot be collected by the built-in HTTP proof collector.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionoutcomes-verificationmethodmismatch"></a>
+
+##### `VerificationMethodMismatch`
+
+```csharp
+const string VerificationMethodMismatch
+```
+
+The matching domain ownership declaration uses a different verification method.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest"></a>
+
+### `TenantDomainOwnershipHttpProofCollectionRequest`
+
+Describes a tenant-domain ownership HTTP proof collection request.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipHttpProofCollectionRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-ctor-system-string-system-string-system-string-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipHttpProofCollectionRequest`
+
+```csharp
+TenantDomainOwnershipHttpProofCollectionRequest(string tenantId, string domainName, string verificationMethod, Uri collectionBaseUri, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership HTTP proof collection request.
+
+Parameters:
+- `tenantId`: The tenant identifier that owns the domain declaration.
+- `domainName`: The domain name whose HTTP proof should be collected.
+- `verificationMethod`: The optional verification method boundary. Only HTTP file verification can be collected.
+- `collectionBaseUri`: The optional base URI used for collection. When omitted, HTTPS on the requested domain is used.
+- `source`: The source that requested HTTP proof collection.
+- `actor`: The actor that requested HTTP proof collection when known.
+- `atUtc`: The UTC timestamp used for collection. The runtime clock is used when omitted.
+- `expiresAtUtc`: The optional UTC timestamp applied if proof evaluation verifies the declaration.
+- `correlationId`: The optional correlation identifier for collection and evaluation.
+- `recordPublicationPlan`: A value indicating whether the publication plan should be recorded before collection.
+- `timeout`: The optional per-request HTTP collection timeout.
+- `metadata`: Optional HTTP proof collection metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested HTTP proof collection when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-collectionbaseuri"></a>
+
+##### `CollectionBaseUri`
+
+```csharp
+Uri CollectionBaseUri { get; }
+```
+
+Gets the optional base URI used for collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for collection and evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name whose HTTP proof should be collected.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the optional UTC timestamp applied if proof evaluation verifies the declaration.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional HTTP proof collection metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-recordpublicationplan"></a>
+
+##### `RecordPublicationPlan`
+
+```csharp
+bool RecordPublicationPlan { get; }
+```
+
+Gets a value indicating whether the publication plan should be recorded before collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that requested HTTP proof collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that owns the domain declaration.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-timeout"></a>
+
+##### `Timeout`
+
+```csharp
+TimeSpan? Timeout { get; }
+```
+
+Gets the optional per-request HTTP collection timeout.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the verification method boundary.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult"></a>
+
+### `TenantDomainOwnershipHttpProofCollectionResult`
+
+Describes the result of one tenant-domain ownership HTTP proof collection attempt.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipHttpProofCollectionResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-uri-system-nullable-system-int32-system-nullable-system-int64-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipHttpProofCollectionResult`
+
+```csharp
+TenantDomainOwnershipHttpProofCollectionResult(string tenantId, string domainName, string verificationMethod, string outcome, bool collected, bool evaluated, DateTimeOffset collectedAtUtc, Uri collectionUri, int? statusCode, long? contentLength, string observedProofFingerprint, TenantDomainOwnershipProofPublicationPlanResult publicationPlanResult, TenantDomainOwnershipProofEvaluationResult evaluationResult, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership HTTP proof collection result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `domainName`: The canonical domain name that was evaluated.
+- `verificationMethod`: The verification method used for collection.
+- `outcome`: The stable HTTP proof collection outcome.
+- `collected`: A value indicating whether HTTP proof content was collected.
+- `evaluated`: A value indicating whether proof evaluation reached a terminal workflow outcome.
+- `collectedAtUtc`: The UTC timestamp when collection executed.
+- `collectionUri`: The URI used to collect the HTTP proof.
+- `statusCode`: The HTTP status code returned by the proof endpoint.
+- `contentLength`: The collected HTTP proof response body length.
+- `observedProofFingerprint`: The SHA-256 fingerprint of the collected proof body.
+- `publicationPlanResult`: The publication-plan result used by collection.
+- `evaluationResult`: The proof-evaluation result produced after collection.
+- `domainOwnership`: The matching or resulting domain ownership descriptor when one exists.
+- `reason`: The operator-facing HTTP proof collection reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-collected"></a>
+
+##### `Collected`
+
+```csharp
+bool Collected { get; }
+```
+
+Gets a value indicating whether HTTP proof content was collected.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-collectedatutc"></a>
+
+##### `CollectedAtUtc`
+
+```csharp
+DateTimeOffset CollectedAtUtc { get; }
+```
+
+Gets the UTC timestamp when collection executed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-collectionuri"></a>
+
+##### `CollectionUri`
+
+```csharp
+Uri CollectionUri { get; }
+```
+
+Gets the URI used to collect the HTTP proof.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-contentlength"></a>
+
+##### `ContentLength`
+
+```csharp
+long? ContentLength { get; }
+```
+
+Gets the collected HTTP proof response body length.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-domainownership"></a>
+
+##### `DomainOwnership`
+
+```csharp
+TenantDomainOwnershipDescriptor DomainOwnership { get; }
+```
+
+Gets the matching or resulting domain ownership descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-evaluated"></a>
+
+##### `Evaluated`
+
+```csharp
+bool Evaluated { get; }
+```
+
+Gets a value indicating whether proof evaluation reached a terminal workflow outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-evaluationresult"></a>
+
+##### `EvaluationResult`
+
+```csharp
+TenantDomainOwnershipProofEvaluationResult EvaluationResult { get; }
+```
+
+Gets the proof-evaluation result produced after collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-observedprooffingerprint"></a>
+
+##### `ObservedProofFingerprint`
+
+```csharp
+string ObservedProofFingerprint { get; }
+```
+
+Gets the SHA-256 fingerprint of the collected proof body.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable HTTP proof collection outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-publicationplanresult"></a>
+
+##### `PublicationPlanResult`
+
+```csharp
+TenantDomainOwnershipProofPublicationPlanResult PublicationPlanResult { get; }
+```
+
+Gets the publication-plan result used by collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing HTTP proof collection reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-statuscode"></a>
+
+##### `StatusCode`
+
+```csharp
+int? StatusCode { get; }
+```
+
+Gets the HTTP status code returned by the proof endpoint.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the verification method used for collection.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys"></a>
 

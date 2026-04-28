@@ -75,6 +75,11 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableDomainOwnershipProofPublicationPlanning { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership HTTP proof collector is active.
+    /// </summary>
+    public bool EnableDomainOwnershipHttpProofCollection { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
     /// </summary>
     public bool EnableGovernanceActionDecision { get; set; } = true;
@@ -108,6 +113,21 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets the default HTTP path used by proof challenge issuance.
     /// </summary>
     public string DomainOwnershipProofChallengeHttpFilePath { get; set; } = "/.well-known/cephalon/domain-ownership.txt";
+
+    /// <summary>
+    /// Gets or sets a value indicating whether HTTP proof collection may use non-HTTPS URLs.
+    /// </summary>
+    public bool AllowInsecureDomainOwnershipHttpProofCollection { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default timeout, in seconds, used by HTTP proof collection.
+    /// </summary>
+    public int DomainOwnershipHttpProofCollectionTimeoutSeconds { get; set; } = 10;
+
+    /// <summary>
+    /// Gets or sets the maximum response body size, in bytes, accepted by HTTP proof collection.
+    /// </summary>
+    public int DomainOwnershipHttpProofCollectionMaxResponseBytes { get; set; } = 4096;
 
     /// <summary>
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.

@@ -45,6 +45,10 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
             .Select(static group => $"{group.Key}:{group.Count().ToString(CultureInfo.InvariantCulture)}")
             .ToArray();
+        var httpProofCollectionEnabled = options.EnableDomainOwnershipHttpProofCollection &&
+            options.EnableDomainOwnershipProofPublicationPlanning &&
+            options.EnableDomainOwnershipProofEvaluation &&
+            options.EnableDomainOwnershipVerificationWorkflow;
 
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -74,11 +78,15 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["proofChallengeGenerationOwnership"] = options.EnableDomainOwnershipProofChallengeIssuance ? "cephalon-managed" : "not-configured",
             ["proofPublicationPlanningEnabled"] = options.EnableDomainOwnershipProofPublicationPlanning.ToString().ToLowerInvariant(),
             ["proofPublicationPlanningOwnership"] = options.EnableDomainOwnershipProofPublicationPlanning ? "cephalon-managed" : "not-configured",
+            ["httpProofCollectionEnabled"] = httpProofCollectionEnabled.ToString().ToLowerInvariant(),
+            ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
+            ["dnsTxtProofCollectionOwnership"] = "application-managed",
+            ["externalProofPollingOwnership"] = "application-managed",
             ["proofPublicationOwnership"] = "application-managed",
             ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["verificationExecutionOwnership"] = "application-managed",
-            ["dnsHttpProofCollectionOwnership"] = "application-managed",
+            ["dnsHttpProofCollectionOwnership"] = httpProofCollectionEnabled ? "mixed" : "application-managed",
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown),
             ["verificationMethodBreakdown"] = verificationMethodBreakdown.Length == 0 ? "none" : string.Join(",", verificationMethodBreakdown)
         };
