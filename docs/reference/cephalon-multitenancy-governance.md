@@ -100,6 +100,16 @@ bool EnableDomainOwnershipProofEvaluation { get; set; }
 
 Gets or sets a value indicating whether the built-in tenant-domain ownership proof evaluator is active.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofpublicationplanning"></a>
+
+##### `EnableDomainOwnershipProofPublicationPlanning`
+
+```csharp
+bool EnableDomainOwnershipProofPublicationPlanning { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-domain ownership proof publication planner is active.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipvalidation"></a>
 
 ##### `EnableDomainOwnershipValidation`
@@ -415,6 +425,37 @@ Returns: The proof evaluation result and workflow transition outcome.
 Parameters:
 - `request`: The proof evaluation request.
 - `cancellationToken`: A token that cancels proof evaluation before workflow mutation starts.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofpublicationplanner"></a>
+
+### `ITenantDomainOwnershipProofPublicationPlanner`
+
+Builds tenant-domain ownership proof publication instructions from an issued proof challenge.
+
+Remarks: The planner owns deterministic instruction generation and optional runtime metadata recording. It does not mutate DNS records, host HTTP proof files, or poll external endpoints; applications or provider packs publish and observe the planned proof outside the engine.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipProofPublicationPlanner
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofpublicationplanner-planasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-system-threading-cancellationtoken"></a>
+
+##### `PlanAsync`
+
+```csharp
+ValueTask<TenantDomainOwnershipProofPublicationPlanResult> PlanAsync(TenantDomainOwnershipProofPublicationPlanRequest request, CancellationToken cancellationToken)
+```
+
+Builds publication instructions for a tenant-domain ownership proof challenge.
+
+Returns: The publication instructions and runtime state outcome.
+
+Parameters:
+- `request`: The proof publication planning request.
+- `cancellationToken`: A token that cancels planning before runtime state is stored.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipregistry"></a>
 
@@ -2524,6 +2565,582 @@ const string ProofEvaluationOwnership
 ```
 
 Ownership marker for proof evaluation performed by the governance companion.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys"></a>
+
+### `TenantDomainOwnershipProofPublicationPlanMetadataKeys`
+
+Stable metadata keys written by tenant-domain ownership proof publication planning.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipProofPublicationPlanMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-dnstxtrecordname"></a>
+
+##### `DnsTxtRecordName`
+
+```csharp
+const string DnsTxtRecordName
+```
+
+Metadata key for the DNS TXT record name where the proof should be published.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-dnstxtrecordvaluefingerprint"></a>
+
+##### `DnsTxtRecordValueFingerprint`
+
+```csharp
+const string DnsTxtRecordValueFingerprint
+```
+
+Metadata key for the DNS TXT record value fingerprint.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-externalpublicationownership"></a>
+
+##### `ExternalPublicationOwnership`
+
+```csharp
+const string ExternalPublicationOwnership
+```
+
+Metadata key that keeps external publication ownership explicit.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-httpcontenttype"></a>
+
+##### `HttpContentType`
+
+```csharp
+const string HttpContentType
+```
+
+Metadata key for the HTTP content type used by the publication plan.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-httpfilecontentfingerprint"></a>
+
+##### `HttpFileContentFingerprint`
+
+```csharp
+const string HttpFileContentFingerprint
+```
+
+Metadata key for the HTTP file content fingerprint.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-httpfilepath"></a>
+
+##### `HttpFilePath`
+
+```csharp
+const string HttpFilePath
+```
+
+Metadata key for the HTTP path where the proof file should be published.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-lastproofpublicationplanactor"></a>
+
+##### `LastProofPublicationPlanActor`
+
+```csharp
+const string LastProofPublicationPlanActor
+```
+
+Metadata key for the actor that requested publication planning.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-lastproofpublicationplancorrelationid"></a>
+
+##### `LastProofPublicationPlanCorrelationId`
+
+```csharp
+const string LastProofPublicationPlanCorrelationId
+```
+
+Metadata key for the publication planning correlation identifier.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-lastproofpublicationplanfingerprint"></a>
+
+##### `LastProofPublicationPlanFingerprint`
+
+```csharp
+const string LastProofPublicationPlanFingerprint
+```
+
+Metadata key for the SHA-256 fingerprint of the planned proof value.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-lastproofpublicationplannedatutc"></a>
+
+##### `LastProofPublicationPlannedAtUtc`
+
+```csharp
+const string LastProofPublicationPlannedAtUtc
+```
+
+Metadata key for the UTC timestamp when publication planning executed.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-lastproofpublicationplanoutcome"></a>
+
+##### `LastProofPublicationPlanOutcome`
+
+```csharp
+const string LastProofPublicationPlanOutcome
+```
+
+Metadata key for the last publication planning outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-lastproofpublicationplansource"></a>
+
+##### `LastProofPublicationPlanSource`
+
+```csharp
+const string LastProofPublicationPlanSource
+```
+
+Metadata key for the source that requested publication planning.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-proofpublicationplanningownership"></a>
+
+##### `ProofPublicationPlanningOwnership`
+
+```csharp
+const string ProofPublicationPlanningOwnership
+```
+
+Metadata key that identifies Cephalon as the publication planning owner.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes"></a>
+
+### `TenantDomainOwnershipProofPublicationPlanOutcomes`
+
+Stable tenant-domain ownership proof publication planning outcomes.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipProofPublicationPlanOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Publication planning is disabled by governance options.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-missingexpectedproof"></a>
+
+##### `MissingExpectedProof`
+
+```csharp
+const string MissingExpectedProof
+```
+
+Expected proof metadata is missing from the tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No tenant-domain ownership declaration matched the supplied tenant and domain.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-planned"></a>
+
+##### `Planned`
+
+```csharp
+const string Planned
+```
+
+Publication instructions were generated.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+Runtime state could not be persisted.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+The domain is already declared for a different tenant.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-unsupportedverificationmethod"></a>
+
+##### `UnsupportedVerificationMethod`
+
+```csharp
+const string UnsupportedVerificationMethod
+```
+
+The verification method does not have built-in publication instructions.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanoutcomes-verificationmethodmismatch"></a>
+
+##### `VerificationMethodMismatch`
+
+```csharp
+const string VerificationMethodMismatch
+```
+
+The requested verification method does not match the existing declaration.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest"></a>
+
+### `TenantDomainOwnershipProofPublicationPlanRequest`
+
+Describes a tenant-domain ownership proof publication planning request.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofPublicationPlanRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofPublicationPlanRequest`
+
+```csharp
+TenantDomainOwnershipProofPublicationPlanRequest(string tenantId, string domainName, string verificationMethod, string source, string actor, DateTimeOffset? atUtc, string correlationId, bool recordPlan, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof publication planning request.
+
+Parameters:
+- `tenantId`: The tenant identifier that owns the domain declaration.
+- `domainName`: The domain name that should receive publication instructions.
+- `verificationMethod`: The optional verification method boundary.
+- `source`: The source that requested publication planning.
+- `actor`: The actor that requested publication planning when known.
+- `atUtc`: The UTC timestamp used for publication planning. The runtime clock is used when omitted.
+- `correlationId`: The optional correlation identifier for publication planning.
+- `recordPlan`: A value indicating whether the plan should be recorded in domain ownership metadata.
+- `metadata`: Optional proof publication planning metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested publication planning when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for publication planning.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for publication planning.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that should receive publication instructions.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional proof publication planning metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-recordplan"></a>
+
+##### `RecordPlan`
+
+```csharp
+bool RecordPlan { get; }
+```
+
+Gets a value indicating whether the plan should be recorded in domain ownership metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that requested publication planning.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that owns the domain declaration.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the optional verification method boundary.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult"></a>
+
+### `TenantDomainOwnershipProofPublicationPlanResult`
+
+Describes generated tenant-domain ownership proof publication instructions.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofPublicationPlanResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofPublicationPlanResult`
+
+```csharp
+TenantDomainOwnershipProofPublicationPlanResult(string tenantId, string domainName, string verificationMethod, string outcome, bool planned, bool recorded, DateTimeOffset plannedAtUtc, string proofValue, string proofFingerprint, string dnsTxtRecordName, string dnsTxtRecordValue, string httpFilePath, string httpFileContent, string httpContentType, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof publication planning result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `domainName`: The canonical domain name that was evaluated.
+- `verificationMethod`: The verification method used for publication planning.
+- `outcome`: The stable publication planning outcome.
+- `planned`: A value indicating whether publication instructions were generated.
+- `recorded`: A value indicating whether publication plan metadata was recorded.
+- `plannedAtUtc`: The UTC timestamp when publication planning executed.
+- `proofValue`: The public proof value to publish.
+- `proofFingerprint`: The SHA-256 fingerprint of the public proof value.
+- `dnsTxtRecordName`: The DNS TXT record name where the proof value should be published.
+- `dnsTxtRecordValue`: The DNS TXT record value to publish.
+- `httpFilePath`: The HTTP path where the proof file should be published.
+- `httpFileContent`: The HTTP file content to publish.
+- `httpContentType`: The HTTP content type to use when the proof is published as a file.
+- `domainOwnership`: The matching or resulting domain ownership descriptor when one exists.
+- `reason`: The operator-facing publication planning reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-dnstxtrecordname"></a>
+
+##### `DnsTxtRecordName`
+
+```csharp
+string DnsTxtRecordName { get; }
+```
+
+Gets the DNS TXT record name where the proof value should be published.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-dnstxtrecordvalue"></a>
+
+##### `DnsTxtRecordValue`
+
+```csharp
+string DnsTxtRecordValue { get; }
+```
+
+Gets the DNS TXT record value to publish.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-domainownership"></a>
+
+##### `DomainOwnership`
+
+```csharp
+TenantDomainOwnershipDescriptor DomainOwnership { get; }
+```
+
+Gets the matching or resulting domain ownership descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-httpcontenttype"></a>
+
+##### `HttpContentType`
+
+```csharp
+string HttpContentType { get; }
+```
+
+Gets the HTTP content type to use when the proof is published as a file.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-httpfilecontent"></a>
+
+##### `HttpFileContent`
+
+```csharp
+string HttpFileContent { get; }
+```
+
+Gets the HTTP file content to publish.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-httpfilepath"></a>
+
+##### `HttpFilePath`
+
+```csharp
+string HttpFilePath { get; }
+```
+
+Gets the HTTP path where the proof file should be published.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable publication planning outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-planned"></a>
+
+##### `Planned`
+
+```csharp
+bool Planned { get; }
+```
+
+Gets a value indicating whether publication instructions were generated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-plannedatutc"></a>
+
+##### `PlannedAtUtc`
+
+```csharp
+DateTimeOffset PlannedAtUtc { get; }
+```
+
+Gets the UTC timestamp when publication planning executed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-prooffingerprint"></a>
+
+##### `ProofFingerprint`
+
+```csharp
+string ProofFingerprint { get; }
+```
+
+Gets the SHA-256 fingerprint of the public proof value.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-proofvalue"></a>
+
+##### `ProofValue`
+
+```csharp
+string ProofValue { get; }
+```
+
+Gets the public proof value to publish.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing publication planning reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-recorded"></a>
+
+##### `Recorded`
+
+```csharp
+bool Recorded { get; }
+```
+
+Gets a value indicating whether publication plan metadata was recorded.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the verification method used for publication planning.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses"></a>
 

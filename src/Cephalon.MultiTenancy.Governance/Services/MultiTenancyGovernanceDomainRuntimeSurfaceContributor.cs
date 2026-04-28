@@ -72,6 +72,8 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["proofChallengeIssuanceEnabled"] = options.EnableDomainOwnershipProofChallengeIssuance.ToString().ToLowerInvariant(),
             ["proofChallengeIssuanceOwnership"] = options.EnableDomainOwnershipProofChallengeIssuance ? "cephalon-managed" : "not-configured",
             ["proofChallengeGenerationOwnership"] = options.EnableDomainOwnershipProofChallengeIssuance ? "cephalon-managed" : "not-configured",
+            ["proofPublicationPlanningEnabled"] = options.EnableDomainOwnershipProofPublicationPlanning.ToString().ToLowerInvariant(),
+            ["proofPublicationPlanningOwnership"] = options.EnableDomainOwnershipProofPublicationPlanning ? "cephalon-managed" : "not-configured",
             ["proofPublicationOwnership"] = "application-managed",
             ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
@@ -84,7 +86,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-domain-ownership-runtime",
             displayName: "Tenant Domain Ownership Runtime",
-            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, and managed proof-challenge issuance ownership.",
+            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, and managed proof-publication planning ownership.",
             metadata: metadata);
     }
 

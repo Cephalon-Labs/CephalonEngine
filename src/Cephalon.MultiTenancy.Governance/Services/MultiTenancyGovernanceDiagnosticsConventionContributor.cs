@@ -150,10 +150,24 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Denied tenant domain ownership proof challenge for tenant '{TenantId}' and domain '{DomainName}'. Outcome: {Outcome}. Reason: {Reason}.",
         Description: "Emitted when the governance companion cannot issue a tenant-domain ownership proof challenge.");
 
+    public static readonly DiagnosticEventDefinition DomainOwnershipProofPublicationPlanned = new(
+        Id: 4530,
+        Name: "TenantDomainOwnershipProofPublicationPlanned",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Planned tenant domain ownership proof publication for tenant '{TenantId}' and domain '{DomainName}' using '{VerificationMethod}'.",
+        Description: "Emitted when the governance companion builds tenant-domain ownership proof publication instructions.");
+
+    public static readonly DiagnosticEventDefinition DomainOwnershipProofPublicationPlanDenied = new(
+        Id: 4531,
+        Name: "TenantDomainOwnershipProofPublicationPlanDenied",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Denied tenant domain ownership proof publication planning for tenant '{TenantId}' and domain '{DomainName}'. Outcome: {Outcome}. Reason: {Reason}.",
+        Description: "Emitted when the governance companion cannot build tenant-domain ownership proof publication instructions.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -175,7 +189,9 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             DomainOwnershipProofEvaluationVerified,
             DomainOwnershipProofEvaluationDenied,
             DomainOwnershipProofChallengeIssued,
-            DomainOwnershipProofChallengeDenied
+            DomainOwnershipProofChallengeDenied,
+            DomainOwnershipProofPublicationPlanned,
+            DomainOwnershipProofPublicationPlanDenied
         ]);
 }
 
@@ -340,6 +356,22 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofChallengeDenied.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofChallengeDenied.Name),
             MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofChallengeDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, Exception?> DomainOwnershipProofPublicationPlannedMessage =
+        LoggerMessage.Define<string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPublicationPlanned.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPublicationPlanned.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPublicationPlanned.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> DomainOwnershipProofPublicationPlanDeniedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPublicationPlanDenied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPublicationPlanDenied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipProofPublicationPlanDenied.MessageTemplate);
 
     public static void MembershipEvaluationAllowed(
         ILogger logger,
@@ -555,5 +587,26 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         DomainOwnershipProofChallengeDeniedMessage(logger, tenantId, domainName, outcome, reason, exception);
+    }
+
+    public static void DomainOwnershipProofPublicationPlanned(
+        ILogger logger,
+        string tenantId,
+        string domainName,
+        string verificationMethod,
+        Exception? exception)
+    {
+        DomainOwnershipProofPublicationPlannedMessage(logger, tenantId, domainName, verificationMethod, exception);
+    }
+
+    public static void DomainOwnershipProofPublicationPlanDenied(
+        ILogger logger,
+        string tenantId,
+        string domainName,
+        string outcome,
+        string reason,
+        Exception? exception)
+    {
+        DomainOwnershipProofPublicationPlanDeniedMessage(logger, tenantId, domainName, outcome, reason, exception);
     }
 }

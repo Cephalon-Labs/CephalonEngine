@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof evaluation over reported evidence, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, domain proof evaluation over reported evidence, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -338,7 +338,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 
 - `identity.authorization` — Identity Authorization
 
-### Multi-tenancy capabilities (15)
+### Multi-tenancy capabilities (18)
 
 - `tenancy.resolution` — Tenant Resolution
 - `tenancy.membership.catalog` — Tenant Membership Catalog
@@ -352,6 +352,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `tenancy.domain-ownership.validation` — Tenant Domain Ownership Validation
 - `tenancy.domain-ownership.workflow` — Tenant Domain Ownership Verification Workflow
 - `tenancy.domain-ownership.proof-challenge` — Tenant Domain Ownership Proof Challenge
+- `tenancy.domain-ownership.proof-publication-plan` — Tenant Domain Ownership Proof Publication Plan
 - `tenancy.domain-ownership.proof-evaluation` — Tenant Domain Ownership Proof Evaluation
 - `tenancy.governance-action.catalog` — Tenant Governance Action Catalog
 - `tenancy.governance-action.decision` — Tenant Governance Action Decision
@@ -453,6 +454,9 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantDomainOwnershipCatalog` — merged declared tenant-domain ownership read model
 - `ITenantDomainOwnershipValidator` — declared tenant-domain ownership validation
 - `ITenantDomainOwnershipVerificationWorkflow` — in-process declared tenant-domain ownership verification workflow
+- `ITenantDomainOwnershipProofChallengeIssuer` — tenant-domain ownership expected-proof challenge issuance
+- `ITenantDomainOwnershipProofPublicationPlanner` — DNS TXT and HTTP file proof publication instruction planning
+- `ITenantDomainOwnershipProofEvaluator` — reported proof evidence evaluation and workflow mutation
 - `ITenantGovernanceActionCatalog` — merged approval/remediation action read model
 - `ITenantGovernanceActionDecider` — tenant-governance action decision
 - `ITenantGovernanceActionStore` — runtime approval/remediation action storage, with in-memory and opt-in file-backed baselines
@@ -461,7 +465,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog, store, and evaluation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, and validation posture from `Cephalon.MultiTenancy.Governance`
-- `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, and proof-evaluation posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, and proof-evaluation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 
 ### Audit

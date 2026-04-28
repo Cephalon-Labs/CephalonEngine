@@ -70,6 +70,11 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableDomainOwnershipProofChallengeIssuance { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership proof publication planner is active.
+    /// </summary>
+    public bool EnableDomainOwnershipProofPublicationPlanning { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
     /// </summary>
     public bool EnableGovernanceActionDecision { get; set; } = true;

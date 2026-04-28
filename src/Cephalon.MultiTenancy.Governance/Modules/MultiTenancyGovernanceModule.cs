@@ -68,6 +68,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantDomainOwnershipVerificationWorkflow>>(NullLogger<TenantDomainOwnershipVerificationWorkflow>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofEvaluator>>(NullLogger<TenantDomainOwnershipProofEvaluator>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofChallengeIssuer>>(NullLogger<TenantDomainOwnershipProofChallengeIssuer>.Instance);
+        services.TryAddSingleton<ILogger<TenantDomainOwnershipProofPublicationPlanner>>(NullLogger<TenantDomainOwnershipProofPublicationPlanner>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionDecider>>(NullLogger<TenantGovernanceActionDecider>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionWorkflow>>(NullLogger<TenantGovernanceActionWorkflow>.Instance);
         services.TryAddSingleton<ITenantMembershipStore>(
@@ -111,6 +112,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         if (options.EnableDomainOwnershipProofChallengeIssuance)
         {
             services.TryAddSingleton<ITenantDomainOwnershipProofChallengeIssuer, TenantDomainOwnershipProofChallengeIssuer>();
+        }
+
+        if (options.EnableDomainOwnershipProofPublicationPlanning)
+        {
+            services.TryAddSingleton<ITenantDomainOwnershipProofPublicationPlanner, TenantDomainOwnershipProofPublicationPlanner>();
         }
 
         if (options.EnableGovernanceActionDecision)
@@ -318,6 +324,25 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["package"] = "Cephalon.MultiTenancy.Governance",
                     ["executionOwnership"] = "cephalon-managed",
                     ["challengeGenerationOwnership"] = "cephalon-managed",
+                    ["proofPublicationOwnership"] = "application-managed",
+                    ["dnsHttpProofCollectionOwnership"] = "application-managed",
+                    ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-domain-ownership"
+                }));
+        }
+
+        if (options.EnableDomainOwnershipProofPublicationPlanning)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.domain-ownership.proof-publication-plan",
+                displayName: "Tenant Domain Ownership Proof Publication Plan",
+                description: "Builds DNS TXT or HTTP file publication instructions from issued tenant-domain ownership proof challenges.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["publicationPlanningOwnership"] = "cephalon-managed",
                     ["proofPublicationOwnership"] = "application-managed",
                     ["dnsHttpProofCollectionOwnership"] = "application-managed",
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
