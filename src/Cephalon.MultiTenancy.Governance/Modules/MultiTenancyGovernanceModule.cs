@@ -69,6 +69,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantGovernanceActionWorkflow>>(NullLogger<TenantGovernanceActionWorkflow>.Instance);
         services.TryAddSingleton<ITenantMembershipStore>(
             static serviceProvider => TenantMembershipStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
+        services.TryAddSingleton<ITenantInvitationStore>(
+            static serviceProvider => TenantInvitationStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantGovernanceActionStore>(
             static serviceProvider => TenantGovernanceActionStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
@@ -173,6 +175,21 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["runtimeSurface"] = "tenant-invitations",
                 ["configuredInvitationCount"] = options.Invitations.Count.ToString(CultureInfo.InvariantCulture),
                 ["hasInvitationContributors"] = hasInvitationContributors.ToString().ToLowerInvariant()
+            }));
+
+        capabilities.Add(new Capability(
+            key: "tenancy.invitation.store",
+            displayName: "Tenant Invitation Store",
+            description: "Stores runtime tenant invitations managed by the multi-tenancy governance companion pack.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "multi-tenancy",
+                ["package"] = "Cephalon.MultiTenancy.Governance",
+                ["ownership"] = "cephalon-managed",
+                ["runtimeSurface"] = "tenant-invitations",
+                ["storeKind"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "in-memory" : "file",
+                ["storeDurable"] = (!string.IsNullOrWhiteSpace(options.InvitationStoreFilePath)).ToString().ToLowerInvariant(),
+                ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "application-managed" : "cephalon-managed"
             }));
 
         if (options.EnableInvitationValidation)

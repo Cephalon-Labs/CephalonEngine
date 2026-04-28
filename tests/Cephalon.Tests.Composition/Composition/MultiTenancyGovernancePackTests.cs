@@ -175,6 +175,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.evaluation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.catalog");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.validation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.validation");
@@ -199,6 +200,11 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("cephalon-managed", invitationSummaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", invitationSummaryEntry.Metadata["package"]);
         Assert.Equal("2", invitationSummaryEntry.Metadata["invitationCount"]);
+        Assert.Equal("0", invitationSummaryEntry.Metadata["runtimeInvitationCount"]);
+        Assert.Equal("in-memory", invitationSummaryEntry.Metadata["invitationStoreKind"]);
+        Assert.Equal("false", invitationSummaryEntry.Metadata["invitationStoreDurable"]);
+        Assert.Equal("cephalon-managed", invitationSummaryEntry.Metadata["invitationStoreOwnership"]);
+        Assert.Equal("application-managed", invitationSummaryEntry.Metadata["durableStoreOwnership"]);
         Assert.Equal("true", invitationSummaryEntry.Metadata["validationEnabled"]);
         Assert.Equal("cephalon-managed", invitationSummaryEntry.Metadata["validationOwnership"]);
         Assert.Equal("pending:1,revoked:1", invitationSummaryEntry.Metadata["statusBreakdown"]);
@@ -531,6 +537,143 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(invitationsSurface.Entries, entry =>
             entry.Id == "tenant-invitations:tenant-002" &&
             entry.Metadata["inviteeKindBreakdown"] == "group:1");
+    }
+
+    [Fact]
+    public async Task TenantInvitationCatalogReadsRuntimeInvitationStoreUpdates()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var store = provider.GetRequiredService<ITenantInvitationStore>();
+        var catalog = provider.GetRequiredService<ITenantInvitationCatalog>();
+        var validator = provider.GetRequiredService<ITenantInvitationValidator>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        store.Upsert(new TenantInvitationDescriptor(
+            invitationId: "invite-runtime-001",
+            tenantId: "tenant-001",
+            inviteeId: "user-001",
+            displayName: "Runtime Invite",
+            roles: ["member"],
+            expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+            sourceModuleId: "runtime-test"));
+
+        var result = await validator.ValidateAsync(new TenantInvitationValidationRequest(
+            tenantId: "tenant-001",
+            invitationId: "invite-runtime-001",
+            inviteeId: "user-001",
+            requiredRoles: ["member"],
+            atUtc: new DateTimeOffset(2026, 04, 29, 0, 0, 0, TimeSpan.Zero)));
+        var invitationsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-invitations");
+        var summaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
+        var tenantEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitations:tenant-001");
+
+        Assert.Single(catalog.Invitations);
+        Assert.Single(catalog.GetByTenantAndInvitation("tenant-001", "invite-runtime-001"));
+        Assert.True(result.Valid);
+        Assert.Equal(TenantInvitationValidationOutcomes.Valid, result.Outcome);
+        Assert.Equal("1", summaryEntry.Metadata["invitationCount"]);
+        Assert.Equal("1", summaryEntry.Metadata["runtimeInvitationCount"]);
+        Assert.Equal("in-memory", summaryEntry.Metadata["invitationStoreKind"]);
+        Assert.Equal("false", summaryEntry.Metadata["invitationStoreDurable"]);
+        Assert.Equal("application-managed", summaryEntry.Metadata["durableStoreOwnership"]);
+        Assert.Equal("1", tenantEntry.Metadata["pendingInvitationCount"]);
+    }
+
+    [Fact]
+    public async Task TenantInvitationCatalogPersistsThroughFileBackedStore()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), $"cephalon-invitations-{Guid.NewGuid():N}");
+        var storePath = Path.Combine(tempRoot, "tenant-invitations.json");
+        try
+        {
+            var services = new ServiceCollection();
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.InvitationStoreFilePath = storePath;
+                });
+            });
+
+            await using (var provider = services.BuildServiceProvider())
+            {
+                var store = provider.GetRequiredService<ITenantInvitationStore>();
+
+                store.Upsert(new TenantInvitationDescriptor(
+                    invitationId: "invite-durable-001",
+                    tenantId: "tenant-001",
+                    inviteeId: "user-001",
+                    displayName: "Durable Invite",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    sourceModuleId: "runtime-test"));
+
+                Assert.Equal(1, store.Count);
+            }
+
+            var restartedServices = new ServiceCollection();
+            restartedServices.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.InvitationStoreFilePath = storePath;
+                });
+            });
+
+            await using var restartedProvider = restartedServices.BuildServiceProvider();
+            var catalog = restartedProvider.GetRequiredService<ITenantInvitationCatalog>();
+            var validator = restartedProvider.GetRequiredService<ITenantInvitationValidator>();
+            var technologyCatalog = restartedProvider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+            var result = await validator.ValidateAsync(new TenantInvitationValidationRequest(
+                tenantId: "tenant-001",
+                invitationId: "invite-durable-001",
+                inviteeId: "user-001",
+                requiredRoles: ["member"],
+                atUtc: new DateTimeOffset(2026, 04, 29, 0, 0, 0, TimeSpan.Zero)));
+            var invitationsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-invitations");
+            var summaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
+
+            var invitation = Assert.Single(catalog.Invitations);
+            Assert.Equal("Durable Invite", invitation.DisplayName);
+            Assert.True(result.Valid);
+            Assert.Equal("file", summaryEntry.Metadata["invitationStoreKind"]);
+            Assert.Equal("true", summaryEntry.Metadata["invitationStoreDurable"]);
+            Assert.Equal("cephalon-managed", summaryEntry.Metadata["durableStoreOwnership"]);
+            Assert.Equal("1", summaryEntry.Metadata["runtimeInvitationCount"]);
+            Assert.True(File.Exists(storePath));
+        }
+        finally
+        {
+            if (Directory.Exists(tempRoot))
+            {
+                Directory.Delete(tempRoot, recursive: true);
+            }
+        }
     }
 
     [Fact]

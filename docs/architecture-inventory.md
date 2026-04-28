@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, declared tenant-domain ownership catalog/validation, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -338,13 +338,14 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 
 - `identity.authorization` — Identity Authorization
 
-### Multi-tenancy capabilities (11)
+### Multi-tenancy capabilities (13)
 
 - `tenancy.resolution` — Tenant Resolution
 - `tenancy.membership.catalog` — Tenant Membership Catalog
 - `tenancy.membership.store` — Tenant Membership Store
 - `tenancy.membership.evaluation` — Tenant Membership Evaluation
 - `tenancy.invitation.catalog` — Tenant Invitation Catalog
+- `tenancy.invitation.store` — Tenant Invitation Store
 - `tenancy.invitation.validation` — Tenant Invitation Validation
 - `tenancy.domain-ownership.catalog` — Tenant Domain Ownership Catalog
 - `tenancy.domain-ownership.validation` — Tenant Domain Ownership Validation
@@ -443,6 +444,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantMembershipStore` — runtime tenant-membership storage, with in-memory and opt-in file-backed baselines
 - `ITenantMembershipEvaluator` — active tenant-membership and role evaluation
 - `ITenantInvitationCatalog` — merged tenant-invitation read model
+- `ITenantInvitationStore` — runtime tenant-invitation storage, with in-memory and opt-in file-backed baselines
 - `ITenantInvitationValidator` — pending tenant-invitation validation
 - `ITenantDomainOwnershipCatalog` — merged declared tenant-domain ownership read model
 - `ITenantDomainOwnershipValidator` — declared tenant-domain ownership validation
@@ -453,7 +455,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog, store, and evaluation posture from `Cephalon.MultiTenancy.Governance`
-- `tenant-invitations` technology surface — Cephalon-managed invitation catalog and validation posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, and validation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog and validation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 

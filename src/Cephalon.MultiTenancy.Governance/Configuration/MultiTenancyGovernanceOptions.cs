@@ -70,6 +70,11 @@ public sealed class MultiTenancyGovernanceOptions
     public string? MembershipStoreFilePath { get; set; }
 
     /// <summary>
+    /// Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-invitation state.
+    /// </summary>
+    public string? InvitationStoreFilePath { get; set; }
+
+    /// <summary>
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.
     /// </summary>
     public string? GovernanceActionStoreFilePath { get; set; }

@@ -7,18 +7,20 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
     MultiTenancyGovernanceOptions options,
     ITenantInvitationCatalog catalog,
+    ITenantInvitationStore invitationStore,
     IEnumerable<ITenantInvitationContributor> contributors) : ITechnologyRuntimeContributor
 {
     private readonly ITenantInvitationContributor[] contributors = contributors.ToArray();
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var invitations = catalog.Invitations;
         var entries = new List<TechnologyRuntimeEntry>
         {
-            CreateSummaryEntry()
+            CreateSummaryEntry(invitations)
         };
 
-        entries.AddRange(catalog.Invitations
+        entries.AddRange(invitations
             .GroupBy(static invitation => invitation.TenantId, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
             .Select(CreateTenantEntry));
@@ -31,9 +33,9 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             entries: entries);
     }
 
-    private TechnologyRuntimeEntry CreateSummaryEntry()
+    private TechnologyRuntimeEntry CreateSummaryEntry(IReadOnlyList<TenantInvitationDescriptor> invitations)
     {
-        var statusBreakdown = catalog.Invitations
+        var statusBreakdown = invitations
             .GroupBy(static invitation => invitation.Status, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
             .Select(static group => $"{group.Key}:{group.Count().ToString(CultureInfo.InvariantCulture)}")
@@ -42,17 +44,22 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
         {
             ["ownership"] = "cephalon-managed",
             ["package"] = "Cephalon.MultiTenancy.Governance",
-            ["runtimeState"] = catalog.Invitations.Count > 0 ? "configured" : "empty",
-            ["invitationCount"] = catalog.Invitations.Count.ToString(CultureInfo.InvariantCulture),
-            ["tenantCount"] = catalog.Invitations
+            ["runtimeState"] = invitations.Count > 0 ? "configured" : "empty",
+            ["invitationCount"] = invitations.Count.ToString(CultureInfo.InvariantCulture),
+            ["tenantCount"] = invitations
                 .Select(static invitation => invitation.TenantId)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Count()
                 .ToString(CultureInfo.InvariantCulture),
             ["contributorCount"] = contributors.Length.ToString(CultureInfo.InvariantCulture),
             ["configuredInvitationCount"] = options.Invitations.Count.ToString(CultureInfo.InvariantCulture),
+            ["runtimeInvitationCount"] = invitationStore.Count.ToString(CultureInfo.InvariantCulture),
+            ["invitationStoreKind"] = invitationStore.StoreKind,
+            ["invitationStoreDurable"] = invitationStore.IsDurable.ToString().ToLowerInvariant(),
+            ["invitationStoreOwnership"] = invitationStore.Ownership,
             ["validationEnabled"] = options.EnableInvitationValidation.ToString().ToLowerInvariant(),
             ["validationOwnership"] = options.EnableInvitationValidation ? "cephalon-managed" : "not-configured",
+            ["durableStoreOwnership"] = invitationStore.IsDurable ? invitationStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown)
         };
@@ -60,7 +67,7 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-invitation-runtime",
             displayName: "Tenant Invitation Runtime",
-            description: "Summarizes tenant invitation catalog size, contributor count, status posture, and managed validation ownership.",
+            description: "Summarizes tenant invitation catalog size, contributor count, runtime store posture, status posture, and managed validation ownership.",
             metadata: metadata);
     }
 

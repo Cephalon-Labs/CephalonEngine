@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T17:50:25.4355813+00:00",
+  "GeneratedAtUtc": "2026-04-28T18:05:52.209129+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -335,7 +335,7 @@
       "Description": "Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 47
+      "TypeCount": 48
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1361,7 +1361,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 45
+      "TypeCount": 46
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11754,6 +11754,21 @@
       }
     },
     {
+      "DisplayName": "ITenantInvitationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationstore",
+      "Declaration": "public interface ITenantInvitationStore",
+      "Summary": "Stores runtime tenant invitations managed by the multi-tenancy governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantInvitationValidator",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -12604,7 +12619,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 12,
         "Methods": 0
       }
     },
@@ -34202,6 +34217,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-count",
       "Signature": "int Count { get; }",
       "Summary": "Gets the number of stored runtime tenant-governance actions."
+    },
+    {
+      "DisplayName": "Count",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-count",
+      "Signature": "int Count { get; }",
+      "Summary": "Gets the number of stored runtime tenant invitations."
     },
     {
       "DisplayName": "Count",
@@ -58849,7 +58875,18 @@
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationcatalog-invitations",
       "Signature": "IReadOnlyList\u003CTenantInvitationDescriptor\u003E Invitations { get; }",
-      "Summary": "Gets the effective invitation set after host options and module contributors have both been applied."
+      "Summary": "Gets the effective invitation set after runtime storage, host options, and module contributors have all been applied."
+    },
+    {
+      "DisplayName": "Invitations",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-invitations",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDescriptor\u003E Invitations { get; }",
+      "Summary": "Gets the stored runtime tenant invitations."
     },
     {
       "DisplayName": "Invitations",
@@ -58861,6 +58898,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitations",
       "Signature": "IList\u003CTenantInvitationDescriptor\u003E Invitations { get; }",
       "Summary": "Gets the host-defined tenant invitations available to the governance runtime."
+    },
+    {
+      "DisplayName": "InvitationStoreFilePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationstorefilepath",
+      "Signature": "string InvitationStoreFilePath { get; set; }",
+      "Summary": "Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-invitation state."
     },
     {
       "DisplayName": "InviteeId",
@@ -60016,6 +60064,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-isdurable",
       "Signature": "bool IsDurable { get; }",
       "Summary": "Gets a value indicating whether action state survives process restarts."
+    },
+    {
+      "DisplayName": "IsDurable",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-isdurable",
+      "Signature": "bool IsDurable { get; }",
+      "Summary": "Gets a value indicating whether invitation state survives process restarts."
     },
     {
       "DisplayName": "IsDurable",
@@ -76389,6 +76448,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-ownership",
+      "Signature": "string Ownership { get; }",
+      "Summary": "Gets the ownership mode for the store implementation."
+    },
+    {
+      "DisplayName": "Ownership",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-ownership",
       "Signature": "string Ownership { get; }",
       "Summary": "Gets the ownership mode for the store implementation."
     },
@@ -98017,6 +98087,17 @@
     {
       "DisplayName": "StoreKind",
       "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-storekind",
+      "Signature": "string StoreKind { get; }",
+      "Summary": "Gets the operator-facing store kind."
+    },
+    {
+      "DisplayName": "StoreKind",
+      "Category": "Properties",
       "DeclaringTypeName": "ITenantMembershipStore",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -103766,6 +103847,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-upsert-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor",
       "Signature": "void Upsert(TenantGovernanceActionDescriptor action)",
       "Summary": "Creates or replaces one stored runtime tenant-governance action."
+    },
+    {
+      "DisplayName": "Upsert",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationstore-upsert-cephalon-multitenancy-governance-services-tenantinvitationdescriptor",
+      "Signature": "void Upsert(TenantInvitationDescriptor invitation)",
+      "Summary": "Creates or replaces one stored runtime tenant invitation."
     },
     {
       "DisplayName": "Upsert",

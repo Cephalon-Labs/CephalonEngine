@@ -130,6 +130,16 @@ IList<TenantInvitationDescriptor> Invitations { get; }
 
 Gets the host-defined tenant invitations available to the governance runtime.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationstorefilepath"></a>
+
+##### `InvitationStoreFilePath`
+
+```csharp
+string InvitationStoreFilePath { get; set; }
+```
+
+Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-invitation state.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-memberships"></a>
 
 ##### `Memberships`
@@ -619,7 +629,7 @@ public interface ITenantInvitationCatalog
 IReadOnlyList<TenantInvitationDescriptor> Invitations { get; }
 ```
 
-Gets the effective invitation set after host options and module contributors have both been applied.
+Gets the effective invitation set after runtime storage, host options, and module contributors have all been applied.
 
 #### Methods
 
@@ -735,6 +745,84 @@ Adds a tenant-invitation descriptor to the registry.
 
 Parameters:
 - `invitation`: The invitation descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationstore"></a>
+
+### `ITenantInvitationStore`
+
+Stores runtime tenant invitations managed by the multi-tenancy governance companion pack.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationStore
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of stored runtime tenant invitations.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-invitations"></a>
+
+##### `Invitations`
+
+```csharp
+IReadOnlyList<TenantInvitationDescriptor> Invitations { get; }
+```
+
+Gets the stored runtime tenant invitations.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-isdurable"></a>
+
+##### `IsDurable`
+
+```csharp
+bool IsDurable { get; }
+```
+
+Gets a value indicating whether invitation state survives process restarts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; }
+```
+
+Gets the ownership mode for the store implementation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-storekind"></a>
+
+##### `StoreKind`
+
+```csharp
+string StoreKind { get; }
+```
+
+Gets the operator-facing store kind.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationstore-upsert-cephalon-multitenancy-governance-services-tenantinvitationdescriptor"></a>
+
+##### `Upsert`
+
+```csharp
+void Upsert(TenantInvitationDescriptor invitation)
+```
+
+Creates or replaces one stored runtime tenant invitation.
+
+Parameters:
+- `invitation`: The tenant invitation to store.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationvalidator"></a>
 

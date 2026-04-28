@@ -1203,6 +1203,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantInvitationCatalog),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantInvitationContributor),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantInvitationRegistry),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantInvitationStore),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantInvitationValidator),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipCatalog),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipContributor),

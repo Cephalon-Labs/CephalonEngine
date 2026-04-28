@@ -6,7 +6,7 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 public interface ITenantInvitationCatalog
 {
     /// <summary>
-    /// Gets the effective invitation set after host options and module contributors have both been applied.
+    /// Gets the effective invitation set after runtime storage, host options, and module contributors have all been applied.
     /// </summary>
     IReadOnlyList<TenantInvitationDescriptor> Invitations { get; }
 

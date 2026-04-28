@@ -4,17 +4,17 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 
 internal sealed class TenantInvitationCatalog : ITenantInvitationCatalog
 {
-    private readonly Dictionary<string, TenantInvitationDescriptor[]> byTenantId;
-    private readonly Dictionary<string, TenantInvitationDescriptor[]> byInviteeId;
-    private readonly Dictionary<string, TenantInvitationDescriptor[]> byInvitationId;
-    private readonly Dictionary<string, TenantInvitationDescriptor[]> byTenantAndInvitation;
+    private readonly TenantInvitationDescriptor[] configuredInvitations;
+    private readonly ITenantInvitationStore invitationStore;
 
     public TenantInvitationCatalog(
         MultiTenancyGovernanceOptions options,
-        IEnumerable<ITenantInvitationContributor> contributors)
+        IEnumerable<ITenantInvitationContributor> contributors,
+        ITenantInvitationStore invitationStore)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(contributors);
+        ArgumentNullException.ThrowIfNull(invitationStore);
 
         var registry = new TenantInvitationRegistry();
         foreach (var invitation in options.Invitations)
@@ -27,60 +27,37 @@ internal sealed class TenantInvitationCatalog : ITenantInvitationCatalog
             contributor.RegisterInvitations(registry);
         }
 
-        Invitations = registry.Build();
-        byTenantId = Invitations
-            .GroupBy(static invitation => invitation.TenantId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byInviteeId = Invitations
-            .GroupBy(static invitation => invitation.InviteeId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byInvitationId = Invitations
-            .GroupBy(static invitation => invitation.InvitationId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byTenantAndInvitation = Invitations
-            .GroupBy(static invitation => CreateTenantInvitationKey(invitation.TenantId, invitation.InvitationId), StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+        configuredInvitations = [.. registry.Build()];
+        this.invitationStore = invitationStore;
     }
 
-    public IReadOnlyList<TenantInvitationDescriptor> Invitations { get; }
+    public IReadOnlyList<TenantInvitationDescriptor> Invitations => BuildInvitations();
 
     public IReadOnlyList<TenantInvitationDescriptor> GetByTenantId(string tenantId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
-        return byTenantId.TryGetValue(tenantId.Trim(), out var invitations)
-            ? invitations
-            : [];
+        return Invitations
+            .Where(invitation => string.Equals(invitation.TenantId, tenantId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantInvitationDescriptor> GetByInviteeId(string inviteeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(inviteeId);
 
-        return byInviteeId.TryGetValue(inviteeId.Trim(), out var invitations)
-            ? invitations
-            : [];
+        return Invitations
+            .Where(invitation => string.Equals(invitation.InviteeId, inviteeId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantInvitationDescriptor> GetByInvitationId(string invitationId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(invitationId);
 
-        return byInvitationId.TryGetValue(invitationId.Trim(), out var invitations)
-            ? invitations
-            : [];
+        return Invitations
+            .Where(invitation => string.Equals(invitation.InvitationId, invitationId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantInvitationDescriptor> GetByTenantAndInvitation(string tenantId, string invitationId)
@@ -88,9 +65,28 @@ internal sealed class TenantInvitationCatalog : ITenantInvitationCatalog
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
         ArgumentException.ThrowIfNullOrWhiteSpace(invitationId);
 
-        return byTenantAndInvitation.TryGetValue(CreateTenantInvitationKey(tenantId, invitationId), out var invitations)
-            ? invitations
-            : [];
+        return Invitations
+            .Where(invitation => string.Equals(
+                CreateTenantInvitationKey(invitation.TenantId, invitation.InvitationId),
+                CreateTenantInvitationKey(tenantId, invitationId),
+                StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+    }
+
+    private IReadOnlyList<TenantInvitationDescriptor> BuildInvitations()
+    {
+        var registry = new TenantInvitationRegistry();
+        foreach (var invitation in invitationStore.Invitations)
+        {
+            registry.Add(invitation);
+        }
+
+        foreach (var invitation in configuredInvitations)
+        {
+            registry.Add(invitation);
+        }
+
+        return registry.Build();
     }
 
     private static string CreateTenantInvitationKey(string tenantId, string invitationId)
