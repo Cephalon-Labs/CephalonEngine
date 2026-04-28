@@ -140,6 +140,16 @@ IList<TenantMembershipDescriptor> Memberships { get; }
 
 Gets the host-defined tenant memberships available to the governance runtime.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-membershipstorefilepath"></a>
+
+##### `MembershipStoreFilePath`
+
+```csharp
+string MembershipStoreFilePath { get; set; }
+```
+
+Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-membership state.
+
 <a id="namespace-cephalon-multitenancy-governance-registration"></a>
 
 ## Namespace Cephalon.MultiTenancy.Governance.Registration
@@ -776,7 +786,7 @@ public interface ITenantMembershipCatalog
 IReadOnlyList<TenantMembershipDescriptor> Memberships { get; }
 ```
 
-Gets the effective membership set after host options and module contributors have both been applied.
+Gets the effective membership set after runtime storage, host options, and module contributors have all been applied.
 
 #### Methods
 
@@ -923,6 +933,84 @@ Adds a tenant-membership descriptor to the registry.
 
 Parameters:
 - `membership`: The membership descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantmembershipstore"></a>
+
+### `ITenantMembershipStore`
+
+Stores runtime tenant memberships managed by the multi-tenancy governance companion pack.
+
+#### Declaration
+```csharp
+public interface ITenantMembershipStore
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of stored runtime tenant memberships.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-isdurable"></a>
+
+##### `IsDurable`
+
+```csharp
+bool IsDurable { get; }
+```
+
+Gets a value indicating whether membership state survives process restarts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-memberships"></a>
+
+##### `Memberships`
+
+```csharp
+IReadOnlyList<TenantMembershipDescriptor> Memberships { get; }
+```
+
+Gets the stored runtime tenant memberships.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; }
+```
+
+Gets the ownership mode for the store implementation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-storekind"></a>
+
+##### `StoreKind`
+
+```csharp
+string StoreKind { get; }
+```
+
+Gets the operator-facing store kind.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantmembershipstore-upsert-cephalon-multitenancy-governance-services-tenantmembershipdescriptor"></a>
+
+##### `Upsert`
+
+```csharp
+void Upsert(TenantMembershipDescriptor membership)
+```
+
+Creates or replaces one stored runtime tenant membership.
+
+Parameters:
+- `membership`: The tenant membership to store.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor"></a>
 

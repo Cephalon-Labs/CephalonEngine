@@ -1208,6 +1208,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipContributor),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipEvaluator),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipRegistry),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantMembershipStore),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipDescriptor),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipStatuses),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.TenantDomainOwnershipValidationOutcomes),

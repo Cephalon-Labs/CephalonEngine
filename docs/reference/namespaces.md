@@ -418,7 +418,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.MultiTenancy.Governance.Services`
 
-- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 44 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)
+- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 45 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)
 
 ## `Cephalon.MultiTenancy.Registration`
 

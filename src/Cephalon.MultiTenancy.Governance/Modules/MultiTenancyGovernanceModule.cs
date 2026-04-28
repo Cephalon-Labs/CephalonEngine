@@ -67,6 +67,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionDecider>>(NullLogger<TenantGovernanceActionDecider>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionWorkflow>>(NullLogger<TenantGovernanceActionWorkflow>.Instance);
+        services.TryAddSingleton<ITenantMembershipStore>(
+            static serviceProvider => TenantMembershipStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantGovernanceActionStore>(
             static serviceProvider => TenantGovernanceActionStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
@@ -127,6 +129,21 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["runtimeSurface"] = "tenant-memberships",
                 ["configuredMembershipCount"] = options.Memberships.Count.ToString(CultureInfo.InvariantCulture),
                 ["hasMembershipContributors"] = hasMembershipContributors.ToString().ToLowerInvariant()
+            }));
+
+        capabilities.Add(new Capability(
+            key: "tenancy.membership.store",
+            displayName: "Tenant Membership Store",
+            description: "Stores runtime tenant memberships managed by the multi-tenancy governance companion pack.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "multi-tenancy",
+                ["package"] = "Cephalon.MultiTenancy.Governance",
+                ["ownership"] = "cephalon-managed",
+                ["runtimeSurface"] = "tenant-memberships",
+                ["storeKind"] = string.IsNullOrWhiteSpace(options.MembershipStoreFilePath) ? "in-memory" : "file",
+                ["storeDurable"] = (!string.IsNullOrWhiteSpace(options.MembershipStoreFilePath)).ToString().ToLowerInvariant(),
+                ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.MembershipStoreFilePath) ? "application-managed" : "cephalon-managed"
             }));
 
         if (options.EnableMembershipEvaluation)

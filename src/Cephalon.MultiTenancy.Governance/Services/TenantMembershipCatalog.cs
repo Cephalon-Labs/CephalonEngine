@@ -4,17 +4,17 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 
 internal sealed class TenantMembershipCatalog : ITenantMembershipCatalog
 {
-    private readonly Dictionary<string, TenantMembershipDescriptor[]> byTenantId;
-    private readonly Dictionary<string, TenantMembershipDescriptor[]> byPrincipalId;
-    private readonly Dictionary<string, TenantMembershipDescriptor[]> byTenantAndPrincipal;
-    private readonly Dictionary<string, TenantMembershipDescriptor[]> byTenantPrincipalAndKind;
+    private readonly TenantMembershipDescriptor[] configuredMemberships;
+    private readonly ITenantMembershipStore membershipStore;
 
     public TenantMembershipCatalog(
         MultiTenancyGovernanceOptions options,
-        IEnumerable<ITenantMembershipContributor> contributors)
+        IEnumerable<ITenantMembershipContributor> contributors,
+        ITenantMembershipStore membershipStore)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(contributors);
+        ArgumentNullException.ThrowIfNull(membershipStore);
 
         var registry = new TenantMembershipRegistry();
         foreach (var membership in options.Memberships)
@@ -27,53 +27,28 @@ internal sealed class TenantMembershipCatalog : ITenantMembershipCatalog
             contributor.RegisterMemberships(registry);
         }
 
-        Memberships = registry.Build();
-        byTenantId = Memberships
-            .GroupBy(static membership => membership.TenantId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byPrincipalId = Memberships
-            .GroupBy(static membership => membership.PrincipalId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byTenantAndPrincipal = Memberships
-            .GroupBy(static membership => CreateTenantPrincipalKey(membership.TenantId, membership.PrincipalId), StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byTenantPrincipalAndKind = Memberships
-            .GroupBy(
-                static membership => CreateTenantPrincipalKindKey(membership.TenantId, membership.PrincipalKind, membership.PrincipalId),
-                StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+        configuredMemberships = [.. registry.Build()];
+        this.membershipStore = membershipStore;
     }
 
-    public IReadOnlyList<TenantMembershipDescriptor> Memberships { get; }
+    public IReadOnlyList<TenantMembershipDescriptor> Memberships => BuildMemberships();
 
     public IReadOnlyList<TenantMembershipDescriptor> GetByTenantId(string tenantId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
-        return byTenantId.TryGetValue(tenantId.Trim(), out var memberships)
-            ? memberships
-            : [];
+        return Memberships
+            .Where(membership => string.Equals(membership.TenantId, tenantId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantMembershipDescriptor> GetByPrincipalId(string principalId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(principalId);
 
-        return byPrincipalId.TryGetValue(principalId.Trim(), out var memberships)
-            ? memberships
-            : [];
+        return Memberships
+            .Where(membership => string.Equals(membership.PrincipalId, principalId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantMembershipDescriptor> GetByTenantAndPrincipal(string tenantId, string principalId)
@@ -81,9 +56,12 @@ internal sealed class TenantMembershipCatalog : ITenantMembershipCatalog
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
         ArgumentException.ThrowIfNullOrWhiteSpace(principalId);
 
-        return byTenantAndPrincipal.TryGetValue(CreateTenantPrincipalKey(tenantId, principalId), out var memberships)
-            ? memberships
-            : [];
+        return Memberships
+            .Where(membership => string.Equals(
+                CreateTenantPrincipalKey(membership.TenantId, membership.PrincipalId),
+                CreateTenantPrincipalKey(tenantId, principalId),
+                StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantMembershipDescriptor> GetByTenantPrincipalAndKind(string tenantId, string principalKind, string principalId)
@@ -92,9 +70,28 @@ internal sealed class TenantMembershipCatalog : ITenantMembershipCatalog
         ArgumentException.ThrowIfNullOrWhiteSpace(principalKind);
         ArgumentException.ThrowIfNullOrWhiteSpace(principalId);
 
-        return byTenantPrincipalAndKind.TryGetValue(CreateTenantPrincipalKindKey(tenantId, principalKind, principalId), out var memberships)
-            ? memberships
-            : [];
+        return Memberships
+            .Where(membership => string.Equals(
+                CreateTenantPrincipalKindKey(membership.TenantId, membership.PrincipalKind, membership.PrincipalId),
+                CreateTenantPrincipalKindKey(tenantId, principalKind, principalId),
+                StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+    }
+
+    private IReadOnlyList<TenantMembershipDescriptor> BuildMemberships()
+    {
+        var registry = new TenantMembershipRegistry();
+        foreach (var membership in membershipStore.Memberships)
+        {
+            registry.Add(membership);
+        }
+
+        foreach (var membership in configuredMemberships)
+        {
+            registry.Add(membership);
+        }
+
+        return registry.Build();
     }
 
     private static string CreateTenantPrincipalKey(string tenantId, string principalId)

@@ -172,6 +172,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(2, domainCatalog.DomainOwnerships.Count);
         Assert.Equal(2, governanceActionCatalog.Actions.Count);
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.catalog");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.evaluation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.validation");
@@ -184,6 +185,11 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", summaryEntry.Metadata["package"]);
         Assert.Equal("2", summaryEntry.Metadata["membershipCount"]);
+        Assert.Equal("0", summaryEntry.Metadata["runtimeMembershipCount"]);
+        Assert.Equal("in-memory", summaryEntry.Metadata["membershipStoreKind"]);
+        Assert.Equal("false", summaryEntry.Metadata["membershipStoreDurable"]);
+        Assert.Equal("cephalon-managed", summaryEntry.Metadata["membershipStoreOwnership"]);
+        Assert.Equal("application-managed", summaryEntry.Metadata["durableStoreOwnership"]);
         Assert.Equal("true", summaryEntry.Metadata["evaluationEnabled"]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["evaluationOwnership"]);
         Assert.Equal("2", tenantEntry.Metadata["membershipCount"]);
@@ -307,6 +313,135 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(membershipsSurface.Entries, entry =>
             entry.Id == "tenant-membership:tenant-002" &&
             entry.Metadata["principalKindBreakdown"] == "group:1");
+    }
+
+    [Fact]
+    public async Task TenantMembershipCatalogReadsRuntimeMembershipStoreUpdates()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var store = provider.GetRequiredService<ITenantMembershipStore>();
+        var catalog = provider.GetRequiredService<ITenantMembershipCatalog>();
+        var evaluator = provider.GetRequiredService<ITenantMembershipEvaluator>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        store.Upsert(new TenantMembershipDescriptor(
+            tenantId: "tenant-001",
+            principalId: "user-001",
+            displayName: "Runtime Admin",
+            roles: ["admin"],
+            sourceModuleId: "runtime-test"));
+
+        var result = await evaluator.EvaluateAsync(new TenantMembershipEvaluationRequest(
+            tenantId: "tenant-001",
+            principalId: "user-001",
+            requiredRoles: ["admin"]));
+        var membershipsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-memberships");
+        var summaryEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership-runtime");
+        var tenantEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership:tenant-001");
+
+        Assert.Single(catalog.Memberships);
+        Assert.Single(catalog.GetByTenantAndPrincipal("tenant-001", "user-001"));
+        Assert.True(result.Allowed);
+        Assert.Equal(TenantMembershipEvaluationOutcomes.Allowed, result.Outcome);
+        Assert.Equal("1", summaryEntry.Metadata["membershipCount"]);
+        Assert.Equal("1", summaryEntry.Metadata["runtimeMembershipCount"]);
+        Assert.Equal("in-memory", summaryEntry.Metadata["membershipStoreKind"]);
+        Assert.Equal("false", summaryEntry.Metadata["membershipStoreDurable"]);
+        Assert.Equal("application-managed", summaryEntry.Metadata["durableStoreOwnership"]);
+        Assert.Equal("1", tenantEntry.Metadata["activeMembershipCount"]);
+    }
+
+    [Fact]
+    public async Task TenantMembershipCatalogPersistsThroughFileBackedStore()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), $"cephalon-memberships-{Guid.NewGuid():N}");
+        var storePath = Path.Combine(tempRoot, "tenant-memberships.json");
+        try
+        {
+            var services = new ServiceCollection();
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.MembershipStoreFilePath = storePath;
+                });
+            });
+
+            await using (var provider = services.BuildServiceProvider())
+            {
+                var store = provider.GetRequiredService<ITenantMembershipStore>();
+
+                store.Upsert(new TenantMembershipDescriptor(
+                    tenantId: "tenant-001",
+                    principalId: "user-001",
+                    displayName: "Durable Admin",
+                    roles: ["admin"],
+                    sourceModuleId: "runtime-test"));
+
+                Assert.Equal(1, store.Count);
+            }
+
+            var restartedServices = new ServiceCollection();
+            restartedServices.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.MembershipStoreFilePath = storePath;
+                });
+            });
+
+            await using var restartedProvider = restartedServices.BuildServiceProvider();
+            var catalog = restartedProvider.GetRequiredService<ITenantMembershipCatalog>();
+            var evaluator = restartedProvider.GetRequiredService<ITenantMembershipEvaluator>();
+            var technologyCatalog = restartedProvider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+            var result = await evaluator.EvaluateAsync(new TenantMembershipEvaluationRequest(
+                tenantId: "tenant-001",
+                principalId: "user-001",
+                requiredRoles: ["admin"]));
+            var membershipsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-memberships");
+            var summaryEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership-runtime");
+
+            var membership = Assert.Single(catalog.Memberships);
+            Assert.Equal("Durable Admin", membership.DisplayName);
+            Assert.True(result.Allowed);
+            Assert.Equal("file", summaryEntry.Metadata["membershipStoreKind"]);
+            Assert.Equal("true", summaryEntry.Metadata["membershipStoreDurable"]);
+            Assert.Equal("cephalon-managed", summaryEntry.Metadata["durableStoreOwnership"]);
+            Assert.Equal("1", summaryEntry.Metadata["runtimeMembershipCount"]);
+            Assert.True(File.Exists(storePath));
+        }
+        finally
+        {
+            if (Directory.Exists(tempRoot))
+            {
+                Directory.Delete(tempRoot, recursive: true);
+            }
+        }
     }
 
     [Fact]

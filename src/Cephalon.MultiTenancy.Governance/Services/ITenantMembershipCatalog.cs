@@ -6,7 +6,7 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 public interface ITenantMembershipCatalog
 {
     /// <summary>
-    /// Gets the effective membership set after host options and module contributors have both been applied.
+    /// Gets the effective membership set after runtime storage, host options, and module contributors have all been applied.
     /// </summary>
     IReadOnlyList<TenantMembershipDescriptor> Memberships { get; }
 

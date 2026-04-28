@@ -2151,6 +2151,11 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["ownership"] == "cephalon-managed" &&
                 entry.Metadata["package"] == "Cephalon.MultiTenancy.Governance" &&
                 entry.Metadata["membershipCount"] == "1" &&
+                entry.Metadata["runtimeMembershipCount"] == "0" &&
+                entry.Metadata["membershipStoreKind"] == "in-memory" &&
+                entry.Metadata["membershipStoreDurable"] == "false" &&
+                entry.Metadata["membershipStoreOwnership"] == "cephalon-managed" &&
+                entry.Metadata["durableStoreOwnership"] == "application-managed" &&
                 entry.Metadata["evaluationOwnership"] == "cephalon-managed");
         Assert.Contains(
             tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-invitations").Entries,

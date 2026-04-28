@@ -4911,6 +4911,9 @@ Browse the published API surface by public member.
 - [Count](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-count): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of stored runtime tenant-governance actions.
   - `int Count { get; }`
+- [Count](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-count): `Properties` on `ITenantMembershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the number of stored runtime tenant memberships.
+  - `int Count { get; }`
 - [Counters](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-counters): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Counters&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The built-in counter names exposed by the engine.
   - `IReadOnlyList<string> Counters { get; set; }`
@@ -11964,6 +11967,9 @@ Browse the published API surface by public member.
 - [IsDurable](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-isdurable): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether action state survives process restarts.
   - `bool IsDurable { get; }`
+- [IsDurable](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-isdurable): `Properties` on `ITenantMembershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether membership state survives process restarts.
+  - `bool IsDurable { get; }`
 - [IsEligible](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-iseligible): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsEligible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether automatic background retry execution is currently eligible to run one shared retry attempt.
   - `bool IsEligible { get; }`
@@ -14134,11 +14140,17 @@ Browse the published API surface by public member.
   - A governance action that changes tenant membership.
   - `const string MembershipChange`
 - [Memberships](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantmembershipcatalog-memberships): `Properties` on `ITenantMembershipCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Memberships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
-  - Gets the effective membership set after host options and module contributors have both been applied.
+  - Gets the effective membership set after runtime storage, host options, and module contributors have all been applied.
+  - `IReadOnlyList<TenantMembershipDescriptor> Memberships { get; }`
+- [Memberships](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-memberships): `Properties` on `ITenantMembershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Memberships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stored runtime tenant memberships.
   - `IReadOnlyList<TenantMembershipDescriptor> Memberships { get; }`
 - [Memberships](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-memberships): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Memberships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets the host-defined tenant memberships available to the governance runtime.
   - `IList<TenantMembershipDescriptor> Memberships { get; }`
+- [MembershipStoreFilePath](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-membershipstorefilepath): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MembershipStoreFilePath&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-membership state.
+  - `string MembershipStoreFilePath { get; set; }`
 - [MemcachedDependencyDefinition](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-ctor): `Constructors` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=MemcachedDependencyDefinition&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
   - Initializes a new instance of the `MemcachedDependencyDefinition` class.
   - `MemcachedDependencyDefinition()`
@@ -16434,6 +16446,9 @@ Browse the published API surface by public member.
   - A condition that describes ownership posture for a materialized resource.
   - `const string Ownership`
 - [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-ownership): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the ownership mode for the store implementation.
+  - `string Ownership { get; }`
+- [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-ownership): `Properties` on `ITenantMembershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the ownership mode for the store implementation.
   - `string Ownership { get; }`
 - [OwnershipActive](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-ownershipactive): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipActive&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -22339,6 +22354,9 @@ Browse the published API surface by public member.
 - [StoreKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-storekind): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the operator-facing store kind.
   - `string StoreKind { get; }`
+- [StoreKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-storekind): `Properties` on `ITenantMembershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the operator-facing store kind.
+  - `string StoreKind { get; }`
 - [StranglerFig](cephalon-engine.md#member-p-cephalon-engine-configuration-migrationsettings-stranglerfig): `Properties` on `MigrationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=StranglerFig&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the strangler-fig migration settings resolved for the app.
   - `StranglerFigMigrationSettings StranglerFig { get; }`
@@ -23911,6 +23929,9 @@ Browse the published API surface by public member.
 - [Upsert](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-upsert-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor): `Methods` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Upsert&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates or replaces one stored runtime tenant-governance action.
   - `void Upsert(TenantGovernanceActionDescriptor action)`
+- [Upsert](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantmembershipstore-upsert-cephalon-multitenancy-governance-services-tenantmembershipdescriptor): `Methods` on `ITenantMembershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Upsert&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates or replaces one stored runtime tenant membership.
+  - `void Upsert(TenantMembershipDescriptor membership)`
 - [Uri](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgedocument-uri): `Properties` on `KnowledgeDocument` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Uri&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets an optional document URI for operator drill-down.
   - `Uri Uri { get; }`

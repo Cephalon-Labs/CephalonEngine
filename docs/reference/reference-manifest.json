@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T17:37:23.237941+00:00",
+  "GeneratedAtUtc": "2026-04-28T17:50:25.4355813+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -232,7 +232,7 @@
       "Description": "Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 46
+      "TypeCount": 47
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1258,7 +1258,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 44
+      "TypeCount": 45
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11726,6 +11726,21 @@
       }
     },
     {
+      "DisplayName": "ITenantMembershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantmembershipstore",
+      "Declaration": "public interface ITenantMembershipStore",
+      "Summary": "Stores runtime tenant memberships managed by the multi-tenancy governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantResolver",
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
       "AssemblyName": "Cephalon.Abstractions",
@@ -12486,7 +12501,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 10,
+        "Properties": 11,
         "Methods": 0
       }
     },
@@ -34084,6 +34099,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-count",
       "Signature": "int Count { get; }",
       "Summary": "Gets the number of stored runtime tenant-governance actions."
+    },
+    {
+      "DisplayName": "Count",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantMembershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-count",
+      "Signature": "int Count { get; }",
+      "Summary": "Gets the number of stored runtime tenant memberships."
     },
     {
       "DisplayName": "Counters",
@@ -59889,6 +59915,17 @@
       "Summary": "Gets a value indicating whether action state survives process restarts."
     },
     {
+      "DisplayName": "IsDurable",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantMembershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-isdurable",
+      "Signature": "bool IsDurable { get; }",
+      "Summary": "Gets a value indicating whether membership state survives process restarts."
+    },
+    {
       "DisplayName": "IsEligible",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -67806,7 +67843,18 @@
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantmembershipcatalog-memberships",
       "Signature": "IReadOnlyList\u003CTenantMembershipDescriptor\u003E Memberships { get; }",
-      "Summary": "Gets the effective membership set after host options and module contributors have both been applied."
+      "Summary": "Gets the effective membership set after runtime storage, host options, and module contributors have all been applied."
+    },
+    {
+      "DisplayName": "Memberships",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantMembershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-memberships",
+      "Signature": "IReadOnlyList\u003CTenantMembershipDescriptor\u003E Memberships { get; }",
+      "Summary": "Gets the stored runtime tenant memberships."
     },
     {
       "DisplayName": "Memberships",
@@ -67818,6 +67866,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-memberships",
       "Signature": "IList\u003CTenantMembershipDescriptor\u003E Memberships { get; }",
       "Summary": "Gets the host-defined tenant memberships available to the governance runtime."
+    },
+    {
+      "DisplayName": "MembershipStoreFilePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-membershipstorefilepath",
+      "Signature": "string MembershipStoreFilePath { get; set; }",
+      "Summary": "Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-membership state."
     },
     {
       "DisplayName": "MemcachedDependencyDefinition",
@@ -76227,6 +76286,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-ownership",
+      "Signature": "string Ownership { get; }",
+      "Summary": "Gets the ownership mode for the store implementation."
+    },
+    {
+      "DisplayName": "Ownership",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantMembershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-ownership",
       "Signature": "string Ownership { get; }",
       "Summary": "Gets the ownership mode for the store implementation."
     },
@@ -97842,6 +97912,17 @@
       "Summary": "Gets the operator-facing store kind."
     },
     {
+      "DisplayName": "StoreKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantMembershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-storekind",
+      "Signature": "string StoreKind { get; }",
+      "Summary": "Gets the operator-facing store kind."
+    },
+    {
       "DisplayName": "StranglerFig",
       "Category": "Properties",
       "DeclaringTypeName": "MigrationSettings",
@@ -103582,6 +103663,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-upsert-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor",
       "Signature": "void Upsert(TenantGovernanceActionDescriptor action)",
       "Summary": "Creates or replaces one stored runtime tenant-governance action."
+    },
+    {
+      "DisplayName": "Upsert",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantMembershipStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantmembershipstore-upsert-cephalon-multitenancy-governance-services-tenantmembershipdescriptor",
+      "Signature": "void Upsert(TenantMembershipDescriptor membership)",
+      "Summary": "Creates or replaces one stored runtime tenant membership."
     },
     {
       "DisplayName": "Uri",

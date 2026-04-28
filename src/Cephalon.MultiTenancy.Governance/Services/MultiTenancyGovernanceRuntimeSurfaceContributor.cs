@@ -7,18 +7,20 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 internal sealed class MultiTenancyGovernanceRuntimeSurfaceContributor(
     MultiTenancyGovernanceOptions options,
     ITenantMembershipCatalog catalog,
+    ITenantMembershipStore membershipStore,
     IEnumerable<ITenantMembershipContributor> contributors) : ITechnologyRuntimeContributor
 {
     private readonly ITenantMembershipContributor[] contributors = contributors.ToArray();
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var memberships = catalog.Memberships;
         var entries = new List<TechnologyRuntimeEntry>
         {
-            CreateSummaryEntry()
+            CreateSummaryEntry(memberships)
         };
 
-        entries.AddRange(catalog.Memberships
+        entries.AddRange(memberships
             .GroupBy(static membership => membership.TenantId, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
             .Select(CreateTenantEntry));
@@ -31,30 +33,35 @@ internal sealed class MultiTenancyGovernanceRuntimeSurfaceContributor(
             entries: entries);
     }
 
-    private TechnologyRuntimeEntry CreateSummaryEntry()
+    private TechnologyRuntimeEntry CreateSummaryEntry(IReadOnlyList<TenantMembershipDescriptor> memberships)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["ownership"] = "cephalon-managed",
             ["package"] = "Cephalon.MultiTenancy.Governance",
-            ["runtimeState"] = catalog.Memberships.Count > 0 ? "configured" : "empty",
-            ["membershipCount"] = catalog.Memberships.Count.ToString(CultureInfo.InvariantCulture),
-            ["tenantCount"] = catalog.Memberships
+            ["runtimeState"] = memberships.Count > 0 ? "configured" : "empty",
+            ["membershipCount"] = memberships.Count.ToString(CultureInfo.InvariantCulture),
+            ["tenantCount"] = memberships
                 .Select(static membership => membership.TenantId)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Count()
                 .ToString(CultureInfo.InvariantCulture),
             ["contributorCount"] = contributors.Length.ToString(CultureInfo.InvariantCulture),
             ["configuredMembershipCount"] = options.Memberships.Count.ToString(CultureInfo.InvariantCulture),
+            ["runtimeMembershipCount"] = membershipStore.Count.ToString(CultureInfo.InvariantCulture),
+            ["membershipStoreKind"] = membershipStore.StoreKind,
+            ["membershipStoreDurable"] = membershipStore.IsDurable.ToString().ToLowerInvariant(),
+            ["membershipStoreOwnership"] = membershipStore.Ownership,
             ["evaluationEnabled"] = options.EnableMembershipEvaluation.ToString().ToLowerInvariant(),
             ["evaluationOwnership"] = options.EnableMembershipEvaluation ? "cephalon-managed" : "not-configured",
+            ["durableStoreOwnership"] = membershipStore.IsDurable ? membershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion"
         };
 
         return new TechnologyRuntimeEntry(
             id: "tenant-membership-runtime",
             displayName: "Tenant Membership Runtime",
-            description: "Summarizes tenant membership catalog size, contributor count, and managed evaluation ownership.",
+            description: "Summarizes tenant membership catalog size, contributor count, runtime store posture, and managed evaluation ownership.",
             metadata: metadata);
     }
 

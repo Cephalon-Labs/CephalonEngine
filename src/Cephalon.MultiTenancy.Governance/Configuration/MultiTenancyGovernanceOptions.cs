@@ -65,6 +65,11 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableGovernanceActionWorkflow { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-membership state.
+    /// </summary>
+    public string? MembershipStoreFilePath { get; set; }
+
+    /// <summary>
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.
     /// </summary>
     public string? GovernanceActionStoreFilePath { get; set; }
