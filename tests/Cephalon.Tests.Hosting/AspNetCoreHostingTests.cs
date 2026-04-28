@@ -2174,7 +2174,10 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["package"] == "Cephalon.MultiTenancy.Governance" &&
                 entry.Metadata["actionCount"] == "1" &&
                 entry.Metadata["decisionOwnership"] == "cephalon-managed" &&
-                entry.Metadata["workflowExecutionOwnership"] == "application-managed");
+                entry.Metadata["workflowExecutionOwnership"] == "cephalon-managed" &&
+                entry.Metadata["runtimeActionCount"] == "0" &&
+                entry.Metadata["durableStoreOwnership"] == "application-managed" &&
+                entry.Metadata["notificationDeliveryOwnership"] == "application-managed");
 
         var edge = Assert.Single(surfaces, surface => surface.TechnologyId == "edge-native-delivery");
         Assert.Contains(edge.Entries, entry => entry.Id == "storefront-edge");

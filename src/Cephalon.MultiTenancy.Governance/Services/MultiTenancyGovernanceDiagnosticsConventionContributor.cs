@@ -66,10 +66,24 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Denied tenant governance action decision for tenant '{TenantId}' and action '{ActionId}'. Outcome: {Outcome}. Reason: {Reason}.",
         Description: "Emitted when the governance companion does not allow a tenant-governance action.");
 
+    public static readonly DiagnosticEventDefinition GovernanceActionWorkflowApplied = new(
+        Id: 4518,
+        Name: "TenantGovernanceActionWorkflowApplied",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Applied tenant governance action workflow command '{Command}' for tenant '{TenantId}' and action '{ActionId}'. Status: {Status}.",
+        Description: "Emitted when the governance companion applies an in-process tenant-governance action workflow transition.");
+
+    public static readonly DiagnosticEventDefinition GovernanceActionWorkflowDenied = new(
+        Id: 4519,
+        Name: "TenantGovernanceActionWorkflowDenied",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Denied tenant governance action workflow command '{Command}' for tenant '{TenantId}' and action '{ActionId}'. Outcome: {Outcome}. Reason: {Reason}.",
+        Description: "Emitted when the governance companion rejects an in-process tenant-governance action workflow transition.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, and approval/remediation action decisions.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, approval/remediation action decisions, and in-process governance-action workflow transitions.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -79,7 +93,9 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             DomainOwnershipValidationAllowed,
             DomainOwnershipValidationDenied,
             GovernanceActionDecisionAllowed,
-            GovernanceActionDecisionDenied
+            GovernanceActionDecisionDenied,
+            GovernanceActionWorkflowApplied,
+            GovernanceActionWorkflowDenied
         ]);
 }
 
@@ -148,6 +164,22 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionDenied.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionDenied.Name),
             MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> GovernanceActionWorkflowAppliedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowApplied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowApplied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowApplied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, string, Exception?> GovernanceActionWorkflowDeniedMessage =
+        LoggerMessage.Define<string, string, string, string, string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.MessageTemplate);
 
     public static void MembershipEvaluationAllowed(
         ILogger logger,
@@ -231,5 +263,28 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         GovernanceActionDecisionDeniedMessage(logger, tenantId, actionId, outcome, reason, exception);
+    }
+
+    public static void GovernanceActionWorkflowApplied(
+        ILogger logger,
+        string tenantId,
+        string actionId,
+        string command,
+        string status,
+        Exception? exception)
+    {
+        GovernanceActionWorkflowAppliedMessage(logger, command, tenantId, actionId, status, exception);
+    }
+
+    public static void GovernanceActionWorkflowDenied(
+        ILogger logger,
+        string tenantId,
+        string actionId,
+        string command,
+        string outcome,
+        string reason,
+        Exception? exception)
+    {
+        GovernanceActionWorkflowDeniedMessage(logger, command, tenantId, actionId, outcome, reason, exception);
     }
 }

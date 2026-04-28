@@ -7,6 +7,7 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 internal sealed class MultiTenancyGovernanceActionRuntimeSurfaceContributor(
     MultiTenancyGovernanceOptions options,
     ITenantGovernanceActionCatalog catalog,
+    TenantGovernanceActionRuntimeStore runtimeStore,
     IEnumerable<ITenantGovernanceActionContributor> contributors) : ITechnologyRuntimeContributor
 {
     private readonly ITenantGovernanceActionContributor[] contributors = contributors.ToArray();
@@ -62,10 +63,13 @@ internal sealed class MultiTenancyGovernanceActionRuntimeSurfaceContributor(
                 .ToString(CultureInfo.InvariantCulture),
             ["contributorCount"] = contributors.Length.ToString(CultureInfo.InvariantCulture),
             ["configuredActionCount"] = options.GovernanceActions.Count.ToString(CultureInfo.InvariantCulture),
+            ["runtimeActionCount"] = runtimeStore.Count.ToString(CultureInfo.InvariantCulture),
             ["decisionEnabled"] = options.EnableGovernanceActionDecision.ToString().ToLowerInvariant(),
             ["decisionOwnership"] = options.EnableGovernanceActionDecision ? "cephalon-managed" : "not-configured",
-            ["workflowExecutionOwnership"] = "application-managed",
+            ["workflowEnabled"] = options.EnableGovernanceActionWorkflow.ToString().ToLowerInvariant(),
+            ["workflowExecutionOwnership"] = options.EnableGovernanceActionWorkflow ? "cephalon-managed" : "not-configured",
             ["durableStoreOwnership"] = "application-managed",
+            ["notificationDeliveryOwnership"] = "application-managed",
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown),
             ["actionKindBreakdown"] = actionKindBreakdown.Length == 0 ? "none" : string.Join(",", actionKindBreakdown),
             ["subjectKindBreakdown"] = subjectKindBreakdown.Length == 0 ? "none" : string.Join(",", subjectKindBreakdown)
@@ -74,7 +78,7 @@ internal sealed class MultiTenancyGovernanceActionRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-governance-action-runtime",
             displayName: "Tenant Governance Action Runtime",
-            description: "Summarizes approval/remediation action catalog size, contributor count, status posture, action-kind posture, and managed decision ownership.",
+            description: "Summarizes approval/remediation action catalog size, contributor count, status posture, action-kind posture, managed decision ownership, and in-process workflow ownership.",
             metadata: metadata);
     }
 

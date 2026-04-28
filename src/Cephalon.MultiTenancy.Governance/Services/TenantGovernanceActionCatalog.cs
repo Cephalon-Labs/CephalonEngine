@@ -4,16 +4,17 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 
 internal sealed class TenantGovernanceActionCatalog : ITenantGovernanceActionCatalog
 {
-    private readonly Dictionary<string, TenantGovernanceActionDescriptor[]> byTenantId;
-    private readonly Dictionary<string, TenantGovernanceActionDescriptor[]> byActionId;
-    private readonly Dictionary<string, TenantGovernanceActionDescriptor[]> byTenantAndAction;
+    private readonly TenantGovernanceActionDescriptor[] configuredActions;
+    private readonly TenantGovernanceActionRuntimeStore runtimeStore;
 
     public TenantGovernanceActionCatalog(
         MultiTenancyGovernanceOptions options,
-        IEnumerable<ITenantGovernanceActionContributor> contributors)
+        IEnumerable<ITenantGovernanceActionContributor> contributors,
+        TenantGovernanceActionRuntimeStore runtimeStore)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(contributors);
+        ArgumentNullException.ThrowIfNull(runtimeStore);
 
         var registry = new TenantGovernanceActionRegistry();
         foreach (var action in options.GovernanceActions)
@@ -26,47 +27,28 @@ internal sealed class TenantGovernanceActionCatalog : ITenantGovernanceActionCat
             contributor.RegisterGovernanceActions(registry);
         }
 
-        Actions = registry.Build();
-        byTenantId = Actions
-            .GroupBy(static action => action.TenantId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byActionId = Actions
-            .GroupBy(static action => action.ActionId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        byTenantAndAction = Actions
-            .GroupBy(
-                static action => CreateTenantActionKey(action.TenantId, action.ActionId),
-                StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+        configuredActions = [.. registry.Build()];
+        this.runtimeStore = runtimeStore;
     }
 
-    public IReadOnlyList<TenantGovernanceActionDescriptor> Actions { get; }
+    public IReadOnlyList<TenantGovernanceActionDescriptor> Actions => BuildActions();
 
     public IReadOnlyList<TenantGovernanceActionDescriptor> GetByTenantId(string tenantId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
-        return byTenantId.TryGetValue(tenantId.Trim(), out var actions)
-            ? actions
-            : [];
+        return Actions
+            .Where(action => string.Equals(action.TenantId, tenantId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantGovernanceActionDescriptor> GetByActionId(string actionId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(actionId);
 
-        return byActionId.TryGetValue(actionId.Trim(), out var actions)
-            ? actions
-            : [];
+        return Actions
+            .Where(action => string.Equals(action.ActionId, actionId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
     }
 
     public IReadOnlyList<TenantGovernanceActionDescriptor> GetByTenantAndAction(string tenantId, string actionId)
@@ -74,9 +56,28 @@ internal sealed class TenantGovernanceActionCatalog : ITenantGovernanceActionCat
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
         ArgumentException.ThrowIfNullOrWhiteSpace(actionId);
 
-        return byTenantAndAction.TryGetValue(CreateTenantActionKey(tenantId, actionId), out var actions)
-            ? actions
-            : [];
+        return Actions
+            .Where(action => string.Equals(
+                CreateTenantActionKey(action.TenantId, action.ActionId),
+                CreateTenantActionKey(tenantId, actionId),
+                StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+    }
+
+    private IReadOnlyList<TenantGovernanceActionDescriptor> BuildActions()
+    {
+        var registry = new TenantGovernanceActionRegistry();
+        foreach (var action in runtimeStore.Actions)
+        {
+            registry.Add(action);
+        }
+
+        foreach (var action in configuredActions)
+        {
+            registry.Add(action);
+        }
+
+        return registry.Build();
     }
 
     private static string CreateTenantActionKey(string tenantId, string actionId)

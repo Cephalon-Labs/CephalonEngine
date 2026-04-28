@@ -70,6 +70,16 @@ bool EnableGovernanceActionDecision { get; set; }
 
 Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enablegovernanceactionworkflow"></a>
+
+##### `EnableGovernanceActionWorkflow`
+
+```csharp
+bool EnableGovernanceActionWorkflow { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-governance action workflow executor is active.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationvalidation"></a>
 
 ##### `EnableInvitationValidation`
@@ -460,6 +470,35 @@ Adds a tenant-governance action descriptor to the registry.
 
 Parameters:
 - `action`: The governance action descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantgovernanceactionworkflow"></a>
+
+### `ITenantGovernanceActionWorkflow`
+
+Applies host-agnostic tenant-governance action workflow transitions.
+
+#### Declaration
+```csharp
+public interface ITenantGovernanceActionWorkflow
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionworkflow-applyasync-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-system-threading-cancellationtoken"></a>
+
+##### `ApplyAsync`
+
+```csharp
+ValueTask<TenantGovernanceActionWorkflowResult> ApplyAsync(TenantGovernanceActionWorkflowRequest request, CancellationToken cancellationToken)
+```
+
+Applies one tenant-governance action workflow transition.
+
+Returns: The workflow transition result.
+
+Parameters:
+- `request`: The workflow transition request.
+- `cancellationToken`: A token that cancels the transition.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationcatalog"></a>
 
@@ -1978,6 +2017,490 @@ const string RemediationRequired
 ```
 
 The action requires remediation before it can proceed.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands"></a>
+
+### `TenantGovernanceActionWorkflowCommands`
+
+Defines built-in tenant-governance action workflow commands.
+
+#### Declaration
+```csharp
+public static class TenantGovernanceActionWorkflowCommands
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-approve"></a>
+
+##### `Approve`
+
+```csharp
+const string Approve
+```
+
+Approves a pending tenant-governance action.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-expire"></a>
+
+##### `Expire`
+
+```csharp
+const string Expire
+```
+
+Expires a non-terminal tenant-governance action.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-markremediated"></a>
+
+##### `MarkRemediated`
+
+```csharp
+const string MarkRemediated
+```
+
+Marks a remediation-required tenant-governance action as remediated.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-reject"></a>
+
+##### `Reject`
+
+```csharp
+const string Reject
+```
+
+Rejects a pending or remediation-required tenant-governance action.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-request"></a>
+
+##### `Request`
+
+```csharp
+const string Request
+```
+
+Creates a pending tenant-governance action.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-requireremediation"></a>
+
+##### `RequireRemediation`
+
+```csharp
+const string RequireRemediation
+```
+
+Marks a pending or approved tenant-governance action as requiring remediation.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes"></a>
+
+### `TenantGovernanceActionWorkflowOutcomes`
+
+Defines built-in tenant-governance action workflow transition outcomes.
+
+#### Declaration
+```csharp
+public static class TenantGovernanceActionWorkflowOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-actionkindmismatch"></a>
+
+##### `ActionKindMismatch`
+
+```csharp
+const string ActionKindMismatch
+```
+
+The matching tenant-governance action has a different action kind.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-applied"></a>
+
+##### `Applied`
+
+```csharp
+const string Applied
+```
+
+The workflow transition updated an existing tenant-governance action.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-created"></a>
+
+##### `Created`
+
+```csharp
+const string Created
+```
+
+The workflow transition created a new tenant-governance action.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Tenant-governance action workflow execution is disabled.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-invalidtransition"></a>
+
+##### `InvalidTransition`
+
+```csharp
+const string InvalidTransition
+```
+
+The requested workflow transition is not valid from the current action status.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No tenant-governance action matched the supplied identifiers.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch"></a>
+
+##### `SubjectMismatch`
+
+```csharp
+const string SubjectMismatch
+```
+
+The matching tenant-governance action has a different subject boundary.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+The matching tenant-governance action belongs to a different tenant.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest"></a>
+
+### `TenantGovernanceActionWorkflowRequest`
+
+Describes one tenant-governance action workflow transition request.
+
+#### Declaration
+```csharp
+public sealed class TenantGovernanceActionWorkflowRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantGovernanceActionWorkflowRequest`
+
+```csharp
+TenantGovernanceActionWorkflowRequest(string command, string tenantId, string actionId, string actionKind, string subjectKind, string subjectId, string displayName, string actor, string reason, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-governance action workflow transition request.
+
+Parameters:
+- `command`: The workflow command to apply.
+- `tenantId`: The tenant identifier to transition.
+- `actionId`: The governance action identifier to transition.
+- `actionKind`: The optional governance action kind.
+- `subjectKind`: The optional subject kind affected by the action.
+- `subjectId`: The optional subject identifier affected by the action.
+- `displayName`: The optional operator-facing action name.
+- `actor`: The actor that requested the workflow transition when known.
+- `reason`: The optional operator-facing transition reason.
+- `atUtc`: The UTC timestamp used for the transition. The runtime clock is used when omitted.
+- `expiresAtUtc`: The optional UTC timestamp when the action expires.
+- `correlationId`: The optional correlation identifier for the workflow transition.
+- `metadata`: Optional transition metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-actionid"></a>
+
+##### `ActionId`
+
+```csharp
+string ActionId { get; }
+```
+
+Gets the governance action identifier to transition.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-actionkind"></a>
+
+##### `ActionKind`
+
+```csharp
+string ActionKind { get; }
+```
+
+Gets the optional governance action kind.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested the workflow transition when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for the transition.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-command"></a>
+
+##### `Command`
+
+```csharp
+string Command { get; }
+```
+
+Gets the workflow command to apply.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the workflow transition.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing action name.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the optional UTC timestamp when the action expires.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional transition metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the optional operator-facing transition reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the optional subject identifier affected by the action.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-subjectkind"></a>
+
+##### `SubjectKind`
+
+```csharp
+string SubjectKind { get; }
+```
+
+Gets the optional subject kind affected by the action.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier to transition.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult"></a>
+
+### `TenantGovernanceActionWorkflowResult`
+
+Describes the result of one tenant-governance action workflow transition.
+
+#### Declaration
+```csharp
+public sealed class TenantGovernanceActionWorkflowResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-string-system-string-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantGovernanceActionWorkflowResult`
+
+```csharp
+TenantGovernanceActionWorkflowResult(string tenantId, string actionId, string command, string outcome, bool applied, DateTimeOffset occurredAtUtc, string previousStatus, string currentStatus, TenantGovernanceActionDescriptor action, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-governance action workflow transition result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was targeted.
+- `actionId`: The governance action identifier that was targeted.
+- `command`: The workflow command that was requested.
+- `outcome`: The workflow transition outcome.
+- `applied`: A value indicating whether the workflow transition was applied.
+- `occurredAtUtc`: The UTC timestamp when the workflow transition was evaluated.
+- `previousStatus`: The action status before the workflow transition when one existed.
+- `currentStatus`: The action status after the workflow transition when one exists.
+- `action`: The resulting action descriptor when one exists.
+- `reason`: The operator-facing transition reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-action"></a>
+
+##### `Action`
+
+```csharp
+TenantGovernanceActionDescriptor Action { get; }
+```
+
+Gets the resulting action descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-actionid"></a>
+
+##### `ActionId`
+
+```csharp
+string ActionId { get; }
+```
+
+Gets the governance action identifier that was targeted.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-applied"></a>
+
+##### `Applied`
+
+```csharp
+bool Applied { get; }
+```
+
+Gets a value indicating whether the workflow transition was applied.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-command"></a>
+
+##### `Command`
+
+```csharp
+string Command { get; }
+```
+
+Gets the workflow command that was requested.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-currentstatus"></a>
+
+##### `CurrentStatus`
+
+```csharp
+string CurrentStatus { get; }
+```
+
+Gets the action status after the workflow transition when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; }
+```
+
+Gets the UTC timestamp when the workflow transition was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the workflow transition outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-previousstatus"></a>
+
+##### `PreviousStatus`
+
+```csharp
+string PreviousStatus { get; }
+```
+
+Gets the action status before the workflow transition when one existed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing transition reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was targeted.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdescriptor"></a>
 

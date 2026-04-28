@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, tenant-invitation catalog/validation, declared tenant-domain ownership catalog/validation, approval/remediation action catalog/decision, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, tenant-invitation catalog/validation, declared tenant-domain ownership catalog/validation, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -338,11 +338,18 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 
 - `identity.authorization` — Identity Authorization
 
-### Multi-tenancy capabilities (3)
+### Multi-tenancy capabilities (10)
 
 - `tenancy.resolution` — Tenant Resolution
 - `tenancy.membership.catalog` — Tenant Membership Catalog
 - `tenancy.membership.evaluation` — Tenant Membership Evaluation
+- `tenancy.invitation.catalog` — Tenant Invitation Catalog
+- `tenancy.invitation.validation` — Tenant Invitation Validation
+- `tenancy.domain-ownership.catalog` — Tenant Domain Ownership Catalog
+- `tenancy.domain-ownership.validation` — Tenant Domain Ownership Validation
+- `tenancy.governance-action.catalog` — Tenant Governance Action Catalog
+- `tenancy.governance-action.decision` — Tenant Governance Action Decision
+- `tenancy.governance-action.workflow` — Tenant Governance Action Workflow
 
 ### Agentics capabilities (4)
 
@@ -438,12 +445,13 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantDomainOwnershipValidator` — declared tenant-domain ownership validation
 - `ITenantGovernanceActionCatalog` — merged approval/remediation action read model
 - `ITenantGovernanceActionDecider` — tenant-governance action decision
+- `ITenantGovernanceActionWorkflow` — in-process tenant-governance action workflow transitions
 - `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog and evaluation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-invitations` technology surface — Cephalon-managed invitation catalog and validation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog and validation posture from `Cephalon.MultiTenancy.Governance`
-- `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog and decision posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, and in-process workflow posture from `Cephalon.MultiTenancy.Governance`
 
 ### Audit
 
@@ -466,7 +474,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Wolverine Eventing (`Cephalon.Eventing.Wolverine`) — event IDs 4300–4305
 - Identity (`Cephalon.Identity`) — event IDs 4400–4401
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
-- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4517
+- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4519
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
 
@@ -587,7 +595,7 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Transports: **6** + 3 messaging bindings = **9**
 - Execution strategies: **7**
 - Modules: 6 core + 14 data + 10 event-sourcing + 6 specialized + 1 identifier = **37**
-- Capabilities: **78+**
+- Capabilities: **79+**
 - Data abstractions: **24+** interfaces
 - Diagnostics sources: **10**
 - Dependency health probes: **18**

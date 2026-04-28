@@ -105,6 +105,7 @@ public sealed class MultiTenancyGovernancePackTests
         var domainValidator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
         var governanceActionCatalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
         var governanceActionDecider = provider.GetRequiredService<ITenantGovernanceActionDecider>();
+        var governanceActionWorkflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
         var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
@@ -178,6 +179,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.validation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.decision");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.workflow");
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", summaryEntry.Metadata["package"]);
         Assert.Equal("2", summaryEntry.Metadata["membershipCount"]);
@@ -214,7 +216,11 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("2", governanceActionSummaryEntry.Metadata["actionCount"]);
         Assert.Equal("true", governanceActionSummaryEntry.Metadata["decisionEnabled"]);
         Assert.Equal("cephalon-managed", governanceActionSummaryEntry.Metadata["decisionOwnership"]);
-        Assert.Equal("application-managed", governanceActionSummaryEntry.Metadata["workflowExecutionOwnership"]);
+        Assert.Equal("true", governanceActionSummaryEntry.Metadata["workflowEnabled"]);
+        Assert.Equal("cephalon-managed", governanceActionSummaryEntry.Metadata["workflowExecutionOwnership"]);
+        Assert.Equal("0", governanceActionSummaryEntry.Metadata["runtimeActionCount"]);
+        Assert.Equal("application-managed", governanceActionSummaryEntry.Metadata["durableStoreOwnership"]);
+        Assert.Equal("application-managed", governanceActionSummaryEntry.Metadata["notificationDeliveryOwnership"]);
         Assert.Equal("approved:1,remediation-required:1", governanceActionSummaryEntry.Metadata["statusBreakdown"]);
         Assert.Equal("membership-change:1,remediation:1", governanceActionSummaryEntry.Metadata["actionKindBreakdown"]);
         Assert.Equal("2", tenantGovernanceActionEntry.Metadata["actionCount"]);
@@ -242,7 +248,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.False(remediationRequiredAction.Allowed);
         Assert.Equal(TenantGovernanceActionDecisionOutcomes.RemediationRequired, remediationRequiredAction.Outcome);
         Assert.Equal(4510, diagnosticsConvention.MinimumEventId);
-        Assert.Equal(4517, diagnosticsConvention.MaximumEventId);
+        Assert.NotNull(governanceActionWorkflow);
+        Assert.Equal(4519, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
@@ -251,6 +258,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4515 && entry.Name == "TenantDomainOwnershipValidationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4516 && entry.Name == "TenantGovernanceActionDecisionAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4517 && entry.Name == "TenantGovernanceActionDecisionDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4518 && entry.Name == "TenantGovernanceActionWorkflowApplied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4519 && entry.Name == "TenantGovernanceActionWorkflowDenied");
     }
 
     [Fact]
@@ -613,6 +622,147 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(TenantGovernanceActionDecisionOutcomes.SubjectMismatch, subjectMismatch.Outcome);
         Assert.True(allowed.Allowed);
         Assert.Equal(TenantGovernanceActionDecisionOutcomes.Allowed, allowed.Outcome);
+    }
+
+    [Fact]
+    public async Task TenantGovernanceActionWorkflowTransitionsFeedCatalogDecisionAndSurface()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
+        var catalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
+        var decider = provider.GetRequiredService<ITenantGovernanceActionDecider>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var created = await workflow.ApplyAsync(new TenantGovernanceActionWorkflowRequest(
+            command: TenantGovernanceActionWorkflowCommands.Request,
+            tenantId: "tenant-001",
+            actionId: "workflow-action-001",
+            actionKind: TenantGovernanceActionKinds.MembershipChange,
+            subjectKind: "user",
+            subjectId: "user-001",
+            actor: "operator-001",
+            reason: "Membership change requires owner approval.",
+            atUtc: new DateTimeOffset(2026, 04, 29, 0, 0, 0, TimeSpan.Zero)));
+        var pendingDecision = await decider.DecideAsync(new TenantGovernanceActionDecisionRequest(
+            tenantId: "tenant-001",
+            actionId: "workflow-action-001",
+            actionKind: TenantGovernanceActionKinds.MembershipChange,
+            subjectKind: "user",
+            subjectId: "user-001",
+            atUtc: new DateTimeOffset(2026, 04, 29, 0, 0, 0, TimeSpan.Zero)));
+        var approved = await workflow.ApplyAsync(new TenantGovernanceActionWorkflowRequest(
+            command: TenantGovernanceActionWorkflowCommands.Approve,
+            tenantId: "tenant-001",
+            actionId: "workflow-action-001",
+            actionKind: TenantGovernanceActionKinds.MembershipChange,
+            subjectKind: "user",
+            subjectId: "user-001",
+            actor: "tenant-owner",
+            correlationId: "corr-001",
+            atUtc: new DateTimeOffset(2026, 04, 29, 0, 5, 0, TimeSpan.Zero)));
+        var allowedDecision = await decider.DecideAsync(new TenantGovernanceActionDecisionRequest(
+            tenantId: "tenant-001",
+            actionId: "workflow-action-001",
+            actionKind: TenantGovernanceActionKinds.MembershipChange,
+            subjectKind: "user",
+            subjectId: "user-001",
+            atUtc: new DateTimeOffset(2026, 04, 29, 0, 10, 0, TimeSpan.Zero)));
+        var actionsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-governance-actions");
+        var summaryEntry = Assert.Single(actionsSurface.Entries, entry => entry.Id == "tenant-governance-action-runtime");
+        var tenantEntry = Assert.Single(actionsSurface.Entries, entry => entry.Id == "tenant-governance-actions:tenant-001");
+
+        Assert.True(created.Applied);
+        Assert.Equal(TenantGovernanceActionWorkflowOutcomes.Created, created.Outcome);
+        Assert.Null(created.PreviousStatus);
+        Assert.Equal(TenantGovernanceActionStatuses.PendingApproval, created.CurrentStatus);
+        Assert.False(pendingDecision.Allowed);
+        Assert.Equal(TenantGovernanceActionDecisionOutcomes.PendingApproval, pendingDecision.Outcome);
+        Assert.True(approved.Applied);
+        Assert.Equal(TenantGovernanceActionWorkflowOutcomes.Applied, approved.Outcome);
+        Assert.Equal(TenantGovernanceActionStatuses.PendingApproval, approved.PreviousStatus);
+        Assert.Equal(TenantGovernanceActionStatuses.Approved, approved.CurrentStatus);
+        Assert.True(allowedDecision.Allowed);
+        Assert.Equal(TenantGovernanceActionDecisionOutcomes.Allowed, allowedDecision.Outcome);
+        var action = Assert.Single(catalog.Actions);
+        Assert.Equal(TenantGovernanceActionStatuses.Approved, action.Status);
+        Assert.Equal("tenant-owner", action.ApprovedBy);
+        Assert.Equal("approve", action.Metadata["lastWorkflowCommand"]);
+        Assert.Equal("corr-001", action.Metadata["lastWorkflowCorrelationId"]);
+        Assert.Equal("1", summaryEntry.Metadata["actionCount"]);
+        Assert.Equal("1", summaryEntry.Metadata["runtimeActionCount"]);
+        Assert.Equal("true", summaryEntry.Metadata["workflowEnabled"]);
+        Assert.Equal("cephalon-managed", summaryEntry.Metadata["workflowExecutionOwnership"]);
+        Assert.Equal("approved:1", summaryEntry.Metadata["statusBreakdown"]);
+        Assert.Equal("1", tenantEntry.Metadata["approvedActionCount"]);
+    }
+
+    [Fact]
+    public async Task TenantGovernanceActionWorkflowRejectsInvalidTransitionsAndBoundaries()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.GovernanceActions.Add(new TenantGovernanceActionDescriptor(
+                    actionId: "shared-action",
+                    tenantId: "tenant-001",
+                    actionKind: TenantGovernanceActionKinds.Remediation,
+                    subjectKind: "domain",
+                    subjectId: "docs.example",
+                    status: TenantGovernanceActionStatuses.Approved));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
+
+        var tenantMismatch = await workflow.ApplyAsync(new TenantGovernanceActionWorkflowRequest(
+            command: TenantGovernanceActionWorkflowCommands.RequireRemediation,
+            tenantId: "tenant-002",
+            actionId: "shared-action",
+            actionKind: TenantGovernanceActionKinds.Remediation));
+        var subjectMismatch = await workflow.ApplyAsync(new TenantGovernanceActionWorkflowRequest(
+            command: TenantGovernanceActionWorkflowCommands.RequireRemediation,
+            tenantId: "tenant-001",
+            actionId: "shared-action",
+            actionKind: TenantGovernanceActionKinds.Remediation,
+            subjectKind: "domain",
+            subjectId: "other.example"));
+        var invalidTransition = await workflow.ApplyAsync(new TenantGovernanceActionWorkflowRequest(
+            command: TenantGovernanceActionWorkflowCommands.MarkRemediated,
+            tenantId: "tenant-001",
+            actionId: "shared-action",
+            actionKind: TenantGovernanceActionKinds.Remediation,
+            subjectKind: "domain",
+            subjectId: "docs.example"));
+
+        Assert.False(tenantMismatch.Applied);
+        Assert.Equal(TenantGovernanceActionWorkflowOutcomes.TenantMismatch, tenantMismatch.Outcome);
+        Assert.False(subjectMismatch.Applied);
+        Assert.Equal(TenantGovernanceActionWorkflowOutcomes.SubjectMismatch, subjectMismatch.Outcome);
+        Assert.False(invalidTransition.Applied);
+        Assert.Equal(TenantGovernanceActionWorkflowOutcomes.InvalidTransition, invalidTransition.Outcome);
+        Assert.Equal(TenantGovernanceActionStatuses.Approved, invalidTransition.PreviousStatus);
+        Assert.Equal(TenantGovernanceActionStatuses.Approved, invalidTransition.CurrentStatus);
     }
 
     private sealed class TestTenantMembershipContributor : ITenantMembershipContributor

@@ -66,6 +66,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantInvitationValidator>>(NullLogger<TenantInvitationValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionDecider>>(NullLogger<TenantGovernanceActionDecider>.Instance);
+        services.TryAddSingleton<ILogger<TenantGovernanceActionWorkflow>>(NullLogger<TenantGovernanceActionWorkflow>.Instance);
+        services.TryAddSingleton<TenantGovernanceActionRuntimeStore>();
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
         services.TryAddSingleton<ITenantInvitationCatalog, TenantInvitationCatalog>();
         services.TryAddSingleton<ITenantDomainOwnershipCatalog, TenantDomainOwnershipCatalog>();
@@ -89,6 +91,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         if (options.EnableGovernanceActionDecision)
         {
             services.TryAddSingleton<ITenantGovernanceActionDecider, TenantGovernanceActionDecider>();
+        }
+
+        if (options.EnableGovernanceActionWorkflow)
+        {
+            services.TryAddSingleton<ITenantGovernanceActionWorkflow, TenantGovernanceActionWorkflow>();
         }
 
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceRuntimeSurfaceContributor>());
@@ -219,6 +226,23 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["technology"] = "multi-tenancy",
                     ["package"] = "Cephalon.MultiTenancy.Governance",
                     ["executionOwnership"] = "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-governance-actions"
+                }));
+        }
+
+        if (options.EnableGovernanceActionWorkflow)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.governance-action.workflow",
+                displayName: "Tenant Governance Action Workflow",
+                description: "Executes in-process approval and remediation status transitions for tenant-governance actions.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["durableStoreOwnership"] = "application-managed",
+                    ["notificationDeliveryOwnership"] = "application-managed",
                     ["runtimeSurface"] = "tenant-governance-actions"
                 }));
         }

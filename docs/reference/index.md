@@ -76,7 +76,7 @@ Quick links:
 - [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md): ASP.NET Core host adapter for Cephalon identity and authorization workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore)
 - [Cephalon.Ids.Sfid](cephalon-ids-sfid.md): Official Sfid.Net-backed identifier generation for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Ids.Sfid)
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md): Host-agnostic tenant-resolution and ambient tenant-context baseline for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy)
-- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md): Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads. Contains 3 namespaces and 40 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance)
+- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md): Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads. Contains 3 namespaces and 45 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance)
 
 ### Tooling
 

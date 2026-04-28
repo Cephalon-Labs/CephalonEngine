@@ -58,4 +58,9 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
     /// </summary>
     public bool EnableGovernanceActionDecision { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-governance action workflow executor is active.
+    /// </summary>
+    public bool EnableGovernanceActionWorkflow { get; set; } = true;
 }
