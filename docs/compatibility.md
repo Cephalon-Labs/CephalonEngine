@@ -56,6 +56,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 - when a technology pack moves from descriptor-only or application-managed behavior into a real managed execution lane, update the public contracts, component docs, capability metadata, runtime-surface metadata, reference docs, and package-surface expectations together
 - keep execution ownership explicit in both public contracts and runtime metadata; do not let a pack read as `cephalon-managed` or `provider-managed` unless the implementation truly owns the path
 - keep narrow managed proofs honest about their trigger path and boundaries, for example when an adapter-managed execution lane depends on an existing staged-publication flow instead of a generic inbound broker story
+- for `Cephalon.Agentics`, the current managed proof is the dispatcher-plus-run-state path around registered `IAgentToolExecutor` services; broader autonomous planning, memory persistence, retry queues, or AI-provider orchestration are not part of that compatibility promise until a package owns them explicitly
 
 ### REST authoring and governance
 

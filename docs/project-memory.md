@@ -218,6 +218,7 @@ The near-term planning center has shifted away from "start the engine" and towar
 - every meaningful package or runtime surface now needs an explicit maturity and ownership label through `docs/engine-surface-maturity-audit.md`: `M0` through `M4` plus `taxonomy-only`, `application-managed`, `cephalon-managed`, or `provider-managed`
 - intentional descriptor-only or catalog-only work is allowed, but it should stay explicitly labeled as `M0` or `M1` instead of reading like partial execution ownership
 - mixed-maturity families should prefer one narrow vertical proof slice before expanding descriptor breadth again
+- `ENG-232` has now promoted `Cephalon.Agentics` from descriptor/runtime-surface truth into a narrow `M2` proof: `IAgentToolDispatcher` owns one Cephalon-managed tool loop around registered `IAgentToolExecutor` services, `IAgentToolExecutionPolicy` can require approval or deny before execution, `IAgentToolExecutionObserver` can attach audit/telemetry, and `IAgentToolRunCatalog` projects run-state truth back into the `agent-tools` technology surface; this does not yet claim autonomous planning, memory persistence, retry queues, or AI-provider orchestration ownership
 
 Recent roadmap memory worth keeping in mind:
 

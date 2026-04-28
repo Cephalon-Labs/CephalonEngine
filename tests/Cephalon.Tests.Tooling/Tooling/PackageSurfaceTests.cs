@@ -886,8 +886,22 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Agentics.Configuration.AgenticRuntimeOptions),
             typeof(global::Cephalon.Agentics.Registration.AgenticEngineBuilderExtensions),
             typeof(global::Cephalon.Agentics.Services.AgentToolDescriptor),
+            typeof(global::Cephalon.Agentics.Services.AgentToolExecutionContext),
+            typeof(global::Cephalon.Agentics.Services.AgentToolExecutionDecision),
+            typeof(global::Cephalon.Agentics.Services.AgentToolExecutionDecisionKinds),
+            typeof(global::Cephalon.Agentics.Services.AgentToolExecutionOutcomes),
+            typeof(global::Cephalon.Agentics.Services.AgentToolExecutionReport),
+            typeof(global::Cephalon.Agentics.Services.AgentToolExecutionRequest),
+            typeof(global::Cephalon.Agentics.Services.AgentToolExecutionResult),
+            typeof(global::Cephalon.Agentics.Services.AgentToolRunState),
+            typeof(global::Cephalon.Agentics.Services.IAgentToolDispatcher),
             typeof(global::Cephalon.Agentics.Services.IAgentToolCatalog),
             typeof(global::Cephalon.Agentics.Services.IAgentToolContributor),
+            typeof(global::Cephalon.Agentics.Services.IAgentToolExecutionObserver),
+            typeof(global::Cephalon.Agentics.Services.IAgentToolExecutionPolicy),
+            typeof(global::Cephalon.Agentics.Services.IAgentToolExecutor),
+            typeof(global::Cephalon.Agentics.Services.IAgentToolRunCatalog),
+            typeof(global::Cephalon.Agentics.Services.IAgentToolRunReporter),
             typeof(global::Cephalon.Agentics.Services.IAgentToolRegistry));
     }
 

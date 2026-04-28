@@ -54,6 +54,16 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
         hasToolContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IAgentToolContributor));
         services.TryAddSingleton(options);
         services.TryAddSingleton<IAgentToolCatalog, AgentToolCatalog>();
+        if (options.EnableExecution)
+        {
+            services.TryAddSingleton<AgentToolRunCatalog>();
+            services.TryAddSingleton<IAgentToolRunCatalog>(static serviceProvider =>
+                serviceProvider.GetRequiredService<AgentToolRunCatalog>());
+            services.TryAddSingleton<IAgentToolRunReporter>(static serviceProvider =>
+                serviceProvider.GetRequiredService<AgentToolRunCatalog>());
+            services.TryAddSingleton<IAgentToolDispatcher, AgentToolDispatcher>();
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, AgenticsRuntimeSurfaceContributor>());
     }
 
@@ -80,7 +90,9 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
                 description: "Supports tool execution and agent action dispatch.",
                 metadata: new Dictionary<string, string>
                 {
-                    ["technology"] = "agentic-workloads"
+                    ["technology"] = "agentic-workloads",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["runtime"] = "agent-tool-dispatcher"
                 }));
         }
 

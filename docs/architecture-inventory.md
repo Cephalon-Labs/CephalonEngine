@@ -200,7 +200,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `eventing-runtime` — Eventing Runtime (`Cephalon.Eventing`): companion runtime services for event-driven integration workloads.
 - `eventing-behaviors` — Eventing Behaviors (`Cephalon.Eventing.Behaviors`): explicit saga choreography bridge into the shared eventing publish path.
 - `wolverine-eventing` — Wolverine Eventing (`Cephalon.Eventing.Wolverine`): optional Wolverine host wiring for event-driven integration workloads.
-- `agentics-runtime` — Agentics Runtime (`Cephalon.Agentics`): companion runtime services for agentic workloads.
+- `agentics-runtime` — Agentics Runtime (`Cephalon.Agentics`): companion runtime services, managed tool dispatch, and run-state projection for agentic workloads.
 - `edge-runtime` — Edge Runtime (`Cephalon.Edge`): companion runtime services for edge-native delivery workloads.
 - `knowledge-retrieval-runtime` — Knowledge Retrieval Runtime (`Cephalon.Retrieval`): companion runtime services for retrieval-heavy applications.
 
@@ -344,7 +344,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 ### Agentics capabilities (4)
 
 - `agentics.runtime` — Agentic Runtime
-- `agentics.execution` — Agent Execution
+- `agentics.execution` — Agent Execution, including the Cephalon-managed dispatcher/run-state baseline when execution is enabled
 - `agentics.memory` — Agent Memory
 - `agentics.tools` — Agent Tools
 

@@ -10,6 +10,7 @@
     "Technologies": [
       "identity-access",
       "multi-tenancy",
+      "agentic-workloads",
       "event-driven-integration"
     ],
     "Transports": [

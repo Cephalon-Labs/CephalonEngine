@@ -90,7 +90,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Agentics.Services`
 
-- [Cephalon.Agentics](cephalon-agentics.md#namespace-cephalon-agentics-services): 4 public types [Browse](browse.html?assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
+- [Cephalon.Agentics](cephalon-agentics.md#namespace-cephalon-agentics-services): 18 public types [Browse](browse.html?assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
 
 ## `Cephalon.AspNetCore.Diagnostics`
 

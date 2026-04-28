@@ -10,6 +10,8 @@ using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Resilience;
+using Cephalon.Abstractions.Technologies;
+using Cephalon.Agentics.Services;
 using Cephalon.Sample.Showcase;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Cephalon.Sample.Showcase.Modules;
@@ -169,6 +171,43 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Null(overridePolicy.Enabled);
         Assert.Equal(400, overridePolicy.PermitLimit);
         Assert.Equal(40, overridePolicy.QueueLimit);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleExecutesAgenticToolAndProjectsRunState()
+    {
+        await using var app = BuildShowcaseForTests();
+
+        await app.StartAsync();
+        var dispatcher = app.Services.GetRequiredService<IAgentToolDispatcher>();
+
+        var result = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "showcase.catalog-inspector",
+            runId: "showcase-agent-run-001",
+            arguments: new Dictionary<string, string>
+            {
+                ["focus"] = "catalog"
+            },
+            actorId: "showcase-test",
+            correlationId: "corr-showcase-agentics-001"));
+
+        var client = app.GetTestClient();
+        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/agentic-workloads");
+
+        Assert.Equal(AgentToolExecutionOutcomes.Succeeded, result.Outcome);
+        Assert.Equal("Inspected showcase catalog posture.", result.OutputSummary);
+        Assert.NotNull(surfaces);
+        var agentics = Assert.Single(surfaces);
+        var tool = Assert.Single(agentics.Entries, entry => entry.Id == "showcase.catalog-inspector");
+        Assert.Equal("cephalon-managed", tool.Metadata["executionOwnership"]);
+        Assert.Equal("reported", tool.Metadata["runtimeState"]);
+        Assert.Equal("showcase-agent-run-001", tool.Metadata["lastRunId"]);
+        Assert.Equal("succeeded", tool.Metadata["lastOutcome"]);
+        Assert.Equal("2", tool.Metadata["totalReports"]);
+        Assert.Equal("showcase-test", tool.Metadata["lastActorId"]);
+        Assert.Equal("corr-showcase-agentics-001", tool.Metadata["lastCorrelationId"]);
+        Assert.Equal("Inspected showcase catalog posture.", tool.Metadata["lastOutputSummary"]);
+        Assert.Equal("catalog", tool.Metadata["reported.focus"]);
     }
 
     [Fact]

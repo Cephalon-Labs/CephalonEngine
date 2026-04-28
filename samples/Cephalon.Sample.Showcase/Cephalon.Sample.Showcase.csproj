@@ -25,6 +25,7 @@
                       ReferenceOutputAssembly="false" />
 
     <!-- Data and event sourcing -->
+    <ProjectReference Include="..\..\src\Cephalon.Agentics\Cephalon.Agentics.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.EntityFramework\Cephalon.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Redis\Cephalon.Data.Redis.csproj" />

@@ -2245,6 +2245,116 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task AddTechnologyPacksExecuteAgentToolsAndProjectRunState()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["AgenticWorkloads"]));
+            engine.AddAgentics();
+            engine.AddModule(new TechnologyPackContributionModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<IAgentToolDispatcher>();
+        var auditProbe = provider.GetRequiredService<AgentToolExecutionAuditProbe>();
+
+        var result = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "analyst",
+            runId: "analysis-run-001",
+            arguments: new Dictionary<string, string>
+            {
+                ["subject"] = "agentics runtime"
+            },
+            actorId: "operator",
+            correlationId: "corr-agentics-001",
+            metadata: new Dictionary<string, string>
+            {
+                ["requestSource"] = "composition-test"
+            }));
+
+        var runCatalog = provider.GetRequiredService<IAgentToolRunCatalog>();
+        var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var runState = Assert.Single(runCatalog.GetByToolId("analyst"));
+        var agenticsSurface = Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
+        var analystEntry = Assert.Single(agenticsSurface.Entries, entry => entry.Id == "analyst");
+
+        Assert.Equal(AgentToolExecutionOutcomes.Succeeded, result.Outcome);
+        Assert.Equal("Analyzed agentics runtime.", result.OutputSummary);
+        Assert.Equal("analysis-run-001", runState.RunId);
+        Assert.Equal(AgentToolExecutionOutcomes.Succeeded, runState.LastOutcome);
+        Assert.Equal("operator", runState.LastActorId);
+        Assert.Equal("corr-agentics-001", runState.LastCorrelationId);
+        Assert.Equal(1, runState.StartedCount);
+        Assert.Equal(1, runState.SucceededCount);
+        Assert.Equal(2, runState.TotalReports);
+        Assert.True(runState.IsTerminal);
+        Assert.False(runState.RequiresApproval);
+        Assert.Contains(auditProbe.Reports, report =>
+            report.RunId == "analysis-run-001" &&
+            report.Outcome == AgentToolExecutionOutcomes.Started);
+        Assert.Contains(auditProbe.Reports, report =>
+            report.RunId == "analysis-run-001" &&
+            report.Outcome == AgentToolExecutionOutcomes.Succeeded);
+        Assert.Equal("true", analystEntry.Metadata["executionEnabled"]);
+        Assert.Equal("cephalon-managed", analystEntry.Metadata["executionOwnership"]);
+        Assert.Equal("true", analystEntry.Metadata["executorConfigured"]);
+        Assert.Equal("reported", analystEntry.Metadata["runtimeState"]);
+        Assert.Equal("analysis-run-001", analystEntry.Metadata["lastRunId"]);
+        Assert.Equal("succeeded", analystEntry.Metadata["lastOutcome"]);
+        Assert.Equal("1", analystEntry.Metadata["startedCount"]);
+        Assert.Equal("1", analystEntry.Metadata["succeededCount"]);
+        Assert.Equal("2", analystEntry.Metadata["totalReports"]);
+        Assert.Equal("false", analystEntry.Metadata["requiresApproval"]);
+        Assert.Equal("true", analystEntry.Metadata["isTerminal"]);
+        Assert.Equal("operator", analystEntry.Metadata["lastActorId"]);
+        Assert.Equal("corr-agentics-001", analystEntry.Metadata["lastCorrelationId"]);
+        Assert.Equal("Analyzed agentics runtime.", analystEntry.Metadata["lastOutputSummary"]);
+        Assert.Equal(nameof(ContributedAgentToolExecutor), analystEntry.Metadata["reported.executor"]);
+    }
+
+    [Fact]
+    public async Task AddTechnologyPacksReportApprovalRequiredAgentToolRunsWithoutCallingExecutor()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["AgenticWorkloads"]));
+            engine.AddAgentics();
+            engine.AddModule(new TechnologyPackContributionModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<IAgentToolDispatcher>();
+
+        var result = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "analyst",
+            runId: "analysis-run-approval-001",
+            metadata: new Dictionary<string, string>
+            {
+                ["approval"] = "required"
+            }));
+
+        var runCatalog = provider.GetRequiredService<IAgentToolRunCatalog>();
+        var runState = Assert.Single(runCatalog.GetByToolId("analyst"));
+
+        Assert.Equal(AgentToolExecutionOutcomes.ApprovalRequired, result.Outcome);
+        Assert.Equal("The analyst tool requires approval for this request.", result.OutputSummary);
+        Assert.Equal(AgentToolExecutionOutcomes.ApprovalRequired, runState.LastOutcome);
+        Assert.Equal(1, runState.StartedCount);
+        Assert.Equal(1, runState.ApprovalRequiredCount);
+        Assert.Equal(0, runState.SucceededCount);
+        Assert.True(runState.RequiresApproval);
+        Assert.False(runState.IsTerminal);
+    }
+
+    [Fact]
     public void AddTechnologyPacksRejectAgentToolsThatReferenceUnknownRuntimeContracts()
     {
         var services = new ServiceCollection();
@@ -2316,6 +2426,8 @@ public sealed class EngineBuilderTests
         var runtime = provider.GetRequiredService<IRuntime>();
 
         Assert.Null(provider.GetService<IAgentToolCatalog>());
+        Assert.Null(provider.GetService<IAgentToolDispatcher>());
+        Assert.Null(provider.GetService<IAgentToolRunCatalog>());
         Assert.Null(provider.GetService<IEventChannelCatalog>());
         Assert.Null(provider.GetService<IEventSubscriptionCatalog>());
         Assert.Null(provider.GetService<IEventDispatchRuntimeCatalog>());

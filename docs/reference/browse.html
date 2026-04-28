@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-25T21:45:23.2842239+00:00",
+  "GeneratedAtUtc": "2026-04-28T14:11:51.4395811+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -119,7 +119,7 @@
       "Description": "Agentic workload runtime services and extension points.",
       "FileName": "cephalon-agentics.md",
       "NamespaceCount": 3,
-      "TypeCount": 6
+      "TypeCount": 20
     },
     {
       "AssemblyName": "Cephalon.AspNetCore",
@@ -779,7 +779,7 @@
       "AssemblyName": "Cephalon.Agentics",
       "FileName": "cephalon-agentics.md",
       "AnchorId": "namespace-cephalon-agentics-services",
-      "TypeCount": 4
+      "TypeCount": 18
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
@@ -1896,6 +1896,126 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenttoolexecutioncontext",
+      "Declaration": "public sealed class AgentToolExecutionContext",
+      "Summary": "Describes the host-agnostic execution context delivered to one managed agent-tool executor.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AgentToolExecutionDecision",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenttoolexecutiondecision",
+      "Declaration": "public sealed class AgentToolExecutionDecision",
+      "Summary": "Describes a policy decision for one agent-tool execution request.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 3
+      }
+    },
+    {
+      "DisplayName": "AgentToolExecutionDecisionKinds",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenttoolexecutiondecisionkinds",
+      "Declaration": "public static class AgentToolExecutionDecisionKinds",
+      "Summary": "Defines stable decision identifiers returned by agent-tool execution policies.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AgentToolExecutionOutcomes",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenttoolexecutionoutcomes",
+      "Declaration": "public static class AgentToolExecutionOutcomes",
+      "Summary": "Defines stable outcome identifiers for agent-tool execution observations.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenttoolexecutionreport",
+      "Declaration": "public sealed class AgentToolExecutionReport",
+      "Summary": "Describes one runtime observation for an agent-tool run.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenttoolexecutionrequest",
+      "Declaration": "public sealed class AgentToolExecutionRequest",
+      "Summary": "Describes one request to execute an agent tool through the Cephalon-managed agentics runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenttoolexecutionresult",
+      "Declaration": "public sealed class AgentToolExecutionResult",
+      "Summary": "Describes the result returned by one managed agent-tool executor.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 5
+      }
+    },
+    {
+      "DisplayName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenttoolrunstate",
+      "Declaration": "public sealed class AgentToolRunState",
+      "Summary": "Describes the latest operator-facing runtime state reported for one agent-tool run.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 19,
         "Methods": 0
       }
     },
@@ -8395,6 +8515,66 @@
       }
     },
     {
+      "DisplayName": "IAgentToolDispatcher",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-iagenttooldispatcher",
+      "Declaration": "public interface IAgentToolDispatcher",
+      "Summary": "Dispatches registered agent tools through Cephalon-managed execution, policy, and run-state services.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IAgentToolExecutionObserver",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-iagenttoolexecutionobserver",
+      "Declaration": "public interface IAgentToolExecutionObserver",
+      "Summary": "Observes agent-tool execution reports for audit, telemetry, or host-specific projection.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IAgentToolExecutionPolicy",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-iagenttoolexecutionpolicy",
+      "Declaration": "public interface IAgentToolExecutionPolicy",
+      "Summary": "Evaluates whether an agent-tool execution request can continue.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IAgentToolExecutor",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-iagenttoolexecutor",
+      "Declaration": "public interface IAgentToolExecutor",
+      "Summary": "Executes one registered agent tool through the Cephalon-managed agentics runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IAgentToolRegistry",
       "NamespaceName": "Cephalon.Agentics.Services",
       "AssemblyName": "Cephalon.Agentics",
@@ -8402,6 +8582,36 @@
       "AnchorId": "type-cephalon-agentics-services-iagenttoolregistry",
       "Declaration": "public interface IAgentToolRegistry",
       "Summary": "Collects tool descriptors contributed to the active agentic runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IAgentToolRunCatalog",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-iagenttoolruncatalog",
+      "Declaration": "public interface IAgentToolRunCatalog",
+      "Summary": "Exposes the latest reported runtime state for agent-tool runs.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 3
+      }
+    },
+    {
+      "DisplayName": "IAgentToolRunReporter",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-iagenttoolrunreporter",
+      "Declaration": "public interface IAgentToolRunReporter",
+      "Summary": "Records runtime observations for agent-tool runs.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -16387,6 +16597,39 @@
     {
       "DisplayName": "ActorId",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-actorid",
+      "Signature": "string ActorId { get; }",
+      "Summary": "Gets the optional actor identifier responsible for the request."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-actorid",
+      "Signature": "string ActorId { get; }",
+      "Summary": "Gets the optional actor identifier responsible for the run."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionrequest-actorid",
+      "Signature": "string ActorId { get; }",
+      "Summary": "Gets the optional actor identifier responsible for the request."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
       "DeclaringTypeName": "AuditActor",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18574,6 +18817,72 @@
       "Summary": "Creates a new agent tool descriptor."
     },
     {
+      "DisplayName": "AgentToolExecutionContext",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutioncontext-ctor-cephalon-agentics-services-agenttooldescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionContext(AgentToolDescriptor tool, string runId, IReadOnlyDictionary\u003Cstring, string\u003E arguments, string actorId, string correlationId, int attempt, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new agent-tool execution context."
+    },
+    {
+      "DisplayName": "AgentToolExecutionDecision",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AgentToolExecutionDecision",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutiondecision-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionDecision(string kind, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new agent-tool execution decision."
+    },
+    {
+      "DisplayName": "AgentToolExecutionReport",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutionreport-ctor-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionReport(string toolId, string runId, string outcome, DateTimeOffset observedAtUtc, string actorId, string correlationId, int attempt, string outputSummary, string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new runtime observation for an agent-tool run."
+    },
+    {
+      "DisplayName": "AgentToolExecutionRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutionrequest-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionRequest(string toolId, string runId, IReadOnlyDictionary\u003Cstring, string\u003E arguments, string actorId, string correlationId, int attempt, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new agent-tool execution request."
+    },
+    {
+      "DisplayName": "AgentToolExecutionResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutionresult-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionResult(string outcome, string outputSummary, string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new agent-tool execution result."
+    },
+    {
+      "DisplayName": "AgentToolRunState",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the latest operator-facing runtime state reported for one agent-tool run."
+    },
+    {
       "DisplayName": "AgeSeconds",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleProbeDescriptor",
@@ -18781,6 +19090,28 @@
       "AnchorId": "member-p-cephalon-abstractions-eventsourcing-ieventstorecatalog-all",
       "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E All { get; }",
       "Summary": "Gets all event-stream descriptors visible to the current runtime."
+    },
+    {
+      "DisplayName": "Allow",
+      "Category": "Methods",
+      "DeclaringTypeName": "AgentToolExecutionDecision",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutiondecision-allow-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionDecision Allow(string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates an allow decision."
+    },
+    {
+      "DisplayName": "Allow",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionDecisionKinds",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutiondecisionkinds-allow",
+      "Signature": "const string Allow",
+      "Summary": "Gets the decision identifier used when execution can continue."
     },
     {
       "DisplayName": "Allow",
@@ -20259,6 +20590,39 @@
     {
       "DisplayName": "ApprovalRequired",
       "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionDecisionKinds",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutiondecisionkinds-approvalrequired",
+      "Signature": "const string ApprovalRequired",
+      "Summary": "Gets the decision identifier used when execution must wait for explicit approval."
+    },
+    {
+      "DisplayName": "ApprovalRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionOutcomes",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-approvalrequired",
+      "Signature": "const string ApprovalRequired",
+      "Summary": "Gets the outcome identifier used when a tool run needs an approval step before execution."
+    },
+    {
+      "DisplayName": "ApprovalRequired",
+      "Category": "Methods",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutionresult-approvalrequired-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionResult ApprovalRequired(string outputSummary, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates an approval-required execution result."
+    },
+    {
+      "DisplayName": "ApprovalRequired",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20444,6 +20808,17 @@
       "Summary": "The current provider lane still requires explicit approval."
     },
     {
+      "DisplayName": "ApprovalRequiredCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-approvalrequiredcount",
+      "Signature": "int ApprovalRequiredCount { get; set; }",
+      "Summary": "The number of \u0060approval-required\u0060 observations reported so far."
+    },
+    {
       "DisplayName": "Approve",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest",
@@ -20475,6 +20850,28 @@
       "AnchorId": "member-f-cephalon-abstractions-patterns-patternkind-architecture",
       "Signature": "const PatternKind Architecture",
       "Summary": "Identifies an architecture-shaping pattern."
+    },
+    {
+      "DisplayName": "Arguments",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-arguments",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Arguments { get; }",
+      "Summary": "Gets optional string arguments supplied to the tool executor."
+    },
+    {
+      "DisplayName": "Arguments",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionrequest-arguments",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Arguments { get; }",
+      "Summary": "Gets optional string arguments supplied to the tool executor."
     },
     {
       "DisplayName": "AsCqrs",
@@ -20629,6 +21026,39 @@
       "AnchorId": "member-f-cephalon-engine-configuration-modulepackagereference-assemblypathkind",
       "Signature": "const string AssemblyPathKind",
       "Summary": "Identifies a package input that points directly to an assembly path."
+    },
+    {
+      "DisplayName": "Attempt",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-attempt",
+      "Signature": "int Attempt { get; }",
+      "Summary": "Gets the execution attempt number."
+    },
+    {
+      "DisplayName": "Attempt",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-attempt",
+      "Signature": "int Attempt { get; }",
+      "Summary": "Gets the execution attempt number."
+    },
+    {
+      "DisplayName": "Attempt",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionrequest-attempt",
+      "Signature": "int Attempt { get; }",
+      "Summary": "Gets the execution attempt number."
     },
     {
       "DisplayName": "Attempt",
@@ -31941,6 +32371,39 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for the request."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier associated with the run."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for the request."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "AuditEntry",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -34633,6 +35096,28 @@
     {
       "DisplayName": "Denied",
       "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionOutcomes",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-denied",
+      "Signature": "const string Denied",
+      "Summary": "Gets the outcome identifier used when a policy denies a tool run."
+    },
+    {
+      "DisplayName": "Denied",
+      "Category": "Methods",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutionresult-denied-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionResult Denied(string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a denied execution result."
+    },
+    {
+      "DisplayName": "Denied",
+      "Category": "Fields",
       "DeclaringTypeName": "CapabilityAccess",
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
       "AssemblyName": "Cephalon.Abstractions",
@@ -34640,6 +35125,39 @@
       "AnchorId": "member-f-cephalon-abstractions-capabilities-capabilityaccess-denied",
       "Signature": "const CapabilityAccess Denied",
       "Summary": "Indicates the capability is denied."
+    },
+    {
+      "DisplayName": "DeniedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-deniedcount",
+      "Signature": "int DeniedCount { get; set; }",
+      "Summary": "The number of \u0060denied\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "Deny",
+      "Category": "Methods",
+      "DeclaringTypeName": "AgentToolExecutionDecision",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutiondecision-deny-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionDecision Deny(string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a deny decision."
+    },
+    {
+      "DisplayName": "Deny",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionDecisionKinds",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutiondecisionkinds-deny",
+      "Signature": "const string Deny",
+      "Summary": "Gets the decision identifier used when execution is denied by policy."
     },
     {
       "DisplayName": "Deny",
@@ -40271,7 +40789,7 @@
       "FileName": "cephalon-agentics.md",
       "AnchorId": "member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecution",
       "Signature": "bool EnableExecution { get; set; }",
-      "Summary": "Gets or sets a value indicating whether tool execution features are enabled."
+      "Summary": "Gets or sets a value indicating whether Cephalon-managed tool dispatch and run-state features are enabled."
     },
     {
       "DisplayName": "EnableExternalCdcRuntimeReporting",
@@ -41012,6 +41530,28 @@
     },
     {
       "DisplayName": "Error",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-error",
+      "Signature": "string Error { get; }",
+      "Summary": "Gets the optional operator-facing error summary."
+    },
+    {
+      "DisplayName": "Error",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionresult-error",
+      "Signature": "string Error { get; }",
+      "Summary": "Gets the optional operator-facing error summary."
+    },
+    {
+      "DisplayName": "Error",
       "Category": "Fields",
       "DeclaringTypeName": "BehaviorFaultSeverity",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
@@ -41141,6 +41681,17 @@
       "AnchorId": "member-m-cephalon-abstractions-features-ifeaturetoggle-evaluate-system-string-cephalon-abstractions-features-featureflagevaluationcontext",
       "Signature": "FeatureFlagEvaluationResult Evaluate(string featureFlagId, FeatureFlagEvaluationContext context)",
       "Summary": "Evaluates the requested feature flag and returns a richer operator-facing result."
+    },
+    {
+      "DisplayName": "EvaluateAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAgentToolExecutionPolicy",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-iagenttoolexecutionpolicy-evaluateasync-cephalon-agentics-services-agenttoolexecutioncontext-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CAgentToolExecutionDecision\u003E EvaluateAsync(AgentToolExecutionContext context, CancellationToken cancellationToken)",
+      "Summary": "Evaluates one resolved agent-tool execution context."
     },
     {
       "DisplayName": "EvaluateAsync",
@@ -41933,6 +42484,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtransportids",
       "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTransportIds { get; }",
       "Summary": "Gets the explicitly excluded transport identifiers."
+    },
+    {
+      "DisplayName": "ExecuteAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAgentToolDispatcher",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-iagenttooldispatcher-executeasync-cephalon-agentics-services-agenttoolexecutionrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CAgentToolExecutionResult\u003E ExecuteAsync(AgentToolExecutionRequest request, CancellationToken cancellationToken)",
+      "Summary": "Executes one registered agent tool."
+    },
+    {
+      "DisplayName": "ExecuteAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAgentToolExecutor",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-iagenttoolexecutor-executeasync-cephalon-agentics-services-agenttoolexecutioncontext-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CAgentToolExecutionResult\u003E ExecuteAsync(AgentToolExecutionContext context, CancellationToken cancellationToken)",
+      "Summary": "Executes the tool against the supplied context."
     },
     {
       "DisplayName": "ExecuteAsync",
@@ -43928,6 +44501,28 @@
     {
       "DisplayName": "Failed",
       "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionOutcomes",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-failed",
+      "Signature": "const string Failed",
+      "Summary": "Gets the outcome identifier used when a tool run fails."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Methods",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutionresult-failed-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionResult Failed(string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a failed execution result."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
       "DeclaringTypeName": "AuditOutcome",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44056,6 +44651,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-failedcdccaptures",
       "Signature": "const string FailedCdcCaptures",
       "Summary": "One or more reported CDC captures currently publish failed runtime outcomes."
+    },
+    {
+      "DisplayName": "FailedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-failedcount",
+      "Signature": "int FailedCount { get; set; }",
+      "Summary": "The number of \u0060failed\u0060 observations reported so far."
     },
     {
       "DisplayName": "FailedCount",
@@ -48260,6 +48866,17 @@
       "Summary": "Gets one effective cell traffic-automation answer by its governed route identifier."
     },
     {
+      "DisplayName": "GetByRunId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAgentToolRunCatalog",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-iagenttoolruncatalog-getbyrunid-system-string",
+      "Signature": "AgentToolRunState GetByRunId(string runId)",
+      "Summary": "Looks up one reported run-state entry by run identifier."
+    },
+    {
       "DisplayName": "GetBySeverity",
       "Category": "Methods",
       "DeclaringTypeName": "IBehaviorAdvisoryCatalog",
@@ -48676,6 +49293,17 @@
       "AnchorId": "member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-getbytechnology-system-string",
       "Signature": "IReadOnlyList\u003CTechnologyRuntimeSurface\u003E GetByTechnology(string technologyId)",
       "Summary": "Gets the runtime surfaces for a specific technology."
+    },
+    {
+      "DisplayName": "GetByToolId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAgentToolRunCatalog",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-iagenttoolruncatalog-getbytoolid-system-string",
+      "Signature": "IReadOnlyList\u003CAgentToolRunState\u003E GetByToolId(string toolId)",
+      "Summary": "Gets all reported run-state entries for one tool."
     },
     {
       "DisplayName": "GetByTransport",
@@ -58622,6 +59250,17 @@
       "Summary": "Gets a value indicating whether the current answer currently represents one teardown operation."
     },
     {
+      "DisplayName": "IsTerminal",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-isterminal",
+      "Signature": "bool IsTerminal { get; }",
+      "Summary": "Gets a value indicating whether the latest report represents a terminal outcome for this run."
+    },
+    {
       "DisplayName": "IsTruncated",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
@@ -58932,6 +59571,17 @@
     {
       "DisplayName": "Kind",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionDecision",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutiondecision-kind",
+      "Signature": "string Kind { get; }",
+      "Summary": "Gets the stable decision identifier."
+    },
+    {
+      "DisplayName": "Kind",
+      "Category": "Properties",
       "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -59227,6 +59877,17 @@
       "Summary": "The latest acknowledgement posture reported for the execution runtime when one is known."
     },
     {
+      "DisplayName": "LastActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-lastactorid",
+      "Signature": "string LastActorId { get; set; }",
+      "Summary": "The actor identifier from the latest observation when one was reported."
+    },
+    {
       "DisplayName": "LastAppendedEventCount",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -59236,6 +59897,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastappendedeventcount",
       "Signature": "int LastAppendedEventCount { get; set; }",
       "Summary": "The number of domain events appended by the latest successful durable step."
+    },
+    {
+      "DisplayName": "LastAttempt",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-lastattempt",
+      "Signature": "int LastAttempt { get; set; }",
+      "Summary": "The last reported execution attempt number."
     },
     {
       "DisplayName": "LastAttempt",
@@ -59392,6 +60064,17 @@
       "Summary": "Gets the last conflicting reporter identity that was observed or rejected when one is known."
     },
     {
+      "DisplayName": "LastCorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-lastcorrelationid",
+      "Signature": "string LastCorrelationId { get; set; }",
+      "Summary": "The correlation identifier from the latest observation when one was reported."
+    },
+    {
       "DisplayName": "LastEdgeNodeId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -59412,6 +60095,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastedgenodeid",
       "Signature": "string LastEdgeNodeId { get; set; }",
       "Summary": "Gets the latest edge-node identifier visible for the capture when one was reported."
+    },
+    {
+      "DisplayName": "LastError",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-lasterror",
+      "Signature": "string LastError { get; set; }",
+      "Summary": "The latest operator-facing error summary when one was reported."
     },
     {
       "DisplayName": "LastError",
@@ -59614,6 +60308,17 @@
     {
       "DisplayName": "LastObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the last observation was reported."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -59779,6 +60484,17 @@
     {
       "DisplayName": "LastOutcome",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-lastoutcome",
+      "Signature": "string LastOutcome { get; set; }",
+      "Summary": "The last reported outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -59852,6 +60568,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastoutcome",
       "Signature": "string LastOutcome { get; set; }",
       "Summary": "The last reported publication outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastOutputSummary",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-lastoutputsummary",
+      "Signature": "string LastOutputSummary { get; set; }",
+      "Summary": "The latest operator-facing output summary when one was reported."
     },
     {
       "DisplayName": "LastPersistedAtUtc",
@@ -64608,6 +65335,72 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata associated with the request."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionDecision",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutiondecision-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional metadata captured with the decision."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata captured alongside the observation."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata associated with the request."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional metadata captured by the executor."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "The operator-facing metadata captured by the latest report."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "AppBlueprint",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -69334,6 +70127,28 @@
       "Summary": "The selected materializer is observing control-plane truth without writing changes."
     },
     {
+      "DisplayName": "ObserveAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAgentToolExecutionObserver",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-iagenttoolexecutionobserver-observeasync-cephalon-agentics-services-agenttoolexecutionreport-system-threading-cancellationtoken",
+      "Signature": "ValueTask ObserveAsync(AgentToolExecutionReport report, CancellationToken cancellationToken)",
+      "Summary": "Observes one execution report after it has been accepted by the runtime catalog."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the observation occurred."
+    },
+    {
       "DisplayName": "ObservedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionReport",
@@ -71589,6 +72404,28 @@
     {
       "DisplayName": "Outcome",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable outcome identifier."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable execution outcome identifier."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
       "DeclaringTypeName": "AuditEntry",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -71717,6 +72554,28 @@
       "AnchorId": "member-p-cephalon-referencedocs-generation-referencedocsrequest-outputpath",
       "Signature": "string OutputPath { get; }",
       "Summary": "Gets the output directory where reference docs should be written."
+    },
+    {
+      "DisplayName": "OutputSummary",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-outputsummary",
+      "Signature": "string OutputSummary { get; }",
+      "Summary": "Gets the optional operator-facing output summary."
+    },
+    {
+      "DisplayName": "OutputSummary",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionresult-outputsummary",
+      "Signature": "string OutputSummary { get; }",
+      "Summary": "Gets the optional operator-facing output summary."
     },
     {
       "DisplayName": "OutputType",
@@ -79419,6 +80278,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionDecision",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutiondecision-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing reason associated with the decision."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "AuthorizationDecision",
       "NamespaceName": "Cephalon.Abstractions.Authorization",
       "AssemblyName": "Cephalon.Abstractions",
@@ -81674,6 +82544,17 @@
     {
       "DisplayName": "ReportAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "IAgentToolRunReporter",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-iagenttoolrunreporter-reportasync-cephalon-agentics-services-agenttoolexecutionreport-system-threading-cancellationtoken",
+      "Signature": "ValueTask ReportAsync(AgentToolExecutionReport report, CancellationToken cancellationToken)",
+      "Summary": "Records one runtime observation for an agent-tool run."
+    },
+    {
+      "DisplayName": "ReportAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeReportSink",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -82838,6 +83719,17 @@
       "Summary": "Indicates request-response interactions are supported."
     },
     {
+      "DisplayName": "RequireApproval",
+      "Category": "Methods",
+      "DeclaringTypeName": "AgentToolExecutionDecision",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutiondecision-requireapproval-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionDecision RequireApproval(string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates an approval-required decision."
+    },
+    {
       "DisplayName": "RequireCapability",
       "Category": "Methods",
       "DeclaringTypeName": "RestEndpointConventionBuilderExtensions",
@@ -83221,6 +84113,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-requiresaction",
       "Signature": "bool RequiresAction { get; }",
       "Summary": "Gets a value indicating whether the managed connector currently requires operator action."
+    },
+    {
+      "DisplayName": "RequiresApproval",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-requiresapproval",
+      "Signature": "bool RequiresApproval { get; }",
+      "Summary": "Gets a value indicating whether the latest report says explicit approval is required before execution can continue."
     },
     {
       "DisplayName": "RequiresApproval",
@@ -86842,6 +87745,50 @@
       "Summary": "Runs the reference docs generator for the supplied arguments and writers."
     },
     {
+      "DisplayName": "RunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-runid",
+      "Signature": "string RunId { get; }",
+      "Summary": "Gets the stable run identifier for this execution."
+    },
+    {
+      "DisplayName": "RunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-runid",
+      "Signature": "string RunId { get; }",
+      "Summary": "Gets the stable run identifier."
+    },
+    {
+      "DisplayName": "RunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionrequest-runid",
+      "Signature": "string RunId { get; }",
+      "Summary": "Gets the stable run identifier for this execution."
+    },
+    {
+      "DisplayName": "RunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-runid",
+      "Signature": "string RunId { get; set; }",
+      "Summary": "The stable run identifier."
+    },
+    {
       "DisplayName": "RunIntervalMinutes",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryRetentionSelection",
@@ -86873,6 +87820,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-databasemigrationstatus-running",
       "Signature": "const DatabaseMigrationStatus Running",
       "Summary": "The migration target is currently executing."
+    },
+    {
+      "DisplayName": "Runs",
+      "Category": "Properties",
+      "DeclaringTypeName": "IAgentToolRunCatalog",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-iagenttoolruncatalog-runs",
+      "Signature": "IReadOnlyList\u003CAgentToolRunState\u003E Runs { get; }",
+      "Summary": "Gets the currently known agent-tool run states ordered by tool identifier and run identifier."
     },
     {
       "DisplayName": "Runtime",
@@ -89352,6 +90310,28 @@
     {
       "DisplayName": "Skipped",
       "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionOutcomes",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-skipped",
+      "Signature": "const string Skipped",
+      "Summary": "Gets the outcome identifier used when a tool run is intentionally skipped."
+    },
+    {
+      "DisplayName": "Skipped",
+      "Category": "Methods",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutionresult-skipped-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionResult Skipped(string outputSummary, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a skipped execution result."
+    },
+    {
+      "DisplayName": "Skipped",
+      "Category": "Fields",
       "DeclaringTypeName": "EventDispatchExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -89392,6 +90372,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-skippedcandidateids",
       "Signature": "IReadOnlyList\u003Cstring\u003E SkippedCandidateIds { get; }",
       "Summary": "Gets the runtime candidate identifiers that this rule would otherwise target but skipped because the original projection did not allow host governance to participate."
+    },
+    {
+      "DisplayName": "SkippedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-skippedcount",
+      "Signature": "int SkippedCount { get; set; }",
+      "Summary": "The number of \u0060skipped\u0060 observations reported so far."
     },
     {
       "DisplayName": "SkippedCount",
@@ -91550,6 +92541,17 @@
     {
       "DisplayName": "Started",
       "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionOutcomes",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-started",
+      "Signature": "const string Started",
+      "Summary": "Gets the outcome identifier used when a tool run begins."
+    },
+    {
+      "DisplayName": "Started",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureRuntimeOutcomes",
       "NamespaceName": "Cephalon.Data.Services",
       "AssemblyName": "Cephalon.Data",
@@ -91623,6 +92625,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimestatussnapshot-startedatutc",
       "Signature": "DateTimeOffset? StartedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when startup completed, if it has completed."
+    },
+    {
+      "DisplayName": "StartedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-startedcount",
+      "Signature": "int StartedCount { get; set; }",
+      "Summary": "The number of \u0060started\u0060 observations reported so far."
     },
     {
       "DisplayName": "StartedCount",
@@ -93222,6 +94235,28 @@
     {
       "DisplayName": "Succeeded",
       "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionOutcomes",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-succeeded",
+      "Signature": "const string Succeeded",
+      "Summary": "Gets the outcome identifier used when a tool run completes successfully."
+    },
+    {
+      "DisplayName": "Succeeded",
+      "Category": "Methods",
+      "DeclaringTypeName": "AgentToolExecutionResult",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutionresult-succeeded-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolExecutionResult Succeeded(string outputSummary, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a successful execution result."
+    },
+    {
+      "DisplayName": "Succeeded",
+      "Category": "Fields",
       "DeclaringTypeName": "AuditOutcome",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -93273,6 +94308,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded",
       "Signature": "const RuntimeLifecycleEventOutcome Succeeded",
       "Summary": "The lifecycle event completed successfully."
+    },
+    {
+      "DisplayName": "SucceededCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-succeededcount",
+      "Signature": "int SucceededCount { get; set; }",
+      "Summary": "The number of \u0060succeeded\u0060 observations reported so far."
     },
     {
       "DisplayName": "SucceededCount",
@@ -95541,6 +96587,50 @@
       "Summary": "Gets the destination node identifier."
     },
     {
+      "DisplayName": "Tool",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionContext",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-tool",
+      "Signature": "AgentToolDescriptor Tool { get; }",
+      "Summary": "Gets the resolved tool descriptor being executed."
+    },
+    {
+      "DisplayName": "ToolId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionReport",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionreport-toolid",
+      "Signature": "string ToolId { get; }",
+      "Summary": "Gets the stable tool identifier."
+    },
+    {
+      "DisplayName": "ToolId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionRequest",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutionrequest-toolid",
+      "Signature": "string ToolId { get; }",
+      "Summary": "Gets the stable tool identifier to execute."
+    },
+    {
+      "DisplayName": "ToolId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-toolid",
+      "Signature": "string ToolId { get; set; }",
+      "Summary": "The stable tool identifier."
+    },
+    {
       "DisplayName": "ToolId",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationCommandDescriptor",
@@ -95550,6 +96640,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-toolid",
       "Signature": "string ToolId { get; }",
       "Summary": "Gets the stable operator tool identifier when the provider can name one."
+    },
+    {
+      "DisplayName": "ToolId",
+      "Category": "Properties",
+      "DeclaringTypeName": "IAgentToolExecutor",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-iagenttoolexecutor-toolid",
+      "Signature": "string ToolId { get; }",
+      "Summary": "Gets the stable tool identifier owned by this executor."
     },
     {
       "DisplayName": "ToolIds",
@@ -95715,6 +96816,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-totalrecordedentrycount",
       "Signature": "int TotalRecordedEntryCount { get; set; }",
       "Summary": "Gets the total number of command-execution outcomes currently visible to cross-node idempotency hardening."
+    },
+    {
+      "DisplayName": "TotalReports",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-totalreports",
+      "Signature": "int TotalReports { get; }",
+      "Summary": "Gets the total number of observations reported for this run."
     },
     {
       "DisplayName": "TotalReports",
@@ -96518,6 +97630,17 @@
       "AnchorId": "member-m-cephalon-agentics-services-iagenttoolcatalog-tryget-system-string-cephalon-agentics-services-agenttooldescriptor",
       "Signature": "bool TryGet(string toolId, out AgentToolDescriptor tool)",
       "Summary": "Attempts to resolve a tool descriptor by identifier."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAgentToolRunCatalog",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-m-cephalon-agentics-services-iagenttoolruncatalog-tryget-system-string-cephalon-agentics-services-agenttoolrunstate",
+      "Signature": "bool TryGet(string runId, out AgentToolRunState state)",
+      "Summary": "Attempts to look up one reported run-state entry by run identifier."
     },
     {
       "DisplayName": "TryGet",

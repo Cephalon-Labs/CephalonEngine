@@ -360,6 +360,15 @@ Browse the published API surface by public member.
 - [Actor](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-actor): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Actor&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the actor responsible for the audited operation when one was supplied explicitly.
   - `AuditActor Actor { get; }`
+- [ActorId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-actorid): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional actor identifier responsible for the request.
+  - `string ActorId { get; }`
+- [ActorId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-actorid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional actor identifier responsible for the run.
+  - `string ActorId { get; }`
+- [ActorId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-actorid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional actor identifier responsible for the request.
+  - `string ActorId { get; }`
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-actorid): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the stable actor identifier.
   - `string ActorId { get; }`
@@ -957,6 +966,24 @@ Browse the published API surface by public member.
 - [AgentToolDescriptor](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolDescriptor&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Creates a new agent tool descriptor.
   - `AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags, IReadOnlyList<string> capabilityKeys, string executionGraphId, string hostedExecutionId, IReadOnlyDictionary<string, string> metadata)`
+- [AgentToolExecutionContext](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutioncontext-ctor-cephalon-agentics-services-agenttooldescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionContext&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a new agent-tool execution context.
+  - `AgentToolExecutionContext(AgentToolDescriptor tool, string runId, IReadOnlyDictionary<string, string> arguments, string actorId, string correlationId, int attempt, IReadOnlyDictionary<string, string> metadata)`
+- [AgentToolExecutionDecision](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutiondecision-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionDecision&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a new agent-tool execution decision.
+  - `AgentToolExecutionDecision(string kind, string reason, IReadOnlyDictionary<string, string> metadata)`
+- [AgentToolExecutionReport](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionreport-ctor-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionReport&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a new runtime observation for an agent-tool run.
+  - `AgentToolExecutionReport(string toolId, string runId, string outcome, DateTimeOffset observedAtUtc, string actorId, string correlationId, int attempt, string outputSummary, string error, IReadOnlyDictionary<string, string> metadata)`
+- [AgentToolExecutionRequest](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionrequest-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionRequest&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a new agent-tool execution request.
+  - `AgentToolExecutionRequest(string toolId, string runId, IReadOnlyDictionary<string, string> arguments, string actorId, string correlationId, int attempt, IReadOnlyDictionary<string, string> metadata)`
+- [AgentToolExecutionResult](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionResult&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a new agent-tool execution result.
+  - `AgentToolExecutionResult(string outcome, string outputSummary, string error, IReadOnlyDictionary<string, string> metadata)`
+- [AgentToolRunState](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolRunState&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Describes the latest operator-facing runtime state reported for one agent-tool run.
+  - `AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary<string, string> Metadata)`
 - [AgeSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleprobedescriptor-ageseconds): `Properties` on `DatabaseRoleProbeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AgeSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the age in seconds of the current answer, when known.
   - `int? AgeSeconds { get; }`
@@ -1014,6 +1041,12 @@ Browse the published API surface by public member.
 - [All](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-ieventstorecatalog-all): `Properties` on `IEventStoreCatalog` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=All&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets all event-stream descriptors visible to the current runtime.
   - `IReadOnlyList<EventStreamDescriptor> All { get; }`
+- [Allow](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutiondecision-allow-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Allow&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates an allow decision.
+  - `AgentToolExecutionDecision Allow(string reason, IReadOnlyDictionary<string, string> metadata)`
+- [Allow](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutiondecisionkinds-allow): `Fields` on `AgentToolExecutionDecisionKinds` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Allow&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the decision identifier used when execution can continue.
+  - `const string Allow`
 - [Allow](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-authorizationdecision-allow-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AuthorizationDecision` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Allow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Creates an allowed authorization decision.
   - `AuthorizationDecision Allow(string policyId, string reason, IReadOnlyList<AuthorizationMode> modes, IReadOnlyDictionary<string, string> metadata)`
@@ -1416,6 +1449,15 @@ Browse the published API surface by public member.
 - [ApprovalReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstates-approvalready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector is currently ready to enter a future approval workflow before engine execution.
   - `const string ApprovalReady`
+- [ApprovalRequired](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutiondecisionkinds-approvalrequired): `Fields` on `AgentToolExecutionDecisionKinds` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the decision identifier used when execution must wait for explicit approval.
+  - `const string ApprovalRequired`
+- [ApprovalRequired](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-approvalrequired): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the outcome identifier used when a tool run needs an approval step before execution.
+  - `const string ApprovalRequired`
+- [ApprovalRequired](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-approvalrequired-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates an approval-required execution result.
+  - `AgentToolExecutionResult ApprovalRequired(string outputSummary, IReadOnlyDictionary<string, string> metadata)`
 - [ApprovalRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-approvalrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command envelope still reflects a higher-risk approval requirement.
   - `const string ApprovalRequired`
@@ -1467,6 +1509,9 @@ Browse the published API surface by public member.
 - [ApprovalRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-approvalrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current provider lane still requires explicit approval.
   - `const string ApprovalRequired`
+- [ApprovalRequiredCount](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-approvalrequiredcount): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ApprovalRequiredCount&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The number of `approval-required` observations reported so far.
+  - `int ApprovalRequiredCount { get; set; }`
 - [Approve](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-approve): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Approve&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets or sets a value indicating whether the caller is intentionally approving an approval-gated provider command.
   - `bool Approve { get; set; }`
@@ -1476,6 +1521,12 @@ Browse the published API surface by public member.
 - [Architecture](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-architecture): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Architecture&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies an architecture-shaping pattern.
   - `const PatternKind Architecture`
+- [Arguments](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-arguments): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Arguments&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets optional string arguments supplied to the tool executor.
+  - `IReadOnlyDictionary<string, string> Arguments { get; }`
+- [Arguments](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-arguments): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Arguments&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets optional string arguments supplied to the tool executor.
+  - `IReadOnlyDictionary<string, string> Arguments { get; }`
 - [AsCqrs](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-ascqrs): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=AsCqrs&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares this behavior as CQRS-shaped (command/query split, 200/202 HTTP semantics).
   - `IBehaviorTopologyBuilder AsCqrs()`
@@ -1518,6 +1569,15 @@ Browse the published API surface by public member.
 - [AssemblyPathKind](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagereference-assemblypathkind): `Fields` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AssemblyPathKind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Identifies a package input that points directly to an assembly path.
   - `const string AssemblyPathKind`
+- [Attempt](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-attempt): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the execution attempt number.
+  - `int Attempt { get; }`
+- [Attempt](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-attempt): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the execution attempt number.
+  - `int Attempt { get; }`
+- [Attempt](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-attempt): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the execution attempt number.
+  - `int Attempt { get; }`
 - [Attempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-attempt): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the dispatch attempt number associated with this observation.
   - `int Attempt { get; }`
@@ -4608,6 +4668,15 @@ Browse the published API surface by public member.
 - [CoordinationStateBreakdown](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-coordinationstatebreakdown): `Properties` on `CdcCaptureExecutionRuntimeReporterCoordinationRollup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationStateBreakdown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The grouped reporter-coordination states currently visible across the execution runtime's reported CDC captures.
   - `IReadOnlyList<CdcCaptureReporterCoordinationBreakdownEntry> CoordinationStateBreakdown { get; set; }`
+- [CorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-correlationid): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional correlation identifier for the request.
+  - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-correlationid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional correlation identifier associated with the run.
+  - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-correlationid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional correlation identifier for the request.
+  - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-correlationid): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the correlation identifier associated with the audited operation.
   - `string CorrelationId { get; }`
@@ -5343,9 +5412,24 @@ Browse the published API surface by public member.
 - [DeliveryMode](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-deliverymode): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeliveryMode&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the declared delivery mode for the subscription.
   - `string DeliveryMode { get; }`
+- [Denied](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-denied): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Denied&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the outcome identifier used when a policy denies a tool run.
+  - `const string Denied`
+- [Denied](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-denied-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Denied&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a denied execution result.
+  - `AgentToolExecutionResult Denied(string error, IReadOnlyDictionary<string, string> metadata)`
 - [Denied](cephalon-abstractions.md#member-f-cephalon-abstractions-capabilities-capabilityaccess-denied): `Fields` on `CapabilityAccess` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Denied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
   - Indicates the capability is denied.
   - `const CapabilityAccess Denied`
+- [DeniedCount](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-deniedcount): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=DeniedCount&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The number of `denied` observations reported so far.
+  - `int DeniedCount { get; set; }`
+- [Deny](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutiondecision-deny-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Deny&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a deny decision.
+  - `AgentToolExecutionDecision Deny(string reason, IReadOnlyDictionary<string, string> metadata)`
+- [Deny](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutiondecisionkinds-deny): `Fields` on `AgentToolExecutionDecisionKinds` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Deny&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the decision identifier used when execution is denied by policy.
+  - `const string Deny`
 - [Deny](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-authorizationdecision-deny-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AuthorizationDecision` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Deny&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Creates a denied authorization decision.
   - `AuthorizationDecision Deny(string policyId, string reason, IReadOnlyList<AuthorizationMode> modes, IReadOnlyDictionary<string, string> metadata)`
@@ -6883,7 +6967,7 @@ Browse the published API surface by public member.
   - Gets or sets a value indicating whether the pack should own the durable staged-event dispatch loop instead of leaving dispatch consumer-managed. Defaults to `false`.
   - `bool EnableDispatchLoop { get; set; }`
 - [EnableExecution](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecution): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=EnableExecution&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
-  - Gets or sets a value indicating whether tool execution features are enabled.
+  - Gets or sets a value indicating whether Cephalon-managed tool dispatch and run-state features are enabled.
   - `bool EnableExecution { get; set; }`
 - [EnableExternalCdcRuntimeReporting](cephalon-data.md#member-p-cephalon-data-configuration-dataruntimeoptions-enableexternalcdcruntimereporting): `Properties` on `DataRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=EnableExternalCdcRuntimeReporting&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should accept external CDC execution-runtime reports through the shared runtime-state catalog.
@@ -7086,6 +7170,12 @@ Browse the published API surface by public member.
 - [EnvironmentName](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-environmentname): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=EnvironmentName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the active hosting environment name.
   - `string EnvironmentName { get; }`
+- [Error](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-error): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Error&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional operator-facing error summary.
+  - `string Error { get; }`
+- [Error](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionresult-error): `Properties` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Error&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional operator-facing error summary.
+  - `string Error { get; }`
 - [Error](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-error): `Fields` on `BehaviorFaultSeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Error-level fault details.
   - `const BehaviorFaultSeverity Error`
@@ -7122,6 +7212,9 @@ Browse the published API surface by public member.
 - [Evaluate](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeaturetoggle-evaluate-system-string-cephalon-abstractions-features-featureflagevaluationcontext): `Methods` on `IFeatureToggle` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Evaluate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Evaluates the requested feature flag and returns a richer operator-facing result.
   - `FeatureFlagEvaluationResult Evaluate(string featureFlagId, FeatureFlagEvaluationContext context)`
+- [EvaluateAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolexecutionpolicy-evaluateasync-cephalon-agentics-services-agenttoolexecutioncontext-system-threading-cancellationtoken): `Methods` on `IAgentToolExecutionPolicy` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=EvaluateAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Evaluates one resolved agent-tool execution context.
+  - `ValueTask<AgentToolExecutionDecision> EvaluateAsync(AgentToolExecutionContext context, CancellationToken cancellationToken)`
 - [EvaluateAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationevaluator-evaluateasync-cephalon-abstractions-authorization-authorizationsubject-cephalon-abstractions-authorization-authorizationresource-cephalon-abstractions-authorization-authorizationcontext-system-threading-cancellationtoken): `Methods` on `IAuthorizationEvaluator` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=EvaluateAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Evaluates one authorization request.
   - `ValueTask<AuthorizationDecision> EvaluateAsync(AuthorizationSubject subject, AuthorizationResource resource, AuthorizationContext context, CancellationToken cancellationToken)`
@@ -7338,6 +7431,12 @@ Browse the published API surface by public member.
 - [ExcludedTransportIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtransportids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedTransportIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the explicitly excluded transport identifiers.
   - `IReadOnlyList<string> ExcludedTransportIds { get; }`
+- [ExecuteAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttooldispatcher-executeasync-cephalon-agentics-services-agenttoolexecutionrequest-system-threading-cancellationtoken): `Methods` on `IAgentToolDispatcher` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Executes one registered agent tool.
+  - `ValueTask<AgentToolExecutionResult> ExecuteAsync(AgentToolExecutionRequest request, CancellationToken cancellationToken)`
+- [ExecuteAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolexecutor-executeasync-cephalon-agentics-services-agenttoolexecutioncontext-system-threading-cancellationtoken): `Methods` on `IAgentToolExecutor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Executes the tool against the supplied context.
+  - `ValueTask<AgentToolExecutionResult> ExecuteAsync(AgentToolExecutionContext context, CancellationToken cancellationToken)`
 - [ExecuteAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimemanagedconnectorcommandexecutor-executeasync-system-string-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionrequest-system-threading-cancellationtoken): `Methods` on `ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Evaluates one managed-connector command request for the supplied execution runtime.
   - `ValueTask<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> ExecuteAsync(string executionRuntimeId, string operationId, CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest request, CancellationToken cancellationToken)`
@@ -7884,6 +7983,12 @@ Browse the published API surface by public member.
 
 ## F
 
+- [Failed](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-failed): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Failed&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the outcome identifier used when a tool run fails.
+  - `const string Failed`
+- [Failed](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-failed-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Failed&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a failed execution result.
+  - `AgentToolExecutionResult Failed(string error, IReadOnlyDictionary<string, string> metadata)`
 - [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-failed): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Indicates the operation failed.
   - `const AuditOutcome Failed`
@@ -7920,6 +8025,9 @@ Browse the published API surface by public member.
 - [FailedCdcCaptures](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationcategories-failedcdccaptures): `Fields` on `CdcCaptureExecutionRuntimeRemediationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCdcCaptures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - One or more reported CDC captures currently publish failed runtime outcomes.
   - `const string FailedCdcCaptures`
+- [FailedCount](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-failedcount): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The number of `failed` observations reported so far.
+  - `int FailedCount { get; set; }`
 - [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-failedcount): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The total number of `failed` observations visible for the execution runtime.
   - `int FailedCount { get; set; }`
@@ -9069,6 +9177,9 @@ Browse the published API surface by public member.
 - [GetByRouteId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyrouteid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByRouteId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets one effective cell traffic-automation answer by its governed route identifier.
   - `CellTrafficAutomationRuntimeDescriptor GetByRouteId(string routeId)`
+- [GetByRunId](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolruncatalog-getbyrunid-system-string): `Methods` on `IAgentToolRunCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=GetByRunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Looks up one reported run-state entry by run identifier.
+  - `AgentToolRunState GetByRunId(string runId)`
 - [GetBySeverity](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbyseverity-cephalon-abstractions-behaviors-behavioradvisoryseverity): `Methods` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySeverity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets advisories at or above the specified severity.
   - `IReadOnlyList<IBehaviorAdvisory> GetBySeverity(BehaviorAdvisorySeverity minimumSeverity)`
@@ -9183,6 +9294,9 @@ Browse the published API surface by public member.
 - [GetByTechnology](cephalon-engine.md#member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-getbytechnology-system-string): `Methods` on `TechnologyRuntimeCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=GetByTechnology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the runtime surfaces for a specific technology.
   - `IReadOnlyList<TechnologyRuntimeSurface> GetByTechnology(string technologyId)`
+- [GetByToolId](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolruncatalog-getbytoolid-system-string): `Methods` on `IAgentToolRunCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=GetByToolId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets all reported run-state entries for one tool.
+  - `IReadOnlyList<AgentToolRunState> GetByToolId(string toolId)`
 - [GetByTransport](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-getbytransport-system-string): `Methods` on `IBehaviorCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransport&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets all behaviors registered with the specified transport.
   - `IReadOnlyList<BehaviorTopologyDescriptor> GetByTransport(string transportId)`
@@ -11901,6 +12015,9 @@ Browse the published API surface by public member.
 - [IsTeardownOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-isteardownoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsTeardownOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current answer currently represents one teardown operation.
   - `bool IsTeardownOperation { get; set; }`
+- [IsTerminal](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-isterminal): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=IsTerminal&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets a value indicating whether the latest report represents a terminal outcome for this run.
+  - `bool IsTerminal { get; }`
 - [IsTruncated](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-istruncated): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsTruncated&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the bounded command journal has truncated older entries.
   - `bool IsTruncated { get; }`
@@ -11991,6 +12108,9 @@ Browse the published API surface by public member.
 - [Keyspace](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-keyspace): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=Keyspace&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the optional Cassandra keyspace used when opening the probe session.
   - `string Keyspace { get; set; }`
+- [Kind](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutiondecision-kind): `Properties` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Kind&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable decision identifier.
+  - `string Kind { get; }`
 - [Kind](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-kind): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Kind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable scope kind.
   - `string Kind { get; }`
@@ -12075,9 +12195,15 @@ Browse the published API surface by public member.
 - [LastAcknowledgement](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastacknowledgement): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAcknowledgement&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest acknowledgement posture reported for the execution runtime when one is known.
   - `string LastAcknowledgement { get; set; }`
+- [LastActorId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-lastactorid): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=LastActorId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The actor identifier from the latest observation when one was reported.
+  - `string LastActorId { get; set; }`
 - [LastAppendedEventCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastappendedeventcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAppendedEventCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of domain events appended by the latest successful durable step.
   - `int LastAppendedEventCount { get; set; }`
+- [LastAttempt](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-lastattempt): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The last reported execution attempt number.
+  - `int LastAttempt { get; set; }`
 - [LastAttempt](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastattempt): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last reported dispatch attempt number.
   - `int LastAttempt { get; set; }`
@@ -12120,12 +12246,18 @@ Browse the published API surface by public member.
 - [LastConflictingReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-lastconflictingreporterid): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastConflictingReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the last conflicting reporter identity that was observed or rejected when one is known.
   - `string LastConflictingReporterId { get; set; }`
+- [LastCorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-lastcorrelationid): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=LastCorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The correlation identifier from the latest observation when one was reported.
+  - `string LastCorrelationId { get; set; }`
 - [LastEdgeNodeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastedgenodeid): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastEdgeNodeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest edge-node identifier visible for the execution runtime when one was reported.
   - `string LastEdgeNodeId { get; set; }`
 - [LastEdgeNodeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastedgenodeid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastEdgeNodeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest edge-node identifier visible for the capture when one was reported.
   - `string LastEdgeNodeId { get; set; }`
+- [LastError](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-lasterror): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=LastError&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The latest operator-facing error summary when one was reported.
+  - `string LastError { get; set; }`
 - [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lasterror): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest operator-facing error summary visible for the execution runtime.
   - `string LastError { get; set; }`
@@ -12180,6 +12312,9 @@ Browse the published API surface by public member.
 - [LastMessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastmessageid): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last stable inbound message identifier when one was reported.
   - `string LastMessageId { get; set; }`
+- [LastObservedAtUtc](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-lastobservedatutc): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The UTC timestamp when the last observation was reported.
+  - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastobservedatutc): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The UTC timestamp when the latest runtime observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
@@ -12225,6 +12360,9 @@ Browse the published API surface by public member.
 - [LastOutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutboxid): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the outbox identifier that produced the latest observation when one exists.
   - `string LastOutboxId { get; }`
+- [LastOutcome](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-lastoutcome): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The last reported outcome identifier when one exists.
+  - `string LastOutcome { get; set; }`
 - [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastoutcome): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest reported capture outcome visible for the execution runtime.
   - `string LastOutcome { get; set; }`
@@ -12246,6 +12384,9 @@ Browse the published API surface by public member.
 - [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastoutcome): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The last reported publication outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
+- [LastOutputSummary](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-lastoutputsummary): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=LastOutputSummary&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The latest operator-facing output summary when one was reported.
+  - `string LastOutputSummary { get; set; }`
 - [LastPersistedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastpersistedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastPersistedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the durable journal snapshot was last persisted successfully.
   - `DateTimeOffset? LastPersistedAtUtc { get; set; }`
@@ -13545,6 +13686,24 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-metadata): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets additional operator-facing metadata associated with the tool.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-metadata): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets optional operator-facing metadata associated with the request.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutiondecision-metadata): `Properties` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets optional metadata captured with the decision.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-metadata): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets optional operator-facing metadata captured alongside the observation.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-metadata): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets optional operator-facing metadata associated with the request.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionresult-metadata): `Properties` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets optional metadata captured by the executor.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-metadata): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The operator-facing metadata captured by the latest report.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-metadata): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets additional blueprint metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -14839,6 +14998,12 @@ Browse the published API surface by public member.
 - [Observe](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-observe): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Observe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer is observing control-plane truth without writing changes.
   - `const string Observe`
+- [ObserveAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolexecutionobserver-observeasync-cephalon-agentics-services-agenttoolexecutionreport-system-threading-cancellationtoken): `Methods` on `IAgentToolExecutionObserver` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ObserveAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Observes one execution report after it has been accepted by the runtime catalog.
+  - `ValueTask ObserveAsync(AgentToolExecutionReport report, CancellationToken cancellationToken)`
+- [ObservedAtUtc](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-observedatutc): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the UTC timestamp when the observation occurred.
+  - `DateTimeOffset ObservedAtUtc { get; }`
 - [ObservedAtUtc](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-observedatutc): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the UTC timestamp when the observation occurred.
   - `DateTimeOffset ObservedAtUtc { get; }`
@@ -15452,6 +15617,12 @@ Browse the published API surface by public member.
 - [OutboxPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-outboxpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=OutboxPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the outbox pattern.
   - `PatternDescriptor OutboxPattern { get; }`
+- [Outcome](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-outcome): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable outcome identifier.
+  - `string Outcome { get; }`
+- [Outcome](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionresult-outcome): `Properties` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable execution outcome identifier.
+  - `string Outcome { get; }`
 - [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-outcome): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the outcome recorded for the audited operation.
   - `AuditOutcome Outcome { get; }`
@@ -15488,6 +15659,12 @@ Browse the published API surface by public member.
 - [OutputPath](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-outputpath): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=OutputPath&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the output directory where reference docs should be written.
   - `string OutputPath { get; }`
+- [OutputSummary](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-outputsummary): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=OutputSummary&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional operator-facing output summary.
+  - `string OutputSummary { get; }`
+- [OutputSummary](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionresult-outputsummary): `Properties` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=OutputSummary&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the optional operator-facing output summary.
+  - `string OutputSummary { get; }`
 - [OutputType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-outputtype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutputType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the durable workflow local output type name.
   - `string OutputType { get; }`
@@ -17595,6 +17772,9 @@ Browse the published API surface by public member.
 - [RealtimeExperience](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-realtimeexperience): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=RealtimeExperience&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the built-in realtime-experience technology profile.
   - `TechnologyDescriptor RealtimeExperience { get; }`
+- [Reason](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutiondecision-reason): `Properties` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Reason&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the operator-facing reason associated with the decision.
+  - `string Reason { get; }`
 - [Reason](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationdecision-reason): `Properties` on `AuthorizationDecision` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the human-readable reason associated with the decision.
   - `string Reason { get; }`
@@ -18210,6 +18390,9 @@ Browse the published API surface by public member.
 - [ReplyAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-system-object-system-threading-cancellationtoken): `Methods` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplyAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Sends a reply message back to the caller through the active transport.
   - `Task ReplyAsync(object reply, CancellationToken cancellationToken)`
+- [ReportAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolrunreporter-reportasync-cephalon-agentics-services-agenttoolexecutionreport-system-threading-cancellationtoken): `Methods` on `IAgentToolRunReporter` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ReportAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Records one runtime observation for an agent-tool run.
+  - `ValueTask ReportAsync(AgentToolExecutionReport report, CancellationToken cancellationToken)`
 - [ReportAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimereportsink-reportasync-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccaptureruntimeobservation-system-threading-cancellationtoken): `Methods` on `ICdcCaptureExecutionRuntimeReportSink` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Reports one or more CDC runtime observations for the supplied execution runtime.
   - `ValueTask ReportAsync(string executionRuntimeId, IReadOnlyList<CdcCaptureRuntimeObservation> observations, CancellationToken cancellationToken)`
@@ -18528,6 +18711,9 @@ Browse the published API surface by public member.
 - [RequestResponse](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-requestresponse): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestResponse&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates request-response interactions are supported.
   - `const TransportFeatures RequestResponse`
+- [RequireApproval](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutiondecision-requireapproval-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RequireApproval&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates an approval-required decision.
+  - `AgentToolExecutionDecision RequireApproval(string reason, IReadOnlyDictionary<string, string> metadata)`
 - [RequireCapability](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirecapability-microsoft-aspnetcore-builder-routehandlerbuilder-system-string): `Methods` on `RestEndpointConventionBuilderExtensions` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RequireCapability&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Requires a Cephalon capability decision before a REST endpoint can execute.
   - `RouteHandlerBuilder RequireCapability(this RouteHandlerBuilder builder, string capabilityKey)`
@@ -18633,6 +18819,9 @@ Browse the published API surface by public member.
 - [RequiresAction](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-requiresaction): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresAction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector currently requires operator action.
   - `bool RequiresAction { get; }`
+- [RequiresApproval](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-requiresapproval): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RequiresApproval&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets a value indicating whether the latest report says explicit approval is required before execution can continue.
+  - `bool RequiresApproval { get; }`
 - [RequiresApproval](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstates-requiresapproval): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently has a future engine-execution candidate, but the next step would still require an approval gate.
   - `const string RequiresApproval`
@@ -19620,6 +19809,18 @@ Browse the published API surface by public member.
 - [RunAsync](cephalon-referencedocs.md#member-m-cephalon-referencedocs-referencedocsapplication-runasync-system-string-system-io-textwriter-system-io-textwriter-system-threading-cancellationtoken): `Methods` on `ReferenceDocsApplication` in `Cephalon.ReferenceDocs` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=RunAsync&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs&scope=members)
   - Runs the reference docs generator for the supplied arguments and writers.
   - `Task<int> RunAsync(string[] args, TextWriter output, TextWriter error, CancellationToken cancellationToken)`
+- [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-runid): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable run identifier for this execution.
+  - `string RunId { get; }`
+- [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-runid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable run identifier.
+  - `string RunId { get; }`
+- [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-runid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable run identifier for this execution.
+  - `string RunId { get; }`
+- [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-runid): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The stable run identifier.
+  - `string RunId { get; set; }`
 - [RunIntervalMinutes](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-runintervalminutes): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RunIntervalMinutes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the optional recurring retention interval in minutes.
   - `int? RunIntervalMinutes { get; }`
@@ -19629,6 +19830,9 @@ Browse the published API surface by public member.
 - [Running](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-running): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Running&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The migration target is currently executing.
   - `const DatabaseMigrationStatus Running`
+- [Runs](cephalon-agentics.md#member-p-cephalon-agentics-services-iagenttoolruncatalog-runs): `Properties` on `IAgentToolRunCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Runs&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the currently known agent-tool run states ordered by tool identifier and run identifier.
+  - `IReadOnlyList<AgentToolRunState> Runs { get; }`
 - [Runtime](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-runtime): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective runtime tuning resolved for this database role.
   - `DatabaseRuntimeSelection Runtime { get; }`
@@ -20307,6 +20511,12 @@ Browse the published API surface by public member.
 - [SingleNodeRuntime](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-singlenoderuntime): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SingleNodeRuntime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently executes automatic retry on a single node without cross-node lease ownership.
   - `const string SingleNodeRuntime`
+- [Skipped](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-skipped): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the outcome identifier used when a tool run is intentionally skipped.
+  - `const string Skipped`
+- [Skipped](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-skipped-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a skipped execution result.
+  - `AgentToolExecutionResult Skipped(string outputSummary, IReadOnlyDictionary<string, string> metadata)`
 - [Skipped](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-skipped): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch intentionally skips one staged message.
   - `const string Skipped`
@@ -20319,6 +20529,9 @@ Browse the published API surface by public member.
 - [SkippedCandidateIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-skippedcandidateids): `Properties` on `RestEndpointSuppressionDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCandidateIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the runtime candidate identifiers that this rule would otherwise target but skipped because the original projection did not allow host governance to participate.
   - `IReadOnlyList<string> SkippedCandidateIds { get; }`
+- [SkippedCount](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-skippedcount): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The number of `skipped` observations reported so far.
+  - `int SkippedCount { get; set; }`
 - [SkippedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-skippedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `skipped` observations reported so far.
   - `int SkippedCount { get; set; }`
@@ -20905,6 +21118,9 @@ Browse the published API surface by public member.
 - [StartAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulebase-startasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Starts the module after initialization has completed.
   - `Task StartAsync(ModuleContext context, CancellationToken cancellationToken)`
+- [Started](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-started): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Started&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the outcome identifier used when a tool run begins.
+  - `const string Started`
 - [Started](cephalon-data.md#member-f-cephalon-data-services-cdccaptureruntimeoutcomes-started): `Fields` on `CdcCaptureRuntimeOutcomes` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Started&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the outcome identifier used when a capture runtime starts or resumes work.
   - `const string Started`
@@ -20926,6 +21142,9 @@ Browse the published API surface by public member.
 - [StartedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-startedatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when startup completed, if it has completed.
   - `DateTimeOffset? StartedAtUtc { get; set; }`
+- [StartedCount](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-startedcount): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The number of `started` observations reported so far.
+  - `int StartedCount { get; set; }`
 - [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-startedcount): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The total number of `started` observations visible for the execution runtime.
   - `int StartedCount { get; set; }`
@@ -21361,6 +21580,12 @@ Browse the published API surface by public member.
 - [Subscriptions](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventsubscriptioncatalog-subscriptions): `Properties` on `IEventSubscriptionCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Subscriptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the effective subscription set after host options and module contributors have both been applied.
   - `IReadOnlyList<EventSubscriptionDescriptor> Subscriptions { get; }`
+- [Succeeded](cephalon-agentics.md#member-f-cephalon-agentics-services-agenttoolexecutionoutcomes-succeeded): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the outcome identifier used when a tool run completes successfully.
+  - `const string Succeeded`
+- [Succeeded](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-succeeded-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a successful execution result.
+  - `AgentToolExecutionResult Succeeded(string outputSummary, IReadOnlyDictionary<string, string> metadata)`
 - [Succeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-succeeded): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Indicates the operation completed successfully.
   - `const AuditOutcome Succeeded`
@@ -21376,6 +21601,9 @@ Browse the published API surface by public member.
 - [Succeeded](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded): `Fields` on `RuntimeLifecycleEventOutcome` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The lifecycle event completed successfully.
   - `const RuntimeLifecycleEventOutcome Succeeded`
+- [SucceededCount](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-succeededcount): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The number of `succeeded` observations reported so far.
+  - `int SucceededCount { get; set; }`
 - [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-succeededcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `succeeded` observations reported so far.
   - `int SucceededCount { get; set; }`
@@ -21997,8 +22225,23 @@ Browse the published API surface by public member.
 - [ToNodeId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-tonodeid): `Properties` on `ExecutionGraphEdgeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ToNodeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the destination node identifier.
   - `string ToNodeId { get; }`
+- [Tool](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-tool): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Tool&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the resolved tool descriptor being executed.
+  - `AgentToolDescriptor Tool { get; }`
+- [ToolId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-toolid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable tool identifier.
+  - `string ToolId { get; }`
+- [ToolId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-toolid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable tool identifier to execute.
+  - `string ToolId { get; }`
+- [ToolId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-toolid): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - The stable tool identifier.
+  - `string ToolId { get; set; }`
 - [ToolId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-toolid): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable operator tool identifier when the provider can name one.
+  - `string ToolId { get; }`
+- [ToolId](cephalon-agentics.md#member-p-cephalon-agentics-services-iagenttoolexecutor-toolid): `Properties` on `IAgentToolExecutor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable tool identifier owned by this executor.
   - `string ToolId { get; }`
 - [ToolIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-toolids): `Properties` on `DatabaseMigrationOperationalExecutionGroupCommandBatch` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ToolIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable operator tool identifiers represented in this batch, in encounter order.
@@ -22045,6 +22288,9 @@ Browse the published API surface by public member.
 - [TotalRecordedEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningstatus-totalrecordedentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalRecordedEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of command-execution outcomes currently visible to cross-node idempotency hardening.
   - `int TotalRecordedEntryCount { get; set; }`
+- [TotalReports](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolrunstate-totalreports): `Properties` on `AgentToolRunState` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the total number of observations reported for this run.
+  - `int TotalReports { get; }`
 - [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-totalreports): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of runtime observations visible for the execution runtime.
   - `int TotalReports { get; }`
@@ -22264,6 +22510,9 @@ Browse the published API surface by public member.
 - [TryGet](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolcatalog-tryget-system-string-cephalon-agentics-services-agenttooldescriptor): `Methods` on `IAgentToolCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Attempts to resolve a tool descriptor by identifier.
   - `bool TryGet(string toolId, out AgentToolDescriptor tool)`
+- [TryGet](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolruncatalog-tryget-system-string-cephalon-agentics-services-agenttoolrunstate): `Methods` on `IAgentToolRunCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Attempts to look up one reported run-state entry by run identifier.
+  - `bool TryGet(string runId, out AgentToolRunState state)`
 - [TryGet](cephalon-edge.md#member-m-cephalon-edge-services-iedgenodecatalog-tryget-system-string-cephalon-edge-services-edgenodedescriptor): `Methods` on `IEdgeNodeCatalog` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Attempts to resolve an edge node descriptor by identifier.
   - `bool TryGet(string nodeId, out EdgeNodeDescriptor node)`

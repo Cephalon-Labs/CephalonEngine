@@ -29,7 +29,7 @@ public sealed class AgenticRuntimeOptions
     public bool EnableMemory { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a value indicating whether tool execution features are enabled.
+    /// Gets or sets a value indicating whether Cephalon-managed tool dispatch and run-state features are enabled.
     /// </summary>
     public bool EnableExecution { get; set; } = true;
 

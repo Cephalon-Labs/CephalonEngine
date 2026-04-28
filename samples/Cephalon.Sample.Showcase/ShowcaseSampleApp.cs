@@ -4,6 +4,7 @@ using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
+using Cephalon.Agentics.Registration;
 using Cephalon.Audit.EntityFramework.Registration;
 using Cephalon.Audit.Registration;
 using Cephalon.Behaviors.Hosting;
@@ -163,6 +164,9 @@ public static class ShowcaseSampleApp
                 options.DispatchPollingIntervalSeconds = 3;
                 options.RetryDelaySeconds = 15;
             });
+
+            // --- Agentic workload proof ---
+            engine.AddAgentics();
 
             // --- Cross-cutting: identity, tenancy, audit ---
             engine.AddIdentityAccess();

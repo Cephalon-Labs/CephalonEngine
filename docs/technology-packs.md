@@ -44,6 +44,8 @@ Current baseline packages:
 - `Cephalon.Agentics`
   - runtime services and capability activation for `AgenticWorkloads`
   - registers `IAgentToolCatalog` when the profile is selected
+  - registers the Cephalon-managed `IAgentToolDispatcher`, `IAgentToolRunCatalog`, and `IAgentToolRunReporter` when execution is enabled
+  - lets modules add `IAgentToolExecutor`, `IAgentToolExecutionPolicy`, and `IAgentToolExecutionObserver` services without making the host own the tool loop
 - `Cephalon.Eventing`
   - runtime services and capability activation for `EventDrivenIntegration`
   - registers `IEventChannelCatalog` when the profile is selected
@@ -160,7 +162,11 @@ Recommended contracts to use:
 Shipped pack-specific extension points:
 
 - `Cephalon.Agentics`
-  - `IAgentToolContributor` and `IAgentToolRegistry`
+  - `IAgentToolContributor` and `IAgentToolRegistry` for descriptor contribution
+  - `IAgentToolExecutor` for the managed execution implementation of one registered tool
+  - `IAgentToolExecutionPolicy` for approval-required or deny decisions before an executor runs
+  - `IAgentToolExecutionObserver` for audit, telemetry, or projection hooks after each run report is recorded
+  - `IAgentToolRunCatalog` and `IAgentToolRunReporter` for runtime-state reads and controlled report writes
 - `Cephalon.Retrieval`
   - `IKnowledgeCollectionContributor` and `IKnowledgeCollectionRegistry`
 - `Cephalon.Eventing`
@@ -178,6 +184,8 @@ For `Cephalon.Agentics`, `AgentToolDescriptor` can now also link back to:
 
 That keeps AI-facing tool metadata anchored in the same module, capability, execution-graph, hosted-execution, and runtime-story contracts the engine already exposes.
 
+When execution is enabled, `Cephalon.Agentics` also owns one narrow tool-dispatch loop. The dispatcher is still host-agnostic: modules contribute descriptors through `IAgentToolContributor`, register exactly one `IAgentToolExecutor` for each executable tool id, and optionally add policy or observer services. Runtime surfaces then report whether each tool is `cephalon-managed`, `awaiting-executor`, or `not-configured`, plus the latest run outcome and counts. That is the boundary of the current managed proof; broader autonomous planning, memory stores, retries, queues, or provider-specific AI orchestration remain future companion work unless another package explicitly owns them.
+
 Runtime introspection contract:
 
 - `ITechnologyRuntimeContributor`
@@ -187,7 +195,7 @@ Runtime introspection contract:
 - `IRuntimeIntrospectionSnapshotProvider`
   - engine-level abstraction for reading one operator-facing snapshot that combines the runtime manifest, runtime status, and active technology-pack surfaces
 - `GET /engine/technology-surfaces`
-  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys plus live execution-graph and hosted-execution state when those links are declared
+  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys, live execution-graph and hosted-execution state, managed execution readiness, and latest run-state truth when those links or reports exist
 - `GET /engine/snapshot`
   - returns the broader runtime introspection snapshot when operators need manifest, runtime status, and technology-pack surfaces in one payload
 

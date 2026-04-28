@@ -1925,6 +1925,16 @@ public sealed class AspNetCoreHostingTests
         app.MapCephalon();
 
         await app.StartAsync();
+        var agentToolDispatcher = app.Services.GetRequiredService<IAgentToolDispatcher>();
+        await agentToolDispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "analyst",
+            runId: "hosting-agent-run-001",
+            arguments: new Dictionary<string, string>
+            {
+                ["subject"] = "hosting runtime"
+            },
+            actorId: "hosting-test",
+            correlationId: "corr-hosting-agentics-001"));
         var reporter = app.Services.GetRequiredService<IEventSubscriptionRuntimeReporter>();
         await reporter.ReportAsync(
             new EventSubscriptionExecutionReport(
@@ -1959,7 +1969,15 @@ public sealed class AspNetCoreHostingTests
 
         var agentics = Assert.Single(surfaces, surface => surface.TechnologyId == "agentic-workloads");
         Assert.Contains(agentics.Entries, entry => entry.Id == "planner");
-        Assert.Contains(agentics.Entries, entry => entry.Id == "analyst");
+        var analyst = Assert.Single(agentics.Entries, entry => entry.Id == "analyst");
+        Assert.Equal("cephalon-managed", analyst.Metadata["executionOwnership"]);
+        Assert.Equal("reported", analyst.Metadata["runtimeState"]);
+        Assert.Equal("hosting-agent-run-001", analyst.Metadata["lastRunId"]);
+        Assert.Equal("succeeded", analyst.Metadata["lastOutcome"]);
+        Assert.Equal("2", analyst.Metadata["totalReports"]);
+        Assert.Equal("hosting-test", analyst.Metadata["lastActorId"]);
+        Assert.Equal("corr-hosting-agentics-001", analyst.Metadata["lastCorrelationId"]);
+        Assert.Equal("Analyzed hosting runtime.", analyst.Metadata["lastOutputSummary"]);
         var approvalOrchestrator = Assert.Single(agentics.Entries, entry => entry.Id == "approval-orchestrator");
         Assert.Equal("approval-flow", approvalOrchestrator.Metadata["executionGraphId"]);
         Assert.Equal("Approval Flow", approvalOrchestrator.Metadata["executionGraphDisplayName"]);

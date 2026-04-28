@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 26, 2026`.
+Backlog status in this document reflects the repository state as of `April 28, 2026`.
 
 ## Current planning reset (April 2026)
 
@@ -11,13 +11,14 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline and first eventing execution proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, and first agentics managed-execution proof landed.
 
 Current focus:
 
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
-- harden `Cephalon.Agentics` and `Cephalon.Retrieval` with one narrow managed vertical proof each before widening catalog breadth
+- treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
+- harden `Cephalon.Retrieval` with one narrow managed vertical proof before widening catalog breadth
 - keep `Cephalon.MultiTenancy` core narrow and move broader governance workflows into a companion-track plan
 
 ### ENG-230 Engine surface maturity model and audit baseline
@@ -59,19 +60,24 @@ Follow-up later:
 
 ### ENG-232 Agentics tool execution and run-state baseline
 
-Status: planned
+Status: done
 Estimate: 13
 
 Why:
 
-- `Cephalon.Agentics` is currently valuable as a tool-descriptor and runtime-surface pack, but it still stops short of tool execution ownership
-- downstream teams need one honest vertical slice before the pack grows more catalogs or helper APIs
+- before this slice, `Cephalon.Agentics` was valuable as a tool-descriptor and runtime-surface pack, but it still stopped short of tool execution ownership
+- downstream teams needed one honest vertical slice before the pack grew more catalogs or helper APIs
 
-Planned outcome:
+Delivered:
 
-- add one managed tool-execution loop with run-state truth
-- publish approval, audit, or policy hooks needed to keep that loop operator-safe
-- prove the slice with runtime surfaces and at least one adoption-quality sample
+- add a host-agnostic managed tool-execution loop through `IAgentToolDispatcher`, `IAgentToolExecutor`, `AgentToolExecutionRequest`, `AgentToolExecutionContext`, and `AgentToolExecutionResult`
+- publish approval, denial, audit, and projection hooks through `IAgentToolExecutionPolicy`, `IAgentToolExecutionDecision`, `IAgentToolExecutionObserver`, `IAgentToolExecutionReport`, `IAgentToolRunCatalog`, and `IAgentToolRunReporter`
+- project execution readiness and run-state truth through the existing `agent-tools` technology surface, including `executionOwnership`, executor counts, latest run ids/outcomes, approval posture, terminal-state posture, counters, and `reported.*` metadata
+- prove the slice with focused composition, hosting, package-surface, regenerated reference-doc, and showcase-sample coverage
+
+Follow-up later:
+
+- broader autonomous planning, memory persistence, retry queues, provider-specific AI orchestration, and operator automation remain future work until a package owns those paths explicitly
 
 ### ENG-233 Retrieval indexing, query execution, and freshness baseline
 

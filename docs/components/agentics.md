@@ -8,6 +8,9 @@
 - module and registration entry points for the `AgenticWorkloads` technology
 - tool descriptors, registries, and catalogs
 - orchestration-link validation for tool descriptors that point back to capabilities, execution graphs, or hosted executions
+- Cephalon-managed agent-tool dispatch through registered executors
+- run-state reporting and catalogs for tool executions
+- policy and observer hooks for approval, denial, audit, and operational projection
 - runtime-surface contribution for introspection
 
 ## Main surfaces
@@ -20,6 +23,17 @@
 - `Services/AgentToolCatalog.cs`
 - `Services/IAgentToolContributor.cs`
 - `Services/IAgentToolCatalog.cs`
+- `Services/IAgentToolDispatcher.cs`
+- `Services/IAgentToolExecutor.cs`
+- `Services/IAgentToolExecutionPolicy.cs`
+- `Services/IAgentToolExecutionObserver.cs`
+- `Services/IAgentToolRunCatalog.cs`
+- `Services/IAgentToolRunReporter.cs`
+- `Services/AgentToolExecutionRequest.cs`
+- `Services/AgentToolExecutionContext.cs`
+- `Services/AgentToolExecutionResult.cs`
+- `Services/AgentToolExecutionReport.cs`
+- `Services/AgentToolRunState.cs`
 - `Services/AgenticsRuntimeSurfaceContributor.cs`
 
 ## Source structure
@@ -31,7 +45,17 @@
 
 ## How it fits
 
-This pack is the reference pattern for future AI or agent runtime behavior in Cephalon. Modules can contribute tools without forcing the host to own the entire catalog, and those tools can now stay grounded in the existing runtime model by linking back to published capability keys, execution graphs, and hosted executions. The resulting operator-facing answer flows through `/engine/technology-surfaces` and `/engine/snapshot` instead of a separate agent-specific endpoint.
+This pack is the reference pattern for future AI or agent runtime behavior in Cephalon. Modules can contribute tools without forcing the host to own the entire catalog, and those tools can stay grounded in the existing runtime model by linking back to published capability keys, execution graphs, and hosted executions.
+
+When `AgenticRuntimeOptions.EnableExecution` is enabled, the pack also owns a narrow managed execution lane:
+
+- `IAgentToolDispatcher` resolves the selected `AgentToolDescriptor`, reports a `started` observation, evaluates `IAgentToolExecutionPolicy` hooks, invokes the matching `IAgentToolExecutor`, and reports the final outcome.
+- `IAgentToolRunCatalog` exposes the latest run-state truth for each tool run, including outcome counts, actor/correlation details, approval-required posture, terminal-state posture, and the latest operator metadata.
+- `IAgentToolExecutionObserver` receives every report after it is recorded so modules can attach audit, telemetry, or projection behavior without replacing the dispatcher.
+
+The resulting operator-facing answer flows through `/engine/technology-surfaces` and `/engine/snapshot` instead of a separate agent-specific endpoint. Tool entries now include execution readiness (`executionEnabled`, `executionOwnership`, `executorConfigured`, `executorCount`) and run-state metadata (`runtimeState`, `runCount`, `lastOutcome`, `totalReports`, approval/denial counters, and `reported.*` metadata). A tool without a registered executor remains truthful as `awaiting-executor` rather than being described as fully managed.
+
+The showcase sample now includes `ShowcaseAgenticsModule`, which contributes a catalog-inspection tool, a matching executor, an approval policy, and an observer hook so the dispatcher/run-state loop is proven end to end in an adoption-quality host.
 
 ## Related docs
 

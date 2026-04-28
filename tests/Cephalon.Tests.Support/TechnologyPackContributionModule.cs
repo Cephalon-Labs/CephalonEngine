@@ -29,6 +29,11 @@ internal sealed class TechnologyPackContributionModule : ModuleBase, IExecutionG
     {
         services.AddSingleton<ManagedAuditProjectorProbe>();
         services.AddSingleton<IAgentToolContributor, ContributedAgentToolContributor>();
+        services.AddSingleton<IAgentToolExecutor, ContributedAgentToolExecutor>();
+        services.AddSingleton<IAgentToolExecutionPolicy, ContributedAgentToolPolicy>();
+        services.AddSingleton<AgentToolExecutionAuditProbe>();
+        services.AddSingleton<IAgentToolExecutionObserver>(static serviceProvider =>
+            serviceProvider.GetRequiredService<AgentToolExecutionAuditProbe>());
         services.AddSingleton<IEventSubscriptionExecutor, ContributedAuditProjectorExecutor>();
         services.AddSingleton<IKnowledgeCollectionContributor, ContributedKnowledgeCollectionContributor>();
         services.AddSingleton<IEventChannelContributor, ContributedEventChannelContributor>();
@@ -108,6 +113,90 @@ internal sealed class ContributedAgentToolContributor : IAgentToolContributor
             displayName: "Analyst",
             description: "Analyzes runtime posture using a module-contributed agent tool.",
             tags: ["analysis", "module"]));
+    }
+}
+
+internal sealed class ContributedAgentToolExecutor : IAgentToolExecutor
+{
+    public string ToolId => "analyst";
+
+    public ValueTask<AgentToolExecutionResult> ExecuteAsync(
+        AgentToolExecutionContext context,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var subject = context.Arguments.TryGetValue("subject", out var configuredSubject) &&
+            !string.IsNullOrWhiteSpace(configuredSubject)
+            ? configuredSubject
+            : "runtime posture";
+
+        return ValueTask.FromResult(AgentToolExecutionResult.Succeeded(
+            outputSummary: $"Analyzed {subject}.",
+            metadata: new Dictionary<string, string>
+            {
+                ["executor"] = nameof(ContributedAgentToolExecutor),
+                ["subject"] = subject
+            }));
+    }
+}
+
+internal sealed class ContributedAgentToolPolicy : IAgentToolExecutionPolicy
+{
+    public ValueTask<AgentToolExecutionDecision> EvaluateAsync(
+        AgentToolExecutionContext context,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (context.Metadata.TryGetValue("approval", out var approval) &&
+            string.Equals(approval, "required", StringComparison.OrdinalIgnoreCase))
+        {
+            return ValueTask.FromResult(AgentToolExecutionDecision.RequireApproval(
+                "The analyst tool requires approval for this request.",
+                new Dictionary<string, string>
+                {
+                    ["policy"] = nameof(ContributedAgentToolPolicy)
+                }));
+        }
+
+        return ValueTask.FromResult(AgentToolExecutionDecision.Allow(
+            metadata: new Dictionary<string, string>
+            {
+                ["policy"] = nameof(ContributedAgentToolPolicy)
+            }));
+    }
+}
+
+internal sealed class AgentToolExecutionAuditProbe : IAgentToolExecutionObserver
+{
+    private readonly Lock gate = new();
+    private readonly List<AgentToolExecutionReport> reports = [];
+
+    public IReadOnlyList<AgentToolExecutionReport> Reports
+    {
+        get
+        {
+            lock (gate)
+            {
+                return reports.ToArray();
+            }
+        }
+    }
+
+    public ValueTask ObserveAsync(
+        AgentToolExecutionReport report,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(report);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (gate)
+        {
+            reports.Add(report);
+        }
+
+        return ValueTask.CompletedTask;
     }
 }
 

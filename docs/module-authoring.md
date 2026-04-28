@@ -898,6 +898,7 @@ ownership.
 Packages that need to describe an execution flow can implement `IExecutionGraphContributor` and publish one or more `ExecutionGraphDescriptor` entries.
 Packages that need to describe operator-facing host-managed background work can also implement `IHostedExecutionContributor` and publish one or more `HostedExecutionDescriptor` entries.
 Packages that extend `Cephalon.Agentics` can keep agent tools grounded in those same runtime contracts by declaring `capabilityKeys`, `executionGraphId`, or `hostedExecutionId` on `AgentToolDescriptor` instead of inventing a separate AI-specific orchestration registry.
+Packages that want a Cephalon-managed agent-tool loop can also register `IAgentToolExecutor` for the tool id, add `IAgentToolExecutionPolicy` for approval or denial decisions, and attach `IAgentToolExecutionObserver` for audit or telemetry without taking over the dispatcher itself.
 
 Current baseline behavior:
 
@@ -911,6 +912,8 @@ Current baseline behavior:
 - modules that own application-managed event handling can also inject `IEventSubscriptionRuntimeReporter` and report `started`, `succeeded`, `failed`, `retry-scheduled`, or `skipped` observations plus operator-facing metadata such as retry windows or backoff hints so `Cephalon.Eventing` can project truthful live runtime state without claiming a pack-owned bus runner
 - modules or adapter packages that own application-managed publication dispatch can inject `IEventDispatchRuntimeReporter` and report `started`, `succeeded`, `failed`, `retry-scheduled`, or `skipped` observations plus operator-facing metadata such as `outboxId`, `channelId`, retry windows, or backoff hints so `Cephalon.Eventing` can project truthful dispatch runtime state without claiming a broker-owned dispatch runtime
 - `Cephalon.Agentics` can now project agent-tool links to capability keys, execution graphs, and hosted executions through `/engine/technology-surfaces` and `/engine/snapshot`
+- when agentic execution is enabled, `IAgentToolDispatcher` records `started` plus terminal or policy outcomes into `IAgentToolRunCatalog`, and the same surface reports `cephalon-managed`, `awaiting-executor`, or `not-configured` ownership truth per tool
+- modules can query `IAgentToolRunCatalog` when they need in-process run posture, but they should report through `IAgentToolDispatcher` or `IAgentToolRunReporter` instead of inventing host-local run dictionaries
 - invalid agent-tool references to unknown capability keys, execution graphs, or hosted executions now fail when the agentic runtime catalog is resolved
 - the engine validates hosted-execution ids, source modules, and referenced execution graphs at build time so invalid hosted descriptors fail fast
 - the engine validates graph ids, entry nodes, edges, referenced modules, and referenced capability keys at build time so invalid descriptors fail fast
