@@ -32,4 +32,19 @@ public sealed class RetrievalOptions
     /// Gets or sets a value indicating whether query features are enabled.
     /// </summary>
     public bool EnableQuerying { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the default maximum number of matches returned when a query request does not choose one explicitly.
+    /// </summary>
+    public int DefaultQueryLimit { get; set; } = 10;
+
+    /// <summary>
+    /// Gets or sets the upper bound applied to query result limits.
+    /// </summary>
+    public int MaximumQueryLimit { get; set; } = 25;
+
+    /// <summary>
+    /// Gets or sets the number of seconds after which the latest successful index is considered stale for operator reporting.
+    /// </summary>
+    public int FreshnessStaleAfterSeconds { get; set; } = 3600;
 }

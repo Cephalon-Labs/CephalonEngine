@@ -1949,6 +1949,19 @@ public sealed class AspNetCoreHostingTests
                     ["nextRetryAtUtc"] = "2026-04-04T11:05:00.0000000+00:00",
                     ["retryPolicy"] = "delayed"
                 }));
+        var retrievalIndexer = app.Services.GetRequiredService<IKnowledgeIndexer>();
+        await retrievalIndexer.IndexAsync(new KnowledgeIndexingRequest(
+            collectionId: "runbooks",
+            runId: "hosting-retrieval-index-001",
+            actorId: "hosting-test",
+            correlationId: "corr-hosting-retrieval-001"));
+        var retrievalQueryEngine = app.Services.GetRequiredService<IKnowledgeQueryEngine>();
+        var retrievalQuery = await retrievalQueryEngine.QueryAsync(new KnowledgeQueryRequest(
+            collectionId: "runbooks",
+            queryText: "retrieval freshness",
+            maxResults: 5,
+            actorId: "hosting-test",
+            correlationId: "corr-hosting-retrieval-query-001"));
         var client = app.GetTestClient();
         var manifest = await client.GetFromJsonAsync<RuntimeManifest>("/engine/manifest");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
@@ -2033,7 +2046,14 @@ public sealed class AspNetCoreHostingTests
 
         var retrieval = Assert.Single(surfaces, surface => surface.TechnologyId == "knowledge-retrieval");
         Assert.Contains(retrieval.Entries, entry => entry.Id == "docs");
-        Assert.Contains(retrieval.Entries, entry => entry.Id == "runbooks");
+        Assert.True(retrievalQuery.HasMatches);
+        Assert.Contains(retrieval.Entries, entry => entry.Id == "runbooks" &&
+            entry.Metadata["indexingOwnership"] == "cephalon-managed" &&
+            entry.Metadata["queryOwnership"] == "cephalon-managed" &&
+            entry.Metadata["runtimeState"] == "indexed" &&
+            entry.Metadata["freshnessState"] == KnowledgeIndexFreshnessStates.Fresh &&
+            entry.Metadata["documentCount"] == "2" &&
+            entry.Metadata["queryCount"] == "1");
 
         var edge = Assert.Single(surfaces, surface => surface.TechnologyId == "edge-native-delivery");
         Assert.Contains(edge.Entries, entry => entry.Id == "storefront-edge");

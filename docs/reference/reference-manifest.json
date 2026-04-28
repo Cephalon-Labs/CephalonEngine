@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T14:11:51.4395811+00:00",
+  "GeneratedAtUtc": "2026-04-28T14:54:45.1811663+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -504,7 +504,7 @@
       "Description": "Knowledge retrieval runtime services and extension points.",
       "FileName": "cephalon-retrieval.md",
       "NamespaceCount": 3,
-      "TypeCount": 6
+      "TypeCount": 20
     },
     {
       "AssemblyName": "Cephalon.Scaffolding",
@@ -1726,7 +1726,7 @@
       "AssemblyName": "Cephalon.Retrieval",
       "FileName": "cephalon-retrieval.md",
       "AnchorId": "namespace-cephalon-retrieval-services",
-      "TypeCount": 4
+      "TypeCount": 18
     },
     {
       "NamespaceName": "Cephalon.Scaffolding.Generation",
@@ -10617,6 +10617,66 @@
       }
     },
     {
+      "DisplayName": "IKnowledgeDocumentProvider",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-iknowledgedocumentprovider",
+      "Declaration": "public interface IKnowledgeDocumentProvider",
+      "Summary": "Loads documents for one knowledge collection so the retrieval runtime can build a managed index.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IKnowledgeIndexCatalog",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-iknowledgeindexcatalog",
+      "Declaration": "public interface IKnowledgeIndexCatalog",
+      "Summary": "Exposes operator-facing index and query execution state for the active retrieval runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "IKnowledgeIndexer",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-iknowledgeindexer",
+      "Declaration": "public interface IKnowledgeIndexer",
+      "Summary": "Builds and replaces managed indexes for registered knowledge collections.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IKnowledgeQueryEngine",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-iknowledgequeryengine",
+      "Declaration": "public interface IKnowledgeQueryEngine",
+      "Summary": "Executes managed retrieval queries over indexed knowledge documents.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ILocalizedResourceContributor",
       "NamespaceName": "Cephalon.Abstractions.Localization",
       "AssemblyName": "Cephalon.Abstractions",
@@ -11498,6 +11558,156 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgedocument",
+      "Declaration": "public sealed class KnowledgeDocument",
+      "Summary": "Describes one source document that can be indexed by the managed retrieval runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeDocumentProviderContext",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgedocumentprovidercontext",
+      "Declaration": "public sealed class KnowledgeDocumentProviderContext",
+      "Summary": "Provides request context to a knowledge document provider during managed indexing.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeIndexFreshnessStates",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgeindexfreshnessstates",
+      "Declaration": "public static class KnowledgeIndexFreshnessStates",
+      "Summary": "Defines stable freshness state identifiers for managed retrieval indexes.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeIndexingOutcomes",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgeindexingoutcomes",
+      "Declaration": "public static class KnowledgeIndexingOutcomes",
+      "Summary": "Defines stable outcome identifiers emitted by managed retrieval indexing.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeIndexingRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgeindexingrequest",
+      "Declaration": "public sealed class KnowledgeIndexingRequest",
+      "Summary": "Describes a managed indexing request for one knowledge collection.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgeindexingresult",
+      "Declaration": "public sealed class KnowledgeIndexingResult",
+      "Summary": "Describes the result of a managed indexing attempt.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgeindexstate",
+      "Declaration": "public sealed class KnowledgeIndexState",
+      "Summary": "Describes the latest managed index and query execution state for one knowledge collection.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 22,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgequerymatch",
+      "Declaration": "public sealed class KnowledgeQueryMatch",
+      "Summary": "Describes one ranked document match returned by the managed query engine.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeQueryRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgequeryrequest",
+      "Declaration": "public sealed class KnowledgeQueryRequest",
+      "Summary": "Describes a managed retrieval query request for one knowledge collection.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-knowledgequeryresult",
+      "Declaration": "public sealed class KnowledgeQueryResult",
+      "Summary": "Describes the result of a managed retrieval query.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -13957,7 +14167,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 3,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -16567,6 +16777,39 @@
       "AnchorId": "member-f-cephalon-audit-conventions-auditmetadatakeys-actorid",
       "Signature": "const string ActorId",
       "Summary": "The metadata key that stores the actor identifier associated with an audit entry."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocumentProviderContext",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-actorid",
+      "Signature": "string ActorId { get; }",
+      "Summary": "Gets the optional actor that requested indexing."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingrequest-actorid",
+      "Signature": "string ActorId { get; }",
+      "Summary": "Gets the optional actor that requested indexing."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryrequest-actorid",
+      "Signature": "string ActorId { get; }",
+      "Summary": "Gets the optional actor that requested the query."
     },
     {
       "DisplayName": "ActorType",
@@ -28218,6 +28461,94 @@
       "Summary": "Gets the stable outcome code when one was supplied."
     },
     {
+      "DisplayName": "Collection",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocumentProviderContext",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-collection",
+      "Signature": "KnowledgeCollectionDescriptor Collection { get; }",
+      "Summary": "Gets the collection being indexed."
+    },
+    {
+      "DisplayName": "CollectionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "IKnowledgeDocumentProvider",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-iknowledgedocumentprovider-collectionid",
+      "Signature": "string CollectionId { get; }",
+      "Summary": "Gets the collection identifier served by this provider."
+    },
+    {
+      "DisplayName": "CollectionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingrequest-collectionid",
+      "Signature": "string CollectionId { get; }",
+      "Summary": "Gets the collection identifier to index."
+    },
+    {
+      "DisplayName": "CollectionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-collectionid",
+      "Signature": "string CollectionId { get; set; }",
+      "Summary": "The collection identifier that was indexed."
+    },
+    {
+      "DisplayName": "CollectionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-collectionid",
+      "Signature": "string CollectionId { get; set; }",
+      "Summary": "The collection identifier represented by this state."
+    },
+    {
+      "DisplayName": "CollectionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-collectionid",
+      "Signature": "string CollectionId { get; set; }",
+      "Summary": "The collection identifier that produced the match."
+    },
+    {
+      "DisplayName": "CollectionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryrequest-collectionid",
+      "Signature": "string CollectionId { get; }",
+      "Summary": "Gets the collection identifier to query."
+    },
+    {
+      "DisplayName": "CollectionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryresult-collectionid",
+      "Signature": "string CollectionId { get; set; }",
+      "Summary": "The collection identifier that was queried."
+    },
+    {
       "DisplayName": "Collections",
       "Category": "Properties",
       "DeclaringTypeName": "IKnowledgeCatalog",
@@ -31386,6 +31717,17 @@
       "Summary": "Initializes a new instance of \u0060ContainsBehaviorsAttribute\u0060 pointing to the generated registration class."
     },
     {
+      "DisplayName": "Content",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocument-content",
+      "Signature": "string Content { get; }",
+      "Summary": "Gets the searchable document content."
+    },
+    {
       "DisplayName": "Contents",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocFile",
@@ -31406,6 +31748,17 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-renderedfile-contents",
       "Signature": "string Contents { get; }",
       "Summary": "Gets the contents that should be written to the file."
+    },
+    {
+      "DisplayName": "ContentSnippet",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-contentsnippet",
+      "Signature": "string ContentSnippet { get; set; }",
+      "Summary": "A short content snippet around the matched text."
     },
     {
       "DisplayName": "ContentType",
@@ -32451,6 +32804,39 @@
       "AnchorId": "member-p-cephalon-abstractions-data-inboxmessage-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the correlation identifier associated with the message."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocumentProviderContext",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for the indexing run."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for this indexing attempt."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for the query."
     },
     {
       "DisplayName": "CorrelationId",
@@ -34604,6 +34990,17 @@
       "AnchorId": "member-f-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-defaultproviderid",
       "Signature": "const string DefaultProviderId",
       "Summary": "Gets the default provider identifier used by the Traefik traffic materializer."
+    },
+    {
+      "DisplayName": "DefaultQueryLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrievalOptions",
+      "NamespaceName": "Cephalon.Retrieval.Configuration",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-defaultquerylimit",
+      "Signature": "int DefaultQueryLimit { get; set; }",
+      "Summary": "Gets or sets the default maximum number of matches returned when a query request does not choose one explicitly."
     },
     {
       "DisplayName": "DefaultRootFolderName",
@@ -38390,6 +38787,39 @@
       "Summary": "Gets the external distribution metadata declared by the package manifest, when available."
     },
     {
+      "DisplayName": "DocumentCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-documentcount",
+      "Signature": "int DocumentCount { get; set; }",
+      "Summary": "The number of documents stored in the replacement index."
+    },
+    {
+      "DisplayName": "DocumentCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-documentcount",
+      "Signature": "int DocumentCount { get; set; }",
+      "Summary": "The number of documents currently stored in the managed index."
+    },
+    {
+      "DisplayName": "DocumentId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-documentid",
+      "Signature": "string DocumentId { get; set; }",
+      "Summary": "The matched document identifier."
+    },
+    {
       "DisplayName": "DocumentName",
       "Category": "Properties",
       "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
@@ -41547,6 +41977,17 @@
       "Summary": "Gets the operator-facing error summary when the observation represents a failure."
     },
     {
+      "DisplayName": "Error",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-error",
+      "Signature": "string Error { get; set; }",
+      "Summary": "The operator-facing error summary when indexing failed."
+    },
+    {
       "DisplayName": "Errors",
       "Category": "Properties",
       "DeclaringTypeName": "ResultModel\u003CTModel\u003E",
@@ -44508,6 +44949,28 @@
     {
       "DisplayName": "Failed",
       "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexFreshnessStates",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-failed",
+      "Signature": "const string Failed",
+      "Summary": "The latest indexing run failed."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexingOutcomes",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexingoutcomes-failed",
+      "Signature": "const string Failed",
+      "Summary": "Indexing failed before a replacement index could be published."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
       "DeclaringTypeName": "RuntimeLifecycleEventOutcome",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -44625,6 +45088,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-failedcount",
       "Signature": "int FailedCount { get; set; }",
       "Summary": "The number of \u0060failed\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "FailedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-failedcount",
+      "Signature": "int FailedCount { get; set; }",
+      "Summary": "The number of indexing runs that have failed."
     },
     {
       "DisplayName": "FailedCount",
@@ -45210,6 +45684,17 @@
       "Summary": "Indicates that the provider reports the capture as fresh."
     },
     {
+      "DisplayName": "Fresh",
+      "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexFreshnessStates",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-fresh",
+      "Signature": "const string Fresh",
+      "Summary": "The latest successful index is within the configured freshness window."
+    },
+    {
       "DisplayName": "Freshness",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionReport",
@@ -45274,6 +45759,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshnessseconds",
       "Signature": "int FreshnessSeconds { get; }",
       "Summary": "Gets the configured or default freshness window in seconds."
+    },
+    {
+      "DisplayName": "FreshnessStaleAfterSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrievalOptions",
+      "NamespaceName": "Cephalon.Retrieval.Configuration",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-freshnessstaleafterseconds",
+      "Signature": "int FreshnessStaleAfterSeconds { get; set; }",
+      "Summary": "Gets or sets the number of seconds after which the latest successful index is considered stale for operator reporting."
+    },
+    {
+      "DisplayName": "FreshnessState",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-freshnessstate",
+      "Signature": "string FreshnessState { get; set; }",
+      "Summary": "The operator-facing freshness state captured for the latest indexing observation."
     },
     {
       "DisplayName": "FreshUntilUtc",
@@ -46583,6 +47090,17 @@
       "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyclientid-system-string",
       "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E GetByClientId(string clientId)",
       "Summary": "Gets all backend-for-frontend client bindings owned by the requested client identifier."
+    },
+    {
+      "DisplayName": "GetByCollectionId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IKnowledgeIndexCatalog",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-iknowledgeindexcatalog-getbycollectionid-system-string",
+      "Signature": "KnowledgeIndexState GetByCollectionId(string collectionId)",
+      "Summary": "Gets the latest index state for a collection when one exists."
     },
     {
       "DisplayName": "GetByCompensationActionId",
@@ -50963,6 +51481,17 @@
       "Summary": "Gets a value indicating whether every target in this group publishes a direct or manual command path."
     },
     {
+      "DisplayName": "HasMatches",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryresult-hasmatches",
+      "Signature": "bool HasMatches { get; }",
+      "Summary": "Gets a value indicating whether the query returned at least one match."
+    },
+    {
       "DisplayName": "HasMatchingAdapterFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus",
@@ -54584,6 +55113,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocument-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable document identifier within its collection."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "ModuleDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Modules",
       "AssemblyName": "Cephalon.Abstractions",
@@ -55647,6 +56187,28 @@
       "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-index",
       "Signature": "string Index { get; set; }",
       "Summary": "Gets or sets the optional index name or comma-delimited index list that should be checked through the cluster-health API."
+    },
+    {
+      "DisplayName": "IndexAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IKnowledgeIndexer",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-iknowledgeindexer-indexasync-cephalon-retrieval-services-knowledgeindexingrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CKnowledgeIndexingResult\u003E IndexAsync(KnowledgeIndexingRequest request, CancellationToken cancellationToken)",
+      "Summary": "Indexes the documents supplied by providers for the requested collection."
+    },
+    {
+      "DisplayName": "IndexedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-indexedatutc",
+      "Signature": "DateTimeOffset? IndexedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the replacement index was published."
     },
     {
       "DisplayName": "Info",
@@ -59609,6 +60171,94 @@
       "Summary": "Creates a new knowledge collection descriptor."
     },
     {
+      "DisplayName": "KnowledgeDocument",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-knowledgedocument-ctor-system-string-system-string-system-string-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "KnowledgeDocument(string id, string title, string content, Uri uri, IReadOnlyList\u003Cstring\u003E tags, DateTimeOffset? lastModifiedAtUtc, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a knowledge document for managed indexing."
+    },
+    {
+      "DisplayName": "KnowledgeDocumentProviderContext",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeDocumentProviderContext",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-knowledgedocumentprovidercontext-ctor-cephalon-retrieval-services-knowledgecollectiondescriptor-system-string-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "KnowledgeDocumentProviderContext(KnowledgeCollectionDescriptor collection, string runId, DateTimeOffset requestedAtUtc, string actorId, string correlationId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates provider context for a managed indexing request."
+    },
+    {
+      "DisplayName": "KnowledgeIndexingRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeIndexingRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-knowledgeindexingrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "KnowledgeIndexingRequest(string collectionId, string runId, string actorId, string correlationId, DateTimeOffset? requestedAtUtc, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a managed indexing request."
+    },
+    {
+      "DisplayName": "KnowledgeIndexingResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-knowledgeindexingresult-ctor-system-string-system-string-system-string-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "KnowledgeIndexingResult(string CollectionId, string RunId, string Outcome, DateTimeOffset ObservedAtUtc, DateTimeOffset? IndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string Error, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the result of a managed indexing attempt."
+    },
+    {
+      "DisplayName": "KnowledgeIndexState",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-knowledgeindexstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "KnowledgeIndexState(string CollectionId, string LastRunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, DateTimeOffset? LastIndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string FreshnessState, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int QueryCount, DateTimeOffset? LastQueriedAtUtc, string LastQueryFingerprint, int LastQueryLength, int LastQueryMatchedCount, string LastActorId, string LastCorrelationId, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the latest managed index and query execution state for one knowledge collection."
+    },
+    {
+      "DisplayName": "KnowledgeQueryMatch",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-knowledgequerymatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "KnowledgeQueryMatch(string CollectionId, string DocumentId, string Title, string ContentSnippet, int Score, Uri Uri, IReadOnlyList\u003Cstring\u003E Tags, DateTimeOffset? LastModifiedAtUtc, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes one ranked document match returned by the managed query engine."
+    },
+    {
+      "DisplayName": "KnowledgeQueryRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeQueryRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-knowledgequeryrequest-ctor-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "KnowledgeQueryRequest(string collectionId, string queryText, int? maxResults, string actorId, string correlationId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a managed retrieval query request."
+    },
+    {
+      "DisplayName": "KnowledgeQueryResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-knowledgequeryresult-ctor-system-string-system-string-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-retrieval-services-knowledgequerymatch-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "KnowledgeQueryResult(string CollectionId, string QueryText, DateTimeOffset QueriedAtUtc, IReadOnlyList\u003CKnowledgeQueryMatch\u003E Matches, int TotalIndexedDocuments, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the result of a managed retrieval query."
+    },
+    {
       "DisplayName": "KnowledgeRetrieval",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInTechnologies",
@@ -59783,6 +60433,17 @@
       "AnchorId": "member-p-cephalon-agentics-services-agenttoolrunstate-lastactorid",
       "Signature": "string LastActorId { get; set; }",
       "Summary": "The actor identifier from the latest observation when one was reported."
+    },
+    {
+      "DisplayName": "LastActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastactorid",
+      "Signature": "string LastActorId { get; set; }",
+      "Summary": "The latest actor identifier when one was supplied by an indexing request."
     },
     {
       "DisplayName": "LastAppendedEventCount",
@@ -59972,6 +60633,17 @@
       "Summary": "The correlation identifier from the latest observation when one was reported."
     },
     {
+      "DisplayName": "LastCorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastcorrelationid",
+      "Signature": "string LastCorrelationId { get; set; }",
+      "Summary": "The latest correlation identifier when one was supplied by an indexing request."
+    },
+    {
       "DisplayName": "LastEdgeNodeId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -60084,6 +60756,17 @@
     {
       "DisplayName": "LastError",
       "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lasterror",
+      "Signature": "string LastError { get; set; }",
+      "Summary": "The latest operator-facing error summary when indexing failed."
+    },
+    {
+      "DisplayName": "LastError",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -60159,6 +60842,17 @@
       "Summary": "The latest HTTP success status code returned by the durable execution strategy when one was reported."
     },
     {
+      "DisplayName": "LastIndexedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastindexedatutc",
+      "Signature": "DateTimeOffset? LastIndexedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the latest replacement index was published."
+    },
+    {
       "DisplayName": "LastKnownVersion",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -60201,6 +60895,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastmessageid",
       "Signature": "string LastMessageId { get; set; }",
       "Summary": "The last stable inbound message identifier when one was reported."
+    },
+    {
+      "DisplayName": "LastModifiedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocument-lastmodifiedatutc",
+      "Signature": "DateTimeOffset? LastModifiedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the source document was last modified."
+    },
+    {
+      "DisplayName": "LastModifiedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-lastmodifiedatutc",
+      "Signature": "DateTimeOffset? LastModifiedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the matched source document was last modified."
     },
     {
       "DisplayName": "LastObservedAtUtc",
@@ -60289,6 +61005,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastobservedatutc",
       "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the last observation was reported."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the latest indexing observation was recorded."
     },
     {
       "DisplayName": "LastObservedAtUtc",
@@ -60458,6 +61185,17 @@
     {
       "DisplayName": "LastOutcome",
       "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastoutcome",
+      "Signature": "string LastOutcome { get; set; }",
+      "Summary": "The latest indexing outcome when one has been observed."
+    },
+    {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -60520,6 +61258,50 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastpublishertype",
       "Signature": "string LastPublisherType { get; set; }",
       "Summary": "The last concrete publisher implementation type that accepted or rejected the publication when one was reported."
+    },
+    {
+      "DisplayName": "LastQueriedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastqueriedatutc",
+      "Signature": "DateTimeOffset? LastQueriedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the latest query was executed."
+    },
+    {
+      "DisplayName": "LastQueryFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastqueryfingerprint",
+      "Signature": "string LastQueryFingerprint { get; set; }",
+      "Summary": "A non-reversible SHA-256 fingerprint of the latest query text."
+    },
+    {
+      "DisplayName": "LastQueryLength",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastquerylength",
+      "Signature": "int LastQueryLength { get; set; }",
+      "Summary": "The character length of the latest query text."
+    },
+    {
+      "DisplayName": "LastQueryMatchedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastquerymatchedcount",
+      "Signature": "int LastQueryMatchedCount { get; set; }",
+      "Summary": "The number of matches returned by the latest query."
     },
     {
       "DisplayName": "LastRecoveredAtUtc",
@@ -60597,6 +61379,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastreportid",
       "Signature": "string LastReportId { get; set; }",
       "Summary": "The latest stable report identifier when the active runtime supplied one."
+    },
+    {
+      "DisplayName": "LastRunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastrunid",
+      "Signature": "string LastRunId { get; set; }",
+      "Summary": "The latest indexing run identifier when one has been observed."
     },
     {
       "DisplayName": "LastStage",
@@ -62370,6 +63163,17 @@
       "Summary": "Gets the assembly load context name used for the package."
     },
     {
+      "DisplayName": "LoadDocumentsAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IKnowledgeDocumentProvider",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-iknowledgedocumentprovider-loaddocumentsasync-cephalon-retrieval-services-knowledgedocumentprovidercontext-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CIReadOnlyList\u003CKnowledgeDocument\u003E\u003E LoadDocumentsAsync(KnowledgeDocumentProviderContext context, CancellationToken cancellationToken)",
+      "Summary": "Loads the current document set for the requested collection."
+    },
+    {
       "DisplayName": "LoadedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
@@ -63910,6 +64714,17 @@
       "Summary": "Gets the included tags that matched the published endpoint."
     },
     {
+      "DisplayName": "Matches",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryresult-matches",
+      "Signature": "IReadOnlyList\u003CKnowledgeQueryMatch\u003E Matches { get; set; }",
+      "Summary": "The ranked matches returned by the managed query engine."
+    },
+    {
       "DisplayName": "MatchingAdapterFingerprint",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories",
@@ -64636,6 +65451,17 @@
       "Summary": "Gets the largest event id published by this convention."
     },
     {
+      "DisplayName": "MaximumQueryLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrievalOptions",
+      "NamespaceName": "Cephalon.Retrieval.Configuration",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-maximumquerylimit",
+      "Signature": "int MaximumQueryLimit { get; set; }",
+      "Summary": "Gets or sets the upper bound applied to query result limits."
+    },
+    {
       "DisplayName": "MaximumRetainedEntryCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -64711,6 +65537,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts",
       "Signature": "int MaxRestartAttempts { get; }",
       "Summary": "Gets the maximum number of manual restarts."
+    },
+    {
+      "DisplayName": "MaxResults",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryrequest-maxresults",
+      "Signature": "int? MaxResults { get; }",
+      "Summary": "Gets the optional maximum number of matches to return."
     },
     {
       "DisplayName": "MaxRetryCount",
@@ -66020,6 +66857,94 @@
       "AnchorId": "member-p-cephalon-abstractions-data-inboxmessage-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets message metadata associated with the message."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocument-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata attached to the document."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocumentProviderContext",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata attached to the indexing request."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata attached to the indexing request."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Optional operator-facing metadata captured with the result."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Optional operator-facing metadata captured with the latest indexing observation."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "The operator-facing metadata attached to the matched document."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional request metadata used by provider-specific query engines."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Optional operator-facing metadata captured with the query result."
     },
     {
       "DisplayName": "Metadata",
@@ -69837,6 +70762,17 @@
       "Summary": "Creates a not-found result for the specified payload type."
     },
     {
+      "DisplayName": "NotIndexed",
+      "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexFreshnessStates",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-notindexed",
+      "Signature": "const string NotIndexed",
+      "Summary": "The collection has not been indexed."
+    },
+    {
       "DisplayName": "NotNeeded",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates",
@@ -70121,6 +71057,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-observedatutc",
       "Signature": "DateTimeOffset ObservedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when the observation occurred."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the outcome was observed."
     },
     {
       "DisplayName": "ObservedEdgeNodeIds",
@@ -72418,6 +73365,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-outcome",
       "Signature": "string Outcome { get; }",
       "Summary": "Gets the stable outcome identifier for the observed subscription activity."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-outcome",
+      "Signature": "string Outcome { get; set; }",
+      "Summary": "The stable indexing outcome identifier."
     },
     {
       "DisplayName": "Outcome",
@@ -79722,6 +80680,17 @@
       "Summary": "Gets the human-readable purpose of the folder."
     },
     {
+      "DisplayName": "QueriedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryresult-queriedatutc",
+      "Signature": "DateTimeOffset QueriedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the query executed."
+    },
+    {
       "DisplayName": "Query",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointBindingSource",
@@ -79753,6 +80722,50 @@
       "AnchorId": "member-m-cephalon-abstractions-data-idataproduct-1-queryasync-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CT\u003E QueryAsync(CancellationToken cancellationToken)",
       "Summary": "Queries the current value of the data product."
+    },
+    {
+      "DisplayName": "QueryAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IKnowledgeQueryEngine",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-iknowledgequeryengine-queryasync-cephalon-retrieval-services-knowledgequeryrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CKnowledgeQueryResult\u003E QueryAsync(KnowledgeQueryRequest request, CancellationToken cancellationToken)",
+      "Summary": "Queries the active managed index for a collection."
+    },
+    {
+      "DisplayName": "QueryCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-querycount",
+      "Signature": "int QueryCount { get; set; }",
+      "Summary": "The number of managed queries executed against this collection."
+    },
+    {
+      "DisplayName": "QueryText",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryrequest-querytext",
+      "Signature": "string QueryText { get; }",
+      "Summary": "Gets the text to search for."
+    },
+    {
+      "DisplayName": "QueryText",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryresult-querytext",
+      "Signature": "string QueryText { get; set; }",
+      "Summary": "The query text supplied by the caller."
     },
     {
       "DisplayName": "QueueLimit",
@@ -83405,6 +84418,28 @@
       "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested",
       "Signature": "RateLimitingSelection Requested { get; set; }",
       "Summary": "The requested app-model selection that asked for rate limiting."
+    },
+    {
+      "DisplayName": "RequestedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocumentProviderContext",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-requestedatutc",
+      "Signature": "DateTimeOffset RequestedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when indexing was requested."
+    },
+    {
+      "DisplayName": "RequestedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingrequest-requestedatutc",
+      "Signature": "DateTimeOffset RequestedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when indexing was requested."
     },
     {
       "DisplayName": "RequestedExecutionRuntimeId",
@@ -87686,6 +88721,39 @@
       "Summary": "The stable run identifier."
     },
     {
+      "DisplayName": "RunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocumentProviderContext",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-runid",
+      "Signature": "string RunId { get; }",
+      "Summary": "Gets the stable indexing run identifier."
+    },
+    {
+      "DisplayName": "RunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingRequest",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingrequest-runid",
+      "Signature": "string RunId { get; }",
+      "Summary": "Gets the stable run identifier for this indexing attempt."
+    },
+    {
+      "DisplayName": "RunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-runid",
+      "Signature": "string RunId { get; set; }",
+      "Summary": "The stable indexing run identifier."
+    },
+    {
       "DisplayName": "RunIntervalMinutes",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryRetentionSelection",
@@ -89149,6 +90217,17 @@
       "Summary": "Gets the stable scope identifier."
     },
     {
+      "DisplayName": "Score",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-score",
+      "Signature": "int Score { get; set; }",
+      "Summary": "The lexical relevance score assigned by the managed query engine."
+    },
+    {
       "DisplayName": "SectionName",
       "Category": "Fields",
       "DeclaringTypeName": "ApiRoutesOptions",
@@ -90249,6 +91328,28 @@
       "Summary": "Gets the outcome identifier used when subscription handling intentionally skips one message."
     },
     {
+      "DisplayName": "Skipped",
+      "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexFreshnessStates",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-skipped",
+      "Signature": "const string Skipped",
+      "Summary": "The latest indexing run was skipped."
+    },
+    {
+      "DisplayName": "Skipped",
+      "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexingOutcomes",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexingoutcomes-skipped",
+      "Signature": "const string Skipped",
+      "Summary": "Indexing was skipped because required runtime inputs were not available."
+    },
+    {
       "DisplayName": "SkippedCandidateIds",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointOverrideDescriptor",
@@ -90313,6 +91414,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-skippedcount",
       "Signature": "int SkippedCount { get; set; }",
       "Summary": "The number of \u0060skipped\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "SkippedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-skippedcount",
+      "Signature": "int SkippedCount { get; set; }",
+      "Summary": "The number of indexing runs that have been skipped."
     },
     {
       "DisplayName": "SkippedOverrideIds",
@@ -90665,6 +91777,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-projectiondescriptor-sourcecontracts",
       "Signature": "IReadOnlyList\u003Cstring\u003E SourceContracts { get; }",
       "Summary": "Gets the optional source contracts that can feed the projection."
+    },
+    {
+      "DisplayName": "SourceFreshnessUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexingResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexingresult-sourcefreshnessutc",
+      "Signature": "DateTimeOffset? SourceFreshnessUtc { get; set; }",
+      "Summary": "The newest source-document timestamp observed during indexing."
+    },
+    {
+      "DisplayName": "SourceFreshnessUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-sourcefreshnessutc",
+      "Signature": "DateTimeOffset? SourceFreshnessUtc { get; set; }",
+      "Summary": "The newest source-document timestamp observed during the latest successful indexing run."
     },
     {
       "DisplayName": "SourceHealthIsolationIds",
@@ -92183,6 +93317,17 @@
       "Summary": "Indicates that the provider reports the capture as stale."
     },
     {
+      "DisplayName": "Stale",
+      "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexFreshnessStates",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-stale",
+      "Signature": "const string Stale",
+      "Summary": "The latest successful index is older than the configured freshness window."
+    },
+    {
       "DisplayName": "StaleAfterSeconds",
       "Category": "Properties",
       "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
@@ -92482,6 +93627,17 @@
     {
       "DisplayName": "Started",
       "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexingOutcomes",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexingoutcomes-started",
+      "Signature": "const string Started",
+      "Summary": "Indexing started for a collection."
+    },
+    {
+      "DisplayName": "Started",
+      "Category": "Fields",
       "DeclaringTypeName": "RuntimeStatus",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -92599,6 +93755,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-startedcount",
       "Signature": "int StartedCount { get; set; }",
       "Summary": "The number of \u0060started\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "StartedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-startedcount",
+      "Signature": "int StartedCount { get; set; }",
+      "Summary": "The number of indexing runs that have started."
     },
     {
       "DisplayName": "Starting",
@@ -93204,6 +94371,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-ieventsubscriptionruntimecatalog-states",
       "Signature": "IReadOnlyList\u003CEventSubscriptionRuntimeState\u003E States { get; }",
       "Summary": "Gets the currently known runtime-state entries ordered by subscription identifier."
+    },
+    {
+      "DisplayName": "States",
+      "Category": "Properties",
+      "DeclaringTypeName": "IKnowledgeIndexCatalog",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-iknowledgeindexcatalog-states",
+      "Signature": "IReadOnlyList\u003CKnowledgeIndexState\u003E States { get; }",
+      "Summary": "Gets the latest index state reported for registered knowledge collections."
     },
     {
       "DisplayName": "States",
@@ -94198,6 +95376,17 @@
     {
       "DisplayName": "Succeeded",
       "Category": "Fields",
+      "DeclaringTypeName": "KnowledgeIndexingOutcomes",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-knowledgeindexingoutcomes-succeeded",
+      "Signature": "const string Succeeded",
+      "Summary": "Indexing completed successfully."
+    },
+    {
+      "DisplayName": "Succeeded",
+      "Category": "Fields",
       "DeclaringTypeName": "RuntimeLifecycleEventOutcome",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -94260,6 +95449,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-succeededcount",
       "Signature": "int SucceededCount { get; set; }",
       "Summary": "The number of \u0060succeeded\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "SucceededCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-succeededcount",
+      "Signature": "int SucceededCount { get; set; }",
+      "Summary": "The number of indexing runs that have completed successfully."
     },
     {
       "DisplayName": "SucceededMigrationTargetCount",
@@ -95129,6 +96329,28 @@
       "AnchorId": "member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the normalized tag set associated with the collection."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocument-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the normalized tags that classify the document."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; set; }",
+      "Summary": "The normalized tags attached to the matched document."
     },
     {
       "DisplayName": "Tags",
@@ -96376,6 +97598,28 @@
     {
       "DisplayName": "Title",
       "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocument-title",
+      "Signature": "string Title { get; }",
+      "Summary": "Gets the human-readable document title."
+    },
+    {
+      "DisplayName": "Title",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-title",
+      "Signature": "string Title { get; set; }",
+      "Summary": "The matched document title."
+    },
+    {
+      "DisplayName": "Title",
+      "Category": "Properties",
       "DeclaringTypeName": "ResultModel\u003CTModel\u003E",
       "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -96658,6 +97902,28 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-audithistoryqueryresult-totalcount",
       "Signature": "int TotalCount { get; }",
       "Summary": "Gets the total number of matching entries before paging was applied."
+    },
+    {
+      "DisplayName": "TotalIndexedDocuments",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryResult",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequeryresult-totalindexeddocuments",
+      "Signature": "int TotalIndexedDocuments { get; set; }",
+      "Summary": "The number of indexed documents available at query time."
+    },
+    {
+      "DisplayName": "TotalIndexRuns",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeIndexState",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-totalindexruns",
+      "Signature": "int TotalIndexRuns { get; }",
+      "Summary": "Gets the total number of indexing observations recorded for this collection."
     },
     {
       "DisplayName": "TotalProducedMessageCount",
@@ -97604,6 +98870,17 @@
       "AnchorId": "member-m-cephalon-retrieval-services-iknowledgecatalog-tryget-system-string-cephalon-retrieval-services-knowledgecollectiondescriptor",
       "Signature": "bool TryGet(string collectionId, out KnowledgeCollectionDescriptor collection)",
       "Summary": "Attempts to resolve a knowledge collection descriptor by identifier."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
+      "DeclaringTypeName": "IKnowledgeIndexCatalog",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-m-cephalon-retrieval-services-iknowledgeindexcatalog-tryget-system-string-cephalon-retrieval-services-knowledgeindexstate",
+      "Signature": "bool TryGet(string collectionId, out KnowledgeIndexState state)",
+      "Summary": "Attempts to resolve the latest index state for a collection."
     },
     {
       "DisplayName": "TryGet",
@@ -98704,6 +99981,28 @@
       "AnchorId": "member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-unsupported-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "OutboxDispatchPolicyDescriptor Unsupported(string outboxId, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates an explicit unsupported dispatch policy for an outbox that can stage messages but does not currently support Cephalon-managed mutable dispatch-state ownership."
+    },
+    {
+      "DisplayName": "Uri",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeDocument",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgedocument-uri",
+      "Signature": "Uri Uri { get; }",
+      "Summary": "Gets an optional document URI for operator drill-down."
+    },
+    {
+      "DisplayName": "Uri",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryMatch",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-services-knowledgequerymatch-uri",
+      "Signature": "Uri Uri { get; set; }",
+      "Summary": "The optional source document URI."
     },
     {
       "DisplayName": "Uri",

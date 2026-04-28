@@ -54,7 +54,8 @@ Current baseline packages:
   - projects runtime truth for the current Wolverine-backed outbox and dispatch loop without turning Wolverine into an engine-core dependency
 - `Cephalon.Retrieval`
   - runtime services and capability activation for `KnowledgeRetrieval`
-  - registers `IKnowledgeCatalog` when the profile is selected
+  - registers `IKnowledgeCatalog`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, and `IKnowledgeQueryEngine` when the profile and options enable those paths
+  - lets modules add `IKnowledgeDocumentProvider` services so Cephalon can build a managed lexical index without making hosts own the retrieval loop
 - `Cephalon.Edge`
   - runtime services and capability activation for `EdgeNativeDelivery`
   - registers `IEdgeNodeCatalog` when the profile is selected
@@ -109,6 +110,10 @@ builder.AddCephalon(engine =>
             id: "docs",
             displayName: "Docs",
             description: "Knowledge base for retrieval."));
+
+        options.DefaultQueryLimit = 10;
+        options.MaximumQueryLimit = 25;
+        options.FreshnessStaleAfterSeconds = 3600;
     });
 
     engine.AddEventing(options =>
@@ -169,6 +174,8 @@ Shipped pack-specific extension points:
   - `IAgentToolRunCatalog` and `IAgentToolRunReporter` for runtime-state reads and controlled report writes
 - `Cephalon.Retrieval`
   - `IKnowledgeCollectionContributor` and `IKnowledgeCollectionRegistry`
+  - `IKnowledgeDocumentProvider` for module-owned source documents
+  - `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and `IKnowledgeIndexCatalog` for the current managed lexical runtime path
 - `Cephalon.Eventing`
   - `IEventChannelContributor` and `IEventChannelRegistry`
 - `Cephalon.Edge`
@@ -186,6 +193,8 @@ That keeps AI-facing tool metadata anchored in the same module, capability, exec
 
 When execution is enabled, `Cephalon.Agentics` also owns one narrow tool-dispatch loop. The dispatcher is still host-agnostic: modules contribute descriptors through `IAgentToolContributor`, register exactly one `IAgentToolExecutor` for each executable tool id, and optionally add policy or observer services. Runtime surfaces then report whether each tool is `cephalon-managed`, `awaiting-executor`, or `not-configured`, plus the latest run outcome and counts. That is the boundary of the current managed proof; broader autonomous planning, memory stores, retries, queues, or provider-specific AI orchestration remain future companion work unless another package explicitly owns them.
 
+When ingestion and querying are enabled, `Cephalon.Retrieval` now owns one narrow lexical retrieval loop. Modules still own the source material through `IKnowledgeDocumentProvider`, while the pack owns indexing, bounded query execution, index state, and freshness reporting for registered collections. Runtime surfaces report `indexingOwnership`, `queryOwnership`, provider readiness, latest index outcome, document count, query count, freshness state, and a query fingerprint rather than raw query text. That is the boundary of the current managed proof; vector databases, embeddings, distributed indexes, durable search clusters, rerankers, provider-specific semantic search, and reindex automation remain future companion work unless another package explicitly owns them.
+
 Runtime introspection contract:
 
 - `ITechnologyRuntimeContributor`
@@ -195,7 +204,7 @@ Runtime introspection contract:
 - `IRuntimeIntrospectionSnapshotProvider`
   - engine-level abstraction for reading one operator-facing snapshot that combines the runtime manifest, runtime status, and active technology-pack surfaces
 - `GET /engine/technology-surfaces`
-  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys, live execution-graph and hosted-execution state, managed execution readiness, and latest run-state truth when those links or reports exist
+  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys, live execution-graph and hosted-execution state, managed execution readiness, and latest run-state truth when those links or reports exist; retrieval collections now also surface provider readiness, indexing/query ownership, freshness state, document counts, query counts, latest run outcomes, and query fingerprints when indexed or queried
 - `GET /engine/snapshot`
   - returns the broader runtime introspection snapshot when operators need manifest, runtime status, and technology-pack surfaces in one payload
 

@@ -1088,7 +1088,21 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Retrieval.Services.IKnowledgeCatalog),
             typeof(global::Cephalon.Retrieval.Services.IKnowledgeCollectionContributor),
             typeof(global::Cephalon.Retrieval.Services.IKnowledgeCollectionRegistry),
-            typeof(global::Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor));
+            typeof(global::Cephalon.Retrieval.Services.IKnowledgeDocumentProvider),
+            typeof(global::Cephalon.Retrieval.Services.IKnowledgeIndexCatalog),
+            typeof(global::Cephalon.Retrieval.Services.IKnowledgeIndexer),
+            typeof(global::Cephalon.Retrieval.Services.IKnowledgeQueryEngine),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeDocument),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeIndexFreshnessStates),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeIndexingOutcomes),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeIndexingRequest),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeIndexingResult),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeIndexState),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeQueryMatch),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeQueryRequest),
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeQueryResult));
     }
 
     [Fact]

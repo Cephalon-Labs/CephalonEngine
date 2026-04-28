@@ -11,14 +11,14 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, and first agentics managed-execution proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, and first retrieval managed index/query proof landed.
 
 Current focus:
 
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
-- harden `Cephalon.Retrieval` with one narrow managed vertical proof before widening catalog breadth
+- treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
 - keep `Cephalon.MultiTenancy` core narrow and move broader governance workflows into a companion-track plan
 
 ### ENG-230 Engine surface maturity model and audit baseline
@@ -81,19 +81,24 @@ Follow-up later:
 
 ### ENG-233 Retrieval indexing, query execution, and freshness baseline
 
-Status: planned
+Status: done
 Estimate: 13
 
 Why:
 
-- `Cephalon.Retrieval` currently models knowledge collections and retrieval surface truth, but it does not yet own indexing or query execution
+- before this slice, `Cephalon.Retrieval` modeled knowledge collections and retrieval surface truth, but it did not yet own indexing or query execution
 - the next useful step is one real retrieval lane with freshness semantics, not broader collection metadata
 
-Planned outcome:
+Delivered:
 
-- add one managed indexing and query execution path
-- surface freshness and runtime posture truthfully through the existing operator story
-- prove the slice with one provider-backed sample and matching docs
+- add `IKnowledgeDocumentProvider`, `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, `IKnowledgeIndexCatalog`, request/result contracts, document contracts, and stable indexing/freshness outcome vocabularies
+- build one Cephalon-managed in-process lexical index/query lane over registered provider documents while preserving module ownership of source material
+- project provider readiness, indexing/query ownership, index outcome counters, document count, query count, freshness state, and query fingerprints through the existing `knowledge-collections` technology surface
+- prove the slice with focused composition, hosting, package-surface, regenerated reference-doc, and showcase-sample coverage
+
+Follow-up later:
+
+- vector databases, embedding pipelines, durable or distributed indexes, rerankers, provider-specific semantic search, reindex automation, and operator remediation remain future work until a package owns those paths explicitly
 
 ### ENG-234 Multi-tenancy governance, membership, and domain workflow companion split
 
@@ -7857,7 +7862,7 @@ Upcoming sequence from the April 2026 maturity reset:
 
 ### Sprint 45
 
-- ENG-233 Retrieval indexing, query execution, and freshness baseline
+- ENG-233 Retrieval indexing, query execution, and freshness baseline (shipped)
 
 ### Later / not scheduled yet
 

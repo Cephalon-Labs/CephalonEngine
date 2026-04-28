@@ -57,6 +57,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 - keep execution ownership explicit in both public contracts and runtime metadata; do not let a pack read as `cephalon-managed` or `provider-managed` unless the implementation truly owns the path
 - keep narrow managed proofs honest about their trigger path and boundaries, for example when an adapter-managed execution lane depends on an existing staged-publication flow instead of a generic inbound broker story
 - for `Cephalon.Agentics`, the current managed proof is the dispatcher-plus-run-state path around registered `IAgentToolExecutor` services; broader autonomous planning, memory persistence, retry queues, or AI-provider orchestration are not part of that compatibility promise until a package owns them explicitly
+- for `Cephalon.Retrieval`, the current managed proof is the provider-fed lexical index/query/freshness path around registered `IKnowledgeDocumentProvider` services; vector databases, embeddings, durable or distributed indexes, rerankers, provider-specific semantic search, and reindex automation are not part of that compatibility promise until a package owns them explicitly
 
 ### REST authoring and governance
 
@@ -98,3 +99,4 @@ Use this checklist whenever compatibility-sensitive behavior changes:
 5. If reference-doc publishing changed, did you update `Cephalon.ReferenceDocs`, CLI docs commands, scaffolded `ReferenceDocs` config, and `docs/reference-docs.md` together?
 6. If framework-readiness or future-SDK behavior changed, did you update `scripts/deployment-mode-support.json`, `scripts/validate-dotnet-readiness.ps1`, the release-validation workflow, `docs/deployment-mode-support.md`, `docs/dotnet11-readiness.md`, `docs/project-memory.md`, and planning docs together?
 7. If trim, Native AOT, or single-file support claims changed, did you add explicit validation and update the deployment-mode support manifest plus package-publishing/support docs instead of relying on analyzer output or local assumptions?
+8. If a technology pack moved into a managed proof, did you update component docs, operations docs, package-surface allow lists, generated reference docs, and planning truth in the same slice?

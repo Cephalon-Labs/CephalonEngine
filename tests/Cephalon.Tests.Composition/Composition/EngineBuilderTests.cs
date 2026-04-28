@@ -2028,6 +2028,7 @@ public sealed class EngineBuilderTests
             });
             engine.AddRetrieval(options =>
             {
+                options.DefaultQueryLimit = 1;
                 options.Collections.Add(new KnowledgeCollectionDescriptor(
                     id: "docs",
                     displayName: "Docs",
@@ -2057,6 +2058,9 @@ public sealed class EngineBuilderTests
         var runtime = provider.GetRequiredService<IRuntime>();
         var toolCatalog = provider.GetRequiredService<IAgentToolCatalog>();
         var knowledgeCatalog = provider.GetRequiredService<IKnowledgeCatalog>();
+        var knowledgeIndexer = provider.GetRequiredService<IKnowledgeIndexer>();
+        var knowledgeQueryEngine = provider.GetRequiredService<IKnowledgeQueryEngine>();
+        var knowledgeIndexCatalog = provider.GetRequiredService<IKnowledgeIndexCatalog>();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var eventChannelCatalog = provider.GetRequiredService<IEventChannelCatalog>();
         var eventSubscriptionCatalog = provider.GetRequiredService<IEventSubscriptionCatalog>();
@@ -2086,6 +2090,17 @@ public sealed class EngineBuilderTests
                     ["nextRetryAtUtc"] = "2026-04-04T09:36:00.0000000+00:00",
                     ["retryPolicy"] = "exponential"
                 }));
+        var indexingResult = await knowledgeIndexer.IndexAsync(new KnowledgeIndexingRequest(
+            collectionId: "runbooks",
+            runId: "composition-retrieval-index-001",
+            actorId: "composition-test",
+            correlationId: "corr-composition-retrieval-001",
+            requestedAtUtc: new DateTimeOffset(2026, 04, 04, 9, 32, 0, TimeSpan.Zero)));
+        var queryResult = await knowledgeQueryEngine.QueryAsync(new KnowledgeQueryRequest(
+            collectionId: "runbooks",
+            queryText: "runbook",
+            actorId: "composition-test",
+            correlationId: "corr-composition-retrieval-query-001"));
 
         var snapshotProvider = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
         var snapshot = snapshotProvider.CreateSnapshot();
@@ -2096,6 +2111,19 @@ public sealed class EngineBuilderTests
         Assert.Equal(2, knowledgeCatalog.Collections.Count);
         Assert.Contains(knowledgeCatalog.Collections, collection => collection.Id == "docs");
         Assert.Contains(knowledgeCatalog.Collections, collection => collection.Id == "runbooks");
+        Assert.Equal(KnowledgeIndexingOutcomes.Succeeded, indexingResult.Outcome);
+        Assert.Equal(2, indexingResult.DocumentCount);
+        Assert.True(queryResult.HasMatches);
+        Assert.Contains(queryResult.Matches, match => match.DocumentId == "runbook.incident-response");
+        Assert.Single(queryResult.Matches);
+        Assert.Equal("1", queryResult.Metadata["queryLimit"]);
+        var knowledgeState = Assert.Single(knowledgeIndexCatalog.States);
+        Assert.Equal("runbooks", knowledgeState.CollectionId);
+        Assert.Equal(KnowledgeIndexingOutcomes.Succeeded, knowledgeState.LastOutcome);
+        Assert.Equal(2, knowledgeState.DocumentCount);
+        Assert.Equal(1, knowledgeState.QueryCount);
+        Assert.Equal(1, knowledgeState.LastQueryMatchedCount);
+        Assert.False(string.IsNullOrWhiteSpace(knowledgeState.LastQueryFingerprint));
         Assert.Equal(2, eventChannelCatalog.Channels.Count);
         Assert.Contains(eventChannelCatalog.Channels, channel => channel.Id == "orders");
         Assert.Contains(eventChannelCatalog.Channels, channel => channel.Id == "audit");
@@ -2162,7 +2190,13 @@ public sealed class EngineBuilderTests
         Assert.Equal(5, snapshot.TechnologySurfaces.Count);
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.TechnologyId == "knowledge-retrieval").Entries,
-            entry => entry.Id == "runbooks");
+            entry => entry.Id == "runbooks" &&
+                entry.Metadata["indexingOwnership"] == "cephalon-managed" &&
+                entry.Metadata["queryOwnership"] == "cephalon-managed" &&
+                entry.Metadata["runtimeState"] == "indexed" &&
+                entry.Metadata["freshnessState"] == KnowledgeIndexFreshnessStates.Fresh &&
+                entry.Metadata["documentCount"] == "2" &&
+                entry.Metadata["queryCount"] == "1");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Eventing");
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
@@ -2435,6 +2469,9 @@ public sealed class EngineBuilderTests
         Assert.Null(provider.GetService<IEventSubscriptionRuntimeCatalog>());
         Assert.Null(provider.GetService<IEventSubscriptionRuntimeReporter>());
         Assert.Null(provider.GetService<IKnowledgeCatalog>());
+        Assert.Null(provider.GetService<IKnowledgeIndexer>());
+        Assert.Null(provider.GetService<IKnowledgeQueryEngine>());
+        Assert.Null(provider.GetService<IKnowledgeIndexCatalog>());
         Assert.Null(provider.GetService<IEdgeNodeCatalog>());
         Assert.DoesNotContain(runtime.Manifest.Capabilities, capability => capability.Key.StartsWith("agentics.", StringComparison.Ordinal));
         Assert.DoesNotContain(runtime.Manifest.Capabilities, capability => capability.Key.StartsWith("eventing.", StringComparison.Ordinal));

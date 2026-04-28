@@ -57,7 +57,7 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 5. Use `ILocalizedResourceContributor` for package-owned text instead of hardcoding strings in hosts.
 6. Use `ITechnologyContributor` when the package introduces a future-tech profile, workload convention, or package hint that the host should be able to select through `Engine:Technologies`.
 7. Use `ITechnologyServiceContributor` or `ITechnologyCapabilityContributor` when package services or capabilities should only activate for specific technology profiles.
-8. If the package extends a shipped technology pack, register the pack-specific contributor service in `ConfigureServices(...)` such as `IAgentToolContributor`, `IKnowledgeCollectionContributor`, `IEventChannelContributor`, or `IEdgeNodeContributor`.
+8. If the package extends a shipped technology pack, register the pack-specific contributor service in `ConfigureServices(...)` such as `IAgentToolContributor`, `IKnowledgeCollectionContributor`, `IKnowledgeDocumentProvider`, `IEventChannelContributor`, or `IEdgeNodeContributor`.
 9. Use `ITechnologyRuntimeContributor` when the package or pack needs to expose an operator-facing runtime snapshot through `/engine/technology-surfaces`.
 10. Use `ICellBoundaryContributor`, `ICellRouteContributor`, and `ICellHealthIsolationContributor` when the package owns explicit cell topology, governed cell-to-cell paths, or cell health-isolation posture that operators should be able to inspect through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`; keep automation overlays in `Engine:Cells:TrafficAutomation` so route and module ownership stay authoritative.
 11. Use `IExecutionGraphContributor` when the package needs to publish operator-facing workflow or execution-graph descriptors through `/engine/execution-graphs` and `/engine/snapshot`.
@@ -915,6 +915,7 @@ Current baseline behavior:
 - when agentic execution is enabled, `IAgentToolDispatcher` records `started` plus terminal or policy outcomes into `IAgentToolRunCatalog`, and the same surface reports `cephalon-managed`, `awaiting-executor`, or `not-configured` ownership truth per tool
 - modules can query `IAgentToolRunCatalog` when they need in-process run posture, but they should report through `IAgentToolDispatcher` or `IAgentToolRunReporter` instead of inventing host-local run dictionaries
 - invalid agent-tool references to unknown capability keys, execution graphs, or hosted executions now fail when the agentic runtime catalog is resolved
+- modules that extend `Cephalon.Retrieval` can contribute `IKnowledgeCollectionContributor` descriptors plus `IKnowledgeDocumentProvider` source material; when `KnowledgeRetrieval` is selected, the pack owns the current lexical index, bounded query execution, freshness state, and query fingerprint reporting while provider-specific vector search, embeddings, durable indexes, or distributed search remain future companion work
 - the engine validates hosted-execution ids, source modules, and referenced execution graphs at build time so invalid hosted descriptors fail fast
 - the engine validates graph ids, entry nodes, edges, referenced modules, and referenced capability keys at build time so invalid descriptors fail fast
 

@@ -26,6 +26,7 @@ using Cephalon.MultiTenancy.Registration;
 using Cephalon.Observability.Hosting;
 using Cephalon.Observability.OpenTelemetry.Hosting;
 using Cephalon.Observability.Serilog.Hosting;
+using Cephalon.Retrieval.Registration;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -167,6 +168,9 @@ public static class ShowcaseSampleApp
 
             // --- Agentic workload proof ---
             engine.AddAgentics();
+
+            // --- Retrieval proof ---
+            engine.AddRetrieval();
 
             // --- Cross-cutting: identity, tenancy, audit ---
             engine.AddIdentityAccess();

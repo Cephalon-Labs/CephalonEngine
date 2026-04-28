@@ -75,14 +75,14 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 | `Cephalon.Eventing` core package | Channel descriptors, staged publication, subscription runtime truth, and managed-execution binding vocabulary | mixed: `application-managed` baseline plus companion-bound execution truth | `M1` | Keep the adapter-neutral execution seam narrow and truthful without claiming generic broker/inbox ownership in the core pack |
 | `Cephalon.Eventing.Wolverine` | Optional Wolverine-managed staged dispatch and subscription execution baseline | `provider-managed` | `M2` | Broaden inbound-consumption, retry-policy, and operator-automation proof only when the runtime truly owns those paths |
 | `Cephalon.Agentics` | Tool descriptors, managed tool dispatch, and agent-workload runtime surface | mixed: `application-managed` descriptors plus `cephalon-managed` dispatcher/run-state baseline | `M2` | Broader operator automation, retry/queue semantics, memory persistence, and provider-specific AI orchestration only after a package truly owns those paths |
-| `Cephalon.Retrieval` | Knowledge collection descriptors and retrieval runtime surface | `application-managed` today | `M1` | Indexing, query execution, freshness/runtime state, and one provider-backed sample |
+| `Cephalon.Retrieval` | Knowledge collection descriptors plus managed lexical indexing, query execution, and freshness state | mixed: `application-managed` source documents plus `cephalon-managed` index/query baseline | `M2` | Provider-specific vector/search engines, durable or distributed indexes, reindex automation, and operator remediation only after a package truly owns those paths |
 | `Cephalon.MultiTenancy` core package | Narrow tenant-resolution and runtime truth baseline | mixed: `cephalon-managed` core, broader workflows still `application-managed` | `M2` | Preserve the narrow core and move governance/member/domain flows into a companion track instead of bloating the base pack |
 
 ## Immediate planning consequences
 
 - stop expanding descriptor-first surfaces inside mixed-maturity families unless the work is explicitly labeled `M0` or `M1`
 - do not describe `M0` or `M1` packages as if they already own execution, orchestration, or provisioning
-- treat `Cephalon.Eventing.Wolverine` and the `Cephalon.Agentics` dispatcher/run-state lane as current managed vertical proofs, and prefer the same narrow-proof approach over broad catalog expansion in `Cephalon.Retrieval`
+- treat `Cephalon.Eventing.Wolverine`, the `Cephalon.Agentics` dispatcher/run-state lane, and the `Cephalon.Retrieval` lexical index/query/freshness lane as current managed vertical proofs instead of widening descriptor breadth before ownership is real
 - keep `Cephalon.MultiTenancy` intentionally thin in the base package; add broader governance workflows through companion-track planning instead of turning the core into a monolith
 - use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
@@ -102,7 +102,7 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 
 ### Sprint 45
 
-- `ENG-233` Retrieval indexing, query execution, and freshness baseline
+- `ENG-233` Retrieval indexing, query execution, and freshness baseline (shipped)
 
 ### Later / not scheduled yet
 

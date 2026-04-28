@@ -11,6 +11,7 @@
       "identity-access",
       "multi-tenancy",
       "agentic-workloads",
+      "knowledge-retrieval",
       "event-driven-integration"
     ],
     "Transports": [

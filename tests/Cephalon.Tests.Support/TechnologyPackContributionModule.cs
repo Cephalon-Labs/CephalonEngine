@@ -36,6 +36,7 @@ internal sealed class TechnologyPackContributionModule : ModuleBase, IExecutionG
             serviceProvider.GetRequiredService<AgentToolExecutionAuditProbe>());
         services.AddSingleton<IEventSubscriptionExecutor, ContributedAuditProjectorExecutor>();
         services.AddSingleton<IKnowledgeCollectionContributor, ContributedKnowledgeCollectionContributor>();
+        services.AddSingleton<IKnowledgeDocumentProvider, ContributedKnowledgeDocumentProvider>();
         services.AddSingleton<IEventChannelContributor, ContributedEventChannelContributor>();
         services.AddSingleton<IEventSubscriptionContributor, ContributedEventSubscriptionContributor>();
         services.AddSingleton<IEdgeNodeContributor, ContributedEdgeNodeContributor>();
@@ -209,6 +210,47 @@ internal sealed class ContributedKnowledgeCollectionContributor : IKnowledgeColl
             displayName: "Runbooks",
             description: "Operational runbooks contributed by a module-level retrieval extension.",
             tags: ["operations", "module"]));
+    }
+}
+
+internal sealed class ContributedKnowledgeDocumentProvider : IKnowledgeDocumentProvider
+{
+    public string CollectionId => "runbooks";
+
+    public ValueTask<IReadOnlyList<KnowledgeDocument>> LoadDocumentsAsync(
+        KnowledgeDocumentProviderContext context,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        IReadOnlyList<KnowledgeDocument> documents =
+        [
+            new KnowledgeDocument(
+                id: "runbook.incident-response",
+                title: "Incident Response Runbook",
+                content: "Use the incident response runbook to triage alerts, assign an owner, and record remediation steps.",
+                uri: new Uri("https://docs.cephalon.local/runbooks/incident-response"),
+                tags: ["operations", "incident"],
+                lastModifiedAtUtc: new DateTimeOffset(2026, 04, 10, 8, 0, 0, TimeSpan.Zero),
+                metadata: new Dictionary<string, string>
+                {
+                    ["owner"] = "platform"
+                }),
+            new KnowledgeDocument(
+                id: "runbook.retrieval-freshness",
+                title: "Retrieval Freshness Runbook",
+                content: "Check retrieval freshness, provider count, document count, and query execution posture before declaring search ready.",
+                uri: new Uri("https://docs.cephalon.local/runbooks/retrieval-freshness"),
+                tags: ["operations", "retrieval"],
+                lastModifiedAtUtc: new DateTimeOffset(2026, 04, 11, 8, 0, 0, TimeSpan.Zero),
+                metadata: new Dictionary<string, string>
+                {
+                    ["owner"] = "knowledge"
+                })
+        ];
+
+        return ValueTask.FromResult(documents);
     }
 }
 

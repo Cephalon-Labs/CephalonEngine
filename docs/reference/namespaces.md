@@ -690,7 +690,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Retrieval.Services`
 
-- [Cephalon.Retrieval](cephalon-retrieval.md#namespace-cephalon-retrieval-services): 4 public types [Browse](browse.html?assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
+- [Cephalon.Retrieval](cephalon-retrieval.md#namespace-cephalon-retrieval-services): 18 public types [Browse](browse.html?assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
 
 ## `Cephalon.Scaffolding.Generation`
 

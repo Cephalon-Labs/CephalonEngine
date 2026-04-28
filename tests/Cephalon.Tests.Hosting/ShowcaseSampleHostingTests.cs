@@ -12,6 +12,7 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Agentics.Services;
+using Cephalon.Retrieval.Services;
 using Cephalon.Sample.Showcase;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Cephalon.Sample.Showcase.Modules;
@@ -208,6 +209,45 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("corr-showcase-agentics-001", tool.Metadata["lastCorrelationId"]);
         Assert.Equal("Inspected showcase catalog posture.", tool.Metadata["lastOutputSummary"]);
         Assert.Equal("catalog", tool.Metadata["reported.focus"]);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleIndexesQueriesAndProjectsRetrievalFreshness()
+    {
+        await using var app = BuildShowcaseForTests();
+
+        await app.StartAsync();
+        var indexer = app.Services.GetRequiredService<IKnowledgeIndexer>();
+        var queryEngine = app.Services.GetRequiredService<IKnowledgeQueryEngine>();
+
+        var indexResult = await indexer.IndexAsync(new KnowledgeIndexingRequest(
+            collectionId: "showcase.docs",
+            runId: "showcase-retrieval-index-001",
+            actorId: "showcase-test",
+            correlationId: "corr-showcase-retrieval-001"));
+        var queryResult = await queryEngine.QueryAsync(new KnowledgeQueryRequest(
+            collectionId: "showcase.docs",
+            queryText: "retrieval readiness",
+            maxResults: 5,
+            actorId: "showcase-test",
+            correlationId: "corr-showcase-retrieval-query-001"));
+        var client = app.GetTestClient();
+        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/knowledge-retrieval");
+
+        Assert.Equal(KnowledgeIndexingOutcomes.Succeeded, indexResult.Outcome);
+        Assert.Equal(3, indexResult.DocumentCount);
+        Assert.True(queryResult.HasMatches);
+        Assert.Contains(queryResult.Matches, match => match.DocumentId == "showcase.docs.retrieval");
+        Assert.NotNull(surfaces);
+        var retrieval = Assert.Single(surfaces);
+        var entry = Assert.Single(retrieval.Entries, item => item.Id == "showcase.docs");
+        Assert.Equal("cephalon-managed", entry.Metadata["indexingOwnership"]);
+        Assert.Equal("cephalon-managed", entry.Metadata["queryOwnership"]);
+        Assert.Equal("indexed", entry.Metadata["runtimeState"]);
+        Assert.Equal(KnowledgeIndexFreshnessStates.Fresh, entry.Metadata["freshnessState"]);
+        Assert.Equal("3", entry.Metadata["documentCount"]);
+        Assert.Equal("1", entry.Metadata["queryCount"]);
+        Assert.False(string.IsNullOrWhiteSpace(entry.Metadata["lastQueryFingerprint"]));
     }
 
     [Fact]

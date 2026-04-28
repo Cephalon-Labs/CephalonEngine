@@ -1,6 +1,6 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 25, 2026`.
+This document captures the current operational surface for Cephalon as of `April 28, 2026`.
 
 For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
 
@@ -1485,6 +1485,15 @@ Current `Cephalon.Agentics` highlights:
 - provider-managed automation entries now also expose `providerMaterializerId`, `providerMaterializationState`, `providerMaterializationObservedAtUtc`, and `providerMaterializationError`, so the same technology surface can answer whether startup reconciliation is still `pending`, already `applied`, currently `unavailable`, or last `failed` for the selected provider materializer
 - edge-managed automation entries now also expose `edgeMaterializerId`, `edgeMaterializationState`, `edgeMaterializationObservedAtUtc`, and `edgeMaterializationError`, while `edgeMaterialization.*` runtime metadata can carry edge-reported action and targeted-node details, so operators can inspect the same edge-runtime reconciliation posture without a second edge-only traffic-materialization API
 - the shared route answer now also exposes derived `materializationState`, `materializationObservedAtUtc`, and `materializationError` plus selection metadata such as `providerSelection.matchingCandidateCount`, `edgeSelection.matchingCandidateCount`, selected priorities, required versus selected dimensions, and `materialization.stateBreakdown`, so `provider-and-edge-managed` routes can publish one truthful overall posture even when provider and edge reconciliation disagree
+
+Current `Cephalon.Retrieval` highlights:
+
+- each collection entry carries descriptor metadata plus managed runtime posture when `KnowledgeRetrieval` is active
+- `indexingOwnership` reports `cephalon-managed`, `awaiting-provider`, or `not-configured` so missing document providers do not look like a ready index
+- `queryOwnership` reports `cephalon-managed`, `awaiting-index`, `awaiting-provider`, or `not-configured` so query readiness stays separate from collection registration
+- `runtimeState`, `freshnessState`, `documentCount`, `queryCount`, latest index outcome fields, and latest query match counts are projected through `/engine/technology-surfaces` and `/engine/snapshot`
+- `lastQueryFingerprint` and `lastQueryLength` are reported instead of raw query text so operator introspection can correlate activity without leaking user prompts or private search terms
+- this is a Cephalon-managed lexical in-process baseline; vector search, embeddings, durable search storage, distributed indexes, rerankers, provider-specific search engines, and reindex automation stay outside the current compatibility promise until a package owns them explicitly
 
 ## Trust surface
 

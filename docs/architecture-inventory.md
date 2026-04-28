@@ -202,7 +202,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `wolverine-eventing` — Wolverine Eventing (`Cephalon.Eventing.Wolverine`): optional Wolverine host wiring for event-driven integration workloads.
 - `agentics-runtime` — Agentics Runtime (`Cephalon.Agentics`): companion runtime services, managed tool dispatch, and run-state projection for agentic workloads.
 - `edge-runtime` — Edge Runtime (`Cephalon.Edge`): companion runtime services for edge-native delivery workloads.
-- `knowledge-retrieval-runtime` — Knowledge Retrieval Runtime (`Cephalon.Retrieval`): companion runtime services for retrieval-heavy applications.
+- `knowledge-retrieval-runtime` — Knowledge Retrieval Runtime (`Cephalon.Retrieval`): companion runtime services, managed lexical indexing/query execution, and freshness projection for retrieval-heavy applications.
 
 ### Identifier strategy modules (1)
 
@@ -356,9 +356,9 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 
 ### Knowledge retrieval capabilities (3)
 
-- `retrieval.query` — Retrieval Query
-- `retrieval.ingestion` — Retrieval Ingestion
-- `retrieval.collections` — Knowledge Collections
+- `retrieval.query` — Retrieval Query: executes bounded managed lexical queries over indexed knowledge collections.
+- `retrieval.ingestion` — Retrieval Ingestion: builds managed indexes from registered knowledge document providers.
+- `retrieval.collections` — Knowledge Collections: exposes registered knowledge collection descriptors to the runtime.
 
 ## Data abstractions
 

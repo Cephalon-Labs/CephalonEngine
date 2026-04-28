@@ -198,7 +198,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 42`: `ENG-230` now establishes the engine surface maturity audit baseline so package ownership and proof levels are explicit before more mixed-maturity expansion lands
 - `Sprint 43`: `ENG-231` now adds the first truthful managed event-subscription execution baseline so the eventing family proves one managed execution story before widening descriptor breadth again
 - `Sprint 44`: shipped `ENG-232` agentics tool execution and run-state baseline so `Cephalon.Agentics` grows from catalog truth into one real dispatcher/run-state loop
-- `Sprint 45`: planned `ENG-233` retrieval indexing, query execution, and freshness baseline so `Cephalon.Retrieval` proves one provider-backed managed retrieval lane
+- `Sprint 45`: shipped `ENG-233` retrieval indexing, query execution, and freshness baseline so `Cephalon.Retrieval` grows from collection catalog truth into one provider-fed lexical index/query/freshness loop
 - `Later / not scheduled yet`: planned `ENG-234` multi-tenancy governance, membership, and domain workflow companion split, further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
@@ -212,7 +212,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - prove one relational-first golden path before widening provider-family or hybrid-runtime claims
 - keep orchestration additive and delay distributed runners until package loading, lifecycle, and policy are strong enough
 - make every mixed-maturity family declare whether a surface is `taxonomy-only`, `application-managed`, `cephalon-managed`, or `provider-managed` before broadening the claim
-- treat the eventing-family proof as landed through `ENG-231` and the agentics-family proof as landed through `ENG-232`, then keep the same narrow managed-proof bias over broad descriptor growth in `Cephalon.Retrieval`
+- treat the eventing-family proof as landed through `ENG-231`, the agentics-family proof as landed through `ENG-232`, and the retrieval-family proof as landed through `ENG-233`, then keep the same narrow managed-proof bias over broad descriptor growth in remaining mixed-maturity families
 - treat intentional metadata-only or catalog-only work as valid only when docs, planning, and runtime surfaces label it honestly
 
 ## Phase 0: Foundation shipped
@@ -450,7 +450,7 @@ Deliverables:
 - a generated-app Kubernetes deployment baseline that proves scaffolded hosts carry a platform-neutral manifest/apply shape from the generated Dockerfile and app root without inventing a second cluster-deploy packaging workflow from scratch
 - a generated-app Linux `systemd` deployment baseline that proves scaffolded hosts carry an installable self-hosted service-manager shape after publish without inventing platform-specific packaging from scratch
 
-Current status as of `April 25, 2026`:
+Current status as of `April 28, 2026`:
 
 - `ENG-033` is implemented: repo-native validation, package publishing, and reference-doc flows now run through `pwsh`-friendly scripts with Windows and Ubuntu CI legs
 - `ENG-034` is implemented: `Cephalon.Cli` now ships `cephalon doctor`, and the repo now has a dedicated getting-started path plus aligned help/readme guidance
@@ -485,6 +485,7 @@ Current status as of `April 25, 2026`:
 - `ENG-230` is implemented: the repo now ships the April 2026 engine surface maturity reset through `docs/engine-surface-maturity-audit.md`, refreshed roadmap/backlog/governance language, and explicit `M0` through `M4` plus ownership-mode vocabulary so descriptor-first work, runtime truth, and execution-owning surfaces stop reading like the same maturity level
 - `ENG-231` is implemented: `Cephalon.Eventing` now ships host-agnostic managed subscription execution contracts and execution-binding vocabulary, while `Cephalon.Eventing.Wolverine` can opt into `EnableSubscriptionExecution` on top of `EnableDispatchLoop` so the repo now has one truthful `wolverine-managed` event-subscription execution lane with fixed-delay retry scheduling, `eventing.subscribe`, runtime-bound `event-subscriptions` metadata, richer `wolverine-adapter` runtime state, regenerated reference docs, and focused composition/hosting/tooling validation
 - `ENG-232` is implemented: `Cephalon.Agentics` now ships a host-agnostic `IAgentToolDispatcher` plus executor, policy, observer, run-report, and run-catalog contracts so registered tools can execute through one Cephalon-managed lane, report approval/denial/success/failure state into the `agent-tools` technology surface, and prove the flow through the showcase sample without claiming broader autonomous planning, memory, retry, queue, or AI-provider orchestration ownership
+- `ENG-233` is implemented: `Cephalon.Retrieval` now ships host-agnostic `IKnowledgeDocumentProvider`, `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and `IKnowledgeIndexCatalog` contracts so registered knowledge collections can build one Cephalon-managed lexical index, execute bounded queries, report freshness plus query fingerprints into the `knowledge-collections` technology surface, and prove the flow through the showcase sample without claiming vector databases, embeddings, durable or distributed search, rerankers, provider-specific semantic search, or reindex automation ownership
 - the planned phase-7 baseline plus the generated-app bootstrap, generated-app bootstrap verification, starter test-harness verification, published-output, local orchestration, container-image publishing, Windows/Linux self-hosted deployment follow-through, hosted Windows IIS path, hosted Azure App Service plus Azure Container Apps paths, platform-neutral Kubernetes path, external cold-start adoption replay, template-pack parity replay, out-of-tree package parity replay, detached-signature governance replay, and certificate-chain trust replay are now in place, so the next adoption work can stay scenario-driven and focus on broader external provenance or distribution follow-through instead of filling a known install/run/deploy gap
 
 Exit criteria:

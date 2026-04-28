@@ -25,6 +25,7 @@ internal sealed class RetrievalModule : ModuleBase, ITechnologyServiceContributo
 
     private readonly RetrievalOptions options;
     private bool hasCollectionContributors;
+    private bool hasDocumentProviders;
 
     public RetrievalModule(RetrievalOptions options)
     {
@@ -52,8 +53,22 @@ internal sealed class RetrievalModule : ModuleBase, ITechnologyServiceContributo
         }
 
         hasCollectionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IKnowledgeCollectionContributor));
+        hasDocumentProviders = services.Any(static descriptor => descriptor.ServiceType == typeof(IKnowledgeDocumentProvider));
         services.TryAddSingleton(options);
         services.TryAddSingleton<IKnowledgeCatalog, KnowledgeCatalog>();
+        services.TryAddSingleton<KnowledgeRuntimeCatalog>();
+        services.TryAddSingleton<IKnowledgeIndexCatalog>(static serviceProvider =>
+            serviceProvider.GetRequiredService<KnowledgeRuntimeCatalog>());
+        if (options.EnableIngestion)
+        {
+            services.TryAddSingleton<IKnowledgeIndexer, KnowledgeIndexer>();
+        }
+
+        if (options.EnableQuerying)
+        {
+            services.TryAddSingleton<IKnowledgeQueryEngine, KnowledgeQueryEngine>();
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, RetrievalRuntimeSurfaceContributor>());
     }
 
@@ -72,10 +87,12 @@ internal sealed class RetrievalModule : ModuleBase, ITechnologyServiceContributo
             capabilities.Add(new Capability(
                 key: "retrieval.query",
                 displayName: "Retrieval Query",
-                description: "Supports search and retrieval queries over registered knowledge collections.",
+                description: "Executes managed lexical retrieval queries over indexed knowledge collections.",
                 metadata: new Dictionary<string, string>
                 {
-                    ["technology"] = "knowledge-retrieval"
+                    ["technology"] = "knowledge-retrieval",
+                    ["executionOwnership"] = options.EnableQuerying ? "cephalon-managed" : "not-configured",
+                    ["providerConfigured"] = hasDocumentProviders.ToString().ToLowerInvariant()
                 }));
         }
 
@@ -84,10 +101,12 @@ internal sealed class RetrievalModule : ModuleBase, ITechnologyServiceContributo
             capabilities.Add(new Capability(
                 key: "retrieval.ingestion",
                 displayName: "Retrieval Ingestion",
-                description: "Supports indexing and ingestion workflows for registered knowledge collections.",
+                description: "Builds managed indexes from registered knowledge document providers.",
                 metadata: new Dictionary<string, string>
                 {
-                    ["technology"] = "knowledge-retrieval"
+                    ["technology"] = "knowledge-retrieval",
+                    ["executionOwnership"] = options.EnableIngestion && hasDocumentProviders ? "cephalon-managed" : "awaiting-provider",
+                    ["providerConfigured"] = hasDocumentProviders.ToString().ToLowerInvariant()
                 }));
         }
 
@@ -100,7 +119,9 @@ internal sealed class RetrievalModule : ModuleBase, ITechnologyServiceContributo
                 metadata: new Dictionary<string, string>
                 {
                     ["technology"] = "knowledge-retrieval",
-                    ["collectionCount"] = options.Collections.Count.ToString(CultureInfo.InvariantCulture)
+                    ["collectionCount"] = options.Collections.Count.ToString(CultureInfo.InvariantCulture),
+                    ["hasCollectionContributors"] = hasCollectionContributors.ToString().ToLowerInvariant(),
+                    ["hasDocumentProviders"] = hasDocumentProviders.ToString().ToLowerInvariant()
                 }));
         }
     }
