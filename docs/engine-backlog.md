@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns the first membership catalog/evaluation proof and broader governance workflows remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns the first membership catalog/evaluation proof plus invitation catalog/validation proof, and broader governance workflows remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -139,7 +139,28 @@ Delivered:
 
 Follow-up later:
 
-- invitations, domain ownership validation, approval/remediation workflows, durable membership stores, identity-provider synchronization, and tenant administration remain future governance slices until the package truly owns those paths
+- domain ownership validation, approval/remediation workflows, durable membership stores, durable invitation stores, invitation delivery, identity-provider synchronization, and tenant administration remain future governance slices until the package truly owns those paths
+
+### ENG-236 Multi-tenancy governance invitation validation baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-235`, `Cephalon.MultiTenancy.Governance` owned membership cataloging and evaluation, but invitation workflows were still only a planned boundary entry
+- tenant invitations are the next smallest useful governance slice because they can be host-agnostic, module-contributed, introspectable, and validated without taking over email delivery, public-site onboarding, durable stores, or identity-provider synchronization
+
+Delivered:
+
+- add invitation descriptors, contributor/registry/catalog contracts, and a deterministic `ITenantInvitationValidator` with valid, not-found, accepted, revoked, expired, invitee-mismatch, missing-role, and disabled outcomes
+- publish `tenancy.invitation.catalog`, `tenancy.invitation.validation`, stable diagnostics `4512-4513`, and the `tenant-invitations` technology runtime surface with aggregate invitation, tenant, contributor, status, role, and invitee-kind posture
+- update `tenant-governance-boundaries` so tenant invitations are a shipped companion-owned lane while the base `Cephalon.MultiTenancy` package remains tenant-resolution only
+- prove the slice with focused composition, hosting, package-surface, and docs/source/planning alignment
+
+Follow-up later:
+
+- domain ownership validation, approval/remediation workflows, durable membership and invitation stores, invitation delivery, identity-provider synchronization, and tenant administration remain future governance slices until the package truly owns those paths
 
 ## Completed foundation work
 
@@ -7897,9 +7918,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-235 Multi-tenancy governance membership evaluation baseline (shipped)
 
+### Sprint 48
+
+- ENG-236 Multi-tenancy governance invitation validation baseline (shipped)
+
 ### Later / not scheduled yet
 
-- invitations, domain ownership, approval/remediation, durable membership stores, identity-provider synchronization, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
+- domain ownership, approval/remediation, durable membership stores, durable invitation stores, invitation delivery, identity-provider synchronization, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ### Foundation Sprint 1
 

@@ -24,6 +24,12 @@ Browse the published API surface by public member.
 - [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an accepted result with a payload value.
   - `Result<T> Accepted<T>(T value, string message, string code)`
+- [Accepted](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-accepted): `Fields` on `TenantInvitationStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Accepted&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation has already been accepted.
+  - `const string Accepted`
+- [Accepted](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-accepted): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Accepted&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation has already been accepted.
+  - `const string Accepted`
 - [AcceptedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-acceptedcount): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcceptedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `accepted` observations reported so far.
   - `int AcceptedCount { get; set; }`
@@ -549,6 +555,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologyregistry-add-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `ITechnologyRegistry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Adds a technology descriptor to the registry.
   - `void Add(TechnologyDescriptor technology)`
+- [Add](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationregistry-add-cephalon-multitenancy-governance-services-tenantinvitationdescriptor): `Methods` on `ITenantInvitationRegistry` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Add&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Adds a tenant-invitation descriptor to the registry.
+  - `void Add(TenantInvitationDescriptor invitation)`
 - [Add](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantmembershipregistry-add-cephalon-multitenancy-governance-services-tenantmembershipdescriptor): `Methods` on `ITenantMembershipRegistry` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Add&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Adds a tenant-membership descriptor to the registry.
   - `void Add(TenantMembershipDescriptor membership)`
@@ -1647,6 +1656,9 @@ Browse the published API surface by public member.
 - [Attributes](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-attributes): `Properties` on `TenantResolutionRequest` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=Attributes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets optional resolution hints supplied by the host or caller.
   - `IReadOnlyDictionary<string, string> Attributes { get; }`
+- [AtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-atutc): `Properties` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp used for expiration evaluation.
+  - `DateTimeOffset? AtUtc { get; }`
 - [AtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationrequest-atutc): `Properties` on `TenantMembershipEvaluationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp used for time-window evaluation.
   - `DateTimeOffset? AtUtc { get; }`
@@ -4791,6 +4803,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-correlationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The correlation identifier associated with the publication when one exists.
   - `string CorrelationId { get; set; }`
+- [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-correlationid): `Properties` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional correlation identifier for the validation.
+  - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationrequest-correlationid): `Properties` on `TenantMembershipEvaluationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional correlation identifier for the evaluation.
   - `string CorrelationId { get; }`
@@ -4827,6 +4842,9 @@ Browse the published API surface by public member.
 - [CreatedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-createdatutc): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreatedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the time at which the durable outbox row was created.
   - `DateTimeOffset CreatedAtUtc { get; }`
+- [CreatedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-createdatutc): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CreatedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when the invitation was created.
+  - `DateTimeOffset? CreatedAtUtc { get; }`
 - [CreateDefault](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-createdefault-system-string): `Methods` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreateDefault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a default API surface descriptor from the supplied behavior identifier.
   - `BehaviorApiSurfaceDescriptor CreateDefault(string behaviorId)`
@@ -6102,6 +6120,9 @@ Browse the published API surface by public member.
 - [Disabled](cephalon-abstractions.md#member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-disabled-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Disabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates the default disabled dispatch policy for an outbox.
   - `OutboxDispatchPolicyDescriptor Disabled(string outboxId, IReadOnlyDictionary<string, string> metadata)`
+- [Disabled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-disabled): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Disabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Invitation validation is disabled by host configuration.
+  - `const string Disabled`
 - [Disabled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantmembershipevaluationoutcomes-disabled): `Fields` on `TenantMembershipEvaluationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Disabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the outcome used when membership evaluation is disabled.
   - `const string Disabled`
@@ -6362,6 +6383,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantcontext-displayname): `Properties` on `TenantContext` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the human-readable tenant name when one is known.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-displayname): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional operator-facing invitation name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-displayname): `Properties` on `TenantMembershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing membership name.
@@ -7071,6 +7095,9 @@ Browse the published API surface by public member.
 - [EnableInMemoryWriter](cephalon-audit.md#member-p-cephalon-audit-configuration-auditruntimeoptions-enableinmemorywriter): `Properties` on `AuditRuntimeOptions` in `Cephalon.Audit.Configuration` (`Cephalon.Audit`) [Browse](browse.html?q=EnableInMemoryWriter&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in in-memory audit writer should remain active.
   - `bool EnableInMemoryWriter { get; set; }`
+- [EnableInvitationValidation](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationvalidation): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationValidation&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets a value indicating whether the built-in invitation validator is active.
+  - `bool EnableInvitationValidation { get; set; }`
 - [EnableLambdaContextExtraction](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enablelambdacontextextraction): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=EnableLambdaContextExtraction&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
   - Gets or sets a value indicating whether Lambda context extraction should be configured when the hosted platform is `lambda`.
   - `bool EnableLambdaContextExtraction { get; set; }`
@@ -8064,12 +8091,21 @@ Browse the published API surface by public member.
 - [Experience](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-experience): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Experience&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies an experience-oriented technology.
   - `const TechnologyKind Experience`
+- [Expired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-expired): `Fields` on `TenantInvitationStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Expired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation is no longer within its valid time window.
+  - `const string Expired`
+- [Expired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-expired): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Expired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation is expired or outside its valid time window.
+  - `const string Expired`
 - [Expired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantmembershipevaluationoutcomes-expired): `Fields` on `TenantMembershipEvaluationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Expired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the outcome used when matching memberships are expired or outside their validity window.
   - `const string Expired`
 - [Expired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantmembershipstatuses-expired): `Fields` on `TenantMembershipStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Expired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the status used when the membership has intentionally expired.
   - `const string Expired`
+- [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-expiresatutc): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when the invitation expires.
+  - `DateTimeOffset? ExpiresAtUtc { get; }`
 - [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-expiresatutc): `Properties` on `TenantMembershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when the membership expires.
   - `DateTimeOffset? ExpiresAtUtc { get; }`
@@ -8859,6 +8895,12 @@ Browse the published API surface by public member.
 - [GetByIdAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryreader-getbyidasync-system-string-system-threading-cancellationtoken): `Methods` on `IAuditHistoryReader` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByIdAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Resolves one audit-history entry by its stable identifier.
   - `ValueTask<AuditHistoryEntry> GetByIdAsync(string auditEntryId, CancellationToken cancellationToken)`
+- [GetByInvitationId](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbyinvitationid-system-string): `Methods` on `ITenantInvitationCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetByInvitationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets invitations by invitation identifier across all tenants.
+  - `IReadOnlyList<TenantInvitationDescriptor> GetByInvitationId(string invitationId)`
+- [GetByInviteeId](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbyinviteeid-system-string): `Methods` on `ITenantInvitationCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetByInviteeId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets invitations for one invitee across all tenants.
+  - `IReadOnlyList<TenantInvitationDescriptor> GetByInviteeId(string inviteeId)`
 - [GetByManagedConnectorActionId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectoractionid-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector action plan includes the requested action identifier.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorActionId(string actionId)`
@@ -9429,9 +9471,15 @@ Browse the published API surface by public member.
 - [GetByTechnology](cephalon-engine.md#member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-getbytechnology-system-string): `Methods` on `TechnologyRuntimeCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=GetByTechnology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the runtime surfaces for a specific technology.
   - `IReadOnlyList<TechnologyRuntimeSurface> GetByTechnology(string technologyId)`
+- [GetByTenantAndInvitation](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbytenantandinvitation-system-string-system-string): `Methods` on `ITenantInvitationCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetByTenantAndInvitation&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets invitations by tenant and invitation identifier.
+  - `IReadOnlyList<TenantInvitationDescriptor> GetByTenantAndInvitation(string tenantId, string invitationId)`
 - [GetByTenantAndPrincipal](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantmembershipcatalog-getbytenantandprincipal-system-string-system-string): `Methods` on `ITenantMembershipCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetByTenantAndPrincipal&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets memberships for one principal in one tenant.
   - `IReadOnlyList<TenantMembershipDescriptor> GetByTenantAndPrincipal(string tenantId, string principalId)`
+- [GetByTenantId](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbytenantid-system-string): `Methods` on `ITenantInvitationCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetByTenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets invitations for one tenant.
+  - `IReadOnlyList<TenantInvitationDescriptor> GetByTenantId(string tenantId)`
 - [GetByTenantId](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantmembershipcatalog-getbytenantid-system-string): `Methods` on `ITenantMembershipCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetByTenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets memberships for one tenant.
   - `IReadOnlyList<TenantMembershipDescriptor> GetByTenantId(string tenantId)`
@@ -11364,6 +11412,42 @@ Browse the published API surface by public member.
 - [InvestigateDrift](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-investigatedrift): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDriftActionIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InvestigateDrift&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Investigate the reported desired-versus-observed managed-connector drift.
   - `const string InvestigateDrift`
+- [InvitationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-invitationid): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable invitation identifier within the tenant.
+  - `string InvitationId { get; }`
+- [InvitationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-invitationid): `Properties` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the invitation identifier to validate.
+  - `string InvitationId { get; }`
+- [InvitationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-invitationid): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the invitation identifier that was validated.
+  - `string InvitationId { get; }`
+- [Invitations](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationcatalog-invitations): `Properties` on `ITenantInvitationCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Invitations&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the effective invitation set after host options and module contributors have both been applied.
+  - `IReadOnlyList<TenantInvitationDescriptor> Invitations { get; }`
+- [Invitations](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitations): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Invitations&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets the host-defined tenant invitations available to the governance runtime.
+  - `IList<TenantInvitationDescriptor> Invitations { get; }`
+- [InviteeId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-inviteeid): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable invitee identifier.
+  - `string InviteeId { get; }`
+- [InviteeId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-inviteeid): `Properties` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional invitee identifier expected by the caller.
+  - `string InviteeId { get; }`
+- [InviteeId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-inviteeid): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional invitee identifier expected by the request.
+  - `string InviteeId { get; }`
+- [InviteeKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-inviteekind): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the invitee kind, such as user, group, service, or organization.
+  - `string InviteeKind { get; }`
+- [InviteeKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-inviteekind): `Properties` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the invitee kind expected by the caller.
+  - `string InviteeKind { get; }`
+- [InviteeKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-inviteekind): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the invitee kind expected by the request.
+  - `string InviteeKind { get; }`
+- [InviteeMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-inviteemismatch): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation exists but does not match the requested invitee boundary.
+  - `const string InviteeMismatch`
 - [InvocationSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-invocationsourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InvocationSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable invocation-source identifier that originated the command-execution request.
   - `string InvocationSourceId { get; set; }`
@@ -13533,6 +13617,9 @@ Browse the published API surface by public member.
 - [MatchedCapabilityKeys](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedcapabilitykeys): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedCapabilityKeys&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the included required-capability keys that matched the published endpoint.
   - `IReadOnlyList<string> MatchedCapabilityKeys { get; }`
+- [MatchedInvitation](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-matchedinvitation): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MatchedInvitation&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the matching invitation considered by validation.
+  - `TenantInvitationDescriptor MatchedInvitation { get; }`
 - [MatchedMemberships](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-matchedmemberships): `Properties` on `TenantMembershipEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MatchedMemberships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the matching memberships considered by evaluation.
   - `IReadOnlyList<TenantMembershipDescriptor> MatchedMemberships { get; }`
@@ -13545,6 +13632,9 @@ Browse the published API surface by public member.
 - [MatchedPathPrefix](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-matchedpathprefix): `Properties` on `StranglerFigRouteResolution` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedPathPrefix&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - The normalized route prefix that matched the request.
   - `string MatchedPathPrefix { get; set; }`
+- [MatchedRoles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-matchedroles): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MatchedRoles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant-local roles found on the invitation.
+  - `IReadOnlyList<string> MatchedRoles { get; }`
 - [MatchedRoles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-matchedroles): `Properties` on `TenantMembershipEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MatchedRoles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant-local roles found on active memberships.
   - `IReadOnlyList<string> MatchedRoles { get; }`
@@ -14259,6 +14349,15 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimeentry-metadata): `Properties` on `TechnologyRuntimeEntry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets additional metadata projected for the entry.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-metadata): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional operator-facing metadata attached to the invitation.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-metadata): `Properties` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional request metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-metadata): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional result metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-metadata): `Properties` on `TenantMembershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets optional operator-facing metadata attached to the membership.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -14454,9 +14553,15 @@ Browse the published API surface by public member.
 - [MissingProviderSurface](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-missingprovidersurface): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MissingProviderSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime does not currently expose one provider-facing surface identifier for provider-specific materialization.
   - `const string MissingProviderSurface`
+- [MissingRole](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-missingrole): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MissingRole&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation does not include every required tenant-local role.
+  - `const string MissingRole`
 - [MissingRole](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantmembershipevaluationoutcomes-missingrole): `Fields` on `TenantMembershipEvaluationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MissingRole&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the outcome used when matching memberships do not satisfy required roles.
   - `const string MissingRole`
+- [MissingRoles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-missingroles): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MissingRoles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the required roles that were not found.
+  - `IReadOnlyList<string> MissingRoles { get; }`
 - [MissingRoles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-missingroles): `Properties` on `TenantMembershipEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MissingRoles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the required roles that were not found.
   - `IReadOnlyList<string> MissingRoles { get; }`
@@ -15232,6 +15337,9 @@ Browse the published API surface by public member.
 - [NotFound](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-notfound-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotFound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a not-found result for the specified payload type.
   - `Result<T> NotFound<T>(string code, string message, BehaviorFault fault)`
+- [NotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-notfound): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - No invitation matched the supplied tenant and invitation identifiers.
+  - `const string NotFound`
 - [NotIndexed](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-notindexed): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=NotIndexed&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - The collection has not been indexed.
   - `const string NotIndexed`
@@ -15950,6 +16058,9 @@ Browse the published API surface by public member.
 - [Outcome](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The completion outcome for the event.
   - `RuntimeLifecycleEventOutcome Outcome { get; set; }`
+- [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-outcome): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable validation outcome.
+  - `string Outcome { get; }`
 - [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-outcome): `Properties` on `TenantMembershipEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable evaluation outcome.
   - `string Outcome { get; }`
@@ -16390,6 +16501,9 @@ Browse the published API surface by public member.
   - `const string Pending`
 - [Pending](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-pending): `Fields` on `CellTrafficAutomationProviderMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Pending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The automation targets a provider and an active materializer is expected to reconcile it.
+  - `const string Pending`
+- [Pending](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-pending): `Fields` on `TenantInvitationStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Pending&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation can still be validated.
   - `const string Pending`
 - [PendingChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturelagstatus-pendingchangecount): `Properties` on `CdcCaptureLagStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of source-side changes still pending capture when the provider reports that answer.
@@ -18132,6 +18246,9 @@ Browse the published API surface by public member.
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-reason): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The reason the package was trusted or rejected.
   - `string Reason { get; set; }`
+- [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-reason): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional operator-facing validation reason.
+  - `string Reason { get; }`
 - [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-reason): `Properties` on `TenantMembershipEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing evaluation reason.
   - `string Reason { get; }`
@@ -18519,6 +18636,9 @@ Browse the published API surface by public member.
 - [RegisterInboxes](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iinboxcontributor-registerinboxes-cephalon-abstractions-data-iinboxregistry): `Methods` on `IInboxContributor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterInboxes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Registers one or more inbox descriptors with the supplied registry.
   - `void RegisterInboxes(IInboxRegistry inboxes)`
+- [RegisterInvitations](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationcontributor-registerinvitations-cephalon-multitenancy-governance-services-itenantinvitationregistry): `Methods` on `ITenantInvitationContributor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RegisterInvitations&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Registers one or more tenant invitations with the supplied registry.
+  - `void RegisterInvitations(ITenantInvitationRegistry invitations)`
 - [RegisterMemberships](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantmembershipcontributor-registermemberships-cephalon-multitenancy-governance-services-itenantmembershipregistry): `Methods` on `ITenantMembershipContributor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RegisterMemberships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Registers one or more tenant memberships with the supplied registry.
   - `void RegisterMemberships(ITenantMembershipRegistry memberships)`
@@ -19128,6 +19248,12 @@ Browse the published API surface by public member.
 - [RequiredRoles](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-requiredroles): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=RequiredRoles&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key that lists required subject roles as a comma-separated value.
   - `const string RequiredRoles`
+- [RequiredRoles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-requiredroles): `Properties` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RequiredRoles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant-local roles required for validation.
+  - `IReadOnlyList<string> RequiredRoles { get; }`
+- [RequiredRoles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-requiredroles): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RequiredRoles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant-local roles required by the request.
+  - `IReadOnlyList<string> RequiredRoles { get; }`
 - [RequiredRoles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationrequest-requiredroles): `Properties` on `TenantMembershipEvaluationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RequiredRoles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant-local roles required for access.
   - `IReadOnlyList<string> RequiredRoles { get; }`
@@ -19959,6 +20085,12 @@ Browse the published API surface by public member.
 - [RetrySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-retrysettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean): `Constructors` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RetrySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `RetrySettings` class.
   - `RetrySettings(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)`
+- [Revoked](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-revoked): `Fields` on `TenantInvitationStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Revoked&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation has been revoked before acceptance.
+  - `const string Revoked`
+- [Revoked](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-revoked): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Revoked&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation has been revoked.
+  - `const string Revoked`
 - [Role](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-role): `Properties` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Role&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable reporter role visible in the current coordination story.
   - `string Role { get; }`
@@ -20000,6 +20132,9 @@ Browse the published API surface by public member.
   - `int? RoleProbeFreshnessSeconds { get; }`
 - [Roles](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationsubject-roles): `Properties` on `AuthorizationSubject` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Roles&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the roles assigned to the subject.
+  - `IReadOnlyList<string> Roles { get; }`
+- [Roles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-roles): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Roles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant-local roles proposed by the invitation.
   - `IReadOnlyList<string> Roles { get; }`
 - [Roles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-roles): `Properties` on `TenantMembershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Roles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant-local roles associated with the principal.
@@ -21270,6 +21405,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-sourcemoduleid): `Properties` on `StranglerFigRouteResolution` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - The Cephalon module that owns the modern boundary.
   - `string SourceModuleId { get; set; }`
+- [SourceModuleId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-sourcemoduleid): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the module that contributed the invitation when one is known.
+  - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-sourcemoduleid): `Properties` on `TenantMembershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the module that contributed the membership when one is known.
   - `string SourceModuleId { get; }`
@@ -21769,6 +21907,9 @@ Browse the published API surface by public member.
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-status): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The current lifecycle status.
   - `RuntimeStatus Status { get; set; }`
+- [Status](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-status): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Status&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the invitation status.
+  - `string Status { get; }`
 - [Status](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-status): `Properties` on `TenantMembershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Status&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the membership status.
   - `string Status { get; }`
@@ -22558,6 +22699,15 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantcontext-tenantid): `Properties` on `TenantContext` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the stable tenant identifier.
   - `string TenantId { get; }`
+- [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-tenantid): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable tenant identifier.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-tenantid): `Properties` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant identifier to validate.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-tenantid): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant identifier that was validated.
+  - `string TenantId { get; }`
 - [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-tenantid): `Properties` on `TenantMembershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable tenant identifier.
   - `string TenantId { get; }`
@@ -22570,6 +22720,15 @@ Browse the published API surface by public member.
 - [TenantIds](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationsubject-tenantids): `Properties` on `AuthorizationSubject` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the tenant identifiers associated with the subject.
   - `IReadOnlyList<string> TenantIds { get; }`
+- [TenantInvitationDescriptor](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantInvitationDescriptor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a new tenant-invitation descriptor.
+  - `TenantInvitationDescriptor(string invitationId, string tenantId, string inviteeId, string inviteeKind, string displayName, IReadOnlyList<string> roles, string status, DateTimeOffset? createdAtUtc, DateTimeOffset? expiresAtUtc, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)`
+- [TenantInvitationValidationRequest](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantInvitationValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantInvitationValidationRequest&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a tenant-invitation validation request.
+  - `TenantInvitationValidationRequest(string tenantId, string invitationId, string inviteeId, string inviteeKind, IReadOnlyList<string> requiredRoles, DateTimeOffset? atUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)`
+- [TenantInvitationValidationResult](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-ctor-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string): `Constructors` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantInvitationValidationResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a tenant-invitation validation result.
+  - `TenantInvitationValidationResult(string tenantId, string invitationId, string outcome, bool valid, DateTimeOffset validatedAtUtc, IReadOnlyList<string> requiredRoles, IReadOnlyList<string> matchedRoles, IReadOnlyList<string> missingRoles, TenantInvitationDescriptor matchedInvitation, string reason, IReadOnlyDictionary<string, string> metadata, string inviteeId, string inviteeKind)`
 - [TenantKey](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantcontext-tenantkey): `Properties` on `TenantContext` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the tenant key, slug, or subdomain-friendly identifier when one is known.
   - `string TenantKey { get; }`
@@ -23485,6 +23644,18 @@ Browse the published API surface by public member.
 
 ## V
 
+- [Valid](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-valid): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Valid&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The invitation is pending and satisfies the validation request.
+  - `const string Valid`
+- [Valid](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-valid): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Valid&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether validation granted invitation use.
+  - `bool Valid { get; }`
+- [ValidateAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationvalidator-validateasync-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-system-threading-cancellationtoken): `Methods` on `ITenantInvitationValidator` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ValidateAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Validates a tenant invitation request.
+  - `ValueTask<TenantInvitationValidationResult> ValidateAsync(TenantInvitationValidationRequest request, CancellationToken cancellationToken)`
+- [ValidatedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-validatedatutc): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ValidatedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when validation executed.
+  - `DateTimeOffset ValidatedAtUtc { get; }`
 - [Value](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-value): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Value&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the boxed payload value when one was supplied.
   - `object Value { get; }`

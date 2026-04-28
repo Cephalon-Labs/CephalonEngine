@@ -77,14 +77,14 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 | `Cephalon.Agentics` | Tool descriptors, managed tool dispatch, and agent-workload runtime surface | mixed: `application-managed` descriptors plus `cephalon-managed` dispatcher/run-state baseline | `M2` | Broader operator automation, retry/queue semantics, memory persistence, and provider-specific AI orchestration only after a package truly owns those paths |
 | `Cephalon.Retrieval` | Knowledge collection descriptors plus managed lexical indexing, query execution, and freshness state | mixed: `application-managed` source documents plus `cephalon-managed` index/query baseline | `M2` | Provider-specific vector/search engines, durable or distributed indexes, reindex automation, and operator remediation only after a package truly owns those paths |
 | `Cephalon.MultiTenancy` core package | Narrow tenant-resolution plus explicit governance-boundary runtime truth | mixed: `cephalon-managed` tenant-resolution core plus boundary entries for companion-owned or planned workflows | `M2` | Keep the base package focused on resolution while companion packages own concrete governance workflows |
-| `Cephalon.MultiTenancy.Governance` | Tenant membership catalog, membership evaluation, and governance runtime surface | `cephalon-managed` membership catalog and evaluation proof | `M2` | Invitation, domain ownership, approval/remediation, durable membership storage, identity-provider synchronization, and tenant administration only when the package truly owns those paths |
+| `Cephalon.MultiTenancy.Governance` | Tenant membership catalog/evaluation, tenant invitation catalog/validation, and governance runtime surfaces | `cephalon-managed` membership and invitation proofs | `M2` | Domain ownership, approval/remediation, durable membership or invitation storage, invitation delivery, identity-provider synchronization, and tenant administration only when the package truly owns those paths |
 
 ## Immediate planning consequences
 
 - stop expanding descriptor-first surfaces inside mixed-maturity families unless the work is explicitly labeled `M0` or `M1`
 - do not describe `M0` or `M1` packages as if they already own execution, orchestration, or provisioning
 - treat `Cephalon.Eventing.Wolverine`, the `Cephalon.Agentics` dispatcher/run-state lane, and the `Cephalon.Retrieval` lexical index/query/freshness lane as current managed vertical proofs instead of widening descriptor breadth before ownership is real
-- keep `Cephalon.MultiTenancy` intentionally thin in the base package; `Cephalon.MultiTenancy.Governance` now owns the first membership catalog/evaluation proof, while broader governance workflows remain explicitly outside the current claim
+- keep `Cephalon.MultiTenancy` intentionally thin in the base package; `Cephalon.MultiTenancy.Governance` now owns membership catalog/evaluation plus invitation catalog/validation proofs, while broader governance workflows remain explicitly outside the current claim
 - use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
 ## Planned next sequence
@@ -113,9 +113,13 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 
 - `ENG-235` Multi-tenancy governance membership evaluation baseline (shipped)
 
+### Sprint 48
+
+- `ENG-236` Multi-tenancy governance invitation validation baseline (shipped)
+
 ### Later / not scheduled yet
 
-- invitation, domain ownership, approval/remediation, durable membership storage, identity-provider synchronization, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
+- domain ownership, approval/remediation, durable membership or invitation storage, invitation delivery, identity-provider synchronization, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ## Promotion checklist
 

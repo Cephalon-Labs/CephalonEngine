@@ -40,6 +40,16 @@ Initializes a new instance of the `MultiTenancyGovernanceOptions` class.
 
 #### Properties
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationvalidation"></a>
+
+##### `EnableInvitationValidation`
+
+```csharp
+bool EnableInvitationValidation { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in invitation validator is active.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enablemembershipevaluation"></a>
 
 ##### `EnableMembershipEvaluation`
@@ -49,6 +59,16 @@ bool EnableMembershipEvaluation { get; set; }
 ```
 
 Gets or sets a value indicating whether the built-in membership evaluator is active.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitations"></a>
+
+##### `Invitations`
+
+```csharp
+IList<TenantInvitationDescriptor> Invitations { get; }
+```
+
+Gets the host-defined tenant invitations available to the governance runtime.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-memberships"></a>
 
@@ -96,6 +116,173 @@ Parameters:
 <a id="namespace-cephalon-multitenancy-governance-services"></a>
 
 ## Namespace Cephalon.MultiTenancy.Governance.Services
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationcatalog"></a>
+
+### `ITenantInvitationCatalog`
+
+Exposes the merged tenant-invitation set available to the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationcatalog-invitations"></a>
+
+##### `Invitations`
+
+```csharp
+IReadOnlyList<TenantInvitationDescriptor> Invitations { get; }
+```
+
+Gets the effective invitation set after host options and module contributors have both been applied.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbyinvitationid-system-string"></a>
+
+##### `GetByInvitationId`
+
+```csharp
+IReadOnlyList<TenantInvitationDescriptor> GetByInvitationId(string invitationId)
+```
+
+Gets invitations by invitation identifier across all tenants.
+
+Returns: The matching invitations.
+
+Parameters:
+- `invitationId`: The invitation identifier to resolve.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbyinviteeid-system-string"></a>
+
+##### `GetByInviteeId`
+
+```csharp
+IReadOnlyList<TenantInvitationDescriptor> GetByInviteeId(string inviteeId)
+```
+
+Gets invitations for one invitee across all tenants.
+
+Returns: The matching invitations.
+
+Parameters:
+- `inviteeId`: The invitee identifier to resolve.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbytenantandinvitation-system-string-system-string"></a>
+
+##### `GetByTenantAndInvitation`
+
+```csharp
+IReadOnlyList<TenantInvitationDescriptor> GetByTenantAndInvitation(string tenantId, string invitationId)
+```
+
+Gets invitations by tenant and invitation identifier.
+
+Returns: The matching invitations.
+
+Parameters:
+- `tenantId`: The tenant identifier to resolve.
+- `invitationId`: The invitation identifier to resolve.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbytenantid-system-string"></a>
+
+##### `GetByTenantId`
+
+```csharp
+IReadOnlyList<TenantInvitationDescriptor> GetByTenantId(string tenantId)
+```
+
+Gets invitations for one tenant.
+
+Returns: The matching invitations.
+
+Parameters:
+- `tenantId`: The tenant identifier to resolve.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationcontributor"></a>
+
+### `ITenantInvitationContributor`
+
+Allows a module to contribute tenant invitations into the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationcontributor-registerinvitations-cephalon-multitenancy-governance-services-itenantinvitationregistry"></a>
+
+##### `RegisterInvitations`
+
+```csharp
+void RegisterInvitations(ITenantInvitationRegistry invitations)
+```
+
+Registers one or more tenant invitations with the supplied registry.
+
+Parameters:
+- `invitations`: The registry that collects contributed invitations.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationregistry"></a>
+
+### `ITenantInvitationRegistry`
+
+Collects tenant invitations contributed to the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationregistry-add-cephalon-multitenancy-governance-services-tenantinvitationdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(TenantInvitationDescriptor invitation)
+```
+
+Adds a tenant-invitation descriptor to the registry.
+
+Parameters:
+- `invitation`: The invitation descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationvalidator"></a>
+
+### `ITenantInvitationValidator`
+
+Validates tenant invitations against the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationValidator
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationvalidator-validateasync-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-system-threading-cancellationtoken"></a>
+
+##### `ValidateAsync`
+
+```csharp
+ValueTask<TenantInvitationValidationResult> ValidateAsync(TenantInvitationValidationRequest request, CancellationToken cancellationToken)
+```
+
+Validates a tenant invitation request.
+
+Returns: The validation result.
+
+Parameters:
+- `request`: The validation request.
+- `cancellationToken`: A token that cancels validation.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantmembershipcatalog"></a>
 
@@ -265,6 +452,585 @@ Adds a tenant-membership descriptor to the registry.
 
 Parameters:
 - `membership`: The membership descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdescriptor"></a>
+
+### `TenantInvitationDescriptor`
+
+Describes one invitation to join or access a tenant.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDescriptor`
+
+```csharp
+TenantInvitationDescriptor(string invitationId, string tenantId, string inviteeId, string inviteeKind, string displayName, IReadOnlyList<string> roles, string status, DateTimeOffset? createdAtUtc, DateTimeOffset? expiresAtUtc, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new tenant-invitation descriptor.
+
+Parameters:
+- `invitationId`: The stable invitation identifier within the tenant.
+- `tenantId`: The stable tenant identifier.
+- `inviteeId`: The stable invitee identifier.
+- `inviteeKind`: The invitee kind, such as user, group, service, or organization.
+- `displayName`: The optional operator-facing invitation name.
+- `roles`: The tenant-local roles proposed by the invitation.
+- `status`: The invitation status.
+- `createdAtUtc`: The UTC timestamp when the invitation was created.
+- `expiresAtUtc`: The UTC timestamp when the invitation expires.
+- `sourceModuleId`: The module that contributed the invitation when one is known.
+- `metadata`: Optional operator-facing metadata attached to the invitation.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-createdatutc"></a>
+
+##### `CreatedAtUtc`
+
+```csharp
+DateTimeOffset? CreatedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the invitation was created.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing invitation name.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the UTC timestamp when the invitation expires.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the stable invitation identifier within the tenant.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-inviteeid"></a>
+
+##### `InviteeId`
+
+```csharp
+string InviteeId { get; }
+```
+
+Gets the stable invitee identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-inviteekind"></a>
+
+##### `InviteeKind`
+
+```csharp
+string InviteeKind { get; }
+```
+
+Gets the invitee kind, such as user, group, service, or organization.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata attached to the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-roles"></a>
+
+##### `Roles`
+
+```csharp
+IReadOnlyList<string> Roles { get; }
+```
+
+Gets the tenant-local roles proposed by the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that contributed the invitation when one is known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the invitation status.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the stable tenant identifier.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationstatuses"></a>
+
+### `TenantInvitationStatuses`
+
+Defines stable tenant-invitation statuses understood by the governance runtime.
+
+#### Declaration
+```csharp
+public static class TenantInvitationStatuses
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-accepted"></a>
+
+##### `Accepted`
+
+```csharp
+const string Accepted
+```
+
+The invitation has already been accepted.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-expired"></a>
+
+##### `Expired`
+
+```csharp
+const string Expired
+```
+
+The invitation is no longer within its valid time window.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-pending"></a>
+
+##### `Pending`
+
+```csharp
+const string Pending
+```
+
+The invitation can still be validated.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-revoked"></a>
+
+##### `Revoked`
+
+```csharp
+const string Revoked
+```
+
+The invitation has been revoked before acceptance.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes"></a>
+
+### `TenantInvitationValidationOutcomes`
+
+Defines stable outcomes returned by tenant-invitation validation.
+
+#### Declaration
+```csharp
+public static class TenantInvitationValidationOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-accepted"></a>
+
+##### `Accepted`
+
+```csharp
+const string Accepted
+```
+
+The invitation has already been accepted.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Invitation validation is disabled by host configuration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-expired"></a>
+
+##### `Expired`
+
+```csharp
+const string Expired
+```
+
+The invitation is expired or outside its valid time window.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-inviteemismatch"></a>
+
+##### `InviteeMismatch`
+
+```csharp
+const string InviteeMismatch
+```
+
+The invitation exists but does not match the requested invitee boundary.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-missingrole"></a>
+
+##### `MissingRole`
+
+```csharp
+const string MissingRole
+```
+
+The invitation does not include every required tenant-local role.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No invitation matched the supplied tenant and invitation identifiers.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-revoked"></a>
+
+##### `Revoked`
+
+```csharp
+const string Revoked
+```
+
+The invitation has been revoked.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-valid"></a>
+
+##### `Valid`
+
+```csharp
+const string Valid
+```
+
+The invitation is pending and satisfies the validation request.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest"></a>
+
+### `TenantInvitationValidationRequest`
+
+Describes one request to validate a tenant invitation.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationValidationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationValidationRequest`
+
+```csharp
+TenantInvitationValidationRequest(string tenantId, string invitationId, string inviteeId, string inviteeKind, IReadOnlyList<string> requiredRoles, DateTimeOffset? atUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-invitation validation request.
+
+Parameters:
+- `tenantId`: The tenant identifier to validate.
+- `invitationId`: The invitation identifier to validate.
+- `inviteeId`: The optional invitee identifier expected by the caller.
+- `inviteeKind`: The optional invitee kind expected by the caller.
+- `requiredRoles`: The optional tenant-local roles required for validation.
+- `atUtc`: The UTC timestamp used for expiration evaluation. The runtime clock is used when omitted.
+- `correlationId`: The optional correlation identifier for the validation.
+- `metadata`: Optional request metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for expiration evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the validation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier to validate.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-inviteeid"></a>
+
+##### `InviteeId`
+
+```csharp
+string InviteeId { get; }
+```
+
+Gets the optional invitee identifier expected by the caller.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-inviteekind"></a>
+
+##### `InviteeKind`
+
+```csharp
+string InviteeKind { get; }
+```
+
+Gets the invitee kind expected by the caller.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional request metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-requiredroles"></a>
+
+##### `RequiredRoles`
+
+```csharp
+IReadOnlyList<string> RequiredRoles { get; }
+```
+
+Gets the tenant-local roles required for validation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier to validate.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult"></a>
+
+### `TenantInvitationValidationResult`
+
+Describes the result of one tenant-invitation validation.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationValidationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-ctor-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string"></a>
+
+##### `TenantInvitationValidationResult`
+
+```csharp
+TenantInvitationValidationResult(string tenantId, string invitationId, string outcome, bool valid, DateTimeOffset validatedAtUtc, IReadOnlyList<string> requiredRoles, IReadOnlyList<string> matchedRoles, IReadOnlyList<string> missingRoles, TenantInvitationDescriptor matchedInvitation, string reason, IReadOnlyDictionary<string, string> metadata, string inviteeId, string inviteeKind)
+```
+
+Creates a tenant-invitation validation result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was validated.
+- `invitationId`: The invitation identifier that was validated.
+- `outcome`: The stable validation outcome.
+- `valid`: A value indicating whether validation granted invitation use.
+- `validatedAtUtc`: The UTC timestamp when validation executed.
+- `requiredRoles`: The tenant-local roles required by the request.
+- `matchedRoles`: The tenant-local roles found on the invitation.
+- `missingRoles`: The required roles that were not found.
+- `matchedInvitation`: The matching invitation considered by validation.
+- `reason`: The optional operator-facing validation reason.
+- `metadata`: Optional result metadata.
+- `inviteeId`: The optional invitee identifier expected by the request.
+- `inviteeKind`: The invitee kind expected by the request.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier that was validated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-inviteeid"></a>
+
+##### `InviteeId`
+
+```csharp
+string InviteeId { get; }
+```
+
+Gets the optional invitee identifier expected by the request.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-inviteekind"></a>
+
+##### `InviteeKind`
+
+```csharp
+string InviteeKind { get; }
+```
+
+Gets the invitee kind expected by the request.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-matchedinvitation"></a>
+
+##### `MatchedInvitation`
+
+```csharp
+TenantInvitationDescriptor MatchedInvitation { get; }
+```
+
+Gets the matching invitation considered by validation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-matchedroles"></a>
+
+##### `MatchedRoles`
+
+```csharp
+IReadOnlyList<string> MatchedRoles { get; }
+```
+
+Gets the tenant-local roles found on the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-missingroles"></a>
+
+##### `MissingRoles`
+
+```csharp
+IReadOnlyList<string> MissingRoles { get; }
+```
+
+Gets the required roles that were not found.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable validation outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the optional operator-facing validation reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-requiredroles"></a>
+
+##### `RequiredRoles`
+
+```csharp
+IReadOnlyList<string> RequiredRoles { get; }
+```
+
+Gets the tenant-local roles required by the request.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was validated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-valid"></a>
+
+##### `Valid`
+
+```csharp
+bool Valid { get; }
+```
+
+Gets a value indicating whether validation granted invitation use.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-validatedatutc"></a>
+
+##### `ValidatedAtUtc`
+
+```csharp
+DateTimeOffset ValidatedAtUtc { get; }
+```
+
+Gets the UTC timestamp when validation executed.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantmembershipdescriptor"></a>
 

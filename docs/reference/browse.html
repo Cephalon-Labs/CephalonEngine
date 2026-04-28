@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T15:53:38.3137178+00:00",
+  "GeneratedAtUtc": "2026-04-28T16:13:49.9091674+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -335,7 +335,7 @@
       "Description": "Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 11
+      "TypeCount": 20
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1361,7 +1361,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 9
+      "TypeCount": 18
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11559,6 +11559,66 @@
       }
     },
     {
+      "DisplayName": "ITenantInvitationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationcatalog",
+      "Declaration": "public interface ITenantInvitationCatalog",
+      "Summary": "Exposes the merged tenant-invitation set available to the active governance runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "ITenantInvitationContributor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationcontributor",
+      "Declaration": "public interface ITenantInvitationContributor",
+      "Summary": "Allows a module to contribute tenant invitations into the active governance runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ITenantInvitationRegistry",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationregistry",
+      "Declaration": "public interface ITenantInvitationRegistry",
+      "Summary": "Collects tenant invitations contributed to the active governance runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ITenantInvitationValidator",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationvalidator",
+      "Declaration": "public interface ITenantInvitationValidator",
+      "Summary": "Validates tenant invitations against the active governance runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantMembershipCatalog",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -12379,7 +12439,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 4,
         "Methods": 0
       }
     },
@@ -15294,6 +15354,81 @@
       }
     },
     {
+      "DisplayName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdescriptor",
+      "Declaration": "public sealed class TenantInvitationDescriptor",
+      "Summary": "Describes one invitation to join or access a tenant.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationstatuses",
+      "Declaration": "public static class TenantInvitationStatuses",
+      "Summary": "Defines stable tenant-invitation statuses understood by the governance runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes",
+      "Declaration": "public static class TenantInvitationValidationOutcomes",
+      "Summary": "Defines stable outcomes returned by tenant-invitation validation.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 8,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest",
+      "Declaration": "public sealed class TenantInvitationValidationRequest",
+      "Summary": "Describes one request to validate a tenant invitation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult",
+      "Declaration": "public sealed class TenantInvitationValidationResult",
+      "Summary": "Describes the result of one tenant-invitation validation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "TenantMembershipDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -15765,6 +15900,28 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string",
       "Signature": "Result\u003CT\u003E Accepted\u003CT\u003E(T value, string message, string code)",
       "Summary": "Creates an accepted result with a payload value."
+    },
+    {
+      "DisplayName": "Accepted",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-accepted",
+      "Signature": "const string Accepted",
+      "Summary": "The invitation has already been accepted."
+    },
+    {
+      "DisplayName": "Accepted",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-accepted",
+      "Signature": "const string Accepted",
+      "Summary": "The invitation has already been accepted."
     },
     {
       "DisplayName": "AcceptedCount",
@@ -17690,6 +17847,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-itechnologyregistry-add-cephalon-abstractions-technologies-technologydescriptor",
       "Signature": "void Add(TechnologyDescriptor technology)",
       "Summary": "Adds a technology descriptor to the registry."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationRegistry",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationregistry-add-cephalon-multitenancy-governance-services-tenantinvitationdescriptor",
+      "Signature": "void Add(TenantInvitationDescriptor invitation)",
+      "Summary": "Adds a tenant-invitation descriptor to the registry."
     },
     {
       "DisplayName": "Add",
@@ -21716,6 +21884,17 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-attributes",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Attributes { get; }",
       "Summary": "Gets optional resolution hints supplied by the host or caller."
+    },
+    {
+      "DisplayName": "AtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-atutc",
+      "Signature": "DateTimeOffset? AtUtc { get; }",
+      "Summary": "Gets the UTC timestamp used for expiration evaluation."
     },
     {
       "DisplayName": "AtUtc",
@@ -33226,6 +33405,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for the validation."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipEvaluationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -33354,6 +33544,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchitem-createdatutc",
       "Signature": "DateTimeOffset CreatedAtUtc { get; }",
       "Summary": "Gets the time at which the durable outbox row was created."
+    },
+    {
+      "DisplayName": "CreatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-createdatutc",
+      "Signature": "DateTimeOffset? CreatedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the invitation was created."
     },
     {
       "DisplayName": "CreateDefault",
@@ -38030,6 +38231,17 @@
     {
       "DisplayName": "Disabled",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-disabled",
+      "Signature": "const string Disabled",
+      "Summary": "Invitation validation is disabled by host configuration."
+    },
+    {
+      "DisplayName": "Disabled",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantMembershipEvaluationOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -38983,6 +39195,17 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-tenantcontext-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the human-readable tenant name when one is known."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the optional operator-facing invitation name."
     },
     {
       "DisplayName": "DisplayName",
@@ -41568,6 +41791,17 @@
       "AnchorId": "member-p-cephalon-audit-configuration-auditruntimeoptions-enableinmemorywriter",
       "Signature": "bool EnableInMemoryWriter { get; set; }",
       "Summary": "Gets or sets a value indicating whether the built-in in-memory audit writer should remain active."
+    },
+    {
+      "DisplayName": "EnableInvitationValidation",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationvalidation",
+      "Signature": "bool EnableInvitationValidation { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the built-in invitation validator is active."
     },
     {
       "DisplayName": "EnableLambdaContextExtraction",
@@ -45213,6 +45447,28 @@
     {
       "DisplayName": "Expired",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-expired",
+      "Signature": "const string Expired",
+      "Summary": "The invitation is no longer within its valid time window."
+    },
+    {
+      "DisplayName": "Expired",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-expired",
+      "Signature": "const string Expired",
+      "Summary": "The invitation is expired or outside its valid time window."
+    },
+    {
+      "DisplayName": "Expired",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantMembershipEvaluationOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -45231,6 +45487,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantmembershipstatuses-expired",
       "Signature": "const string Expired",
       "Summary": "Gets the status used when the membership has intentionally expired."
+    },
+    {
+      "DisplayName": "ExpiresAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-expiresatutc",
+      "Signature": "DateTimeOffset? ExpiresAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the invitation expires."
     },
     {
       "DisplayName": "ExpiresAtUtc",
@@ -48104,6 +48371,28 @@
       "Summary": "Resolves one audit-history entry by its stable identifier."
     },
     {
+      "DisplayName": "GetByInvitationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbyinvitationid-system-string",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDescriptor\u003E GetByInvitationId(string invitationId)",
+      "Summary": "Gets invitations by invitation identifier across all tenants."
+    },
+    {
+      "DisplayName": "GetByInviteeId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbyinviteeid-system-string",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDescriptor\u003E GetByInviteeId(string inviteeId)",
+      "Summary": "Gets invitations for one invitee across all tenants."
+    },
+    {
       "DisplayName": "GetByManagedConnectorActionId",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -50194,6 +50483,17 @@
       "Summary": "Gets the runtime surfaces for a specific technology."
     },
     {
+      "DisplayName": "GetByTenantAndInvitation",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbytenantandinvitation-system-string-system-string",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDescriptor\u003E GetByTenantAndInvitation(string tenantId, string invitationId)",
+      "Summary": "Gets invitations by tenant and invitation identifier."
+    },
+    {
       "DisplayName": "GetByTenantAndPrincipal",
       "Category": "Methods",
       "DeclaringTypeName": "ITenantMembershipCatalog",
@@ -50203,6 +50503,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantmembershipcatalog-getbytenantandprincipal-system-string-system-string",
       "Signature": "IReadOnlyList\u003CTenantMembershipDescriptor\u003E GetByTenantAndPrincipal(string tenantId, string principalId)",
       "Summary": "Gets memberships for one principal in one tenant."
+    },
+    {
+      "DisplayName": "GetByTenantId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationcatalog-getbytenantid-system-string",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDescriptor\u003E GetByTenantId(string tenantId)",
+      "Summary": "Gets invitations for one tenant."
     },
     {
       "DisplayName": "GetByTenantId",
@@ -57265,6 +57576,138 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids-investigatedrift",
       "Signature": "const string InvestigateDrift",
       "Summary": "Investigate the reported desired-versus-observed managed-connector drift."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the stable invitation identifier within the tenant."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the invitation identifier to validate."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the invitation identifier that was validated."
+    },
+    {
+      "DisplayName": "Invitations",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationCatalog",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationcatalog-invitations",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDescriptor\u003E Invitations { get; }",
+      "Summary": "Gets the effective invitation set after host options and module contributors have both been applied."
+    },
+    {
+      "DisplayName": "Invitations",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitations",
+      "Signature": "IList\u003CTenantInvitationDescriptor\u003E Invitations { get; }",
+      "Summary": "Gets the host-defined tenant invitations available to the governance runtime."
+    },
+    {
+      "DisplayName": "InviteeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-inviteeid",
+      "Signature": "string InviteeId { get; }",
+      "Summary": "Gets the stable invitee identifier."
+    },
+    {
+      "DisplayName": "InviteeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-inviteeid",
+      "Signature": "string InviteeId { get; }",
+      "Summary": "Gets the optional invitee identifier expected by the caller."
+    },
+    {
+      "DisplayName": "InviteeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-inviteeid",
+      "Signature": "string InviteeId { get; }",
+      "Summary": "Gets the optional invitee identifier expected by the request."
+    },
+    {
+      "DisplayName": "InviteeKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-inviteekind",
+      "Signature": "string InviteeKind { get; }",
+      "Summary": "Gets the invitee kind, such as user, group, service, or organization."
+    },
+    {
+      "DisplayName": "InviteeKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-inviteekind",
+      "Signature": "string InviteeKind { get; }",
+      "Summary": "Gets the invitee kind expected by the caller."
+    },
+    {
+      "DisplayName": "InviteeKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-inviteekind",
+      "Signature": "string InviteeKind { get; }",
+      "Summary": "Gets the invitee kind expected by the request."
+    },
+    {
+      "DisplayName": "InviteeMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-inviteemismatch",
+      "Signature": "const string InviteeMismatch",
+      "Summary": "The invitation exists but does not match the requested invitee boundary."
     },
     {
       "DisplayName": "InvocationSourceId",
@@ -65176,6 +65619,17 @@
       "Summary": "Gets the included required-capability keys that matched the published endpoint."
     },
     {
+      "DisplayName": "MatchedInvitation",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-matchedinvitation",
+      "Signature": "TenantInvitationDescriptor MatchedInvitation { get; }",
+      "Summary": "Gets the matching invitation considered by validation."
+    },
+    {
       "DisplayName": "MatchedMemberships",
       "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipEvaluationResult",
@@ -65218,6 +65672,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-matchedpathprefix",
       "Signature": "string MatchedPathPrefix { get; set; }",
       "Summary": "The normalized route prefix that matched the request."
+    },
+    {
+      "DisplayName": "MatchedRoles",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-matchedroles",
+      "Signature": "IReadOnlyList\u003Cstring\u003E MatchedRoles { get; }",
+      "Summary": "Gets the tenant-local roles found on the invitation."
     },
     {
       "DisplayName": "MatchedRoles",
@@ -67840,6 +68305,39 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata attached to the invitation."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional request metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional result metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -68555,6 +69053,17 @@
     {
       "DisplayName": "MissingRole",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-missingrole",
+      "Signature": "const string MissingRole",
+      "Summary": "The invitation does not include every required tenant-local role."
+    },
+    {
+      "DisplayName": "MissingRole",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantMembershipEvaluationOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -68562,6 +69071,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantmembershipevaluationoutcomes-missingrole",
       "Signature": "const string MissingRole",
       "Summary": "Gets the outcome used when matching memberships do not satisfy required roles."
+    },
+    {
+      "DisplayName": "MissingRoles",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-missingroles",
+      "Signature": "IReadOnlyList\u003Cstring\u003E MissingRoles { get; }",
+      "Summary": "Gets the required roles that were not found."
     },
     {
       "DisplayName": "MissingRoles",
@@ -71400,6 +71920,17 @@
       "Summary": "Creates a not-found result for the specified payload type."
     },
     {
+      "DisplayName": "NotFound",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-notfound",
+      "Signature": "const string NotFound",
+      "Summary": "No invitation matched the supplied tenant and invitation identifiers."
+    },
+    {
       "DisplayName": "NotIndexed",
       "Category": "Fields",
       "DeclaringTypeName": "KnowledgeIndexFreshnessStates",
@@ -74029,6 +74560,17 @@
     {
       "DisplayName": "Outcome",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable validation outcome."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipEvaluationResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -75631,6 +76173,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-pending",
       "Signature": "const string Pending",
       "Summary": "The automation targets a provider and an active materializer is expected to reconcile it."
+    },
+    {
+      "DisplayName": "Pending",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-pending",
+      "Signature": "const string Pending",
+      "Summary": "The invitation can still be validated."
     },
     {
       "DisplayName": "PendingChangeCount",
@@ -82002,6 +82555,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the optional operator-facing validation reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipEvaluationResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -83417,6 +83981,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-iinboxcontributor-registerinboxes-cephalon-abstractions-data-iinboxregistry",
       "Signature": "void RegisterInboxes(IInboxRegistry inboxes)",
       "Summary": "Registers one or more inbox descriptors with the supplied registry."
+    },
+    {
+      "DisplayName": "RegisterInvitations",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationContributor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationcontributor-registerinvitations-cephalon-multitenancy-governance-services-itenantinvitationregistry",
+      "Signature": "void RegisterInvitations(ITenantInvitationRegistry invitations)",
+      "Summary": "Registers one or more tenant invitations with the supplied registry."
     },
     {
       "DisplayName": "RegisterMemberships",
@@ -85650,6 +86225,28 @@
       "AnchorId": "member-f-cephalon-identity-policies-identitypolicymetadatakeys-requiredroles",
       "Signature": "const string RequiredRoles",
       "Summary": "The metadata key that lists required subject roles as a comma-separated value."
+    },
+    {
+      "DisplayName": "RequiredRoles",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-requiredroles",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredRoles { get; }",
+      "Summary": "Gets the tenant-local roles required for validation."
+    },
+    {
+      "DisplayName": "RequiredRoles",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-requiredroles",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredRoles { get; }",
+      "Summary": "Gets the tenant-local roles required by the request."
     },
     {
       "DisplayName": "RequiredRoles",
@@ -88699,6 +89296,28 @@
       "Summary": "Initializes a new instance of the \u0060RetrySettings\u0060 class."
     },
     {
+      "DisplayName": "Revoked",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-revoked",
+      "Signature": "const string Revoked",
+      "Summary": "The invitation has been revoked before acceptance."
+    },
+    {
+      "DisplayName": "Revoked",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-revoked",
+      "Signature": "const string Revoked",
+      "Summary": "The invitation has been revoked."
+    },
+    {
       "DisplayName": "Role",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
@@ -88851,6 +89470,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationsubject-roles",
       "Signature": "IReadOnlyList\u003Cstring\u003E Roles { get; }",
       "Summary": "Gets the roles assigned to the subject."
+    },
+    {
+      "DisplayName": "Roles",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-roles",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Roles { get; }",
+      "Summary": "Gets the tenant-local roles proposed by the invitation."
     },
     {
       "DisplayName": "Roles",
@@ -93497,6 +94127,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module that contributed the invitation when one is known."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -95328,6 +95969,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimestatussnapshot-status",
       "Signature": "RuntimeStatus Status { get; set; }",
       "Summary": "The current lifecycle status."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the invitation status."
     },
     {
       "DisplayName": "Status",
@@ -98214,6 +98866,39 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the stable tenant identifier."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier to validate."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that was validated."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -98254,6 +98939,39 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationsubject-tenantids",
       "Signature": "IReadOnlyList\u003Cstring\u003E TenantIds { get; }",
       "Summary": "Gets the tenant identifiers associated with the subject."
+    },
+    {
+      "DisplayName": "TenantInvitationDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationDescriptor(string invitationId, string tenantId, string inviteeId, string inviteeKind, string displayName, IReadOnlyList\u003Cstring\u003E roles, string status, DateTimeOffset? createdAtUtc, DateTimeOffset? expiresAtUtc, string sourceModuleId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new tenant-invitation descriptor."
+    },
+    {
+      "DisplayName": "TenantInvitationValidationRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationValidationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationValidationRequest(string tenantId, string invitationId, string inviteeId, string inviteeKind, IReadOnlyList\u003Cstring\u003E requiredRoles, DateTimeOffset? atUtc, string correlationId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-invitation validation request."
+    },
+    {
+      "DisplayName": "TenantInvitationValidationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-ctor-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string",
+      "Signature": "TenantInvitationValidationResult(string tenantId, string invitationId, string outcome, bool valid, DateTimeOffset validatedAtUtc, IReadOnlyList\u003Cstring\u003E requiredRoles, IReadOnlyList\u003Cstring\u003E matchedRoles, IReadOnlyList\u003Cstring\u003E missingRoles, TenantInvitationDescriptor matchedInvitation, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata, string inviteeId, string inviteeKind)",
+      "Summary": "Creates a tenant-invitation validation result."
     },
     {
       "DisplayName": "TenantKey",
@@ -101587,6 +102305,50 @@
       "AnchorId": "member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-usexraytraceids",
       "Signature": "bool UseXRayTraceIds { get; set; }",
       "Summary": "Gets or sets a value indicating whether AWS X-Ray-compatible trace identifiers should be used."
+    },
+    {
+      "DisplayName": "Valid",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationValidationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-valid",
+      "Signature": "const string Valid",
+      "Summary": "The invitation is pending and satisfies the validation request."
+    },
+    {
+      "DisplayName": "Valid",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-valid",
+      "Signature": "bool Valid { get; }",
+      "Summary": "Gets a value indicating whether validation granted invitation use."
+    },
+    {
+      "DisplayName": "ValidateAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationValidator",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationvalidator-validateasync-cephalon-multitenancy-governance-services-tenantinvitationvalidationrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CTenantInvitationValidationResult\u003E ValidateAsync(TenantInvitationValidationRequest request, CancellationToken cancellationToken)",
+      "Summary": "Validates a tenant invitation request."
+    },
+    {
+      "DisplayName": "ValidatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationValidationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-validatedatutc",
+      "Signature": "DateTimeOffset ValidatedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when validation executed."
     },
     {
       "DisplayName": "Value",

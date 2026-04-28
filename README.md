@@ -18,7 +18,7 @@ This first cut focuses on the core shape we can keep growing:
 - runtime-neutral data companion package with handler-backed read/write stores
 - optional Entity Framework Core companion package for read/write DbContext baselines, inbox/outbox storage, and `Sfid.EntityFramework` integration
 - optional identity companion packages for host-agnostic authorization plus ASP.NET Core adapter follow-through
-- optional multi-tenancy companion packages for tenant resolution, ambient tenant context, and tenant-membership governance
+- optional multi-tenancy companion packages for tenant resolution, ambient tenant context, tenant-membership governance, and tenant-invitation validation
 - optional audit companion package for host-agnostic audit recording and runtime cataloging
 - optional `Sfid.Net`-backed identifier companion package for low-ceremony database ids
 - optional Wolverine eventing adapter as the current first-class managed dispatch path
@@ -75,7 +75,7 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.Identity.AspNetCore`: ASP.NET Core adapter for Cephalon identity and authorization
 - `src/Cephalon.Ids.Sfid`: official `Sfid.Net` identifier companion package
 - `src/Cephalon.MultiTenancy`: host-agnostic multi-tenancy companion package
-- `src/Cephalon.MultiTenancy.Governance`: tenant-membership catalog and evaluation companion package
+- `src/Cephalon.MultiTenancy.Governance`: tenant-membership catalog/evaluation and tenant-invitation catalog/validation companion package
 - `src/Cephalon.Worker`: Generic Host worker adapter for non-HTTP hosts
 - `src/Cephalon.Observability`: observability package for logs, metrics, and tracing conventions
 - `src/Cephalon.Observability.CassandraDependencies`: optional Cassandra dependency-health companion package for Cassandra probes

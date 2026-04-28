@@ -29,6 +29,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         });
 
     private bool hasMembershipContributors;
+    private bool hasInvitationContributors;
 
     public override ModuleDescriptor Descriptor => DescriptorInstance;
 
@@ -55,16 +56,25 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         }
 
         hasMembershipContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantMembershipContributor));
+        hasInvitationContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantInvitationContributor));
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<ILogger<TenantMembershipEvaluator>>(NullLogger<TenantMembershipEvaluator>.Instance);
+        services.TryAddSingleton<ILogger<TenantInvitationValidator>>(NullLogger<TenantInvitationValidator>.Instance);
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
+        services.TryAddSingleton<ITenantInvitationCatalog, TenantInvitationCatalog>();
 
         if (options.EnableMembershipEvaluation)
         {
             services.TryAddSingleton<ITenantMembershipEvaluator, TenantMembershipEvaluator>();
         }
 
+        if (options.EnableInvitationValidation)
+        {
+            services.TryAddSingleton<ITenantInvitationValidator, TenantInvitationValidator>();
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceRuntimeSurfaceContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceInvitationRuntimeSurfaceContributor>());
     }
 
     public void RegisterTechnologyCapabilities(ICapabilityRegistry capabilities, TechnologySelection technologies)
@@ -103,6 +113,35 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["package"] = "Cephalon.MultiTenancy.Governance",
                     ["executionOwnership"] = "cephalon-managed",
                     ["runtimeSurface"] = "tenant-memberships"
+                }));
+        }
+
+        capabilities.Add(new Capability(
+            key: "tenancy.invitation.catalog",
+            displayName: "Tenant Invitation Catalog",
+            description: "Exposes tenant invitation descriptors through the multi-tenancy governance companion pack.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "multi-tenancy",
+                ["package"] = "Cephalon.MultiTenancy.Governance",
+                ["ownership"] = "cephalon-managed",
+                ["runtimeSurface"] = "tenant-invitations",
+                ["configuredInvitationCount"] = options.Invitations.Count.ToString(CultureInfo.InvariantCulture),
+                ["hasInvitationContributors"] = hasInvitationContributors.ToString().ToLowerInvariant()
+            }));
+
+        if (options.EnableInvitationValidation)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.invitation.validation",
+                displayName: "Tenant Invitation Validation",
+                description: "Validates whether a tenant invitation is pending, unexpired, invitee-matched, and role-compatible.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-invitations"
                 }));
         }
     }

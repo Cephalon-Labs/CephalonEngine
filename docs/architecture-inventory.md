@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog, membership evaluation, and governance runtime-surface proof.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, tenant-invitation catalog/validation, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -432,9 +432,12 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantResolver` — tenant resolution interface
 - `ITenantMembershipCatalog` — merged tenant-membership read model
 - `ITenantMembershipEvaluator` — active tenant-membership and role evaluation
+- `ITenantInvitationCatalog` — merged tenant-invitation read model
+- `ITenantInvitationValidator` — pending tenant-invitation validation
 - `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog and evaluation posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-invitations` technology surface — Cephalon-managed invitation catalog and validation posture from `Cephalon.MultiTenancy.Governance`
 
 ### Audit
 
@@ -457,7 +460,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Wolverine Eventing (`Cephalon.Eventing.Wolverine`) — event IDs 4300–4305
 - Identity (`Cephalon.Identity`) — event IDs 4400–4401
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
-- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4511
+- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4513
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
 
