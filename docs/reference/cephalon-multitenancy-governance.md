@@ -70,6 +70,16 @@ bool EnableDomainOwnershipValidation { get; set; }
 
 Gets or sets a value indicating whether the built-in tenant-domain ownership validator is active.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipverificationworkflow"></a>
+
+##### `EnableDomainOwnershipVerificationWorkflow`
+
+```csharp
+bool EnableDomainOwnershipVerificationWorkflow { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-domain ownership verification workflow executor is active.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enablegovernanceactiondecision"></a>
 
 ##### `EnableGovernanceActionDecision`
@@ -436,6 +446,35 @@ Returns: The validation result.
 Parameters:
 - `request`: The validation request.
 - `cancellationToken`: A token that cancels validation.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipverificationworkflow"></a>
+
+### `ITenantDomainOwnershipVerificationWorkflow`
+
+Applies in-process tenant-domain ownership verification workflow transitions.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipVerificationWorkflow
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipverificationworkflow-applyasync-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-system-threading-cancellationtoken"></a>
+
+##### `ApplyAsync`
+
+```csharp
+ValueTask<TenantDomainOwnershipVerificationWorkflowResult> ApplyAsync(TenantDomainOwnershipVerificationWorkflowRequest request, CancellationToken cancellationToken)
+```
+
+Applies one tenant-domain ownership verification workflow command.
+
+Returns: The evaluated workflow transition result.
+
+Parameters:
+- `request`: The workflow transition request to evaluate.
+- `cancellationToken`: A cancellation token for the workflow operation.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantgovernanceactioncatalog"></a>
 
@@ -1666,6 +1705,469 @@ DateTimeOffset ValidatedAtUtc { get; }
 ```
 
 Gets the UTC timestamp when validation executed.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands"></a>
+
+### `TenantDomainOwnershipVerificationWorkflowCommands`
+
+Defines built-in tenant-domain ownership verification workflow commands.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipVerificationWorkflowCommands
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-expire"></a>
+
+##### `Expire`
+
+```csharp
+const string Expire
+```
+
+Expires a non-expired tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-reject"></a>
+
+##### `Reject`
+
+```csharp
+const string Reject
+```
+
+Rejects a pending tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-request"></a>
+
+##### `Request`
+
+```csharp
+const string Request
+```
+
+Creates a pending tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-suspend"></a>
+
+##### `Suspend`
+
+```csharp
+const string Suspend
+```
+
+Suspends a verified tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-verify"></a>
+
+##### `Verify`
+
+```csharp
+const string Verify
+```
+
+Marks a pending tenant-domain ownership declaration as verified.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes"></a>
+
+### `TenantDomainOwnershipVerificationWorkflowOutcomes`
+
+Defines stable tenant-domain ownership verification workflow transition outcomes.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipVerificationWorkflowOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-applied"></a>
+
+##### `Applied`
+
+```csharp
+const string Applied
+```
+
+The workflow transition updated an existing tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-created"></a>
+
+##### `Created`
+
+```csharp
+const string Created
+```
+
+The workflow transition created a new pending tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Tenant-domain ownership verification workflow execution is disabled.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-invalidtransition"></a>
+
+##### `InvalidTransition`
+
+```csharp
+const string InvalidTransition
+```
+
+The requested workflow transition is not valid from the current domain ownership status.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No tenant-domain ownership declaration matched the supplied identifiers.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+The requested workflow transition could not be persisted.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+The matching tenant-domain ownership declaration belongs to a different tenant.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-verificationmethodmismatch"></a>
+
+##### `VerificationMethodMismatch`
+
+```csharp
+const string VerificationMethodMismatch
+```
+
+The matching tenant-domain ownership declaration uses a different verification method.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest"></a>
+
+### `TenantDomainOwnershipVerificationWorkflowRequest`
+
+Describes one tenant-domain ownership verification workflow transition request.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipVerificationWorkflowRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipVerificationWorkflowRequest`
+
+```csharp
+TenantDomainOwnershipVerificationWorkflowRequest(string command, string tenantId, string domainName, string displayName, string verificationMethod, string actor, string reason, string evidence, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership verification workflow transition request.
+
+Parameters:
+- `command`: The workflow command to apply.
+- `tenantId`: The tenant identifier to transition.
+- `domainName`: The domain name to transition.
+- `displayName`: The optional operator-facing domain name.
+- `verificationMethod`: The optional verification method boundary.
+- `actor`: The actor that requested the workflow transition when known.
+- `reason`: The optional operator-facing transition reason.
+- `evidence`: The optional evidence summary observed by the application or provider.
+- `atUtc`: The UTC timestamp used for the transition. The runtime clock is used when omitted.
+- `expiresAtUtc`: The optional UTC timestamp when the ownership declaration expires.
+- `correlationId`: The optional correlation identifier for the workflow transition.
+- `metadata`: Optional transition metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested the workflow transition when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for the transition.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-command"></a>
+
+##### `Command`
+
+```csharp
+string Command { get; }
+```
+
+Gets the workflow command to apply.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the workflow transition.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing domain name.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name to transition.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-evidence"></a>
+
+##### `Evidence`
+
+```csharp
+string Evidence { get; }
+```
+
+Gets the optional evidence summary observed by the application or provider.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the optional UTC timestamp when the ownership declaration expires.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional transition metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the optional operator-facing transition reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier to transition.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the optional verification method boundary.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult"></a>
+
+### `TenantDomainOwnershipVerificationWorkflowResult`
+
+Describes the result of one tenant-domain ownership verification workflow transition.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipVerificationWorkflowResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-string-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipVerificationWorkflowResult`
+
+```csharp
+TenantDomainOwnershipVerificationWorkflowResult(string tenantId, string domainName, string command, string outcome, bool applied, DateTimeOffset occurredAtUtc, string previousStatus, string currentStatus, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership verification workflow transition result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was targeted.
+- `domainName`: The domain name that was targeted.
+- `command`: The workflow command that was requested.
+- `outcome`: The workflow transition outcome.
+- `applied`: A value indicating whether the workflow transition was applied.
+- `occurredAtUtc`: The UTC timestamp when the workflow transition was evaluated.
+- `previousStatus`: The domain ownership status before the workflow transition when one existed.
+- `currentStatus`: The domain ownership status after the workflow transition when one exists.
+- `domainOwnership`: The resulting domain ownership descriptor when one exists.
+- `reason`: The operator-facing transition reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-applied"></a>
+
+##### `Applied`
+
+```csharp
+bool Applied { get; }
+```
+
+Gets a value indicating whether the workflow transition was applied.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-command"></a>
+
+##### `Command`
+
+```csharp
+string Command { get; }
+```
+
+Gets the workflow command that was requested.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-currentstatus"></a>
+
+##### `CurrentStatus`
+
+```csharp
+string CurrentStatus { get; }
+```
+
+Gets the domain ownership status after the workflow transition when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that was targeted.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-domainownership"></a>
+
+##### `DomainOwnership`
+
+```csharp
+TenantDomainOwnershipDescriptor DomainOwnership { get; }
+```
+
+Gets the resulting domain ownership descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; }
+```
+
+Gets the UTC timestamp when the workflow transition was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the workflow transition outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-previousstatus"></a>
+
+##### `PreviousStatus`
+
+```csharp
+string PreviousStatus { get; }
+```
+
+Gets the domain ownership status before the workflow transition when one existed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing transition reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was targeted.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainverificationmethods"></a>
 

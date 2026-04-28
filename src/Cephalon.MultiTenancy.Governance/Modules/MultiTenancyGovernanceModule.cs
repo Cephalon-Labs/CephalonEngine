@@ -65,6 +65,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantMembershipEvaluator>>(NullLogger<TenantMembershipEvaluator>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationValidator>>(NullLogger<TenantInvitationValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
+        services.TryAddSingleton<ILogger<TenantDomainOwnershipVerificationWorkflow>>(NullLogger<TenantDomainOwnershipVerificationWorkflow>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionDecider>>(NullLogger<TenantGovernanceActionDecider>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionWorkflow>>(NullLogger<TenantGovernanceActionWorkflow>.Instance);
         services.TryAddSingleton<ITenantMembershipStore>(
@@ -93,6 +94,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         if (options.EnableDomainOwnershipValidation)
         {
             services.TryAddSingleton<ITenantDomainOwnershipValidator, TenantDomainOwnershipValidator>();
+        }
+
+        if (options.EnableDomainOwnershipVerificationWorkflow)
+        {
+            services.TryAddSingleton<ITenantDomainOwnershipVerificationWorkflow, TenantDomainOwnershipVerificationWorkflow>();
         }
 
         if (options.EnableGovernanceActionDecision)
@@ -249,6 +255,23 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["technology"] = "multi-tenancy",
                     ["package"] = "Cephalon.MultiTenancy.Governance",
                     ["executionOwnership"] = "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-domain-ownership"
+                }));
+        }
+
+        if (options.EnableDomainOwnershipVerificationWorkflow)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.domain-ownership.workflow",
+                displayName: "Tenant Domain Ownership Verification Workflow",
+                description: "Executes in-process tenant-domain ownership verification status transitions.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
+                    ["dnsHttpProofCollectionOwnership"] = "application-managed",
                     ["runtimeSurface"] = "tenant-domain-ownership"
                 }));
         }

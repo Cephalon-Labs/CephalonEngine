@@ -2181,7 +2181,9 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["domainOwnershipStoreOwnership"] == "cephalon-managed" &&
                 entry.Metadata["durableStoreOwnership"] == "application-managed" &&
                 entry.Metadata["validationOwnership"] == "cephalon-managed" &&
-                entry.Metadata["verificationExecutionOwnership"] == "application-managed");
+                entry.Metadata["verificationWorkflowOwnership"] == "cephalon-managed" &&
+                entry.Metadata["verificationExecutionOwnership"] == "application-managed" &&
+                entry.Metadata["dnsHttpProofCollectionOwnership"] == "application-managed");
         Assert.Contains(
             tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-governance-actions").Entries,
             entry => entry.Id == "tenant-governance-action-runtime" &&

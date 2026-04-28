@@ -408,6 +408,9 @@ Browse the published API surface by public member.
 - [Actor](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-actor): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Actor&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the actor responsible for the audited operation when one was supplied explicitly.
   - `AuditActor Actor { get; }`
+- [Actor](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-actor): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the actor that requested the workflow transition when known.
+  - `string Actor { get; }`
 - [Actor](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-actor): `Properties` on `TenantGovernanceActionWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the actor that requested the workflow transition when known.
   - `string Actor { get; }`
@@ -1242,6 +1245,12 @@ Browse the published API surface by public member.
 - [Applied](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-applied): `Fields` on `CellTrafficAutomationProviderMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Applied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The automation was reconciled successfully by the selected provider materializer.
   - `const string Applied`
+- [Applied](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-applied): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Applied&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The workflow transition updated an existing tenant-domain ownership declaration.
+  - `const string Applied`
+- [Applied](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-applied): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Applied&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the workflow transition was applied.
+  - `bool Applied { get; }`
 - [Applied](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-applied): `Fields` on `TenantGovernanceActionWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Applied&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The workflow transition updated an existing tenant-governance action.
   - `const string Applied`
@@ -1467,6 +1476,9 @@ Browse the published API surface by public member.
 - [ApplyAndReconcileRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-applyandreconcilerisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApplyAndReconcileRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The broader provider-owned apply-and-reconcile lane currently remains risky.
   - `const string ApplyAndReconcileRisk`
+- [ApplyAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantdomainownershipverificationworkflow-applyasync-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-system-threading-cancellationtoken): `Methods` on `ITenantDomainOwnershipVerificationWorkflow` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ApplyAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Applies one tenant-domain ownership verification workflow command.
+  - `ValueTask<TenantDomainOwnershipVerificationWorkflowResult> ApplyAsync(TenantDomainOwnershipVerificationWorkflowRequest request, CancellationToken cancellationToken)`
 - [ApplyAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionworkflow-applyasync-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-system-threading-cancellationtoken): `Methods` on `ITenantGovernanceActionWorkflow` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ApplyAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Applies one tenant-governance action workflow transition.
   - `ValueTask<TenantGovernanceActionWorkflowResult> ApplyAsync(TenantGovernanceActionWorkflowRequest request, CancellationToken cancellationToken)`
@@ -1730,6 +1742,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Attributes { get; }`
 - [AtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-atutc): `Properties` on `TenantDomainOwnershipValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp used for expiration evaluation.
+  - `DateTimeOffset? AtUtc { get; }`
+- [AtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-atutc): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp used for the transition.
   - `DateTimeOffset? AtUtc { get; }`
 - [AtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-atutc): `Properties` on `TenantGovernanceActionDecisionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp used for expiration evaluation.
@@ -3756,6 +3771,12 @@ Browse the published API surface by public member.
 - [Command](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-command): `Properties` on `DatabaseMigrationOperationalExecutionGroupCommand` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Command&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the selected command descriptor for this execution-group entry.
   - `DatabaseMigrationCommandDescriptor Command { get; }`
+- [Command](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-command): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Command&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the workflow command to apply.
+  - `string Command { get; }`
+- [Command](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-command): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Command&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the workflow command that was requested.
+  - `string Command { get; }`
 - [Command](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowrequest-command): `Properties` on `TenantGovernanceActionWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Command&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the workflow command to apply.
   - `string Command { get; }`
@@ -4893,6 +4914,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationrequest-correlationid): `Properties` on `TenantDomainOwnershipValidationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional correlation identifier for the validation.
   - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-correlationid): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional correlation identifier for the workflow transition.
+  - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-correlationid): `Properties` on `TenantGovernanceActionDecisionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional correlation identifier for the decision.
   - `string CorrelationId { get; }`
@@ -4944,6 +4968,9 @@ Browse the published API surface by public member.
 - [Created](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-created): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Created&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime has been created but not initialized.
   - `const RuntimeStatus Created`
+- [Created](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-created): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Created&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The workflow transition created a new pending tenant-domain ownership declaration.
+  - `const string Created`
 - [Created](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-created): `Fields` on `TenantGovernanceActionWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Created&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The workflow transition created a new tenant-governance action.
   - `const string Created`
@@ -5148,6 +5175,9 @@ Browse the published API surface by public member.
 - [CurrentNodeTeardownExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-currentnodeteardownexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeTeardownExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current node can execute dependency-aware teardown.
   - `const string CurrentNodeTeardownExecutable`
+- [CurrentStatus](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-currentstatus): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CurrentStatus&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the domain ownership status after the workflow transition when one exists.
+  - `string CurrentStatus { get; }`
 - [CurrentStatus](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-currentstatus): `Properties` on `TenantGovernanceActionWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CurrentStatus&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the action status after the workflow transition when one exists.
   - `string CurrentStatus { get; }`
@@ -6249,6 +6279,9 @@ Browse the published API surface by public member.
 - [Disabled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-disabled): `Fields` on `TenantDomainOwnershipValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Disabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Domain ownership validation is disabled by host configuration.
   - `const string Disabled`
+- [Disabled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-disabled): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Disabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Tenant-domain ownership verification workflow execution is disabled.
+  - `const string Disabled`
 - [Disabled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-disabled): `Fields` on `TenantGovernanceActionDecisionOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Disabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Governance action decisions are disabled by host configuration.
   - `const string Disabled`
@@ -6522,6 +6555,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-displayname): `Properties` on `TenantDomainOwnershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing domain name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-displayname): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional operator-facing domain name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-displayname): `Properties` on `TenantGovernanceActionDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing action name.
   - `string DisplayName { get; }`
@@ -6621,6 +6657,15 @@ Browse the published API surface by public member.
 - [DomainName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-domainname): `Properties` on `TenantDomainOwnershipValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the canonical domain name that was validated.
   - `string DomainName { get; }`
+- [DomainName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-domainname): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the canonical domain name to transition.
+  - `string DomainName { get; }`
+- [DomainName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-domainname): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the canonical domain name that was targeted.
+  - `string DomainName { get; }`
+- [DomainOwnership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-domainownership): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the resulting domain ownership descriptor when one exists.
+  - `TenantDomainOwnershipDescriptor DomainOwnership { get; }`
 - [DomainOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-domainownership): `Fields` on `TenantGovernanceActionKinds` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - A governance action that changes declared tenant-domain ownership posture.
   - `const string DomainOwnership`
@@ -7254,6 +7299,9 @@ Browse the published API surface by public member.
 - [EnableDomainOwnershipValidation](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipvalidation): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableDomainOwnershipValidation&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in tenant-domain ownership validator is active.
   - `bool EnableDomainOwnershipValidation { get; set; }`
+- [EnableDomainOwnershipVerificationWorkflow](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipverificationworkflow): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableDomainOwnershipVerificationWorkflow&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets a value indicating whether the built-in tenant-domain ownership verification workflow executor is active.
+  - `bool EnableDomainOwnershipVerificationWorkflow { get; set; }`
 - [EnableExecution](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecution): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=EnableExecution&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets or sets a value indicating whether Cephalon-managed tool dispatch and run-state features are enabled.
   - `bool EnableExecution { get; set; }`
@@ -7653,6 +7701,9 @@ Browse the published API surface by public member.
 - [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-eventtype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The logical event type identifier used by the publication.
   - `string EventType { get; set; }`
+- [Evidence](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-evidence): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Evidence&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional evidence summary observed by the application or provider.
+  - `string Evidence { get; }`
 - [Exception](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-exception): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Exception&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets the exception being classified.
   - `Exception Exception { get; }`
@@ -8271,6 +8322,9 @@ Browse the published API surface by public member.
 - [Experience](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-experience): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Experience&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies an experience-oriented technology.
   - `const TechnologyKind Experience`
+- [Expire](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-expire): `Fields` on `TenantDomainOwnershipVerificationWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Expire&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Expires a non-expired tenant-domain ownership declaration.
+  - `const string Expire`
 - [Expire](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-expire): `Fields` on `TenantGovernanceActionWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Expire&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Expires a non-terminal tenant-governance action.
   - `const string Expire`
@@ -8300,6 +8354,9 @@ Browse the published API surface by public member.
   - `const string Expired`
 - [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-expiresatutc): `Properties` on `TenantDomainOwnershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when ownership expires.
+  - `DateTimeOffset? ExpiresAtUtc { get; }`
+- [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-expiresatutc): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional UTC timestamp when the ownership declaration expires.
   - `DateTimeOffset? ExpiresAtUtc { get; }`
 - [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-expiresatutc): `Properties` on `TenantGovernanceActionDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when the action expires.
@@ -11637,6 +11694,9 @@ Browse the published API surface by public member.
 - [Invalid](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-invalid-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an invalid-request result for the specified payload type.
   - `Result<T> Invalid<T>(string code, string message, BehaviorFault fault)`
+- [InvalidTransition](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-invalidtransition): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvalidTransition&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The requested workflow transition is not valid from the current domain ownership status.
+  - `const string InvalidTransition`
 - [InvalidTransition](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-invalidtransition): `Fields` on `TenantGovernanceActionWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvalidTransition&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested workflow transition is not valid from the current action status.
   - `const string InvalidTransition`
@@ -14634,6 +14694,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-metadata): `Properties` on `TenantDomainOwnershipValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets optional result metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-metadata): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional transition metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-metadata): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional result metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-metadata): `Properties` on `TenantGovernanceActionDecisionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets optional request metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -15640,6 +15706,9 @@ Browse the published API surface by public member.
 - [NotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-notfound): `Fields` on `TenantDomainOwnershipValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - No domain ownership descriptor matched the supplied domain.
   - `const string NotFound`
+- [NotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-notfound): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - No tenant-domain ownership declaration matched the supplied identifiers.
+  - `const string NotFound`
 - [NotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-notfound): `Fields` on `TenantGovernanceActionDecisionOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - No governance action descriptor matched the supplied action.
   - `const string NotFound`
@@ -15832,6 +15901,9 @@ Browse the published API surface by public member.
 - [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-occurredatutc): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The UTC timestamp carried by the observed publication itself.
   - `DateTimeOffset OccurredAtUtc { get; set; }`
+- [OccurredAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-occurredatutc): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when the workflow transition was evaluated.
+  - `DateTimeOffset OccurredAtUtc { get; }`
 - [OccurredAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-occurredatutc): `Properties` on `TenantGovernanceActionWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when the workflow transition was evaluated.
   - `DateTimeOffset OccurredAtUtc { get; }`
@@ -16372,6 +16444,9 @@ Browse the published API surface by public member.
   - `RuntimeLifecycleEventOutcome Outcome { get; set; }`
 - [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-outcome): `Properties` on `TenantDomainOwnershipValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable validation outcome.
+  - `string Outcome { get; }`
+- [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-outcome): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the workflow transition outcome.
   - `string Outcome { get; }`
 - [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-outcome): `Properties` on `TenantGovernanceActionDecisionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable decision outcome.
@@ -17283,6 +17358,9 @@ Browse the published API surface by public member.
 - [PreviousReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-previousreporterid): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PreviousReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the previous active reporter identity when the current reporter took over after lease expiry.
   - `string PreviousReporterId { get; set; }`
+- [PreviousStatus](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-previousstatus): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PreviousStatus&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the domain ownership status before the workflow transition when one existed.
+  - `string PreviousStatus { get; }`
 - [PreviousStatus](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-previousstatus): `Properties` on `TenantGovernanceActionWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PreviousStatus&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the action status before the workflow transition when one existed.
   - `string PreviousStatus { get; }`
@@ -18597,6 +18675,12 @@ Browse the published API surface by public member.
 - [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-reason): `Properties` on `TenantDomainOwnershipValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing validation reason.
   - `string Reason { get; }`
+- [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-reason): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional operator-facing transition reason.
+  - `string Reason { get; }`
+- [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-reason): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the operator-facing transition reason.
+  - `string Reason { get; }`
 - [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-reason): `Properties` on `TenantGovernanceActionDecisionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing decision reason.
   - `string Reason { get; }`
@@ -19059,6 +19143,9 @@ Browse the published API surface by public member.
 - [RegistrationType](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-containsbehaviorsattribute-registrationtype): `Properties` on `ContainsBehaviorsAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegistrationType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the generated registration class type emitted by the source generator.
   - `Type RegistrationType { get; }`
+- [Reject](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-reject): `Fields` on `TenantDomainOwnershipVerificationWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reject&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Rejects a pending tenant-domain ownership declaration.
+  - `const string Reject`
 - [Reject](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-reject): `Fields` on `TenantGovernanceActionWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reject&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Rejects a pending or remediation-required tenant-governance action.
   - `const string Reject`
@@ -19494,6 +19581,9 @@ Browse the published API surface by public member.
 - [Request](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-request): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Request&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the original scaffold request.
   - `ScaffoldRequest Request { get; }`
+- [Request](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-request): `Fields` on `TenantDomainOwnershipVerificationWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Request&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a pending tenant-domain ownership declaration.
+  - `const string Request`
 - [Request](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-request): `Fields` on `TenantGovernanceActionWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Request&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a pending tenant-governance action.
   - `const string Request`
@@ -22378,6 +22468,9 @@ Browse the published API surface by public member.
 - [StoppingAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-stoppingatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StoppingAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when shutdown most recently entered the stopping phase, if any.
   - `DateTimeOffset? StoppingAtUtc { get; set; }`
+- [StoreFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-storefailed): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The requested workflow transition could not be persisted.
+  - `const string StoreFailed`
 - [StoreFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-storefailed): `Fields` on `TenantGovernanceActionWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested workflow transition could not be persisted.
   - `const string StoreFailed`
@@ -22747,6 +22840,9 @@ Browse the published API surface by public member.
 - [Surfaces](cephalon-engine.md#member-p-cephalon-engine-technologies-technologyruntimecatalogsnapshot-surfaces): `Properties` on `TechnologyRuntimeCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=Surfaces&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the active technology runtime surfaces.
   - `IReadOnlyList<TechnologyRuntimeSurface> Surfaces { get; }`
+- [Suspend](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-suspend): `Fields` on `TenantDomainOwnershipVerificationWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Suspend&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Suspends a verified tenant-domain ownership declaration.
+  - `const string Suspend`
 - [Suspended](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-suspended): `Fields` on `TenantDomainOwnershipStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Suspended&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The tenant domain ownership has been suspended.
   - `const string Suspended`
@@ -23110,6 +23206,12 @@ Browse the published API surface by public member.
 - [TenantDomainOwnershipValidationResult](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-ctor-system-string-system-string-system-string-system-boolean-system-datetimeoffset-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantDomainOwnershipValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantDomainOwnershipValidationResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a tenant-domain ownership validation result.
   - `TenantDomainOwnershipValidationResult(string tenantId, string domainName, string outcome, bool valid, DateTimeOffset validatedAtUtc, TenantDomainOwnershipDescriptor matchedDomainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)`
+- [TenantDomainOwnershipVerificationWorkflowRequest](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantDomainOwnershipVerificationWorkflowRequest&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a tenant-domain ownership verification workflow transition request.
+  - `TenantDomainOwnershipVerificationWorkflowRequest(string command, string tenantId, string domainName, string displayName, string verificationMethod, string actor, string reason, string evidence, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)`
+- [TenantDomainOwnershipVerificationWorkflowResult](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-string-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantDomainOwnershipVerificationWorkflowResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a tenant-domain ownership verification workflow transition result.
+  - `TenantDomainOwnershipVerificationWorkflowResult(string tenantId, string domainName, string command, string outcome, bool applied, DateTimeOffset occurredAtUtc, string previousStatus, string currentStatus, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)`
 - [TenantGovernanceActionDecisionRequest](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantGovernanceActionDecisionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantGovernanceActionDecisionRequest&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a tenant-governance action decision request.
   - `TenantGovernanceActionDecisionRequest(string tenantId, string actionId, string actionKind, string subjectKind, string subjectId, DateTimeOffset? atUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)`
@@ -23194,6 +23296,12 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationresult-tenantid): `Properties` on `TenantDomainOwnershipValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant identifier that was validated.
   - `string TenantId { get; }`
+- [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-tenantid): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant identifier to transition.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-tenantid): `Properties` on `TenantDomainOwnershipVerificationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant identifier that was targeted.
+  - `string TenantId { get; }`
 - [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-tenantid): `Properties` on `TenantGovernanceActionDecisionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant identifier to validate.
   - `string TenantId { get; }`
@@ -23253,6 +23361,9 @@ Browse the published API surface by public member.
   - `TenantMembershipEvaluationResult(string tenantId, string principalId, string outcome, bool allowed, DateTimeOffset evaluatedAtUtc, IReadOnlyList<string> requiredRoles, IReadOnlyList<string> matchedRoles, IReadOnlyList<string> missingRoles, IReadOnlyList<TenantMembershipDescriptor> matchedMemberships, string reason, IReadOnlyDictionary<string, string> metadata, string principalKind)`
 - [TenantMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-tenantmismatch): `Fields` on `TenantDomainOwnershipValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The domain exists but belongs to a different tenant.
+  - `const string TenantMismatch`
+- [TenantMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-tenantmismatch): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The matching tenant-domain ownership declaration belongs to a different tenant.
   - `const string TenantMismatch`
 - [TenantMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-tenantmismatch): `Fields` on `TenantGovernanceActionDecisionOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The action exists but belongs to a different tenant.
@@ -24208,6 +24319,12 @@ Browse the published API surface by public member.
 - [VerificationMethod](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-verificationmethod): `Properties` on `TenantDomainOwnershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the verification method associated with the descriptor.
   - `string VerificationMethod { get; }`
+- [VerificationMethod](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-verificationmethod): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional verification method boundary.
+  - `string VerificationMethod { get; }`
+- [VerificationMethodMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowoutcomes-verificationmethodmismatch): `Fields` on `TenantDomainOwnershipVerificationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethodMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - The matching tenant-domain ownership declaration uses a different verification method.
+  - `const string VerificationMethodMismatch`
 - [VerificationReason](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-verificationreason): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=VerificationReason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the verification outcome summary for this signature.
   - `string VerificationReason { get; }`
@@ -24223,6 +24340,9 @@ Browse the published API surface by public member.
 - [VerifiedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-verifiedatutc): `Properties` on `TenantDomainOwnershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerifiedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when ownership was verified.
   - `DateTimeOffset? VerifiedAtUtc { get; }`
+- [Verify](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-verify): `Fields` on `TenantDomainOwnershipVerificationWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Verify&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Marks a pending tenant-domain ownership declaration as verified.
+  - `const string Verify`
 - [Version](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-version): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Version&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the declared module version, when one is available.
   - `string Version { get; }`

@@ -94,10 +94,38 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Failed to persist tenant governance action state for tenant '{TenantId}' and action '{ActionId}' using store '{StoreKind}'. Reason: {Reason}.",
         Description: "Emitted when the governance companion cannot store runtime tenant-governance action state.");
 
+    public static readonly DiagnosticEventDefinition DomainOwnershipVerificationWorkflowApplied = new(
+        Id: 4522,
+        Name: "TenantDomainOwnershipVerificationWorkflowApplied",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Applied tenant domain ownership verification workflow command '{Command}' for tenant '{TenantId}' and domain '{DomainName}'. Status: {Status}.",
+        Description: "Emitted when the governance companion applies an in-process tenant-domain ownership verification workflow transition.");
+
+    public static readonly DiagnosticEventDefinition DomainOwnershipVerificationWorkflowDenied = new(
+        Id: 4523,
+        Name: "TenantDomainOwnershipVerificationWorkflowDenied",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Denied tenant domain ownership verification workflow command '{Command}' for tenant '{TenantId}' and domain '{DomainName}'. Outcome: {Outcome}. Reason: {Reason}.",
+        Description: "Emitted when the governance companion rejects an in-process tenant-domain ownership verification workflow transition.");
+
+    public static readonly DiagnosticEventDefinition DomainOwnershipStorePersisted = new(
+        Id: 4524,
+        Name: "TenantDomainOwnershipStorePersisted",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Persisted tenant domain ownership state for tenant '{TenantId}' and domain '{DomainName}' using store '{StoreKind}'. Durable: {Durable}.",
+        Description: "Emitted when the governance companion stores runtime tenant-domain ownership state.");
+
+    public static readonly DiagnosticEventDefinition DomainOwnershipStorePersistenceFailed = new(
+        Id: 4525,
+        Name: "TenantDomainOwnershipStorePersistenceFailed",
+        Severity: DiagnosticSeverity.Error,
+        MessageTemplate: "Failed to persist tenant domain ownership state for tenant '{TenantId}' and domain '{DomainName}' using store '{StoreKind}'. Reason: {Reason}.",
+        Description: "Emitted when the governance companion cannot store runtime tenant-domain ownership state.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -111,7 +139,11 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             GovernanceActionWorkflowApplied,
             GovernanceActionWorkflowDenied,
             GovernanceActionStorePersisted,
-            GovernanceActionStorePersistenceFailed
+            GovernanceActionStorePersistenceFailed,
+            DomainOwnershipVerificationWorkflowApplied,
+            DomainOwnershipVerificationWorkflowDenied,
+            DomainOwnershipStorePersisted,
+            DomainOwnershipStorePersistenceFailed
         ]);
 }
 
@@ -212,6 +244,38 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersistenceFailed.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersistenceFailed.Name),
             MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersistenceFailed.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> DomainOwnershipVerificationWorkflowAppliedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipVerificationWorkflowApplied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipVerificationWorkflowApplied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipVerificationWorkflowApplied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, string, Exception?> DomainOwnershipVerificationWorkflowDeniedMessage =
+        LoggerMessage.Define<string, string, string, string, string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipVerificationWorkflowDenied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipVerificationWorkflowDenied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipVerificationWorkflowDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> DomainOwnershipStorePersistedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipStorePersisted.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipStorePersisted.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipStorePersisted.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> DomainOwnershipStorePersistenceFailedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Error,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipStorePersistenceFailed.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipStorePersistenceFailed.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipStorePersistenceFailed.MessageTemplate);
 
     public static void MembershipEvaluationAllowed(
         ILogger logger,
@@ -340,5 +404,50 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         GovernanceActionStorePersistenceFailedMessage(logger, tenantId, actionId, storeKind, reason, exception);
+    }
+
+    public static void DomainOwnershipVerificationWorkflowApplied(
+        ILogger logger,
+        string tenantId,
+        string domainName,
+        string command,
+        string status,
+        Exception? exception)
+    {
+        DomainOwnershipVerificationWorkflowAppliedMessage(logger, command, tenantId, domainName, status, exception);
+    }
+
+    public static void DomainOwnershipVerificationWorkflowDenied(
+        ILogger logger,
+        string tenantId,
+        string domainName,
+        string command,
+        string outcome,
+        string reason,
+        Exception? exception)
+    {
+        DomainOwnershipVerificationWorkflowDeniedMessage(logger, command, tenantId, domainName, outcome, reason, exception);
+    }
+
+    public static void DomainOwnershipStorePersisted(
+        ILogger logger,
+        string tenantId,
+        string domainName,
+        string storeKind,
+        string durable,
+        Exception? exception)
+    {
+        DomainOwnershipStorePersistedMessage(logger, tenantId, domainName, storeKind, durable, exception);
+    }
+
+    public static void DomainOwnershipStorePersistenceFailed(
+        ILogger logger,
+        string tenantId,
+        string domainName,
+        string storeKind,
+        string reason,
+        Exception? exception)
+    {
+        DomainOwnershipStorePersistenceFailedMessage(logger, tenantId, domainName, storeKind, reason, exception);
     }
 }

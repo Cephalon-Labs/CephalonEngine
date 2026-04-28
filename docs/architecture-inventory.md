@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -350,6 +350,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `tenancy.domain-ownership.catalog` — Tenant Domain Ownership Catalog
 - `tenancy.domain-ownership.store` — Tenant Domain Ownership Store
 - `tenancy.domain-ownership.validation` — Tenant Domain Ownership Validation
+- `tenancy.domain-ownership.workflow` — Tenant Domain Ownership Verification Workflow
 - `tenancy.governance-action.catalog` — Tenant Governance Action Catalog
 - `tenancy.governance-action.decision` — Tenant Governance Action Decision
 - `tenancy.governance-action.store` — Tenant Governance Action Store
@@ -449,6 +450,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantInvitationValidator` — pending tenant-invitation validation
 - `ITenantDomainOwnershipCatalog` — merged declared tenant-domain ownership read model
 - `ITenantDomainOwnershipValidator` — declared tenant-domain ownership validation
+- `ITenantDomainOwnershipVerificationWorkflow` — in-process declared tenant-domain ownership verification workflow
 - `ITenantGovernanceActionCatalog` — merged approval/remediation action read model
 - `ITenantGovernanceActionDecider` — tenant-governance action decision
 - `ITenantGovernanceActionStore` — runtime approval/remediation action storage, with in-memory and opt-in file-backed baselines

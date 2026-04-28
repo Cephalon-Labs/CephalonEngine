@@ -29,7 +29,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             technologyId: "multi-tenancy",
             surfaceId: "tenant-domain-ownership",
             displayName: "Tenant Domain Ownership",
-            description: "Projects tenant-domain ownership catalog and Cephalon-managed declared-domain validation truth from the governance companion pack.",
+            description: "Projects tenant-domain ownership catalog, Cephalon-managed declared-domain validation, and in-process verification workflow truth from the governance companion pack.",
             entries: entries);
     }
 
@@ -65,9 +65,12 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["domainOwnershipStoreOwnership"] = domainOwnershipStore.Ownership,
             ["validationEnabled"] = options.EnableDomainOwnershipValidation.ToString().ToLowerInvariant(),
             ["validationOwnership"] = options.EnableDomainOwnershipValidation ? "cephalon-managed" : "not-configured",
+            ["verificationWorkflowEnabled"] = options.EnableDomainOwnershipVerificationWorkflow.ToString().ToLowerInvariant(),
+            ["verificationWorkflowOwnership"] = options.EnableDomainOwnershipVerificationWorkflow ? "cephalon-managed" : "not-configured",
             ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["verificationExecutionOwnership"] = "application-managed",
+            ["dnsHttpProofCollectionOwnership"] = "application-managed",
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown),
             ["verificationMethodBreakdown"] = verificationMethodBreakdown.Length == 0 ? "none" : string.Join(",", verificationMethodBreakdown)
         };
@@ -75,7 +78,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-domain-ownership-runtime",
             displayName: "Tenant Domain Ownership Runtime",
-            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, and managed validation ownership.",
+            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, and managed in-process verification workflow ownership.",
             metadata: metadata);
     }
 

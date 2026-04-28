@@ -103,6 +103,7 @@ public sealed class MultiTenancyGovernancePackTests
         var invitationValidator = provider.GetRequiredService<ITenantInvitationValidator>();
         var domainCatalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
         var domainValidator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
+        var domainWorkflow = provider.GetRequiredService<ITenantDomainOwnershipVerificationWorkflow>();
         var governanceActionCatalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
         var governanceActionDecider = provider.GetRequiredService<ITenantGovernanceActionDecider>();
         var governanceActionWorkflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
@@ -180,6 +181,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.validation");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.workflow");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.decision");
@@ -223,7 +225,10 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("application-managed", domainSummaryEntry.Metadata["durableStoreOwnership"]);
         Assert.Equal("true", domainSummaryEntry.Metadata["validationEnabled"]);
         Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["validationOwnership"]);
+        Assert.Equal("true", domainSummaryEntry.Metadata["verificationWorkflowEnabled"]);
+        Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["verificationWorkflowOwnership"]);
         Assert.Equal("application-managed", domainSummaryEntry.Metadata["verificationExecutionOwnership"]);
+        Assert.Equal("application-managed", domainSummaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
         Assert.Equal("pending:1,verified:1", domainSummaryEntry.Metadata["statusBreakdown"]);
         Assert.Equal("dns-txt:1,http-file:1", domainSummaryEntry.Metadata["verificationMethodBreakdown"]);
         Assert.Equal("2", tenantDomainEntry.Metadata["domainOwnershipCount"]);
@@ -270,8 +275,9 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.False(remediationRequiredAction.Allowed);
         Assert.Equal(TenantGovernanceActionDecisionOutcomes.RemediationRequired, remediationRequiredAction.Outcome);
         Assert.Equal(4510, diagnosticsConvention.MinimumEventId);
+        Assert.NotNull(domainWorkflow);
         Assert.NotNull(governanceActionWorkflow);
-        Assert.Equal(4521, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4525, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
@@ -284,6 +290,10 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4519 && entry.Name == "TenantGovernanceActionWorkflowDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4520 && entry.Name == "TenantGovernanceActionStorePersisted");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4521 && entry.Name == "TenantGovernanceActionStorePersistenceFailed");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4522 && entry.Name == "TenantDomainOwnershipVerificationWorkflowApplied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4523 && entry.Name == "TenantDomainOwnershipVerificationWorkflowDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4524 && entry.Name == "TenantDomainOwnershipStorePersisted");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4525 && entry.Name == "TenantDomainOwnershipStorePersistenceFailed");
     }
 
     [Fact]
@@ -953,6 +963,264 @@ public sealed class MultiTenancyGovernancePackTests
     }
 
     [Fact]
+    public async Task TenantDomainOwnershipVerificationWorkflowTransitionsFeedCatalogValidationAndSurface()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantDomainOwnershipVerificationWorkflow>();
+        var catalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
+        var validator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var created = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+            command: TenantDomainOwnershipVerificationWorkflowCommands.Request,
+            tenantId: "tenant-001",
+            domainName: "Workflow.Example.",
+            displayName: "Workflow Domain",
+            verificationMethod: TenantDomainVerificationMethods.DnsTxt,
+            actor: "operator-001",
+            reason: "Tenant requested a custom domain.",
+            atUtc: new DateTimeOffset(2026, 04, 29, 2, 0, 0, TimeSpan.Zero)));
+        var pending = await validator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-001",
+            domainName: "workflow.example",
+            atUtc: new DateTimeOffset(2026, 04, 29, 2, 1, 0, TimeSpan.Zero)));
+        var verified = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+            command: TenantDomainOwnershipVerificationWorkflowCommands.Verify,
+            tenantId: "tenant-001",
+            domainName: "workflow.example",
+            verificationMethod: TenantDomainVerificationMethods.DnsTxt,
+            actor: "tenant-owner",
+            evidence: "TXT cephalon=verified",
+            correlationId: "corr-domain-001",
+            atUtc: new DateTimeOffset(2026, 04, 29, 2, 5, 0, TimeSpan.Zero)));
+        var valid = await validator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-001",
+            domainName: "WORKFLOW.EXAMPLE.",
+            atUtc: new DateTimeOffset(2026, 04, 29, 2, 10, 0, TimeSpan.Zero)));
+        var domainsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-domain-ownership");
+        var summaryEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership-runtime");
+        var tenantEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership:tenant-001");
+
+        Assert.True(created.Applied);
+        Assert.Equal(TenantDomainOwnershipVerificationWorkflowOutcomes.Created, created.Outcome);
+        Assert.Null(created.PreviousStatus);
+        Assert.Equal(TenantDomainOwnershipStatuses.Pending, created.CurrentStatus);
+        Assert.False(pending.Valid);
+        Assert.Equal(TenantDomainOwnershipValidationOutcomes.Pending, pending.Outcome);
+        Assert.True(verified.Applied);
+        Assert.Equal(TenantDomainOwnershipVerificationWorkflowOutcomes.Applied, verified.Outcome);
+        Assert.Equal(TenantDomainOwnershipStatuses.Pending, verified.PreviousStatus);
+        Assert.Equal(TenantDomainOwnershipStatuses.Verified, verified.CurrentStatus);
+        Assert.True(valid.Valid);
+        Assert.Equal(TenantDomainOwnershipValidationOutcomes.Valid, valid.Outcome);
+        var domainOwnership = Assert.Single(catalog.DomainOwnerships);
+        Assert.Equal(TenantDomainOwnershipStatuses.Verified, domainOwnership.Status);
+        Assert.Equal(TenantDomainVerificationMethods.DnsTxt, domainOwnership.VerificationMethod);
+        Assert.Equal(new DateTimeOffset(2026, 04, 29, 2, 5, 0, TimeSpan.Zero), domainOwnership.VerifiedAtUtc);
+        Assert.Equal("verify", domainOwnership.Metadata["lastVerificationWorkflowCommand"]);
+        Assert.Equal("tenant-owner", domainOwnership.Metadata["lastVerificationWorkflowActor"]);
+        Assert.Equal("TXT cephalon=verified", domainOwnership.Metadata["lastVerificationWorkflowEvidence"]);
+        Assert.Equal("corr-domain-001", domainOwnership.Metadata["lastVerificationWorkflowCorrelationId"]);
+        Assert.Equal("1", summaryEntry.Metadata["domainOwnershipCount"]);
+        Assert.Equal("1", summaryEntry.Metadata["runtimeDomainOwnershipCount"]);
+        Assert.Equal("true", summaryEntry.Metadata["verificationWorkflowEnabled"]);
+        Assert.Equal("cephalon-managed", summaryEntry.Metadata["verificationWorkflowOwnership"]);
+        Assert.Equal("application-managed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
+        Assert.Equal("verified:1", summaryEntry.Metadata["statusBreakdown"]);
+        Assert.Equal("1", tenantEntry.Metadata["verifiedDomainOwnershipCount"]);
+    }
+
+    [Fact]
+    public async Task TenantDomainOwnershipVerificationWorkflowPersistsThroughFileBackedStore()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), $"cephalon-domain-workflow-{Guid.NewGuid():N}");
+        var storePath = Path.Combine(tempRoot, "tenant-domain-ownership.json");
+        try
+        {
+            var services = new ServiceCollection();
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.DomainOwnershipStoreFilePath = storePath;
+                });
+            });
+
+            await using (var provider = services.BuildServiceProvider())
+            {
+                var workflow = provider.GetRequiredService<ITenantDomainOwnershipVerificationWorkflow>();
+
+                var created = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+                    command: TenantDomainOwnershipVerificationWorkflowCommands.Request,
+                    tenantId: "tenant-001",
+                    domainName: "durable.example",
+                    verificationMethod: TenantDomainVerificationMethods.HttpFile,
+                    actor: "operator-001",
+                    atUtc: new DateTimeOffset(2026, 04, 29, 3, 0, 0, TimeSpan.Zero)));
+                var verified = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+                    command: TenantDomainOwnershipVerificationWorkflowCommands.Verify,
+                    tenantId: "tenant-001",
+                    domainName: "durable.example",
+                    verificationMethod: TenantDomainVerificationMethods.HttpFile,
+                    actor: "tenant-owner",
+                    atUtc: new DateTimeOffset(2026, 04, 29, 3, 5, 0, TimeSpan.Zero)));
+
+                Assert.True(created.Applied);
+                Assert.True(verified.Applied);
+            }
+
+            var restartedServices = new ServiceCollection();
+            restartedServices.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.DomainOwnershipStoreFilePath = storePath;
+                });
+            });
+
+            await using var restartedProvider = restartedServices.BuildServiceProvider();
+            var catalog = restartedProvider.GetRequiredService<ITenantDomainOwnershipCatalog>();
+            var validator = restartedProvider.GetRequiredService<ITenantDomainOwnershipValidator>();
+            var technologyCatalog = restartedProvider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+            var domainOwnership = Assert.Single(catalog.DomainOwnerships);
+            var validation = await validator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+                tenantId: "tenant-001",
+                domainName: "DURABLE.EXAMPLE.",
+                atUtc: new DateTimeOffset(2026, 04, 29, 3, 10, 0, TimeSpan.Zero)));
+            var domainsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-domain-ownership");
+            var summaryEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership-runtime");
+
+            Assert.Equal(TenantDomainOwnershipStatuses.Verified, domainOwnership.Status);
+            Assert.True(validation.Valid);
+            Assert.Equal("file", summaryEntry.Metadata["domainOwnershipStoreKind"]);
+            Assert.Equal("true", summaryEntry.Metadata["domainOwnershipStoreDurable"]);
+            Assert.Equal("cephalon-managed", summaryEntry.Metadata["durableStoreOwnership"]);
+            Assert.Equal("1", summaryEntry.Metadata["runtimeDomainOwnershipCount"]);
+            Assert.True(File.Exists(storePath));
+        }
+        finally
+        {
+            if (Directory.Exists(tempRoot))
+            {
+                Directory.Delete(tempRoot, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task TenantDomainOwnershipVerificationWorkflowReportsStoreFailuresWithoutApplyingTransition()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ITenantDomainOwnershipStore>(new FailingTenantDomainOwnershipStore());
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantDomainOwnershipVerificationWorkflow>();
+        var catalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
+
+        var result = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+            command: TenantDomainOwnershipVerificationWorkflowCommands.Request,
+            tenantId: "tenant-001",
+            domainName: "failing.example",
+            verificationMethod: TenantDomainVerificationMethods.DnsTxt));
+
+        Assert.False(result.Applied);
+        Assert.Equal(TenantDomainOwnershipVerificationWorkflowOutcomes.StoreFailed, result.Outcome);
+        Assert.Empty(catalog.DomainOwnerships);
+    }
+
+    [Fact]
+    public async Task TenantDomainOwnershipVerificationWorkflowRejectsInvalidTransitionsAndBoundaries()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "shared.example",
+                    status: TenantDomainOwnershipStatuses.Verified,
+                    verificationMethod: TenantDomainVerificationMethods.DnsTxt));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantDomainOwnershipVerificationWorkflow>();
+
+        var tenantMismatch = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+            command: TenantDomainOwnershipVerificationWorkflowCommands.Suspend,
+            tenantId: "tenant-002",
+            domainName: "SHARED.EXAMPLE.",
+            verificationMethod: TenantDomainVerificationMethods.DnsTxt));
+        var methodMismatch = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+            command: TenantDomainOwnershipVerificationWorkflowCommands.Suspend,
+            tenantId: "tenant-001",
+            domainName: "shared.example",
+            verificationMethod: TenantDomainVerificationMethods.HttpFile));
+        var notFound = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+            command: TenantDomainOwnershipVerificationWorkflowCommands.Verify,
+            tenantId: "tenant-001",
+            domainName: "missing.example"));
+        var invalidTransition = await workflow.ApplyAsync(new TenantDomainOwnershipVerificationWorkflowRequest(
+            command: TenantDomainOwnershipVerificationWorkflowCommands.Verify,
+            tenantId: "tenant-001",
+            domainName: "shared.example",
+            verificationMethod: TenantDomainVerificationMethods.DnsTxt));
+
+        Assert.False(tenantMismatch.Applied);
+        Assert.Equal(TenantDomainOwnershipVerificationWorkflowOutcomes.TenantMismatch, tenantMismatch.Outcome);
+        Assert.False(methodMismatch.Applied);
+        Assert.Equal(TenantDomainOwnershipVerificationWorkflowOutcomes.VerificationMethodMismatch, methodMismatch.Outcome);
+        Assert.False(notFound.Applied);
+        Assert.Equal(TenantDomainOwnershipVerificationWorkflowOutcomes.NotFound, notFound.Outcome);
+        Assert.False(invalidTransition.Applied);
+        Assert.Equal(TenantDomainOwnershipVerificationWorkflowOutcomes.InvalidTransition, invalidTransition.Outcome);
+        Assert.Equal(TenantDomainOwnershipStatuses.Verified, invalidTransition.PreviousStatus);
+        Assert.Equal(TenantDomainOwnershipStatuses.Verified, invalidTransition.CurrentStatus);
+    }
+
+    [Fact]
     public async Task TenantGovernanceActionCatalogMergesContributorActions()
     {
         var services = new ServiceCollection();
@@ -1390,6 +1658,24 @@ public sealed class MultiTenancyGovernancePackTests
         public int Count => 0;
 
         public void Upsert(TenantGovernanceActionDescriptor action)
+        {
+            throw new InvalidOperationException("Test store failure.");
+        }
+    }
+
+    private sealed class FailingTenantDomainOwnershipStore : ITenantDomainOwnershipStore
+    {
+        public string StoreKind => "failing-test";
+
+        public bool IsDurable => true;
+
+        public string Ownership => "application-managed";
+
+        public IReadOnlyList<TenantDomainOwnershipDescriptor> DomainOwnerships => [];
+
+        public int Count => 0;
+
+        public void Upsert(TenantDomainOwnershipDescriptor domainOwnership)
         {
             throw new InvalidOperationException("Test store failure.");
         }

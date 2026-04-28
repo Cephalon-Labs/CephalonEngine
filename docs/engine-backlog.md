@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, and opt-in durable governance-domain ownership store proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, and in-process governance domain-ownership verification workflow proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, remediation execution beyond state transitions, DNS/HTTP verification execution, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, remediation execution beyond state transitions, DNS/HTTP proof collection or external polling, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -181,7 +181,7 @@ Delivered:
 
 Follow-up later:
 
-- DNS/HTTP verification execution, approval/remediation action workflow execution, remediation execution, durable membership/invitation/domain stores, invitation delivery, identity-provider synchronization, and tenant administration remained future governance slices after this domain baseline; action workflow execution is now covered by `ENG-239`
+- DNS/HTTP proof collection or external polling, approval/remediation action workflow execution, remediation execution, durable membership/invitation/domain stores, invitation delivery, identity-provider synchronization, and tenant administration remained future governance slices after this domain baseline; action workflow execution is now covered by `ENG-239`
 
 ### ENG-238 Multi-tenancy governance action decision baseline
 
@@ -225,7 +225,7 @@ Delivered:
 Follow-up later:
 
 - opt-in durable local action storage is now covered by `ENG-240`
-- external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP verification execution, identity-provider synchronization, tenant administration, public onboarding, and distributed or provider-backed action-store backends remain future governance slices until the package truly owns those paths
+- external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP proof collection or external polling, identity-provider synchronization, tenant administration, public onboarding, and distributed or provider-backed action-store backends remain future governance slices until the package truly owns those paths
 
 ### ENG-240 Multi-tenancy governance durable action store baseline
 
@@ -249,7 +249,7 @@ Follow-up later:
 - opt-in durable local membership storage is now covered by `ENG-241`
 - durable invitation storage is now covered by `ENG-242`
 - durable domain ownership storage is now covered by `ENG-243`
-- distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP verification execution, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP proof collection or external polling, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
 
 ### ENG-241 Multi-tenancy governance durable membership store baseline
 
@@ -272,7 +272,7 @@ Follow-up later:
 
 - durable invitation storage is now covered by `ENG-242`
 - durable domain ownership storage is now covered by `ENG-243`
-- distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP verification execution, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP proof collection or external polling, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
 
 ### ENG-242 Multi-tenancy governance durable invitation store baseline
 
@@ -294,7 +294,7 @@ Delivered:
 Follow-up later:
 
 - durable domain ownership storage is now covered by `ENG-243`
-- distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, DNS/HTTP verification execution, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, DNS/HTTP proof collection or external polling, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
 
 ### ENG-243 Multi-tenancy governance durable domain ownership store baseline
 
@@ -304,7 +304,7 @@ Estimate: 8
 Why:
 
 - after `ENG-242`, `Cephalon.MultiTenancy.Governance` had durable action, membership, and invitation store proofs, but tenant-domain ownership state still came only from process-local descriptors unless the consumer app owned storage itself
-- the smallest honest domain-ownership durability proof is a host-agnostic domain-ownership store contract with an in-memory default and an opt-in local JSON store, not DNS/HTTP verification execution, domain lifecycle automation, or tenant-admin workflow
+- the smallest honest domain-ownership durability proof is a host-agnostic domain-ownership store contract with an in-memory default and an opt-in local JSON store, not DNS/HTTP proof collection or external polling, domain lifecycle automation, or tenant-admin workflow
 
 Delivered:
 
@@ -315,7 +315,29 @@ Delivered:
 
 Follow-up later:
 
-- distributed or provider-backed membership/invitation/domain/action-store backends, DNS/HTTP verification execution, domain lifecycle automation, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- in-process domain-ownership verification workflow transitions are now covered by `ENG-244`
+- distributed or provider-backed membership/invitation/domain/action-store backends, DNS/HTTP proof collection or external polling, domain lifecycle automation beyond status transitions, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+
+### ENG-244 Multi-tenancy governance domain ownership verification workflow baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-243`, `Cephalon.MultiTenancy.Governance` could persist runtime tenant-domain ownership declarations, but consumers still had to mutate descriptor state themselves to move pending domains through verification outcomes
+- the smallest honest workflow proof is an in-process status-transition service that writes through the same domain-ownership store and catalog used by validation, not DNS polling, HTTP proof hosting, domain lifecycle automation, or tenant-admin workflow
+
+Delivered:
+
+- add public `ITenantDomainOwnershipVerificationWorkflow`, workflow request/result contracts, command and outcome vocabularies, and guarded runtime transition behavior over `ITenantDomainOwnershipStore`
+- support deterministic `request`, `verify`, `reject`, `suspend`, and `expire` transitions with cross-tenant domain protection, verification-method mismatch protection, workflow evidence metadata, and `store-failed` outcomes when persistence fails
+- publish `tenancy.domain-ownership.workflow`, verification-workflow ownership metadata, DNS/HTTP proof-collection ownership boundaries, and stable diagnostics `4522-4525` through the existing `tenant-domain-ownership` runtime surface
+- prove the slice with focused composition, hosting, package-surface, reference-doc, and docs/source/planning alignment
+
+Follow-up later:
+
+- DNS/HTTP proof collection or external polling, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
 
 ## Completed foundation work
 
@@ -8105,9 +8127,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-243 Multi-tenancy governance durable domain ownership store baseline (shipped)
 
+### Sprint 56
+
+- ENG-244 Multi-tenancy governance domain ownership verification workflow baseline (shipped)
+
 ### Later / not scheduled yet
 
-- DNS/HTTP domain verification execution, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, identity-provider synchronization, public onboarding, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
+- DNS/HTTP proof collection or external polling, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, identity-provider synchronization, public onboarding, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ### Foundation Sprint 1
 
