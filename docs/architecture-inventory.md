@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, tenant-invitation catalog/validation, declared tenant-domain ownership catalog/validation, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, tenant-invitation catalog/validation, declared tenant-domain ownership catalog/validation, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -349,6 +349,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `tenancy.domain-ownership.validation` — Tenant Domain Ownership Validation
 - `tenancy.governance-action.catalog` — Tenant Governance Action Catalog
 - `tenancy.governance-action.decision` — Tenant Governance Action Decision
+- `tenancy.governance-action.store` — Tenant Governance Action Store
 - `tenancy.governance-action.workflow` — Tenant Governance Action Workflow
 
 ### Agentics capabilities (4)
@@ -445,13 +446,14 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantDomainOwnershipValidator` — declared tenant-domain ownership validation
 - `ITenantGovernanceActionCatalog` — merged approval/remediation action read model
 - `ITenantGovernanceActionDecider` — tenant-governance action decision
+- `ITenantGovernanceActionStore` — runtime approval/remediation action storage, with in-memory and opt-in file-backed baselines
 - `ITenantGovernanceActionWorkflow` — in-process tenant-governance action workflow transitions
 - `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog and evaluation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-invitations` technology surface — Cephalon-managed invitation catalog and validation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog and validation posture from `Cephalon.MultiTenancy.Governance`
-- `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, and in-process workflow posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 
 ### Audit
 
@@ -474,7 +476,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Wolverine Eventing (`Cephalon.Eventing.Wolverine`) — event IDs 4300–4305
 - Identity (`Cephalon.Identity`) — event IDs 4400–4401
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
-- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4519
+- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4521
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
 

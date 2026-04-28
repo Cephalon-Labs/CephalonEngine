@@ -80,10 +80,24 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Denied tenant governance action workflow command '{Command}' for tenant '{TenantId}' and action '{ActionId}'. Outcome: {Outcome}. Reason: {Reason}.",
         Description: "Emitted when the governance companion rejects an in-process tenant-governance action workflow transition.");
 
+    public static readonly DiagnosticEventDefinition GovernanceActionStorePersisted = new(
+        Id: 4520,
+        Name: "TenantGovernanceActionStorePersisted",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Persisted tenant governance action state for tenant '{TenantId}' and action '{ActionId}' using store '{StoreKind}'. Durable: {Durable}.",
+        Description: "Emitted when the governance companion stores runtime tenant-governance action state.");
+
+    public static readonly DiagnosticEventDefinition GovernanceActionStorePersistenceFailed = new(
+        Id: 4521,
+        Name: "TenantGovernanceActionStorePersistenceFailed",
+        Severity: DiagnosticSeverity.Error,
+        MessageTemplate: "Failed to persist tenant governance action state for tenant '{TenantId}' and action '{ActionId}' using store '{StoreKind}'. Reason: {Reason}.",
+        Description: "Emitted when the governance companion cannot store runtime tenant-governance action state.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, approval/remediation action decisions, and in-process governance-action workflow transitions.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -95,7 +109,9 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             GovernanceActionDecisionAllowed,
             GovernanceActionDecisionDenied,
             GovernanceActionWorkflowApplied,
-            GovernanceActionWorkflowDenied
+            GovernanceActionWorkflowDenied,
+            GovernanceActionStorePersisted,
+            GovernanceActionStorePersistenceFailed
         ]);
 }
 
@@ -180,6 +196,22 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.Name),
             MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> GovernanceActionStorePersistedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersisted.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersisted.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersisted.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> GovernanceActionStorePersistenceFailedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Error,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersistenceFailed.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersistenceFailed.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionStorePersistenceFailed.MessageTemplate);
 
     public static void MembershipEvaluationAllowed(
         ILogger logger,
@@ -286,5 +318,27 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         GovernanceActionWorkflowDeniedMessage(logger, command, tenantId, actionId, outcome, reason, exception);
+    }
+
+    public static void GovernanceActionStorePersisted(
+        ILogger logger,
+        string tenantId,
+        string actionId,
+        string storeKind,
+        string durable,
+        Exception? exception)
+    {
+        GovernanceActionStorePersistedMessage(logger, tenantId, actionId, storeKind, durable, exception);
+    }
+
+    public static void GovernanceActionStorePersistenceFailed(
+        ILogger logger,
+        string tenantId,
+        string actionId,
+        string storeKind,
+        string reason,
+        Exception? exception)
+    {
+        GovernanceActionStorePersistenceFailedMessage(logger, tenantId, actionId, storeKind, reason, exception);
     }
 }

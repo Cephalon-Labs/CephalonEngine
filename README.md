@@ -75,7 +75,7 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.Identity.AspNetCore`: ASP.NET Core adapter for Cephalon identity and authorization
 - `src/Cephalon.Ids.Sfid`: official `Sfid.Net` identifier companion package
 - `src/Cephalon.MultiTenancy`: host-agnostic multi-tenancy companion package
-- `src/Cephalon.MultiTenancy.Governance`: tenant-membership, tenant-invitation, declared tenant-domain ownership, approval/remediation action decision, and in-process action workflow governance companion package
+- `src/Cephalon.MultiTenancy.Governance`: tenant-membership, tenant-invitation, declared tenant-domain ownership, approval/remediation action decision, in-process action workflow, and opt-in durable action-store governance companion package
 - `src/Cephalon.Worker`: Generic Host worker adapter for non-HTTP hosts
 - `src/Cephalon.Observability`: observability package for logs, metrics, and tracing conventions
 - `src/Cephalon.Observability.CassandraDependencies`: optional Cassandra dependency-health companion package for Cassandra probes

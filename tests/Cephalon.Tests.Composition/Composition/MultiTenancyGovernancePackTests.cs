@@ -178,6 +178,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.validation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.catalog");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.decision");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.workflow");
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["ownership"]);
@@ -219,6 +220,9 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("true", governanceActionSummaryEntry.Metadata["workflowEnabled"]);
         Assert.Equal("cephalon-managed", governanceActionSummaryEntry.Metadata["workflowExecutionOwnership"]);
         Assert.Equal("0", governanceActionSummaryEntry.Metadata["runtimeActionCount"]);
+        Assert.Equal("in-memory", governanceActionSummaryEntry.Metadata["actionStoreKind"]);
+        Assert.Equal("false", governanceActionSummaryEntry.Metadata["actionStoreDurable"]);
+        Assert.Equal("cephalon-managed", governanceActionSummaryEntry.Metadata["actionStoreOwnership"]);
         Assert.Equal("application-managed", governanceActionSummaryEntry.Metadata["durableStoreOwnership"]);
         Assert.Equal("application-managed", governanceActionSummaryEntry.Metadata["notificationDeliveryOwnership"]);
         Assert.Equal("approved:1,remediation-required:1", governanceActionSummaryEntry.Metadata["statusBreakdown"]);
@@ -249,7 +253,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(TenantGovernanceActionDecisionOutcomes.RemediationRequired, remediationRequiredAction.Outcome);
         Assert.Equal(4510, diagnosticsConvention.MinimumEventId);
         Assert.NotNull(governanceActionWorkflow);
-        Assert.Equal(4519, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4521, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
@@ -260,6 +264,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4517 && entry.Name == "TenantGovernanceActionDecisionDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4518 && entry.Name == "TenantGovernanceActionWorkflowApplied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4519 && entry.Name == "TenantGovernanceActionWorkflowDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4520 && entry.Name == "TenantGovernanceActionStorePersisted");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4521 && entry.Name == "TenantGovernanceActionStorePersistenceFailed");
     }
 
     [Fact]
@@ -709,6 +715,135 @@ public sealed class MultiTenancyGovernancePackTests
     }
 
     [Fact]
+    public async Task TenantGovernanceActionWorkflowPersistsThroughFileBackedStore()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), $"cephalon-governance-{Guid.NewGuid():N}");
+        var storePath = Path.Combine(tempRoot, "tenant-governance-actions.json");
+        try
+        {
+            var services = new ServiceCollection();
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.GovernanceActionStoreFilePath = storePath;
+                });
+            });
+
+            await using (var provider = services.BuildServiceProvider())
+            {
+                var workflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
+
+                var created = await workflow.ApplyAsync(new TenantGovernanceActionWorkflowRequest(
+                    command: TenantGovernanceActionWorkflowCommands.Request,
+                    tenantId: "tenant-001",
+                    actionId: "durable-action-001",
+                    actionKind: TenantGovernanceActionKinds.Remediation,
+                    subjectKind: "domain",
+                    subjectId: "docs.example",
+                    actor: "operator-001",
+                    atUtc: new DateTimeOffset(2026, 04, 29, 1, 0, 0, TimeSpan.Zero)));
+                var approved = await workflow.ApplyAsync(new TenantGovernanceActionWorkflowRequest(
+                    command: TenantGovernanceActionWorkflowCommands.Approve,
+                    tenantId: "tenant-001",
+                    actionId: "durable-action-001",
+                    actionKind: TenantGovernanceActionKinds.Remediation,
+                    subjectKind: "domain",
+                    subjectId: "docs.example",
+                    actor: "tenant-owner",
+                    atUtc: new DateTimeOffset(2026, 04, 29, 1, 5, 0, TimeSpan.Zero)));
+
+                Assert.True(created.Applied);
+                Assert.True(approved.Applied);
+            }
+
+            var restartedServices = new ServiceCollection();
+            restartedServices.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.GovernanceActionStoreFilePath = storePath;
+                });
+            });
+
+            await using var restartedProvider = restartedServices.BuildServiceProvider();
+            var catalog = restartedProvider.GetRequiredService<ITenantGovernanceActionCatalog>();
+            var decider = restartedProvider.GetRequiredService<ITenantGovernanceActionDecider>();
+            var technologyCatalog = restartedProvider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+            var action = Assert.Single(catalog.Actions);
+            var decision = await decider.DecideAsync(new TenantGovernanceActionDecisionRequest(
+                tenantId: "tenant-001",
+                actionId: "durable-action-001",
+                actionKind: TenantGovernanceActionKinds.Remediation,
+                subjectKind: "domain",
+                subjectId: "docs.example",
+                atUtc: new DateTimeOffset(2026, 04, 29, 1, 10, 0, TimeSpan.Zero)));
+            var actionsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-governance-actions");
+            var summaryEntry = Assert.Single(actionsSurface.Entries, entry => entry.Id == "tenant-governance-action-runtime");
+
+            Assert.Equal(TenantGovernanceActionStatuses.Approved, action.Status);
+            Assert.Equal("tenant-owner", action.ApprovedBy);
+            Assert.True(decision.Allowed);
+            Assert.Equal("file", summaryEntry.Metadata["actionStoreKind"]);
+            Assert.Equal("true", summaryEntry.Metadata["actionStoreDurable"]);
+            Assert.Equal("cephalon-managed", summaryEntry.Metadata["durableStoreOwnership"]);
+            Assert.Equal("1", summaryEntry.Metadata["runtimeActionCount"]);
+            Assert.True(File.Exists(storePath));
+        }
+        finally
+        {
+            if (Directory.Exists(tempRoot))
+            {
+                Directory.Delete(tempRoot, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task TenantGovernanceActionWorkflowReportsStoreFailuresWithoutApplyingTransition()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ITenantGovernanceActionStore>(new FailingTenantGovernanceActionStore());
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
+        var catalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
+
+        var result = await workflow.ApplyAsync(new TenantGovernanceActionWorkflowRequest(
+            command: TenantGovernanceActionWorkflowCommands.Request,
+            tenantId: "tenant-001",
+            actionId: "failing-action-001",
+            actionKind: TenantGovernanceActionKinds.MembershipChange));
+
+        Assert.False(result.Applied);
+        Assert.Equal(TenantGovernanceActionWorkflowOutcomes.StoreFailed, result.Outcome);
+        Assert.Empty(catalog.Actions);
+    }
+
+    [Fact]
     public async Task TenantGovernanceActionWorkflowRejectsInvalidTransitionsAndBoundaries()
     {
         var services = new ServiceCollection();
@@ -817,6 +952,24 @@ public sealed class MultiTenancyGovernancePackTests
                 subjectId: "docs.example",
                 status: TenantGovernanceActionStatuses.Remediated,
                 sourceModuleId: "test-module"));
+        }
+    }
+
+    private sealed class FailingTenantGovernanceActionStore : ITenantGovernanceActionStore
+    {
+        public string StoreKind => "failing-test";
+
+        public bool IsDurable => true;
+
+        public string Ownership => "application-managed";
+
+        public IReadOnlyList<TenantGovernanceActionDescriptor> Actions => [];
+
+        public int Count => 0;
+
+        public void Upsert(TenantGovernanceActionDescriptor action)
+        {
+            throw new InvalidOperationException("Test store failure.");
         }
     }
 }

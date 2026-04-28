@@ -63,4 +63,9 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets a value indicating whether the built-in tenant-governance action workflow executor is active.
     /// </summary>
     public bool EnableGovernanceActionWorkflow { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.
+    /// </summary>
+    public string? GovernanceActionStoreFilePath { get; set; }
 }

@@ -1103,6 +1103,8 @@ Operational notes:
 Current shipped event-id ranges include:
 
 - `Cephalon.Engine`: `2000-2005`
+- `Cephalon.MultiTenancy`: `4500-4502`
+- `Cephalon.MultiTenancy.Governance`: `4510-4521`
 - `Cephalon.Observability`: `3000-3006`
 - `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
@@ -1244,14 +1246,14 @@ Current payload highlights:
 - `tenant-memberships` reports the governance companion's Cephalon-managed membership catalog and evaluation posture, including membership count, tenant count, contributor count, configured membership count, evaluation ownership, per-tenant status counts, role summaries, principal-kind breakdowns, and contributing module ids without exposing individual principal identifiers
 - `tenant-invitations` reports the governance companion's Cephalon-managed invitation catalog and validation posture, including invitation count, tenant count, contributor count, configured invitation count, validation ownership, status breakdown, per-tenant status counts, role summaries, invitee-kind breakdowns, and contributing module ids without exposing individual invitee identifiers
 - `tenant-domain-ownership` reports the governance companion's Cephalon-managed declared domain-ownership catalog and validation posture, including domain ownership count, tenant count, contributor count, configured domain count, validation ownership, status breakdown, verification-method breakdown, and contributing module ids without exposing individual domain names
-- `tenant-governance-actions` reports the governance companion's Cephalon-managed approval/remediation action catalog, decision, and in-process workflow posture, including action count, tenant count, contributor count, configured action count, runtime action count, decision ownership, workflow execution ownership, durable-store ownership, notification-delivery ownership, status breakdown, action-kind breakdown, subject-kind breakdown, and contributing module ids without exposing individual action metadata
+- `tenant-governance-actions` reports the governance companion's Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture, including action count, tenant count, contributor count, configured action count, runtime action count, decision ownership, workflow execution ownership, action-store kind, action-store durability, action-store ownership, durable-store ownership, notification-delivery ownership, status breakdown, action-kind breakdown, subject-kind breakdown, and contributing module ids without exposing individual action metadata
 - boundary entries outside the current membership, invitation, declared domain-ownership, and governance-action proofs still carry `plannedOwnership = companion-planned`, `basePackageOwnership = not-owned`, and `suggestedPackage = Cephalon.MultiTenancy.Governance` so operators can distinguish current runtime ownership from planned companion work
 
 Current note:
 
 - the base package owns tenant resolution and ambient tenant context only
-- the governance companion currently owns tenant membership cataloging/evaluation, tenant invitation cataloging/validation, declared tenant-domain ownership cataloging/validation, approval/remediation action cataloging/decision, and in-process approval/remediation action workflow transitions
-- DNS/HTTP domain verification execution, remediation execution beyond state transitions, durable membership/invitation/domain/action stores, notification/delivery, identity-provider synchronization, and backoffice/public-site tenant orchestration remain future companion work until a package owns those paths explicitly
+- the governance companion currently owns tenant membership cataloging/evaluation, tenant invitation cataloging/validation, declared tenant-domain ownership cataloging/validation, approval/remediation action cataloging/decision, in-process approval/remediation action workflow transitions, and opt-in local durable action state
+- DNS/HTTP domain verification execution, remediation execution beyond state transitions, durable membership/invitation/domain stores, distributed or provider-backed action-store backends, notification/delivery, identity-provider synchronization, and backoffice/public-site tenant orchestration remain future companion work until a package owns those paths explicitly
 
 ## Data product surface
 

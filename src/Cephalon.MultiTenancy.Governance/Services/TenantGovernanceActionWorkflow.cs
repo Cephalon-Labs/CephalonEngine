@@ -6,7 +6,7 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 internal sealed class TenantGovernanceActionWorkflow(
     MultiTenancyGovernanceOptions options,
     ITenantGovernanceActionCatalog catalog,
-    TenantGovernanceActionRuntimeStore runtimeStore,
+    ITenantGovernanceActionStore actionStore,
     TimeProvider timeProvider,
     ILogger<TenantGovernanceActionWorkflow> logger) : ITenantGovernanceActionWorkflow
 {
@@ -150,7 +150,11 @@ internal sealed class TenantGovernanceActionWorkflow(
             createdAtUtc: occurredAtUtc,
             expiresAtUtc: request.ExpiresAtUtc,
             metadata: BuildMetadata(request, previous: null, currentStatus: TenantGovernanceActionStatuses.PendingApproval));
-        runtimeStore.Upsert(action);
+        var persisted = Persist(request, action, previousStatus: null, currentStatus: action.Status, occurredAtUtc);
+        if (persisted is not null)
+        {
+            return persisted;
+        }
 
         return CreateResult(
             request,
@@ -197,7 +201,11 @@ internal sealed class TenantGovernanceActionWorkflow(
             expiresAtUtc: request.ExpiresAtUtc ?? action.ExpiresAtUtc,
             sourceModuleId: action.SourceModuleId,
             metadata: BuildMetadata(request, action, targetStatus));
-        runtimeStore.Upsert(transitioned);
+        var persisted = Persist(request, transitioned, action.Status, transitioned.Status, occurredAtUtc);
+        if (persisted is not null)
+        {
+            return persisted;
+        }
 
         return CreateResult(
             request,
@@ -208,6 +216,48 @@ internal sealed class TenantGovernanceActionWorkflow(
             action.Status,
             transitioned.Status,
             $"Tenant-governance action transitioned from '{action.Status}' to '{transitioned.Status}'.");
+    }
+
+    private TenantGovernanceActionWorkflowResult? Persist(
+        TenantGovernanceActionWorkflowRequest request,
+        TenantGovernanceActionDescriptor action,
+        string? previousStatus,
+        string currentStatus,
+        DateTimeOffset occurredAtUtc)
+    {
+        try
+        {
+            actionStore.Upsert(action);
+            MultiTenancyGovernanceLoggerMessages.GovernanceActionStorePersisted(
+                logger,
+                action.TenantId,
+                action.ActionId,
+                actionStore.StoreKind,
+                actionStore.IsDurable.ToString().ToLowerInvariant(),
+                null);
+            return null;
+        }
+        catch (Exception exception)
+        {
+            var reason = $"Tenant-governance action workflow command '{request.Command}' could not persist action state.";
+            MultiTenancyGovernanceLoggerMessages.GovernanceActionStorePersistenceFailed(
+                logger,
+                request.TenantId,
+                request.ActionId,
+                actionStore.StoreKind,
+                reason,
+                exception);
+
+            return CreateResult(
+                request,
+                TenantGovernanceActionWorkflowOutcomes.StoreFailed,
+                applied: false,
+                occurredAtUtc,
+                action,
+                previousStatus,
+                currentStatus,
+                reason);
+        }
     }
 
     private static string? ResolveTargetStatus(string command, string currentStatus)

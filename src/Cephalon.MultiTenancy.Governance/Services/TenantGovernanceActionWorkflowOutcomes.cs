@@ -41,6 +41,11 @@ public static class TenantGovernanceActionWorkflowOutcomes
     public const string InvalidTransition = "invalid-transition";
 
     /// <summary>
+    /// The requested workflow transition could not be persisted.
+    /// </summary>
+    public const string StoreFailed = "store-failed";
+
+    /// <summary>
     /// Tenant-governance action workflow execution is disabled.
     /// </summary>
     public const string Disabled = "disabled";

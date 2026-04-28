@@ -2176,6 +2176,9 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["decisionOwnership"] == "cephalon-managed" &&
                 entry.Metadata["workflowExecutionOwnership"] == "cephalon-managed" &&
                 entry.Metadata["runtimeActionCount"] == "0" &&
+                entry.Metadata["actionStoreKind"] == "in-memory" &&
+                entry.Metadata["actionStoreDurable"] == "false" &&
+                entry.Metadata["actionStoreOwnership"] == "cephalon-managed" &&
                 entry.Metadata["durableStoreOwnership"] == "application-managed" &&
                 entry.Metadata["notificationDeliveryOwnership"] == "application-managed");
 

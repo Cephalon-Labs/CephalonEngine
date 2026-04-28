@@ -110,6 +110,16 @@ IList<TenantGovernanceActionDescriptor> GovernanceActions { get; }
 
 Gets the host-defined approval and remediation actions available to the governance runtime.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-governanceactionstorefilepath"></a>
+
+##### `GovernanceActionStoreFilePath`
+
+```csharp
+string GovernanceActionStoreFilePath { get; set; }
+```
+
+Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitations"></a>
 
 ##### `Invitations`
@@ -470,6 +480,84 @@ Adds a tenant-governance action descriptor to the registry.
 
 Parameters:
 - `action`: The governance action descriptor to contribute.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantgovernanceactionstore"></a>
+
+### `ITenantGovernanceActionStore`
+
+Stores runtime tenant-governance actions created or transitioned by the governance action workflow.
+
+#### Declaration
+```csharp
+public interface ITenantGovernanceActionStore
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-actions"></a>
+
+##### `Actions`
+
+```csharp
+IReadOnlyList<TenantGovernanceActionDescriptor> Actions { get; }
+```
+
+Gets the stored runtime tenant-governance actions.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of stored runtime tenant-governance actions.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-isdurable"></a>
+
+##### `IsDurable`
+
+```csharp
+bool IsDurable { get; }
+```
+
+Gets a value indicating whether action state survives process restarts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; }
+```
+
+Gets the ownership mode for the store implementation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-storekind"></a>
+
+##### `StoreKind`
+
+```csharp
+string StoreKind { get; }
+```
+
+Gets the operator-facing store kind.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-upsert-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor"></a>
+
+##### `Upsert`
+
+```csharp
+void Upsert(TenantGovernanceActionDescriptor action)
+```
+
+Creates or replaces one stored runtime tenant-governance action.
+
+Parameters:
+- `action`: The tenant-governance action to store.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantgovernanceactionworkflow"></a>
 
@@ -2163,6 +2251,16 @@ const string NotFound
 ```
 
 No tenant-governance action matched the supplied identifiers.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+The requested workflow transition could not be persisted.
 
 <a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch"></a>
 

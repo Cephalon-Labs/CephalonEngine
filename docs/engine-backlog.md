@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, and in-process governance-action workflow proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, and opt-in durable governance-action store proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, invitation catalog/validation, declared domain-ownership catalog/validation, approval/remediation action catalog/decision, and in-process approval/remediation action workflow proofs, while durable stores, notification/delivery, remediation execution beyond state transitions, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, invitation catalog/validation, declared domain-ownership catalog/validation, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while durable membership/invitation/domain stores, distributed or provider-backed action-store backends, notification/delivery, remediation execution beyond state transitions, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -224,7 +224,29 @@ Delivered:
 
 Follow-up later:
 
-- durable governance action stores, external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP verification execution, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+- opt-in durable local action storage is now covered by `ENG-240`
+- external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP verification execution, identity-provider synchronization, tenant administration, public onboarding, and distributed or provider-backed action-store backends remain future governance slices until the package truly owns those paths
+
+### ENG-240 Multi-tenancy governance durable action store baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-239`, `Cephalon.MultiTenancy.Governance` owned real workflow transitions, but runtime action state was still process-local unless the consumer supplied its own store
+- the smallest honest durability proof is a host-agnostic action-store contract with an in-memory default and an opt-in local JSON store, not a full human-task or tenant-admin workflow
+
+Delivered:
+
+- add public `ITenantGovernanceActionStore` plus built-in in-memory and file-backed implementations selected through `MultiTenancyGovernanceOptions.GovernanceActionStoreFilePath`
+- route workflow-created and workflow-transitioned runtime actions through the store, return `store-failed` without marking transitions applied when persistence fails, and merge stored actions back into the same action catalog used by decisions
+- publish `tenancy.governance-action.store`, action-store kind/durability/ownership metadata, durable-store ownership truth, and stable diagnostics `4520-4521` through the existing governance action runtime surface
+- prove the slice with focused composition, hosting, package-surface, reference-doc, and docs/source/planning alignment
+
+Follow-up later:
+
+- durable membership/invitation/domain stores, distributed or provider-backed action-store backends, external human-task inboxes, notification/delivery, remediation execution beyond status transitions, DNS/HTTP verification execution, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
 
 ## Completed foundation work
 
@@ -7998,9 +8020,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-239 Multi-tenancy governance action workflow execution baseline (shipped)
 
+### Sprint 52
+
+- ENG-240 Multi-tenancy governance durable action store baseline (shipped)
+
 ### Later / not scheduled yet
 
-- DNS/HTTP domain verification execution, remediation execution beyond status transitions, durable membership/invitation/domain/action stores, notification/delivery, identity-provider synchronization, public onboarding, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
+- DNS/HTTP domain verification execution, remediation execution beyond status transitions, durable membership/invitation/domain stores, distributed or provider-backed action-store backends, notification/delivery, identity-provider synchronization, public onboarding, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ### Foundation Sprint 1
 

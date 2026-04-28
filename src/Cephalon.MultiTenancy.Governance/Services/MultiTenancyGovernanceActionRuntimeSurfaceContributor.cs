@@ -7,7 +7,7 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 internal sealed class MultiTenancyGovernanceActionRuntimeSurfaceContributor(
     MultiTenancyGovernanceOptions options,
     ITenantGovernanceActionCatalog catalog,
-    TenantGovernanceActionRuntimeStore runtimeStore,
+    ITenantGovernanceActionStore actionStore,
     IEnumerable<ITenantGovernanceActionContributor> contributors) : ITechnologyRuntimeContributor
 {
     private readonly ITenantGovernanceActionContributor[] contributors = contributors.ToArray();
@@ -63,12 +63,15 @@ internal sealed class MultiTenancyGovernanceActionRuntimeSurfaceContributor(
                 .ToString(CultureInfo.InvariantCulture),
             ["contributorCount"] = contributors.Length.ToString(CultureInfo.InvariantCulture),
             ["configuredActionCount"] = options.GovernanceActions.Count.ToString(CultureInfo.InvariantCulture),
-            ["runtimeActionCount"] = runtimeStore.Count.ToString(CultureInfo.InvariantCulture),
+            ["runtimeActionCount"] = actionStore.Count.ToString(CultureInfo.InvariantCulture),
+            ["actionStoreKind"] = actionStore.StoreKind,
+            ["actionStoreDurable"] = actionStore.IsDurable.ToString().ToLowerInvariant(),
+            ["actionStoreOwnership"] = actionStore.Ownership,
             ["decisionEnabled"] = options.EnableGovernanceActionDecision.ToString().ToLowerInvariant(),
             ["decisionOwnership"] = options.EnableGovernanceActionDecision ? "cephalon-managed" : "not-configured",
             ["workflowEnabled"] = options.EnableGovernanceActionWorkflow.ToString().ToLowerInvariant(),
             ["workflowExecutionOwnership"] = options.EnableGovernanceActionWorkflow ? "cephalon-managed" : "not-configured",
-            ["durableStoreOwnership"] = "application-managed",
+            ["durableStoreOwnership"] = actionStore.IsDurable ? actionStore.Ownership : "application-managed",
             ["notificationDeliveryOwnership"] = "application-managed",
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown),
             ["actionKindBreakdown"] = actionKindBreakdown.Length == 0 ? "none" : string.Join(",", actionKindBreakdown),

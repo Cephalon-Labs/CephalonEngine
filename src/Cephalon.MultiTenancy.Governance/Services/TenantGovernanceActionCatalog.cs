@@ -5,16 +5,16 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 internal sealed class TenantGovernanceActionCatalog : ITenantGovernanceActionCatalog
 {
     private readonly TenantGovernanceActionDescriptor[] configuredActions;
-    private readonly TenantGovernanceActionRuntimeStore runtimeStore;
+    private readonly ITenantGovernanceActionStore actionStore;
 
     public TenantGovernanceActionCatalog(
         MultiTenancyGovernanceOptions options,
         IEnumerable<ITenantGovernanceActionContributor> contributors,
-        TenantGovernanceActionRuntimeStore runtimeStore)
+        ITenantGovernanceActionStore actionStore)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(contributors);
-        ArgumentNullException.ThrowIfNull(runtimeStore);
+        ArgumentNullException.ThrowIfNull(actionStore);
 
         var registry = new TenantGovernanceActionRegistry();
         foreach (var action in options.GovernanceActions)
@@ -28,7 +28,7 @@ internal sealed class TenantGovernanceActionCatalog : ITenantGovernanceActionCat
         }
 
         configuredActions = [.. registry.Build()];
-        this.runtimeStore = runtimeStore;
+        this.actionStore = actionStore;
     }
 
     public IReadOnlyList<TenantGovernanceActionDescriptor> Actions => BuildActions();
@@ -67,7 +67,7 @@ internal sealed class TenantGovernanceActionCatalog : ITenantGovernanceActionCat
     private IReadOnlyList<TenantGovernanceActionDescriptor> BuildActions()
     {
         var registry = new TenantGovernanceActionRegistry();
-        foreach (var action in runtimeStore.Actions)
+        foreach (var action in actionStore.Actions)
         {
             registry.Add(action);
         }

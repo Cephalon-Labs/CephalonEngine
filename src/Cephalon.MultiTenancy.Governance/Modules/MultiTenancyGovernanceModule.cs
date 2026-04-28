@@ -67,7 +67,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionDecider>>(NullLogger<TenantGovernanceActionDecider>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionWorkflow>>(NullLogger<TenantGovernanceActionWorkflow>.Instance);
-        services.TryAddSingleton<TenantGovernanceActionRuntimeStore>();
+        services.TryAddSingleton<ITenantGovernanceActionStore>(
+            static serviceProvider => TenantGovernanceActionStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
         services.TryAddSingleton<ITenantInvitationCatalog, TenantInvitationCatalog>();
         services.TryAddSingleton<ITenantDomainOwnershipCatalog, TenantDomainOwnershipCatalog>();
@@ -215,6 +216,21 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["hasGovernanceActionContributors"] = hasGovernanceActionContributors.ToString().ToLowerInvariant()
             }));
 
+        capabilities.Add(new Capability(
+            key: "tenancy.governance-action.store",
+            displayName: "Tenant Governance Action Store",
+            description: "Stores runtime approval and remediation actions created or transitioned by the governance companion pack.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "multi-tenancy",
+                ["package"] = "Cephalon.MultiTenancy.Governance",
+                ["ownership"] = "cephalon-managed",
+                ["runtimeSurface"] = "tenant-governance-actions",
+                ["storeKind"] = string.IsNullOrWhiteSpace(options.GovernanceActionStoreFilePath) ? "in-memory" : "file",
+                ["storeDurable"] = (!string.IsNullOrWhiteSpace(options.GovernanceActionStoreFilePath)).ToString().ToLowerInvariant(),
+                ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.GovernanceActionStoreFilePath) ? "application-managed" : "cephalon-managed"
+            }));
+
         if (options.EnableGovernanceActionDecision)
         {
             capabilities.Add(new Capability(
@@ -241,7 +257,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["technology"] = "multi-tenancy",
                     ["package"] = "Cephalon.MultiTenancy.Governance",
                     ["executionOwnership"] = "cephalon-managed",
-                    ["durableStoreOwnership"] = "application-managed",
+                    ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.GovernanceActionStoreFilePath) ? "application-managed" : "cephalon-managed",
                     ["notificationDeliveryOwnership"] = "application-managed",
                     ["runtimeSurface"] = "tenant-governance-actions"
                 }));
