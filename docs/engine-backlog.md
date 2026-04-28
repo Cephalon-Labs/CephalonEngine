@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, and in-process governance domain-ownership verification workflow proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, and governance domain-ownership proof-evaluation proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, remediation execution beyond state transitions, DNS/HTTP proof collection or external polling, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof evaluation over reported evidence, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, remediation execution beyond state transitions, DNS/HTTP proof collection or external polling, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -333,6 +333,28 @@ Delivered:
 - add public `ITenantDomainOwnershipVerificationWorkflow`, workflow request/result contracts, command and outcome vocabularies, and guarded runtime transition behavior over `ITenantDomainOwnershipStore`
 - support deterministic `request`, `verify`, `reject`, `suspend`, and `expire` transitions with cross-tenant domain protection, verification-method mismatch protection, workflow evidence metadata, and `store-failed` outcomes when persistence fails
 - publish `tenancy.domain-ownership.workflow`, verification-workflow ownership metadata, DNS/HTTP proof-collection ownership boundaries, and stable diagnostics `4522-4525` through the existing `tenant-domain-ownership` runtime surface
+- prove the slice with focused composition, hosting, package-surface, reference-doc, and docs/source/planning alignment
+
+Follow-up later:
+
+- DNS/HTTP proof collection or external polling, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+
+### ENG-245 Multi-tenancy governance domain ownership proof evaluation baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-244`, `Cephalon.MultiTenancy.Governance` could transition domain ownership status, but consumers still had to decide whether reported DNS/HTTP/manual evidence matched the expected proof before calling `verify` or `reject`
+- the smallest honest next proof is a host-agnostic evaluator that consumes application/provider-reported evidence, compares it against an expected proof value, and applies the existing workflow; it should not claim DNS polling, HTTP fetching, or external collection ownership yet
+
+Delivered:
+
+- add public `ITenantDomainOwnershipProofEvaluator`, proof-evaluation request/result contracts, outcome vocabulary, and stable proof metadata keys
+- support exact trimmed proof comparison against an expected proof supplied on the request or descriptor metadata (`expectedProof`, `expectedDnsTxtProof`, or `expectedHttpFileProof`), then apply `verify` for matches or `reject` for mismatches through `ITenantDomainOwnershipVerificationWorkflow`
+- record proof-evaluation ownership, source, actor, correlation id, and SHA-256 proof fingerprints in descriptor metadata without adding observed raw proof values
+- publish `tenancy.domain-ownership.proof-evaluation`, proof-evaluation runtime-surface metadata, and stable diagnostics `4526-4527` through the existing `tenant-domain-ownership` runtime surface
 - prove the slice with focused composition, hosting, package-surface, reference-doc, and docs/source/planning alignment
 
 Follow-up later:
@@ -8130,6 +8152,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 56
 
 - ENG-244 Multi-tenancy governance domain ownership verification workflow baseline (shipped)
+
+### Sprint 57
+
+- ENG-245 Multi-tenancy governance domain ownership proof evaluation baseline (shipped)
 
 ### Later / not scheduled yet
 

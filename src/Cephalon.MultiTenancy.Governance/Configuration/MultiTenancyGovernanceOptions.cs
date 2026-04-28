@@ -60,6 +60,11 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableDomainOwnershipVerificationWorkflow { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership proof evaluator is active.
+    /// </summary>
+    public bool EnableDomainOwnershipProofEvaluation { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
     /// </summary>
     public bool EnableGovernanceActionDecision { get; set; } = true;

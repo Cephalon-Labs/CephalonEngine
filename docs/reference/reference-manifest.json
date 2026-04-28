@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T18:34:09.9280231+00:00",
+  "GeneratedAtUtc": "2026-04-28T18:54:24.1249472+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -232,7 +232,7 @@
       "Description": "Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 54
+      "TypeCount": 59
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1258,7 +1258,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 52
+      "TypeCount": 57
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11486,6 +11486,21 @@
       }
     },
     {
+      "DisplayName": "ITenantDomainOwnershipProofEvaluator",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantdomainownershipproofevaluator",
+      "Declaration": "public interface ITenantDomainOwnershipProofEvaluator",
+      "Summary": "Evaluates reported tenant-domain ownership proof evidence and applies the resulting verification workflow transition.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantDomainOwnershipRegistry",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -12546,7 +12561,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 14,
+        "Properties": 15,
         "Methods": 0
       }
     },
@@ -15476,6 +15491,66 @@
       }
     },
     {
+      "DisplayName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes",
+      "Declaration": "public static class TenantDomainOwnershipProofEvaluationOutcomes",
+      "Summary": "Defines stable tenant-domain ownership proof evaluation outcome labels.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 9,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest",
+      "Declaration": "public sealed class TenantDomainOwnershipProofEvaluationRequest",
+      "Summary": "Describes reported proof evidence for a tenant-domain ownership declaration.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult",
+      "Declaration": "public sealed class TenantDomainOwnershipProofEvaluationResult",
+      "Summary": "Describes the result of one tenant-domain ownership proof evaluation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys",
+      "Declaration": "public static class TenantDomainOwnershipProofMetadataKeys",
+      "Summary": "Defines stable metadata keys used by tenant-domain ownership proof evaluation.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 10,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "TenantDomainOwnershipStatuses",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -17715,6 +17790,17 @@
       "AnchorId": "member-p-cephalon-audit-services-auditrecordrequest-actor",
       "Signature": "AuditActor Actor { get; }",
       "Summary": "Gets the actor responsible for the audited operation when one was supplied explicitly."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-actor",
+      "Signature": "string Actor { get; }",
+      "Summary": "Gets the actor that requested proof evaluation when known."
     },
     {
       "DisplayName": "Actor",
@@ -20787,6 +20873,17 @@
     },
     {
       "DisplayName": "Applied",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-applied",
+      "Signature": "bool Applied { get; }",
+      "Summary": "Gets a value indicating whether the verification workflow transition was applied."
+    },
+    {
+      "DisplayName": "Applied",
       "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipVerificationWorkflowOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
@@ -22599,6 +22696,17 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-attributes",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Attributes { get; }",
       "Summary": "Gets optional resolution hints supplied by the host or caller."
+    },
+    {
+      "DisplayName": "AtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-atutc",
+      "Signature": "DateTimeOffset? AtUtc { get; }",
+      "Summary": "Gets the UTC timestamp used for proof evaluation."
     },
     {
       "DisplayName": "AtUtc",
@@ -34208,6 +34316,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for proof evaluation."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipValidationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -39210,6 +39329,17 @@
     {
       "DisplayName": "Disabled",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-disabled",
+      "Signature": "const string Disabled",
+      "Summary": "The built-in proof evaluator is disabled."
+    },
+    {
+      "DisplayName": "Disabled",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipValidationOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -40585,6 +40715,28 @@
     {
       "DisplayName": "DomainName",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-domainname",
+      "Signature": "string DomainName { get; }",
+      "Summary": "Gets the canonical domain name whose proof should be evaluated."
+    },
+    {
+      "DisplayName": "DomainName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-domainname",
+      "Signature": "string DomainName { get; }",
+      "Summary": "Gets the canonical domain name that was evaluated."
+    },
+    {
+      "DisplayName": "DomainName",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipValidationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -40625,6 +40777,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-domainname",
       "Signature": "string DomainName { get; }",
       "Summary": "Gets the canonical domain name that was targeted."
+    },
+    {
+      "DisplayName": "DomainOwnership",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-domainownership",
+      "Signature": "TenantDomainOwnershipDescriptor DomainOwnership { get; }",
+      "Summary": "Gets the matching or resulting domain ownership descriptor when one exists."
     },
     {
       "DisplayName": "DomainOwnership",
@@ -42937,6 +43100,17 @@
       "Summary": "Gets or sets a value indicating whether the pack should own the durable staged-event dispatch loop instead of leaving dispatch consumer-managed. Defaults to \u0060false\u0060."
     },
     {
+      "DisplayName": "EnableDomainOwnershipProofEvaluation",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofevaluation",
+      "Signature": "bool EnableDomainOwnershipProofEvaluation { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the built-in tenant-domain ownership proof evaluator is active."
+    },
+    {
       "DisplayName": "EnableDomainOwnershipValidation",
       "Category": "Properties",
       "DeclaringTypeName": "MultiTenancyGovernanceOptions",
@@ -43940,6 +44114,17 @@
     {
       "DisplayName": "EvaluateAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "ITenantDomainOwnershipProofEvaluator",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofevaluator-evaluateasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CTenantDomainOwnershipProofEvaluationResult\u003E EvaluateAsync(TenantDomainOwnershipProofEvaluationRequest request, CancellationToken cancellationToken)",
+      "Summary": "Evaluates reported proof evidence for a tenant-domain ownership declaration."
+    },
+    {
+      "DisplayName": "EvaluateAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "ITenantMembershipEvaluator",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -43947,6 +44132,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantmembershipevaluator-evaluateasync-cephalon-multitenancy-governance-services-tenantmembershipevaluationrequest-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CTenantMembershipEvaluationResult\u003E EvaluateAsync(TenantMembershipEvaluationRequest request, CancellationToken cancellationToken)",
       "Summary": "Evaluates tenant membership for the supplied request."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when proof evaluation executed."
     },
     {
       "DisplayName": "EvaluatedAtUtc",
@@ -46600,6 +46796,61 @@
       "Summary": "Gets or sets the expected Oracle database unique name when the capture should fail fast if the runtime connects to a different upstream."
     },
     {
+      "DisplayName": "ExpectedDnsTxtProof",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-expecteddnstxtproof",
+      "Signature": "const string ExpectedDnsTxtProof",
+      "Summary": "Expected DNS TXT proof value for DNS-based domain ownership verification."
+    },
+    {
+      "DisplayName": "ExpectedHttpFileProof",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-expectedhttpfileproof",
+      "Signature": "const string ExpectedHttpFileProof",
+      "Summary": "Expected HTTP file or well-known endpoint proof value for HTTP-based domain ownership verification."
+    },
+    {
+      "DisplayName": "ExpectedProof",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-expectedproof",
+      "Signature": "string ExpectedProof { get; }",
+      "Summary": "Gets the optional expected proof value. Descriptor metadata is used when this is omitted."
+    },
+    {
+      "DisplayName": "ExpectedProof",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-expectedproof",
+      "Signature": "const string ExpectedProof",
+      "Summary": "Generic expected proof value used when a method-specific expected value is not present."
+    },
+    {
+      "DisplayName": "ExpectedProofFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-expectedprooffingerprint",
+      "Signature": "string ExpectedProofFingerprint { get; }",
+      "Summary": "Gets the SHA-256 fingerprint of the expected proof value when present."
+    },
+    {
       "DisplayName": "ExpectedSourceServerUuid",
       "Category": "Properties",
       "DeclaringTypeName": "MySqlBinlogCaptureOptions",
@@ -46818,6 +47069,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-expiresatutc",
       "Signature": "DateTimeOffset? ExpiresAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when ownership expires."
+    },
+    {
+      "DisplayName": "ExpiresAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-expiresatutc",
+      "Signature": "DateTimeOffset? ExpiresAtUtc { get; }",
+      "Summary": "Gets the optional UTC timestamp when the ownership declaration expires."
     },
     {
       "DisplayName": "ExpiresAtUtc",
@@ -63771,6 +64033,72 @@
       "Summary": "The number of outbox messages produced by the latest report."
     },
     {
+      "DisplayName": "LastProofEvaluationActor",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationactor",
+      "Signature": "const string LastProofEvaluationActor",
+      "Summary": "Actor that requested or reported the proof evaluation when known."
+    },
+    {
+      "DisplayName": "LastProofEvaluationCorrelationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationcorrelationid",
+      "Signature": "const string LastProofEvaluationCorrelationId",
+      "Summary": "Correlation identifier for the last proof evaluation when known."
+    },
+    {
+      "DisplayName": "LastProofEvaluationExpectedFingerprint",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationexpectedfingerprint",
+      "Signature": "const string LastProofEvaluationExpectedFingerprint",
+      "Summary": "SHA-256 fingerprint of the expected proof value considered by the evaluator."
+    },
+    {
+      "DisplayName": "LastProofEvaluationObservedFingerprint",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationobservedfingerprint",
+      "Signature": "const string LastProofEvaluationObservedFingerprint",
+      "Summary": "SHA-256 fingerprint of the observed proof value considered by the evaluator."
+    },
+    {
+      "DisplayName": "LastProofEvaluationOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationoutcome",
+      "Signature": "const string LastProofEvaluationOutcome",
+      "Summary": "Last proof evaluation outcome recorded on the domain ownership descriptor."
+    },
+    {
+      "DisplayName": "LastProofEvaluationSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationsource",
+      "Signature": "const string LastProofEvaluationSource",
+      "Summary": "Source that reported the observed proof evidence."
+    },
+    {
       "DisplayName": "LastPublisherType",
       "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
@@ -67104,6 +67432,17 @@
       "Summary": "Indicates whether the supplied evaluation context matched the targeting constraints for the feature flag."
     },
     {
+      "DisplayName": "Matched",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-matched",
+      "Signature": "bool Matched { get; }",
+      "Summary": "Gets a value indicating whether the observed proof matched the expected proof."
+    },
+    {
       "DisplayName": "MatchedAction",
       "Category": "Properties",
       "DeclaringTypeName": "TenantGovernanceActionDecisionResult",
@@ -69955,6 +70294,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional proof evaluation metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional result metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipValidationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -70723,6 +71084,17 @@
       "Summary": "One or more declared task ids are missing from the latest reported task ids."
     },
     {
+      "DisplayName": "MissingExpectedProof",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-missingexpectedproof",
+      "Signature": "const string MissingExpectedProof",
+      "Summary": "The request and descriptor did not contain an expected proof value to compare against."
+    },
+    {
       "DisplayName": "MissingManagementMode",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceCategories",
@@ -70754,6 +71126,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-missingmaterializerid",
       "Signature": "const string MissingMaterializerId",
       "Summary": "The runtime does not currently expose one materializer identifier for provider-specific materialization."
+    },
+    {
+      "DisplayName": "MissingObservedProof",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-missingobservedproof",
+      "Signature": "const string MissingObservedProof",
+      "Summary": "The request did not contain an observed proof value to evaluate."
     },
     {
       "DisplayName": "MissingProviderId",
@@ -73671,6 +74054,17 @@
     {
       "DisplayName": "NotFound",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-notfound",
+      "Signature": "const string NotFound",
+      "Summary": "No tenant-domain ownership declaration matched the supplied tenant and domain."
+    },
+    {
+      "DisplayName": "NotFound",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipValidationOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -74063,6 +74457,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-observededgenodeids",
       "Signature": "IReadOnlyList\u003Cstring\u003E ObservedEdgeNodeIds { get; set; }",
       "Summary": "Gets the edge-node identifiers most recently associated with this reporter."
+    },
+    {
+      "DisplayName": "ObservedProof",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-observedproof",
+      "Signature": "string ObservedProof { get; }",
+      "Summary": "Gets the proof value observed by the application or provider pack."
+    },
+    {
+      "DisplayName": "ObservedProofFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-observedprooffingerprint",
+      "Signature": "string ObservedProofFingerprint { get; }",
+      "Summary": "Gets the SHA-256 fingerprint of the observed proof value when present."
     },
     {
       "DisplayName": "ObserveOnly",
@@ -76371,6 +76787,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome",
       "Signature": "RuntimeLifecycleEventOutcome Outcome { get; set; }",
       "Summary": "The completion outcome for the event."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable proof evaluation outcome."
     },
     {
       "DisplayName": "Outcome",
@@ -80384,6 +80811,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-projects",
       "Signature": "IReadOnlyList\u003CScaffoldProject\u003E Projects { get; }",
       "Summary": "Gets the projects emitted by the scaffold."
+    },
+    {
+      "DisplayName": "ProofEvaluationOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-proofevaluationownership",
+      "Signature": "const string ProofEvaluationOwnership",
+      "Summary": "Ownership marker for proof evaluation performed by the governance companion."
     },
     {
       "DisplayName": "PropertyName",
@@ -84524,6 +84962,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing proof evaluation reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipValidationResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -86335,6 +86784,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-rejected",
       "Signature": "const string Rejected",
       "Summary": "The reporter most recently attempted to report while another reporter still owned the active lease."
+    },
+    {
+      "DisplayName": "Rejected",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-rejected",
+      "Signature": "const string Rejected",
+      "Summary": "The observed proof did not match the expected proof and the domain ownership was rejected."
     },
     {
       "DisplayName": "Rejected",
@@ -95348,6 +95808,17 @@
     {
       "DisplayName": "Source",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-source",
+      "Signature": "string Source { get; }",
+      "Summary": "Gets the source that reported the observed proof evidence."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantResolutionResult",
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
       "AssemblyName": "Cephalon.Abstractions",
@@ -101108,6 +101579,28 @@
       "Summary": "Creates a tenant-domain ownership descriptor."
     },
     {
+      "DisplayName": "TenantDomainOwnershipProofEvaluationRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipProofEvaluationRequest(string tenantId, string domainName, string observedProof, string verificationMethod, string expectedProof, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-domain ownership proof evaluation request."
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipProofEvaluationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipProofEvaluationResult(string tenantId, string domainName, string verificationMethod, string outcome, bool matched, bool applied, DateTimeOffset evaluatedAtUtc, string observedProofFingerprint, string expectedProofFingerprint, TenantDomainOwnershipDescriptor domainOwnership, TenantDomainOwnershipVerificationWorkflowResult workflowResult, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-domain ownership proof evaluation result."
+    },
+    {
       "DisplayName": "TenantDomainOwnershipValidationRequest",
       "Category": "Constructors",
       "DeclaringTypeName": "TenantDomainOwnershipValidationRequest",
@@ -101440,6 +101933,28 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that owns the domain declaration."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that was evaluated."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipValidationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -101689,6 +102204,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-ctor-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string",
       "Signature": "TenantMembershipEvaluationResult(string tenantId, string principalId, string outcome, bool allowed, DateTimeOffset evaluatedAtUtc, IReadOnlyList\u003Cstring\u003E requiredRoles, IReadOnlyList\u003Cstring\u003E matchedRoles, IReadOnlyList\u003Cstring\u003E missingRoles, IReadOnlyList\u003CTenantMembershipDescriptor\u003E matchedMemberships, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata, string principalKind)",
       "Summary": "Creates a tenant-membership evaluation result."
+    },
+    {
+      "DisplayName": "TenantMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-tenantmismatch",
+      "Signature": "const string TenantMismatch",
+      "Summary": "A declaration for the supplied domain belongs to a different tenant."
     },
     {
       "DisplayName": "TenantMismatch",
@@ -105191,6 +105717,28 @@
     {
       "DisplayName": "VerificationMethod",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-verificationmethod",
+      "Signature": "string VerificationMethod { get; }",
+      "Summary": "Gets the optional verification method boundary."
+    },
+    {
+      "DisplayName": "VerificationMethod",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-verificationmethod",
+      "Signature": "string VerificationMethod { get; }",
+      "Summary": "Gets the verification method used for evaluation."
+    },
+    {
+      "DisplayName": "VerificationMethod",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipVerificationWorkflowRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -105198,6 +105746,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-verificationmethod",
       "Signature": "string VerificationMethod { get; }",
       "Summary": "Gets the optional verification method boundary."
+    },
+    {
+      "DisplayName": "VerificationMethodMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-verificationmethodmismatch",
+      "Signature": "const string VerificationMethodMismatch",
+      "Summary": "The matching domain ownership declaration uses a different verification method."
     },
     {
       "DisplayName": "VerificationMethodMismatch",
@@ -105242,6 +105801,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-verificationsource",
       "Signature": "string VerificationSource { get; set; }",
       "Summary": "The trust source that verified the signature, when available."
+    },
+    {
+      "DisplayName": "Verified",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-verified",
+      "Signature": "const string Verified",
+      "Summary": "The observed proof matched the expected proof and the domain ownership was verified."
     },
     {
       "DisplayName": "Verified",
@@ -105803,6 +106373,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-workeridentityvisible",
       "Signature": "const string WorkerIdentityVisible",
       "Summary": "The runtime currently exposes one provider worker identity."
+    },
+    {
+      "DisplayName": "WorkflowDenied",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-workflowdenied",
+      "Signature": "const string WorkflowDenied",
+      "Summary": "Proof evaluation matched or mismatched, but the verification workflow refused or failed the transition."
+    },
+    {
+      "DisplayName": "WorkflowResult",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-workflowresult",
+      "Signature": "TenantDomainOwnershipVerificationWorkflowResult WorkflowResult { get; }",
+      "Summary": "Gets the underlying workflow transition result when proof evaluation reached workflow mutation."
     },
     {
       "DisplayName": "WorkingDirectoryHint",

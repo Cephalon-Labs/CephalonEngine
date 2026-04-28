@@ -67,6 +67,8 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["validationOwnership"] = options.EnableDomainOwnershipValidation ? "cephalon-managed" : "not-configured",
             ["verificationWorkflowEnabled"] = options.EnableDomainOwnershipVerificationWorkflow.ToString().ToLowerInvariant(),
             ["verificationWorkflowOwnership"] = options.EnableDomainOwnershipVerificationWorkflow ? "cephalon-managed" : "not-configured",
+            ["proofEvaluationEnabled"] = (options.EnableDomainOwnershipProofEvaluation && options.EnableDomainOwnershipVerificationWorkflow).ToString().ToLowerInvariant(),
+            ["proofEvaluationOwnership"] = options.EnableDomainOwnershipProofEvaluation && options.EnableDomainOwnershipVerificationWorkflow ? "cephalon-managed" : "not-configured",
             ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["verificationExecutionOwnership"] = "application-managed",
@@ -78,7 +80,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-domain-ownership-runtime",
             displayName: "Tenant Domain Ownership Runtime",
-            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, and managed in-process verification workflow ownership.",
+            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, and managed proof-evaluation ownership.",
             metadata: metadata);
     }
 

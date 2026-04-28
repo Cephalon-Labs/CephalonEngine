@@ -60,6 +60,16 @@ string DomainOwnershipStoreFilePath { get; set; }
 
 Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofevaluation"></a>
+
+##### `EnableDomainOwnershipProofEvaluation`
+
+```csharp
+bool EnableDomainOwnershipProofEvaluation { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-domain ownership proof evaluator is active.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipvalidation"></a>
 
 ##### `EnableDomainOwnershipValidation`
@@ -313,6 +323,37 @@ Registers one or more tenant-domain ownership descriptors with the supplied regi
 
 Parameters:
 - `domainOwnerships`: The registry that collects contributed domain ownership descriptors.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofevaluator"></a>
+
+### `ITenantDomainOwnershipProofEvaluator`
+
+Evaluates reported tenant-domain ownership proof evidence and applies the resulting verification workflow transition.
+
+Remarks: The evaluator owns proof comparison and workflow mutation. It does not collect DNS records, HTTP files, or external polling evidence itself; applications or provider packs report the observed proof value into this contract.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipProofEvaluator
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofevaluator-evaluateasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-system-threading-cancellationtoken"></a>
+
+##### `EvaluateAsync`
+
+```csharp
+ValueTask<TenantDomainOwnershipProofEvaluationResult> EvaluateAsync(TenantDomainOwnershipProofEvaluationRequest request, CancellationToken cancellationToken)
+```
+
+Evaluates reported proof evidence for a tenant-domain ownership declaration.
+
+Returns: The proof evaluation result and workflow transition outcome.
+
+Parameters:
+- `request`: The proof evaluation request.
+- `cancellationToken`: A token that cancels proof evaluation before workflow mutation starts.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipregistry"></a>
 
@@ -1352,6 +1393,540 @@ DateTimeOffset? VerifiedAtUtc { get; }
 ```
 
 Gets the UTC timestamp when ownership was verified.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes"></a>
+
+### `TenantDomainOwnershipProofEvaluationOutcomes`
+
+Defines stable tenant-domain ownership proof evaluation outcome labels.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipProofEvaluationOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+The built-in proof evaluator is disabled.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-missingexpectedproof"></a>
+
+##### `MissingExpectedProof`
+
+```csharp
+const string MissingExpectedProof
+```
+
+The request and descriptor did not contain an expected proof value to compare against.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-missingobservedproof"></a>
+
+##### `MissingObservedProof`
+
+```csharp
+const string MissingObservedProof
+```
+
+The request did not contain an observed proof value to evaluate.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No tenant-domain ownership declaration matched the supplied tenant and domain.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const string Rejected
+```
+
+The observed proof did not match the expected proof and the domain ownership was rejected.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+A declaration for the supplied domain belongs to a different tenant.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-verificationmethodmismatch"></a>
+
+##### `VerificationMethodMismatch`
+
+```csharp
+const string VerificationMethodMismatch
+```
+
+The matching domain ownership declaration uses a different verification method.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-verified"></a>
+
+##### `Verified`
+
+```csharp
+const string Verified
+```
+
+The observed proof matched the expected proof and the domain ownership was verified.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-workflowdenied"></a>
+
+##### `WorkflowDenied`
+
+```csharp
+const string WorkflowDenied
+```
+
+Proof evaluation matched or mismatched, but the verification workflow refused or failed the transition.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest"></a>
+
+### `TenantDomainOwnershipProofEvaluationRequest`
+
+Describes reported proof evidence for a tenant-domain ownership declaration.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofEvaluationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofEvaluationRequest`
+
+```csharp
+TenantDomainOwnershipProofEvaluationRequest(string tenantId, string domainName, string observedProof, string verificationMethod, string expectedProof, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof evaluation request.
+
+Parameters:
+- `tenantId`: The tenant identifier that owns the domain declaration.
+- `domainName`: The domain name whose proof should be evaluated.
+- `observedProof`: The proof value observed by the application or provider pack.
+- `verificationMethod`: The optional verification method boundary.
+- `expectedProof`: The optional expected proof value. Descriptor metadata is used when this is omitted.
+- `source`: The source that reported the observed proof evidence.
+- `actor`: The actor that requested proof evaluation when known.
+- `atUtc`: The UTC timestamp used for proof evaluation. The runtime clock is used when omitted.
+- `expiresAtUtc`: The optional UTC timestamp when the ownership declaration expires.
+- `correlationId`: The optional correlation identifier for proof evaluation.
+- `metadata`: Optional proof evaluation metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested proof evaluation when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for proof evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for proof evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name whose proof should be evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-expectedproof"></a>
+
+##### `ExpectedProof`
+
+```csharp
+string ExpectedProof { get; }
+```
+
+Gets the optional expected proof value. Descriptor metadata is used when this is omitted.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the optional UTC timestamp when the ownership declaration expires.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional proof evaluation metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-observedproof"></a>
+
+##### `ObservedProof`
+
+```csharp
+string ObservedProof { get; }
+```
+
+Gets the proof value observed by the application or provider pack.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that reported the observed proof evidence.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that owns the domain declaration.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationrequest-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the optional verification method boundary.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult"></a>
+
+### `TenantDomainOwnershipProofEvaluationResult`
+
+Describes the result of one tenant-domain ownership proof evaluation.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofEvaluationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowresult-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofEvaluationResult`
+
+```csharp
+TenantDomainOwnershipProofEvaluationResult(string tenantId, string domainName, string verificationMethod, string outcome, bool matched, bool applied, DateTimeOffset evaluatedAtUtc, string observedProofFingerprint, string expectedProofFingerprint, TenantDomainOwnershipDescriptor domainOwnership, TenantDomainOwnershipVerificationWorkflowResult workflowResult, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof evaluation result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `domainName`: The canonical domain name that was evaluated.
+- `verificationMethod`: The verification method used for evaluation.
+- `outcome`: The stable proof evaluation outcome.
+- `matched`: A value indicating whether the observed proof matched the expected proof.
+- `applied`: A value indicating whether the verification workflow transition was applied.
+- `evaluatedAtUtc`: The UTC timestamp when proof evaluation executed.
+- `observedProofFingerprint`: The SHA-256 fingerprint of the observed proof value when present.
+- `expectedProofFingerprint`: The SHA-256 fingerprint of the expected proof value when present.
+- `domainOwnership`: The matching or resulting domain ownership descriptor when one exists.
+- `workflowResult`: The underlying workflow transition result when proof evaluation reached workflow mutation.
+- `reason`: The operator-facing proof evaluation reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-applied"></a>
+
+##### `Applied`
+
+```csharp
+bool Applied { get; }
+```
+
+Gets a value indicating whether the verification workflow transition was applied.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-domainownership"></a>
+
+##### `DomainOwnership`
+
+```csharp
+TenantDomainOwnershipDescriptor DomainOwnership { get; }
+```
+
+Gets the matching or resulting domain ownership descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; }
+```
+
+Gets the UTC timestamp when proof evaluation executed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-expectedprooffingerprint"></a>
+
+##### `ExpectedProofFingerprint`
+
+```csharp
+string ExpectedProofFingerprint { get; }
+```
+
+Gets the SHA-256 fingerprint of the expected proof value when present.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-matched"></a>
+
+##### `Matched`
+
+```csharp
+bool Matched { get; }
+```
+
+Gets a value indicating whether the observed proof matched the expected proof.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-observedprooffingerprint"></a>
+
+##### `ObservedProofFingerprint`
+
+```csharp
+string ObservedProofFingerprint { get; }
+```
+
+Gets the SHA-256 fingerprint of the observed proof value when present.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable proof evaluation outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing proof evaluation reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the verification method used for evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-workflowresult"></a>
+
+##### `WorkflowResult`
+
+```csharp
+TenantDomainOwnershipVerificationWorkflowResult WorkflowResult { get; }
+```
+
+Gets the underlying workflow transition result when proof evaluation reached workflow mutation.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys"></a>
+
+### `TenantDomainOwnershipProofMetadataKeys`
+
+Defines stable metadata keys used by tenant-domain ownership proof evaluation.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipProofMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-expecteddnstxtproof"></a>
+
+##### `ExpectedDnsTxtProof`
+
+```csharp
+const string ExpectedDnsTxtProof
+```
+
+Expected DNS TXT proof value for DNS-based domain ownership verification.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-expectedhttpfileproof"></a>
+
+##### `ExpectedHttpFileProof`
+
+```csharp
+const string ExpectedHttpFileProof
+```
+
+Expected HTTP file or well-known endpoint proof value for HTTP-based domain ownership verification.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-expectedproof"></a>
+
+##### `ExpectedProof`
+
+```csharp
+const string ExpectedProof
+```
+
+Generic expected proof value used when a method-specific expected value is not present.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationactor"></a>
+
+##### `LastProofEvaluationActor`
+
+```csharp
+const string LastProofEvaluationActor
+```
+
+Actor that requested or reported the proof evaluation when known.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationcorrelationid"></a>
+
+##### `LastProofEvaluationCorrelationId`
+
+```csharp
+const string LastProofEvaluationCorrelationId
+```
+
+Correlation identifier for the last proof evaluation when known.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationexpectedfingerprint"></a>
+
+##### `LastProofEvaluationExpectedFingerprint`
+
+```csharp
+const string LastProofEvaluationExpectedFingerprint
+```
+
+SHA-256 fingerprint of the expected proof value considered by the evaluator.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationobservedfingerprint"></a>
+
+##### `LastProofEvaluationObservedFingerprint`
+
+```csharp
+const string LastProofEvaluationObservedFingerprint
+```
+
+SHA-256 fingerprint of the observed proof value considered by the evaluator.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationoutcome"></a>
+
+##### `LastProofEvaluationOutcome`
+
+```csharp
+const string LastProofEvaluationOutcome
+```
+
+Last proof evaluation outcome recorded on the domain ownership descriptor.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-lastproofevaluationsource"></a>
+
+##### `LastProofEvaluationSource`
+
+```csharp
+const string LastProofEvaluationSource
+```
+
+Source that reported the observed proof evidence.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofmetadatakeys-proofevaluationownership"></a>
+
+##### `ProofEvaluationOwnership`
+
+```csharp
+const string ProofEvaluationOwnership
+```
+
+Ownership marker for proof evaluation performed by the governance companion.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses"></a>
 
