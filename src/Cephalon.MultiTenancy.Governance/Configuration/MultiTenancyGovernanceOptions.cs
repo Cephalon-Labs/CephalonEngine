@@ -153,6 +153,15 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableGovernanceActionWorkflow { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-administration workflow executor is active.
+    /// </summary>
+    /// <remarks>
+    /// The workflow mutates Cephalon-managed membership and invitation stores through explicit host-driven commands. It does
+    /// not provide public onboarding screens, invitation delivery, tenant-admin HTTP endpoints, or identity-provider sync.
+    /// </remarks>
+    public bool EnableTenantAdministrationWorkflow { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-membership state.
     /// </summary>
     public string? MembershipStoreFilePath { get; set; }

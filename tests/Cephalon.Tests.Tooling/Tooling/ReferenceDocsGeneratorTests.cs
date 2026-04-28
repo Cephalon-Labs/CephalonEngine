@@ -437,6 +437,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("ITenantGovernanceActionStore", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("ITenantGovernanceActionWorkflow", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantGovernanceActionWorkflowRequest", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("ITenantAdministrationWorkflow", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantAdministrationWorkflowRequest", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantAdministrationWorkflowResult", governancePage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]

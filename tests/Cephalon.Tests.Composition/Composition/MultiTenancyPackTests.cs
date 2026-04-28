@@ -50,6 +50,7 @@ public sealed class MultiTenancyPackTests
         var tenancyEntry = Assert.Single(tenancySurface.Entries, entry => entry.Id == "tenant-runtime");
         var governanceBoundarySurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-governance-boundaries");
         var membershipBoundary = Assert.Single(governanceBoundarySurface.Entries, entry => entry.Id == "tenant-membership");
+        var administrationBoundary = Assert.Single(governanceBoundarySurface.Entries, entry => entry.Id == "tenant-administration");
         var resolutionCore = Assert.Single(governanceBoundarySurface.Entries, entry => entry.Id == "tenant-resolution-core");
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.MultiTenancy"));
 
@@ -70,6 +71,11 @@ public sealed class MultiTenancyPackTests
         Assert.Equal("Cephalon.MultiTenancy.Governance", membershipBoundary.Metadata["suggestedPackage"]);
         Assert.Equal("tenant-memberships", membershipBoundary.Metadata["surfaceId"]);
         Assert.Equal("requires-companion-registration", membershipBoundary.Metadata["runtimeState"]);
+        Assert.Equal("companion-shipped", administrationBoundary.Metadata["ownership"]);
+        Assert.Equal("Cephalon.MultiTenancy.Governance", administrationBoundary.Metadata["suggestedPackage"]);
+        Assert.Equal("tenant-administration", administrationBoundary.Metadata["surfaceId"]);
+        Assert.Equal("tenancy.administration.workflow", administrationBoundary.Metadata["capabilityKey"]);
+        Assert.Equal("requires-companion-registration", administrationBoundary.Metadata["runtimeState"]);
         Assert.Equal(4500, diagnosticsConvention.MinimumEventId);
         Assert.Equal(4502, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4500 && entry.Name == "TenantResolved");

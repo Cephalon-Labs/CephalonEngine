@@ -118,6 +118,7 @@ public sealed class MultiTenancyGovernancePackTests
         var governanceActionCatalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
         var governanceActionDecider = provider.GetRequiredService<ITenantGovernanceActionDecider>();
         var governanceActionWorkflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
+        var administrationWorkflow = provider.GetRequiredService<ITenantAdministrationWorkflow>();
         var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
@@ -125,6 +126,7 @@ public sealed class MultiTenancyGovernancePackTests
         var invitationsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-invitations");
         var domainsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-domain-ownership");
         var governanceActionsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-governance-actions");
+        var administrationSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-administration");
         var summaryEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership-runtime");
         var tenantEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership:tenant-001");
         var invitationSummaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
@@ -133,6 +135,7 @@ public sealed class MultiTenancyGovernancePackTests
         var tenantDomainEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership:tenant-001");
         var governanceActionSummaryEntry = Assert.Single(governanceActionsSurface.Entries, entry => entry.Id == "tenant-governance-action-runtime");
         var tenantGovernanceActionEntry = Assert.Single(governanceActionsSurface.Entries, entry => entry.Id == "tenant-governance-actions:tenant-001");
+        var administrationSummaryEntry = Assert.Single(administrationSurface.Entries, entry => entry.Id == "tenant-administration-runtime");
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.MultiTenancy.Governance"));
 
         var allowed = await evaluator.EvaluateAsync(new TenantMembershipEvaluationRequest(
@@ -189,6 +192,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.validation");
+        var administrationWorkflowCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.administration.workflow");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.validation");
@@ -280,6 +284,29 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("1", tenantInvitationEntry.Metadata["pendingInvitationCount"]);
         Assert.Equal("1", tenantInvitationEntry.Metadata["revokedInvitationCount"]);
         Assert.Equal("member", tenantInvitationEntry.Metadata["roles"]);
+        Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["executionOwnership"]);
+        Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["membershipAdministrationOwnership"]);
+        Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["invitationAdministrationOwnership"]);
+        Assert.Equal("application-managed", administrationWorkflowCapability.Metadata["publicOnboardingOwnership"]);
+        Assert.Equal("application-managed", administrationWorkflowCapability.Metadata["tenantAdminEndpointOwnership"]);
+        Assert.Equal("application-managed", administrationWorkflowCapability.Metadata["invitationDeliveryOwnership"]);
+        Assert.Equal("application-managed", administrationWorkflowCapability.Metadata["identityProviderSyncOwnership"]);
+        Assert.Equal("tenant-administration", administrationWorkflowCapability.Metadata["runtimeSurface"]);
+        Assert.Equal("cephalon-managed", administrationSummaryEntry.Metadata["ownership"]);
+        Assert.Equal("enabled", administrationSummaryEntry.Metadata["runtimeState"]);
+        Assert.Equal("true", administrationSummaryEntry.Metadata["workflowEnabled"]);
+        Assert.Equal("cephalon-managed", administrationSummaryEntry.Metadata["workflowExecutionOwnership"]);
+        Assert.Equal("cephalon-managed", administrationSummaryEntry.Metadata["membershipAdministrationOwnership"]);
+        Assert.Equal("cephalon-managed", administrationSummaryEntry.Metadata["invitationAdministrationOwnership"]);
+        Assert.Equal("in-memory", administrationSummaryEntry.Metadata["membershipStoreKind"]);
+        Assert.Equal("false", administrationSummaryEntry.Metadata["membershipStoreDurable"]);
+        Assert.Equal("in-memory", administrationSummaryEntry.Metadata["invitationStoreKind"]);
+        Assert.Equal("false", administrationSummaryEntry.Metadata["invitationStoreDurable"]);
+        Assert.Equal("application-managed", administrationSummaryEntry.Metadata["publicOnboardingOwnership"]);
+        Assert.Equal("application-managed", administrationSummaryEntry.Metadata["tenantAdminEndpointOwnership"]);
+        Assert.Equal("application-managed", administrationSummaryEntry.Metadata["invitationDeliveryOwnership"]);
+        Assert.Equal("application-managed", administrationSummaryEntry.Metadata["identityProviderSyncOwnership"]);
+        Assert.Contains(TenantAdministrationWorkflowCommands.GrantMembership, administrationSummaryEntry.Metadata["supportedCommands"], StringComparison.Ordinal);
         Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", domainSummaryEntry.Metadata["package"]);
         Assert.Equal("2", domainSummaryEntry.Metadata["domainOwnershipCount"]);
@@ -380,7 +407,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.NotNull(domainProofVerificationRunner);
         Assert.NotNull(domainProofPollingRunner);
         Assert.NotNull(governanceActionWorkflow);
-        Assert.Equal(4545, diagnosticsConvention.MaximumEventId);
+        Assert.NotNull(administrationWorkflow);
+        Assert.Equal(4547, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
@@ -417,6 +445,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4543 && entry.Name == "TenantDomainOwnershipProofBackgroundPollingStopped");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4544 && entry.Name == "TenantDomainOwnershipHttpProofPublished");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4545 && entry.Name == "TenantDomainOwnershipHttpProofPublicationDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4546 && entry.Name == "TenantAdministrationWorkflowApplied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4547 && entry.Name == "TenantAdministrationWorkflowDenied");
     }
 
     [Fact]
@@ -3209,6 +3239,222 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(TenantGovernanceActionStatuses.Approved, invalidTransition.CurrentStatus);
     }
 
+    [Fact]
+    public async Task TenantAdministrationWorkflowMutatesMembershipAndInvitationStores()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantAdministrationWorkflow>();
+        var membershipCatalog = provider.GetRequiredService<ITenantMembershipCatalog>();
+        var membershipEvaluator = provider.GetRequiredService<ITenantMembershipEvaluator>();
+        var invitationCatalog = provider.GetRequiredService<ITenantInvitationCatalog>();
+        var invitationValidator = provider.GetRequiredService<ITenantInvitationValidator>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var requestedAtUtc = new DateTimeOffset(2026, 04, 29, 2, 0, 0, TimeSpan.Zero);
+
+        var issued = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.IssueInvitation,
+            tenantId: "tenant-900",
+            invitationId: "invite-900",
+            inviteeId: "user-900",
+            displayName: "Future Admin",
+            roles: ["member", "admin"],
+            actor: "operator-001",
+            reason: "Backoffice invite",
+            atUtc: requestedAtUtc,
+            expiresAtUtc: requestedAtUtc.AddDays(7),
+            correlationId: "corr-admin-001"));
+        var validInvitation = await invitationValidator.ValidateAsync(new TenantInvitationValidationRequest(
+            tenantId: "tenant-900",
+            invitationId: "invite-900",
+            inviteeId: "user-900",
+            requiredRoles: ["admin"],
+            atUtc: requestedAtUtc.AddMinutes(1)));
+        var accepted = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.AcceptInvitation,
+            tenantId: "tenant-900",
+            invitationId: "invite-900",
+            actor: "user-900",
+            atUtc: requestedAtUtc.AddMinutes(2)));
+        var acceptedValidation = await invitationValidator.ValidateAsync(new TenantInvitationValidationRequest(
+            tenantId: "tenant-900",
+            invitationId: "invite-900",
+            inviteeId: "user-900",
+            atUtc: requestedAtUtc.AddMinutes(3)));
+        var granted = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.GrantMembership,
+            tenantId: "tenant-900",
+            principalId: "user-900",
+            displayName: "Future Admin",
+            roles: ["admin", "member"],
+            actor: "tenant-owner",
+            atUtc: requestedAtUtc.AddMinutes(4),
+            correlationId: "corr-admin-002",
+            metadata: new Dictionary<string, string>
+            {
+                ["source"] = "composition-test"
+            }));
+        var allowed = await membershipEvaluator.EvaluateAsync(new TenantMembershipEvaluationRequest(
+            tenantId: "tenant-900",
+            principalId: "user-900",
+            requiredRoles: ["admin"],
+            atUtc: requestedAtUtc.AddMinutes(5)));
+        var suspended = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.SuspendMembership,
+            tenantId: "tenant-900",
+            principalId: "user-900",
+            actor: "tenant-owner",
+            reason: "Risk review",
+            atUtc: requestedAtUtc.AddMinutes(6)));
+        var suspendedEvaluation = await membershipEvaluator.EvaluateAsync(new TenantMembershipEvaluationRequest(
+            tenantId: "tenant-900",
+            principalId: "user-900",
+            atUtc: requestedAtUtc.AddMinutes(7)));
+        var expired = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.ExpireMembership,
+            tenantId: "tenant-900",
+            principalId: "user-900",
+            actor: "tenant-owner",
+            atUtc: requestedAtUtc.AddMinutes(8)));
+        var expiredEvaluation = await membershipEvaluator.EvaluateAsync(new TenantMembershipEvaluationRequest(
+            tenantId: "tenant-900",
+            principalId: "user-900",
+            atUtc: requestedAtUtc.AddMinutes(9)));
+        var administrationSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-administration");
+        var summaryEntry = Assert.Single(administrationSurface.Entries, entry => entry.Id == "tenant-administration-runtime");
+        var membership = Assert.Single(membershipCatalog.Memberships, entry =>
+            entry.TenantId == "tenant-900" &&
+            entry.PrincipalId == "user-900");
+        var invitation = Assert.Single(invitationCatalog.Invitations, entry =>
+            entry.TenantId == "tenant-900" &&
+            entry.InvitationId == "invite-900");
+
+        Assert.True(issued.Applied);
+        Assert.Equal(TenantAdministrationWorkflowOutcomes.Applied, issued.Outcome);
+        Assert.Equal(TenantInvitationStatuses.Pending, issued.CurrentStatus);
+        Assert.Equal(["admin", "member"], issued.Invitation!.Roles);
+        Assert.True(validInvitation.Valid);
+        Assert.Equal(TenantInvitationValidationOutcomes.Valid, validInvitation.Outcome);
+        Assert.True(accepted.Applied);
+        Assert.Equal(TenantInvitationStatuses.Accepted, accepted.CurrentStatus);
+        Assert.False(acceptedValidation.Valid);
+        Assert.Equal(TenantInvitationValidationOutcomes.Accepted, acceptedValidation.Outcome);
+        Assert.True(granted.Applied);
+        Assert.Equal(TenantMembershipStatuses.Active, granted.CurrentStatus);
+        Assert.Equal("composition-test", granted.Membership!.Metadata["source"]);
+        Assert.Equal("tenant-owner", granted.Membership.Metadata[TenantAdministrationWorkflowMetadataKeys.LastAdministrationActor]);
+        Assert.True(allowed.Allowed);
+        Assert.Equal(TenantMembershipEvaluationOutcomes.Allowed, allowed.Outcome);
+        Assert.True(suspended.Applied);
+        Assert.Equal(TenantMembershipStatuses.Active, suspended.PreviousStatus);
+        Assert.Equal(TenantMembershipStatuses.Suspended, suspended.CurrentStatus);
+        Assert.False(suspendedEvaluation.Allowed);
+        Assert.Equal(TenantMembershipEvaluationOutcomes.Suspended, suspendedEvaluation.Outcome);
+        Assert.True(expired.Applied);
+        Assert.Equal(TenantMembershipStatuses.Suspended, expired.PreviousStatus);
+        Assert.Equal(TenantMembershipStatuses.Expired, expired.CurrentStatus);
+        Assert.False(expiredEvaluation.Allowed);
+        Assert.Equal(TenantMembershipEvaluationOutcomes.Expired, expiredEvaluation.Outcome);
+        Assert.Equal(TenantMembershipStatuses.Expired, membership.Status);
+        Assert.Equal(TenantInvitationStatuses.Accepted, invitation.Status);
+        Assert.Equal("expire-membership", membership.Metadata[TenantAdministrationWorkflowMetadataKeys.LastAdministrationCommand]);
+        Assert.Equal("cephalon-managed", membership.Metadata[TenantAdministrationWorkflowMetadataKeys.AdministrationWorkflowOwnership]);
+        Assert.Equal("1", summaryEntry.Metadata["membershipStoreCount"]);
+        Assert.Equal("1", summaryEntry.Metadata["invitationStoreCount"]);
+    }
+
+    [Fact]
+    public async Task TenantAdministrationWorkflowRejectsMissingTargetsAndInvalidInvitationState()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "revoked-invite",
+                    tenantId: "tenant-900",
+                    inviteeId: "user-900",
+                    status: TenantInvitationStatuses.Revoked));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantAdministrationWorkflow>();
+
+        var missingMembership = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.SuspendMembership,
+            tenantId: "tenant-900",
+            principalId: "missing-user"));
+        var invalidInvitationState = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.AcceptInvitation,
+            tenantId: "tenant-900",
+            invitationId: "revoked-invite",
+            atUtc: new DateTimeOffset(2026, 04, 29, 2, 10, 0, TimeSpan.Zero)));
+        var missingInvitationTarget = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.IssueInvitation,
+            tenantId: "tenant-900",
+            invitationId: "invite-without-invitee"));
+
+        Assert.False(missingMembership.Applied);
+        Assert.Equal(TenantAdministrationWorkflowOutcomes.MembershipNotFound, missingMembership.Outcome);
+        Assert.Equal("membership", missingMembership.TargetKind);
+        Assert.False(invalidInvitationState.Applied);
+        Assert.Equal(TenantAdministrationWorkflowOutcomes.InvalidInvitationState, invalidInvitationState.Outcome);
+        Assert.Equal(TenantInvitationStatuses.Revoked, invalidInvitationState.PreviousStatus);
+        Assert.False(missingInvitationTarget.Applied);
+        Assert.Equal(TenantAdministrationWorkflowOutcomes.InvitationTargetRequired, missingInvitationTarget.Outcome);
+        Assert.Equal("not-applied", missingInvitationTarget.Metadata[TenantAdministrationWorkflowMetadataKeys.AdministrationWorkflowOwnership]);
+    }
+
+    [Fact]
+    public async Task TenantAdministrationWorkflowReportsStoreFailuresWithoutApplyingTransition()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ITenantMembershipStore>(new FailingTenantMembershipStore());
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var workflow = provider.GetRequiredService<ITenantAdministrationWorkflow>();
+        var catalog = provider.GetRequiredService<ITenantMembershipCatalog>();
+
+        var result = await workflow.ApplyAsync(new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.GrantMembership,
+            tenantId: "tenant-900",
+            principalId: "user-900"));
+
+        Assert.False(result.Applied);
+        Assert.Equal(TenantAdministrationWorkflowOutcomes.StoreFailed, result.Outcome);
+        Assert.Empty(catalog.Memberships);
+        Assert.Equal("failing-test", result.Metadata["storeKind"]);
+    }
+
     private static async Task WaitUntilAsync(Func<bool> condition)
     {
         for (var attempt = 0; attempt < 50; attempt++)
@@ -3305,6 +3551,24 @@ public sealed class MultiTenancyGovernancePackTests
         public int Count => 0;
 
         public void Upsert(TenantGovernanceActionDescriptor action)
+        {
+            throw new InvalidOperationException("Test store failure.");
+        }
+    }
+
+    private sealed class FailingTenantMembershipStore : ITenantMembershipStore
+    {
+        public string StoreKind => "failing-test";
+
+        public bool IsDurable => true;
+
+        public string Ownership => "application-managed";
+
+        public IReadOnlyList<TenantMembershipDescriptor> Memberships => [];
+
+        public int Count => 0;
+
+        public void Upsert(TenantMembershipDescriptor membership)
         {
             throw new InvalidOperationException("Test store failure.");
         }

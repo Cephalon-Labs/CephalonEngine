@@ -262,10 +262,24 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Denied tenant domain ownership HTTP proof publication for tenant '{TenantId}' and domain '{DomainName}'. Outcome: {Outcome}. Reason: {Reason}.",
         Description: "Emitted when the governance companion cannot materialize or record an HTTP proof file.");
 
+    public static readonly DiagnosticEventDefinition TenantAdministrationWorkflowApplied = new(
+        Id: 4546,
+        Name: "TenantAdministrationWorkflowApplied",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Applied tenant administration workflow command '{Command}' for tenant '{TenantId}' and {TargetKind} '{TargetId}'. Status: {Status}.",
+        Description: "Emitted when the governance companion applies a host-driven tenant-administration workflow command to membership or invitation state.");
+
+    public static readonly DiagnosticEventDefinition TenantAdministrationWorkflowDenied = new(
+        Id: 4547,
+        Name: "TenantAdministrationWorkflowDenied",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Denied tenant administration workflow command '{Command}' for tenant '{TenantId}' and {TargetKind} '{TargetId}'. Outcome: {Outcome}. Reason: {Reason}.",
+        Description: "Emitted when the governance companion rejects or cannot persist a tenant-administration workflow command.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP proof publication, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, tenant-administration workflow commands, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP proof publication, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -303,7 +317,9 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             DomainOwnershipProofBackgroundPollingFailed,
             DomainOwnershipProofBackgroundPollingStopped,
             DomainOwnershipHttpProofPublished,
-            DomainOwnershipHttpProofPublicationDenied
+            DomainOwnershipHttpProofPublicationDenied,
+            TenantAdministrationWorkflowApplied,
+            TenantAdministrationWorkflowDenied
         ]);
 }
 
@@ -388,6 +404,22 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.Name),
             MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionWorkflowDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, string, Exception?> TenantAdministrationWorkflowAppliedMessage =
+        LoggerMessage.Define<string, string, string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowApplied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowApplied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowApplied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, string, string, Exception?> TenantAdministrationWorkflowDeniedMessage =
+        LoggerMessage.Define<string, string, string, string, string, string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowDenied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowDenied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowDenied.MessageTemplate);
 
     private static readonly Action<ILogger, string, string, string, string, Exception?> GovernanceActionStorePersistedMessage =
         LoggerMessage.Define<string, string, string, string>(
@@ -702,6 +734,31 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         GovernanceActionWorkflowDeniedMessage(logger, command, tenantId, actionId, outcome, reason, exception);
+    }
+
+    public static void TenantAdministrationWorkflowApplied(
+        ILogger logger,
+        string tenantId,
+        string targetKind,
+        string targetId,
+        string command,
+        string status,
+        Exception? exception)
+    {
+        TenantAdministrationWorkflowAppliedMessage(logger, command, tenantId, targetKind, targetId, status, exception);
+    }
+
+    public static void TenantAdministrationWorkflowDenied(
+        ILogger logger,
+        string tenantId,
+        string targetKind,
+        string targetId,
+        string command,
+        string outcome,
+        string reason,
+        Exception? exception)
+    {
+        TenantAdministrationWorkflowDeniedMessage(logger, command, tenantId, targetKind, targetId, outcome, reason, exception);
     }
 
     public static void GovernanceActionStorePersisted(

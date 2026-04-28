@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T22:37:42.6169685+00:00",
+  "GeneratedAtUtc": "2026-04-28T23:15:43.3850444+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -335,7 +335,7 @@
       "Description": "Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 98
+      "TypeCount": 104
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -1383,7 +1383,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 96
+      "TypeCount": 102
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11566,6 +11566,21 @@
       }
     },
     {
+      "DisplayName": "ITenantAdministrationWorkflow",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantadministrationworkflow",
+      "Declaration": "public interface ITenantAdministrationWorkflow",
+      "Summary": "Applies host-agnostic tenant administration commands over Cephalon-managed governance stores.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantContextAccessor",
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
       "AssemblyName": "Cephalon.Abstractions",
@@ -12866,7 +12881,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 35,
+        "Properties": 36,
         "Methods": 0
       }
     },
@@ -15766,6 +15781,81 @@
       }
     },
     {
+      "DisplayName": "TenantAdministrationWorkflowCommands",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands",
+      "Declaration": "public static class TenantAdministrationWorkflowCommands",
+      "Summary": "Defines stable tenant-administration workflow command identifiers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantAdministrationWorkflowMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys",
+      "Declaration": "public static class TenantAdministrationWorkflowMetadataKeys",
+      "Summary": "Defines stable metadata keys written by tenant-administration workflow commands.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes",
+      "Declaration": "public static class TenantAdministrationWorkflowOutcomes",
+      "Summary": "Defines stable tenant-administration workflow outcomes.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 8,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest",
+      "Declaration": "public sealed class TenantAdministrationWorkflowRequest",
+      "Summary": "Describes one host-driven tenant-administration workflow command.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 16,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult",
+      "Declaration": "public sealed class TenantAdministrationWorkflowResult",
+      "Summary": "Describes the result of one tenant-administration workflow command.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "TenantContext",
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
       "AssemblyName": "Cephalon.Abstractions",
@@ -17187,6 +17277,17 @@
       "Summary": "The number of \u0060accepted\u0060 observations reported so far."
     },
     {
+      "DisplayName": "AcceptInvitation",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowCommands",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-acceptinvitation",
+      "Signature": "const string AcceptInvitation",
+      "Summary": "Accepts an existing pending tenant invitation."
+    },
+    {
       "DisplayName": "Access",
       "Category": "Properties",
       "DeclaringTypeName": "CapabilityPolicyDecision",
@@ -18560,6 +18661,17 @@
       "AnchorId": "member-p-cephalon-audit-services-auditrecordrequest-actor",
       "Signature": "AuditActor Actor { get; }",
       "Summary": "Gets the actor responsible for the audited operation when one was supplied explicitly."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-actor",
+      "Signature": "string Actor { get; }",
+      "Summary": "Gets the actor that requested the command when known."
     },
     {
       "DisplayName": "Actor",
@@ -20927,6 +21039,17 @@
       "Summary": "Adds the Wolverine eventing companion pack to the engine."
     },
     {
+      "DisplayName": "AdministrationWorkflowOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-administrationworkflowownership",
+      "Signature": "const string AdministrationWorkflowOwnership",
+      "Summary": "Metadata key describing who owns the tenant-administration workflow that wrote the descriptor."
+    },
+    {
       "DisplayName": "Advisories",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalSnapshot",
@@ -21772,6 +21895,28 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-applied",
       "Signature": "const string Applied",
       "Summary": "The automation was reconciled successfully by the selected provider materializer."
+    },
+    {
+      "DisplayName": "Applied",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-applied",
+      "Signature": "const string Applied",
+      "Summary": "The requested tenant-administration command was applied."
+    },
+    {
+      "DisplayName": "Applied",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-applied",
+      "Signature": "bool Applied { get; }",
+      "Summary": "Gets a value indicating whether the command was fully applied."
     },
     {
       "DisplayName": "Applied",
@@ -22630,6 +22775,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-applyandreconcilerisk",
       "Signature": "const string ApplyAndReconcileRisk",
       "Summary": "The broader provider-owned apply-and-reconcile lane currently remains risky."
+    },
+    {
+      "DisplayName": "ApplyAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantAdministrationWorkflow",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantadministrationworkflow-applyasync-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CTenantAdministrationWorkflowResult\u003E ApplyAsync(TenantAdministrationWorkflowRequest request, CancellationToken cancellationToken)",
+      "Summary": "Applies one tenant administration command."
     },
     {
       "DisplayName": "ApplyAsync",
@@ -23598,6 +23754,17 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-attributes",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Attributes { get; }",
       "Summary": "Gets optional resolution hints supplied by the host or caller."
+    },
+    {
+      "DisplayName": "AtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-atutc",
+      "Signature": "DateTimeOffset? AtUtc { get; }",
+      "Summary": "Gets the UTC timestamp used for the command."
     },
     {
       "DisplayName": "AtUtc",
@@ -31456,6 +31623,28 @@
     {
       "DisplayName": "Command",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-command",
+      "Signature": "string Command { get; }",
+      "Summary": "Gets the tenant-administration command to apply."
+    },
+    {
+      "DisplayName": "Command",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-command",
+      "Signature": "string Command { get; }",
+      "Summary": "Gets the tenant-administration command that was requested."
+    },
+    {
+      "DisplayName": "Command",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipVerificationWorkflowRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -35669,6 +35858,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for the command."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -36732,6 +36932,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-currentnodeteardownexecutable",
       "Signature": "const string CurrentNodeTeardownExecutable",
       "Summary": "The current node can execute dependency-aware teardown."
+    },
+    {
+      "DisplayName": "CurrentStatus",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-currentstatus",
+      "Signature": "string CurrentStatus { get; }",
+      "Summary": "Gets the target status after the command when a target exists."
     },
     {
       "DisplayName": "CurrentStatus",
@@ -40770,6 +40981,17 @@
     {
       "DisplayName": "Disabled",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-disabled",
+      "Signature": "const string Disabled",
+      "Summary": "Tenant-administration workflow execution is disabled."
+    },
+    {
+      "DisplayName": "Disabled",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -41855,6 +42077,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-technologyruntimesurface-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the surface."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the optional operator-facing membership or invitation name."
     },
     {
       "DisplayName": "DisplayName",
@@ -44048,6 +44281,17 @@
     {
       "DisplayName": "EffectiveFromUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-effectivefromutc",
+      "Signature": "DateTimeOffset? EffectiveFromUtc { get; }",
+      "Summary": "Gets the optional UTC timestamp when a granted membership becomes active."
+    },
+    {
+      "DisplayName": "EffectiveFromUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -45606,6 +45850,17 @@
       "AnchorId": "member-p-cephalon-edge-configuration-edgeruntimeoptions-enablesynchronization",
       "Signature": "bool EnableSynchronization { get; set; }",
       "Summary": "Gets or sets a value indicating whether synchronization features are enabled."
+    },
+    {
+      "DisplayName": "EnableTenantAdministrationWorkflow",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabletenantadministrationworkflow",
+      "Signature": "bool EnableTenantAdministrationWorkflow { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the built-in tenant-administration workflow executor is active."
     },
     {
       "DisplayName": "Encrypt",
@@ -49346,6 +49601,39 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantmembershipstatuses-expired",
       "Signature": "const string Expired",
       "Summary": "Gets the status used when the membership has intentionally expired."
+    },
+    {
+      "DisplayName": "ExpireInvitation",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowCommands",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-expireinvitation",
+      "Signature": "const string ExpireInvitation",
+      "Summary": "Expires an existing tenant invitation."
+    },
+    {
+      "DisplayName": "ExpireMembership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowCommands",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-expiremembership",
+      "Signature": "const string ExpireMembership",
+      "Summary": "Expires an existing tenant membership."
+    },
+    {
+      "DisplayName": "ExpiresAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-expiresatutc",
+      "Signature": "DateTimeOffset? ExpiresAtUtc { get; }",
+      "Summary": "Gets the optional UTC timestamp when the membership or invitation expires."
     },
     {
       "DisplayName": "ExpiresAtUtc",
@@ -55484,6 +55772,17 @@
       "AnchorId": "member-m-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-ctor",
       "Signature": "GrafanaCloudTelemetryExportOptions()",
       "Summary": "Initializes a new instance of the \u0060GrafanaCloudTelemetryExportOptions\u0060 class."
+    },
+    {
+      "DisplayName": "GrantMembership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowCommands",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-grantmembership",
+      "Signature": "const string GrantMembership",
+      "Summary": "Creates or replaces an active tenant membership."
     },
     {
       "DisplayName": "GraphId",
@@ -62075,6 +62374,17 @@
       "Summary": "Creates an invalid-request result for the specified payload type."
     },
     {
+      "DisplayName": "InvalidInvitationState",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-invalidinvitationstate",
+      "Signature": "const string InvalidInvitationState",
+      "Summary": "An invitation command targeted an invitation whose state cannot transition through the requested command."
+    },
+    {
       "DisplayName": "InvalidResolverUri",
       "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
@@ -62163,6 +62473,28 @@
       "Summary": "Investigate the reported desired-versus-observed managed-connector drift."
     },
     {
+      "DisplayName": "Invitation",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-invitation",
+      "Signature": "TenantInvitationDescriptor Invitation { get; }",
+      "Summary": "Gets the resulting invitation descriptor when an invitation command produced one."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the invitation identifier for invitation commands."
+    },
+    {
       "DisplayName": "InvitationId",
       "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDescriptor",
@@ -62205,6 +62537,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-invitationlifecycle",
       "Signature": "const string InvitationLifecycle",
       "Summary": "A governance action that changes an invitation lifecycle."
+    },
+    {
+      "DisplayName": "InvitationNotFound",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-invitationnotfound",
+      "Signature": "const string InvitationNotFound",
+      "Summary": "An invitation command targeted an invitation that does not exist."
     },
     {
       "DisplayName": "Invitations",
@@ -62251,6 +62594,28 @@
       "Summary": "Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-invitation state."
     },
     {
+      "DisplayName": "InvitationTargetRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-invitationtargetrequired",
+      "Signature": "const string InvitationTargetRequired",
+      "Summary": "An invitation command was missing its required invitation target."
+    },
+    {
+      "DisplayName": "InviteeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-inviteeid",
+      "Signature": "string InviteeId { get; }",
+      "Summary": "Gets the invitee identifier for invitation commands."
+    },
+    {
       "DisplayName": "InviteeId",
       "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDescriptor",
@@ -62282,6 +62647,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-inviteeid",
       "Signature": "string InviteeId { get; }",
       "Summary": "Gets the optional invitee identifier expected by the request."
+    },
+    {
+      "DisplayName": "InviteeKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-inviteekind",
+      "Signature": "string InviteeKind { get; }",
+      "Summary": "Gets the invitee kind for invitation commands."
     },
     {
       "DisplayName": "InviteeKind",
@@ -65342,6 +65718,17 @@
       "Summary": "Gets the UTC timestamp when challenge issuance executed."
     },
     {
+      "DisplayName": "IssueInvitation",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowCommands",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-issueinvitation",
+      "Signature": "const string IssueInvitation",
+      "Summary": "Creates or replaces a pending tenant invitation."
+    },
+    {
       "DisplayName": "IsSystem",
       "Category": "Properties",
       "DeclaringTypeName": "AuditActor",
@@ -66121,6 +66508,72 @@
       "AnchorId": "member-p-cephalon-retrieval-services-knowledgeindexstate-lastactorid",
       "Signature": "string LastActorId { get; set; }",
       "Summary": "The latest actor identifier when one was supplied by an indexing request."
+    },
+    {
+      "DisplayName": "LastAdministrationActor",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationactor",
+      "Signature": "const string LastAdministrationActor",
+      "Summary": "Metadata key containing the actor that requested the last tenant-administration command."
+    },
+    {
+      "DisplayName": "LastAdministrationCommand",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationcommand",
+      "Signature": "const string LastAdministrationCommand",
+      "Summary": "Metadata key containing the last tenant-administration command."
+    },
+    {
+      "DisplayName": "LastAdministrationCorrelationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationcorrelationid",
+      "Signature": "const string LastAdministrationCorrelationId",
+      "Summary": "Metadata key containing the correlation identifier for the last tenant-administration command."
+    },
+    {
+      "DisplayName": "LastAdministrationOccurredAtUtc",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationoccurredatutc",
+      "Signature": "const string LastAdministrationOccurredAtUtc",
+      "Summary": "Metadata key containing the UTC timestamp when the last tenant-administration command was evaluated."
+    },
+    {
+      "DisplayName": "LastAdministrationOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationoutcome",
+      "Signature": "const string LastAdministrationOutcome",
+      "Summary": "Metadata key containing the last tenant-administration command outcome."
+    },
+    {
+      "DisplayName": "LastAdministrationReason",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationreason",
+      "Signature": "const string LastAdministrationReason",
+      "Summary": "Metadata key containing the operator-facing reason for the last tenant-administration command."
     },
     {
       "DisplayName": "LastAppendedEventCount",
@@ -72206,6 +72659,17 @@
       "Summary": "The hosted path to the member index."
     },
     {
+      "DisplayName": "Membership",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-membership",
+      "Signature": "TenantMembershipDescriptor Membership { get; }",
+      "Summary": "Gets the resulting membership descriptor when a membership command produced one."
+    },
+    {
       "DisplayName": "MembershipChange",
       "Category": "Fields",
       "DeclaringTypeName": "TenantGovernanceActionKinds",
@@ -72215,6 +72679,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-membershipchange",
       "Signature": "const string MembershipChange",
       "Summary": "A governance action that changes tenant membership."
+    },
+    {
+      "DisplayName": "MembershipNotFound",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-membershipnotfound",
+      "Signature": "const string MembershipNotFound",
+      "Summary": "A membership command targeted a membership that does not exist."
     },
     {
       "DisplayName": "Memberships",
@@ -72259,6 +72734,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-membershipstorefilepath",
       "Signature": "string MembershipStoreFilePath { get; set; }",
       "Summary": "Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-membership state."
+    },
+    {
+      "DisplayName": "MembershipTargetRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-membershiptargetrequired",
+      "Signature": "const string MembershipTargetRequired",
+      "Summary": "A membership command was missing its required principal target."
     },
     {
       "DisplayName": "MemcachedDependencyDefinition",
@@ -73909,6 +74395,28 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-technologyruntimeentry-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets additional metadata projected for the entry."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional command metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional result metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -78828,6 +79336,17 @@
     {
       "DisplayName": "OccurredAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-occurredatutc",
+      "Signature": "DateTimeOffset OccurredAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the command was evaluated."
+    },
+    {
+      "DisplayName": "OccurredAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipVerificationWorkflowResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -80813,6 +81332,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome",
       "Signature": "RuntimeLifecycleEventOutcome Outcome { get; set; }",
       "Summary": "The completion outcome for the event."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the tenant-administration command outcome."
     },
     {
       "DisplayName": "Outcome",
@@ -84346,6 +84876,17 @@
     {
       "DisplayName": "PreviousStatus",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-previousstatus",
+      "Signature": "string PreviousStatus { get; }",
+      "Summary": "Gets the target status before the command when a target existed."
+    },
+    {
+      "DisplayName": "PreviousStatus",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipVerificationWorkflowResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -84533,6 +85074,17 @@
     {
       "DisplayName": "PrincipalId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-principalid",
+      "Signature": "string PrincipalId { get; }",
+      "Summary": "Gets the principal identifier for membership commands."
+    },
+    {
+      "DisplayName": "PrincipalId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantMembershipDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -84562,6 +85114,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-principalid",
       "Signature": "string PrincipalId { get; }",
       "Summary": "Gets the principal identifier that was evaluated."
+    },
+    {
+      "DisplayName": "PrincipalKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-principalkind",
+      "Signature": "string PrincipalKind { get; }",
+      "Summary": "Gets the principal kind for membership commands."
     },
     {
       "DisplayName": "PrincipalKind",
@@ -89435,6 +89998,28 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-reason",
       "Signature": "string Reason { get; set; }",
       "Summary": "The reason the package was trusted or rejected."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the optional operator-facing command reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing command result reason."
     },
     {
       "DisplayName": "Reason",
@@ -96752,6 +97337,17 @@
       "Summary": "The invitation has been revoked."
     },
     {
+      "DisplayName": "RevokeInvitation",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowCommands",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-revokeinvitation",
+      "Signature": "const string RevokeInvitation",
+      "Summary": "Revokes an existing pending tenant invitation."
+    },
+    {
       "DisplayName": "Role",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
@@ -96904,6 +97500,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationsubject-roles",
       "Signature": "IReadOnlyList\u003Cstring\u003E Roles { get; }",
       "Summary": "Gets the roles assigned to the subject."
+    },
+    {
+      "DisplayName": "Roles",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-roles",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Roles { get; }",
+      "Summary": "Gets the tenant-local roles associated with the membership or invitation."
     },
     {
       "DisplayName": "Roles",
@@ -103825,6 +104432,17 @@
     {
       "DisplayName": "StoreFailed",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-storefailed",
+      "Signature": "const string StoreFailed",
+      "Summary": "A governance store failed before the requested command could be reported as applied."
+    },
+    {
+      "DisplayName": "StoreFailed",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -105319,6 +105937,17 @@
       "Summary": "Gets the status used when the membership exists but is blocked from evaluation."
     },
     {
+      "DisplayName": "SuspendMembership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantAdministrationWorkflowCommands",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-suspendmembership",
+      "Signature": "const string SuspendMembership",
+      "Summary": "Suspends an existing tenant membership."
+    },
+    {
       "DisplayName": "TableName",
       "Category": "Properties",
       "DeclaringTypeName": "MySqlBinlogCaptureOptions",
@@ -106045,6 +106674,17 @@
       "Summary": "Gets the normalized target-cell health-isolation identifiers."
     },
     {
+      "DisplayName": "TargetId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-targetid",
+      "Signature": "string TargetId { get; }",
+      "Summary": "Gets the stable target identifier affected by the command."
+    },
+    {
       "DisplayName": "Targeting",
       "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagDescriptor",
@@ -106065,6 +106705,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-targeting",
       "Signature": "FeatureFlagTargetingSettings Targeting { get; }",
       "Summary": "Gets the optional targeting settings attached to the feature flag."
+    },
+    {
+      "DisplayName": "TargetKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-targetkind",
+      "Signature": "string TargetKind { get; }",
+      "Summary": "Gets the kind of target affected by the command."
     },
     {
       "DisplayName": "TargetPathPrefix",
@@ -106538,6 +107189,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-tenantadministration",
       "Signature": "const string TenantAdministration",
       "Summary": "A governance action that represents tenant administration."
+    },
+    {
+      "DisplayName": "TenantAdministrationWorkflowRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantAdministrationWorkflowRequest(string command, string tenantId, string principalId, string principalKind, string invitationId, string inviteeId, string inviteeKind, string displayName, IReadOnlyList\u003Cstring\u003E roles, string actor, string reason, DateTimeOffset? atUtc, DateTimeOffset? effectiveFromUtc, DateTimeOffset? expiresAtUtc, string correlationId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-administration workflow command request."
+    },
+    {
+      "DisplayName": "TenantAdministrationWorkflowResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-string-system-string-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantAdministrationWorkflowResult(string tenantId, string command, string targetKind, string targetId, string outcome, bool applied, DateTimeOffset occurredAtUtc, string previousStatus, string currentStatus, TenantMembershipDescriptor membership, TenantInvitationDescriptor invitation, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-administration workflow command result."
     },
     {
       "DisplayName": "TenantClaimTypes",
@@ -107077,6 +107750,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-tenantid",
       "Signature": "string TenantId { get; set; }",
       "Summary": "The tenant identifier associated with the publication when one exists."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the stable tenant identifier."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantAdministrationWorkflowResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the stable tenant identifier targeted by the command."
     },
     {
       "DisplayName": "TenantId",

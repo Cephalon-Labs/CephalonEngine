@@ -21,10 +21,11 @@ internal sealed class MultiTenancyGovernanceBoundaryRuntimeSurfaceContributor : 
                 CreateInvitationEntry(),
                 CreateDomainOwnershipEntry(),
                 CreateGovernanceActionEntry(),
+                CreateTenantAdministrationEntry(),
                 CreateCompanionEntry(
                     id: "tenant-governance-workflows",
                     displayName: "Tenant Governance Workflows",
-                    description: "Broader policy, lifecycle, delivery, synchronization, and tenant-administration workflows.",
+                    description: "Broader policy, lifecycle, delivery, synchronization, onboarding, and tenant-admin endpoint workflows.",
                     futureSurfaceId: "tenant-governance-workflows")
             ]);
     }
@@ -132,6 +133,28 @@ internal sealed class MultiTenancyGovernanceBoundaryRuntimeSurfaceContributor : 
                 ["maturity"] = "M2",
                 ["capabilityKey"] = "tenancy.governance-action.catalog,tenancy.governance-action.decision",
                 ["notes"] = "Cephalon.MultiTenancy intentionally does not decide governance approvals or remediations; install and register Cephalon.MultiTenancy.Governance for the shipped action catalog and decision proof."
+            });
+    }
+
+    private static TechnologyRuntimeEntry CreateTenantAdministrationEntry()
+    {
+        return new TechnologyRuntimeEntry(
+            id: "tenant-administration",
+            displayName: "Tenant Administration",
+            description: "Host-driven membership and invitation administration workflow commands for tenants.",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ownership"] = "companion-shipped",
+                ["plannedOwnership"] = "companion-available",
+                ["basePackageOwnership"] = "not-owned",
+                ["basePackageRuntimeState"] = "not-configured",
+                ["companionPackage"] = FutureCompanionPackage,
+                ["suggestedPackage"] = FutureCompanionPackage,
+                ["runtimeState"] = "requires-companion-registration",
+                ["surfaceId"] = "tenant-administration",
+                ["maturity"] = "M2",
+                ["capabilityKey"] = "tenancy.administration.workflow",
+                ["notes"] = "Cephalon.MultiTenancy intentionally does not execute tenant-administration workflow commands; install and register Cephalon.MultiTenancy.Governance for the shipped host-driven membership and invitation administration proof."
             });
     }
 

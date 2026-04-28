@@ -340,6 +340,18 @@ bool EnableMembershipEvaluation { get; set; }
 
 Gets or sets a value indicating whether the built-in membership evaluator is active.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabletenantadministrationworkflow"></a>
+
+##### `EnableTenantAdministrationWorkflow`
+
+```csharp
+bool EnableTenantAdministrationWorkflow { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-administration workflow executor is active.
+
+Remarks: The workflow mutates Cephalon-managed membership and invitation stores through explicit host-driven commands. It does not provide public onboarding screens, invitation delivery, tenant-admin HTTP endpoints, or identity-provider sync.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-governanceactions"></a>
 
 ##### `GovernanceActions`
@@ -436,6 +448,35 @@ Parameters:
 <a id="namespace-cephalon-multitenancy-governance-services"></a>
 
 ## Namespace Cephalon.MultiTenancy.Governance.Services
+
+<a id="type-cephalon-multitenancy-governance-services-itenantadministrationworkflow"></a>
+
+### `ITenantAdministrationWorkflow`
+
+Applies host-agnostic tenant administration commands over Cephalon-managed governance stores.
+
+#### Declaration
+```csharp
+public interface ITenantAdministrationWorkflow
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantadministrationworkflow-applyasync-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-system-threading-cancellationtoken"></a>
+
+##### `ApplyAsync`
+
+```csharp
+ValueTask<TenantAdministrationWorkflowResult> ApplyAsync(TenantAdministrationWorkflowRequest request, CancellationToken cancellationToken)
+```
+
+Applies one tenant administration command.
+
+Returns: The evaluated tenant administration command result.
+
+Parameters:
+- `request`: The tenant administration command request.
+- `cancellationToken`: A token that cancels the command.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipcatalog"></a>
 
@@ -1760,6 +1801,638 @@ Creates or replaces one stored runtime tenant membership.
 
 Parameters:
 - `membership`: The tenant membership to store.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands"></a>
+
+### `TenantAdministrationWorkflowCommands`
+
+Defines stable tenant-administration workflow command identifiers.
+
+#### Declaration
+```csharp
+public static class TenantAdministrationWorkflowCommands
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-acceptinvitation"></a>
+
+##### `AcceptInvitation`
+
+```csharp
+const string AcceptInvitation
+```
+
+Accepts an existing pending tenant invitation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-expireinvitation"></a>
+
+##### `ExpireInvitation`
+
+```csharp
+const string ExpireInvitation
+```
+
+Expires an existing tenant invitation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-expiremembership"></a>
+
+##### `ExpireMembership`
+
+```csharp
+const string ExpireMembership
+```
+
+Expires an existing tenant membership.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-grantmembership"></a>
+
+##### `GrantMembership`
+
+```csharp
+const string GrantMembership
+```
+
+Creates or replaces an active tenant membership.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-issueinvitation"></a>
+
+##### `IssueInvitation`
+
+```csharp
+const string IssueInvitation
+```
+
+Creates or replaces a pending tenant invitation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-revokeinvitation"></a>
+
+##### `RevokeInvitation`
+
+```csharp
+const string RevokeInvitation
+```
+
+Revokes an existing pending tenant invitation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-suspendmembership"></a>
+
+##### `SuspendMembership`
+
+```csharp
+const string SuspendMembership
+```
+
+Suspends an existing tenant membership.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys"></a>
+
+### `TenantAdministrationWorkflowMetadataKeys`
+
+Defines stable metadata keys written by tenant-administration workflow commands.
+
+#### Declaration
+```csharp
+public static class TenantAdministrationWorkflowMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-administrationworkflowownership"></a>
+
+##### `AdministrationWorkflowOwnership`
+
+```csharp
+const string AdministrationWorkflowOwnership
+```
+
+Metadata key describing who owns the tenant-administration workflow that wrote the descriptor.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationactor"></a>
+
+##### `LastAdministrationActor`
+
+```csharp
+const string LastAdministrationActor
+```
+
+Metadata key containing the actor that requested the last tenant-administration command.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationcommand"></a>
+
+##### `LastAdministrationCommand`
+
+```csharp
+const string LastAdministrationCommand
+```
+
+Metadata key containing the last tenant-administration command.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationcorrelationid"></a>
+
+##### `LastAdministrationCorrelationId`
+
+```csharp
+const string LastAdministrationCorrelationId
+```
+
+Metadata key containing the correlation identifier for the last tenant-administration command.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationoccurredatutc"></a>
+
+##### `LastAdministrationOccurredAtUtc`
+
+```csharp
+const string LastAdministrationOccurredAtUtc
+```
+
+Metadata key containing the UTC timestamp when the last tenant-administration command was evaluated.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationoutcome"></a>
+
+##### `LastAdministrationOutcome`
+
+```csharp
+const string LastAdministrationOutcome
+```
+
+Metadata key containing the last tenant-administration command outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationreason"></a>
+
+##### `LastAdministrationReason`
+
+```csharp
+const string LastAdministrationReason
+```
+
+Metadata key containing the operator-facing reason for the last tenant-administration command.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes"></a>
+
+### `TenantAdministrationWorkflowOutcomes`
+
+Defines stable tenant-administration workflow outcomes.
+
+#### Declaration
+```csharp
+public static class TenantAdministrationWorkflowOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-applied"></a>
+
+##### `Applied`
+
+```csharp
+const string Applied
+```
+
+The requested tenant-administration command was applied.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Tenant-administration workflow execution is disabled.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-invalidinvitationstate"></a>
+
+##### `InvalidInvitationState`
+
+```csharp
+const string InvalidInvitationState
+```
+
+An invitation command targeted an invitation whose state cannot transition through the requested command.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-invitationnotfound"></a>
+
+##### `InvitationNotFound`
+
+```csharp
+const string InvitationNotFound
+```
+
+An invitation command targeted an invitation that does not exist.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-invitationtargetrequired"></a>
+
+##### `InvitationTargetRequired`
+
+```csharp
+const string InvitationTargetRequired
+```
+
+An invitation command was missing its required invitation target.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-membershipnotfound"></a>
+
+##### `MembershipNotFound`
+
+```csharp
+const string MembershipNotFound
+```
+
+A membership command targeted a membership that does not exist.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-membershiptargetrequired"></a>
+
+##### `MembershipTargetRequired`
+
+```csharp
+const string MembershipTargetRequired
+```
+
+A membership command was missing its required principal target.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+A governance store failed before the requested command could be reported as applied.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest"></a>
+
+### `TenantAdministrationWorkflowRequest`
+
+Describes one host-driven tenant-administration workflow command.
+
+#### Declaration
+```csharp
+public sealed class TenantAdministrationWorkflowRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantAdministrationWorkflowRequest`
+
+```csharp
+TenantAdministrationWorkflowRequest(string command, string tenantId, string principalId, string principalKind, string invitationId, string inviteeId, string inviteeKind, string displayName, IReadOnlyList<string> roles, string actor, string reason, DateTimeOffset? atUtc, DateTimeOffset? effectiveFromUtc, DateTimeOffset? expiresAtUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-administration workflow command request.
+
+Parameters:
+- `command`: The tenant-administration command to apply.
+- `tenantId`: The stable tenant identifier.
+- `principalId`: The principal identifier for membership commands.
+- `principalKind`: The principal kind for membership commands, such as user, group, service, or organization.
+- `invitationId`: The invitation identifier for invitation commands.
+- `inviteeId`: The invitee identifier for invitation commands.
+- `inviteeKind`: The invitee kind for invitation commands, such as user, group, service, or organization.
+- `displayName`: The optional operator-facing membership or invitation name.
+- `roles`: The tenant-local roles associated with the membership or invitation.
+- `actor`: The actor that requested the command when known.
+- `reason`: The optional operator-facing command reason.
+- `atUtc`: The UTC timestamp used for the command. The runtime clock is used when omitted.
+- `effectiveFromUtc`: The optional UTC timestamp when a granted membership becomes active.
+- `expiresAtUtc`: The optional UTC timestamp when the membership or invitation expires.
+- `correlationId`: The optional correlation identifier for the command.
+- `metadata`: Optional command metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested the command when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for the command.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-command"></a>
+
+##### `Command`
+
+```csharp
+string Command { get; }
+```
+
+Gets the tenant-administration command to apply.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the command.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing membership or invitation name.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-effectivefromutc"></a>
+
+##### `EffectiveFromUtc`
+
+```csharp
+DateTimeOffset? EffectiveFromUtc { get; }
+```
+
+Gets the optional UTC timestamp when a granted membership becomes active.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the optional UTC timestamp when the membership or invitation expires.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier for invitation commands.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-inviteeid"></a>
+
+##### `InviteeId`
+
+```csharp
+string InviteeId { get; }
+```
+
+Gets the invitee identifier for invitation commands.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-inviteekind"></a>
+
+##### `InviteeKind`
+
+```csharp
+string InviteeKind { get; }
+```
+
+Gets the invitee kind for invitation commands.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional command metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-principalid"></a>
+
+##### `PrincipalId`
+
+```csharp
+string PrincipalId { get; }
+```
+
+Gets the principal identifier for membership commands.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-principalkind"></a>
+
+##### `PrincipalKind`
+
+```csharp
+string PrincipalKind { get; }
+```
+
+Gets the principal kind for membership commands.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the optional operator-facing command reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-roles"></a>
+
+##### `Roles`
+
+```csharp
+IReadOnlyList<string> Roles { get; }
+```
+
+Gets the tenant-local roles associated with the membership or invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the stable tenant identifier.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult"></a>
+
+### `TenantAdministrationWorkflowResult`
+
+Describes the result of one tenant-administration workflow command.
+
+#### Declaration
+```csharp
+public sealed class TenantAdministrationWorkflowResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-string-system-string-cephalon-multitenancy-governance-services-tenantmembershipdescriptor-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantAdministrationWorkflowResult`
+
+```csharp
+TenantAdministrationWorkflowResult(string tenantId, string command, string targetKind, string targetId, string outcome, bool applied, DateTimeOffset occurredAtUtc, string previousStatus, string currentStatus, TenantMembershipDescriptor membership, TenantInvitationDescriptor invitation, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-administration workflow command result.
+
+Parameters:
+- `tenantId`: The stable tenant identifier targeted by the command.
+- `command`: The tenant-administration command that was requested.
+- `targetKind`: The kind of target affected by the command.
+- `targetId`: The stable target identifier affected by the command.
+- `outcome`: The tenant-administration command outcome.
+- `applied`: A value indicating whether the command was fully applied.
+- `occurredAtUtc`: The UTC timestamp when the command was evaluated.
+- `previousStatus`: The target status before the command when a target existed.
+- `currentStatus`: The target status after the command when a target exists.
+- `membership`: The resulting membership descriptor when a membership command produced one.
+- `invitation`: The resulting invitation descriptor when an invitation command produced one.
+- `reason`: The operator-facing command result reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-applied"></a>
+
+##### `Applied`
+
+```csharp
+bool Applied { get; }
+```
+
+Gets a value indicating whether the command was fully applied.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-command"></a>
+
+##### `Command`
+
+```csharp
+string Command { get; }
+```
+
+Gets the tenant-administration command that was requested.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-currentstatus"></a>
+
+##### `CurrentStatus`
+
+```csharp
+string CurrentStatus { get; }
+```
+
+Gets the target status after the command when a target exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-invitation"></a>
+
+##### `Invitation`
+
+```csharp
+TenantInvitationDescriptor Invitation { get; }
+```
+
+Gets the resulting invitation descriptor when an invitation command produced one.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-membership"></a>
+
+##### `Membership`
+
+```csharp
+TenantMembershipDescriptor Membership { get; }
+```
+
+Gets the resulting membership descriptor when a membership command produced one.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; }
+```
+
+Gets the UTC timestamp when the command was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the tenant-administration command outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-previousstatus"></a>
+
+##### `PreviousStatus`
+
+```csharp
+string PreviousStatus { get; }
+```
+
+Gets the target status before the command when a target existed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing command result reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-targetid"></a>
+
+##### `TargetId`
+
+```csharp
+string TargetId { get; }
+```
+
+Gets the stable target identifier affected by the command.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-targetkind"></a>
+
+##### `TargetKind`
+
+```csharp
+string TargetKind { get; }
+```
+
+Gets the kind of target affected by the command.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the stable tenant identifier targeted by the command.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor"></a>
 

@@ -78,6 +78,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofPollingHostedService>>(NullLogger<TenantDomainOwnershipProofPollingHostedService>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionDecider>>(NullLogger<TenantGovernanceActionDecider>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionWorkflow>>(NullLogger<TenantGovernanceActionWorkflow>.Instance);
+        services.TryAddSingleton<ILogger<TenantAdministrationWorkflow>>(NullLogger<TenantAdministrationWorkflow>.Instance);
         services.TryAddSingleton(static _ => new HttpClient(new HttpClientHandler
         {
             AllowAutoRedirect = false
@@ -195,10 +196,16 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             services.TryAddSingleton<ITenantGovernanceActionWorkflow, TenantGovernanceActionWorkflow>();
         }
 
+        if (options.EnableTenantAdministrationWorkflow)
+        {
+            services.TryAddSingleton<ITenantAdministrationWorkflow, TenantAdministrationWorkflow>();
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceInvitationRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceDomainRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceActionRuntimeSurfaceContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceAdministrationRuntimeSurfaceContributor>());
     }
 
     public void RegisterTechnologyCapabilities(ICapabilityRegistry capabilities, TechnologySelection technologies)
@@ -239,6 +246,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         var backgroundProofPollingOwnership = TenantDomainOwnershipProofPollingConfiguration.ResolveBackgroundPollingOwnership(options);
         var httpProofPublicationOwnership = httpProofPublicationEnabled ? "cephalon-managed" : "not-configured";
         var proofPublicationOwnership = httpProofPublicationEnabled ? "mixed" : "application-managed";
+        var administrationWorkflowOwnership = options.EnableTenantAdministrationWorkflow ? "cephalon-managed" : "not-configured";
 
         capabilities.Add(new Capability(
             key: "tenancy.membership.catalog",
@@ -266,7 +274,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["runtimeSurface"] = "tenant-memberships",
                 ["storeKind"] = string.IsNullOrWhiteSpace(options.MembershipStoreFilePath) ? "in-memory" : "file",
                 ["storeDurable"] = (!string.IsNullOrWhiteSpace(options.MembershipStoreFilePath)).ToString().ToLowerInvariant(),
-                ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.MembershipStoreFilePath) ? "application-managed" : "cephalon-managed"
+                ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.MembershipStoreFilePath) ? "application-managed" : "cephalon-managed",
+                ["administrationWorkflowOwnership"] = administrationWorkflowOwnership
             }));
 
         if (options.EnableMembershipEvaluation)
@@ -310,7 +319,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["runtimeSurface"] = "tenant-invitations",
                 ["storeKind"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "in-memory" : "file",
                 ["storeDurable"] = (!string.IsNullOrWhiteSpace(options.InvitationStoreFilePath)).ToString().ToLowerInvariant(),
-                ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "application-managed" : "cephalon-managed"
+                ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "application-managed" : "cephalon-managed",
+                ["administrationWorkflowOwnership"] = administrationWorkflowOwnership
             }));
 
         if (options.EnableInvitationValidation)
@@ -325,6 +335,31 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["package"] = "Cephalon.MultiTenancy.Governance",
                     ["executionOwnership"] = "cephalon-managed",
                     ["runtimeSurface"] = "tenant-invitations"
+                }));
+        }
+
+        if (options.EnableTenantAdministrationWorkflow)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.administration.workflow",
+                displayName: "Tenant Administration Workflow",
+                description: "Applies host-driven tenant administration commands over Cephalon-managed membership and invitation stores without claiming public onboarding, notification delivery, tenant-admin endpoints, or identity-provider synchronization.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["membershipAdministrationOwnership"] = "cephalon-managed",
+                    ["invitationAdministrationOwnership"] = "cephalon-managed",
+                    ["membershipStoreKind"] = string.IsNullOrWhiteSpace(options.MembershipStoreFilePath) ? "in-memory" : "file",
+                    ["membershipStoreDurable"] = (!string.IsNullOrWhiteSpace(options.MembershipStoreFilePath)).ToString().ToLowerInvariant(),
+                    ["invitationStoreKind"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "in-memory" : "file",
+                    ["invitationStoreDurable"] = (!string.IsNullOrWhiteSpace(options.InvitationStoreFilePath)).ToString().ToLowerInvariant(),
+                    ["publicOnboardingOwnership"] = "application-managed",
+                    ["tenantAdminEndpointOwnership"] = "application-managed",
+                    ["invitationDeliveryOwnership"] = "application-managed",
+                    ["identityProviderSyncOwnership"] = "application-managed",
+                    ["runtimeSurface"] = "tenant-administration"
                 }));
         }
 
