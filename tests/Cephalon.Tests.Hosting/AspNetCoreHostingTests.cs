@@ -1957,6 +1957,18 @@ public sealed class AspNetCoreHostingTests
                     verificationMethod: TenantDomainVerificationMethods.DnsTxt,
                     verifiedAtUtc: new DateTimeOffset(2026, 04, 01, 0, 0, 0, TimeSpan.Zero),
                     sourceModuleId: "platform-test"));
+                options.GovernanceActions.Add(new TenantGovernanceActionDescriptor(
+                    actionId: "approve-membership-001",
+                    tenantId: "tenant-001",
+                    actionKind: TenantGovernanceActionKinds.MembershipChange,
+                    subjectKind: "user",
+                    subjectId: "user-001",
+                    displayName: "Approve Acme Admin",
+                    status: TenantGovernanceActionStatuses.Approved,
+                    requestedBy: "platform-test",
+                    approvedBy: "tenant-owner",
+                    decidedAtUtc: new DateTimeOffset(2026, 04, 20, 0, 0, 0, TimeSpan.Zero),
+                    sourceModuleId: "platform-test"));
             });
         });
 
@@ -2012,10 +2024,10 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(snapshot);
         Assert.Equal(RuntimeStatus.Started, snapshot.Status.Status);
         Assert.Equal("modular-vertical-slice", snapshot.Manifest.AppProfile.BlueprintId);
-        Assert.Equal(10, snapshot.TechnologySurfaces.Count);
+        Assert.Equal(11, snapshot.TechnologySurfaces.Count);
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Eventing");
         Assert.NotNull(surfaces);
-        Assert.Equal(10, surfaces.Length);
+        Assert.Equal(11, surfaces.Length);
         Assert.NotNull(eventingSurfaces);
         Assert.Equal(2, eventingSurfaces.Length);
 
@@ -2095,7 +2107,7 @@ public sealed class AspNetCoreHostingTests
             entry.Metadata["queryCount"] == "1");
 
         var tenancySurfaces = surfaces.Where(surface => surface.TechnologyId == "multi-tenancy").ToArray();
-        Assert.Equal(5, tenancySurfaces.Length);
+        Assert.Equal(6, tenancySurfaces.Length);
         Assert.Contains(
             tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-resolution").Entries,
             entry => entry.Id == "tenant-runtime" &&
@@ -2126,6 +2138,14 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["suggestedPackage"] == "Cephalon.MultiTenancy.Governance" &&
                 entry.Metadata["surfaceId"] == "tenant-domain-ownership");
         Assert.Contains(
+            tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-governance-boundaries").Entries,
+            entry => entry.Id == "tenant-governance-actions" &&
+                entry.Metadata["ownership"] == "companion-shipped" &&
+                entry.Metadata["plannedOwnership"] == "companion-available" &&
+                entry.Metadata["basePackageOwnership"] == "not-owned" &&
+                entry.Metadata["suggestedPackage"] == "Cephalon.MultiTenancy.Governance" &&
+                entry.Metadata["surfaceId"] == "tenant-governance-actions");
+        Assert.Contains(
             tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-memberships").Entries,
             entry => entry.Id == "tenant-membership-runtime" &&
                 entry.Metadata["ownership"] == "cephalon-managed" &&
@@ -2147,6 +2167,14 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["domainOwnershipCount"] == "1" &&
                 entry.Metadata["validationOwnership"] == "cephalon-managed" &&
                 entry.Metadata["verificationExecutionOwnership"] == "application-managed");
+        Assert.Contains(
+            tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-governance-actions").Entries,
+            entry => entry.Id == "tenant-governance-action-runtime" &&
+                entry.Metadata["ownership"] == "cephalon-managed" &&
+                entry.Metadata["package"] == "Cephalon.MultiTenancy.Governance" &&
+                entry.Metadata["actionCount"] == "1" &&
+                entry.Metadata["decisionOwnership"] == "cephalon-managed" &&
+                entry.Metadata["workflowExecutionOwnership"] == "application-managed");
 
         var edge = Assert.Single(surfaces, surface => surface.TechnologyId == "edge-native-delivery");
         Assert.Contains(edge.Entries, entry => entry.Id == "storefront-edge");

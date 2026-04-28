@@ -19,7 +19,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures the tenant-governance companion package.
 
-Remarks: These options seed the host-owned membership baseline. Installed modules can still contribute additional memberships through `ITenantMembershipContributor`.
+Remarks: These options seed the host-owned governance baseline. Installed modules can still contribute additional memberships, invitations, domain ownership descriptors, and governance actions through contributor contracts.
 
 #### Declaration
 ```csharp
@@ -60,6 +60,16 @@ bool EnableDomainOwnershipValidation { get; set; }
 
 Gets or sets a value indicating whether the built-in tenant-domain ownership validator is active.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enablegovernanceactiondecision"></a>
+
+##### `EnableGovernanceActionDecision`
+
+```csharp
+bool EnableGovernanceActionDecision { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationvalidation"></a>
 
 ##### `EnableInvitationValidation`
@@ -79,6 +89,16 @@ bool EnableMembershipEvaluation { get; set; }
 ```
 
 Gets or sets a value indicating whether the built-in membership evaluator is active.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-governanceactions"></a>
+
+##### `GovernanceActions`
+
+```csharp
+IList<TenantGovernanceActionDescriptor> GovernanceActions { get; }
+```
+
+Gets the host-defined approval and remediation actions available to the governance runtime.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitations"></a>
 
@@ -288,6 +308,158 @@ Returns: The validation result.
 Parameters:
 - `request`: The validation request.
 - `cancellationToken`: A token that cancels validation.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantgovernanceactioncatalog"></a>
+
+### `ITenantGovernanceActionCatalog`
+
+Exposes the merged tenant-governance action set available to the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantGovernanceActionCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantgovernanceactioncatalog-actions"></a>
+
+##### `Actions`
+
+```csharp
+IReadOnlyList<TenantGovernanceActionDescriptor> Actions { get; }
+```
+
+Gets the effective governance action set after host options and module contributors have both been applied.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantgovernanceactioncatalog-getbyactionid-system-string"></a>
+
+##### `GetByActionId`
+
+```csharp
+IReadOnlyList<TenantGovernanceActionDescriptor> GetByActionId(string actionId)
+```
+
+Gets governance action descriptors by action identifier across all tenants.
+
+Returns: The matching governance action descriptors.
+
+Parameters:
+- `actionId`: The action identifier to resolve.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantgovernanceactioncatalog-getbytenantandaction-system-string-system-string"></a>
+
+##### `GetByTenantAndAction`
+
+```csharp
+IReadOnlyList<TenantGovernanceActionDescriptor> GetByTenantAndAction(string tenantId, string actionId)
+```
+
+Gets governance action descriptors by tenant and action identifier.
+
+Returns: The matching governance action descriptors.
+
+Parameters:
+- `tenantId`: The tenant identifier to resolve.
+- `actionId`: The action identifier to resolve.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantgovernanceactioncatalog-getbytenantid-system-string"></a>
+
+##### `GetByTenantId`
+
+```csharp
+IReadOnlyList<TenantGovernanceActionDescriptor> GetByTenantId(string tenantId)
+```
+
+Gets governance action descriptors for one tenant.
+
+Returns: The matching governance action descriptors.
+
+Parameters:
+- `tenantId`: The tenant identifier to resolve.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantgovernanceactioncontributor"></a>
+
+### `ITenantGovernanceActionContributor`
+
+Allows a module to contribute tenant-governance approval or remediation actions into the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantGovernanceActionContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantgovernanceactioncontributor-registergovernanceactions-cephalon-multitenancy-governance-services-itenantgovernanceactionregistry"></a>
+
+##### `RegisterGovernanceActions`
+
+```csharp
+void RegisterGovernanceActions(ITenantGovernanceActionRegistry actions)
+```
+
+Registers one or more tenant-governance actions with the supplied registry.
+
+Parameters:
+- `actions`: The registry that collects contributed governance action descriptors.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantgovernanceactiondecider"></a>
+
+### `ITenantGovernanceActionDecider`
+
+Decides whether a tenant-governance action can proceed against the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantGovernanceActionDecider
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantgovernanceactiondecider-decideasync-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-system-threading-cancellationtoken"></a>
+
+##### `DecideAsync`
+
+```csharp
+ValueTask<TenantGovernanceActionDecisionResult> DecideAsync(TenantGovernanceActionDecisionRequest request, CancellationToken cancellationToken)
+```
+
+Decides one tenant-governance action request.
+
+Returns: The decision result.
+
+Parameters:
+- `request`: The decision request.
+- `cancellationToken`: A token that cancels decision evaluation.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantgovernanceactionregistry"></a>
+
+### `ITenantGovernanceActionRegistry`
+
+Collects tenant-governance action descriptors contributed to the active governance runtime.
+
+#### Declaration
+```csharp
+public interface ITenantGovernanceActionRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionregistry-add-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(TenantGovernanceActionDescriptor action)
+```
+
+Adds a tenant-governance action descriptor to the registry.
+
+Parameters:
+- `action`: The governance action descriptor to contribute.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationcatalog"></a>
 
@@ -1146,6 +1318,666 @@ const string Manual
 ```
 
 Domain ownership was verified by an operator or another trusted manual process.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes"></a>
+
+### `TenantGovernanceActionDecisionOutcomes`
+
+Defines stable outcomes returned by tenant-governance action decisions.
+
+#### Declaration
+```csharp
+public static class TenantGovernanceActionDecisionOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-actionkindmismatch"></a>
+
+##### `ActionKindMismatch`
+
+```csharp
+const string ActionKindMismatch
+```
+
+The action exists but has a different action kind.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-allowed"></a>
+
+##### `Allowed`
+
+```csharp
+const string Allowed
+```
+
+The governance action is approved or remediated and satisfies the decision request.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Governance action decisions are disabled by host configuration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-expired"></a>
+
+##### `Expired`
+
+```csharp
+const string Expired
+```
+
+The action is expired or outside its valid time window.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No governance action descriptor matched the supplied action.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-pendingapproval"></a>
+
+##### `PendingApproval`
+
+```csharp
+const string PendingApproval
+```
+
+The action is still waiting for approval.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const string Rejected
+```
+
+The action was rejected.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-remediationrequired"></a>
+
+##### `RemediationRequired`
+
+```csharp
+const string RemediationRequired
+```
+
+The action requires remediation before it can proceed.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-subjectmismatch"></a>
+
+##### `SubjectMismatch`
+
+```csharp
+const string SubjectMismatch
+```
+
+The action exists but targets a different subject.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+The action exists but belongs to a different tenant.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest"></a>
+
+### `TenantGovernanceActionDecisionRequest`
+
+Describes one request to decide whether a tenant-governance action can proceed.
+
+#### Declaration
+```csharp
+public sealed class TenantGovernanceActionDecisionRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantGovernanceActionDecisionRequest`
+
+```csharp
+TenantGovernanceActionDecisionRequest(string tenantId, string actionId, string actionKind, string subjectKind, string subjectId, DateTimeOffset? atUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-governance action decision request.
+
+Parameters:
+- `tenantId`: The tenant identifier to validate.
+- `actionId`: The governance action identifier to validate.
+- `actionKind`: The optional expected governance action kind.
+- `subjectKind`: The optional expected subject kind.
+- `subjectId`: The optional expected subject identifier.
+- `atUtc`: The UTC timestamp used for expiration evaluation. The runtime clock is used when omitted.
+- `correlationId`: The optional correlation identifier for the decision.
+- `metadata`: Optional request metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-actionid"></a>
+
+##### `ActionId`
+
+```csharp
+string ActionId { get; }
+```
+
+Gets the governance action identifier to validate.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-actionkind"></a>
+
+##### `ActionKind`
+
+```csharp
+string ActionKind { get; }
+```
+
+Gets the optional expected governance action kind.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for expiration evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the decision.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional request metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the optional expected subject identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-subjectkind"></a>
+
+##### `SubjectKind`
+
+```csharp
+string SubjectKind { get; }
+```
+
+Gets the optional expected subject kind.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier to validate.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult"></a>
+
+### `TenantGovernanceActionDecisionResult`
+
+Describes the result of one tenant-governance action decision.
+
+#### Declaration
+```csharp
+public sealed class TenantGovernanceActionDecisionResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-ctor-system-string-system-string-system-string-system-boolean-system-datetimeoffset-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantGovernanceActionDecisionResult`
+
+```csharp
+TenantGovernanceActionDecisionResult(string tenantId, string actionId, string outcome, bool allowed, DateTimeOffset decidedAtUtc, TenantGovernanceActionDescriptor matchedAction, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-governance action decision result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `actionId`: The governance action identifier that was evaluated.
+- `outcome`: The stable decision outcome.
+- `allowed`: A value indicating whether the governance action can proceed.
+- `decidedAtUtc`: The UTC timestamp when decision evaluation executed.
+- `matchedAction`: The matching governance action descriptor considered by decision evaluation.
+- `reason`: The optional operator-facing decision reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-actionid"></a>
+
+##### `ActionId`
+
+```csharp
+string ActionId { get; }
+```
+
+Gets the governance action identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-allowed"></a>
+
+##### `Allowed`
+
+```csharp
+bool Allowed { get; }
+```
+
+Gets a value indicating whether the governance action can proceed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-decidedatutc"></a>
+
+##### `DecidedAtUtc`
+
+```csharp
+DateTimeOffset DecidedAtUtc { get; }
+```
+
+Gets the UTC timestamp when decision evaluation executed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-matchedaction"></a>
+
+##### `MatchedAction`
+
+```csharp
+TenantGovernanceActionDescriptor MatchedAction { get; }
+```
+
+Gets the matching governance action descriptor considered by decision evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable decision outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the optional operator-facing decision reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor"></a>
+
+### `TenantGovernanceActionDescriptor`
+
+Describes one tenant-governance approval or remediation action.
+
+#### Declaration
+```csharp
+public sealed class TenantGovernanceActionDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantGovernanceActionDescriptor`
+
+```csharp
+TenantGovernanceActionDescriptor(string actionId, string tenantId, string actionKind, string subjectKind, string subjectId, string displayName, string status, string requestedBy, string approvedBy, DateTimeOffset? createdAtUtc, DateTimeOffset? decidedAtUtc, DateTimeOffset? expiresAtUtc, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-governance action descriptor.
+
+Parameters:
+- `actionId`: The stable action identifier.
+- `tenantId`: The stable tenant identifier.
+- `actionKind`: The governance action kind.
+- `subjectKind`: The kind of subject affected by the action.
+- `subjectId`: The stable subject identifier affected by the action.
+- `displayName`: The optional operator-facing action name.
+- `status`: The governance action status.
+- `requestedBy`: The actor that requested the action when known.
+- `approvedBy`: The actor that approved or remediated the action when known.
+- `createdAtUtc`: The UTC timestamp when the action was created.
+- `decidedAtUtc`: The UTC timestamp when the action was approved, rejected, or remediated.
+- `expiresAtUtc`: The UTC timestamp when the action expires.
+- `sourceModuleId`: The module that contributed the action when one is known.
+- `metadata`: Optional operator-facing metadata attached to the action.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-actionid"></a>
+
+##### `ActionId`
+
+```csharp
+string ActionId { get; }
+```
+
+Gets the stable action identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-actionkind"></a>
+
+##### `ActionKind`
+
+```csharp
+string ActionKind { get; }
+```
+
+Gets the governance action kind.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-approvedby"></a>
+
+##### `ApprovedBy`
+
+```csharp
+string ApprovedBy { get; }
+```
+
+Gets the actor that approved or remediated the action when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-createdatutc"></a>
+
+##### `CreatedAtUtc`
+
+```csharp
+DateTimeOffset? CreatedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the action was created.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-decidedatutc"></a>
+
+##### `DecidedAtUtc`
+
+```csharp
+DateTimeOffset? DecidedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the action was approved, rejected, or remediated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing action name.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the UTC timestamp when the action expires.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata attached to the action.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-requestedby"></a>
+
+##### `RequestedBy`
+
+```csharp
+string RequestedBy { get; }
+```
+
+Gets the actor that requested the action when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that contributed the action when one is known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the governance action status.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the stable subject identifier affected by the action.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-subjectkind"></a>
+
+##### `SubjectKind`
+
+```csharp
+string SubjectKind { get; }
+```
+
+Gets the kind of subject affected by the action.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the stable tenant identifier.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds"></a>
+
+### `TenantGovernanceActionKinds`
+
+Defines stable tenant-governance action kinds understood by the governance runtime.
+
+#### Declaration
+```csharp
+public static class TenantGovernanceActionKinds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-domainownership"></a>
+
+##### `DomainOwnership`
+
+```csharp
+const string DomainOwnership
+```
+
+A governance action that changes declared tenant-domain ownership posture.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-invitationlifecycle"></a>
+
+##### `InvitationLifecycle`
+
+```csharp
+const string InvitationLifecycle
+```
+
+A governance action that changes an invitation lifecycle.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-membershipchange"></a>
+
+##### `MembershipChange`
+
+```csharp
+const string MembershipChange
+```
+
+A governance action that changes tenant membership.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-remediation"></a>
+
+##### `Remediation`
+
+```csharp
+const string Remediation
+```
+
+A governance action that represents an operator remediation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-tenantadministration"></a>
+
+##### `TenantAdministration`
+
+```csharp
+const string TenantAdministration
+```
+
+A governance action that represents tenant administration.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantgovernanceactionstatuses"></a>
+
+### `TenantGovernanceActionStatuses`
+
+Defines stable tenant-governance action statuses understood by the governance runtime.
+
+#### Declaration
+```csharp
+public static class TenantGovernanceActionStatuses
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionstatuses-approved"></a>
+
+##### `Approved`
+
+```csharp
+const string Approved
+```
+
+The action has been approved and can be decided as allowed.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionstatuses-expired"></a>
+
+##### `Expired`
+
+```csharp
+const string Expired
+```
+
+The action is no longer within its valid time window.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionstatuses-pendingapproval"></a>
+
+##### `PendingApproval`
+
+```csharp
+const string PendingApproval
+```
+
+The action is declared but still waiting for approval.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionstatuses-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const string Rejected
+```
+
+The action was rejected.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionstatuses-remediated"></a>
+
+##### `Remediated`
+
+```csharp
+const string Remediated
+```
+
+The action has been remediated and can be decided as allowed.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionstatuses-remediationrequired"></a>
+
+##### `RemediationRequired`
+
+```csharp
+const string RemediationRequired
+```
+
+The action requires remediation before it can proceed.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdescriptor"></a>
 

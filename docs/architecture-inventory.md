@@ -108,7 +108,7 @@ Technologies are additive workload profiles that prepare the runtime for specifi
 - `edge-native-delivery` — Edge-Native Delivery (Deployment): prepares the app for browser, device, edge, and intermittently connected deployment scenarios. Aliases: `EdgeNativeDelivery`, `EdgeNative`, `Edge`. Package hint: `Cephalon.Edge`.
 - `serverless-hosting` — Serverless Hosting (Deployment): prepares the app for event-triggered or function-style hosting without changing the host-agnostic core runtime model. Aliases: `ServerlessHosting`, `Serverless`.
 - `identity-access` — Identity Access (Security): prepares the app for configurable authentication and authorization flows such as RBAC, ABAC, and policy evaluation. Aliases: `IdentityAccess`, `Identity`. Package hint: `Cephalon.Identity`.
-- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`.
+- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain/action companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`.
 - `hybrid-cloud-runtime` — Hybrid Cloud Runtime (Platform): prepares the app for mixed on-premises, edge, and cloud deployment handoffs without changing the engine core. Aliases: `HybridCloudRuntime`, `HybridCloud`.
 - `service-mesh-integration` — Service Mesh Integration (Platform): prepares the app for additive service-mesh coordination, policy handoff, and traffic-governance guidance. Aliases: `ServiceMeshIntegration`, `ServiceMesh`.
 
@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, tenant-invitation catalog/validation, declared tenant-domain ownership catalog/validation, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, tenant-invitation catalog/validation, declared tenant-domain ownership catalog/validation, approval/remediation action catalog/decision, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -436,11 +436,14 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantInvitationValidator` — pending tenant-invitation validation
 - `ITenantDomainOwnershipCatalog` — merged declared tenant-domain ownership read model
 - `ITenantDomainOwnershipValidator` — declared tenant-domain ownership validation
+- `ITenantGovernanceActionCatalog` — merged approval/remediation action read model
+- `ITenantGovernanceActionDecider` — tenant-governance action decision
 - `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog and evaluation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-invitations` technology surface — Cephalon-managed invitation catalog and validation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog and validation posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog and decision posture from `Cephalon.MultiTenancy.Governance`
 
 ### Audit
 
@@ -463,7 +466,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Wolverine Eventing (`Cephalon.Eventing.Wolverine`) — event IDs 4300–4305
 - Identity (`Cephalon.Identity`) — event IDs 4400–4401
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
-- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4515
+- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4517
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
 

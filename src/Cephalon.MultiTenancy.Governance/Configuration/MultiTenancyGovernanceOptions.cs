@@ -6,8 +6,9 @@ namespace Cephalon.MultiTenancy.Governance.Configuration;
 /// Configures the tenant-governance companion package.
 /// </summary>
 /// <remarks>
-/// These options seed the host-owned membership baseline. Installed modules can still contribute
-/// additional memberships through <see cref="ITenantMembershipContributor" />.
+/// These options seed the host-owned governance baseline. Installed modules can still contribute
+/// additional memberships, invitations, domain ownership descriptors, and governance actions through
+/// contributor contracts.
 /// </remarks>
 public sealed class MultiTenancyGovernanceOptions
 {
@@ -34,6 +35,11 @@ public sealed class MultiTenancyGovernanceOptions
     public IList<TenantDomainOwnershipDescriptor> DomainOwnerships { get; } = [];
 
     /// <summary>
+    /// Gets the host-defined approval and remediation actions available to the governance runtime.
+    /// </summary>
+    public IList<TenantGovernanceActionDescriptor> GovernanceActions { get; } = [];
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in membership evaluator is active.
     /// </summary>
     public bool EnableMembershipEvaluation { get; set; } = true;
@@ -47,4 +53,9 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets a value indicating whether the built-in tenant-domain ownership validator is active.
     /// </summary>
     public bool EnableDomainOwnershipValidation { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
+    /// </summary>
+    public bool EnableGovernanceActionDecision { get; set; } = true;
 }

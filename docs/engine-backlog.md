@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, and declared domain-ownership validation proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, and approval/remediation action decision proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns the first membership catalog/evaluation proof, invitation catalog/validation proof, and declared domain-ownership catalog/validation proof, while broader governance workflows remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, invitation catalog/validation, declared domain-ownership catalog/validation, and approval/remediation action catalog/decision proofs, while broader governance workflows remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -181,7 +181,28 @@ Delivered:
 
 Follow-up later:
 
-- DNS/HTTP verification execution, approval/remediation workflows, durable membership/invitation/domain stores, invitation delivery, identity-provider synchronization, and tenant administration remain future governance slices until the package truly owns those paths
+- DNS/HTTP verification execution, human approval workflow execution, remediation execution, durable membership/invitation/domain stores, invitation delivery, identity-provider synchronization, and tenant administration remain future governance slices until the package truly owns those paths
+
+### ENG-238 Multi-tenancy governance action decision baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-237`, `Cephalon.MultiTenancy.Governance` owned membership, invitation, and declared domain-ownership validation, but approval/remediation workflows were still only a planned boundary entry
+- approval/remediation action decisions are the next smallest useful governance slice because they can be host-agnostic, module-contributed, introspectable, and decided without taking over human workflow execution, durable stores, public onboarding, or tenant administration
+
+Delivered:
+
+- add governance-action descriptors, contributor/registry/catalog contracts, and a deterministic `ITenantGovernanceActionDecider` with allowed, not-found, tenant-mismatch, action-kind-mismatch, subject-mismatch, pending-approval, rejected, remediation-required, expired, and disabled outcomes
+- publish `tenancy.governance-action.catalog`, `tenancy.governance-action.decision`, stable diagnostics `4516-4517`, and the `tenant-governance-actions` technology runtime surface with aggregate action, tenant, contributor, status, action-kind, and subject-kind posture
+- update `tenant-governance-boundaries` so tenant governance actions are a shipped companion-owned lane while the base `Cephalon.MultiTenancy` package remains tenant-resolution only
+- prove the slice with focused composition, hosting, package-surface, and docs/source/planning alignment
+
+Follow-up later:
+
+- human approval workflow execution, remediation execution, durable governance action stores, notification/delivery, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
 
 ## Completed foundation work
 
@@ -7947,9 +7968,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-237 Multi-tenancy governance domain ownership validation baseline (shipped)
 
+### Sprint 50
+
+- ENG-238 Multi-tenancy governance action decision baseline (shipped)
+
 ### Later / not scheduled yet
 
-- DNS/HTTP domain verification execution, approval/remediation, durable membership/invitation/domain stores, invitation delivery, identity-provider synchronization, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
+- DNS/HTTP domain verification execution, human approval workflow execution, remediation execution, durable membership/invitation/domain/action stores, invitation or action notification delivery, identity-provider synchronization, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ### Foundation Sprint 1
 

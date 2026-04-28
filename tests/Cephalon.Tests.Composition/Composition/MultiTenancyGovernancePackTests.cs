@@ -72,6 +72,27 @@ public sealed class MultiTenancyGovernancePackTests
                     status: TenantDomainOwnershipStatuses.Pending,
                     verificationMethod: TenantDomainVerificationMethods.HttpFile,
                     sourceModuleId: "platform-test"));
+                options.GovernanceActions.Add(new TenantGovernanceActionDescriptor(
+                    actionId: "approve-membership-001",
+                    tenantId: "tenant-001",
+                    actionKind: TenantGovernanceActionKinds.MembershipChange,
+                    subjectKind: "user",
+                    subjectId: "user-001",
+                    displayName: "Approve Acme Admin",
+                    status: TenantGovernanceActionStatuses.Approved,
+                    requestedBy: "operator-001",
+                    approvedBy: "tenant-owner",
+                    decidedAtUtc: new DateTimeOffset(2026, 04, 20, 0, 0, 0, TimeSpan.Zero),
+                    sourceModuleId: "platform-test"));
+                options.GovernanceActions.Add(new TenantGovernanceActionDescriptor(
+                    actionId: "remediate-domain-001",
+                    tenantId: "tenant-001",
+                    actionKind: TenantGovernanceActionKinds.Remediation,
+                    subjectKind: "domain",
+                    subjectId: "pending.example",
+                    displayName: "Remediate Pending Domain",
+                    status: TenantGovernanceActionStatuses.RemediationRequired,
+                    sourceModuleId: "platform-test"));
             });
         });
 
@@ -82,18 +103,23 @@ public sealed class MultiTenancyGovernancePackTests
         var invitationValidator = provider.GetRequiredService<ITenantInvitationValidator>();
         var domainCatalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
         var domainValidator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
+        var governanceActionCatalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
+        var governanceActionDecider = provider.GetRequiredService<ITenantGovernanceActionDecider>();
         var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
         var membershipsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-memberships");
         var invitationsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-invitations");
         var domainsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-domain-ownership");
+        var governanceActionsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-governance-actions");
         var summaryEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership-runtime");
         var tenantEntry = Assert.Single(membershipsSurface.Entries, entry => entry.Id == "tenant-membership:tenant-001");
         var invitationSummaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
         var tenantInvitationEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitations:tenant-001");
         var domainSummaryEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership-runtime");
         var tenantDomainEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership:tenant-001");
+        var governanceActionSummaryEntry = Assert.Single(governanceActionsSurface.Entries, entry => entry.Id == "tenant-governance-action-runtime");
+        var tenantGovernanceActionEntry = Assert.Single(governanceActionsSurface.Entries, entry => entry.Id == "tenant-governance-actions:tenant-001");
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.MultiTenancy.Governance"));
 
         var allowed = await evaluator.EvaluateAsync(new TenantMembershipEvaluationRequest(
@@ -125,16 +151,33 @@ public sealed class MultiTenancyGovernancePackTests
             tenantId: "tenant-001",
             domainName: "pending.example",
             atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+        var approvedAction = await governanceActionDecider.DecideAsync(new TenantGovernanceActionDecisionRequest(
+            tenantId: "tenant-001",
+            actionId: "approve-membership-001",
+            actionKind: TenantGovernanceActionKinds.MembershipChange,
+            subjectKind: "user",
+            subjectId: "user-001",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+        var remediationRequiredAction = await governanceActionDecider.DecideAsync(new TenantGovernanceActionDecisionRequest(
+            tenantId: "tenant-001",
+            actionId: "remediate-domain-001",
+            actionKind: TenantGovernanceActionKinds.Remediation,
+            subjectKind: "domain",
+            subjectId: "pending.example",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
 
         Assert.Equal(2, catalog.Memberships.Count);
         Assert.Equal(2, invitationCatalog.Invitations.Count);
         Assert.Equal(2, domainCatalog.DomainOwnerships.Count);
+        Assert.Equal(2, governanceActionCatalog.Actions.Count);
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.membership.evaluation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.validation");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.validation");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.catalog");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.decision");
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", summaryEntry.Metadata["package"]);
         Assert.Equal("2", summaryEntry.Metadata["membershipCount"]);
@@ -166,6 +209,18 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("1", tenantDomainEntry.Metadata["verifiedDomainOwnershipCount"]);
         Assert.Equal("1", tenantDomainEntry.Metadata["pendingDomainOwnershipCount"]);
         Assert.Equal("dns-txt:1,http-file:1", tenantDomainEntry.Metadata["verificationMethodBreakdown"]);
+        Assert.Equal("cephalon-managed", governanceActionSummaryEntry.Metadata["ownership"]);
+        Assert.Equal("Cephalon.MultiTenancy.Governance", governanceActionSummaryEntry.Metadata["package"]);
+        Assert.Equal("2", governanceActionSummaryEntry.Metadata["actionCount"]);
+        Assert.Equal("true", governanceActionSummaryEntry.Metadata["decisionEnabled"]);
+        Assert.Equal("cephalon-managed", governanceActionSummaryEntry.Metadata["decisionOwnership"]);
+        Assert.Equal("application-managed", governanceActionSummaryEntry.Metadata["workflowExecutionOwnership"]);
+        Assert.Equal("approved:1,remediation-required:1", governanceActionSummaryEntry.Metadata["statusBreakdown"]);
+        Assert.Equal("membership-change:1,remediation:1", governanceActionSummaryEntry.Metadata["actionKindBreakdown"]);
+        Assert.Equal("2", tenantGovernanceActionEntry.Metadata["actionCount"]);
+        Assert.Equal("1", tenantGovernanceActionEntry.Metadata["approvedActionCount"]);
+        Assert.Equal("1", tenantGovernanceActionEntry.Metadata["remediationRequiredActionCount"]);
+        Assert.Equal("membership-change:1,remediation:1", tenantGovernanceActionEntry.Metadata["actionKindBreakdown"]);
         Assert.True(allowed.Allowed);
         Assert.Equal(TenantMembershipEvaluationOutcomes.Allowed, allowed.Outcome);
         Assert.False(missingRole.Allowed);
@@ -182,14 +237,20 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(TenantDomainOwnershipValidationOutcomes.Valid, validDomain.Outcome);
         Assert.False(pendingDomain.Valid);
         Assert.Equal(TenantDomainOwnershipValidationOutcomes.Pending, pendingDomain.Outcome);
+        Assert.True(approvedAction.Allowed);
+        Assert.Equal(TenantGovernanceActionDecisionOutcomes.Allowed, approvedAction.Outcome);
+        Assert.False(remediationRequiredAction.Allowed);
+        Assert.Equal(TenantGovernanceActionDecisionOutcomes.RemediationRequired, remediationRequiredAction.Outcome);
         Assert.Equal(4510, diagnosticsConvention.MinimumEventId);
-        Assert.Equal(4515, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4517, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4513 && entry.Name == "TenantInvitationValidationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4514 && entry.Name == "TenantDomainOwnershipValidationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4515 && entry.Name == "TenantDomainOwnershipValidationDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4516 && entry.Name == "TenantGovernanceActionDecisionAllowed");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4517 && entry.Name == "TenantGovernanceActionDecisionDenied");
     }
 
     [Fact]
@@ -454,6 +515,106 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(TenantDomainOwnershipValidationOutcomes.Valid, validResult.Outcome);
     }
 
+    [Fact]
+    public async Task TenantGovernanceActionCatalogMergesContributorActions()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ITenantGovernanceActionContributor>(new TestTenantGovernanceActionContributor());
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.GovernanceActions.Add(new TenantGovernanceActionDescriptor(
+                    actionId: "action-001",
+                    tenantId: "tenant-001",
+                    actionKind: TenantGovernanceActionKinds.MembershipChange,
+                    subjectKind: "user",
+                    subjectId: "user-001",
+                    status: TenantGovernanceActionStatuses.Approved));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var actionsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-governance-actions");
+        var summaryEntry = Assert.Single(actionsSurface.Entries, entry => entry.Id == "tenant-governance-action-runtime");
+
+        Assert.Equal(2, catalog.Actions.Count);
+        Assert.Single(catalog.GetByTenantId("tenant-002"));
+        Assert.Single(catalog.GetByActionId("action-002"));
+        Assert.Single(catalog.GetByTenantAndAction("tenant-002", "action-002"));
+        Assert.Empty(catalog.GetByTenantAndAction("tenant-001", "action-002"));
+        Assert.Equal("1", summaryEntry.Metadata["contributorCount"]);
+        Assert.Contains(actionsSurface.Entries, entry =>
+            entry.Id == "tenant-governance-actions:tenant-002" &&
+            entry.Metadata["actionKindBreakdown"] == "remediation:1");
+    }
+
+    [Fact]
+    public async Task TenantGovernanceActionDecisionPreventsCrossTenantOrSubjectUse()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.GovernanceActions.Add(new TenantGovernanceActionDescriptor(
+                    actionId: "shared-action",
+                    tenantId: "tenant-001",
+                    actionKind: TenantGovernanceActionKinds.MembershipChange,
+                    subjectKind: "user",
+                    subjectId: "user-001",
+                    status: TenantGovernanceActionStatuses.Approved));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var decider = provider.GetRequiredService<ITenantGovernanceActionDecider>();
+
+        var tenantMismatch = await decider.DecideAsync(new TenantGovernanceActionDecisionRequest(
+            tenantId: "tenant-002",
+            actionId: "shared-action",
+            actionKind: TenantGovernanceActionKinds.MembershipChange,
+            subjectKind: "user",
+            subjectId: "user-001",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+        var subjectMismatch = await decider.DecideAsync(new TenantGovernanceActionDecisionRequest(
+            tenantId: "tenant-001",
+            actionId: "shared-action",
+            actionKind: TenantGovernanceActionKinds.MembershipChange,
+            subjectKind: "user",
+            subjectId: "user-002",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+        var allowed = await decider.DecideAsync(new TenantGovernanceActionDecisionRequest(
+            tenantId: "tenant-001",
+            actionId: "shared-action",
+            actionKind: TenantGovernanceActionKinds.MembershipChange,
+            subjectKind: "user",
+            subjectId: "user-001",
+            atUtc: new DateTimeOffset(2026, 04, 28, 0, 0, 0, TimeSpan.Zero)));
+
+        Assert.False(tenantMismatch.Allowed);
+        Assert.Equal(TenantGovernanceActionDecisionOutcomes.TenantMismatch, tenantMismatch.Outcome);
+        Assert.False(subjectMismatch.Allowed);
+        Assert.Equal(TenantGovernanceActionDecisionOutcomes.SubjectMismatch, subjectMismatch.Outcome);
+        Assert.True(allowed.Allowed);
+        Assert.Equal(TenantGovernanceActionDecisionOutcomes.Allowed, allowed.Outcome);
+    }
+
     private sealed class TestTenantMembershipContributor : ITenantMembershipContributor
     {
         public void RegisterMemberships(ITenantMembershipRegistry memberships)
@@ -490,6 +651,21 @@ public sealed class MultiTenancyGovernancePackTests
                 domainName: "docs.example",
                 status: TenantDomainOwnershipStatuses.Verified,
                 verificationMethod: TenantDomainVerificationMethods.HttpFile,
+                sourceModuleId: "test-module"));
+        }
+    }
+
+    private sealed class TestTenantGovernanceActionContributor : ITenantGovernanceActionContributor
+    {
+        public void RegisterGovernanceActions(ITenantGovernanceActionRegistry actions)
+        {
+            actions.Add(new TenantGovernanceActionDescriptor(
+                actionId: "action-002",
+                tenantId: "tenant-002",
+                actionKind: TenantGovernanceActionKinds.Remediation,
+                subjectKind: "domain",
+                subjectId: "docs.example",
+                status: TenantGovernanceActionStatuses.Remediated,
                 sourceModuleId: "test-module"));
         }
     }

@@ -52,10 +52,24 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Denied tenant domain ownership validation for tenant '{TenantId}' and domain '{DomainName}'. Outcome: {Outcome}. Reason: {Reason}.",
         Description: "Emitted when the governance companion does not validate declared tenant domain ownership.");
 
+    public static readonly DiagnosticEventDefinition GovernanceActionDecisionAllowed = new(
+        Id: 4516,
+        Name: "TenantGovernanceActionDecisionAllowed",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Allowed tenant governance action decision for tenant '{TenantId}' and action '{ActionId}' of kind '{ActionKind}'.",
+        Description: "Emitted when the governance companion allows an approved or remediated tenant-governance action.");
+
+    public static readonly DiagnosticEventDefinition GovernanceActionDecisionDenied = new(
+        Id: 4517,
+        Name: "TenantGovernanceActionDecisionDenied",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Denied tenant governance action decision for tenant '{TenantId}' and action '{ActionId}'. Outcome: {Outcome}. Reason: {Reason}.",
+        Description: "Emitted when the governance companion does not allow a tenant-governance action.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, and declared domain-ownership cataloging/validation.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, declared domain-ownership cataloging/validation, and approval/remediation action decisions.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -63,7 +77,9 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             InvitationValidationAllowed,
             InvitationValidationDenied,
             DomainOwnershipValidationAllowed,
-            DomainOwnershipValidationDenied
+            DomainOwnershipValidationDenied,
+            GovernanceActionDecisionAllowed,
+            GovernanceActionDecisionDenied
         ]);
 }
 
@@ -116,6 +132,22 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipValidationDenied.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipValidationDenied.Name),
             MultiTenancyGovernanceDiagnosticsConventions.DomainOwnershipValidationDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, Exception?> GovernanceActionDecisionAllowedMessage =
+        LoggerMessage.Define<string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionAllowed.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionAllowed.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionAllowed.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> GovernanceActionDecisionDeniedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionDenied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionDenied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.GovernanceActionDecisionDenied.MessageTemplate);
 
     public static void MembershipEvaluationAllowed(
         ILogger logger,
@@ -178,5 +210,26 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         DomainOwnershipValidationDeniedMessage(logger, tenantId, domainName, outcome, reason, exception);
+    }
+
+    public static void GovernanceActionDecisionAllowed(
+        ILogger logger,
+        string tenantId,
+        string actionId,
+        string actionKind,
+        Exception? exception)
+    {
+        GovernanceActionDecisionAllowedMessage(logger, tenantId, actionId, actionKind, exception);
+    }
+
+    public static void GovernanceActionDecisionDenied(
+        ILogger logger,
+        string tenantId,
+        string actionId,
+        string outcome,
+        string reason,
+        Exception? exception)
+    {
+        GovernanceActionDecisionDeniedMessage(logger, tenantId, actionId, outcome, reason, exception);
     }
 }

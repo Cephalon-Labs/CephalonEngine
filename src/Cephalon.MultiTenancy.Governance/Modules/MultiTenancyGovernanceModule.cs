@@ -18,8 +18,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "multi-tenancy-governance",
         displayName: "Multi-Tenancy Governance",
-        description: "Tenant membership, invitation, and declared domain-ownership governance runtime for Cephalon multi-tenancy workloads.",
-        tags: ["tenant", "membership", "invitation", "domain-ownership", "governance"],
+        description: "Tenant membership, invitation, declared domain-ownership, and approval/remediation action governance runtime for Cephalon multi-tenancy workloads.",
+        tags: ["tenant", "membership", "invitation", "domain-ownership", "governance", "approval", "remediation"],
         version: "1.0.0",
         metadata: new Dictionary<string, string>
         {
@@ -31,6 +31,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
     private bool hasMembershipContributors;
     private bool hasInvitationContributors;
     private bool hasDomainOwnershipContributors;
+    private bool hasGovernanceActionContributors;
 
     public override ModuleDescriptor Descriptor => DescriptorInstance;
 
@@ -59,13 +60,16 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         hasMembershipContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantMembershipContributor));
         hasInvitationContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantInvitationContributor));
         hasDomainOwnershipContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantDomainOwnershipContributor));
+        hasGovernanceActionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantGovernanceActionContributor));
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<ILogger<TenantMembershipEvaluator>>(NullLogger<TenantMembershipEvaluator>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationValidator>>(NullLogger<TenantInvitationValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
+        services.TryAddSingleton<ILogger<TenantGovernanceActionDecider>>(NullLogger<TenantGovernanceActionDecider>.Instance);
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
         services.TryAddSingleton<ITenantInvitationCatalog, TenantInvitationCatalog>();
         services.TryAddSingleton<ITenantDomainOwnershipCatalog, TenantDomainOwnershipCatalog>();
+        services.TryAddSingleton<ITenantGovernanceActionCatalog, TenantGovernanceActionCatalog>();
 
         if (options.EnableMembershipEvaluation)
         {
@@ -82,9 +86,15 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             services.TryAddSingleton<ITenantDomainOwnershipValidator, TenantDomainOwnershipValidator>();
         }
 
+        if (options.EnableGovernanceActionDecision)
+        {
+            services.TryAddSingleton<ITenantGovernanceActionDecider, TenantGovernanceActionDecider>();
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceInvitationRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceDomainRuntimeSurfaceContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceActionRuntimeSurfaceContributor>());
     }
 
     public void RegisterTechnologyCapabilities(ICapabilityRegistry capabilities, TechnologySelection technologies)
@@ -181,6 +191,35 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["package"] = "Cephalon.MultiTenancy.Governance",
                     ["executionOwnership"] = "cephalon-managed",
                     ["runtimeSurface"] = "tenant-domain-ownership"
+                }));
+        }
+
+        capabilities.Add(new Capability(
+            key: "tenancy.governance-action.catalog",
+            displayName: "Tenant Governance Action Catalog",
+            description: "Exposes tenant approval and remediation action descriptors through the multi-tenancy governance companion pack.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "multi-tenancy",
+                ["package"] = "Cephalon.MultiTenancy.Governance",
+                ["ownership"] = "cephalon-managed",
+                ["runtimeSurface"] = "tenant-governance-actions",
+                ["configuredActionCount"] = options.GovernanceActions.Count.ToString(CultureInfo.InvariantCulture),
+                ["hasGovernanceActionContributors"] = hasGovernanceActionContributors.ToString().ToLowerInvariant()
+            }));
+
+        if (options.EnableGovernanceActionDecision)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.governance-action.decision",
+                displayName: "Tenant Governance Action Decision",
+                description: "Decides whether declared tenant approval and remediation actions are allowed, pending, rejected, expired, or remediation-blocked.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-governance-actions"
                 }));
         }
     }
