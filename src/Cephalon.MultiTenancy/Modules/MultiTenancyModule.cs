@@ -73,6 +73,7 @@ internal sealed class MultiTenancyModule(Action<MultiTenancyRuntimeOptions>? con
                 : ActivatorUtilities.CreateInstance<DisabledTenantResolver>(serviceProvider);
         });
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyRuntimeSurfaceContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceBoundaryRuntimeSurfaceContributor>());
     }
 
     public void RegisterTechnologyCapabilities(ICapabilityRegistry capabilities, TechnologySelection technologies)

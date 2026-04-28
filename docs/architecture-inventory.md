@@ -108,7 +108,7 @@ Technologies are additive workload profiles that prepare the runtime for specifi
 - `edge-native-delivery` — Edge-Native Delivery (Deployment): prepares the app for browser, device, edge, and intermittently connected deployment scenarios. Aliases: `EdgeNativeDelivery`, `EdgeNative`, `Edge`. Package hint: `Cephalon.Edge`.
 - `serverless-hosting` — Serverless Hosting (Deployment): prepares the app for event-triggered or function-style hosting without changing the host-agnostic core runtime model. Aliases: `ServerlessHosting`, `Serverless`.
 - `identity-access` — Identity Access (Security): prepares the app for configurable authentication and authorization flows such as RBAC, ABAC, and policy evaluation. Aliases: `IdentityAccess`, `Identity`. Package hint: `Cephalon.Identity`.
-- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, membership, and runtime answers. Aliases: `MultiTenancy`, `Multitenancy`. Package hint: `Cephalon.MultiTenancy`.
+- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and future governance/member/domain companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hint: `Cephalon.MultiTenancy`.
 - `hybrid-cloud-runtime` — Hybrid Cloud Runtime (Platform): prepares the app for mixed on-premises, edge, and cloud deployment handoffs without changing the engine core. Aliases: `HybridCloudRuntime`, `HybridCloud`.
 - `service-mesh-integration` — Service Mesh Integration (Platform): prepares the app for additive service-mesh coordination, policy handoff, and traffic-governance guidance. Aliases: `ServiceMeshIntegration`, `ServiceMesh`.
 
@@ -163,7 +163,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `event-sourcing` — Event Sourcing (`Cephalon.EventSourcing`): runtime-neutral event-sourcing baseline.
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
-- `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution and ambient tenant-context baseline.
+- `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
 
 ### Data provider modules (14)
 
@@ -427,6 +427,8 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 
 - `ITenantContextAccessor` — ambient tenant context
 - `ITenantResolver` — tenant resolution interface
+- `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
+- `tenant-governance-boundaries` technology surface — taxonomy-only boundary for future membership, invitation, domain-ownership, and governance companion workflows
 
 ### Audit
 

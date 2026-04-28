@@ -18,6 +18,7 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Abstractions.Tenancy;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
@@ -48,6 +49,7 @@ using Cephalon.Cli;
 using Cephalon.ReferenceModule.Operations.Registration;
 using Cephalon.ReferenceDocs.Generation;
 using Cephalon.ReferenceDocs.IO;
+using Cephalon.MultiTenancy.Registration;
 using Cephalon.Retrieval.Registration;
 using Cephalon.Retrieval.Services;
 using Grpc.Net.Client;
@@ -1886,6 +1888,7 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:1"] = "EventDrivenIntegration";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:2"] = "KnowledgeRetrieval";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:3"] = "EdgeNativeDelivery";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:4"] = "MultiTenancy";
         builder.AddCephalon(cephalon =>
         {
             cephalon.AddModule(new PlatformTestModule());
@@ -1918,6 +1921,15 @@ public sealed class AspNetCoreHostingTests
                     id: "storefront-edge",
                     displayName: "Storefront Edge",
                     description: "Regional storefront edge node."));
+            });
+            cephalon.AddMultiTenancy(options =>
+            {
+                options.DefaultTenantId = "tenant-001";
+                options.Tenants.Add(new TenantContext(
+                    tenantId: "tenant-001",
+                    tenantKey: "acme",
+                    displayName: "Acme",
+                    domains: ["acme.example.test"]));
             });
         });
 
@@ -1973,10 +1985,10 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(snapshot);
         Assert.Equal(RuntimeStatus.Started, snapshot.Status.Status);
         Assert.Equal("modular-vertical-slice", snapshot.Manifest.AppProfile.BlueprintId);
-        Assert.Equal(5, snapshot.TechnologySurfaces.Count);
+        Assert.Equal(7, snapshot.TechnologySurfaces.Count);
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Eventing");
         Assert.NotNull(surfaces);
-        Assert.Equal(5, surfaces.Length);
+        Assert.Equal(7, surfaces.Length);
         Assert.NotNull(eventingSurfaces);
         Assert.Equal(2, eventingSurfaces.Length);
 
@@ -2054,6 +2066,21 @@ public sealed class AspNetCoreHostingTests
             entry.Metadata["freshnessState"] == KnowledgeIndexFreshnessStates.Fresh &&
             entry.Metadata["documentCount"] == "2" &&
             entry.Metadata["queryCount"] == "1");
+
+        var tenancySurfaces = surfaces.Where(surface => surface.TechnologyId == "multi-tenancy").ToArray();
+        Assert.Equal(2, tenancySurfaces.Length);
+        Assert.Contains(
+            tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-resolution").Entries,
+            entry => entry.Id == "tenant-runtime" &&
+                entry.Metadata["configuredTenantCount"] == "1" &&
+                entry.Metadata["defaultTenantId"] == "tenant-001");
+        Assert.Contains(
+            tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-governance-boundaries").Entries,
+            entry => entry.Id == "tenant-membership" &&
+                entry.Metadata["ownership"] == "taxonomy-only" &&
+                entry.Metadata["plannedOwnership"] == "companion-planned" &&
+                entry.Metadata["basePackageOwnership"] == "not-owned" &&
+                entry.Metadata["suggestedPackage"] == "Cephalon.MultiTenancy.Governance");
 
         var edge = Assert.Single(surfaces, surface => surface.TechnologyId == "edge-native-delivery");
         Assert.Contains(edge.Entries, entry => entry.Id == "storefront-edge");

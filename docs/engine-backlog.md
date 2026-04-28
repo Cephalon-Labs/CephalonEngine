@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, and first retrieval managed index/query proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, and multi-tenancy governance-boundary split landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow and move broader governance workflows into a companion-track plan
+- keep `Cephalon.MultiTenancy` core narrow while the actual governance workflow companion remains a later package-owned proof
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -102,7 +102,7 @@ Follow-up later:
 
 ### ENG-234 Multi-tenancy governance, membership, and domain workflow companion split
 
-Status: planned
+Status: done
 Estimate: 8
 
 Why:
@@ -110,11 +110,15 @@ Why:
 - `Cephalon.MultiTenancy` already has a truthful narrow runtime slice, but broader governance and membership workflows would blur its adoption story if they land in the base package
 - the repo needs a companion-track plan that preserves the thin core while making future governance work intentional
 
-Planned outcome:
+Delivered:
 
-- keep the base package focused on tenant resolution and current runtime truth
-- define the companion-track boundary for membership, invite, domain, and governance workflows
-- align component docs and planning language so teams understand what belongs in the core versus the future companion surface
+- keep the base package focused on tenant resolution and current runtime truth through the existing `tenant-resolution` surface
+- add `tenant-governance-boundaries` so membership, invite, domain, and governance workflows are visible as taxonomy-only companion-planned boundaries instead of implied runtime ownership
+- align component, technology-pack, compatibility, operations, architecture, maturity-audit, roadmap, backlog, and project-memory docs so teams understand what belongs in the core versus the future companion surface
+
+Follow-up later:
+
+- create a concrete `Cephalon.MultiTenancy.Governance` package only when it owns membership, invitation, domain-ownership, approval, remediation, or tenant-administration workflows end to end
 
 ## Completed foundation work
 
@@ -7864,9 +7868,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-233 Retrieval indexing, query execution, and freshness baseline (shipped)
 
+### Sprint 46
+
+- ENG-234 Multi-tenancy governance, membership, and domain workflow companion split (shipped)
+
 ### Later / not scheduled yet
 
-- ENG-234 Multi-tenancy governance, membership, and domain workflow companion split
+- first concrete `Cephalon.MultiTenancy.Governance` workflow proof when membership, invitation, domain ownership, or governance automation needs package-owned runtime behavior
 
 ### Foundation Sprint 1
 

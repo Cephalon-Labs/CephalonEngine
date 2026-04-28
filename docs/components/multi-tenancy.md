@@ -8,6 +8,7 @@
 - lets hosts disable the built-in configuration-driven resolver without removing the package
 - keeps tenant resolution, default-tenant fallback, and ambient tenant-context management out of hosts
 - projects the active tenant-resolution answer through the `tenant-resolution` runtime surface under `multi-tenancy`
+- projects the base-package versus future-companion boundary through the `tenant-governance-boundaries` runtime surface under `multi-tenancy`
 - contributes a dedicated diagnostics convention so `/engine/diagnostics` can advertise stable tenant-resolution event ids
 - keeps request-host, route, and ASP.NET Core-specific tenant extraction out of the host-agnostic pack
 
@@ -18,6 +19,7 @@
 - `Services/ConfiguredTenantResolver.cs`
 - `Services/AmbientTenantContextAccessor.cs`
 - `Services/MultiTenancyRuntimeSurfaceContributor.cs`
+- `Services/MultiTenancyGovernanceBoundaryRuntimeSurfaceContributor.cs`
 - `Services/MultiTenancyDiagnosticsConventionContributor.cs`
 
 ## How it fits
@@ -26,7 +28,7 @@ This package is the first truthful runtime slice of Cephalon multi-tenancy. `Cep
 
 The built-in resolver is intentionally configuration-driven and conservative. It can resolve tenants from explicit tenant id hints, tenant keys, host names, configured default tenants, and the single-tenant fallback case, and it seeds an ambient tenant context for the current async flow. Explicit tenant-id, tenant-key, or host-name misses stay misses instead of silently defaulting into a different tenant, which keeps the runtime answer safer and more truthful. Hosts can also disable the built-in configuration-driven resolver when they want to supply a different resolution strategy on top of the same shared contracts and runtime surface.
 
-It does not yet claim tenant membership workflows, invite flows, domain ownership validation, or product-specific backoffice/public-site orchestration. Those remain later slices.
+The base package still does not execute tenant membership workflows, invite flows, domain ownership validation, or product-specific backoffice/public-site orchestration. Those broader workflows are now visible as taxonomy-only boundary entries in the `tenant-governance-boundaries` surface with `plannedOwnership = companion-planned` and suggested future package `Cephalon.MultiTenancy.Governance`. That keeps the current runtime honest: `Cephalon.MultiTenancy` owns resolution and ambient context today, while the future governance companion can own membership, invitations, domain ownership, and approval/remediation workflows when that package exists.
 
 That gives consumer apps a low-ceremony starting point: hosts and future adapters can feed host-neutral resolution hints into `ITenantResolver`, while the shared Cephalon runtime surfaces continue to tell operators what tenant-resolution behavior is actually active.
 

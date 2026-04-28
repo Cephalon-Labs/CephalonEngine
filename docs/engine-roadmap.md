@@ -21,7 +21,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - host-agnostic module contracts in `Cephalon.Abstractions`
 - configuration-driven engine composition in `Cephalon.Engine`
 - technology-profile modeling for future-facing workloads through `Engine:Technologies` and `AppProfile.Technologies`
-- baseline companion packages for `AgenticWorkloads`, `EventDrivenIntegration`, `KnowledgeRetrieval`, and `EdgeNativeDelivery`
+- baseline companion packages for `AgenticWorkloads`, `EventDrivenIntegration`, `KnowledgeRetrieval`, `MultiTenancy`, and `EdgeNativeDelivery`
 - assembly-based module discovery
 - module and capability policy toggles through `Engine:Options`
 - manifest v2 with engine version, module metadata, and capability source mapping
@@ -62,8 +62,8 @@ The next planning wave is therefore not "add more descriptors everywhere." It is
 
 - make surface maturity explicit through [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - keep intentional `M0` and `M1` surfaces honest instead of letting them read like unfinished `M2` work
-- prove one narrow managed vertical slice in mixed-maturity families before widening catalog breadth; the eventing/Wolverine and agentics dispatcher lanes are the first current examples
-- keep `Cephalon.MultiTenancy` core narrow and move broader governance/member/domain workflows into a companion-track plan instead of bloating the base package
+- prove one narrow managed vertical slice in mixed-maturity families before widening catalog breadth; the eventing/Wolverine, agentics dispatcher, and retrieval lexical index/query lanes are current examples
+- keep `Cephalon.MultiTenancy` core narrow; its governance-boundary surface now marks membership, invitation, domain-ownership, and governance workflows as taxonomy-only companion-planned work instead of bloating the base package
 - use `Cephalon.Behaviors`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
 ## Sprint alignment
@@ -199,7 +199,8 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 43`: `ENG-231` now adds the first truthful managed event-subscription execution baseline so the eventing family proves one managed execution story before widening descriptor breadth again
 - `Sprint 44`: shipped `ENG-232` agentics tool execution and run-state baseline so `Cephalon.Agentics` grows from catalog truth into one real dispatcher/run-state loop
 - `Sprint 45`: shipped `ENG-233` retrieval indexing, query execution, and freshness baseline so `Cephalon.Retrieval` grows from collection catalog truth into one provider-fed lexical index/query/freshness loop
-- `Later / not scheduled yet`: planned `ENG-234` multi-tenancy governance, membership, and domain workflow companion split, further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
+- `Sprint 46`: shipped `ENG-234` multi-tenancy governance, membership, and domain workflow companion split so `Cephalon.MultiTenancy` stays focused on tenant resolution while the broader workflow lane is explicit and companion-planned
+- `Later / not scheduled yet`: first concrete `Cephalon.MultiTenancy.Governance` workflow proof, further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
 

@@ -48,6 +48,9 @@ public sealed class MultiTenancyPackTests
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
         var tenancySurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-resolution");
         var tenancyEntry = Assert.Single(tenancySurface.Entries, entry => entry.Id == "tenant-runtime");
+        var governanceBoundarySurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-governance-boundaries");
+        var membershipBoundary = Assert.Single(governanceBoundarySurface.Entries, entry => entry.Id == "tenant-membership");
+        var resolutionCore = Assert.Single(governanceBoundarySurface.Entries, entry => entry.Id == "tenant-resolution-core");
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.MultiTenancy"));
 
         Assert.NotNull(resolver);
@@ -59,6 +62,12 @@ public sealed class MultiTenancyPackTests
         Assert.Equal("tenant-001", tenancyEntry.Metadata["defaultTenantId"]);
         Assert.Equal("configured", tenancyEntry.Metadata["domainResolution"]);
         Assert.Equal("configured", tenancyEntry.Metadata["tenantKeyResolution"]);
+        Assert.Equal("cephalon-managed", resolutionCore.Metadata["ownership"]);
+        Assert.Equal("tenant-resolution", resolutionCore.Metadata["surfaceId"]);
+        Assert.Equal("taxonomy-only", membershipBoundary.Metadata["ownership"]);
+        Assert.Equal("companion-planned", membershipBoundary.Metadata["plannedOwnership"]);
+        Assert.Equal("not-owned", membershipBoundary.Metadata["basePackageOwnership"]);
+        Assert.Equal("Cephalon.MultiTenancy.Governance", membershipBoundary.Metadata["suggestedPackage"]);
         Assert.Equal(4500, diagnosticsConvention.MinimumEventId);
         Assert.Equal(4502, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4500 && entry.Name == "TenantResolved");

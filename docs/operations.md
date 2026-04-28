@@ -1233,6 +1233,21 @@ Current note:
 - non-REST transports stay out of these REST catalogs and continue to surface through their own
   transport-specific runtime contracts
 
+## Multi-tenancy technology surfaces
+
+When `MultiTenancy` is selected and `Cephalon.MultiTenancy` is registered, `GET /engine/technology-surfaces` and `GET /engine/snapshot` expose the active tenant runtime answer.
+
+Current payload highlights:
+
+- `tenant-resolution` reports configured tenant count, configured tenant ids, default tenant id, domain-resolution posture, tenant-key posture, resolver count, ambient-context accessor count, and the enabled resolution strategies
+- `tenant-governance-boundaries` reports the shipped `tenant-resolution-core` as `cephalon-managed` and keeps tenant membership, invitations, domain ownership, and governance workflows as `taxonomy-only` boundary entries
+- future workflow entries carry `plannedOwnership = companion-planned`, `basePackageOwnership = not-owned`, and `suggestedPackage = Cephalon.MultiTenancy.Governance` so operators can distinguish current runtime ownership from the intended companion split
+
+Current note:
+
+- the base package owns tenant resolution and ambient tenant context only
+- membership, invitations, domain verification, approval, remediation, and backoffice/public-site tenant orchestration remain future companion work until a package owns those paths explicitly
+
 ## Data product surface
 
 `GET /engine/data-products` exposes the operator-facing data product catalog contributed by active modules.

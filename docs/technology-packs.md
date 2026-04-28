@@ -56,6 +56,10 @@ Current baseline packages:
   - runtime services and capability activation for `KnowledgeRetrieval`
   - registers `IKnowledgeCatalog`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, and `IKnowledgeQueryEngine` when the profile and options enable those paths
   - lets modules add `IKnowledgeDocumentProvider` services so Cephalon can build a managed lexical index without making hosts own the retrieval loop
+- `Cephalon.MultiTenancy`
+  - runtime services and capability activation for `MultiTenancy`
+  - registers `ITenantResolver` and `ITenantContextAccessor` when the profile is selected
+  - projects `tenant-resolution` for the shipped core and `tenant-governance-boundaries` for taxonomy-only future companion workflows
 - `Cephalon.Edge`
   - runtime services and capability activation for `EdgeNativeDelivery`
   - registers `IEdgeNodeCatalog` when the profile is selected
@@ -116,6 +120,16 @@ builder.AddCephalon(engine =>
         options.FreshnessStaleAfterSeconds = 3600;
     });
 
+    engine.AddMultiTenancy(options =>
+    {
+        options.DefaultTenantId = "tenant-001";
+        options.Tenants.Add(new TenantContext(
+            tenantId: "tenant-001",
+            tenantKey: "acme",
+            displayName: "Acme",
+            domains: ["acme.example.test"]));
+    });
+
     engine.AddEventing(options =>
     {
         options.Channels.Add(new EventChannelDescriptor(
@@ -137,7 +151,7 @@ builder.AddCephalon(engine =>
 ```json
 {
   "Engine": {
-    "Technologies": ["AgenticWorkloads", "EventDrivenIntegration", "KnowledgeRetrieval", "EdgeNativeDelivery"]
+    "Technologies": ["AgenticWorkloads", "EventDrivenIntegration", "KnowledgeRetrieval", "MultiTenancy", "EdgeNativeDelivery"]
   }
 }
 ```
@@ -176,6 +190,10 @@ Shipped pack-specific extension points:
   - `IKnowledgeCollectionContributor` and `IKnowledgeCollectionRegistry`
   - `IKnowledgeDocumentProvider` for module-owned source documents
   - `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and `IKnowledgeIndexCatalog` for the current managed lexical runtime path
+- `Cephalon.MultiTenancy`
+  - `ITenantResolver` for host-neutral tenant resolution
+  - `ITenantContextAccessor` for ambient tenant context in the current async flow
+  - `MultiTenancyRuntimeOptions` for configuration-driven tenants, domains, default tenant, and resolver enablement
 - `Cephalon.Eventing`
   - `IEventChannelContributor` and `IEventChannelRegistry`
 - `Cephalon.Edge`
@@ -195,6 +213,8 @@ When execution is enabled, `Cephalon.Agentics` also owns one narrow tool-dispatc
 
 When ingestion and querying are enabled, `Cephalon.Retrieval` now owns one narrow lexical retrieval loop. Modules still own the source material through `IKnowledgeDocumentProvider`, while the pack owns indexing, bounded query execution, index state, and freshness reporting for registered collections. Runtime surfaces report `indexingOwnership`, `queryOwnership`, provider readiness, latest index outcome, document count, query count, freshness state, and a query fingerprint rather than raw query text. That is the boundary of the current managed proof; vector databases, embeddings, distributed indexes, durable search clusters, rerankers, provider-specific semantic search, and reindex automation remain future companion work unless another package explicitly owns them.
 
+When multi-tenancy is selected, `Cephalon.MultiTenancy` owns one narrow tenant-resolution loop. The base package resolves configured tenant ids, tenant keys, host names, defaults, and single-tenant fallback through `ITenantResolver`, then exposes the ambient answer through `ITenantContextAccessor` and the `tenant-resolution` surface. Membership, invitation, domain-ownership, and tenant-governance workflows are not executed by the base package; they are taxonomy-only entries in `tenant-governance-boundaries` with `plannedOwnership = companion-planned` until a package such as `Cephalon.MultiTenancy.Governance` owns those workflows explicitly.
+
 Runtime introspection contract:
 
 - `ITechnologyRuntimeContributor`
@@ -204,7 +224,7 @@ Runtime introspection contract:
 - `IRuntimeIntrospectionSnapshotProvider`
   - engine-level abstraction for reading one operator-facing snapshot that combines the runtime manifest, runtime status, and active technology-pack surfaces
 - `GET /engine/technology-surfaces`
-  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys, live execution-graph and hosted-execution state, managed execution readiness, and latest run-state truth when those links or reports exist; retrieval collections now also surface provider readiness, indexing/query ownership, freshness state, document counts, query counts, latest run outcomes, and query fingerprints when indexed or queried
+  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys, live execution-graph and hosted-execution state, managed execution readiness, and latest run-state truth when those links or reports exist; retrieval collections now also surface provider readiness, indexing/query ownership, freshness state, document counts, query counts, latest run outcomes, and query fingerprints when indexed or queried; multi-tenancy now surfaces both the active tenant-resolution answer and taxonomy-only governance companion boundaries
 - `GET /engine/snapshot`
   - returns the broader runtime introspection snapshot when operators need manifest, runtime status, and technology-pack surfaces in one payload
 
