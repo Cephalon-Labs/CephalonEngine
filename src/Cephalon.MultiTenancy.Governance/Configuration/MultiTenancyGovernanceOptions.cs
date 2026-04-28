@@ -65,6 +65,11 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableDomainOwnershipProofEvaluation { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership proof challenge issuer is active.
+    /// </summary>
+    public bool EnableDomainOwnershipProofChallengeIssuance { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
     /// </summary>
     public bool EnableGovernanceActionDecision { get; set; } = true;
@@ -88,6 +93,16 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.
     /// </summary>
     public string? DomainOwnershipStoreFilePath { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default DNS TXT record prefix used by proof challenge issuance.
+    /// </summary>
+    public string DomainOwnershipProofChallengeDnsTxtRecordPrefix { get; set; } = "_cephalon-domain-verification";
+
+    /// <summary>
+    /// Gets or sets the default HTTP path used by proof challenge issuance.
+    /// </summary>
+    public string DomainOwnershipProofChallengeHttpFilePath { get; set; } = "/.well-known/cephalon/domain-ownership.txt";
 
     /// <summary>
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.

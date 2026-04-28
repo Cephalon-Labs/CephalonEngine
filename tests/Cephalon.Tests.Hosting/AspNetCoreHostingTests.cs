@@ -2183,6 +2183,8 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["validationOwnership"] == "cephalon-managed" &&
                 entry.Metadata["verificationWorkflowOwnership"] == "cephalon-managed" &&
                 entry.Metadata["proofEvaluationOwnership"] == "cephalon-managed" &&
+                entry.Metadata["proofChallengeIssuanceOwnership"] == "cephalon-managed" &&
+                entry.Metadata["proofPublicationOwnership"] == "application-managed" &&
                 entry.Metadata["verificationExecutionOwnership"] == "application-managed" &&
                 entry.Metadata["dnsHttpProofCollectionOwnership"] == "application-managed");
         Assert.Contains(

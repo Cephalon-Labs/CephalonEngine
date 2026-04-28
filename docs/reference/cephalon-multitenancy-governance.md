@@ -40,6 +40,26 @@ Initializes a new instance of the `MultiTenancyGovernanceOptions` class.
 
 #### Properties
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofchallengednstxtrecordprefix"></a>
+
+##### `DomainOwnershipProofChallengeDnsTxtRecordPrefix`
+
+```csharp
+string DomainOwnershipProofChallengeDnsTxtRecordPrefix { get; set; }
+```
+
+Gets or sets the default DNS TXT record prefix used by proof challenge issuance.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofchallengehttpfilepath"></a>
+
+##### `DomainOwnershipProofChallengeHttpFilePath`
+
+```csharp
+string DomainOwnershipProofChallengeHttpFilePath { get; set; }
+```
+
+Gets or sets the default HTTP path used by proof challenge issuance.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownerships"></a>
 
 ##### `DomainOwnerships`
@@ -59,6 +79,16 @@ string DomainOwnershipStoreFilePath { get; set; }
 ```
 
 Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofchallengeissuance"></a>
+
+##### `EnableDomainOwnershipProofChallengeIssuance`
+
+```csharp
+bool EnableDomainOwnershipProofChallengeIssuance { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-domain ownership proof challenge issuer is active.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofevaluation"></a>
 
@@ -323,6 +353,37 @@ Registers one or more tenant-domain ownership descriptors with the supplied regi
 
 Parameters:
 - `domainOwnerships`: The registry that collects contributed domain ownership descriptors.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofchallengeissuer"></a>
+
+### `ITenantDomainOwnershipProofChallengeIssuer`
+
+Issues tenant-domain ownership proof challenges and records the expected proof value for later evaluation.
+
+Remarks: The issuer owns challenge generation and runtime metadata mutation. It does not publish DNS records, host HTTP proof files, or poll external endpoints; applications or provider packs publish and observe the issued challenge.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipProofChallengeIssuer
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofchallengeissuer-issueasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-system-threading-cancellationtoken"></a>
+
+##### `IssueAsync`
+
+```csharp
+ValueTask<TenantDomainOwnershipProofChallengeResult> IssueAsync(TenantDomainOwnershipProofChallengeRequest request, CancellationToken cancellationToken)
+```
+
+Issues or refreshes a proof challenge for a tenant-domain ownership declaration.
+
+Returns: The issued challenge details and runtime state outcome.
+
+Parameters:
+- `request`: The proof challenge request.
+- `cancellationToken`: A token that cancels challenge issuance before runtime state is stored.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofevaluator"></a>
 
@@ -1393,6 +1454,542 @@ DateTimeOffset? VerifiedAtUtc { get; }
 ```
 
 Gets the UTC timestamp when ownership was verified.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys"></a>
+
+### `TenantDomainOwnershipProofChallengeMetadataKeys`
+
+Stable metadata keys written by tenant-domain ownership proof challenge issuance.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipProofChallengeMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-dnstxtrecordname"></a>
+
+##### `DnsTxtRecordName`
+
+```csharp
+const string DnsTxtRecordName
+```
+
+Metadata key for the DNS TXT record name where the challenge should be published.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-httpfilepath"></a>
+
+##### `HttpFilePath`
+
+```csharp
+const string HttpFilePath
+```
+
+Metadata key for the HTTP path where the challenge should be published.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-lastproofchallengeactor"></a>
+
+##### `LastProofChallengeActor`
+
+```csharp
+const string LastProofChallengeActor
+```
+
+Metadata key for the actor that requested proof challenge issuance.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-lastproofchallengecorrelationid"></a>
+
+##### `LastProofChallengeCorrelationId`
+
+```csharp
+const string LastProofChallengeCorrelationId
+```
+
+Metadata key for the challenge issuance correlation identifier.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-lastproofchallengeexpiresatutc"></a>
+
+##### `LastProofChallengeExpiresAtUtc`
+
+```csharp
+const string LastProofChallengeExpiresAtUtc
+```
+
+Metadata key for the UTC timestamp when the challenge expires.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-lastproofchallengefingerprint"></a>
+
+##### `LastProofChallengeFingerprint`
+
+```csharp
+const string LastProofChallengeFingerprint
+```
+
+Metadata key for the SHA-256 fingerprint of the issued challenge value.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-lastproofchallengeissuedatutc"></a>
+
+##### `LastProofChallengeIssuedAtUtc`
+
+```csharp
+const string LastProofChallengeIssuedAtUtc
+```
+
+Metadata key for the UTC timestamp when the challenge was issued.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-lastproofchallengeoutcome"></a>
+
+##### `LastProofChallengeOutcome`
+
+```csharp
+const string LastProofChallengeOutcome
+```
+
+Metadata key for the last proof challenge issuance outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-lastproofchallengesource"></a>
+
+##### `LastProofChallengeSource`
+
+```csharp
+const string LastProofChallengeSource
+```
+
+Metadata key for the source that requested proof challenge issuance.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengemetadatakeys-proofchallengeownership"></a>
+
+##### `ProofChallengeOwnership`
+
+```csharp
+const string ProofChallengeOwnership
+```
+
+Metadata key that identifies Cephalon as the challenge issuance owner.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes"></a>
+
+### `TenantDomainOwnershipProofChallengeOutcomes`
+
+Stable tenant-domain ownership proof challenge issuance outcomes.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipProofChallengeOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes-alreadyverified"></a>
+
+##### `AlreadyVerified`
+
+```csharp
+const string AlreadyVerified
+```
+
+The domain is already verified and does not need a new challenge.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Challenge issuance is disabled by governance options.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes-invalidstatus"></a>
+
+##### `InvalidStatus`
+
+```csharp
+const string InvalidStatus
+```
+
+The current declaration status cannot receive a new proof challenge.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes-issued"></a>
+
+##### `Issued`
+
+```csharp
+const string Issued
+```
+
+Challenge issuance created or refreshed the pending proof challenge.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+Runtime state could not be persisted.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+The domain is already declared for a different tenant.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeoutcomes-verificationmethodmismatch"></a>
+
+##### `VerificationMethodMismatch`
+
+```csharp
+const string VerificationMethodMismatch
+```
+
+The requested verification method does not match the existing declaration.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest"></a>
+
+### `TenantDomainOwnershipProofChallengeRequest`
+
+Describes a tenant-domain ownership proof challenge issuance request.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofChallengeRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofChallengeRequest`
+
+```csharp
+TenantDomainOwnershipProofChallengeRequest(string tenantId, string domainName, string verificationMethod, string displayName, string challengeValue, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, string dnsTxtRecordName, string httpFilePath, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof challenge request.
+
+Parameters:
+- `tenantId`: The tenant identifier that owns the domain declaration.
+- `domainName`: The domain name that should receive a proof challenge.
+- `verificationMethod`: The optional verification method boundary.
+- `displayName`: The optional operator-facing domain display name.
+- `challengeValue`: An optional caller-supplied challenge value. A secure random value is generated when omitted.
+- `source`: The source that requested challenge issuance.
+- `actor`: The actor that requested challenge issuance when known.
+- `atUtc`: The UTC timestamp used for challenge issuance. The runtime clock is used when omitted.
+- `expiresAtUtc`: The optional UTC timestamp when the challenge and ownership declaration expire.
+- `correlationId`: The optional correlation identifier for challenge issuance.
+- `dnsTxtRecordName`: The optional DNS TXT record name where the challenge should be published.
+- `httpFilePath`: The optional HTTP path where the challenge should be published.
+- `metadata`: Optional proof challenge metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested challenge issuance when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for challenge issuance.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-challengevalue"></a>
+
+##### `ChallengeValue`
+
+```csharp
+string ChallengeValue { get; }
+```
+
+Gets an optional caller-supplied challenge value.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for challenge issuance.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing domain display name.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-dnstxtrecordname"></a>
+
+##### `DnsTxtRecordName`
+
+```csharp
+string DnsTxtRecordName { get; }
+```
+
+Gets the optional DNS TXT record name where the challenge should be published.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that should receive a proof challenge.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the optional UTC timestamp when the challenge and ownership declaration expire.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-httpfilepath"></a>
+
+##### `HttpFilePath`
+
+```csharp
+string HttpFilePath { get; }
+```
+
+Gets the optional HTTP path where the challenge should be published.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional proof challenge metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that requested challenge issuance.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that owns the domain declaration.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengerequest-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the optional verification method boundary.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult"></a>
+
+### `TenantDomainOwnershipProofChallengeResult`
+
+Describes the result of tenant-domain ownership proof challenge issuance.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofChallengeResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-datetimeoffset-system-string-system-string-system-string-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofChallengeResult`
+
+```csharp
+TenantDomainOwnershipProofChallengeResult(string tenantId, string domainName, string verificationMethod, string outcome, bool issued, DateTimeOffset issuedAtUtc, string challengeValue, string challengeFingerprint, string dnsTxtRecordName, string httpFilePath, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof challenge result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `domainName`: The canonical domain name that was evaluated.
+- `verificationMethod`: The verification method used for challenge issuance.
+- `outcome`: The stable challenge issuance outcome.
+- `issued`: A value indicating whether a challenge was issued and stored.
+- `issuedAtUtc`: The UTC timestamp when challenge issuance executed.
+- `challengeValue`: The public proof challenge value to publish.
+- `challengeFingerprint`: The SHA-256 fingerprint of the challenge value.
+- `dnsTxtRecordName`: The DNS TXT record name where the challenge should be published.
+- `httpFilePath`: The HTTP path where the challenge should be published.
+- `domainOwnership`: The matching or resulting domain ownership descriptor when one exists.
+- `reason`: The operator-facing challenge issuance reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-challengefingerprint"></a>
+
+##### `ChallengeFingerprint`
+
+```csharp
+string ChallengeFingerprint { get; }
+```
+
+Gets the SHA-256 fingerprint of the challenge value.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-challengevalue"></a>
+
+##### `ChallengeValue`
+
+```csharp
+string ChallengeValue { get; }
+```
+
+Gets the public proof challenge value to publish.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-dnstxtrecordname"></a>
+
+##### `DnsTxtRecordName`
+
+```csharp
+string DnsTxtRecordName { get; }
+```
+
+Gets the DNS TXT record name where the challenge should be published.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-domainownership"></a>
+
+##### `DomainOwnership`
+
+```csharp
+TenantDomainOwnershipDescriptor DomainOwnership { get; }
+```
+
+Gets the matching or resulting domain ownership descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-httpfilepath"></a>
+
+##### `HttpFilePath`
+
+```csharp
+string HttpFilePath { get; }
+```
+
+Gets the HTTP path where the challenge should be published.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-issued"></a>
+
+##### `Issued`
+
+```csharp
+bool Issued { get; }
+```
+
+Gets a value indicating whether a challenge was issued and stored.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-issuedatutc"></a>
+
+##### `IssuedAtUtc`
+
+```csharp
+DateTimeOffset IssuedAtUtc { get; }
+```
+
+Gets the UTC timestamp when challenge issuance executed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable challenge issuance outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing challenge issuance reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the verification method used for challenge issuance.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes"></a>
 

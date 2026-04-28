@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, and governance domain-ownership proof-evaluation proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, and governance domain-ownership proof-challenge issuance proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof evaluation over reported evidence, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, remediation execution beyond state transitions, DNS/HTTP proof collection or external polling, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof evaluation over reported evidence, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, remediation execution beyond state transitions, DNS/HTTP proof publication, DNS/HTTP proof collection or external polling, identity-provider synchronization, public onboarding, and tenant administration remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -360,6 +360,28 @@ Delivered:
 Follow-up later:
 
 - DNS/HTTP proof collection or external polling, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
+
+### ENG-246 Multi-tenancy governance domain ownership proof challenge issuance baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-245`, `Cephalon.MultiTenancy.Governance` could evaluate reported DNS/HTTP/manual proof evidence, but consumers still had to invent and persist the expected proof challenge values themselves
+- the smallest honest next proof is a host-agnostic challenge issuer that generates or accepts a challenge token, records expected proof metadata, gives DNS TXT or HTTP file publication hints, and writes the pending declaration through the existing domain-ownership store without claiming DNS/HTTP publication or external polling
+
+Delivered:
+
+- add public `ITenantDomainOwnershipProofChallengeIssuer`, proof-challenge request/result contracts, outcome vocabulary, and stable challenge metadata keys
+- generate secure `cephalon-domain-proof-*` challenge values when callers do not supply one, store `expectedProof` plus method-specific expected-proof metadata, and expose default DNS TXT record / HTTP file publication hints
+- create or refresh pending domain-ownership declarations through `ITenantDomainOwnershipStore`, protect already verified or suspended declarations from accidental re-challenge, and report store failures without claiming a challenge was applied
+- publish `tenancy.domain-ownership.proof-challenge`, proof-challenge runtime-surface metadata, and stable diagnostics `4528-4529` through the existing `tenant-domain-ownership` runtime surface
+- prove the slice with focused composition, hosting, package-surface, reference-doc, and docs/source/planning alignment
+
+Follow-up later:
+
+- DNS/HTTP proof publication, DNS/HTTP proof collection or external polling, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant administration, and public onboarding remain future governance slices until the package truly owns those paths
 
 ## Completed foundation work
 
@@ -8156,10 +8178,11 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 57
 
 - ENG-245 Multi-tenancy governance domain ownership proof evaluation baseline (shipped)
+- ENG-246 Multi-tenancy governance domain ownership proof challenge issuance baseline (shipped)
 
 ### Later / not scheduled yet
 
-- DNS/HTTP proof collection or external polling, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, identity-provider synchronization, public onboarding, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
+- DNS/HTTP proof publication, DNS/HTTP proof collection or external polling, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, identity-provider synchronization, public onboarding, and tenant-administration proof when `Cephalon.MultiTenancy.Governance` truly owns those paths
 
 ### Foundation Sprint 1
 
