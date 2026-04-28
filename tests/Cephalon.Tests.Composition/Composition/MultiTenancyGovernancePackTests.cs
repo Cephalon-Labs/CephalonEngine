@@ -110,6 +110,7 @@ public sealed class MultiTenancyGovernancePackTests
         var domainHttpProofCollector = provider.GetRequiredService<ITenantDomainOwnershipHttpProofCollector>();
         var domainDnsTxtProofCollector = provider.GetRequiredService<ITenantDomainOwnershipDnsTxtProofCollector>();
         var domainProofVerificationRunner = provider.GetRequiredService<ITenantDomainOwnershipProofVerificationRunner>();
+        var domainProofPollingRunner = provider.GetRequiredService<ITenantDomainOwnershipProofPollingRunner>();
         var governanceActionCatalog = provider.GetRequiredService<ITenantGovernanceActionCatalog>();
         var governanceActionDecider = provider.GetRequiredService<ITenantGovernanceActionDecider>();
         var governanceActionWorkflow = provider.GetRequiredService<ITenantGovernanceActionWorkflow>();
@@ -194,6 +195,7 @@ public sealed class MultiTenancyGovernancePackTests
         var httpProofCollectionCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.http-proof-collection");
         var dnsTxtProofCollectionCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.dns-txt-proof-collection");
         var proofVerificationRunnerCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.proof-verification-runner");
+        var proofPollingRunnerCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.proof-polling-runner");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.decision");
@@ -202,18 +204,27 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("cephalon-managed", proofEvaluationCapability.Metadata["httpProofCollectionOwnership"]);
         Assert.Equal("not-configured", proofEvaluationCapability.Metadata["dnsTxtProofCollectionOwnership"]);
         Assert.Equal("false", proofEvaluationCapability.Metadata["dnsTxtProofResolverConfigured"]);
-        Assert.Equal("application-managed", proofEvaluationCapability.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("cephalon-managed", proofEvaluationCapability.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("application-managed", proofEvaluationCapability.Metadata["backgroundProofPollingOwnership"]);
         Assert.Equal("cephalon-managed", httpProofCollectionCapability.Metadata["httpProofCollectionOwnership"]);
         Assert.Equal("not-configured", httpProofCollectionCapability.Metadata["dnsTxtProofCollectionOwnership"]);
         Assert.Equal("false", httpProofCollectionCapability.Metadata["dnsTxtProofResolverConfigured"]);
-        Assert.Equal("application-managed", httpProofCollectionCapability.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("cephalon-managed", httpProofCollectionCapability.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("application-managed", httpProofCollectionCapability.Metadata["backgroundProofPollingOwnership"]);
         Assert.Equal("not-configured", dnsTxtProofCollectionCapability.Metadata["dnsTxtProofCollectionOwnership"]);
         Assert.Equal("false", dnsTxtProofCollectionCapability.Metadata["dnsTxtProofResolverConfigured"]);
         Assert.Equal("cephalon-managed", proofVerificationRunnerCapability.Metadata["proofVerificationRunnerOwnership"]);
+        Assert.Equal("cephalon-managed", proofVerificationRunnerCapability.Metadata["proofPollingRunnerOwnership"]);
         Assert.Equal("cephalon-managed", proofVerificationRunnerCapability.Metadata["httpProofCollectionOwnership"]);
         Assert.Equal("not-configured", proofVerificationRunnerCapability.Metadata["dnsTxtProofCollectionOwnership"]);
         Assert.Equal("false", proofVerificationRunnerCapability.Metadata["dnsTxtProofResolverConfigured"]);
-        Assert.Equal("application-managed", proofVerificationRunnerCapability.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("cephalon-managed", proofVerificationRunnerCapability.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("application-managed", proofVerificationRunnerCapability.Metadata["backgroundProofPollingOwnership"]);
+        Assert.Equal("cephalon-managed", proofPollingRunnerCapability.Metadata["proofPollingRunnerOwnership"]);
+        Assert.Equal("cephalon-managed", proofPollingRunnerCapability.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("application-managed", proofPollingRunnerCapability.Metadata["backgroundProofPollingOwnership"]);
+        Assert.Equal("application-managed", proofPollingRunnerCapability.Metadata["proofPublicationOwnership"]);
+        Assert.Equal("50", proofPollingRunnerCapability.Metadata["defaultBatchLimit"]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", summaryEntry.Metadata["package"]);
         Assert.Equal("2", summaryEntry.Metadata["membershipCount"]);
@@ -269,7 +280,11 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("not-configured", domainSummaryEntry.Metadata["dnsTxtProofCollectionOwnership"]);
         Assert.Equal("true", domainSummaryEntry.Metadata["proofVerificationRunnerEnabled"]);
         Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["proofVerificationRunnerOwnership"]);
-        Assert.Equal("application-managed", domainSummaryEntry.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("true", domainSummaryEntry.Metadata["proofPollingRunnerEnabled"]);
+        Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["proofPollingRunnerOwnership"]);
+        Assert.Equal("cephalon-managed", domainSummaryEntry.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("application-managed", domainSummaryEntry.Metadata["backgroundProofPollingOwnership"]);
+        Assert.Equal("50", domainSummaryEntry.Metadata["proofPollingDefaultBatchLimit"]);
         Assert.Equal("application-managed", domainSummaryEntry.Metadata["proofPublicationOwnership"]);
         Assert.Equal("application-managed", domainSummaryEntry.Metadata["verificationExecutionOwnership"]);
         Assert.Equal("mixed", domainSummaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
@@ -327,7 +342,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.NotNull(domainDnsTxtProofCollector);
         Assert.NotNull(domainProofVerificationRunner);
         Assert.NotNull(governanceActionWorkflow);
-        Assert.Equal(4537, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4539, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
@@ -356,6 +371,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4535 && entry.Name == "TenantDomainOwnershipProofVerificationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4536 && entry.Name == "TenantDomainOwnershipDnsTxtProofCollected");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4537 && entry.Name == "TenantDomainOwnershipDnsTxtProofCollectionDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4538 && entry.Name == "TenantDomainOwnershipProofPollingCompleted");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4539 && entry.Name == "TenantDomainOwnershipProofPollingDenied");
     }
 
     [Fact]
@@ -1679,11 +1696,13 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(collection.ObservedProofFingerprint, domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionObservedFingerprint]);
         Assert.Equal("cephalon-managed", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.HttpProofCollectionOwnership]);
         Assert.Equal("not-configured", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.DnsTxtProofCollectionOwnership]);
-        Assert.Equal("application-managed", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.ExternalProofPollingOwnership]);
+        Assert.Equal("cephalon-managed", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.ExternalProofPollingOwnership]);
+        Assert.Equal("application-managed", domainOwnership.Metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.BackgroundProofPollingOwnership]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["httpProofCollectionOwnership"]);
         Assert.Equal("not-configured", summaryEntry.Metadata["dnsTxtProofCollectionOwnership"]);
         Assert.Equal("false", summaryEntry.Metadata["dnsTxtProofResolverConfigured"]);
-        Assert.Equal("application-managed", summaryEntry.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("cephalon-managed", summaryEntry.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("application-managed", summaryEntry.Metadata["backgroundProofPollingOwnership"]);
         Assert.Equal("mixed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
     }
 
@@ -1821,6 +1840,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("1", domainOwnership.Metadata[TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys.LastDnsTxtProofCollectionObservedTxtRecordCount]);
         Assert.Equal(collection.ObservedProofFingerprint, domainOwnership.Metadata[TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys.LastDnsTxtProofCollectionObservedFingerprint]);
         Assert.Equal("cephalon-managed", domainOwnership.Metadata[TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys.DnsTxtProofCollectionOwnership]);
+        Assert.Equal("cephalon-managed", domainOwnership.Metadata[TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys.ExternalProofPollingOwnership]);
+        Assert.Equal("application-managed", domainOwnership.Metadata[TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys.BackgroundProofPollingOwnership]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["dnsTxtProofCollectionOwnership"]);
         Assert.Equal("true", summaryEntry.Metadata["dnsTxtProofResolverConfigured"]);
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["dnsHttpProofCollectionOwnership"]);
@@ -2021,6 +2042,146 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("cephalon-managed", result.Metadata[TenantDomainOwnershipProofVerificationMetadataKeys.DnsTxtProofCollectionOwnership]);
         Assert.DoesNotContain(result.Metadata, pair => string.Equals(pair.Value, "runner-dns-proof", StringComparison.Ordinal));
         Assert.DoesNotContain(domainOwnership.Metadata, pair => pair.Key.Contains("Observed", StringComparison.OrdinalIgnoreCase) && string.Equals(pair.Value, "runner-dns-proof", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task TenantDomainOwnershipProofPollingRunnerPollsPendingHttpAndRejectedDnsTxtProofs()
+    {
+        var handler = new TestHttpProofMessageHandler(static request =>
+        {
+            var uri = request.RequestUri ?? throw new InvalidOperationException("Expected a proof polling request URI.");
+            if (string.Equals(uri.Host, "poll-http.example", StringComparison.OrdinalIgnoreCase))
+            {
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                {
+                    Content = new StringContent("poll-http-proof")
+                };
+            }
+
+            return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                Content = new StringContent("{\"Status\":0,\"Answer\":[{\"name\":\"_cephalon-domain-verification.poll-dns.example\",\"type\":16,\"data\":\"\\\"poll-dns-proof\\\"\"}]}")
+            };
+        });
+        var services = new ServiceCollection();
+        services.AddSingleton(new HttpClient(handler)
+        {
+            Timeout = Timeout.InfiniteTimeSpan
+        });
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.DomainOwnershipDnsTxtProofResolverEndpoint = new Uri("https://resolver.example/dns-query");
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "poll-http.example",
+                    status: TenantDomainOwnershipStatuses.Pending,
+                    verificationMethod: TenantDomainVerificationMethods.HttpFile,
+                    metadata: new Dictionary<string, string>
+                    {
+                        [TenantDomainOwnershipProofMetadataKeys.ExpectedHttpFileProof] = "poll-http-proof",
+                        [TenantDomainOwnershipProofChallengeMetadataKeys.HttpFilePath] = "poll-proof.txt"
+                    }));
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "poll-dns.example",
+                    status: TenantDomainOwnershipStatuses.Rejected,
+                    verificationMethod: TenantDomainVerificationMethods.DnsTxt,
+                    metadata: new Dictionary<string, string>
+                    {
+                        [TenantDomainOwnershipProofMetadataKeys.ExpectedDnsTxtProof] = "poll-dns-proof"
+                    }));
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "poll-manual.example",
+                    status: TenantDomainOwnershipStatuses.Pending,
+                    verificationMethod: TenantDomainVerificationMethods.Manual,
+                    metadata: new Dictionary<string, string>
+                    {
+                        [TenantDomainOwnershipProofMetadataKeys.ExpectedProof] = "manual-proof"
+                    }));
+                options.DomainOwnerships.Add(new TenantDomainOwnershipDescriptor(
+                    tenantId: "tenant-001",
+                    domainName: "poll-verified.example",
+                    status: TenantDomainOwnershipStatuses.Verified,
+                    verificationMethod: TenantDomainVerificationMethods.HttpFile,
+                    verifiedAtUtc: new DateTimeOffset(2026, 04, 29, 9, 45, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>
+                    {
+                        [TenantDomainOwnershipProofMetadataKeys.ExpectedHttpFileProof] = "already-verified"
+                    }));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var poller = provider.GetRequiredService<ITenantDomainOwnershipProofPollingRunner>();
+        var validator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
+        var catalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var result = await poller.PollAsync(new TenantDomainOwnershipProofPollingRequest(
+            collectionBaseUri: new Uri("https://poll-http.example"),
+            source: "proof-polling-test",
+            actor: "operator-001",
+            atUtc: new DateTimeOffset(2026, 04, 29, 10, 0, 0, TimeSpan.Zero),
+            expiresAtUtc: new DateTimeOffset(2026, 05, 29, 10, 0, 0, TimeSpan.Zero),
+            correlationId: "corr-proof-polling-001",
+            maxItems: 10));
+        var httpValidation = await validator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-001",
+            domainName: "poll-http.example",
+            atUtc: new DateTimeOffset(2026, 04, 29, 10, 5, 0, TimeSpan.Zero)));
+        var dnsValidation = await validator.ValidateAsync(new TenantDomainOwnershipValidationRequest(
+            tenantId: "tenant-001",
+            domainName: "poll-dns.example",
+            atUtc: new DateTimeOffset(2026, 04, 29, 10, 5, 0, TimeSpan.Zero)));
+        var httpDomainOwnership = Assert.Single(catalog.GetByTenantAndDomain("tenant-001", "poll-http.example"));
+        var dnsDomainOwnership = Assert.Single(catalog.GetByTenantAndDomain("tenant-001", "poll-dns.example"));
+        var manualDomainOwnership = Assert.Single(catalog.GetByTenantAndDomain("tenant-001", "poll-manual.example"));
+        var domainsSurface = Assert.Single(technologyCatalog.GetByTechnology("multi-tenancy"), surface => surface.SurfaceId == "tenant-domain-ownership");
+        var summaryEntry = Assert.Single(domainsSurface.Entries, entry => entry.Id == "tenant-domain-ownership-runtime");
+
+        Assert.True(result.Polled);
+        Assert.Equal(TenantDomainOwnershipProofPollingOutcomes.Completed, result.Outcome);
+        Assert.Equal(2, result.CandidateCount);
+        Assert.Equal(2, result.VerificationCount);
+        Assert.Equal(0, result.SkippedCount);
+        Assert.Equal(2, result.VerifiedCount);
+        Assert.Equal(0, result.RejectedCount);
+        Assert.Equal(0, result.FailedCount);
+        Assert.Equal(10, result.BatchLimit);
+        Assert.All(result.VerificationResults, static verification => Assert.True(verification.Verified));
+        Assert.Contains(result.VerificationResults, static verification => string.Equals(verification.VerificationMethod, TenantDomainVerificationMethods.HttpFile, StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(result.VerificationResults, static verification => string.Equals(verification.VerificationMethod, TenantDomainVerificationMethods.DnsTxt, StringComparison.OrdinalIgnoreCase));
+        Assert.Equal("completed", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.LastProofPollingOutcome]);
+        Assert.Equal("proof-polling-test", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.LastProofPollingSource]);
+        Assert.Equal("operator-001", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.LastProofPollingActor]);
+        Assert.Equal("corr-proof-polling-001", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.LastProofPollingCorrelationId]);
+        Assert.Equal("cephalon-managed", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.ProofPollingRunnerOwnership]);
+        Assert.Equal("cephalon-managed", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.ExternalProofPollingOwnership]);
+        Assert.Equal("application-managed", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.BackgroundProofPollingOwnership]);
+        Assert.Equal("2", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.CandidateCount]);
+        Assert.Equal("2", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.VerificationCount]);
+        Assert.Equal("10", result.Metadata[TenantDomainOwnershipProofPollingMetadataKeys.BatchLimit]);
+        Assert.Equal(2, handler.RequestedUris.Count);
+        Assert.Contains(handler.RequestedUris, static uri => string.Equals(uri.Host, "poll-http.example", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(handler.RequestedUris, static uri => string.Equals(uri.Host, "resolver.example", StringComparison.OrdinalIgnoreCase));
+        Assert.True(httpValidation.Valid);
+        Assert.True(dnsValidation.Valid);
+        Assert.Equal(TenantDomainOwnershipStatuses.Verified, httpDomainOwnership.Status);
+        Assert.Equal(TenantDomainOwnershipStatuses.Verified, dnsDomainOwnership.Status);
+        Assert.Equal(TenantDomainOwnershipStatuses.Pending, manualDomainOwnership.Status);
+        Assert.Equal("true", summaryEntry.Metadata["proofPollingRunnerEnabled"]);
+        Assert.Equal("cephalon-managed", summaryEntry.Metadata["proofPollingRunnerOwnership"]);
+        Assert.Equal("cephalon-managed", summaryEntry.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("application-managed", summaryEntry.Metadata["backgroundProofPollingOwnership"]);
     }
 
     [Fact]

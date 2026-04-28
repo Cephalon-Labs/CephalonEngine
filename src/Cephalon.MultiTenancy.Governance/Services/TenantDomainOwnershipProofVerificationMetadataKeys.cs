@@ -61,6 +61,11 @@ public static class TenantDomainOwnershipProofVerificationMetadataKeys
     public const string ProofVerificationRunnerOwnership = "proofVerificationRunnerOwnership";
 
     /// <summary>
+    /// Metadata key for proof polling runner ownership.
+    /// </summary>
+    public const string ProofPollingRunnerOwnership = "proofPollingRunnerOwnership";
+
+    /// <summary>
     /// Metadata key for HTTP proof collection ownership.
     /// </summary>
     public const string HttpProofCollectionOwnership = "httpProofCollectionOwnership";
@@ -71,7 +76,12 @@ public static class TenantDomainOwnershipProofVerificationMetadataKeys
     public const string DnsTxtProofCollectionOwnership = "dnsTxtProofCollectionOwnership";
 
     /// <summary>
-    /// Metadata key for external proof polling ownership.
+    /// Metadata key for on-demand external proof polling ownership.
     /// </summary>
     public const string ExternalProofPollingOwnership = "externalProofPollingOwnership";
+
+    /// <summary>
+    /// Metadata key for automatic background proof polling ownership.
+    /// </summary>
+    public const string BackgroundProofPollingOwnership = "backgroundProofPollingOwnership";
 }

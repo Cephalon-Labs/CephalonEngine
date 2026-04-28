@@ -122,6 +122,16 @@ string DomainOwnershipProofChallengeHttpFilePath { get; set; }
 
 Gets or sets the default HTTP path used by proof challenge issuance.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipproofpollingmaxitems"></a>
+
+##### `DomainOwnershipProofPollingMaxItems`
+
+```csharp
+int DomainOwnershipProofPollingMaxItems { get; set; }
+```
+
+Gets or sets the default maximum number of tenant-domain ownership declarations polled in one runner pass.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownerships"></a>
 
 ##### `DomainOwnerships`
@@ -181,6 +191,18 @@ bool EnableDomainOwnershipProofEvaluation { get; set; }
 ```
 
 Gets or sets a value indicating whether the built-in tenant-domain ownership proof evaluator is active.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofpollingrunner"></a>
+
+##### `EnableDomainOwnershipProofPollingRunner`
+
+```csharp
+bool EnableDomainOwnershipProofPollingRunner { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in bounded tenant-domain ownership proof polling runner is active.
+
+Remarks: The polling runner owns one on-demand scan over pending or rejected declarations and delegates each attempt to the proof verification runner. It does not schedule background polling or publish DNS/HTTP proof values.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipproofpublicationplanning"></a>
 
@@ -580,6 +602,37 @@ Parameters:
 - `request`: The proof evaluation request.
 - `cancellationToken`: A token that cancels proof evaluation before workflow mutation starts.
 
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofpollingrunner"></a>
+
+### `ITenantDomainOwnershipProofPollingRunner`
+
+Runs bounded tenant-domain ownership proof polling over the governance domain-ownership catalog.
+
+Remarks: The polling runner reduces application glue code by selecting pending or rejected domain-ownership declarations and delegating each proof attempt to `ITenantDomainOwnershipProofVerificationRunner`. It owns the on-demand polling loop, not DNS mutation, HTTP file hosting, provider control-plane mutation, or automatic background scheduling.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipProofPollingRunner
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofpollingrunner-pollasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-system-threading-cancellationtoken"></a>
+
+##### `PollAsync`
+
+```csharp
+ValueTask<TenantDomainOwnershipProofPollingResult> PollAsync(TenantDomainOwnershipProofPollingRequest request, CancellationToken cancellationToken)
+```
+
+Runs one bounded polling pass over matching tenant-domain ownership declarations.
+
+Returns: The aggregate polling result plus the nested verification attempts.
+
+Parameters:
+- `request`: The proof polling request.
+- `cancellationToken`: A token that cancels the polling pass.
+
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipproofpublicationplanner"></a>
 
 ### `ITenantDomainOwnershipProofPublicationPlanner`
@@ -617,7 +670,7 @@ Parameters:
 
 Runs the built-in tenant-domain ownership proof verification flow.
 
-Remarks: The runner reduces application glue code by composing challenge issuance, publication planning, reported-proof evaluation, and optional HTTP file proof collection without claiming DNS mutation, HTTP file hosting, DNS TXT collection, or background polling ownership.
+Remarks: The runner reduces application glue code by composing challenge issuance, publication planning, reported-proof evaluation, and optional HTTP file proof collection and configured DNS TXT proof collection without claiming DNS mutation, HTTP file hosting, provider control-plane mutation, or automatic background polling ownership.
 
 #### Declaration
 ```csharp
@@ -1694,6 +1747,16 @@ public static class TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys
 
 #### Fields
 
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-backgroundproofpollingownership"></a>
+
+##### `BackgroundProofPollingOwnership`
+
+```csharp
+const string BackgroundProofPollingOwnership
+```
+
+Metadata key that keeps automatic background proof polling ownership explicit.
+
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-dnstxtproofcollectionownership"></a>
 
 ##### `DnsTxtProofCollectionOwnership`
@@ -1712,7 +1775,7 @@ Metadata key that identifies Cephalon as the DNS TXT proof collection owner when
 const string ExternalProofPollingOwnership
 ```
 
-Metadata key that keeps background proof polling ownership explicit.
+Metadata key that keeps on-demand external proof polling ownership explicit.
 
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-httpproofcollectionownership"></a>
 
@@ -2444,6 +2507,16 @@ public static class TenantDomainOwnershipHttpProofCollectionMetadataKeys
 
 #### Fields
 
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-backgroundproofpollingownership"></a>
+
+##### `BackgroundProofPollingOwnership`
+
+```csharp
+const string BackgroundProofPollingOwnership
+```
+
+Metadata key that keeps automatic background proof polling ownership explicit.
+
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-dnstxtproofcollectionownership"></a>
 
 ##### `DnsTxtProofCollectionOwnership`
@@ -2462,7 +2535,7 @@ Metadata key that keeps DNS TXT proof collection ownership explicit.
 const string ExternalProofPollingOwnership
 ```
 
-Metadata key that keeps background proof polling ownership explicit.
+Metadata key that keeps on-demand external proof polling ownership explicit.
 
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys-httpproofcollectionownership"></a>
 
@@ -4169,6 +4242,617 @@ const string ProofEvaluationOwnership
 
 Ownership marker for proof evaluation performed by the governance companion.
 
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys"></a>
+
+### `TenantDomainOwnershipProofPollingMetadataKeys`
+
+Stable metadata keys emitted by tenant-domain ownership proof polling.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipProofPollingMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-backgroundproofpollingownership"></a>
+
+##### `BackgroundProofPollingOwnership`
+
+```csharp
+const string BackgroundProofPollingOwnership
+```
+
+Metadata key containing the automatic background proof polling ownership mode.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-batchlimit"></a>
+
+##### `BatchLimit`
+
+```csharp
+const string BatchLimit
+```
+
+Metadata key containing the effective batch limit used by the polling pass.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-candidatecount"></a>
+
+##### `CandidateCount`
+
+```csharp
+const string CandidateCount
+```
+
+Metadata key containing the number of declarations that matched the request filters before batch limiting.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-externalproofpollingownership"></a>
+
+##### `ExternalProofPollingOwnership`
+
+```csharp
+const string ExternalProofPollingOwnership
+```
+
+Metadata key containing the on-demand external proof polling ownership mode.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+const string FailedCount
+```
+
+Metadata key containing the number of polling attempts that did not reach an accepted terminal outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-lastproofpollingactor"></a>
+
+##### `LastProofPollingActor`
+
+```csharp
+const string LastProofPollingActor
+```
+
+Metadata key containing the latest proof polling actor.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-lastproofpollingcorrelationid"></a>
+
+##### `LastProofPollingCorrelationId`
+
+```csharp
+const string LastProofPollingCorrelationId
+```
+
+Metadata key containing the latest proof polling correlation identifier.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-lastproofpollingoutcome"></a>
+
+##### `LastProofPollingOutcome`
+
+```csharp
+const string LastProofPollingOutcome
+```
+
+Metadata key containing the latest proof polling outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-lastproofpollingranatutc"></a>
+
+##### `LastProofPollingRanAtUtc`
+
+```csharp
+const string LastProofPollingRanAtUtc
+```
+
+Metadata key containing the latest proof polling timestamp.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-lastproofpollingsource"></a>
+
+##### `LastProofPollingSource`
+
+```csharp
+const string LastProofPollingSource
+```
+
+Metadata key containing the latest proof polling source.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-proofpollingrunnerownership"></a>
+
+##### `ProofPollingRunnerOwnership`
+
+```csharp
+const string ProofPollingRunnerOwnership
+```
+
+Metadata key containing the proof polling runner ownership mode.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-rejectedcount"></a>
+
+##### `RejectedCount`
+
+```csharp
+const string RejectedCount
+```
+
+Metadata key containing the number of declarations rejected during the polling pass.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-skippedcount"></a>
+
+##### `SkippedCount`
+
+```csharp
+const string SkippedCount
+```
+
+Metadata key containing the number of declarations skipped by filters, missing expected proof policy, or batch limits.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-verificationcount"></a>
+
+##### `VerificationCount`
+
+```csharp
+const string VerificationCount
+```
+
+Metadata key containing the number of proof verification attempts run during the polling pass.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-verifiedcount"></a>
+
+##### `VerifiedCount`
+
+```csharp
+const string VerifiedCount
+```
+
+Metadata key containing the number of declarations verified during the polling pass.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingoutcomes"></a>
+
+### `TenantDomainOwnershipProofPollingOutcomes`
+
+Stable tenant-domain ownership proof polling outcome labels.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipProofPollingOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingoutcomes-completed"></a>
+
+##### `Completed`
+
+```csharp
+const string Completed
+```
+
+At least one matching domain ownership declaration was polled and all attempts reached a terminal or non-failing outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Proof polling is disabled by governance options.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingoutcomes-nocandidates"></a>
+
+##### `NoCandidates`
+
+```csharp
+const string NoCandidates
+```
+
+No matching domain ownership declarations needed a polling attempt.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingoutcomes-partialfailure"></a>
+
+##### `PartialFailure`
+
+```csharp
+const string PartialFailure
+```
+
+At least one matching domain ownership declaration was polled, but one or more attempts could not complete.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest"></a>
+
+### `TenantDomainOwnershipProofPollingRequest`
+
+Describes a bounded tenant-domain ownership proof polling request.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofPollingRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-ctor-system-collections-generic-ireadonlycollection-system-string-system-collections-generic-ireadonlycollection-system-string-system-collections-generic-ireadonlycollection-system-string-system-uri-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-int32-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofPollingRequest`
+
+```csharp
+TenantDomainOwnershipProofPollingRequest(IReadOnlyCollection<string> tenantIds, IReadOnlyCollection<string> domainNames, IReadOnlyCollection<string> verificationMethods, Uri collectionBaseUri, Uri dnsTxtResolverEndpoint, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, int? maxItems, bool includeHttpFile, bool includeDnsTxt, bool includeRejected, bool includeMissingExpectedProof, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof polling request.
+
+Parameters:
+- `tenantIds`: Optional tenant identifiers to include. When omitted, all tenants are eligible.
+- `domainNames`: Optional domain names to include. When omitted, all domains are eligible.
+- `verificationMethods`: Optional verification methods to include. When omitted, HTTP file and DNS TXT declarations are eligible.
+- `collectionBaseUri`: The optional base URI used by HTTP file proof collection.
+- `dnsTxtResolverEndpoint`: The optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection.
+- `source`: The source that requested the polling pass.
+- `actor`: The actor that requested the polling pass when known.
+- `atUtc`: The UTC timestamp used by the polling pass. The runtime clock is used when omitted.
+- `expiresAtUtc`: The optional UTC timestamp applied if proof evaluation verifies a declaration.
+- `correlationId`: The optional correlation identifier for the polling pass.
+- `maxItems`: The optional maximum number of declarations to poll in this pass.
+- `includeHttpFile`: A value indicating whether HTTP file declarations are eligible.
+- `includeDnsTxt`: A value indicating whether DNS TXT declarations are eligible.
+- `includeRejected`: A value indicating whether rejected declarations can be retried.
+- `includeMissingExpectedProof`: A value indicating whether declarations without expected proof metadata should still be passed to the verifier.
+- `recordPublicationPlan`: A value indicating whether nested verification should record publication-plan metadata.
+- `timeout`: The optional per-request proof collection timeout.
+- `metadata`: Optional proof polling metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested the polling pass when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used by the polling pass.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-collectionbaseuri"></a>
+
+##### `CollectionBaseUri`
+
+```csharp
+Uri CollectionBaseUri { get; }
+```
+
+Gets the optional base URI used by HTTP file proof collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the polling pass.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-dnstxtresolverendpoint"></a>
+
+##### `DnsTxtResolverEndpoint`
+
+```csharp
+Uri DnsTxtResolverEndpoint { get; }
+```
+
+Gets the optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-domainnames"></a>
+
+##### `DomainNames`
+
+```csharp
+IReadOnlyList<string> DomainNames { get; }
+```
+
+Gets optional canonical domain names to include.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the optional UTC timestamp applied if proof evaluation verifies a declaration.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-includednstxt"></a>
+
+##### `IncludeDnsTxt`
+
+```csharp
+bool IncludeDnsTxt { get; }
+```
+
+Gets a value indicating whether DNS TXT declarations are eligible.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-includehttpfile"></a>
+
+##### `IncludeHttpFile`
+
+```csharp
+bool IncludeHttpFile { get; }
+```
+
+Gets a value indicating whether HTTP file declarations are eligible.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-includemissingexpectedproof"></a>
+
+##### `IncludeMissingExpectedProof`
+
+```csharp
+bool IncludeMissingExpectedProof { get; }
+```
+
+Gets a value indicating whether declarations without expected proof metadata should still be passed to the verifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-includerejected"></a>
+
+##### `IncludeRejected`
+
+```csharp
+bool IncludeRejected { get; }
+```
+
+Gets a value indicating whether rejected declarations can be retried.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-maxitems"></a>
+
+##### `MaxItems`
+
+```csharp
+int? MaxItems { get; }
+```
+
+Gets the optional maximum number of declarations to poll in this pass.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional proof polling metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-recordpublicationplan"></a>
+
+##### `RecordPublicationPlan`
+
+```csharp
+bool RecordPublicationPlan { get; }
+```
+
+Gets a value indicating whether nested verification should record publication-plan metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that requested the polling pass.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-tenantids"></a>
+
+##### `TenantIds`
+
+```csharp
+IReadOnlyList<string> TenantIds { get; }
+```
+
+Gets optional tenant identifiers to include.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-timeout"></a>
+
+##### `Timeout`
+
+```csharp
+TimeSpan? Timeout { get; }
+```
+
+Gets the optional per-request proof collection timeout.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-verificationmethods"></a>
+
+##### `VerificationMethods`
+
+```csharp
+IReadOnlyList<string> VerificationMethods { get; }
+```
+
+Gets optional verification methods to include.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult"></a>
+
+### `TenantDomainOwnershipProofPollingResult`
+
+Describes the aggregate result of one tenant-domain ownership proof polling pass.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipProofPollingResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-ctor-system-string-system-boolean-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipProofPollingResult`
+
+```csharp
+TenantDomainOwnershipProofPollingResult(string outcome, bool polled, DateTimeOffset ranAtUtc, int candidateCount, int verificationCount, int skippedCount, int verifiedCount, int rejectedCount, int failedCount, int batchLimit, IReadOnlyList<TenantDomainOwnershipProofVerificationResult> verificationResults, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership proof polling result.
+
+Parameters:
+- `outcome`: The stable proof polling outcome.
+- `polled`: A value indicating whether at least one verification attempt ran.
+- `ranAtUtc`: The UTC timestamp when polling ran.
+- `candidateCount`: The number of declarations that matched request filters before batch limiting.
+- `verificationCount`: The number of verification attempts run.
+- `skippedCount`: The number of declarations skipped by filters, missing expected proof policy, or batch limits.
+- `verifiedCount`: The number of declarations verified by the polling pass.
+- `rejectedCount`: The number of declarations rejected by the polling pass.
+- `failedCount`: The number of attempts that did not reach an accepted terminal outcome.
+- `batchLimit`: The effective maximum number of declarations this pass could poll.
+- `verificationResults`: The nested proof verification results.
+- `reason`: The operator-facing proof polling reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-batchlimit"></a>
+
+##### `BatchLimit`
+
+```csharp
+int BatchLimit { get; }
+```
+
+Gets the effective maximum number of declarations this pass could poll.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-candidatecount"></a>
+
+##### `CandidateCount`
+
+```csharp
+int CandidateCount { get; }
+```
+
+Gets the number of declarations that matched request filters before batch limiting.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; }
+```
+
+Gets the number of attempts that did not reach an accepted terminal outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable proof polling outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-polled"></a>
+
+##### `Polled`
+
+```csharp
+bool Polled { get; }
+```
+
+Gets a value indicating whether at least one verification attempt ran.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-ranatutc"></a>
+
+##### `RanAtUtc`
+
+```csharp
+DateTimeOffset RanAtUtc { get; }
+```
+
+Gets the UTC timestamp when polling ran.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing proof polling reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-rejectedcount"></a>
+
+##### `RejectedCount`
+
+```csharp
+int RejectedCount { get; }
+```
+
+Gets the number of declarations rejected by the polling pass.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-skippedcount"></a>
+
+##### `SkippedCount`
+
+```csharp
+int SkippedCount { get; }
+```
+
+Gets the number of declarations skipped by filters, missing expected proof policy, or batch limits.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-verificationcount"></a>
+
+##### `VerificationCount`
+
+```csharp
+int VerificationCount { get; }
+```
+
+Gets the number of verification attempts run.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-verificationresults"></a>
+
+##### `VerificationResults`
+
+```csharp
+IReadOnlyList<TenantDomainOwnershipProofVerificationResult> VerificationResults { get; }
+```
+
+Gets the nested proof verification results.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-verifiedcount"></a>
+
+##### `VerifiedCount`
+
+```csharp
+int VerifiedCount { get; }
+```
+
+Gets the number of declarations verified by the polling pass.
+
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys"></a>
 
 ### `TenantDomainOwnershipProofPublicationPlanMetadataKeys`
@@ -4758,6 +5442,16 @@ public static class TenantDomainOwnershipProofVerificationMetadataKeys
 
 #### Fields
 
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-backgroundproofpollingownership"></a>
+
+##### `BackgroundProofPollingOwnership`
+
+```csharp
+const string BackgroundProofPollingOwnership
+```
+
+Metadata key for automatic background proof polling ownership.
+
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-dnstxtproofcollectionownership"></a>
 
 ##### `DnsTxtProofCollectionOwnership`
@@ -4776,7 +5470,7 @@ Metadata key for DNS TXT proof collection ownership.
 const string ExternalProofPollingOwnership
 ```
 
-Metadata key for external proof polling ownership.
+Metadata key for on-demand external proof polling ownership.
 
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-httpproofcollectionownership"></a>
 
@@ -4887,6 +5581,16 @@ const string LastProofVerificationSource
 ```
 
 Metadata key for the source that requested the latest proof verification run.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-proofpollingrunnerownership"></a>
+
+##### `ProofPollingRunnerOwnership`
+
+```csharp
+const string ProofPollingRunnerOwnership
+```
+
+Metadata key for proof polling runner ownership.
 
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-proofverificationrunnerownership"></a>
 

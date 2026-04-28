@@ -60,11 +60,15 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
             options.EnableDomainOwnershipVerificationWorkflow;
+        var proofPollingRunnerEnabled = options.EnableDomainOwnershipProofPollingRunner &&
+            proofVerificationRunnerEnabled;
         var dnsHttpProofCollectionOwnership = httpProofCollectionEnabled && dnsTxtProofCollectionConfigured
             ? "cephalon-managed"
             : httpProofCollectionEnabled || dnsTxtProofCollectionConfigured
                 ? "mixed"
                 : "application-managed";
+        var proofPollingRunnerOwnership = proofPollingRunnerEnabled ? "cephalon-managed" : "not-configured";
+        var externalProofPollingOwnership = proofPollingRunnerEnabled ? "cephalon-managed" : "application-managed";
 
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -101,7 +105,11 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionConfigured ? "cephalon-managed" : "not-configured",
             ["proofVerificationRunnerEnabled"] = proofVerificationRunnerEnabled.ToString().ToLowerInvariant(),
             ["proofVerificationRunnerOwnership"] = proofVerificationRunnerEnabled ? "cephalon-managed" : "not-configured",
-            ["externalProofPollingOwnership"] = "application-managed",
+            ["proofPollingRunnerEnabled"] = proofPollingRunnerEnabled.ToString().ToLowerInvariant(),
+            ["proofPollingRunnerOwnership"] = proofPollingRunnerOwnership,
+            ["externalProofPollingOwnership"] = externalProofPollingOwnership,
+            ["backgroundProofPollingOwnership"] = "application-managed",
+            ["proofPollingDefaultBatchLimit"] = (options.DomainOwnershipProofPollingMaxItems <= 0 ? 50 : options.DomainOwnershipProofPollingMaxItems).ToString(CultureInfo.InvariantCulture),
             ["proofPublicationOwnership"] = "application-managed",
             ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
@@ -114,7 +122,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-domain-ownership-runtime",
             displayName: "Tenant Domain Ownership Runtime",
-            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, managed proof-publication planning ownership, managed HTTP proof-collection ownership, configured DNS TXT proof-collection ownership, and managed proof-verification runner ownership.",
+            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, managed proof-publication planning ownership, managed HTTP proof-collection ownership, configured DNS TXT proof-collection ownership, managed proof-verification runner ownership, and managed on-demand proof-polling runner ownership.",
             metadata: metadata);
     }
 

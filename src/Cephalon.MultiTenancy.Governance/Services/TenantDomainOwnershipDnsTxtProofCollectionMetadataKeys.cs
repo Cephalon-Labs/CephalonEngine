@@ -76,7 +76,12 @@ public static class TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys
     public const string HttpProofCollectionOwnership = "httpProofCollectionOwnership";
 
     /// <summary>
-    /// Metadata key that keeps background proof polling ownership explicit.
+    /// Metadata key that keeps on-demand external proof polling ownership explicit.
     /// </summary>
     public const string ExternalProofPollingOwnership = "externalProofPollingOwnership";
+
+    /// <summary>
+    /// Metadata key that keeps automatic background proof polling ownership explicit.
+    /// </summary>
+    public const string BackgroundProofPollingOwnership = "backgroundProofPollingOwnership";
 }

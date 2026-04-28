@@ -90,6 +90,20 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableDomainOwnershipProofVerificationRunner { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in bounded tenant-domain ownership proof polling runner is active.
+    /// </summary>
+    /// <remarks>
+    /// The polling runner owns one on-demand scan over pending or rejected declarations and delegates each
+    /// attempt to the proof verification runner. It does not schedule background polling or publish DNS/HTTP proof values.
+    /// </remarks>
+    public bool EnableDomainOwnershipProofPollingRunner { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the default maximum number of tenant-domain ownership declarations polled in one runner pass.
+    /// </summary>
+    public int DomainOwnershipProofPollingMaxItems { get; set; } = 50;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-governance action decider is active.
     /// </summary>
     public bool EnableGovernanceActionDecision { get; set; } = true;

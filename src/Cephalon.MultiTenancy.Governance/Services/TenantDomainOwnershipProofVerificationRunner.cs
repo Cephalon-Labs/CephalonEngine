@@ -804,9 +804,11 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.LastProofVerificationRanAtUtc] = ranAtUtc.ToString("O", CultureInfo.InvariantCulture);
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.LastProofVerificationSource] = request.Source ?? "proof-verification-runner";
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.ProofVerificationRunnerOwnership] = options.EnableDomainOwnershipProofVerificationRunner ? "cephalon-managed" : "not-configured";
+        metadata[TenantDomainOwnershipProofVerificationMetadataKeys.ProofPollingRunnerOwnership] = ResolveProofPollingRunnerOwnership();
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.HttpProofCollectionOwnership] = httpProofCollector is null ? "not-configured" : "cephalon-managed";
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.DnsTxtProofCollectionOwnership] = ResolveDnsTxtProofCollectionOwnership(request);
-        metadata[TenantDomainOwnershipProofVerificationMetadataKeys.ExternalProofPollingOwnership] = "application-managed";
+        metadata[TenantDomainOwnershipProofVerificationMetadataKeys.ExternalProofPollingOwnership] = ResolveExternalProofPollingOwnership();
+        metadata[TenantDomainOwnershipProofVerificationMetadataKeys.BackgroundProofPollingOwnership] = "application-managed";
 
         if (!string.IsNullOrWhiteSpace(request.Actor))
         {
@@ -844,6 +846,20 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
         }
 
         return metadata;
+    }
+
+    private string ResolveProofPollingRunnerOwnership()
+    {
+        return options.EnableDomainOwnershipProofPollingRunner && options.EnableDomainOwnershipProofVerificationRunner
+            ? "cephalon-managed"
+            : "not-configured";
+    }
+
+    private string ResolveExternalProofPollingOwnership()
+    {
+        return options.EnableDomainOwnershipProofPollingRunner && options.EnableDomainOwnershipProofVerificationRunner
+            ? "cephalon-managed"
+            : "application-managed";
     }
 
     private static TenantDomainOwnershipProofVerificationResult CreateResult(

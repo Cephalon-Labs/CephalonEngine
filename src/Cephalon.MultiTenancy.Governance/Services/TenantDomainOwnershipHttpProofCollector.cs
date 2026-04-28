@@ -540,6 +540,13 @@ internal sealed class TenantDomainOwnershipHttpProofCollector(
             : "not-configured";
     }
 
+    private string ResolveExternalProofPollingOwnership()
+    {
+        return options.EnableDomainOwnershipProofPollingRunner && options.EnableDomainOwnershipProofVerificationRunner
+            ? "cephalon-managed"
+            : "application-managed";
+    }
+
     private static async ValueTask<HttpProofBodyReadResult> ReadBodyAsync(
         HttpContent content,
         int maxResponseBytes,
@@ -605,7 +612,8 @@ internal sealed class TenantDomainOwnershipHttpProofCollector(
         metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionSource] = request.Source ?? "http-proof-collector";
         metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.HttpProofCollectionOwnership] = "cephalon-managed";
         metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.DnsTxtProofCollectionOwnership] = ResolveDnsTxtProofCollectionOwnership();
-        metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.ExternalProofPollingOwnership] = "application-managed";
+        metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.ExternalProofPollingOwnership] = ResolveExternalProofPollingOwnership();
+        metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.BackgroundProofPollingOwnership] = "application-managed";
 
         if (!string.IsNullOrWhiteSpace(request.Actor))
         {

@@ -6,8 +6,9 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 /// <remarks>
 /// The runner reduces application glue code by composing challenge issuance,
 /// publication planning, reported-proof evaluation, and optional HTTP file
-/// proof collection without claiming DNS mutation, HTTP file hosting, DNS TXT
-/// collection, or background polling ownership.
+/// proof collection and configured DNS TXT proof collection without claiming
+/// DNS mutation, HTTP file hosting, provider control-plane mutation, or
+/// automatic background polling ownership.
 /// </remarks>
 public interface ITenantDomainOwnershipProofVerificationRunner
 {
