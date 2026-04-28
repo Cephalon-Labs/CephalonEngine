@@ -80,6 +80,11 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableDomainOwnershipHttpProofCollection { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in tenant-domain ownership DNS TXT proof collector is active.
+    /// </summary>
+    public bool EnableDomainOwnershipDnsTxtProofCollection { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-domain ownership proof verification runner is active.
     /// </summary>
     public bool EnableDomainOwnershipProofVerificationRunner { get; set; } = true;
@@ -133,6 +138,25 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets the maximum response body size, in bytes, accepted by HTTP proof collection.
     /// </summary>
     public int DomainOwnershipHttpProofCollectionMaxResponseBytes { get; set; } = 4096;
+
+    /// <summary>
+    /// Gets or sets the optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection.
+    /// </summary>
+    /// <remarks>
+    /// When omitted, callers can still provide a per-request resolver endpoint. Cephalon does not use
+    /// a hidden public resolver by default.
+    /// </remarks>
+    public Uri? DomainOwnershipDnsTxtProofResolverEndpoint { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default timeout, in seconds, used by DNS TXT proof collection.
+    /// </summary>
+    public int DomainOwnershipDnsTxtProofCollectionTimeoutSeconds { get; set; } = 10;
+
+    /// <summary>
+    /// Gets or sets the maximum response body size, in bytes, accepted by DNS TXT proof collection.
+    /// </summary>
+    public int DomainOwnershipDnsTxtProofCollectionMaxResponseBytes { get; set; } = 16384;
 
     /// <summary>
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.

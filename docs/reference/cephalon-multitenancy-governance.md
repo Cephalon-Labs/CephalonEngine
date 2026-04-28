@@ -50,6 +50,38 @@ bool AllowInsecureDomainOwnershipHttpProofCollection { get; set; }
 
 Gets or sets a value indicating whether HTTP proof collection may use non-HTTPS URLs.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipdnstxtproofcollectionmaxresponsebytes"></a>
+
+##### `DomainOwnershipDnsTxtProofCollectionMaxResponseBytes`
+
+```csharp
+int DomainOwnershipDnsTxtProofCollectionMaxResponseBytes { get; set; }
+```
+
+Gets or sets the maximum response body size, in bytes, accepted by DNS TXT proof collection.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipdnstxtproofcollectiontimeoutseconds"></a>
+
+##### `DomainOwnershipDnsTxtProofCollectionTimeoutSeconds`
+
+```csharp
+int DomainOwnershipDnsTxtProofCollectionTimeoutSeconds { get; set; }
+```
+
+Gets or sets the default timeout, in seconds, used by DNS TXT proof collection.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipdnstxtproofresolverendpoint"></a>
+
+##### `DomainOwnershipDnsTxtProofResolverEndpoint`
+
+```csharp
+Uri DomainOwnershipDnsTxtProofResolverEndpoint { get; set; }
+```
+
+Gets or sets the optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection.
+
+Remarks: When omitted, callers can still provide a per-request resolver endpoint. Cephalon does not use a hidden public resolver by default.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershiphttpproofcollectionmaxresponsebytes"></a>
 
 ##### `DomainOwnershipHttpProofCollectionMaxResponseBytes`
@@ -109,6 +141,16 @@ string DomainOwnershipStoreFilePath { get; set; }
 ```
 
 Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipdnstxtproofcollection"></a>
+
+##### `EnableDomainOwnershipDnsTxtProofCollection`
+
+```csharp
+bool EnableDomainOwnershipDnsTxtProofCollection { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in tenant-domain ownership DNS TXT proof collector is active.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershiphttpproofcollection"></a>
 
@@ -413,6 +455,37 @@ Registers one or more tenant-domain ownership descriptors with the supplied regi
 
 Parameters:
 - `domainOwnerships`: The registry that collects contributed domain ownership descriptors.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantdomainownershipdnstxtproofcollector"></a>
+
+### `ITenantDomainOwnershipDnsTxtProofCollector`
+
+Collects tenant-domain ownership DNS TXT proof evidence and evaluates the collected proof through the governance workflow.
+
+Remarks: The collector owns the on-demand DNS TXT proof lookup path for declarations that use `DnsTxt`. It does not mutate DNS provider records, publish proof values, or run background polling.
+
+#### Declaration
+```csharp
+public interface ITenantDomainOwnershipDnsTxtProofCollector
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantdomainownershipdnstxtproofcollector-collectasync-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-system-threading-cancellationtoken"></a>
+
+##### `CollectAsync`
+
+```csharp
+ValueTask<TenantDomainOwnershipDnsTxtProofCollectionResult> CollectAsync(TenantDomainOwnershipDnsTxtProofCollectionRequest request, CancellationToken cancellationToken)
+```
+
+Collects and evaluates one tenant-domain ownership DNS TXT proof.
+
+Returns: The collection result and nested proof-evaluation outcome.
+
+Parameters:
+- `request`: The DNS TXT proof collection request.
+- `cancellationToken`: A token that cancels collection before the proof evaluator is invoked.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofcollector"></a>
 
@@ -1607,6 +1680,756 @@ DateTimeOffset? VerifiedAtUtc { get; }
 ```
 
 Gets the UTC timestamp when ownership was verified.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys"></a>
+
+### `TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys`
+
+Stable metadata keys written by tenant-domain ownership DNS TXT proof collection.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-dnstxtproofcollectionownership"></a>
+
+##### `DnsTxtProofCollectionOwnership`
+
+```csharp
+const string DnsTxtProofCollectionOwnership
+```
+
+Metadata key that identifies Cephalon as the DNS TXT proof collection owner when a resolver endpoint is configured.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-externalproofpollingownership"></a>
+
+##### `ExternalProofPollingOwnership`
+
+```csharp
+const string ExternalProofPollingOwnership
+```
+
+Metadata key that keeps background proof polling ownership explicit.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-httpproofcollectionownership"></a>
+
+##### `HttpProofCollectionOwnership`
+
+```csharp
+const string HttpProofCollectionOwnership
+```
+
+Metadata key for HTTP proof collection ownership.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectedatutc"></a>
+
+##### `LastDnsTxtProofCollectedAtUtc`
+
+```csharp
+const string LastDnsTxtProofCollectedAtUtc
+```
+
+Metadata key for the UTC timestamp when DNS TXT proof collection executed.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionactor"></a>
+
+##### `LastDnsTxtProofCollectionActor`
+
+```csharp
+const string LastDnsTxtProofCollectionActor
+```
+
+Metadata key for the actor that requested DNS TXT proof collection when known.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectioncontentlength"></a>
+
+##### `LastDnsTxtProofCollectionContentLength`
+
+```csharp
+const string LastDnsTxtProofCollectionContentLength
+```
+
+Metadata key for the DNS TXT resolver response body length.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectioncorrelationid"></a>
+
+##### `LastDnsTxtProofCollectionCorrelationId`
+
+```csharp
+const string LastDnsTxtProofCollectionCorrelationId
+```
+
+Metadata key for the DNS TXT proof collection correlation identifier.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionobservedfingerprint"></a>
+
+##### `LastDnsTxtProofCollectionObservedFingerprint`
+
+```csharp
+const string LastDnsTxtProofCollectionObservedFingerprint
+```
+
+Metadata key for the SHA-256 fingerprint of the matching collected DNS TXT proof.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionobservedtxtrecordcount"></a>
+
+##### `LastDnsTxtProofCollectionObservedTxtRecordCount`
+
+```csharp
+const string LastDnsTxtProofCollectionObservedTxtRecordCount
+```
+
+Metadata key for the number of TXT answers observed by collection.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionoutcome"></a>
+
+##### `LastDnsTxtProofCollectionOutcome`
+
+```csharp
+const string LastDnsTxtProofCollectionOutcome
+```
+
+Metadata key for the last DNS TXT proof collection outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionpublicationplanoutcome"></a>
+
+##### `LastDnsTxtProofCollectionPublicationPlanOutcome`
+
+```csharp
+const string LastDnsTxtProofCollectionPublicationPlanOutcome
+```
+
+Metadata key for the nested publication-plan outcome used by collection.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionrecordname"></a>
+
+##### `LastDnsTxtProofCollectionRecordName`
+
+```csharp
+const string LastDnsTxtProofCollectionRecordName
+```
+
+Metadata key for the DNS TXT record name queried during collection.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionresolveruri"></a>
+
+##### `LastDnsTxtProofCollectionResolverUri`
+
+```csharp
+const string LastDnsTxtProofCollectionResolverUri
+```
+
+Metadata key for the resolver URI used to collect the DNS TXT proof.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionsource"></a>
+
+##### `LastDnsTxtProofCollectionSource`
+
+```csharp
+const string LastDnsTxtProofCollectionSource
+```
+
+Metadata key for the source that requested DNS TXT proof collection.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionstatuscode"></a>
+
+##### `LastDnsTxtProofCollectionStatusCode`
+
+```csharp
+const string LastDnsTxtProofCollectionStatusCode
+```
+
+Metadata key for the HTTP status code returned by the DNS TXT resolver.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes"></a>
+
+### `TenantDomainOwnershipDnsTxtProofCollectionOutcomes`
+
+Stable tenant-domain ownership DNS TXT proof collection outcome labels.
+
+#### Declaration
+```csharp
+public static class TenantDomainOwnershipDnsTxtProofCollectionOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-collected"></a>
+
+##### `Collected`
+
+```csharp
+const string Collected
+```
+
+DNS TXT proof content was collected and proof evaluation reached a terminal workflow outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+DNS TXT proof collection is disabled by governance options.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-emptyresponse"></a>
+
+##### `EmptyResponse`
+
+```csharp
+const string EmptyResponse
+```
+
+The DNS TXT proof resolver returned an empty response body.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-evaluationfailed"></a>
+
+##### `EvaluationFailed`
+
+```csharp
+const string EvaluationFailed
+```
+
+DNS TXT content was collected, but proof evaluation did not apply a terminal workflow outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-invalidresolveruri"></a>
+
+##### `InvalidResolverUri`
+
+```csharp
+const string InvalidResolverUri
+```
+
+The resolved DNS TXT proof resolver URI is invalid or unsafe.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-invalidresponse"></a>
+
+##### `InvalidResponse`
+
+```csharp
+const string InvalidResponse
+```
+
+The DNS TXT proof resolver response could not be parsed as a DNS JSON response.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-missingexpectedproof"></a>
+
+##### `MissingExpectedProof`
+
+```csharp
+const string MissingExpectedProof
+```
+
+Expected proof metadata is missing from the tenant-domain ownership declaration.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-missingpublicationplan"></a>
+
+##### `MissingPublicationPlan`
+
+```csharp
+const string MissingPublicationPlan
+```
+
+Publication planning did not provide a DNS TXT record name and expected proof value.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-nomatchingtxtrecord"></a>
+
+##### `NoMatchingTxtRecord`
+
+```csharp
+const string NoMatchingTxtRecord
+```
+
+DNS TXT answers were returned, but none matched the expected proof value.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const string NotFound
+```
+
+No tenant-domain ownership declaration matched the supplied tenant and domain.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-notxtrecords"></a>
+
+##### `NoTxtRecords`
+
+```csharp
+const string NoTxtRecords
+```
+
+No DNS TXT answer was returned for the planned proof record.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-requestfailed"></a>
+
+##### `RequestFailed`
+
+```csharp
+const string RequestFailed
+```
+
+The DNS TXT proof resolver could not be reached or timed out.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-resolvernotconfigured"></a>
+
+##### `ResolverNotConfigured`
+
+```csharp
+const string ResolverNotConfigured
+```
+
+DNS TXT proof collection has no configured resolver endpoint.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-responsetoolarge"></a>
+
+##### `ResponseTooLarge`
+
+```csharp
+const string ResponseTooLarge
+```
+
+The DNS TXT proof resolver response body exceeded the configured collection size limit.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+Publication-plan metadata could not be recorded before collection.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-tenantmismatch"></a>
+
+##### `TenantMismatch`
+
+```csharp
+const string TenantMismatch
+```
+
+A declaration for the supplied domain belongs to a different tenant.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-unexpectedstatuscode"></a>
+
+##### `UnexpectedStatusCode`
+
+```csharp
+const string UnexpectedStatusCode
+```
+
+The DNS TXT proof resolver returned a non-success status code.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-unsupportedverificationmethod"></a>
+
+##### `UnsupportedVerificationMethod`
+
+```csharp
+const string UnsupportedVerificationMethod
+```
+
+The verification method cannot be collected by the built-in DNS TXT proof collector.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-verificationmethodmismatch"></a>
+
+##### `VerificationMethodMismatch`
+
+```csharp
+const string VerificationMethodMismatch
+```
+
+The matching domain ownership declaration uses a different verification method.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest"></a>
+
+### `TenantDomainOwnershipDnsTxtProofCollectionRequest`
+
+Describes a tenant-domain ownership DNS TXT proof collection request.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipDnsTxtProofCollectionRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-ctor-system-string-system-string-system-string-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipDnsTxtProofCollectionRequest`
+
+```csharp
+TenantDomainOwnershipDnsTxtProofCollectionRequest(string tenantId, string domainName, string verificationMethod, Uri resolverEndpoint, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership DNS TXT proof collection request.
+
+Parameters:
+- `tenantId`: The tenant identifier that owns the domain declaration.
+- `domainName`: The domain name whose DNS TXT proof should be collected.
+- `verificationMethod`: The optional verification method boundary. Only DNS TXT verification can be collected.
+- `resolverEndpoint`: The optional DNS-over-HTTPS resolver endpoint used for collection.
+- `source`: The source that requested DNS TXT proof collection.
+- `actor`: The actor that requested DNS TXT proof collection when known.
+- `atUtc`: The UTC timestamp used for collection. The runtime clock is used when omitted.
+- `expiresAtUtc`: The optional UTC timestamp applied if proof evaluation verifies the declaration.
+- `correlationId`: The optional correlation identifier for collection and evaluation.
+- `recordPublicationPlan`: A value indicating whether the publication plan should be recorded before collection.
+- `timeout`: The optional per-request DNS TXT collection timeout.
+- `metadata`: Optional DNS TXT proof collection metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested DNS TXT proof collection when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for collection and evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name whose DNS TXT proof should be collected.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ExpiresAtUtc { get; }
+```
+
+Gets the optional UTC timestamp applied if proof evaluation verifies the declaration.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional DNS TXT proof collection metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-recordpublicationplan"></a>
+
+##### `RecordPublicationPlan`
+
+```csharp
+bool RecordPublicationPlan { get; }
+```
+
+Gets a value indicating whether the publication plan should be recorded before collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-resolverendpoint"></a>
+
+##### `ResolverEndpoint`
+
+```csharp
+Uri ResolverEndpoint { get; }
+```
+
+Gets the optional DNS-over-HTTPS resolver endpoint used for collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that requested DNS TXT proof collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that owns the domain declaration.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-timeout"></a>
+
+##### `Timeout`
+
+```csharp
+TimeSpan? Timeout { get; }
+```
+
+Gets the optional per-request DNS TXT collection timeout.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the verification method boundary.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult"></a>
+
+### `TenantDomainOwnershipDnsTxtProofCollectionResult`
+
+Describes the result of one tenant-domain ownership DNS TXT proof collection attempt.
+
+#### Declaration
+```csharp
+public sealed class TenantDomainOwnershipDnsTxtProofCollectionResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-uri-system-string-system-nullable-system-int32-system-nullable-system-int64-system-int32-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantDomainOwnershipDnsTxtProofCollectionResult`
+
+```csharp
+TenantDomainOwnershipDnsTxtProofCollectionResult(string tenantId, string domainName, string verificationMethod, string outcome, bool collected, bool evaluated, DateTimeOffset collectedAtUtc, Uri resolverUri, string dnsTxtRecordName, int? statusCode, long? contentLength, int observedTxtRecordCount, string observedProofFingerprint, TenantDomainOwnershipProofPublicationPlanResult publicationPlanResult, TenantDomainOwnershipProofEvaluationResult evaluationResult, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-domain ownership DNS TXT proof collection result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `domainName`: The canonical domain name that was evaluated.
+- `verificationMethod`: The verification method used for collection.
+- `outcome`: The stable DNS TXT proof collection outcome.
+- `collected`: A value indicating whether DNS TXT proof content was collected.
+- `evaluated`: A value indicating whether proof evaluation reached a terminal workflow outcome.
+- `collectedAtUtc`: The UTC timestamp when collection executed.
+- `resolverUri`: The resolver URI used to collect the DNS TXT proof.
+- `dnsTxtRecordName`: The DNS TXT record name queried during collection.
+- `statusCode`: The HTTP status code returned by the DNS TXT resolver.
+- `contentLength`: The collected DNS TXT resolver response body length.
+- `observedTxtRecordCount`: The number of TXT answers observed by collection.
+- `observedProofFingerprint`: The SHA-256 fingerprint of the matching collected TXT proof.
+- `publicationPlanResult`: The publication-plan result used by collection.
+- `evaluationResult`: The proof-evaluation result produced after collection.
+- `domainOwnership`: The matching or resulting domain ownership descriptor when one exists.
+- `reason`: The operator-facing DNS TXT proof collection reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-collected"></a>
+
+##### `Collected`
+
+```csharp
+bool Collected { get; }
+```
+
+Gets a value indicating whether DNS TXT proof content was collected.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-collectedatutc"></a>
+
+##### `CollectedAtUtc`
+
+```csharp
+DateTimeOffset CollectedAtUtc { get; }
+```
+
+Gets the UTC timestamp when collection executed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-contentlength"></a>
+
+##### `ContentLength`
+
+```csharp
+long? ContentLength { get; }
+```
+
+Gets the collected DNS TXT resolver response body length.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-dnstxtrecordname"></a>
+
+##### `DnsTxtRecordName`
+
+```csharp
+string DnsTxtRecordName { get; }
+```
+
+Gets the DNS TXT record name queried during collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-domainname"></a>
+
+##### `DomainName`
+
+```csharp
+string DomainName { get; }
+```
+
+Gets the canonical domain name that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-domainownership"></a>
+
+##### `DomainOwnership`
+
+```csharp
+TenantDomainOwnershipDescriptor DomainOwnership { get; }
+```
+
+Gets the matching or resulting domain ownership descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-evaluated"></a>
+
+##### `Evaluated`
+
+```csharp
+bool Evaluated { get; }
+```
+
+Gets a value indicating whether proof evaluation reached a terminal workflow outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-evaluationresult"></a>
+
+##### `EvaluationResult`
+
+```csharp
+TenantDomainOwnershipProofEvaluationResult EvaluationResult { get; }
+```
+
+Gets the proof-evaluation result produced after collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-observedprooffingerprint"></a>
+
+##### `ObservedProofFingerprint`
+
+```csharp
+string ObservedProofFingerprint { get; }
+```
+
+Gets the SHA-256 fingerprint of the matching collected TXT proof.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-observedtxtrecordcount"></a>
+
+##### `ObservedTxtRecordCount`
+
+```csharp
+int ObservedTxtRecordCount { get; }
+```
+
+Gets the number of TXT answers observed by collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable DNS TXT proof collection outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-publicationplanresult"></a>
+
+##### `PublicationPlanResult`
+
+```csharp
+TenantDomainOwnershipProofPublicationPlanResult PublicationPlanResult { get; }
+```
+
+Gets the publication-plan result used by collection.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing DNS TXT proof collection reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-resolveruri"></a>
+
+##### `ResolverUri`
+
+```csharp
+Uri ResolverUri { get; }
+```
+
+Gets the resolver URI used to collect the DNS TXT proof.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-statuscode"></a>
+
+##### `StatusCode`
+
+```csharp
+int? StatusCode { get; }
+```
+
+Gets the HTTP status code returned by the DNS TXT resolver.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-verificationmethod"></a>
+
+##### `VerificationMethod`
+
+```csharp
+string VerificationMethod { get; }
+```
+
+Gets the verification method used for collection.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionmetadatakeys"></a>
 
@@ -3995,6 +4818,16 @@ const string LastProofVerificationCorrelationId
 
 Metadata key for the correlation identifier attached to the latest proof verification run.
 
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationdnstxtcollectionoutcome"></a>
+
+##### `LastProofVerificationDnsTxtCollectionOutcome`
+
+```csharp
+const string LastProofVerificationDnsTxtCollectionOutcome
+```
+
+Metadata key for the DNS TXT proof collection outcome observed by the latest proof verification run.
+
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationevaluationoutcome"></a>
 
 ##### `LastProofVerificationEvaluationOutcome`
@@ -4117,6 +4950,26 @@ const string Disabled
 ```
 
 Proof verification runner execution is disabled by governance options.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-dnstxtcollectionfailed"></a>
+
+##### `DnsTxtCollectionFailed`
+
+```csharp
+const string DnsTxtCollectionFailed
+```
+
+DNS TXT proof collection failed before a proof could be evaluated.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-dnstxtcollectionunavailable"></a>
+
+##### `DnsTxtCollectionUnavailable`
+
+```csharp
+const string DnsTxtCollectionUnavailable
+```
+
+DNS TXT proof collection is required but the built-in collector is not registered.
 
 <a id="member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-evaluationfailed"></a>
 
@@ -4271,12 +5124,12 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-ctor-system-string-system-string-system-string-system-string-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-boolean-system-boolean-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-ctor-system-string-system-string-system-string-system-string-system-uri-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `TenantDomainOwnershipProofVerificationRequest`
 
 ```csharp
-TenantDomainOwnershipProofVerificationRequest(string tenantId, string domainName, string verificationMethod, string observedProof, Uri collectionBaseUri, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, bool issueChallengeWhenMissingExpectedProof, bool collectHttpProof, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary<string, string> metadata)
+TenantDomainOwnershipProofVerificationRequest(string tenantId, string domainName, string verificationMethod, string observedProof, Uri collectionBaseUri, Uri dnsTxtResolverEndpoint, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, bool issueChallengeWhenMissingExpectedProof, bool collectHttpProof, bool collectDnsTxtProof, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a tenant-domain ownership proof verification runner request.
@@ -4287,6 +5140,7 @@ Parameters:
 - `verificationMethod`: The optional verification method boundary. When omitted, the existing declaration method or HTTP file is used.
 - `observedProof`: Optional observed proof supplied by an application or provider pack.
 - `collectionBaseUri`: The optional base URI used by HTTP file proof collection.
+- `dnsTxtResolverEndpoint`: The optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection.
 - `source`: The source that requested the verification run.
 - `actor`: The actor that requested the verification run when known.
 - `atUtc`: The UTC timestamp used by the run. The runtime clock is used when omitted.
@@ -4294,8 +5148,9 @@ Parameters:
 - `correlationId`: The optional correlation identifier for the run.
 - `issueChallengeWhenMissingExpectedProof`: A value indicating whether the runner should issue a challenge when expected proof metadata is missing.
 - `collectHttpProof`: A value indicating whether the runner should use the built-in HTTP proof collector for HTTP file declarations.
+- `collectDnsTxtProof`: A value indicating whether the runner should use the built-in DNS TXT proof collector for DNS TXT declarations.
 - `recordPublicationPlan`: A value indicating whether publication planning metadata should be recorded.
-- `timeout`: The optional per-request HTTP collection timeout.
+- `timeout`: The optional per-request proof collection timeout.
 - `metadata`: Optional proof verification runner metadata.
 
 #### Properties
@@ -4319,6 +5174,16 @@ DateTimeOffset? AtUtc { get; }
 ```
 
 Gets the UTC timestamp used by the run.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-collectdnstxtproof"></a>
+
+##### `CollectDnsTxtProof`
+
+```csharp
+bool CollectDnsTxtProof { get; }
+```
+
+Gets a value indicating whether the runner should use the built-in DNS TXT proof collector for DNS TXT declarations.
 
 <a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-collecthttpproof"></a>
 
@@ -4349,6 +5214,16 @@ string CorrelationId { get; }
 ```
 
 Gets the optional correlation identifier for the run.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-dnstxtresolverendpoint"></a>
+
+##### `DnsTxtResolverEndpoint`
+
+```csharp
+Uri DnsTxtResolverEndpoint { get; }
+```
+
+Gets the optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection.
 
 <a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-domainname"></a>
 
@@ -4463,12 +5338,12 @@ public sealed class TenantDomainOwnershipProofVerificationResult
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-datetimeoffset-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-datetimeoffset-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `TenantDomainOwnershipProofVerificationResult`
 
 ```csharp
-TenantDomainOwnershipProofVerificationResult(string tenantId, string domainName, string verificationMethod, string outcome, bool verified, bool rejected, bool challengeIssued, bool publicationPlanned, bool proofCollected, bool proofEvaluated, DateTimeOffset ranAtUtc, TenantDomainOwnershipProofChallengeResult challengeResult, TenantDomainOwnershipProofPublicationPlanResult publicationPlanResult, TenantDomainOwnershipHttpProofCollectionResult httpProofCollectionResult, TenantDomainOwnershipProofEvaluationResult evaluationResult, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)
+TenantDomainOwnershipProofVerificationResult(string tenantId, string domainName, string verificationMethod, string outcome, bool verified, bool rejected, bool challengeIssued, bool publicationPlanned, bool proofCollected, bool proofEvaluated, DateTimeOffset ranAtUtc, TenantDomainOwnershipProofChallengeResult challengeResult, TenantDomainOwnershipProofPublicationPlanResult publicationPlanResult, TenantDomainOwnershipHttpProofCollectionResult httpProofCollectionResult, TenantDomainOwnershipDnsTxtProofCollectionResult dnsTxtProofCollectionResult, TenantDomainOwnershipProofEvaluationResult evaluationResult, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a tenant-domain ownership proof verification runner result.
@@ -4488,6 +5363,7 @@ Parameters:
 - `challengeResult`: The nested proof challenge result when one ran.
 - `publicationPlanResult`: The nested publication plan result when one ran.
 - `httpProofCollectionResult`: The nested HTTP proof collection result when one ran.
+- `dnsTxtProofCollectionResult`: The nested DNS TXT proof collection result when one ran.
 - `evaluationResult`: The nested proof evaluation result when one ran.
 - `domainOwnership`: The matching or resulting domain ownership descriptor when one exists.
 - `reason`: The operator-facing proof verification reason.
@@ -4514,6 +5390,16 @@ TenantDomainOwnershipProofChallengeResult ChallengeResult { get; }
 ```
 
 Gets the nested proof challenge result when one ran.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-dnstxtproofcollectionresult"></a>
+
+##### `DnsTxtProofCollectionResult`
+
+```csharp
+TenantDomainOwnershipDnsTxtProofCollectionResult DnsTxtProofCollectionResult { get; }
+```
+
+Gets the nested DNS TXT proof collection result when one ran.
 
 <a id="member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-domainname"></a>
 

@@ -22,6 +22,7 @@ public sealed class TenantDomainOwnershipProofVerificationResult
     /// <param name="challengeResult">The nested proof challenge result when one ran.</param>
     /// <param name="publicationPlanResult">The nested publication plan result when one ran.</param>
     /// <param name="httpProofCollectionResult">The nested HTTP proof collection result when one ran.</param>
+    /// <param name="dnsTxtProofCollectionResult">The nested DNS TXT proof collection result when one ran.</param>
     /// <param name="evaluationResult">The nested proof evaluation result when one ran.</param>
     /// <param name="domainOwnership">The matching or resulting domain ownership descriptor when one exists.</param>
     /// <param name="reason">The operator-facing proof verification reason.</param>
@@ -41,6 +42,7 @@ public sealed class TenantDomainOwnershipProofVerificationResult
         TenantDomainOwnershipProofChallengeResult? challengeResult,
         TenantDomainOwnershipProofPublicationPlanResult? publicationPlanResult,
         TenantDomainOwnershipHttpProofCollectionResult? httpProofCollectionResult,
+        TenantDomainOwnershipDnsTxtProofCollectionResult? dnsTxtProofCollectionResult,
         TenantDomainOwnershipProofEvaluationResult? evaluationResult,
         TenantDomainOwnershipDescriptor? domainOwnership,
         string reason,
@@ -75,6 +77,7 @@ public sealed class TenantDomainOwnershipProofVerificationResult
         ChallengeResult = challengeResult;
         PublicationPlanResult = publicationPlanResult;
         HttpProofCollectionResult = httpProofCollectionResult;
+        DnsTxtProofCollectionResult = dnsTxtProofCollectionResult;
         EvaluationResult = evaluationResult;
         DomainOwnership = domainOwnership;
         Reason = string.IsNullOrWhiteSpace(reason) ? string.Empty : reason.Trim();
@@ -152,6 +155,11 @@ public sealed class TenantDomainOwnershipProofVerificationResult
     public TenantDomainOwnershipHttpProofCollectionResult? HttpProofCollectionResult { get; }
 
     /// <summary>
+    /// Gets the nested DNS TXT proof collection result when one ran.
+    /// </summary>
+    public TenantDomainOwnershipDnsTxtProofCollectionResult? DnsTxtProofCollectionResult { get; }
+
+    /// <summary>
     /// Gets the nested proof evaluation result when one ran.
     /// </summary>
     public TenantDomainOwnershipProofEvaluationResult? EvaluationResult { get; }
@@ -192,6 +200,8 @@ public sealed class TenantDomainOwnershipProofVerificationResult
             TenantDomainOwnershipProofVerificationOutcomes.PublicationPlanFailed => TenantDomainOwnershipProofVerificationOutcomes.PublicationPlanFailed,
             TenantDomainOwnershipProofVerificationOutcomes.HttpCollectionUnavailable => TenantDomainOwnershipProofVerificationOutcomes.HttpCollectionUnavailable,
             TenantDomainOwnershipProofVerificationOutcomes.HttpCollectionFailed => TenantDomainOwnershipProofVerificationOutcomes.HttpCollectionFailed,
+            TenantDomainOwnershipProofVerificationOutcomes.DnsTxtCollectionUnavailable => TenantDomainOwnershipProofVerificationOutcomes.DnsTxtCollectionUnavailable,
+            TenantDomainOwnershipProofVerificationOutcomes.DnsTxtCollectionFailed => TenantDomainOwnershipProofVerificationOutcomes.DnsTxtCollectionFailed,
             TenantDomainOwnershipProofVerificationOutcomes.EvaluationFailed => TenantDomainOwnershipProofVerificationOutcomes.EvaluationFailed,
             TenantDomainOwnershipProofVerificationOutcomes.StoreFailed => TenantDomainOwnershipProofVerificationOutcomes.StoreFailed,
             _ => throw new ArgumentException($"Tenant-domain ownership proof verification outcome '{outcome}' is not supported.", nameof(outcome))

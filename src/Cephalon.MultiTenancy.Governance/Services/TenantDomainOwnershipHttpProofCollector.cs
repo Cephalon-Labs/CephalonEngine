@@ -426,7 +426,7 @@ internal sealed class TenantDomainOwnershipHttpProofCollector(
         }
     }
 
-    private static TenantDomainOwnershipHttpProofCollectionResult CreateRequestFailedResult(
+    private TenantDomainOwnershipHttpProofCollectionResult CreateRequestFailedResult(
         TenantDomainOwnershipHttpProofCollectionRequest request,
         DateTimeOffset collectedAtUtc,
         Uri collectionUri,
@@ -529,6 +529,17 @@ internal sealed class TenantDomainOwnershipHttpProofCollector(
             : options.DomainOwnershipHttpProofCollectionMaxResponseBytes;
     }
 
+    private string ResolveDnsTxtProofCollectionOwnership()
+    {
+        return options.EnableDomainOwnershipDnsTxtProofCollection &&
+            options.EnableDomainOwnershipProofPublicationPlanning &&
+            options.EnableDomainOwnershipProofEvaluation &&
+            options.EnableDomainOwnershipVerificationWorkflow &&
+            options.DomainOwnershipDnsTxtProofResolverEndpoint is not null
+            ? "cephalon-managed"
+            : "not-configured";
+    }
+
     private static async ValueTask<HttpProofBodyReadResult> ReadBodyAsync(
         HttpContent content,
         int maxResponseBytes,
@@ -573,7 +584,7 @@ internal sealed class TenantDomainOwnershipHttpProofCollector(
         };
     }
 
-    private static Dictionary<string, string> BuildResultMetadata(
+    private Dictionary<string, string> BuildResultMetadata(
         TenantDomainOwnershipHttpProofCollectionRequest request,
         string outcome,
         DateTimeOffset collectedAtUtc,
@@ -593,7 +604,7 @@ internal sealed class TenantDomainOwnershipHttpProofCollector(
         metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectedAtUtc] = collectedAtUtc.ToString("O", CultureInfo.InvariantCulture);
         metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.LastHttpProofCollectionSource] = request.Source ?? "http-proof-collector";
         metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.HttpProofCollectionOwnership] = "cephalon-managed";
-        metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.DnsTxtProofCollectionOwnership] = "application-managed";
+        metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.DnsTxtProofCollectionOwnership] = ResolveDnsTxtProofCollectionOwnership();
         metadata[TenantDomainOwnershipHttpProofCollectionMetadataKeys.ExternalProofPollingOwnership] = "application-managed";
 
         if (!string.IsNullOrWhiteSpace(request.Actor))

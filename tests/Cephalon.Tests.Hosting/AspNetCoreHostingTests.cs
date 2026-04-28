@@ -2187,7 +2187,9 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["proofPublicationPlanningOwnership"] == "cephalon-managed" &&
                 entry.Metadata["proofVerificationRunnerOwnership"] == "cephalon-managed" &&
                 entry.Metadata["httpProofCollectionOwnership"] == "cephalon-managed" &&
-                entry.Metadata["dnsTxtProofCollectionOwnership"] == "application-managed" &&
+                entry.Metadata["dnsTxtProofCollectionEnabled"] == "true" &&
+                entry.Metadata["dnsTxtProofResolverConfigured"] == "false" &&
+                entry.Metadata["dnsTxtProofCollectionOwnership"] == "not-configured" &&
                 entry.Metadata["externalProofPollingOwnership"] == "application-managed" &&
                 entry.Metadata["proofPublicationOwnership"] == "application-managed" &&
                 entry.Metadata["verificationExecutionOwnership"] == "application-managed" &&

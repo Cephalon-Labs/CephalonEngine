@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T20:27:01.2285429+00:00",
+  "GeneratedAtUtc": "2026-04-28T20:56:10.9804996+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -232,7 +232,7 @@
       "Description": "Tenant-membership catalog and evaluation companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 79
+      "TypeCount": 84
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1258,7 +1258,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 77
+      "TypeCount": 82
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11486,6 +11486,21 @@
       }
     },
     {
+      "DisplayName": "ITenantDomainOwnershipDnsTxtProofCollector",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantdomainownershipdnstxtproofcollector",
+      "Declaration": "public interface ITenantDomainOwnershipDnsTxtProofCollector",
+      "Summary": "Collects tenant-domain ownership DNS TXT proof evidence and evaluates the collected proof through the governance workflow.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantDomainOwnershipHttpProofCollector",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -12621,7 +12636,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 24,
+        "Properties": 28,
         "Methods": 0
       }
     },
@@ -15551,6 +15566,66 @@
       }
     },
     {
+      "DisplayName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys",
+      "Declaration": "public static class TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "Summary": "Stable metadata keys written by tenant-domain ownership DNS TXT proof collection.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 15,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes",
+      "Declaration": "public static class TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "Summary": "Stable tenant-domain ownership DNS TXT proof collection outcome labels.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 19,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest",
+      "Declaration": "public sealed class TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "Summary": "Describes a tenant-domain ownership DNS TXT proof collection request.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult",
+      "Declaration": "public sealed class TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "Summary": "Describes the result of one tenant-domain ownership DNS TXT proof collection attempt.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "TenantDomainOwnershipHttpProofCollectionMetadataKeys",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -15800,7 +15875,7 @@
       "Summary": "Stable metadata keys returned by tenant-domain ownership proof verification runs.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 13,
+        "Fields": 14,
         "Properties": 0,
         "Methods": 0
       }
@@ -15815,7 +15890,7 @@
       "Summary": "Stable tenant-domain ownership proof verification runner outcome labels.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 18,
+        "Fields": 20,
         "Properties": 0,
         "Methods": 0
       }
@@ -15831,7 +15906,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 15,
+        "Properties": 17,
         "Methods": 0
       }
     },
@@ -15846,7 +15921,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 19,
         "Methods": 0
       }
     },
@@ -18090,6 +18165,17 @@
       "AnchorId": "member-p-cephalon-audit-services-auditrecordrequest-actor",
       "Signature": "AuditActor Actor { get; }",
       "Summary": "Gets the actor responsible for the audited operation when one was supplied explicitly."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-actor",
+      "Signature": "string Actor { get; }",
+      "Summary": "Gets the actor that requested DNS TXT proof collection when known."
     },
     {
       "DisplayName": "Actor",
@@ -23073,6 +23159,17 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-attributes",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Attributes { get; }",
       "Summary": "Gets optional resolution hints supplied by the host or caller."
+    },
+    {
+      "DisplayName": "AtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-atutc",
+      "Signature": "DateTimeOffset? AtUtc { get; }",
+      "Summary": "Gets the UTC timestamp used for collection."
     },
     {
       "DisplayName": "AtUtc",
@@ -30370,6 +30467,17 @@
     {
       "DisplayName": "CollectAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "ITenantDomainOwnershipDnsTxtProofCollector",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantdomainownershipdnstxtproofcollector-collectasync-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CTenantDomainOwnershipDnsTxtProofCollectionResult\u003E CollectAsync(TenantDomainOwnershipDnsTxtProofCollectionRequest request, CancellationToken cancellationToken)",
+      "Summary": "Collects and evaluates one tenant-domain ownership DNS TXT proof."
+    },
+    {
+      "DisplayName": "CollectAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "ITenantDomainOwnershipHttpProofCollector",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -30377,6 +30485,39 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantdomainownershiphttpproofcollector-collectasync-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionrequest-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CTenantDomainOwnershipHttpProofCollectionResult\u003E CollectAsync(TenantDomainOwnershipHttpProofCollectionRequest request, CancellationToken cancellationToken)",
       "Summary": "Collects and evaluates one tenant-domain ownership HTTP file proof."
+    },
+    {
+      "DisplayName": "CollectDnsTxtProof",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofVerificationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-collectdnstxtproof",
+      "Signature": "bool CollectDnsTxtProof { get; }",
+      "Summary": "Gets a value indicating whether the runner should use the built-in DNS TXT proof collector for DNS TXT declarations."
+    },
+    {
+      "DisplayName": "Collected",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-collected",
+      "Signature": "const string Collected",
+      "Summary": "DNS TXT proof content was collected and proof evaluation reached a terminal workflow outcome."
+    },
+    {
+      "DisplayName": "Collected",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-collected",
+      "Signature": "bool Collected { get; }",
+      "Summary": "Gets a value indicating whether DNS TXT proof content was collected."
     },
     {
       "DisplayName": "Collected",
@@ -30399,6 +30540,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-collected",
       "Signature": "bool Collected { get; }",
       "Summary": "Gets a value indicating whether HTTP proof content was collected."
+    },
+    {
+      "DisplayName": "CollectedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-collectedatutc",
+      "Signature": "DateTimeOffset CollectedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when collection executed."
     },
     {
       "DisplayName": "CollectedAtUtc",
@@ -33769,6 +33921,17 @@
     {
       "DisplayName": "ContentLength",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-contentlength",
+      "Signature": "long? ContentLength { get; }",
+      "Summary": "Gets the collected DNS TXT resolver response body length."
+    },
+    {
+      "DisplayName": "ContentLength",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -34909,6 +35072,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-correlationid",
       "Signature": "string CorrelationId { get; set; }",
       "Summary": "The correlation identifier associated with the publication when one exists."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for collection and evaluation."
     },
     {
       "DisplayName": "CorrelationId",
@@ -39970,6 +40144,17 @@
     {
       "DisplayName": "Disabled",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-disabled",
+      "Signature": "const string Disabled",
+      "Summary": "DNS TXT proof collection is disabled by governance options."
+    },
+    {
+      "DisplayName": "Disabled",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -41310,6 +41495,39 @@
       "Summary": "Domain ownership is expected to be verified by a DNS TXT record."
     },
     {
+      "DisplayName": "DnsTxtCollectionFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofVerificationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-dnstxtcollectionfailed",
+      "Signature": "const string DnsTxtCollectionFailed",
+      "Summary": "DNS TXT proof collection failed before a proof could be evaluated."
+    },
+    {
+      "DisplayName": "DnsTxtCollectionUnavailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofVerificationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-dnstxtcollectionunavailable",
+      "Signature": "const string DnsTxtCollectionUnavailable",
+      "Summary": "DNS TXT proof collection is required but the built-in collector is not registered."
+    },
+    {
+      "DisplayName": "DnsTxtProofCollectionOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-dnstxtproofcollectionownership",
+      "Signature": "const string DnsTxtProofCollectionOwnership",
+      "Summary": "Metadata key that identifies Cephalon as the DNS TXT proof collection owner when a resolver endpoint is configured."
+    },
+    {
       "DisplayName": "DnsTxtProofCollectionOwnership",
       "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionMetadataKeys",
@@ -41330,6 +41548,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-dnstxtproofcollectionownership",
       "Signature": "const string DnsTxtProofCollectionOwnership",
       "Summary": "Metadata key for DNS TXT proof collection ownership."
+    },
+    {
+      "DisplayName": "DnsTxtProofCollectionResult",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofVerificationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-dnstxtproofcollectionresult",
+      "Signature": "TenantDomainOwnershipDnsTxtProofCollectionResult DnsTxtProofCollectionResult { get; }",
+      "Summary": "Gets the nested DNS TXT proof collection result when one ran."
+    },
+    {
+      "DisplayName": "DnsTxtRecordName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-dnstxtrecordname",
+      "Signature": "string DnsTxtRecordName { get; }",
+      "Summary": "Gets the DNS TXT record name queried during collection."
     },
     {
       "DisplayName": "DnsTxtRecordName",
@@ -41407,6 +41647,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanmetadatakeys-dnstxtrecordvaluefingerprint",
       "Signature": "const string DnsTxtRecordValueFingerprint",
       "Summary": "Metadata key for the DNS TXT record value fingerprint."
+    },
+    {
+      "DisplayName": "DnsTxtResolverEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipProofVerificationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-dnstxtresolverendpoint",
+      "Signature": "Uri DnsTxtResolverEndpoint { get; }",
+      "Summary": "Gets the optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection."
     },
     {
       "DisplayName": "DocumentCount",
@@ -41506,6 +41757,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-domainname",
       "Signature": "string DomainName { get; }",
       "Summary": "Gets the canonical domain name claimed by the tenant."
+    },
+    {
+      "DisplayName": "DomainName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-domainname",
+      "Signature": "string DomainName { get; }",
+      "Summary": "Gets the canonical domain name whose DNS TXT proof should be collected."
+    },
+    {
+      "DisplayName": "DomainName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-domainname",
+      "Signature": "string DomainName { get; }",
+      "Summary": "Gets the canonical domain name that was evaluated."
     },
     {
       "DisplayName": "DomainName",
@@ -41664,6 +41937,17 @@
     {
       "DisplayName": "DomainOwnership",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-domainownership",
+      "Signature": "TenantDomainOwnershipDescriptor DomainOwnership { get; }",
+      "Summary": "Gets the matching or resulting domain ownership descriptor when one exists."
+    },
+    {
+      "DisplayName": "DomainOwnership",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -41737,6 +42021,39 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-domainownership",
       "Signature": "const string DomainOwnership",
       "Summary": "A governance action that changes declared tenant-domain ownership posture."
+    },
+    {
+      "DisplayName": "DomainOwnershipDnsTxtProofCollectionMaxResponseBytes",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipdnstxtproofcollectionmaxresponsebytes",
+      "Signature": "int DomainOwnershipDnsTxtProofCollectionMaxResponseBytes { get; set; }",
+      "Summary": "Gets or sets the maximum response body size, in bytes, accepted by DNS TXT proof collection."
+    },
+    {
+      "DisplayName": "DomainOwnershipDnsTxtProofCollectionTimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipdnstxtproofcollectiontimeoutseconds",
+      "Signature": "int DomainOwnershipDnsTxtProofCollectionTimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the default timeout, in seconds, used by DNS TXT proof collection."
+    },
+    {
+      "DisplayName": "DomainOwnershipDnsTxtProofResolverEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-domainownershipdnstxtproofresolverendpoint",
+      "Signature": "Uri DomainOwnershipDnsTxtProofResolverEndpoint { get; set; }",
+      "Summary": "Gets or sets the optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection."
     },
     {
       "DisplayName": "DomainOwnershipHttpProofCollectionMaxResponseBytes",
@@ -43655,6 +43972,17 @@
     {
       "DisplayName": "EmptyResponse",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-emptyresponse",
+      "Signature": "const string EmptyResponse",
+      "Summary": "The DNS TXT proof resolver returned an empty response body."
+    },
+    {
+      "DisplayName": "EmptyResponse",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -44080,6 +44408,17 @@
       "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-enabledispatchloop",
       "Signature": "bool EnableDispatchLoop { get; set; }",
       "Summary": "Gets or sets a value indicating whether the pack should own the durable staged-event dispatch loop instead of leaving dispatch consumer-managed. Defaults to \u0060false\u0060."
+    },
+    {
+      "DisplayName": "EnableDomainOwnershipDnsTxtProofCollection",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipdnstxtproofcollection",
+      "Signature": "bool EnableDomainOwnershipDnsTxtProofCollection { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the built-in tenant-domain ownership DNS TXT proof collector is active."
     },
     {
       "DisplayName": "EnableDomainOwnershipHttpProofCollection",
@@ -45162,6 +45501,17 @@
     {
       "DisplayName": "Evaluated",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-evaluated",
+      "Signature": "bool Evaluated { get; }",
+      "Summary": "Gets a value indicating whether proof evaluation reached a terminal workflow outcome."
+    },
+    {
+      "DisplayName": "Evaluated",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -45228,6 +45578,17 @@
     {
       "DisplayName": "EvaluationFailed",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-evaluationfailed",
+      "Signature": "const string EvaluationFailed",
+      "Summary": "DNS TXT content was collected, but proof evaluation did not apply a terminal workflow outcome."
+    },
+    {
+      "DisplayName": "EvaluationFailed",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -45246,6 +45607,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-evaluationfailed",
       "Signature": "const string EvaluationFailed",
       "Summary": "Proof evaluation failed before a terminal workflow outcome could be applied."
+    },
+    {
+      "DisplayName": "EvaluationResult",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-evaluationresult",
+      "Signature": "TenantDomainOwnershipProofEvaluationResult EvaluationResult { get; }",
+      "Summary": "Gets the proof-evaluation result produced after collection."
     },
     {
       "DisplayName": "EvaluationResult",
@@ -48154,6 +48526,17 @@
     {
       "DisplayName": "ExpiresAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-expiresatutc",
+      "Signature": "DateTimeOffset? ExpiresAtUtc { get; }",
+      "Summary": "Gets the optional UTC timestamp applied if proof evaluation verifies the declaration."
+    },
+    {
+      "DisplayName": "ExpiresAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -48315,6 +48698,17 @@
       "AnchorId": "member-p-cephalon-observability-configuration-telemetryexportoptions-exporttraces",
       "Signature": "bool ExportTraces { get; set; }",
       "Summary": "Gets or sets a value indicating whether traces should be exported."
+    },
+    {
+      "DisplayName": "ExternalProofPollingOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-externalproofpollingownership",
+      "Signature": "const string ExternalProofPollingOwnership",
+      "Summary": "Metadata key that keeps background proof polling ownership explicit."
     },
     {
       "DisplayName": "ExternalProofPollingOwnership",
@@ -58263,6 +58657,17 @@
     {
       "DisplayName": "HttpProofCollectionOwnership",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-httpproofcollectionownership",
+      "Signature": "const string HttpProofCollectionOwnership",
+      "Summary": "Metadata key for HTTP proof collection ownership."
+    },
+    {
+      "DisplayName": "HttpProofCollectionOwnership",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionMetadataKeys",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -60580,6 +60985,28 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-result-invalid-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault",
       "Signature": "Result\u003CT\u003E Invalid\u003CT\u003E(string code, string message, BehaviorFault fault)",
       "Summary": "Creates an invalid-request result for the specified payload type."
+    },
+    {
+      "DisplayName": "InvalidResolverUri",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-invalidresolveruri",
+      "Signature": "const string InvalidResolverUri",
+      "Summary": "The resolved DNS TXT proof resolver URI is invalid or unsafe."
+    },
+    {
+      "DisplayName": "InvalidResponse",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-invalidresponse",
+      "Signature": "const string InvalidResponse",
+      "Summary": "The DNS TXT proof resolver response could not be parsed as a DNS JSON response."
     },
     {
       "DisplayName": "InvalidStatus",
@@ -64806,6 +65233,138 @@
       "Summary": "The latest correlation identifier when one was supplied by an indexing request."
     },
     {
+      "DisplayName": "LastDnsTxtProofCollectedAtUtc",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectedatutc",
+      "Signature": "const string LastDnsTxtProofCollectedAtUtc",
+      "Summary": "Metadata key for the UTC timestamp when DNS TXT proof collection executed."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionActor",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionactor",
+      "Signature": "const string LastDnsTxtProofCollectionActor",
+      "Summary": "Metadata key for the actor that requested DNS TXT proof collection when known."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionContentLength",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectioncontentlength",
+      "Signature": "const string LastDnsTxtProofCollectionContentLength",
+      "Summary": "Metadata key for the DNS TXT resolver response body length."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionCorrelationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectioncorrelationid",
+      "Signature": "const string LastDnsTxtProofCollectionCorrelationId",
+      "Summary": "Metadata key for the DNS TXT proof collection correlation identifier."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionObservedFingerprint",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionobservedfingerprint",
+      "Signature": "const string LastDnsTxtProofCollectionObservedFingerprint",
+      "Summary": "Metadata key for the SHA-256 fingerprint of the matching collected DNS TXT proof."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionObservedTxtRecordCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionobservedtxtrecordcount",
+      "Signature": "const string LastDnsTxtProofCollectionObservedTxtRecordCount",
+      "Summary": "Metadata key for the number of TXT answers observed by collection."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionoutcome",
+      "Signature": "const string LastDnsTxtProofCollectionOutcome",
+      "Summary": "Metadata key for the last DNS TXT proof collection outcome."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionPublicationPlanOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionpublicationplanoutcome",
+      "Signature": "const string LastDnsTxtProofCollectionPublicationPlanOutcome",
+      "Summary": "Metadata key for the nested publication-plan outcome used by collection."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionRecordName",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionrecordname",
+      "Signature": "const string LastDnsTxtProofCollectionRecordName",
+      "Summary": "Metadata key for the DNS TXT record name queried during collection."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionResolverUri",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionresolveruri",
+      "Signature": "const string LastDnsTxtProofCollectionResolverUri",
+      "Summary": "Metadata key for the resolver URI used to collect the DNS TXT proof."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionsource",
+      "Signature": "const string LastDnsTxtProofCollectionSource",
+      "Summary": "Metadata key for the source that requested DNS TXT proof collection."
+    },
+    {
+      "DisplayName": "LastDnsTxtProofCollectionStatusCode",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectionstatuscode",
+      "Signature": "const string LastDnsTxtProofCollectionStatusCode",
+      "Summary": "Metadata key for the HTTP status code returned by the DNS TXT resolver."
+    },
+    {
       "DisplayName": "LastEdgeNodeId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -65761,6 +66320,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationcorrelationid",
       "Signature": "const string LastProofVerificationCorrelationId",
       "Summary": "Metadata key for the correlation identifier attached to the latest proof verification run."
+    },
+    {
+      "DisplayName": "LastProofVerificationDnsTxtCollectionOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipProofVerificationMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-lastproofverificationdnstxtcollectionoutcome",
+      "Signature": "const string LastProofVerificationDnsTxtCollectionOutcome",
+      "Summary": "Metadata key for the DNS TXT proof collection outcome observed by the latest proof verification run."
     },
     {
       "DisplayName": "LastProofVerificationEvaluationOutcome",
@@ -72024,6 +72594,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional DNS TXT proof collection metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional result metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -72904,6 +73496,17 @@
     {
       "DisplayName": "MissingExpectedProof",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-missingexpectedproof",
+      "Signature": "const string MissingExpectedProof",
+      "Summary": "Expected proof metadata is missing from the tenant-domain ownership declaration."
+    },
+    {
+      "DisplayName": "MissingExpectedProof",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -73043,6 +73646,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-missingprovidersurface",
       "Signature": "const string MissingProviderSurface",
       "Summary": "The runtime does not currently expose one provider-facing surface identifier for provider-specific materialization."
+    },
+    {
+      "DisplayName": "MissingPublicationPlan",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-missingpublicationplan",
+      "Signature": "const string MissingPublicationPlan",
+      "Summary": "Publication planning did not provide a DNS TXT record name and expected proof value."
     },
     {
       "DisplayName": "MissingPublicationPlan",
@@ -75045,6 +75659,17 @@
       "Summary": "The current retry posture does not currently match any recorded command outcome."
     },
     {
+      "DisplayName": "NoMatchingTxtRecord",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-nomatchingtxtrecord",
+      "Signature": "const string NoMatchingTxtRecord",
+      "Summary": "DNS TXT answers were returned, but none matched the expected proof value."
+    },
+    {
       "DisplayName": "NoMembership",
       "Category": "Fields",
       "DeclaringTypeName": "TenantMembershipEvaluationOutcomes",
@@ -75927,6 +76552,17 @@
     {
       "DisplayName": "NotFound",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-notfound",
+      "Signature": "const string NotFound",
+      "Summary": "No tenant-domain ownership declaration matched the supplied tenant and domain."
+    },
+    {
+      "DisplayName": "NotFound",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -76088,6 +76724,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-notrequired",
       "Signature": "const string NotRequired",
       "Summary": "Reporter takeover is not currently required because the execution runtime still has a single active reporter owner."
+    },
+    {
+      "DisplayName": "NoTxtRecords",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-notxtrecords",
+      "Signature": "const string NoTxtRecords",
+      "Summary": "No DNS TXT answer was returned for the planned proof record."
     },
     {
       "DisplayName": "ObservabilityOptions",
@@ -76389,6 +77036,17 @@
     {
       "DisplayName": "ObservedProofFingerprint",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-observedprooffingerprint",
+      "Signature": "string ObservedProofFingerprint { get; }",
+      "Summary": "Gets the SHA-256 fingerprint of the matching collected TXT proof."
+    },
+    {
+      "DisplayName": "ObservedProofFingerprint",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -76407,6 +77065,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-observedprooffingerprint",
       "Signature": "string ObservedProofFingerprint { get; }",
       "Summary": "Gets the SHA-256 fingerprint of the observed proof value when present."
+    },
+    {
+      "DisplayName": "ObservedTxtRecordCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-observedtxtrecordcount",
+      "Signature": "int ObservedTxtRecordCount { get; }",
+      "Summary": "Gets the number of TXT answers observed by collection."
     },
     {
       "DisplayName": "ObserveOnly",
@@ -78715,6 +79384,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome",
       "Signature": "RuntimeLifecycleEventOutcome Outcome { get; set; }",
       "Summary": "The completion outcome for the event."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable DNS TXT proof collection outcome."
     },
     {
       "DisplayName": "Outcome",
@@ -86351,6 +87031,17 @@
     {
       "DisplayName": "PublicationPlanResult",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-publicationplanresult",
+      "Signature": "TenantDomainOwnershipProofPublicationPlanResult PublicationPlanResult { get; }",
+      "Summary": "Gets the publication-plan result used by collection."
+    },
+    {
+      "DisplayName": "PublicationPlanResult",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -87117,6 +87808,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-reason",
       "Signature": "string Reason { get; set; }",
       "Summary": "The reason the package was trusted or rejected."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing DNS TXT proof collection reason."
     },
     {
       "DisplayName": "Reason",
@@ -87909,6 +88611,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-recordplan",
       "Signature": "bool RecordPlan { get; }",
       "Summary": "Gets a value indicating whether the plan should be recorded in domain ownership metadata."
+    },
+    {
+      "DisplayName": "RecordPublicationPlan",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-recordpublicationplan",
+      "Signature": "bool RecordPublicationPlan { get; }",
+      "Summary": "Gets a value indicating whether the publication plan should be recorded before collection."
     },
     {
       "DisplayName": "RecordPublicationPlan",
@@ -90883,6 +91596,17 @@
     {
       "DisplayName": "RequestFailed",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-requestfailed",
+      "Signature": "const string RequestFailed",
+      "Summary": "The DNS TXT proof resolver could not be reached or timed out."
+    },
+    {
+      "DisplayName": "RequestFailed",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -92267,6 +92991,28 @@
       "Summary": "Resolves the read database role."
     },
     {
+      "DisplayName": "ResolverEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-resolverendpoint",
+      "Signature": "Uri ResolverEndpoint { get; }",
+      "Summary": "Gets the optional DNS-over-HTTPS resolver endpoint used for collection."
+    },
+    {
+      "DisplayName": "ResolverNotConfigured",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-resolvernotconfigured",
+      "Signature": "const string ResolverNotConfigured",
+      "Summary": "DNS TXT proof collection has no configured resolver endpoint."
+    },
+    {
       "DisplayName": "ResolveRole",
       "Category": "Methods",
       "DeclaringTypeName": "EntityFrameworkDatabaseRoleResolver",
@@ -92287,6 +93033,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanactionids-resolveruntimeremediation",
       "Signature": "const string ResolveRuntimeRemediation",
       "Summary": "Resolve runtime remediation work before relying on deeper managed-connector follow-through."
+    },
+    {
+      "DisplayName": "ResolverUri",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-resolveruri",
+      "Signature": "Uri ResolverUri { get; }",
+      "Summary": "Gets the resolver URI used to collect the DNS TXT proof."
     },
     {
       "DisplayName": "ResolveSharedWrite",
@@ -92507,6 +93264,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-responsebodylimit",
       "Signature": "int ResponseBodyLimit { get; set; }",
       "Summary": "Gets or sets the maximum number of response-body characters to log before the payload is truncated."
+    },
+    {
+      "DisplayName": "ResponseTooLarge",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-responsetoolarge",
+      "Signature": "const string ResponseTooLarge",
+      "Summary": "The DNS TXT proof resolver response body exceeded the configured collection size limit."
     },
     {
       "DisplayName": "ResponseTooLarge",
@@ -98099,6 +98867,17 @@
     {
       "DisplayName": "Source",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-source",
+      "Signature": "string Source { get; }",
+      "Summary": "Gets the source that requested DNS TXT proof collection."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -101078,6 +101857,17 @@
     {
       "DisplayName": "StatusCode",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-statuscode",
+      "Signature": "int? StatusCode { get; }",
+      "Summary": "Gets the HTTP status code returned by the DNS TXT resolver."
+    },
+    {
+      "DisplayName": "StatusCode",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -101250,6 +102040,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimestatussnapshot-stoppingatutc",
       "Signature": "DateTimeOffset? StoppingAtUtc { get; set; }",
       "Summary": "The UTC timestamp when shutdown most recently entered the stopping phase, if any."
+    },
+    {
+      "DisplayName": "StoreFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-storefailed",
+      "Signature": "const string StoreFailed",
+      "Summary": "Publication-plan metadata could not be recorded before collection."
     },
     {
       "DisplayName": "StoreFailed",
@@ -103969,6 +104770,28 @@
       "Summary": "Creates a tenant-domain ownership descriptor."
     },
     {
+      "DisplayName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-ctor-system-string-system-string-system-string-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipDnsTxtProofCollectionRequest(string tenantId, string domainName, string verificationMethod, Uri resolverEndpoint, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-domain ownership DNS TXT proof collection request."
+    },
+    {
+      "DisplayName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-uri-system-string-system-nullable-system-int32-system-nullable-system-int64-system-int32-system-string-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipDnsTxtProofCollectionResult(string tenantId, string domainName, string verificationMethod, string outcome, bool collected, bool evaluated, DateTimeOffset collectedAtUtc, Uri resolverUri, string dnsTxtRecordName, int? statusCode, long? contentLength, int observedTxtRecordCount, string observedProofFingerprint, TenantDomainOwnershipProofPublicationPlanResult publicationPlanResult, TenantDomainOwnershipProofEvaluationResult evaluationResult, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant-domain ownership DNS TXT proof collection result."
+    },
+    {
       "DisplayName": "TenantDomainOwnershipHttpProofCollectionRequest",
       "Category": "Constructors",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionRequest",
@@ -104063,8 +104886,8 @@
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
-      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-ctor-system-string-system-string-system-string-system-string-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-boolean-system-boolean-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "TenantDomainOwnershipProofVerificationRequest(string tenantId, string domainName, string verificationMethod, string observedProof, Uri collectionBaseUri, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, bool issueChallengeWhenMissingExpectedProof, bool collectHttpProof, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-ctor-system-string-system-string-system-string-system-string-system-uri-system-uri-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-nullable-system-timespan-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipProofVerificationRequest(string tenantId, string domainName, string verificationMethod, string observedProof, Uri collectionBaseUri, Uri dnsTxtResolverEndpoint, string source, string actor, DateTimeOffset? atUtc, DateTimeOffset? expiresAtUtc, string correlationId, bool issueChallengeWhenMissingExpectedProof, bool collectHttpProof, bool collectDnsTxtProof, bool recordPublicationPlan, TimeSpan? timeout, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a tenant-domain ownership proof verification runner request."
     },
     {
@@ -104074,8 +104897,8 @@
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
-      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-datetimeoffset-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "TenantDomainOwnershipProofVerificationResult(string tenantId, string domainName, string verificationMethod, string outcome, bool verified, bool rejected, bool challengeIssued, bool publicationPlanned, bool proofCollected, bool proofEvaluated, DateTimeOffset ranAtUtc, TenantDomainOwnershipProofChallengeResult challengeResult, TenantDomainOwnershipProofPublicationPlanResult publicationPlanResult, TenantDomainOwnershipHttpProofCollectionResult httpProofCollectionResult, TenantDomainOwnershipProofEvaluationResult evaluationResult, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-datetimeoffset-cephalon-multitenancy-governance-services-tenantdomainownershipproofchallengeresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantDomainOwnershipProofVerificationResult(string tenantId, string domainName, string verificationMethod, string outcome, bool verified, bool rejected, bool challengeIssued, bool publicationPlanned, bool proofCollected, bool proofEvaluated, DateTimeOffset ranAtUtc, TenantDomainOwnershipProofChallengeResult challengeResult, TenantDomainOwnershipProofPublicationPlanResult publicationPlanResult, TenantDomainOwnershipHttpProofCollectionResult httpProofCollectionResult, TenantDomainOwnershipDnsTxtProofCollectionResult dnsTxtProofCollectionResult, TenantDomainOwnershipProofEvaluationResult evaluationResult, TenantDomainOwnershipDescriptor domainOwnership, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a tenant-domain ownership proof verification runner result."
     },
     {
@@ -104407,6 +105230,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-tenantid",
       "Signature": "string TenantId { get; }",
       "Summary": "Gets the stable tenant identifier."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that owns the domain declaration."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that was evaluated."
     },
     {
       "DisplayName": "TenantId",
@@ -104774,6 +105619,17 @@
     {
       "DisplayName": "TenantMismatch",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-tenantmismatch",
+      "Signature": "const string TenantMismatch",
+      "Summary": "A declaration for the supplied domain belongs to a different tenant."
+    },
+    {
+      "DisplayName": "TenantMismatch",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -105001,6 +105857,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-timeout",
       "Signature": "TimeoutSettings Timeout { get; }",
       "Summary": "Gets the timeout settings resolved for the app."
+    },
+    {
+      "DisplayName": "Timeout",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-timeout",
+      "Signature": "TimeSpan? Timeout { get; }",
+      "Summary": "Gets the optional per-request DNS TXT collection timeout."
     },
     {
       "DisplayName": "Timeout",
@@ -106776,6 +107643,17 @@
     {
       "DisplayName": "UnexpectedStatusCode",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-unexpectedstatuscode",
+      "Signature": "const string UnexpectedStatusCode",
+      "Summary": "The DNS TXT proof resolver returned a non-success status code."
+    },
+    {
+      "DisplayName": "UnexpectedStatusCode",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -107465,6 +108343,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-unsupported-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "OutboxDispatchPolicyDescriptor Unsupported(string outboxId, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates an explicit unsupported dispatch policy for an outbox that can stage messages but does not currently support Cephalon-managed mutable dispatch-state ownership."
+    },
+    {
+      "DisplayName": "UnsupportedVerificationMethod",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-unsupportedverificationmethod",
+      "Signature": "const string UnsupportedVerificationMethod",
+      "Summary": "The verification method cannot be collected by the built-in DNS TXT proof collector."
     },
     {
       "DisplayName": "UnsupportedVerificationMethod",
@@ -108393,6 +109282,28 @@
     {
       "DisplayName": "VerificationMethod",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionrequest-verificationmethod",
+      "Signature": "string VerificationMethod { get; }",
+      "Summary": "Gets the verification method boundary."
+    },
+    {
+      "DisplayName": "VerificationMethod",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-verificationmethod",
+      "Signature": "string VerificationMethod { get; }",
+      "Summary": "Gets the verification method used for collection."
+    },
+    {
+      "DisplayName": "VerificationMethod",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofCollectionRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -108510,6 +109421,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-verificationmethod",
       "Signature": "string VerificationMethod { get; }",
       "Summary": "Gets the optional verification method boundary."
+    },
+    {
+      "DisplayName": "VerificationMethodMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-verificationmethodmismatch",
+      "Signature": "const string VerificationMethodMismatch",
+      "Summary": "The matching domain ownership declaration uses a different verification method."
     },
     {
       "DisplayName": "VerificationMethodMismatch",

@@ -13,6 +13,7 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
     /// <param name="verificationMethod">The optional verification method boundary. When omitted, the existing declaration method or HTTP file is used.</param>
     /// <param name="observedProof">Optional observed proof supplied by an application or provider pack.</param>
     /// <param name="collectionBaseUri">The optional base URI used by HTTP file proof collection.</param>
+    /// <param name="dnsTxtResolverEndpoint">The optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection.</param>
     /// <param name="source">The source that requested the verification run.</param>
     /// <param name="actor">The actor that requested the verification run when known.</param>
     /// <param name="atUtc">The UTC timestamp used by the run. The runtime clock is used when omitted.</param>
@@ -20,8 +21,9 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
     /// <param name="correlationId">The optional correlation identifier for the run.</param>
     /// <param name="issueChallengeWhenMissingExpectedProof">A value indicating whether the runner should issue a challenge when expected proof metadata is missing.</param>
     /// <param name="collectHttpProof">A value indicating whether the runner should use the built-in HTTP proof collector for HTTP file declarations.</param>
+    /// <param name="collectDnsTxtProof">A value indicating whether the runner should use the built-in DNS TXT proof collector for DNS TXT declarations.</param>
     /// <param name="recordPublicationPlan">A value indicating whether publication planning metadata should be recorded.</param>
-    /// <param name="timeout">The optional per-request HTTP collection timeout.</param>
+    /// <param name="timeout">The optional per-request proof collection timeout.</param>
     /// <param name="metadata">Optional proof verification runner metadata.</param>
     public TenantDomainOwnershipProofVerificationRequest(
         string tenantId,
@@ -29,6 +31,7 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
         string? verificationMethod = null,
         string? observedProof = null,
         Uri? collectionBaseUri = null,
+        Uri? dnsTxtResolverEndpoint = null,
         string? source = null,
         string? actor = null,
         DateTimeOffset? atUtc = null,
@@ -36,6 +39,7 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
         string? correlationId = null,
         bool issueChallengeWhenMissingExpectedProof = true,
         bool collectHttpProof = true,
+        bool collectDnsTxtProof = true,
         bool recordPublicationPlan = true,
         TimeSpan? timeout = null,
         IReadOnlyDictionary<string, string>? metadata = null)
@@ -55,11 +59,17 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
             throw new ArgumentException("Collection base URI must be absolute.", nameof(collectionBaseUri));
         }
 
+        if (dnsTxtResolverEndpoint is not null && !dnsTxtResolverEndpoint.IsAbsoluteUri)
+        {
+            throw new ArgumentException("DNS TXT resolver endpoint must be absolute.", nameof(dnsTxtResolverEndpoint));
+        }
+
         TenantId = tenantId.Trim();
         DomainName = TenantDomainOwnershipDescriptor.NormalizeDomainName(domainName);
         VerificationMethod = NormalizeVerificationMethod(verificationMethod);
         ObservedProof = string.IsNullOrWhiteSpace(observedProof) ? null : observedProof.Trim();
         CollectionBaseUri = collectionBaseUri;
+        DnsTxtResolverEndpoint = dnsTxtResolverEndpoint;
         Source = string.IsNullOrWhiteSpace(source) ? null : source.Trim();
         Actor = string.IsNullOrWhiteSpace(actor) ? null : actor.Trim();
         AtUtc = atUtc;
@@ -67,6 +77,7 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
         CorrelationId = string.IsNullOrWhiteSpace(correlationId) ? null : correlationId.Trim();
         IssueChallengeWhenMissingExpectedProof = issueChallengeWhenMissingExpectedProof;
         CollectHttpProof = collectHttpProof;
+        CollectDnsTxtProof = collectDnsTxtProof;
         RecordPublicationPlan = recordPublicationPlan;
         Timeout = timeout;
         Metadata = CopyMetadata(metadata);
@@ -96,6 +107,11 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
     /// Gets the optional base URI used by HTTP file proof collection.
     /// </summary>
     public Uri? CollectionBaseUri { get; }
+
+    /// <summary>
+    /// Gets the optional DNS-over-HTTPS resolver endpoint used by DNS TXT proof collection.
+    /// </summary>
+    public Uri? DnsTxtResolverEndpoint { get; }
 
     /// <summary>
     /// Gets the source that requested the verification run.
@@ -131,6 +147,11 @@ public sealed class TenantDomainOwnershipProofVerificationRequest
     /// Gets a value indicating whether the runner should use the built-in HTTP proof collector for HTTP file declarations.
     /// </summary>
     public bool CollectHttpProof { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the runner should use the built-in DNS TXT proof collector for DNS TXT declarations.
+    /// </summary>
+    public bool CollectDnsTxtProof { get; }
 
     /// <summary>
     /// Gets a value indicating whether publication planning metadata should be recorded.

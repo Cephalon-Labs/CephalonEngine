@@ -86,6 +86,16 @@ public static class TenantDomainOwnershipProofVerificationOutcomes
     public const string HttpCollectionFailed = "http-collection-failed";
 
     /// <summary>
+    /// DNS TXT proof collection is required but the built-in collector is not registered.
+    /// </summary>
+    public const string DnsTxtCollectionUnavailable = "dns-txt-collection-unavailable";
+
+    /// <summary>
+    /// DNS TXT proof collection failed before a proof could be evaluated.
+    /// </summary>
+    public const string DnsTxtCollectionFailed = "dns-txt-collection-failed";
+
+    /// <summary>
     /// Proof evaluation failed before a terminal workflow outcome could be applied.
     /// </summary>
     public const string EvaluationFailed = "evaluation-failed";

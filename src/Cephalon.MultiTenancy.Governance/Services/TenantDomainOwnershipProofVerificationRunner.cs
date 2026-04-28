@@ -11,10 +11,12 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
     ITenantDomainOwnershipProofPublicationPlanner publicationPlanner,
     ITenantDomainOwnershipProofEvaluator proofEvaluator,
     IEnumerable<ITenantDomainOwnershipHttpProofCollector> httpProofCollectors,
+    IEnumerable<ITenantDomainOwnershipDnsTxtProofCollector> dnsTxtProofCollectors,
     TimeProvider timeProvider,
     ILogger<TenantDomainOwnershipProofVerificationRunner> logger) : ITenantDomainOwnershipProofVerificationRunner
 {
     private readonly ITenantDomainOwnershipHttpProofCollector? httpProofCollector = httpProofCollectors.FirstOrDefault();
+    private readonly ITenantDomainOwnershipDnsTxtProofCollector? dnsTxtProofCollector = dnsTxtProofCollectors.FirstOrDefault();
 
     public async ValueTask<TenantDomainOwnershipProofVerificationResult> VerifyAsync(
         TenantDomainOwnershipProofVerificationRequest request,
@@ -41,6 +43,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challengeResult: null,
                 publicationPlanResult: null,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null,
                 domainOwnership: null,
                 reason: "Tenant-domain ownership proof verification runner is disabled.",
@@ -51,6 +54,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                     challengeResult: null,
                     publicationPlanResult: null,
                     httpProofCollectionResult: null,
+                    dnsTxtProofCollectionResult: null,
                     evaluationResult: null));
 
         if (result.Verified || result.Rejected || result.ChallengeIssued || result.PublicationPlanned)
@@ -100,6 +104,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challengeResult: null,
                 publicationPlanResult: null,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null,
                 domainOwnership: existingDomainOwnership,
                 reason: "Only manual, DNS TXT, and HTTP file tenant-domain ownership verification methods are supported by the runner.",
@@ -110,6 +115,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                     challengeResult: null,
                     publicationPlanResult: null,
                     httpProofCollectionResult: null,
+                    dnsTxtProofCollectionResult: null,
                     evaluationResult: null));
         }
 
@@ -131,6 +137,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challengeResult: null,
                 publicationPlanResult: null,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null,
                 existingDomainOwnership,
                 "Tenant-domain ownership is already verified.",
@@ -141,6 +148,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                     challengeResult: null,
                     publicationPlanResult: null,
                     httpProofCollectionResult: null,
+                    dnsTxtProofCollectionResult: null,
                     evaluationResult: null));
         }
 
@@ -165,6 +173,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challengeResult: null,
                 publicationPlanResult: null,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null,
                 existingDomainOwnership,
                 "Observed proof is required for manual tenant-domain ownership proof verification.",
@@ -175,6 +184,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                     challengeResult: null,
                     publicationPlanResult: null,
                     httpProofCollectionResult: null,
+                    dnsTxtProofCollectionResult: null,
                     evaluationResult: null));
         }
 
@@ -188,6 +198,12 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
             request.CollectHttpProof)
         {
             return await CollectHttpProofAsync(request, ranAtUtc, cancellationToken).ConfigureAwait(false);
+        }
+
+        if (string.Equals(verificationMethod, TenantDomainVerificationMethods.DnsTxt, StringComparison.OrdinalIgnoreCase) &&
+            request.CollectDnsTxtProof)
+        {
+            return await CollectDnsTxtProofAsync(request, ranAtUtc, cancellationToken).ConfigureAwait(false);
         }
 
         if (string.Equals(verificationMethod, TenantDomainVerificationMethods.DnsTxt, StringComparison.OrdinalIgnoreCase))
@@ -208,17 +224,19 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
             verificationMethod,
             challengeResult: null,
             publicationPlanResult: null,
-                httpProofCollectionResult: null,
-                evaluationResult: null,
-                existingDomainOwnership,
-                "Observed proof is required or the requested tenant-domain ownership proof collection path is not enabled.",
-                BuildResultMetadata(
-                    request,
-                    TenantDomainOwnershipProofVerificationOutcomes.MissingObservedProof,
-                    ranAtUtc,
+            httpProofCollectionResult: null,
+            dnsTxtProofCollectionResult: null,
+            evaluationResult: null,
+            existingDomainOwnership,
+            "Observed proof is required or the requested tenant-domain ownership proof collection path is not enabled.",
+            BuildResultMetadata(
+                request,
+                TenantDomainOwnershipProofVerificationOutcomes.MissingObservedProof,
+                ranAtUtc,
                 challengeResult: null,
                 publicationPlanResult: null,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null));
     }
 
@@ -242,7 +260,13 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 metadata: request.Metadata),
             cancellationToken).ConfigureAwait(false);
 
-        return CreateEvaluationResult(request, ranAtUtc, verificationMethod, evaluation, httpProofCollectionResult: null);
+        return CreateEvaluationResult(
+            request,
+            ranAtUtc,
+            verificationMethod,
+            evaluation,
+            httpProofCollectionResult: null,
+            dnsTxtProofCollectionResult: null);
     }
 
     private async ValueTask<TenantDomainOwnershipProofVerificationResult> IssueChallengeAndPlanAsync(
@@ -281,6 +305,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challenge,
                 publicationPlanResult: null,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null,
                 challenge.DomainOwnership,
                 $"Tenant-domain ownership proof verification could not issue a challenge. {challenge.Reason}",
@@ -291,6 +316,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                     challenge,
                     publicationPlanResult: null,
                     httpProofCollectionResult: null,
+                    dnsTxtProofCollectionResult: null,
                     evaluationResult: null));
         }
 
@@ -324,6 +350,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
             challenge,
             publicationPlan,
             httpProofCollectionResult: null,
+            dnsTxtProofCollectionResult: null,
             evaluationResult: null,
             publicationPlan.DomainOwnership ?? challenge.DomainOwnership,
             publicationPlan.Planned
@@ -336,6 +363,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challenge,
                 publicationPlan,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null));
     }
 
@@ -360,6 +388,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challengeResult: null,
                 publicationPlanResult: null,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null,
                 domainOwnership: ResolveDomainOwnership(request),
                 reason: "Tenant-domain ownership HTTP proof collection is not registered.",
@@ -370,6 +399,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                     challengeResult: null,
                     publicationPlanResult: null,
                     httpProofCollectionResult: null,
+                    dnsTxtProofCollectionResult: null,
                     evaluationResult: null));
         }
 
@@ -391,7 +421,13 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
 
         if (collection.EvaluationResult is not null)
         {
-            return CreateEvaluationResult(request, ranAtUtc, TenantDomainVerificationMethods.HttpFile, collection.EvaluationResult, collection);
+            return CreateEvaluationResult(
+                request,
+                ranAtUtc,
+                TenantDomainVerificationMethods.HttpFile,
+                collection.EvaluationResult,
+                collection,
+                dnsTxtProofCollectionResult: null);
         }
 
         var outcome = MapHttpCollectionOutcome(collection.Outcome);
@@ -409,6 +445,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
             challengeResult: null,
             publicationPlanResult: collection.PublicationPlanResult,
             httpProofCollectionResult: collection,
+            dnsTxtProofCollectionResult: null,
             evaluationResult: null,
             collection.DomainOwnership,
             $"Tenant-domain ownership proof verification could not collect HTTP proof. {collection.Reason}",
@@ -419,6 +456,100 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challengeResult: null,
                 collection.PublicationPlanResult,
                 collection,
+                dnsTxtProofCollectionResult: null,
+                evaluationResult: null));
+    }
+
+    private async ValueTask<TenantDomainOwnershipProofVerificationResult> CollectDnsTxtProofAsync(
+        TenantDomainOwnershipProofVerificationRequest request,
+        DateTimeOffset ranAtUtc,
+        CancellationToken cancellationToken)
+    {
+        if (dnsTxtProofCollector is null)
+        {
+            return CreateResult(
+                request,
+                TenantDomainOwnershipProofVerificationOutcomes.DnsTxtCollectionUnavailable,
+                verified: false,
+                rejected: false,
+                challengeIssued: false,
+                publicationPlanned: false,
+                proofCollected: false,
+                proofEvaluated: false,
+                ranAtUtc,
+                verificationMethod: TenantDomainVerificationMethods.DnsTxt,
+                challengeResult: null,
+                publicationPlanResult: null,
+                httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
+                evaluationResult: null,
+                domainOwnership: ResolveDomainOwnership(request),
+                reason: "Tenant-domain ownership DNS TXT proof collection is not registered.",
+                metadata: BuildResultMetadata(
+                    request,
+                    TenantDomainOwnershipProofVerificationOutcomes.DnsTxtCollectionUnavailable,
+                    ranAtUtc,
+                    challengeResult: null,
+                    publicationPlanResult: null,
+                    httpProofCollectionResult: null,
+                    dnsTxtProofCollectionResult: null,
+                    evaluationResult: null));
+        }
+
+        var collection = await dnsTxtProofCollector.CollectAsync(
+            new TenantDomainOwnershipDnsTxtProofCollectionRequest(
+                request.TenantId,
+                request.DomainName,
+                TenantDomainVerificationMethods.DnsTxt,
+                request.DnsTxtResolverEndpoint,
+                source: request.Source ?? "proof-verification-runner",
+                actor: request.Actor,
+                atUtc: ranAtUtc,
+                expiresAtUtc: request.ExpiresAtUtc,
+                correlationId: request.CorrelationId,
+                recordPublicationPlan: request.RecordPublicationPlan,
+                timeout: request.Timeout,
+                metadata: request.Metadata),
+            cancellationToken).ConfigureAwait(false);
+
+        if (collection.EvaluationResult is not null)
+        {
+            return CreateEvaluationResult(
+                request,
+                ranAtUtc,
+                TenantDomainVerificationMethods.DnsTxt,
+                collection.EvaluationResult,
+                httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: collection);
+        }
+
+        var outcome = MapDnsTxtCollectionOutcome(collection.Outcome);
+        return CreateResult(
+            request,
+            outcome,
+            verified: false,
+            rejected: false,
+            challengeIssued: false,
+            publicationPlanned: collection.PublicationPlanResult?.Planned == true,
+            proofCollected: collection.Collected,
+            proofEvaluated: false,
+            ranAtUtc,
+            verificationMethod: TenantDomainVerificationMethods.DnsTxt,
+            challengeResult: null,
+            publicationPlanResult: collection.PublicationPlanResult,
+            httpProofCollectionResult: null,
+            dnsTxtProofCollectionResult: collection,
+            evaluationResult: null,
+            collection.DomainOwnership,
+            $"Tenant-domain ownership proof verification could not collect DNS TXT proof. {collection.Reason}",
+            BuildResultMetadata(
+                request,
+                outcome,
+                ranAtUtc,
+                challengeResult: null,
+                collection.PublicationPlanResult,
+                httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: collection,
                 evaluationResult: null));
     }
 
@@ -458,6 +589,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
             challengeResult: null,
             publicationPlan,
             httpProofCollectionResult: null,
+            dnsTxtProofCollectionResult: null,
             evaluationResult: null,
             publicationPlan.DomainOwnership,
             publicationPlan.Planned
@@ -470,6 +602,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 challengeResult: null,
                 publicationPlan,
                 httpProofCollectionResult: null,
+                dnsTxtProofCollectionResult: null,
                 evaluationResult: null));
     }
 
@@ -478,7 +611,8 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
         DateTimeOffset ranAtUtc,
         string verificationMethod,
         TenantDomainOwnershipProofEvaluationResult evaluation,
-        TenantDomainOwnershipHttpProofCollectionResult? httpProofCollectionResult)
+        TenantDomainOwnershipHttpProofCollectionResult? httpProofCollectionResult,
+        TenantDomainOwnershipDnsTxtProofCollectionResult? dnsTxtProofCollectionResult)
     {
         var verified = evaluation.Applied &&
             string.Equals(evaluation.Outcome, TenantDomainOwnershipProofEvaluationOutcomes.Verified, StringComparison.OrdinalIgnoreCase);
@@ -496,16 +630,19 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
             verified,
             rejected,
             challengeIssued: false,
-            publicationPlanned: httpProofCollectionResult?.PublicationPlanResult?.Planned == true,
-            proofCollected: httpProofCollectionResult?.Collected == true,
+            publicationPlanned: httpProofCollectionResult?.PublicationPlanResult?.Planned == true ||
+                dnsTxtProofCollectionResult?.PublicationPlanResult?.Planned == true,
+            proofCollected: httpProofCollectionResult?.Collected == true ||
+                dnsTxtProofCollectionResult?.Collected == true,
             proofEvaluated: true,
             ranAtUtc,
             verificationMethod,
             challengeResult: null,
-            publicationPlanResult: httpProofCollectionResult?.PublicationPlanResult,
+            publicationPlanResult: httpProofCollectionResult?.PublicationPlanResult ?? dnsTxtProofCollectionResult?.PublicationPlanResult,
             httpProofCollectionResult,
+            dnsTxtProofCollectionResult,
             evaluation,
-            evaluation.DomainOwnership ?? httpProofCollectionResult?.DomainOwnership,
+            evaluation.DomainOwnership ?? httpProofCollectionResult?.DomainOwnership ?? dnsTxtProofCollectionResult?.DomainOwnership,
             verified
                 ? "Tenant-domain ownership proof matched and the declaration was verified."
                 : rejected
@@ -516,8 +653,9 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
                 outcome,
                 ranAtUtc,
                 challengeResult: null,
-                httpProofCollectionResult?.PublicationPlanResult,
+                httpProofCollectionResult?.PublicationPlanResult ?? dnsTxtProofCollectionResult?.PublicationPlanResult,
                 httpProofCollectionResult,
+                dnsTxtProofCollectionResult,
                 evaluation));
     }
 
@@ -607,6 +745,23 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
         };
     }
 
+    private static string MapDnsTxtCollectionOutcome(string outcome)
+    {
+        return outcome switch
+        {
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.Disabled => TenantDomainOwnershipProofVerificationOutcomes.Disabled,
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.ResolverNotConfigured => TenantDomainOwnershipProofVerificationOutcomes.DnsTxtCollectionUnavailable,
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.NotFound => TenantDomainOwnershipProofVerificationOutcomes.NotFound,
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.TenantMismatch => TenantDomainOwnershipProofVerificationOutcomes.TenantMismatch,
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.VerificationMethodMismatch => TenantDomainOwnershipProofVerificationOutcomes.VerificationMethodMismatch,
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.MissingExpectedProof => TenantDomainOwnershipProofVerificationOutcomes.MissingExpectedProof,
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.UnsupportedVerificationMethod => TenantDomainOwnershipProofVerificationOutcomes.UnsupportedVerificationMethod,
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.StoreFailed => TenantDomainOwnershipProofVerificationOutcomes.StoreFailed,
+            TenantDomainOwnershipDnsTxtProofCollectionOutcomes.EvaluationFailed => TenantDomainOwnershipProofVerificationOutcomes.EvaluationFailed,
+            _ => TenantDomainOwnershipProofVerificationOutcomes.DnsTxtCollectionFailed
+        };
+    }
+
     private static string MapEvaluationOutcome(string outcome)
     {
         return outcome switch
@@ -621,6 +776,14 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
         };
     }
 
+    private string ResolveDnsTxtProofCollectionOwnership(TenantDomainOwnershipProofVerificationRequest request)
+    {
+        return dnsTxtProofCollector is not null &&
+            (request.DnsTxtResolverEndpoint is not null || options.DomainOwnershipDnsTxtProofResolverEndpoint is not null)
+            ? "cephalon-managed"
+            : "not-configured";
+    }
+
     private Dictionary<string, string> BuildResultMetadata(
         TenantDomainOwnershipProofVerificationRequest request,
         string outcome,
@@ -628,6 +791,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
         TenantDomainOwnershipProofChallengeResult? challengeResult,
         TenantDomainOwnershipProofPublicationPlanResult? publicationPlanResult,
         TenantDomainOwnershipHttpProofCollectionResult? httpProofCollectionResult,
+        TenantDomainOwnershipDnsTxtProofCollectionResult? dnsTxtProofCollectionResult,
         TenantDomainOwnershipProofEvaluationResult? evaluationResult)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -641,7 +805,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.LastProofVerificationSource] = request.Source ?? "proof-verification-runner";
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.ProofVerificationRunnerOwnership] = options.EnableDomainOwnershipProofVerificationRunner ? "cephalon-managed" : "not-configured";
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.HttpProofCollectionOwnership] = httpProofCollector is null ? "not-configured" : "cephalon-managed";
-        metadata[TenantDomainOwnershipProofVerificationMetadataKeys.DnsTxtProofCollectionOwnership] = "application-managed";
+        metadata[TenantDomainOwnershipProofVerificationMetadataKeys.DnsTxtProofCollectionOwnership] = ResolveDnsTxtProofCollectionOwnership(request);
         metadata[TenantDomainOwnershipProofVerificationMetadataKeys.ExternalProofPollingOwnership] = "application-managed";
 
         if (!string.IsNullOrWhiteSpace(request.Actor))
@@ -669,6 +833,11 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
             metadata[TenantDomainOwnershipProofVerificationMetadataKeys.LastProofVerificationHttpCollectionOutcome] = httpProofCollectionResult.Outcome;
         }
 
+        if (dnsTxtProofCollectionResult is not null)
+        {
+            metadata[TenantDomainOwnershipProofVerificationMetadataKeys.LastProofVerificationDnsTxtCollectionOutcome] = dnsTxtProofCollectionResult.Outcome;
+        }
+
         if (evaluationResult is not null)
         {
             metadata[TenantDomainOwnershipProofVerificationMetadataKeys.LastProofVerificationEvaluationOutcome] = evaluationResult.Outcome;
@@ -691,6 +860,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
         TenantDomainOwnershipProofChallengeResult? challengeResult,
         TenantDomainOwnershipProofPublicationPlanResult? publicationPlanResult,
         TenantDomainOwnershipHttpProofCollectionResult? httpProofCollectionResult,
+        TenantDomainOwnershipDnsTxtProofCollectionResult? dnsTxtProofCollectionResult,
         TenantDomainOwnershipProofEvaluationResult? evaluationResult,
         TenantDomainOwnershipDescriptor? domainOwnership,
         string reason,
@@ -711,6 +881,7 @@ internal sealed class TenantDomainOwnershipProofVerificationRunner(
             challengeResult,
             publicationPlanResult,
             httpProofCollectionResult,
+            dnsTxtProofCollectionResult,
             evaluationResult,
             domainOwnership,
             reason,

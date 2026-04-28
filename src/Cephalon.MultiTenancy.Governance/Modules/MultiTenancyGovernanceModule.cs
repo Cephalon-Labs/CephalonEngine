@@ -71,6 +71,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofChallengeIssuer>>(NullLogger<TenantDomainOwnershipProofChallengeIssuer>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofPublicationPlanner>>(NullLogger<TenantDomainOwnershipProofPublicationPlanner>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipHttpProofCollector>>(NullLogger<TenantDomainOwnershipHttpProofCollector>.Instance);
+        services.TryAddSingleton<ILogger<TenantDomainOwnershipDnsTxtProofCollector>>(NullLogger<TenantDomainOwnershipDnsTxtProofCollector>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofVerificationRunner>>(NullLogger<TenantDomainOwnershipProofVerificationRunner>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionDecider>>(NullLogger<TenantGovernanceActionDecider>.Instance);
         services.TryAddSingleton<ILogger<TenantGovernanceActionWorkflow>>(NullLogger<TenantGovernanceActionWorkflow>.Instance);
@@ -137,6 +138,14 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             services.TryAddSingleton<ITenantDomainOwnershipHttpProofCollector, TenantDomainOwnershipHttpProofCollector>();
         }
 
+        if (options.EnableDomainOwnershipDnsTxtProofCollection &&
+            options.EnableDomainOwnershipProofPublicationPlanning &&
+            options.EnableDomainOwnershipProofEvaluation &&
+            options.EnableDomainOwnershipVerificationWorkflow)
+        {
+            services.TryAddSingleton<ITenantDomainOwnershipDnsTxtProofCollector, TenantDomainOwnershipDnsTxtProofCollector>();
+        }
+
         if (options.EnableDomainOwnershipProofVerificationRunner &&
             options.EnableDomainOwnershipProofChallengeIssuance &&
             options.EnableDomainOwnershipProofPublicationPlanning &&
@@ -176,12 +185,23 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
             options.EnableDomainOwnershipVerificationWorkflow;
+        var dnsTxtProofCollectionEnabled = options.EnableDomainOwnershipDnsTxtProofCollection &&
+            options.EnableDomainOwnershipProofPublicationPlanning &&
+            options.EnableDomainOwnershipProofEvaluation &&
+            options.EnableDomainOwnershipVerificationWorkflow;
+        var dnsTxtProofCollectionConfigured = dnsTxtProofCollectionEnabled &&
+            options.DomainOwnershipDnsTxtProofResolverEndpoint is not null;
         var proofVerificationRunnerEnabled = options.EnableDomainOwnershipProofVerificationRunner &&
             options.EnableDomainOwnershipProofChallengeIssuance &&
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
             options.EnableDomainOwnershipVerificationWorkflow;
-        var dnsHttpProofCollectionOwnership = httpProofCollectionEnabled ? "mixed" : "application-managed";
+        var dnsTxtProofCollectionOwnership = dnsTxtProofCollectionConfigured ? "cephalon-managed" : "not-configured";
+        var dnsHttpProofCollectionOwnership = httpProofCollectionEnabled && dnsTxtProofCollectionConfigured
+            ? "cephalon-managed"
+            : httpProofCollectionEnabled || dnsTxtProofCollectionConfigured
+                ? "mixed"
+                : "application-managed";
 
         capabilities.Add(new Capability(
             key: "tenancy.membership.catalog",
@@ -329,7 +349,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
                     ["proofVerificationRunnerOwnership"] = proofVerificationRunnerEnabled ? "cephalon-managed" : "not-configured",
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
-                    ["dnsTxtProofCollectionOwnership"] = "application-managed",
+                    ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
+                    ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = "application-managed",
                     ["dnsHttpProofCollectionOwnership"] = dnsHttpProofCollectionOwnership,
                     ["runtimeSurface"] = "tenant-domain-ownership"
@@ -350,7 +371,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["proofCollectionOwnership"] = dnsHttpProofCollectionOwnership,
                     ["proofVerificationRunnerOwnership"] = proofVerificationRunnerEnabled ? "cephalon-managed" : "not-configured",
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
-                    ["dnsTxtProofCollectionOwnership"] = "application-managed",
+                    ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
+                    ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = "application-managed",
                     ["dnsHttpProofCollectionOwnership"] = dnsHttpProofCollectionOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
@@ -373,7 +395,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["proofVerificationRunnerOwnership"] = proofVerificationRunnerEnabled ? "cephalon-managed" : "not-configured",
                     ["proofPublicationOwnership"] = "application-managed",
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
-                    ["dnsTxtProofCollectionOwnership"] = "application-managed",
+                    ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
+                    ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = "application-managed",
                     ["dnsHttpProofCollectionOwnership"] = dnsHttpProofCollectionOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
@@ -396,7 +419,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["proofVerificationRunnerOwnership"] = proofVerificationRunnerEnabled ? "cephalon-managed" : "not-configured",
                     ["proofPublicationOwnership"] = "application-managed",
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
-                    ["dnsTxtProofCollectionOwnership"] = "application-managed",
+                    ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
+                    ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = "application-managed",
                     ["dnsHttpProofCollectionOwnership"] = dnsHttpProofCollectionOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
@@ -417,7 +441,30 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["executionOwnership"] = "cephalon-managed",
                     ["proofVerificationRunnerOwnership"] = proofVerificationRunnerEnabled ? "cephalon-managed" : "not-configured",
                     ["httpProofCollectionOwnership"] = "cephalon-managed",
-                    ["dnsTxtProofCollectionOwnership"] = "application-managed",
+                    ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
+                    ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
+                    ["externalProofPollingOwnership"] = "application-managed",
+                    ["proofPublicationOwnership"] = "application-managed",
+                    ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-domain-ownership"
+                }));
+        }
+
+        if (dnsTxtProofCollectionEnabled)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.domain-ownership.dns-txt-proof-collection",
+                displayName: "Tenant Domain Ownership DNS TXT Proof Collection",
+                description: "Collects DNS TXT domain-ownership proof content through an explicitly configured DNS-over-HTTPS resolver and evaluates it through the governance workflow.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = dnsTxtProofCollectionConfigured ? "cephalon-managed" : "not-configured",
+                    ["proofVerificationRunnerOwnership"] = proofVerificationRunnerEnabled ? "cephalon-managed" : "not-configured",
+                    ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
+                    ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
+                    ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = "application-managed",
                     ["proofPublicationOwnership"] = "application-managed",
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",
@@ -430,7 +477,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             capabilities.Add(new Capability(
                 key: "tenancy.domain-ownership.proof-verification-runner",
                 displayName: "Tenant Domain Ownership Proof Verification Runner",
-                description: "Runs tenant-domain ownership proof challenge, publication planning, reported-proof evaluation, and HTTP proof collection paths through one governance entry point.",
+                description: "Runs tenant-domain ownership proof challenge, publication planning, reported-proof evaluation, HTTP proof collection, and configured DNS TXT proof collection paths through one governance entry point.",
                 metadata: new Dictionary<string, string>
                 {
                     ["technology"] = "multi-tenancy",
@@ -438,7 +485,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["executionOwnership"] = "cephalon-managed",
                     ["proofVerificationRunnerOwnership"] = "cephalon-managed",
                     ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
-                    ["dnsTxtProofCollectionOwnership"] = "application-managed",
+                    ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionOwnership,
+                    ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
                     ["externalProofPollingOwnership"] = "application-managed",
                     ["proofPublicationOwnership"] = "application-managed",
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.DomainOwnershipStoreFilePath) ? "application-managed" : "cephalon-managed",

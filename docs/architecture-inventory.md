@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, domain proof verification runner orchestration, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 
 ### Data provider modules (14)
 
@@ -355,6 +355,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `tenancy.domain-ownership.proof-publication-plan` — Tenant Domain Ownership Proof Publication Plan
 - `tenancy.domain-ownership.proof-evaluation` — Tenant Domain Ownership Proof Evaluation
 - `tenancy.domain-ownership.http-proof-collection` — Tenant Domain Ownership HTTP Proof Collection
+- `tenancy.domain-ownership.dns-txt-proof-collection` — Tenant Domain Ownership DNS TXT Proof Collection
 - `tenancy.domain-ownership.proof-verification-runner` — Tenant Domain Ownership Proof Verification Runner
 - `tenancy.governance-action.catalog` — Tenant Governance Action Catalog
 - `tenancy.governance-action.decision` — Tenant Governance Action Decision
@@ -460,7 +461,8 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantDomainOwnershipProofPublicationPlanner` — DNS TXT and HTTP file proof publication instruction planning
 - `ITenantDomainOwnershipProofEvaluator` — reported proof evidence evaluation and workflow mutation
 - `ITenantDomainOwnershipHttpProofCollector` — bounded on-demand HTTP file proof collection and evaluation handoff
-- `ITenantDomainOwnershipProofVerificationRunner` — proof challenge, publication planning, reported-proof evaluation, and optional HTTP collection orchestration
+- `ITenantDomainOwnershipDnsTxtProofCollector` — bounded on-demand DNS TXT proof collection through an explicit DNS-over-HTTPS resolver and evaluation handoff
+- `ITenantDomainOwnershipProofVerificationRunner` — proof challenge, publication planning, reported-proof evaluation, and optional HTTP/DNS collection orchestration
 - `ITenantGovernanceActionCatalog` — merged approval/remediation action read model
 - `ITenantGovernanceActionDecider` — tenant-governance action decision
 - `ITenantGovernanceActionStore` — runtime approval/remediation action storage, with in-memory and opt-in file-backed baselines
@@ -469,7 +471,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog, store, and evaluation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, and validation posture from `Cephalon.MultiTenancy.Governance`
-- `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, proof-evaluation, HTTP proof collection, and proof-verification runner posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, proof-evaluation, HTTP proof collection, configured DNS TXT proof collection, and proof-verification runner posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 
 ### Audit
@@ -493,7 +495,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Wolverine Eventing (`Cephalon.Eventing.Wolverine`) — event IDs 4300–4305
 - Identity (`Cephalon.Identity`) — event IDs 4400–4401
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
-- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4535
+- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4537
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
 

@@ -46,6 +46,11 @@ public static class TenantDomainOwnershipProofVerificationMetadataKeys
     public const string LastProofVerificationHttpCollectionOutcome = "lastProofVerificationHttpCollectionOutcome";
 
     /// <summary>
+    /// Metadata key for the DNS TXT proof collection outcome observed by the latest proof verification run.
+    /// </summary>
+    public const string LastProofVerificationDnsTxtCollectionOutcome = "lastProofVerificationDnsTxtCollectionOutcome";
+
+    /// <summary>
     /// Metadata key for the proof evaluation outcome observed by the latest proof verification run.
     /// </summary>
     public const string LastProofVerificationEvaluationOutcome = "lastProofVerificationEvaluationOutcome";

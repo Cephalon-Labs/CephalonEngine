@@ -49,11 +49,22 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
             options.EnableDomainOwnershipVerificationWorkflow;
+        var dnsTxtProofCollectionEnabled = options.EnableDomainOwnershipDnsTxtProofCollection &&
+            options.EnableDomainOwnershipProofPublicationPlanning &&
+            options.EnableDomainOwnershipProofEvaluation &&
+            options.EnableDomainOwnershipVerificationWorkflow;
+        var dnsTxtProofCollectionConfigured = dnsTxtProofCollectionEnabled &&
+            options.DomainOwnershipDnsTxtProofResolverEndpoint is not null;
         var proofVerificationRunnerEnabled = options.EnableDomainOwnershipProofVerificationRunner &&
             options.EnableDomainOwnershipProofChallengeIssuance &&
             options.EnableDomainOwnershipProofPublicationPlanning &&
             options.EnableDomainOwnershipProofEvaluation &&
             options.EnableDomainOwnershipVerificationWorkflow;
+        var dnsHttpProofCollectionOwnership = httpProofCollectionEnabled && dnsTxtProofCollectionConfigured
+            ? "cephalon-managed"
+            : httpProofCollectionEnabled || dnsTxtProofCollectionConfigured
+                ? "mixed"
+                : "application-managed";
 
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -85,15 +96,17 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
             ["proofPublicationPlanningOwnership"] = options.EnableDomainOwnershipProofPublicationPlanning ? "cephalon-managed" : "not-configured",
             ["httpProofCollectionEnabled"] = httpProofCollectionEnabled.ToString().ToLowerInvariant(),
             ["httpProofCollectionOwnership"] = httpProofCollectionEnabled ? "cephalon-managed" : "not-configured",
+            ["dnsTxtProofCollectionEnabled"] = dnsTxtProofCollectionEnabled.ToString().ToLowerInvariant(),
+            ["dnsTxtProofResolverConfigured"] = dnsTxtProofCollectionConfigured.ToString().ToLowerInvariant(),
+            ["dnsTxtProofCollectionOwnership"] = dnsTxtProofCollectionConfigured ? "cephalon-managed" : "not-configured",
             ["proofVerificationRunnerEnabled"] = proofVerificationRunnerEnabled.ToString().ToLowerInvariant(),
             ["proofVerificationRunnerOwnership"] = proofVerificationRunnerEnabled ? "cephalon-managed" : "not-configured",
-            ["dnsTxtProofCollectionOwnership"] = "application-managed",
             ["externalProofPollingOwnership"] = "application-managed",
             ["proofPublicationOwnership"] = "application-managed",
             ["durableStoreOwnership"] = domainOwnershipStore.IsDurable ? domainOwnershipStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["verificationExecutionOwnership"] = "application-managed",
-            ["dnsHttpProofCollectionOwnership"] = httpProofCollectionEnabled ? "mixed" : "application-managed",
+            ["dnsHttpProofCollectionOwnership"] = dnsHttpProofCollectionOwnership,
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown),
             ["verificationMethodBreakdown"] = verificationMethodBreakdown.Length == 0 ? "none" : string.Join(",", verificationMethodBreakdown)
         };
@@ -101,7 +114,7 @@ internal sealed class MultiTenancyGovernanceDomainRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-domain-ownership-runtime",
             displayName: "Tenant Domain Ownership Runtime",
-            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, managed proof-publication planning ownership, managed HTTP proof-collection ownership, and managed proof-verification runner ownership.",
+            description: "Summarizes declared domain ownership catalog size, contributor count, runtime store posture, status posture, verification-method posture, managed validation ownership, managed in-process verification workflow ownership, managed proof-evaluation ownership, managed proof-challenge issuance ownership, managed proof-publication planning ownership, managed HTTP proof-collection ownership, configured DNS TXT proof-collection ownership, and managed proof-verification runner ownership.",
             metadata: metadata);
     }
 
