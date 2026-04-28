@@ -1,4 +1,5 @@
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Configuration;
 using Cephalon.MultiTenancy.Governance.AspNetCore.Hosting;
 using Cephalon.MultiTenancy.Governance.Registration;
@@ -7,11 +8,110 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
+using System.Net.Http.Json;
 
 namespace Cephalon.Tests.Hosting;
 
 public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
 {
+    [Fact]
+    public async Task MapCephalonTenantAdministrationCommandsAppliesWorkflowAndReportsMappedRuntimeSurface()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance();
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore(options =>
+        {
+            options.RequireTenantAdministrationAuthorization = false;
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantAdministrationCommands();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var request = new TenantAdministrationWorkflowRequest(
+            command: TenantAdministrationWorkflowCommands.GrantMembership,
+            tenantId: "tenant-admin-http",
+            principalId: "user-admin-http",
+            displayName: "HTTP Admin",
+            roles: ["owner", "member"],
+            actor: "tenant-owner",
+            reason: "Bootstrap tenant owner",
+            atUtc: new DateTimeOffset(2026, 04, 29, 12, 0, 0, TimeSpan.Zero),
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["source"] = "hosting-test"
+            });
+
+        var response = await client.PostAsJsonAsync("/engine/tenant-administration/commands", request);
+        var result = await response.Content.ReadFromJsonAsync<TenantAdministrationWorkflowResult>();
+        var membership = Assert.Single(app.Services.GetRequiredService<ITenantMembershipCatalog>().Memberships);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-administration-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.True(result.Applied);
+        Assert.Equal(TenantAdministrationWorkflowOutcomes.Applied, result.Outcome);
+        Assert.Equal("tenant-admin-http", membership.TenantId);
+        Assert.Equal("user-admin-http", membership.PrincipalId);
+        Assert.Equal(TenantMembershipStatuses.Active, membership.Status);
+        Assert.Equal("tenant-owner", membership.Metadata[TenantAdministrationWorkflowMetadataKeys.LastAdministrationActor]);
+        Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
+        Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
+        Assert.Equal("false", endpointEntry.Metadata["requireAuthorization"]);
+        Assert.Equal("/engine/tenant-administration/commands", endpointEntry.Metadata["routePattern"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantAdminEndpointOwnership"]);
+        Assert.Equal("application-managed", endpointEntry.Metadata["tenantAdminUiOwnership"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonTenantAdministrationCommandsDeniesAnonymousByDefault()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance();
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore();
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantAdministrationCommands();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/tenant-administration/commands",
+            new TenantAdministrationWorkflowRequest(
+                command: TenantAdministrationWorkflowCommands.GrantMembership,
+                tenantId: "tenant-admin-http",
+                principalId: "anonymous-user"));
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-administration-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Empty(app.Services.GetRequiredService<ITenantMembershipCatalog>().Memberships);
+        Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
+        Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
+        Assert.Equal("true", endpointEntry.Metadata["requireAuthorization"]);
+        Assert.Equal("none", endpointEntry.Metadata["authorizationPolicy"]);
+    }
+
     [Fact]
     public async Task MapCephalonTenantDomainOwnershipHttpProofsServesPublishedProofsByHostAndPath()
     {

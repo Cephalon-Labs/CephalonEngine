@@ -478,6 +478,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog, store, and evaluation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, and validation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-administration` technology surface — Cephalon-managed host-driven tenant-administration workflow posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-administration-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-administration command endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, HTTP proof publication, proof-evaluation, HTTP proof collection, configured DNS TXT proof collection, proof-verification runner, bounded proof-polling runner, and opt-in background proof-polling posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 
@@ -555,6 +556,7 @@ Each exporter is a standalone companion package on top of the cloud-neutral OTLP
 - `Cephalon.AspNetCore.GraphQL` — GraphQL transport adapter
 - `Cephalon.AspNetCore.Grpc` — gRPC transport adapter with unary and streaming contracts
 - `Cephalon.Identity.AspNetCore` — ASP.NET Core identity/authorization host adapter
+- `Cephalon.MultiTenancy.Governance.AspNetCore` — ASP.NET Core tenant-domain ownership HTTP proof and tenant-administration command adapter
 - `Cephalon.Worker` — non-HTTP generic-host adapter for worker processes
 
 ## Tooling and adoption
@@ -628,6 +630,6 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Diagnostics sources: **10**
 - Dependency health probes: **18**
 - Cloud/platform exporters: **14**
-- Host adapters: **6**
+- Host adapters: **7**
 - Runtime introspection endpoints: **33+**
 - Sample applications: **5**

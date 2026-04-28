@@ -104,6 +104,7 @@ public sealed class ReferenceDocsGeneratorTests
 
         Assert.Contains("EngineWebApplicationExtensions", hostPage.Contents, StringComparison.Ordinal);
         Assert.Contains("ITransportRouteMapper", hostPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapCephalonTenantAdministrationCommands", governanceHostPage.Contents, StringComparison.Ordinal);
         Assert.Contains("MapCephalonTenantDomainOwnershipHttpProofs", governanceHostPage.Contents, StringComparison.Ordinal);
     }
 
@@ -456,6 +457,7 @@ public sealed class ReferenceDocsGeneratorTests
         var governanceAspNetCorePage = Assert.Single(rendered.Files, file => file.Path == "cephalon-multitenancy-governance-aspnetcore.md");
 
         Assert.Contains("MultiTenancyGovernanceAspNetCoreOptions", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapCephalonTenantAdministrationCommands", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
         Assert.Contains("MapCephalonTenantDomainOwnershipHttpProofs", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
     }
 

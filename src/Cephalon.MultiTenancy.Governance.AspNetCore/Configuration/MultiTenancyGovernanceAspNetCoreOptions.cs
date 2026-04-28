@@ -4,10 +4,12 @@ using Microsoft.Extensions.Configuration;
 namespace Cephalon.MultiTenancy.Governance.AspNetCore.Configuration;
 
 /// <summary>
-/// Configures ASP.NET Core-specific tenant-domain ownership governance endpoints.
+/// Configures ASP.NET Core-specific multi-tenancy governance endpoints.
 /// </summary>
 public sealed class MultiTenancyGovernanceAspNetCoreOptions
 {
+    internal const string DefaultTenantAdministrationCommandRoutePattern = "/engine/tenant-administration/commands";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MultiTenancyGovernanceAspNetCoreOptions" /> class.
     /// </summary>
@@ -40,6 +42,39 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
     public bool ExcludeFromDescription { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the tenant-administration command endpoint should be mapped.
+    /// </summary>
+    public bool EnableTenantAdministrationCommandEndpoint { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the endpoint route pattern used for tenant-administration workflow commands.
+    /// </summary>
+    /// <remarks>
+    /// The default route stays under <c>/engine</c> because the endpoint is an operator/admin surface, not an
+    /// application-owned public onboarding API.
+    /// </remarks>
+    public string TenantAdministrationCommandRoutePattern { get; set; } = DefaultTenantAdministrationCommandRoutePattern;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the tenant-administration command endpoint should require authorization.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core
+    /// authorization middleware do not execute tenant-administration commands anonymously.
+    /// </remarks>
+    public bool RequireTenantAdministrationAuthorization { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the optional ASP.NET Core authorization policy required by the tenant-administration command endpoint.
+    /// </summary>
+    public string? TenantAdministrationAuthorizationPolicy { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the tenant-administration command endpoint should be excluded from OpenAPI descriptions.
+    /// </summary>
+    public bool ExcludeTenantAdministrationEndpointFromDescription { get; set; } = true;
+
+    /// <summary>
     /// Reads ASP.NET Core governance adapter options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -65,6 +100,11 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
         options.RoutePattern = Normalize(section["RoutePattern"]) ?? options.RoutePattern;
         options.CacheControlHeader = Normalize(section["CacheControlHeader"]) ?? options.CacheControlHeader;
         options.ExcludeFromDescription = ParseBoolean(section["ExcludeFromDescription"], options.ExcludeFromDescription);
+        options.EnableTenantAdministrationCommandEndpoint = ParseBoolean(section["EnableTenantAdministrationCommandEndpoint"], options.EnableTenantAdministrationCommandEndpoint);
+        options.TenantAdministrationCommandRoutePattern = Normalize(section["TenantAdministrationCommandRoutePattern"]) ?? options.TenantAdministrationCommandRoutePattern;
+        options.RequireTenantAdministrationAuthorization = ParseBoolean(section["RequireTenantAdministrationAuthorization"], options.RequireTenantAdministrationAuthorization);
+        options.TenantAdministrationAuthorizationPolicy = Normalize(section["TenantAdministrationAuthorizationPolicy"]);
+        options.ExcludeTenantAdministrationEndpointFromDescription = ParseBoolean(section["ExcludeTenantAdministrationEndpointFromDescription"], options.ExcludeTenantAdministrationEndpointFromDescription);
         return options;
     }
 

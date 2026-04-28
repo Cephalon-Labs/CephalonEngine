@@ -79,7 +79,7 @@ public static class ReferenceDocsGenerator
         new("Cephalon.Identity.AspNetCore", "Phase 8 Companion Packs", "ASP.NET Core host adapter for Cephalon identity and authorization workloads."),
         new("Cephalon.Ids.Sfid", "Phase 8 Companion Packs", "Official Sfid.Net-backed identifier generation for Cephalon runtimes."),
         new("Cephalon.MultiTenancy", "Phase 8 Companion Packs", "Host-agnostic tenant-resolution and ambient tenant-context baseline for Cephalon runtimes."),
-        new("Cephalon.MultiTenancy.Governance.AspNetCore", "Phase 8 Companion Packs", "ASP.NET Core HTTP proof publication adapter for Cephalon multi-tenancy governance workloads."),
+        new("Cephalon.MultiTenancy.Governance.AspNetCore", "Phase 8 Companion Packs", "ASP.NET Core HTTP proof publication and tenant-administration command adapter for Cephalon multi-tenancy governance workloads."),
         new("Cephalon.MultiTenancy.Governance", "Phase 8 Companion Packs", "Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads."),
         new("Cephalon.Retrieval", "Technology Packs", "Knowledge retrieval runtime services and extension points."),
         new("Cephalon.Edge", "Technology Packs", "Edge-native delivery runtime services and extension points."),

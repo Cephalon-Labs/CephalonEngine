@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-28T23:15:43.3850444+00:00",
+  "GeneratedAtUtc": "2026-04-28T23:45:20.1216612+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -237,10 +237,10 @@
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
       "Category": "Phase 8 Companion Packs",
-      "Description": "ASP.NET Core HTTP proof publication adapter for Cephalon multi-tenancy governance workloads.",
+      "Description": "ASP.NET Core HTTP proof publication and tenant-administration command adapter for Cephalon multi-tenancy governance workloads.",
       "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
       "NamespaceCount": 2,
-      "TypeCount": 4
+      "TypeCount": 5
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1259,7 +1259,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-aspnetcore-hosting",
-      "TypeCount": 3
+      "TypeCount": 4
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
@@ -12714,11 +12714,11 @@
       "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
       "AnchorId": "type-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions",
       "Declaration": "public sealed class MultiTenancyGovernanceAspNetCoreOptions",
-      "Summary": "Configures ASP.NET Core-specific tenant-domain ownership governance endpoints.",
+      "Summary": "Configures ASP.NET Core-specific multi-tenancy governance endpoints.",
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 9,
         "Methods": 1
       }
     },
@@ -15674,6 +15674,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 4,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "TenantAdministrationEndpointRouteBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantadministrationendpointroutebuilderextensions",
+      "Declaration": "public static class TenantAdministrationEndpointRouteBuilderExtensions",
+      "Summary": "Maps ASP.NET Core endpoints for Cephalon tenant-administration workflow commands.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -45749,6 +45764,17 @@
       "Summary": "Gets or sets a value indicating whether synchronization features are enabled."
     },
     {
+      "DisplayName": "EnableTenantAdministrationCommandEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantadministrationcommandendpoint",
+      "Signature": "bool EnableTenantAdministrationCommandEndpoint { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the tenant-administration command endpoint should be mapped."
+    },
+    {
       "DisplayName": "EnableTenantAdministrationWorkflow",
       "Category": "Properties",
       "DeclaringTypeName": "MultiTenancyGovernanceOptions",
@@ -47386,6 +47412,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludefromdescription",
       "Signature": "bool ExcludeFromDescription { get; set; }",
       "Summary": "Gets or sets a value indicating whether the proof endpoint should be excluded from OpenAPI descriptions."
+    },
+    {
+      "DisplayName": "ExcludeTenantAdministrationEndpointFromDescription",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludetenantadministrationendpointfromdescription",
+      "Signature": "bool ExcludeTenantAdministrationEndpointFromDescription { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the tenant-administration command endpoint should be excluded from OpenAPI descriptions."
     },
     {
       "DisplayName": "ExecuteAsync",
@@ -71258,6 +71295,17 @@
       "Summary": "Maps Cephalon runtime, diagnostics, transport, and documentation endpoints onto the application."
     },
     {
+      "DisplayName": "MapCephalonTenantAdministrationCommands",
+      "Category": "Methods",
+      "DeclaringTypeName": "TenantAdministrationEndpointRouteBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantadministrationendpointroutebuilderextensions-mapcephalontenantadministrationcommands-microsoft-aspnetcore-routing-iendpointroutebuilder",
+      "Signature": "IEndpointRouteBuilder MapCephalonTenantAdministrationCommands(this IEndpointRouteBuilder endpoints)",
+      "Summary": "Maps the optional tenant-administration command endpoint."
+    },
+    {
       "DisplayName": "MapCephalonTenantDomainOwnershipHttpProofs",
       "Category": "Methods",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofEndpointRouteBuilderExtensions",
@@ -94781,6 +94829,17 @@
       "Summary": "Gets a value indicating whether package manifests must declare supported target frameworks."
     },
     {
+      "DisplayName": "RequireTenantAdministrationAuthorization",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantadministrationauthorization",
+      "Signature": "bool RequireTenantAdministrationAuthorization { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the tenant-administration command endpoint should require authorization."
+    },
+    {
       "DisplayName": "RequireTenantMatch",
       "Category": "Fields",
       "DeclaringTypeName": "IdentityPolicyMetadataKeys",
@@ -107086,6 +107145,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-tenantadministration",
       "Signature": "const string TenantAdministration",
       "Summary": "A governance action that represents tenant administration."
+    },
+    {
+      "DisplayName": "TenantAdministrationAuthorizationPolicy",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantadministrationauthorizationpolicy",
+      "Signature": "string TenantAdministrationAuthorizationPolicy { get; set; }",
+      "Summary": "Gets or sets the optional ASP.NET Core authorization policy required by the tenant-administration command endpoint."
+    },
+    {
+      "DisplayName": "TenantAdministrationCommandRoutePattern",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantadministrationcommandroutepattern",
+      "Signature": "string TenantAdministrationCommandRoutePattern { get; set; }",
+      "Summary": "Gets or sets the endpoint route pattern used for tenant-administration workflow commands."
     },
     {
       "DisplayName": "TenantAdministrationWorkflowRequest",

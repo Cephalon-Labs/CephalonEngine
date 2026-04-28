@@ -16,7 +16,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 ### `MultiTenancyGovernanceAspNetCoreOptions`
 
-Configures ASP.NET Core-specific tenant-domain ownership governance endpoints.
+Configures ASP.NET Core-specific multi-tenancy governance endpoints.
 
 #### Declaration
 ```csharp
@@ -57,6 +57,16 @@ bool EnableHttpProofPublicationEndpoint { get; set; }
 
 Gets or sets a value indicating whether the HTTP proof publication endpoint should be mapped.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantadministrationcommandendpoint"></a>
+
+##### `EnableTenantAdministrationCommandEndpoint`
+
+```csharp
+bool EnableTenantAdministrationCommandEndpoint { get; set; }
+```
+
+Gets or sets a value indicating whether the tenant-administration command endpoint should be mapped.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludefromdescription"></a>
 
 ##### `ExcludeFromDescription`
@@ -66,6 +76,28 @@ bool ExcludeFromDescription { get; set; }
 ```
 
 Gets or sets a value indicating whether the proof endpoint should be excluded from OpenAPI descriptions.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludetenantadministrationendpointfromdescription"></a>
+
+##### `ExcludeTenantAdministrationEndpointFromDescription`
+
+```csharp
+bool ExcludeTenantAdministrationEndpointFromDescription { get; set; }
+```
+
+Gets or sets a value indicating whether the tenant-administration command endpoint should be excluded from OpenAPI descriptions.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantadministrationauthorization"></a>
+
+##### `RequireTenantAdministrationAuthorization`
+
+```csharp
+bool RequireTenantAdministrationAuthorization { get; set; }
+```
+
+Gets or sets a value indicating whether the tenant-administration command endpoint should require authorization.
+
+Remarks: The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core authorization middleware do not execute tenant-administration commands anonymously.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-routepattern"></a>
 
@@ -78,6 +110,28 @@ string RoutePattern { get; set; }
 Gets or sets the endpoint route pattern used for published HTTP proof files.
 
 Remarks: The default catch-all route is intentionally constrained under `/.well-known/cephalon/` so it does not compete with application-owned routes.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantadministrationauthorizationpolicy"></a>
+
+##### `TenantAdministrationAuthorizationPolicy`
+
+```csharp
+string TenantAdministrationAuthorizationPolicy { get; set; }
+```
+
+Gets or sets the optional ASP.NET Core authorization policy required by the tenant-administration command endpoint.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantadministrationcommandroutepattern"></a>
+
+##### `TenantAdministrationCommandRoutePattern`
+
+```csharp
+string TenantAdministrationCommandRoutePattern { get; set; }
+```
+
+Gets or sets the endpoint route pattern used for tenant-administration workflow commands.
+
+Remarks: The default route stays under `/engine` because the endpoint is an operator/admin surface, not an application-owned public onboarding API.
 
 #### Methods
 
@@ -159,6 +213,36 @@ Returns: The same builder instance for fluent composition.
 Parameters:
 - `builder`: The ASP.NET Core application builder to extend.
 - `configure`: An optional callback that can extend or override the configuration-driven ASP.NET Core governance adapter options.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantadministrationendpointroutebuilderextensions"></a>
+
+### `TenantAdministrationEndpointRouteBuilderExtensions`
+
+Maps ASP.NET Core endpoints for Cephalon tenant-administration workflow commands.
+
+#### Declaration
+```csharp
+public static class TenantAdministrationEndpointRouteBuilderExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantadministrationendpointroutebuilderextensions-mapcephalontenantadministrationcommands-microsoft-aspnetcore-routing-iendpointroutebuilder"></a>
+
+##### `MapCephalonTenantAdministrationCommands`
+
+```csharp
+IEndpointRouteBuilder MapCephalonTenantAdministrationCommands(this IEndpointRouteBuilder endpoints)
+```
+
+Maps the optional tenant-administration command endpoint.
+
+Remarks: The endpoint is opt-in, executes the host-agnostic `ITenantAdministrationWorkflow`, and performs a fail-closed authorization check by default. It does not provide public onboarding, tenant-admin UI, invitation delivery, or identity-provider synchronization.
+
+Returns: The same endpoint route builder for fluent routing composition.
+
+Parameters:
+- `endpoints`: The endpoint route builder to extend.
 
 <a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantdomainownershiphttpproofendpointroutebuilderextensions"></a>
 

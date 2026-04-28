@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Technologies;
 using Cephalon.MultiTenancy.Governance.AspNetCore.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,8 @@ public static class MultiTenancyGovernanceAspNetCoreServiceCollectionExtensions
 
         services.RemoveAll<MultiTenancyGovernanceAspNetCoreOptions>();
         services.AddSingleton(options);
+        services.TryAddSingleton<TenantAdministrationEndpointRuntimeCatalog>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceAspNetCoreAdministrationRuntimeSurfaceContributor>());
         return services;
     }
 }
