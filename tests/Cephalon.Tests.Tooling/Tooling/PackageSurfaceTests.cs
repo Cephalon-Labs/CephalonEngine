@@ -1364,6 +1364,18 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void MultiTenancyGovernanceSmtpDeliveryAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting.SmtpInvitationDeliveryServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions),
+            typeof(global::Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting.SmtpInvitationDeliveryServiceCollectionExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.ISmtpInvitationDeliveryClient),
+            typeof(global::Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryClientResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage));
+    }
+
+    [Fact]
     public void AuditAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

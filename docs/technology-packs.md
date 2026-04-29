@@ -111,7 +111,13 @@ Current baseline packages:
   - optional HTTP webhook sender companion for `Cephalon.MultiTenancy.Governance`
   - registers a provider-managed `ITenantInvitationDeliverySender` with sender id `http-webhook` by default
   - reads `Engine:MultiTenancy:Governance:HttpInvitationDelivery` or code-first options for endpoint, method, headers, accepted status codes, timeout, supported channels, provider-neutral idempotency headers, bounded in-process retry/backoff, and optional HMAC-SHA256 webhook signing
-  - emits `Cephalon.MultiTenancy.Governance.HttpDelivery` diagnostics while leaving provider-specific email, SMS, chat, CRM, identity-provider, automatic background delivery workers, distributed retry queues, provider-specific delivery-status callback translation, provider-specific callback signature verification, provider polling, and provider-reconciliation semantics to future provider packs or applications
+  - emits `Cephalon.MultiTenancy.Governance.HttpDelivery` diagnostics while leaving provider-specific email API, SMS, chat, CRM, identity-provider, automatic background delivery workers, distributed retry queues, provider-specific delivery-status callback translation, provider-specific callback signature verification, provider polling, and provider-reconciliation semantics to future provider packs or applications
+- `Cephalon.MultiTenancy.Governance.SmtpDelivery`
+  - optional SMTP relay sender companion for `Cephalon.MultiTenancy.Governance`
+  - registers a provider-managed `ITenantInvitationDeliverySender` with sender id `smtp-email` by default
+  - reads `Engine:MultiTenancy:Governance:SmtpInvitationDelivery` or code-first options for relay host, port, TLS posture, credentials, sender address, recipient metadata key, supported channels, deterministic message-id domain, templates, and safe custom headers
+  - exposes `ISmtpInvitationDeliveryClient`, `SmtpInvitationDeliveryMessage`, and `SmtpInvitationDeliveryClientResult` so hosts can test or replace the default SMTP relay client without changing the core dispatcher
+  - emits `Cephalon.MultiTenancy.Governance.SmtpDelivery` diagnostics while leaving SendGrid, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce handling, provider polling, callback inboxes, and provider-specific reconciliation semantics to future provider packs or applications
 - `Cephalon.Edge`
   - runtime services and capability activation for `EdgeNativeDelivery`
   - registers `IEdgeNodeCatalog` when the profile is selected
@@ -278,6 +284,7 @@ Shipped pack-specific extension points:
     - `ITenantInvitationDeliveryStatusReconciler` for the current host-agnostic delivery status observation path over provider or receiver reports
     - `ITenantInvitationDeliveryStatusObservationStore` for normalized delivery-status observation history, with in-memory and file-backed baselines
     - `Cephalon.MultiTenancy.Governance.HttpDelivery` plus `AddCephalonHttpInvitationDelivery(...)` when a host wants the first-party signed/retrying HTTP webhook sender implementation for that dispatch path
+    - `Cephalon.MultiTenancy.Governance.SmtpDelivery` plus `AddCephalonSmtpInvitationDelivery(...)` when a host wants the first-party SMTP relay sender implementation for that dispatch path
     - `ITenantAdministrationWorkflow` for the current Cephalon-managed host-driven membership and invitation administration path
     - `ITenantDomainOwnershipProofChallengeIssuer` for the current Cephalon-managed proof-challenge issuance path that creates expected proof values and publication hints
     - `ITenantDomainOwnershipProofPublicationPlanner` for the current Cephalon-managed proof-publication planning path that emits DNS TXT or HTTP file instructions

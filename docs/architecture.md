@@ -311,6 +311,9 @@ Companion adapter packages:
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Services` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Services`
+- `src/Cephalon.MultiTenancy.Governance.SmtpDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration`
+- `src/Cephalon.MultiTenancy.Governance.SmtpDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting`
+- `src/Cephalon.MultiTenancy.Governance.SmtpDelivery/Services` -> `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services`
 - `src/Cephalon.Scaffolding/Generation` -> `Cephalon.Scaffolding.Generation`
 - `src/Cephalon.Scaffolding/IO` -> `Cephalon.Scaffolding.IO`
 - `templates/Cephalon.TemplatePack/templates` -> installable `dotnet new` blueprint templates

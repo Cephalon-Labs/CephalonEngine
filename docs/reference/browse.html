@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T15:50:27.0471042+00:00",
+  "GeneratedAtUtc": "2026-04-29T16:15:44.25699+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -352,6 +352,14 @@
       "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
       "NamespaceCount": 3,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "Category": "Phase 8 Companion Packs",
+      "Description": "SMTP relay invitation delivery sender companion package for Cephalon multi-tenancy governance workloads.",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "NamespaceCount": 3,
+      "TypeCount": 5
     },
     {
       "AssemblyName": "Cephalon.Observability",
@@ -1427,6 +1435,27 @@
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
       "TypeCount": 130
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-smtpdelivery-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-smtpdelivery-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-smtpdelivery-services",
+      "TypeCount": 3
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -11654,6 +11683,21 @@
       }
     },
     {
+      "DisplayName": "ISmtpInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-smtpdelivery-services-ismtpinvitationdeliveryclient",
+      "Declaration": "public interface ISmtpInvitationDeliveryClient",
+      "Summary": "Sends SMTP invitation delivery messages for the SMTP companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ISnapshotStore",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15749,6 +15793,66 @@
       }
     },
     {
+      "DisplayName": "SmtpInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult",
+      "Declaration": "public sealed class SmtpInvitationDeliveryClientResult",
+      "Summary": "Describes the result returned by an SMTP invitation delivery client.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage",
+      "Declaration": "public sealed class SmtpInvitationDeliveryMessage",
+      "Summary": "Describes a prepared SMTP invitation delivery message.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions",
+      "Declaration": "public sealed class SmtpInvitationDeliveryOptions",
+      "Summary": "Configures SMTP relay delivery for tenant invitations dispatched by the governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "SmtpInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-smtpdelivery-hosting-smtpinvitationdeliveryservicecollectionextensions",
+      "Declaration": "public static class SmtpInvitationDeliveryServiceCollectionExtensions",
+      "Summary": "Adds SMTP relay invitation delivery services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "SqlServerCdcCaptureOptions",
       "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
       "AssemblyName": "Cephalon.Data.SqlServer",
@@ -18072,6 +18176,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string",
       "Signature": "Result\u003CT\u003E Accepted\u003CT\u003E(T value, string message, string code)",
       "Summary": "Creates an accepted result with a payload value."
+    },
+    {
+      "DisplayName": "Accepted",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-accepted",
+      "Signature": "bool Accepted { get; }",
+      "Summary": "Gets a value indicating whether the SMTP relay accepted the message."
     },
     {
       "DisplayName": "Accepted",
@@ -21350,6 +21465,28 @@
       "AnchorId": "member-m-cephalon-observability-serilog-hosting-seriloghostapplicationbuilderextensions-addcephalonserilog-1-0-system-action-system-iserviceprovider-serilog-loggerconfiguration",
       "Signature": "TBuilder AddCephalonSerilog\u003CTBuilder\u003E(this TBuilder builder, Action\u003CIServiceProvider, LoggerConfiguration\u003E configure)",
       "Summary": "Adds Serilog as an \u0060ILogger\u0060 provider for the target host builder."
+    },
+    {
+      "DisplayName": "AddCephalonSmtpInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "SmtpInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-smtpdelivery-hosting-smtpinvitationdeliveryservicecollectionextensions-addcephalonsmtpinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonSmtpInvitationDelivery(this IServiceCollection services, Action\u003CSmtpInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds SMTP invitation delivery using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonSmtpInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "SmtpInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-smtpdelivery-hosting-smtpinvitationdeliveryservicecollectionextensions-addcephalonsmtpinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonSmtpInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action\u003CSmtpInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds SMTP invitation delivery using configuration as the primary source of relay settings."
     },
     {
       "DisplayName": "AddCephalonSqlServerDependencyHealth",
@@ -47586,6 +47723,17 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-enabled",
+      "Signature": "bool Enabled { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the SMTP invitation sender should be registered."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "TenancySelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -53810,6 +53958,28 @@
       "Summary": "Gets the UTC timestamp until which the current answer remains fresh, when known."
     },
     {
+      "DisplayName": "FromAddress",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-fromaddress",
+      "Signature": "string FromAddress { get; }",
+      "Summary": "Gets the sender email address."
+    },
+    {
+      "DisplayName": "FromAddress",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-fromaddress",
+      "Signature": "string FromAddress { get; set; }",
+      "Summary": "Gets or sets the sender email address used in the SMTP message."
+    },
+    {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
       "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
@@ -54439,6 +54609,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "SmtpInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds SMTP invitation delivery options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "SqlServerDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
@@ -54479,6 +54660,28 @@
       "AnchorId": "member-m-cephalon-engine-configuration-trustpolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "TrustPolicy FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Reads a trust policy from configuration."
+    },
+    {
+      "DisplayName": "FromDisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-fromdisplayname",
+      "Signature": "string FromDisplayName { get; }",
+      "Summary": "Gets the optional sender display name."
+    },
+    {
+      "DisplayName": "FromDisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-fromdisplayname",
+      "Signature": "string FromDisplayName { get; set; }",
+      "Summary": "Gets or sets the optional sender display name used in the SMTP message."
     },
     {
       "DisplayName": "FromManifest",
@@ -61985,6 +62188,28 @@
     {
       "DisplayName": "Headers",
       "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; }",
+      "Summary": "Gets safe additional SMTP headers."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; set; }",
+      "Summary": "Gets or sets additional SMTP message headers added to every delivery message."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
       "DeclaringTypeName": "TanzuTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
       "AssemblyName": "Cephalon.Observability.Tanzu",
@@ -62414,6 +62639,17 @@
     {
       "DisplayName": "Host",
       "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the SMTP relay host name."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
       "DeclaringTypeName": "SqlServerDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
@@ -62828,6 +63064,28 @@
       "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-hostnames",
       "Signature": "IList\u003Cstring\u003E Hostnames { get; }",
       "Summary": "Gets the optional hostnames published by the projected HTTPRoute."
+    },
+    {
+      "DisplayName": "HtmlBody",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-htmlbody",
+      "Signature": "string HtmlBody { get; }",
+      "Summary": "Gets the optional HTML message body."
+    },
+    {
+      "DisplayName": "HtmlBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-htmlbodytemplate",
+      "Signature": "string HtmlBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the optional HTML SMTP message body template."
     },
     {
       "DisplayName": "HttpClientName",
@@ -64599,6 +64857,17 @@
       "AnchorId": "member-p-cephalon-identity-aspnetcore-configuration-identityaspnetcoreoptions-includeallclaimsassubjectattributes",
       "Signature": "bool IncludeAllClaimsAsSubjectAttributes { get; set; }",
       "Summary": "Gets or sets a value indicating whether unmatched claims should be projected into \u0060Attributes\u0060."
+    },
+    {
+      "DisplayName": "IncludeContextHeaders",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-includecontextheaders",
+      "Signature": "bool IncludeContextHeaders { get; set; }",
+      "Summary": "Gets or sets a value indicating whether safe Cephalon context headers should be added to the SMTP message."
     },
     {
       "DisplayName": "IncludedBehaviorIds",
@@ -77306,6 +77575,28 @@
       "Summary": "Gets the stable inbound message identifier when one was reported."
     },
     {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-messageid",
+      "Signature": "string MessageId { get; }",
+      "Summary": "Gets the deterministic SMTP message identifier."
+    },
+    {
+      "DisplayName": "MessageIdDomain",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-messageiddomain",
+      "Signature": "string MessageIdDomain { get; set; }",
+      "Summary": "Gets or sets the domain used for deterministic SMTP \u0060Message-Id\u0060 values."
+    },
+    {
       "DisplayName": "Messages",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionAcknowledgement",
@@ -78657,6 +78948,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional project metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional safe client metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -87468,6 +87770,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the SMTP password when the relay requires explicit credentials."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "SqlServerDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
@@ -89147,6 +89460,17 @@
       "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-port",
       "Signature": "int Port { get; set; }",
       "Summary": "Gets or sets the Redis TCP port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the SMTP relay port."
     },
     {
       "DisplayName": "Port",
@@ -92350,6 +92674,17 @@
     {
       "DisplayName": "ProviderMessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-providermessageid",
+      "Signature": "string ProviderMessageId { get; }",
+      "Summary": "Gets the provider or relay message identifier when one is known."
+    },
+    {
+      "DisplayName": "ProviderMessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -95023,6 +95358,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the provider-facing outcome reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -95338,6 +95684,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-inboxmessage-receivedatutc",
       "Signature": "DateTimeOffset ReceivedAtUtc { get; }",
       "Summary": "Gets the time at which the message was received."
+    },
+    {
+      "DisplayName": "RecipientAddressMetadataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-recipientaddressmetadatakey",
+      "Signature": "string RecipientAddressMetadataKey { get; set; }",
+      "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
     },
     {
       "DisplayName": "RecommendedActionId",
@@ -106001,6 +106358,17 @@
     {
       "DisplayName": "SendAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "ISmtpInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-smtpdelivery-services-ismtpinvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CSmtpInvitationDeliveryClientResult\u003E SendAsync(SmtpInvitationDeliveryMessage message, CancellationToken cancellationToken)",
+      "Summary": "Sends one SMTP invitation delivery message."
+    },
+    {
+      "DisplayName": "SendAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "ITenantInvitationDeliverySender",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -106041,6 +106409,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-senderid",
       "Signature": "string SenderId { get; }",
       "Summary": "Gets the stable sender identifier used by configuration, runtime metadata, and diagnostics."
+    },
+    {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-senderid",
+      "Signature": "string SenderId { get; set; }",
+      "Summary": "Gets or sets the sender identifier used by \u0060TenantInvitationDeliveryRequest.SenderId\u0060."
     },
     {
       "DisplayName": "SenderId",
@@ -107185,6 +107564,38 @@
       "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-slotname",
       "Signature": "string SlotName { get; set; }",
       "Summary": "Gets or sets the PostgreSQL logical replication slot used for durable progress."
+    },
+    {
+      "DisplayName": "SmtpInvitationDeliveryClientResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-ctor-system-boolean-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "SmtpInvitationDeliveryClientResult(bool accepted, string providerMessageId, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates an SMTP invitation delivery client result."
+    },
+    {
+      "DisplayName": "SmtpInvitationDeliveryMessage",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "SmtpInvitationDeliveryMessage(string messageId, string fromAddress, string fromDisplayName, string toAddress, string toDisplayName, string subject, string textBody, string htmlBody, IReadOnlyDictionary\u003Cstring, string\u003E headers)",
+      "Summary": "Creates a prepared SMTP invitation delivery message."
+    },
+    {
+      "DisplayName": "SmtpInvitationDeliveryOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-ctor",
+      "Signature": "SmtpInvitationDeliveryOptions()"
     },
     {
       "DisplayName": "Snapshot",
@@ -111112,6 +111523,17 @@
       "Summary": "Gets the optimistic stream version assigned to the event."
     },
     {
+      "DisplayName": "Subject",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-subject",
+      "Signature": "string Subject { get; }",
+      "Summary": "Gets the message subject."
+    },
+    {
       "DisplayName": "SubjectAttributePrefix",
       "Category": "Fields",
       "DeclaringTypeName": "IdentityPolicyMetadataKeys",
@@ -111319,6 +111741,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch",
       "Signature": "const string SubjectMismatch",
       "Summary": "The matching tenant-governance action has a different subject boundary."
+    },
+    {
+      "DisplayName": "SubjectTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-subjecttemplate",
+      "Signature": "string SubjectTemplate { get; set; }",
+      "Summary": "Gets or sets the SMTP message subject template."
     },
     {
       "DisplayName": "SubjectType",
@@ -111955,6 +112388,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
       "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-supportedchannels",
+      "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
+      "Summary": "Gets or sets delivery channels accepted by this sender."
+    },
+    {
+      "DisplayName": "SupportedChannels",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-supportedchannels",
       "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
       "Summary": "Gets or sets delivery channels accepted by this sender."
     },
@@ -115347,6 +115791,28 @@
       "Summary": "Identifies a test project."
     },
     {
+      "DisplayName": "TextBody",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-textbody",
+      "Signature": "string TextBody { get; }",
+      "Summary": "Gets the plain-text message body."
+    },
+    {
+      "DisplayName": "TextBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-textbodytemplate",
+      "Signature": "string TextBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the plain-text SMTP message body template."
+    },
+    {
       "DisplayName": "Timeline",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeOperationalStory",
@@ -115466,6 +115932,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-timeoutseconds",
       "Signature": "int TimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the maximum time allowed for the HTTP delivery request."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the maximum time allowed for the SMTP send operation."
     },
     {
       "DisplayName": "TimeoutSelection",
@@ -115598,6 +116075,28 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-tlsservername",
       "Signature": "string TlsServerName { get; set; }",
       "Summary": "Gets or sets the TLS server name used for certificate validation when \u0060UseTls\u0060 is enabled."
+    },
+    {
+      "DisplayName": "ToAddress",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-toaddress",
+      "Signature": "string ToAddress { get; }",
+      "Summary": "Gets the recipient email address."
+    },
+    {
+      "DisplayName": "ToDisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-todisplayname",
+      "Signature": "string ToDisplayName { get; }",
+      "Summary": "Gets the optional recipient display name."
     },
     {
       "DisplayName": "Token",
@@ -118614,6 +119113,17 @@
       "Summary": "Gets or sets the optional Redis ACL user name used for authentication."
     },
     {
+      "DisplayName": "UserName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-username",
+      "Signature": "string UserName { get; set; }",
+      "Summary": "Gets or sets the SMTP username when the relay requires explicit credentials."
+    },
+    {
       "DisplayName": "Username",
       "Category": "Properties",
       "DeclaringTypeName": "SqlServerDependencyDefinition",
@@ -118744,6 +119254,17 @@
       "AnchorId": "member-p-cephalon-engine-appmodel-databasetopologyroleresolution-usesrolereference",
       "Signature": "bool UsesRoleReference { get; }",
       "Summary": "Gets a value indicating whether the requested role resolved through an explicit role reference."
+    },
+    {
+      "DisplayName": "UseSsl",
+      "Category": "Properties",
+      "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
+      "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-usessl",
+      "Signature": "bool UseSsl { get; set; }",
+      "Summary": "Gets or sets a value indicating whether SSL/TLS should be enabled for the SMTP relay connection."
     },
     {
       "DisplayName": "UseTls",

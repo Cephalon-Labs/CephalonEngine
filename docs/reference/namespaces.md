@@ -448,6 +448,18 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 130 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)
 
+## `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.SmtpDelivery](cephalon-multitenancy-governance-smtpdelivery.md#namespace-cephalon-multitenancy-governance-smtpdelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.SmtpDelivery](cephalon-multitenancy-governance-smtpdelivery.md#namespace-cephalon-multitenancy-governance-smtpdelivery-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting)
+
+## `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services`
+
+- [Cephalon.MultiTenancy.Governance.SmtpDelivery](cephalon-multitenancy-governance-smtpdelivery.md#namespace-cephalon-multitenancy-governance-smtpdelivery-services): 3 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services)
+
 ## `Cephalon.MultiTenancy.Registration`
 
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md#namespace-cephalon-multitenancy-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Registration)

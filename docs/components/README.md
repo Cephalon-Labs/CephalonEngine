@@ -83,6 +83,7 @@ See also: [Docs hub](../README.md)
 - [Cephalon.MultiTenancy.Governance](multi-tenancy-governance.md)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](multi-tenancy-governance-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](multi-tenancy-governance-httpdelivery.md)
+- [Cephalon.MultiTenancy.Governance.SmtpDelivery](multi-tenancy-governance-smtpdelivery.md)
 
 ## Tooling and adoption
 

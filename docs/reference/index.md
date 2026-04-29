@@ -79,6 +79,7 @@ Quick links:
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md): Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads. Contains 3 namespaces and 132 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](cephalon-multitenancy-governance-aspnetcore.md): ASP.NET Core HTTP proof publication and tenant-administration command adapter for Cephalon multi-tenancy governance workloads. Contains 2 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AspNetCore)
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](cephalon-multitenancy-governance-httpdelivery.md): HTTP webhook invitation delivery sender companion package for Cephalon multi-tenancy governance workloads. Contains 3 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.HttpDelivery)
+- [Cephalon.MultiTenancy.Governance.SmtpDelivery](cephalon-multitenancy-governance-smtpdelivery.md): SMTP relay invitation delivery sender companion package for Cephalon multi-tenancy governance workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery)
 
 ### Tooling
 

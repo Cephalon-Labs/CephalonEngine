@@ -1104,8 +1104,9 @@ Current shipped event-id ranges include:
 
 - `Cephalon.Engine`: `2000-2005`
 - `Cephalon.MultiTenancy`: `4500-4502`
-- `Cephalon.MultiTenancy.Governance`: `4510-4549`, `4552-4553`
+- `Cephalon.MultiTenancy.Governance`: `4510-4549`, `4552-4557`
 - `Cephalon.MultiTenancy.Governance.HttpDelivery`: `4550-4551`
+- `Cephalon.MultiTenancy.Governance.SmtpDelivery`: `4558-4559`
 - `Cephalon.Observability`: `3000-3006`
 - `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
@@ -1249,7 +1250,7 @@ Current payload highlights:
 - `tenant-resolution` reports configured tenant count, configured tenant ids, default tenant id, domain-resolution posture, tenant-key posture, resolver count, ambient-context accessor count, and the enabled resolution strategies
 - `tenant-governance-boundaries` reports the shipped `tenant-resolution-core` as `cephalon-managed`, marks tenant membership, tenant invitations, tenant administration, declared tenant-domain ownership, and approval/remediation governance actions as shipped companion-owned lanes that require `Cephalon.MultiTenancy.Governance` registration, and keeps broader onboarding, delivery, synchronization, and endpoint/UI workflows outside those owned lanes as `taxonomy-only` boundary entries
 - `tenant-memberships` reports the governance companion's Cephalon-managed membership catalog, store, and evaluation posture, including membership count, tenant count, contributor count, configured membership count, runtime membership count, membership-store kind, membership-store durability, membership-store ownership, durable-store ownership, evaluation ownership, per-tenant status counts, role summaries, principal-kind breakdowns, and contributing module ids without exposing individual principal identifiers
-- `tenant-invitations` reports the governance companion's Cephalon-managed invitation catalog, store, validation, delivery-dispatch, opt-in delivery retry queue, process-local retry execution coordination, delivery-status reconciliation, and delivery-status observation-store posture, including invitation count, tenant count, contributor count, configured invitation count, runtime invitation count, invitation-store kind, invitation-store durability, invitation-store ownership, durable-store ownership, validation ownership, retry queue enablement/ownership/kind/durability/scope/counts/latest retry outcome, delivery retry max attempts/delay/max items, retry execution coordination enablement/ownership/scope/mode/in-progress state/counts/latest outcome/timestamps, delivery status reconciliation ownership, observation-store kind/durability/scope/history limit/count/latest observation, external delivery status ownership, delivery status reported count/latest status/latest observed timestamp, delivery sender count/ids/ownership, external delivery ownership, delivery run counts/latest outcome, status breakdown, per-tenant retry counts, per-tenant status counts, role summaries, invitee-kind breakdowns, and contributing module ids without exposing individual invitee identifiers. Installing `Cephalon.MultiTenancy.Governance.HttpDelivery` registers a first-party `http-webhook` sender that appears in the same sender readiness and run-history metadata instead of creating a separate runtime surface; signed sends record only safe `httpSigned` plus optional `httpSigningKeyId` metadata, idempotent sends record safe `httpIdempotencyKey`/`httpIdempotencyKeySource` metadata, and retrying sends record safe attempt/retry metadata such as `httpAttemptCount`, `httpMaxAttempts`, `httpRetried`, and `httpRetryReason`.
+- `tenant-invitations` reports the governance companion's Cephalon-managed invitation catalog, store, validation, delivery-dispatch, opt-in delivery retry queue, process-local retry execution coordination, delivery-status reconciliation, and delivery-status observation-store posture, including invitation count, tenant count, contributor count, configured invitation count, runtime invitation count, invitation-store kind, invitation-store durability, invitation-store ownership, durable-store ownership, validation ownership, retry queue enablement/ownership/kind/durability/scope/counts/latest retry outcome, delivery retry max attempts/delay/max items, retry execution coordination enablement/ownership/scope/mode/in-progress state/counts/latest outcome/timestamps, delivery status reconciliation ownership, observation-store kind/durability/scope/history limit/count/latest observation, external delivery status ownership, delivery status reported count/latest status/latest observed timestamp, delivery sender count/ids/ownership, external delivery ownership, delivery run counts/latest outcome, status breakdown, per-tenant retry counts, per-tenant status counts, role summaries, invitee-kind breakdowns, and contributing module ids without exposing individual invitee identifiers. Installing `Cephalon.MultiTenancy.Governance.HttpDelivery` registers a first-party `http-webhook` sender that appears in the same sender readiness and run-history metadata instead of creating a separate runtime surface; signed sends record only safe `httpSigned` plus optional `httpSigningKeyId` metadata, idempotent sends record safe `httpIdempotencyKey`/`httpIdempotencyKeySource` metadata, and retrying sends record safe attempt/retry metadata such as `httpAttemptCount`, `httpMaxAttempts`, `httpRetried`, and `httpRetryReason`. Installing `Cephalon.MultiTenancy.Governance.SmtpDelivery` registers a first-party `smtp-email` sender that appears in the same sender readiness and run-history metadata; SMTP sends record only safe relay host/port/TLS/message-id/recipient metadata and never record SMTP credentials or message bodies.
 - `tenant-administration` reports the governance companion's Cephalon-managed host-driven administration workflow posture, including workflow enablement, membership and invitation administration ownership, membership/invitation store kinds, durability, counts, supported commands, and core-package boundaries for public onboarding, host-adapter endpoint ownership, invitation delivery dispatch, invitation delivery status reconciliation, provider-specific sender ownership, external delivery/status ownership, and identity-provider sync
 - `tenant-administration-http-endpoints` reports the ASP.NET Core governance adapter's optional command endpoint posture, including route pattern, `POST` method, mapped/configured/disabled state, authorization requirement, optional policy, endpoint-description visibility, and application-managed boundaries for public onboarding, tenant-admin UI, provider-specific invitation senders, external invitation delivery, and identity-provider sync
 - `tenant-invitation-delivery-status-http-endpoints` reports the ASP.NET Core governance adapter's optional normalized callback and bounded observation-read endpoint posture, including callback route pattern, `POST` method, mapped/configured/disabled state, authorization requirement, optional policy, provider-message-match enforcement, endpoint-description visibility, provider-neutral callback signature verification configuration, safe signature header names, signing key-id configuration, timestamp tolerance, signed-callback replay protection policy/key/scope/durability/retention/cache-limit posture, observation read route pattern, `GET` method, authorization posture, response contract, default/max limits, and application-managed boundaries for provider-specific callback inboxes, provider-specific payload translation, provider-specific signature verification, and provider polling
@@ -1263,10 +1264,11 @@ Current note:
 - the governance companion currently owns tenant membership cataloging/evaluation, opt-in local durable membership state, tenant invitation cataloging/validation, opt-in local durable invitation state, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, opt-in local invitation delivery retry storage plus bounded retry execution, process-local retry execution coordination, and opt-in automatic background retry scheduling over retryable sender failures, host-agnostic invitation delivery status reconciliation over provider or receiver observations, opt-in local durable delivery-status observation storage for normalized reconciliation records, host-driven tenant-administration workflow commands over membership and invitation stores, declared tenant-domain ownership cataloging/validation, opt-in local durable domain-ownership state, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection through an explicit DNS-over-HTTPS resolver, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background proof polling scheduling/run-state, approval/remediation action cataloging/decision, in-process approval/remediation action workflow transitions, and opt-in local durable action state
 - ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.AspNetCore`, call `MapCephalonTenantDomainOwnershipHttpProofs()` to serve published HTTP proof files from the governance catalog, call `MapCephalonTenantAdministrationCommands()` to expose `POST /engine/tenant-administration/commands` over `TenantAdministrationWorkflowRequest`, call `MapCephalonTenantInvitationDeliveryDispatches()` to expose fail-closed `POST /engine/tenant-invitations/delivery-dispatches` dispatch actions over `ITenantInvitationDeliveryDispatcher`, call `MapCephalonTenantInvitationDeliveryStatusCallbacks()` to expose `POST /engine/tenant-invitations/delivery-status` over normalized `TenantInvitationDeliveryStatusCallbackRequest` payloads with optional provider-neutral HMAC verification plus bounded process-local signed replay rejection, and call `MapCephalonTenantInvitationDeliveryStatusObservations()` to expose bounded/filterable `GET /engine/tenant-invitations/delivery-status/observations` reads over `ITenantInvitationDeliveryStatusObservationStore`
 - hosts can install `Cephalon.MultiTenancy.Governance.HttpDelivery` and call `AddCephalonHttpInvitationDelivery(...)` when invitation dispatch should POST a generic JSON payload to a configured webhook, include a receiver-facing idempotency key, optionally sign that exact body with HMAC-SHA256, retry transient webhook outcomes within a bounded in-process attempt budget, and still record outcome truth through the governance dispatcher
+- hosts can install `Cephalon.MultiTenancy.Governance.SmtpDelivery` and call `AddCephalonSmtpInvitationDelivery(...)` when invitation dispatch should hand a templated email to a configured SMTP relay through a replaceable client seam while still recording outcome truth through the governance dispatcher
 - hosts can enable `EnableInvitationDeliveryRetryQueue` when `sender-failed` dispatch outcomes should be retained for an explicit `ITenantInvitationDeliveryRetryRunner.RetryPendingAsync(...)` pass; configure `InvitationDeliveryRetryQueueFilePath` only when the local retry queue should survive process restarts
 - the tenant-administration command endpoint is fail-closed by default; keep `RequireTenantAdministrationAuthorization = true` for real hosts, set `TenantAdministrationAuthorizationPolicy` when a named ASP.NET Core policy should guard the command surface, and disable authorization only for deliberate internal/test hosts
 - the delivery status callback and observation read endpoints are fail-closed by default; keep `RequireTenantInvitationDeliveryStatusCallbackAuthorization = true` and `RequireTenantInvitationDeliveryStatusObservationAuthorization = true` for real hosts, set the related authorization policy when a named ASP.NET Core policy should guard callback ingress or observation reads, keep `RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch = true` unless the host deliberately owns another correlation boundary, and keep signed callback replay protection enabled when `TenantInvitationDeliveryStatusCallbackSigningSecret` is configured
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific email/SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, provider-specific delivery-status callback payload translation, provider-specific callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific email API/SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, provider-specific delivery-status callback payload translation, provider-specific callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
 
 Tenant-administration command endpoint configuration:
 
@@ -1408,6 +1410,61 @@ Operational notes:
 - set `MaxAttempts` above 1 when a host wants bounded in-process retry; the sender retries non-accepted `RetryStatusCodes` and, when `RetryTransportFailures` is true, transient `HttpRequestException` failures using the fixed `RetryDelayMilliseconds` delay inside the configured timeout budget
 - failed HTTP status codes, timeouts, and transport exceptions return `sender-failed`; response bodies are not copied into metadata unless `IncludeResponseBodyInMetadata` is enabled and then only up to `ResponseBodyMetadataLimit`; retry metadata records attempts and retry reasons without copying secrets or webhook signatures
 - custom headers and signing secrets are added as configured, so hosts should source secrets from their normal configuration provider and avoid committing raw delivery credentials
+
+### SMTP invitation delivery sender
+
+Install `Cephalon.MultiTenancy.Governance.SmtpDelivery` when invitation dispatch should hand a templated email to an SMTP relay instead of posting a webhook.
+
+Configuration:
+
+```json
+{
+  "Engine": {
+    "MultiTenancy": {
+      "Governance": {
+        "SmtpInvitationDelivery": {
+          "Enabled": true,
+          "SenderId": "smtp-email",
+          "Host": "smtp.internal.example",
+          "Port": 587,
+          "UseSsl": true,
+          "UserName": "${SMTP_USER}",
+          "Password": "${SMTP_PASSWORD}",
+          "FromAddress": "noreply@example.com",
+          "FromDisplayName": "Example SaaS",
+          "RecipientAddressMetadataKey": "email",
+          "SupportedChannels": ["email"],
+          "MessageIdDomain": "mail.example.com",
+          "SubjectTemplate": "Invitation for {tenantId}",
+          "TextBodyTemplate": "You have been invited to tenant {tenantId}. Invitation: {invitationId}. Roles: {roles}.",
+          "Headers": {
+            "X-Product": "Example SaaS"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+builder.Services.AddCephalonSmtpInvitationDelivery(builder.Configuration);
+
+builder.AddCephalon(engine =>
+{
+    engine.AddMultiTenancyGovernance();
+});
+```
+
+Operational notes:
+
+- recipient email resolution checks dispatch metadata first, invitation metadata second, and finally `InviteeId` when `InviteeKind` is `email`
+- `ISmtpInvitationDeliveryClient` is replaceable, so test hosts or provider-specific wrappers can reuse the same Cephalon sender contract without changing the governance dispatcher
+- deterministic SMTP `Message-Id` values are derived from tenant id, invitation id, channel, and sender id so retry attempts for the same dispatch boundary can be correlated safely
+- sender metadata records relay host, port, TLS posture, message id, sender id, recipient address, recipient metadata key, and safe client metadata, but it does not record SMTP username, password, message bodies, or unsafe headers
+- this package owns SMTP relay handoff only; SendGrid, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce handling, provider polling, distributed retry queues, callback inboxes, and tenant-admin UI remain future provider-pack or application-owned work
 
 ## Data product surface
 

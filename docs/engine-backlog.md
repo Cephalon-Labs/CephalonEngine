@@ -1746,10 +1746,51 @@ Delivered:
 Follow-up later:
 
 - distributed retry queues, cross-node retry leases, exactly-once delivery,
-  provider-specific email/SMS/chat/CRM/identity-provider senders, provider-specific callback inboxes,
+  provider-specific email API/SMS/chat/CRM/identity-provider senders, provider-specific callback inboxes,
   provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization,
   and distributed/provider-backed governance stores remain future governance slices until a package
   truly owns those paths
+
+### ENG-293 Multi-tenancy invitation delivery SMTP sender baseline
+
+Status: done
+Estimate: 5
+Issue: #808
+
+Why:
+
+- after `ENG-292`, Cephalon could dispatch invitations, persist outcomes, queue retryable sender
+  failures, schedule retries, and prevent same-process retry overlap, but the first-party delivery
+  options were still generic HTTP webhook or consumer-written senders
+- the smallest honest provider-managed sender proof is SMTP relay handoff: it sends a prepared email
+  through a configured relay without claiming transactional-email provider APIs, bounce handling,
+  provider callback translation, public onboarding, or identity-provider synchronization
+
+Delivered:
+
+- add `Cephalon.MultiTenancy.Governance.SmtpDelivery` as an optional companion package with
+  configuration/code-first registration through `AddCephalonSmtpInvitationDelivery(...)`
+- add `SmtpInvitationDeliveryOptions` for relay host, port, TLS, credentials, from address,
+  recipient metadata key, supported channels, templates, message-id domain, safe context headers,
+  and timeout
+- add `ISmtpInvitationDeliveryClient`, `SmtpInvitationDeliveryMessage`, and
+  `SmtpInvitationDeliveryClientResult` so hosts can test or replace the SMTP relay client without
+  changing the core governance dispatcher
+- implement the `smtp-email` `ITenantInvitationDeliverySender` with recipient resolution from
+  dispatch metadata, invitation metadata, or `InviteeKind = email`, deterministic SMTP `Message-Id`
+  generation, safe context headers, safe sender metadata, and `dispatched` / `suppressed` /
+  `sender-failed` outcomes over the existing dispatcher
+- publish `Cephalon.MultiTenancy.Governance.SmtpDelivery` diagnostics `4558-4559`, package-surface
+  coverage, component docs, operations guidance, compatibility truth, maturity-audit ownership, and
+  reference-doc alignment
+
+Follow-up later:
+
+- provider-specific email API connectors such as SendGrid, Mailgun, SES, or Microsoft Graph,
+  SMS/chat/CRM/identity-provider invitation senders, bounce/callback translation, provider polling,
+  public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed
+  retry queues, cross-node retry leases, and distributed/provider-backed governance stores remain
+  future governance slices until a package truly owns those paths
 
 ## Completed foundation work
 
@@ -9714,9 +9755,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-292 Multi-tenancy invitation delivery retry execution coordination baseline (shipped, issue #807)
 
+### Sprint 98
+
+- ENG-293 Multi-tenancy invitation delivery SMTP sender baseline (shipped, issue #808)
+
 ### Later / not scheduled yet
 
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific email API/SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
 
 ### Foundation Sprint 1
 

@@ -30,6 +30,9 @@ Browse the published API surface by public member.
 - [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an accepted result with a payload value.
   - `Result<T> Accepted<T>(T value, string message, string code)`
+- [Accepted](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-accepted): `Properties` on `SmtpInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Accepted&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets a value indicating whether the SMTP relay accepted the message.
+  - `bool Accepted { get; }`
 - [Accepted](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-accepted): `Fields` on `TenantInvitationDeliveryStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Accepted&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The delivery provider accepted the message for processing.
   - `const string Accepted`
@@ -924,6 +927,12 @@ Browse the published API surface by public member.
 - [AddCephalonSerilog](cephalon-observability-serilog.md#member-m-cephalon-observability-serilog-hosting-seriloghostapplicationbuilderextensions-addcephalonserilog-1-0-system-action-system-iserviceprovider-serilog-loggerconfiguration): `Methods` on `SerilogHostApplicationBuilderExtensions` in `Cephalon.Observability.Serilog.Hosting` (`Cephalon.Observability.Serilog`) [Browse](browse.html?q=AddCephalonSerilog&assembly=Cephalon.Observability.Serilog&namespace=Cephalon.Observability.Serilog.Hosting&scope=members)
   - Adds Serilog as an `ILogger` provider for the target host builder.
   - `TBuilder AddCephalonSerilog<TBuilder>(this TBuilder builder, Action<IServiceProvider, LoggerConfiguration> configure)`
+- [AddCephalonSmtpInvitationDelivery](cephalon-multitenancy-governance-smtpdelivery.md#member-m-cephalon-multitenancy-governance-smtpdelivery-hosting-smtpinvitationdeliveryservicecollectionextensions-addcephalonsmtpinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions): `Methods` on `SmtpInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=AddCephalonSmtpInvitationDelivery&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting&scope=members)
+  - Adds SMTP invitation delivery using code-first configuration.
+  - `IServiceCollection AddCephalonSmtpInvitationDelivery(this IServiceCollection services, Action<SmtpInvitationDeliveryOptions> configure)`
+- [AddCephalonSmtpInvitationDelivery](cephalon-multitenancy-governance-smtpdelivery.md#member-m-cephalon-multitenancy-governance-smtpdelivery-hosting-smtpinvitationdeliveryservicecollectionextensions-addcephalonsmtpinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions): `Methods` on `SmtpInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=AddCephalonSmtpInvitationDelivery&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting&scope=members)
+  - Adds SMTP invitation delivery using configuration as the primary source of relay settings.
+  - `IServiceCollection AddCephalonSmtpInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action<SmtpInvitationDeliveryOptions> configure)`
 - [AddCephalonSqlServerDependencyHealth](cephalon-observability-sqlserverdependencies.md#member-m-cephalon-observability-sqlserverdependencies-hosting-sqlserverdependencyhealthservicecollectionextensions-addcephalonsqlserverdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions): `Methods` on `SqlServerDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.SqlServerDependencies.Hosting` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=AddCephalonSqlServerDependencyHealth&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Hosting&scope=members)
   - Adds SQL Server dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonSqlServerDependencyHealth(this IServiceCollection services, Action<SqlServerDependencyHealthOptions> configure)`
@@ -8088,6 +8097,9 @@ Browse the published API surface by public member.
 - [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-enabled): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether retry support was explicitly enabled.
   - `bool? Enabled { get; }`
+- [Enabled](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-enabled): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Enabled&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether the SMTP invitation sender should be registered.
+  - `bool Enabled { get; set; }`
 - [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-tenancyselection-enabled): `Properties` on `TenancySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether multi-tenancy was explicitly enabled.
   - `bool? Enabled { get; }`
@@ -9789,6 +9801,12 @@ Browse the published API surface by public member.
 - [FreshUntilUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshuntilutc): `Properties` on `DatabaseRoleProbeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshUntilUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp until which the current answer remains fresh, when known.
   - `DateTimeOffset? FreshUntilUtc { get; }`
+- [FromAddress](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-fromaddress): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=FromAddress&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the sender email address.
+  - `string FromAddress { get; }`
+- [FromAddress](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-fromaddress): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=FromAddress&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the sender email address used in the SMTP message.
+  - `string FromAddress { get; set; }`
 - [FromConfiguration](cephalon-observability-alibabacloud.md#member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
   - Binds Alibaba Cloud telemetry export options from configuration.
   - `AlibabaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -9960,6 +9978,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-ids-sfid.md#member-m-cephalon-ids-sfid-configuration-sfididoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Reads Sfid id-strategy options from configuration.
   - `SfidIdOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-multitenancy-governance-smtpdelivery.md#member-m-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Binds SMTP invitation delivery options from configuration.
+  - `SmtpInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-sqlserverdependencies.md#member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `SqlServerDependencyHealthOptions` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Binds SQL Server dependency-health options from configuration.
   - `SqlServerDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -9972,6 +9993,12 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-trustpolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads a trust policy from configuration.
   - `TrustPolicy FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromDisplayName](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-fromdisplayname): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=FromDisplayName&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the optional sender display name.
+  - `string FromDisplayName { get; }`
+- [FromDisplayName](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-fromdisplayname): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=FromDisplayName&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the optional sender display name used in the SMTP message.
+  - `string FromDisplayName { get; set; }`
 - [FromManifest](cephalon-engine.md#member-m-cephalon-engine-configuration-modulepackagereference-frommanifest-system-string-system-string): `Methods` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates a manifest-backed package reference.
   - `ModulePackageReference FromManifest(string manifestPath, string id)`
@@ -12024,6 +12051,12 @@ Browse the published API surface by public member.
 - [Headers](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-headers): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Headers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets message headers associated with the message.
   - `IReadOnlyDictionary<string, string> Headers { get; }`
+- [Headers](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-headers): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Headers&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets safe additional SMTP headers.
+  - `IReadOnlyDictionary<string, string> Headers { get; }`
+- [Headers](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-headers): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Headers&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets additional SMTP message headers added to every delivery message.
+  - `IReadOnlyDictionary<string, string> Headers { get; set; }`
 - [Headers](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-headers): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to Tanzu proxy or shared collector requests.
   - `string Headers { get; set; }`
@@ -12141,6 +12174,9 @@ Browse the published API surface by public member.
 - [Host](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-host): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the Redis host name or IP address to probe.
   - `string Host { get; set; }`
+- [Host](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-host): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Host&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the SMTP relay host name.
+  - `string Host { get; set; }`
 - [Host](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-host): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
@@ -12255,6 +12291,12 @@ Browse the published API surface by public member.
 - [Hostnames](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-hostnames): `Properties` on `KubernetesGatewayTrafficRouteOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=Hostnames&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets the optional hostnames published by the projected HTTPRoute.
   - `IList<string> Hostnames { get; }`
+- [HtmlBody](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-htmlbody): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=HtmlBody&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the optional HTML message body.
+  - `string HtmlBody { get; }`
+- [HtmlBodyTemplate](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-htmlbodytemplate): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=HtmlBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the optional HTML SMTP message body template.
+  - `string HtmlBodyTemplate { get; set; }`
 - [HttpClientName](cephalon-multitenancy-governance-httpdelivery.md#member-f-cephalon-multitenancy-governance-httpdelivery-hosting-httpinvitationdeliveryservicecollectionextensions-httpclientname): `Fields` on `HttpInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=HttpClientName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting&scope=members)
   - The named HTTP client used by the HTTP invitation delivery sender.
   - `const string HttpClientName`
@@ -12741,6 +12783,9 @@ Browse the published API surface by public member.
 - [IncludeAllClaimsAsSubjectAttributes](cephalon-identity-aspnetcore.md#member-p-cephalon-identity-aspnetcore-configuration-identityaspnetcoreoptions-includeallclaimsassubjectattributes): `Properties` on `IdentityAspNetCoreOptions` in `Cephalon.Identity.AspNetCore.Configuration` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=IncludeAllClaimsAsSubjectAttributes&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether unmatched claims should be projected into `Attributes`.
   - `bool IncludeAllClaimsAsSubjectAttributes { get; set; }`
+- [IncludeContextHeaders](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-includecontextheaders): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=IncludeContextHeaders&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether safe Cephalon context headers should be added to the SMTP message.
+  - `bool IncludeContextHeaders { get; set; }`
 - [IncludedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedbehaviorids): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the explicit behavior identifiers that should stay visible to the client.
   - `IReadOnlyList<string> IncludedBehaviorIds { get; }`
@@ -16218,6 +16263,12 @@ Browse the published API surface by public member.
 - [MessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-messageid): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable inbound message identifier when one was reported.
   - `string MessageId { get; }`
+- [MessageId](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-messageid): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=MessageId&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the deterministic SMTP message identifier.
+  - `string MessageId { get; }`
+- [MessageIdDomain](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-messageiddomain): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=MessageIdDomain&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the domain used for deterministic SMTP `Message-Id` values.
+  - `string MessageIdDomain { get; set; }`
 - [Messages](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-messages): `Properties` on `CdcCaptureExecutionAcknowledgement` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Messages&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the outbox publications that the shared runtime staged successfully.
   - `IReadOnlyList<OutboxMessage> Messages { get; }`
@@ -16586,6 +16637,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-metadata): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets optional project metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-metadata): `Properties` on `SmtpInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets optional safe client metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-metadata): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets arbitrary operator-facing metadata that should flow through the capture descriptor.
@@ -18995,6 +19049,9 @@ Browse the published API surface by public member.
 - [Password](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-password): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the optional Redis password used for authentication.
   - `string Password { get; set; }`
+- [Password](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-password): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Password&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the SMTP password when the relay requires explicit credentials.
+  - `string Password { get; set; }`
 - [Password](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-password): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication when no full connection string is supplied.
   - `string Password { get; set; }`
@@ -19453,6 +19510,9 @@ Browse the published API surface by public member.
   - `int Port { get; set; }`
 - [Port](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-port): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the Redis TCP port.
+  - `int Port { get; set; }`
+- [Port](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-port): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Port&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the SMTP relay port.
   - `int Port { get; set; }`
 - [Port](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-port): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the SQL Server TCP port.
@@ -20325,6 +20385,9 @@ Browse the published API surface by public member.
 - [ProviderMaterializerId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providermaterializerid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderMaterializerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the optional selected provider materializer identifier.
   - `string ProviderMaterializerId { get; }`
+- [ProviderMessageId](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-providermessageid): `Properties` on `SmtpInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the provider or relay message identifier when one is known.
+  - `string ProviderMessageId { get; }`
 - [ProviderMessageId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-providermessageid): `Properties` on `TenantInvitationDeliveryResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the provider message identifier returned by the sender.
   - `string ProviderMessageId { get; }`
@@ -21060,6 +21123,9 @@ Browse the published API surface by public member.
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-reason): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The reason the package was trusted or rejected.
   - `string Reason { get; set; }`
+- [Reason](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-reason): `Properties` on `SmtpInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the provider-facing outcome reason.
+  - `string Reason { get; }`
 - [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-reason): `Properties` on `TenantAdministrationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing command reason.
   - `string Reason { get; }`
@@ -21147,6 +21213,9 @@ Browse the published API surface by public member.
 - [ReceivedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxmessage-receivedatutc): `Properties` on `InboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReceivedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the time at which the message was received.
   - `DateTimeOffset ReceivedAtUtc { get; }`
+- [RecipientAddressMetadataKey](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-recipientaddressmetadatakey): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=RecipientAddressMetadataKey&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address.
+  - `string RecipientAddressMetadataKey { get; set; }`
 - [RecommendedActionId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-recommendedactionid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecommendedActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable recommended action identifier for the current drift posture.
   - `string RecommendedActionId { get; set; }`
@@ -24057,6 +24126,9 @@ Browse the published API surface by public member.
 - [SelectionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-selectionmode): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the runtime selection result, such as `requested-target` or `fallback-target`.
   - `string SelectionMode { get; }`
+- [SendAsync](cephalon-multitenancy-governance-smtpdelivery.md#member-m-cephalon-multitenancy-governance-smtpdelivery-services-ismtpinvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-system-threading-cancellationtoken): `Methods` on `ISmtpInvitationDeliveryClient` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=SendAsync&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Sends one SMTP invitation delivery message.
+  - `ValueTask<SmtpInvitationDeliveryClientResult> SendAsync(SmtpInvitationDeliveryMessage message, CancellationToken cancellationToken)`
 - [SendAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-sendasync-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-system-threading-cancellationtoken): `Methods` on `ITenantInvitationDeliverySender` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SendAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Sends or queues one tenant invitation delivery payload.
   - `ValueTask<TenantInvitationDeliverySenderResult> SendAsync(TenantInvitationDeliveryContext context, CancellationToken cancellationToken)`
@@ -24069,6 +24141,9 @@ Browse the published API surface by public member.
 - [SenderId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-senderid): `Properties` on `ITenantInvitationDeliverySender` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable sender identifier used by configuration, runtime metadata, and diagnostics.
   - `string SenderId { get; }`
+- [SenderId](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-senderid): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the sender identifier used by `TenantInvitationDeliveryRequest.SenderId`.
+  - `string SenderId { get; set; }`
 - [SenderId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-senderid): `Properties` on `TenantInvitationDeliveryRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the preferred delivery sender identifier.
   - `string SenderId { get; }`
@@ -24381,6 +24456,14 @@ Browse the published API surface by public member.
 - [SlotName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-slotname): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=SlotName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the PostgreSQL logical replication slot used for durable progress.
   - `string SlotName { get; set; }`
+- [SmtpInvitationDeliveryClientResult](cephalon-multitenancy-governance-smtpdelivery.md#member-m-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliveryclientresult-ctor-system-boolean-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `SmtpInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=SmtpInvitationDeliveryClientResult&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Creates an SMTP invitation delivery client result.
+  - `SmtpInvitationDeliveryClientResult(bool accepted, string providerMessageId, string reason, IReadOnlyDictionary<string, string> metadata)`
+- [SmtpInvitationDeliveryMessage](cephalon-multitenancy-governance-smtpdelivery.md#member-m-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=SmtpInvitationDeliveryMessage&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Creates a prepared SMTP invitation delivery message.
+  - `SmtpInvitationDeliveryMessage(string messageId, string fromAddress, string fromDisplayName, string toAddress, string toDisplayName, string subject, string textBody, string htmlBody, IReadOnlyDictionary<string, string> headers)`
+- [SmtpInvitationDeliveryOptions](cephalon-multitenancy-governance-smtpdelivery.md#member-m-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-ctor): `Constructors` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=SmtpInvitationDeliveryOptions&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - `SmtpInvitationDeliveryOptions()`
 - [Snapshot](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicyevaluator-snapshot): `Properties` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Snapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Gets the trust snapshot being evaluated.
   - `TrustSnapshot Snapshot { get; }`
@@ -25450,6 +25533,9 @@ Browse the published API surface by public member.
 - [StreamVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-streamversion): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the optimistic stream version assigned to the event.
   - `long StreamVersion { get; }`
+- [Subject](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-subject): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=Subject&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the message subject.
+  - `string Subject { get; }`
 - [SubjectAttributePrefix](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-subjectattributeprefix): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=SubjectAttributePrefix&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key prefix for required subject attributes.
   - `const string SubjectAttributePrefix`
@@ -25507,6 +25593,9 @@ Browse the published API surface by public member.
 - [SubjectMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch): `Fields` on `TenantGovernanceActionWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SubjectMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The matching tenant-governance action has a different subject boundary.
   - `const string SubjectMismatch`
+- [SubjectTemplate](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-subjecttemplate): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=SubjectTemplate&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the SMTP message subject template.
+  - `string SubjectTemplate { get; set; }`
 - [SubjectType](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-subjecttype): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the logical subject type associated with the entry.
   - `string SubjectType { get; }`
@@ -25679,6 +25768,9 @@ Browse the published API surface by public member.
   - The aggregate health endpoint path.
   - `string SummaryPath { get; set; }`
 - [SupportedChannels](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-supportedchannels): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SupportedChannels&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets delivery channels accepted by this sender.
+  - `IReadOnlyList<string> SupportedChannels { get; set; }`
+- [SupportedChannels](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-supportedchannels): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=SupportedChannels&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
   - Gets or sets delivery channels accepted by this sender.
   - `IReadOnlyList<string> SupportedChannels { get; set; }`
 - [SupportedCultures](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-ilocalizedtextcatalog-supportedcultures): `Properties` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=SupportedCultures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
@@ -26608,6 +26700,12 @@ Browse the published API surface by public member.
 - [Tests](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-tests): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tests&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a test project.
   - `const string Tests`
+- [TextBody](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-textbody): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=TextBody&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the plain-text message body.
+  - `string TextBody { get; }`
+- [TextBodyTemplate](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-textbodytemplate): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=TextBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the plain-text SMTP message body template.
+  - `string TextBodyTemplate { get; set; }`
 - [Timeline](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Timeline&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures.
   - `IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }`
@@ -26640,6 +26738,9 @@ Browse the published API surface by public member.
   - `TimeSpan? Timeout { get; }`
 - [TimeoutSeconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-timeoutseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the maximum time allowed for the HTTP delivery request.
+  - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-timeoutseconds): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the maximum time allowed for the SMTP send operation.
   - `int TimeoutSeconds { get; set; }`
 - [TimeoutSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-timeoutselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TimeoutSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `TimeoutSelection` class.
@@ -26677,6 +26778,12 @@ Browse the published API surface by public member.
 - [TlsServerName](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-tlsservername): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=TlsServerName&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the TLS server name used for certificate validation when `UseTls` is enabled.
   - `string TlsServerName { get; set; }`
+- [ToAddress](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-toaddress): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=ToAddress&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the recipient email address.
+  - `string ToAddress { get; }`
+- [ToDisplayName](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-todisplayname): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=ToDisplayName&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
+  - Gets the optional recipient display name.
+  - `string ToDisplayName { get; }`
 - [Token](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-token): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=Token&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the optional auth token used for token-based NATS authentication.
   - `string Token { get; set; }`
@@ -27502,6 +27609,9 @@ Browse the published API surface by public member.
 - [Username](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-username): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the optional Redis ACL user name used for authentication.
   - `string Username { get; set; }`
+- [UserName](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-username): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=UserName&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets the SMTP username when the relay requires explicit credentials.
+  - `string UserName { get; set; }`
 - [Username](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-username): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication when no full connection string is supplied.
   - `string Username { get; set; }`
@@ -27538,6 +27648,9 @@ Browse the published API surface by public member.
 - [UsesRoleReference](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-usesrolereference): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=UsesRoleReference&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Gets a value indicating whether the requested role resolved through an explicit role reference.
   - `bool UsesRoleReference { get; }`
+- [UseSsl](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-usessl): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=UseSsl&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether SSL/TLS should be enabled for the SMTP relay connection.
+  - `bool UseSsl { get; set; }`
 - [UseTls](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-usetls): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=UseTls&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional value that controls whether TLS should be used for the probe.
   - `bool? UseTls { get; set; }`

@@ -658,6 +658,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-httpdelivery.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-smtpdelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-data-mysql.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-data-debezium.md");
@@ -711,6 +712,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.HttpDelivery", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.SmtpDelivery", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance", StringComparison.Ordinal));
