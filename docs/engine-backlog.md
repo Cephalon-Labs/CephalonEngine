@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, eventing bounded in-process idempotency proof, eventing publication runtime-state proof, Wolverine bounded subscription retry proof, Wolverine bounded dispatch terminal-failure proof, Wolverine dispatch publish-exception proof, first-class event-dispatch terminal-failure operator posture, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, agentics bounded process-local retry proof, agentics process-local duplicate-completed idempotency proof, agentics approval-required and terminal-failure operator posture, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval query operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, ASP.NET Core normalized invitation delivery status callback endpoint proof, ASP.NET Core normalized callback signature verification proof, and behavior REST profile runtime ownership metadata proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, eventing bounded in-process idempotency proof, eventing publication runtime-state proof, Wolverine bounded subscription retry proof, Wolverine bounded dispatch terminal-failure proof, Wolverine dispatch publish-exception proof, first-class event-dispatch terminal-failure operator posture, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, agentics bounded process-local retry proof, agentics process-local duplicate-completed idempotency proof, agentics approval-required and terminal-failure operator posture, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval query operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, ASP.NET Core normalized invitation delivery status callback endpoint proof, ASP.NET Core normalized callback signature verification proof, ASP.NET Core normalized signed-callback replay protection proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
@@ -20,7 +20,7 @@ Current focus:
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-agnostic invitation delivery status reconciliation over provider or receiver observations, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving, the fail-closed tenant-administration command endpoint, the fail-closed normalized invitation delivery-status callback endpoint, and opt-in provider-neutral callback signature verification; distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, provider-specific delivery-status callback payload translation, provider-specific callback signature verification, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-agnostic invitation delivery status reconciliation over provider or receiver observations, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving, the fail-closed tenant-administration command endpoint, the fail-closed normalized invitation delivery-status callback endpoint, opt-in provider-neutral callback signature verification, and bounded process-local signed-callback replay protection; distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, durable callback inboxes, cross-node callback replay protection, provider-specific delivery-status callback payload translation, provider-specific callback signature verification, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -1467,6 +1467,45 @@ Follow-up later:
   onboarding, tenant-admin UI/backoffice, identity-provider synchronization, and
   distributed/provider-backed governance stores remain future governance slices until a package truly
   owns those paths
+
+### ENG-286 Multi-tenancy invitation delivery status callback replay protection baseline
+
+Status: done
+Estimate: 3
+Issue: #801
+
+Why:
+
+- after `ENG-285`, the ASP.NET Core normalized callback endpoint could authenticate signed bodies
+  before reconciliation, but the same valid signed request could still be replayed inside the
+  timestamp tolerance window unless consumer code supplied its own guard
+- the smallest honest hardening step is bounded process-local duplicate signed-callback rejection,
+  not a durable inbox, cross-node exactly-once claim, provider-specific callback translation, or
+  provider polling loop
+
+Delivered:
+
+- add `EnableTenantInvitationDeliveryStatusCallbackReplayProtection`,
+  `TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds`, and
+  `TenantInvitationDeliveryStatusCallbackReplayCacheLimit` to
+  `MultiTenancyGovernanceAspNetCoreOptions`
+- record safe SHA-256 signature fingerprints for accepted signed normalized callbacks and reject
+  duplicate signed requests with `409` before `ITenantInvitationDeliveryStatusReconciler` mutates
+  invitation state
+- publish replay protection configuration, ownership, policy, key shape, process-local scope,
+  non-durable posture, retention seconds, and cache limit through
+  `tenant-invitation-delivery-status-http-endpoints`
+- record safe replay metadata on reconciled observations without exposing raw signatures or secrets
+- prove signed replay rejection, signed callback success, unsigned configured-callback denial,
+  package-surface, reference-doc, and docs alignment paths through focused hosting/tooling coverage
+
+Follow-up later:
+
+- durable callback inboxes, cross-node callback replay protection, provider-specific callback payload
+  translation, provider-specific callback signature verification, provider polling, provider-specific
+  invitation senders, public onboarding, tenant-admin UI/backoffice, identity-provider
+  synchronization, and distributed/provider-backed governance stores remain future governance slices
+  until a package truly owns those paths
 
 ## Completed foundation work
 
@@ -9418,9 +9457,13 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-284 Multi-tenancy invitation delivery status callback endpoint baseline (shipped, issue #793)
 - ENG-285 Multi-tenancy invitation delivery status callback signature verification baseline (shipped, issue #800)
 
+### Sprint 96
+
+- ENG-286 Multi-tenancy invitation delivery status callback replay protection baseline (shipped, issue #801)
+
 ### Later / not scheduled yet
 
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, durable callback inboxes, cross-node callback replay protection, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
 
 ### Foundation Sprint 1
 

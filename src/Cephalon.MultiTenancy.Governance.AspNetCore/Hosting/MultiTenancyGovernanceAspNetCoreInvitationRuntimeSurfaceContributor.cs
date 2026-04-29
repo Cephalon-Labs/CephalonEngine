@@ -38,6 +38,12 @@ internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceCo
             !string.IsNullOrWhiteSpace(options.TenantInvitationDeliveryStatusCallbackSigningKeyId);
         var signatureToleranceSeconds = callbackEndpoint?.SignatureToleranceSeconds ??
             Math.Max(1, options.TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds);
+        var callbackReplayProtectionConfigured = callbackEndpoint?.CallbackReplayProtectionConfigured ??
+            IsCallbackReplayProtectionConfigured(options, callbackSignatureVerificationConfigured);
+        var replayRetentionSeconds = callbackEndpoint?.ReplayRetentionSeconds ??
+            Math.Max(1, options.TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds);
+        var replayCacheLimit = callbackEndpoint?.ReplayCacheLimit ??
+            Math.Max(1, options.TenantInvitationDeliveryStatusCallbackReplayCacheLimit);
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -72,6 +78,15 @@ internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceCo
             ["signatureKeyIdHeaderName"] = signatureKeyIdHeaderName,
             ["signatureKeyIdConfigured"] = signatureKeyIdConfigured.ToString().ToLowerInvariant(),
             ["signatureToleranceSeconds"] = signatureToleranceSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["callbackReplayProtectionConfigured"] = callbackReplayProtectionConfigured.ToString().ToLowerInvariant(),
+            ["callbackReplayProtectionOwnership"] = callbackReplayProtectionConfigured ? endpointOwnership : "not-configured",
+            ["callbackReplayProtectionPolicy"] = callbackReplayProtectionConfigured ? "signed-callback" : "none",
+            ["callbackReplayProtectionKey"] = callbackReplayProtectionConfigured ? "signature-fingerprint" : "none",
+            ["callbackReplayProtectionScope"] = callbackReplayProtectionConfigured ? "process-local" : "none",
+            ["callbackReplayProtectionDurability"] = "none",
+            ["callbackReplayProtectionRetentionSeconds"] = replayRetentionSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["callbackReplayProtectionCacheLimit"] = replayCacheLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["callbackReplayProtectionRequiresSignature"] = "true",
             ["providerSpecificCallbackTranslationOwnership"] = "application-managed",
             ["providerSpecificSignatureVerificationOwnership"] = "application-managed",
             ["providerPollingOwnership"] = "application-managed",
@@ -98,5 +113,13 @@ internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceCo
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
+    }
+
+    private static bool IsCallbackReplayProtectionConfigured(
+        MultiTenancyGovernanceAspNetCoreOptions options,
+        bool callbackSignatureVerificationConfigured)
+    {
+        return options.EnableTenantInvitationDeliveryStatusCallbackReplayProtection &&
+            callbackSignatureVerificationConfigured;
     }
 }

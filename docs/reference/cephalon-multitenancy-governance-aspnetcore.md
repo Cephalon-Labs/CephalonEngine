@@ -77,6 +77,18 @@ bool EnableTenantInvitationDeliveryStatusCallbackEndpoint { get; set; }
 
 Gets or sets a value indicating whether the tenant-invitation delivery status callback endpoint should be mapped.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantinvitationdeliverystatuscallbackreplayprotection"></a>
+
+##### `EnableTenantInvitationDeliveryStatusCallbackReplayProtection`
+
+```csharp
+bool EnableTenantInvitationDeliveryStatusCallbackReplayProtection { get; set; }
+```
+
+Gets or sets a value indicating whether signed delivery-status callbacks should be protected against replay inside the current process.
+
+Remarks: Replay protection is active only when `TenantInvitationDeliveryStatusCallbackSigningSecret` is configured and the request signature verifies successfully. The built-in guard stores bounded signature fingerprints in memory and does not claim durable inbox storage, cross-node deduplication, or distributed exactly-once delivery.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludefromdescription"></a>
 
 ##### `ExcludeFromDescription`
@@ -186,6 +198,30 @@ string TenantInvitationDeliveryStatusCallbackAuthorizationPolicy { get; set; }
 ```
 
 Gets or sets the optional ASP.NET Core authorization policy required by the delivery status callback endpoint.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbackreplaycachelimit"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackReplayCacheLimit`
+
+```csharp
+int TenantInvitationDeliveryStatusCallbackReplayCacheLimit { get; set; }
+```
+
+Gets or sets the maximum number of signed callback replay fingerprints retained in the current process.
+
+Remarks: When the bounded cache is full, the oldest fingerprint is evicted before recording a new accepted signed callback.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbackreplayretentionseconds"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds`
+
+```csharp
+int TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds { get; set; }
+```
+
+Gets or sets the process-local retention window, in seconds, for signed callback replay fingerprints.
+
+Remarks: The endpoint clamps the effective retention to at least one second. The default matches the signature timestamp tolerance.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbackroutepattern"></a>
 

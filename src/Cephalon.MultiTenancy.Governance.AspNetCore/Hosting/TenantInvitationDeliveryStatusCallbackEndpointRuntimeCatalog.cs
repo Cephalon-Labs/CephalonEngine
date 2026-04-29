@@ -27,7 +27,10 @@ internal sealed class TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatal
         string signatureTimestampHeaderName,
         string signatureKeyIdHeaderName,
         bool signatureKeyIdConfigured,
-        int signatureToleranceSeconds)
+        int signatureToleranceSeconds,
+        bool callbackReplayProtectionConfigured,
+        int replayRetentionSeconds,
+        int replayCacheLimit)
     {
         lock (syncRoot)
         {
@@ -42,7 +45,10 @@ internal sealed class TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatal
                 signatureTimestampHeaderName,
                 signatureKeyIdHeaderName,
                 signatureKeyIdConfigured,
-                signatureToleranceSeconds);
+                signatureToleranceSeconds,
+                callbackReplayProtectionConfigured,
+                replayRetentionSeconds,
+                replayCacheLimit);
         }
     }
 }
@@ -58,4 +64,7 @@ internal sealed record TenantInvitationDeliveryStatusCallbackEndpointRuntimeSnap
     string SignatureTimestampHeaderName,
     string SignatureKeyIdHeaderName,
     bool SignatureKeyIdConfigured,
-    int SignatureToleranceSeconds);
+    int SignatureToleranceSeconds,
+    bool CallbackReplayProtectionConfigured,
+    int ReplayRetentionSeconds,
+    int ReplayCacheLimit);

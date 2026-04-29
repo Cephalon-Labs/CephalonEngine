@@ -162,6 +162,32 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
     public int TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds { get; set; } = 300;
 
     /// <summary>
+    /// Gets or sets a value indicating whether signed delivery-status callbacks should be protected against replay inside the current process.
+    /// </summary>
+    /// <remarks>
+    /// Replay protection is active only when <see cref="TenantInvitationDeliveryStatusCallbackSigningSecret" /> is configured and
+    /// the request signature verifies successfully. The built-in guard stores bounded signature fingerprints in memory and does not
+    /// claim durable inbox storage, cross-node deduplication, or distributed exactly-once delivery.
+    /// </remarks>
+    public bool EnableTenantInvitationDeliveryStatusCallbackReplayProtection { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the process-local retention window, in seconds, for signed callback replay fingerprints.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint clamps the effective retention to at least one second. The default matches the signature timestamp tolerance.
+    /// </remarks>
+    public int TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Gets or sets the maximum number of signed callback replay fingerprints retained in the current process.
+    /// </summary>
+    /// <remarks>
+    /// When the bounded cache is full, the oldest fingerprint is evicted before recording a new accepted signed callback.
+    /// </remarks>
+    public int TenantInvitationDeliveryStatusCallbackReplayCacheLimit { get; set; } = 4096;
+
+    /// <summary>
     /// Reads ASP.NET Core governance adapter options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -204,6 +230,9 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
         options.TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName = Normalize(section["TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName"]) ?? options.TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName;
         options.TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName = Normalize(section["TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName"]) ?? options.TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName;
         options.TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds = ParseInt32(section["TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds"], options.TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds);
+        options.EnableTenantInvitationDeliveryStatusCallbackReplayProtection = ParseBoolean(section["EnableTenantInvitationDeliveryStatusCallbackReplayProtection"], options.EnableTenantInvitationDeliveryStatusCallbackReplayProtection);
+        options.TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds = ParseInt32(section["TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds"], options.TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds);
+        options.TenantInvitationDeliveryStatusCallbackReplayCacheLimit = ParseInt32(section["TenantInvitationDeliveryStatusCallbackReplayCacheLimit"], options.TenantInvitationDeliveryStatusCallbackReplayCacheLimit);
         return options;
     }
 

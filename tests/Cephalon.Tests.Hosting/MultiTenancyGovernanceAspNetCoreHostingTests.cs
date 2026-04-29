@@ -204,6 +204,11 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantInvitationDeliveryStatusCallbackEndpointOwnership"]);
         Assert.Equal("false", endpointEntry.Metadata["callbackSignatureVerificationConfigured"]);
         Assert.Equal("not-configured", endpointEntry.Metadata["callbackSignatureVerificationOwnership"]);
+        Assert.Equal("false", endpointEntry.Metadata["callbackReplayProtectionConfigured"]);
+        Assert.Equal("not-configured", endpointEntry.Metadata["callbackReplayProtectionOwnership"]);
+        Assert.Equal("none", endpointEntry.Metadata["callbackReplayProtectionPolicy"]);
+        Assert.Equal("none", endpointEntry.Metadata["callbackReplayProtectionScope"]);
+        Assert.Equal("not-configured", invitation.Metadata["deliveryStatusCallbackReplayProtection"]);
         Assert.Equal("application-managed", endpointEntry.Metadata["providerSpecificCallbackTranslationOwnership"]);
         Assert.Equal("application-managed", endpointEntry.Metadata["providerPollingOwnership"]);
     }
@@ -258,15 +263,11 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         };
         var requestBody = JsonSerializer.Serialize(request, SerializerOptions);
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
-        using var message = new HttpRequestMessage(HttpMethod.Post, "/engine/tenant-invitations/delivery-status")
-        {
-            Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
-        };
-        message.Headers.TryAddWithoutValidation("X-Cephalon-Callback-Signature-Timestamp", timestamp);
-        message.Headers.TryAddWithoutValidation("X-Cephalon-Callback-Key-Id", "callback-key-1");
-        message.Headers.TryAddWithoutValidation(
-            "X-Cephalon-Callback-Signature",
-            CreateCallbackSignature("status-callback-secret", timestamp, requestBody));
+        using var message = CreateSignedCallbackMessage(
+            "status-callback-secret",
+            timestamp,
+            requestBody,
+            keyId: "callback-key-1");
 
         var response = await client.SendAsync(message);
         var result = await response.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusReconciliationResult>();
@@ -284,6 +285,15 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("cephalon-managed", invitation.Metadata["deliveryStatusCallbackSignatureVerificationOwnership"]);
         Assert.Equal(timestamp, invitation.Metadata["deliveryStatusCallbackSignatureTimestamp"]);
         Assert.Equal("callback-key-1", invitation.Metadata["deliveryStatusCallbackSignatureKeyId"]);
+        Assert.Equal("recorded", invitation.Metadata["deliveryStatusCallbackReplayProtection"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["deliveryStatusCallbackReplayProtectionOwnership"]);
+        Assert.Equal("signed-callback", invitation.Metadata["deliveryStatusCallbackReplayPolicy"]);
+        Assert.Equal("signature-fingerprint", invitation.Metadata["deliveryStatusCallbackReplayKey"]);
+        Assert.Equal("process-local", invitation.Metadata["deliveryStatusCallbackReplayScope"]);
+        Assert.Equal("none", invitation.Metadata["deliveryStatusCallbackReplayDurability"]);
+        Assert.Equal("300", invitation.Metadata["deliveryStatusCallbackReplayRetentionSeconds"]);
+        Assert.Equal("4096", invitation.Metadata["deliveryStatusCallbackReplayCacheLimit"]);
+        Assert.StartsWith("sha256:", invitation.Metadata["deliveryStatusCallbackReplayFingerprint"], StringComparison.Ordinal);
         Assert.Equal("true", endpointEntry.Metadata["callbackSignatureVerificationConfigured"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["callbackSignatureVerificationOwnership"]);
         Assert.Equal("true", endpointEntry.Metadata["signatureKeyIdConfigured"]);
@@ -291,6 +301,184 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("X-Cephalon-Callback-Signature-Timestamp", endpointEntry.Metadata["signatureTimestampHeaderName"]);
         Assert.Equal("X-Cephalon-Callback-Key-Id", endpointEntry.Metadata["signatureKeyIdHeaderName"]);
         Assert.Equal("300", endpointEntry.Metadata["signatureToleranceSeconds"]);
+        Assert.Equal("true", endpointEntry.Metadata["callbackReplayProtectionConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["callbackReplayProtectionOwnership"]);
+        Assert.Equal("signed-callback", endpointEntry.Metadata["callbackReplayProtectionPolicy"]);
+        Assert.Equal("signature-fingerprint", endpointEntry.Metadata["callbackReplayProtectionKey"]);
+        Assert.Equal("process-local", endpointEntry.Metadata["callbackReplayProtectionScope"]);
+        Assert.Equal("none", endpointEntry.Metadata["callbackReplayProtectionDurability"]);
+        Assert.Equal("300", endpointEntry.Metadata["callbackReplayProtectionRetentionSeconds"]);
+        Assert.Equal("4096", endpointEntry.Metadata["callbackReplayProtectionCacheLimit"]);
+        Assert.Equal("true", endpointEntry.Metadata["callbackReplayProtectionRequiresSignature"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryStatusCallbacksRejectsReplayedSignedCallback()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-replayed-callback",
+                    tenantId: "tenant-replayed-callback",
+                    inviteeId: "user-replayed-callback",
+                    displayName: "Replayed Callback Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "provider-message-replayed"
+                    }));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore(options =>
+        {
+            options.RequireTenantInvitationDeliveryStatusCallbackAuthorization = false;
+            options.TenantInvitationDeliveryStatusCallbackSigningSecret = "status-callback-secret";
+            options.TenantInvitationDeliveryStatusCallbackSigningKeyId = "callback-key-1";
+            options.TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds = 600;
+            options.TenantInvitationDeliveryStatusCallbackReplayCacheLimit = 16;
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var request = new TenantInvitationDeliveryStatusCallbackRequest
+        {
+            TenantId = "tenant-replayed-callback",
+            InvitationId = "invite-replayed-callback",
+            Status = TenantInvitationDeliveryStatuses.Delivered,
+            ProviderMessageId = "provider-message-replayed",
+            SenderId = "http-webhook",
+            Channel = "email",
+            Actor = "signed-provider",
+            CorrelationId = "delivery-callback-replayed"
+        };
+        var requestBody = JsonSerializer.Serialize(request, SerializerOptions);
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        using var firstMessage = CreateSignedCallbackMessage(
+            "status-callback-secret",
+            timestamp,
+            requestBody,
+            keyId: "callback-key-1");
+        using var replayedMessage = CreateSignedCallbackMessage(
+            "status-callback-secret",
+            timestamp,
+            requestBody,
+            keyId: "callback-key-1");
+
+        var firstResponse = await client.SendAsync(firstMessage);
+        var replayedResponse = await client.SendAsync(replayedMessage);
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, replayedResponse.StatusCode);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
+        Assert.Equal("recorded", invitation.Metadata["deliveryStatusCallbackReplayProtection"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["deliveryStatusCallbackReplayProtectionOwnership"]);
+        Assert.Equal("signed-callback", invitation.Metadata["deliveryStatusCallbackReplayPolicy"]);
+        Assert.Equal("signature-fingerprint", invitation.Metadata["deliveryStatusCallbackReplayKey"]);
+        Assert.Equal("process-local", invitation.Metadata["deliveryStatusCallbackReplayScope"]);
+        Assert.Equal("none", invitation.Metadata["deliveryStatusCallbackReplayDurability"]);
+        Assert.Equal("600", invitation.Metadata["deliveryStatusCallbackReplayRetentionSeconds"]);
+        Assert.Equal("16", invitation.Metadata["deliveryStatusCallbackReplayCacheLimit"]);
+        Assert.StartsWith("sha256:", invitation.Metadata["deliveryStatusCallbackReplayFingerprint"], StringComparison.Ordinal);
+        Assert.Equal("true", endpointEntry.Metadata["callbackReplayProtectionConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["callbackReplayProtectionOwnership"]);
+        Assert.Equal("signed-callback", endpointEntry.Metadata["callbackReplayProtectionPolicy"]);
+        Assert.Equal("signature-fingerprint", endpointEntry.Metadata["callbackReplayProtectionKey"]);
+        Assert.Equal("process-local", endpointEntry.Metadata["callbackReplayProtectionScope"]);
+        Assert.Equal("none", endpointEntry.Metadata["callbackReplayProtectionDurability"]);
+        Assert.Equal("600", endpointEntry.Metadata["callbackReplayProtectionRetentionSeconds"]);
+        Assert.Equal("16", endpointEntry.Metadata["callbackReplayProtectionCacheLimit"]);
+        Assert.Equal("true", endpointEntry.Metadata["callbackReplayProtectionRequiresSignature"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryStatusCallbacksDoesNotPoisonReplayGuardWhenReconciliationFails()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-failed-replay",
+                    tenantId: "tenant-failed-replay",
+                    inviteeId: "user-failed-replay",
+                    displayName: "Failed Replay Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "provider-message-expected"
+                    }));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore(options =>
+        {
+            options.RequireTenantInvitationDeliveryStatusCallbackAuthorization = false;
+            options.TenantInvitationDeliveryStatusCallbackSigningSecret = "status-callback-secret";
+            options.TenantInvitationDeliveryStatusCallbackSigningKeyId = "callback-key-1";
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var request = new TenantInvitationDeliveryStatusCallbackRequest
+        {
+            TenantId = "tenant-failed-replay",
+            InvitationId = "invite-failed-replay",
+            Status = TenantInvitationDeliveryStatuses.Delivered,
+            ProviderMessageId = "provider-message-wrong",
+            SenderId = "http-webhook",
+            Channel = "email"
+        };
+        var requestBody = JsonSerializer.Serialize(request, SerializerOptions);
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        using var firstMessage = CreateSignedCallbackMessage(
+            "status-callback-secret",
+            timestamp,
+            requestBody,
+            keyId: "callback-key-1");
+        using var secondMessage = CreateSignedCallbackMessage(
+            "status-callback-secret",
+            timestamp,
+            requestBody,
+            keyId: "callback-key-1");
+
+        var firstResponse = await client.SendAsync(firstMessage);
+        var secondResponse = await client.SendAsync(secondMessage);
+        var firstResult = await firstResponse.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusReconciliationResult>();
+        var secondResult = await secondResponse.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusReconciliationResult>();
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+
+        Assert.Equal(HttpStatusCode.Conflict, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
+        Assert.NotNull(firstResult);
+        Assert.NotNull(secondResult);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.ProviderMessageMismatch, firstResult.Outcome);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.ProviderMessageMismatch, secondResult.Outcome);
+        Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
+        Assert.False(invitation.Metadata.ContainsKey("deliveryStatusCallbackReplayProtection"));
     }
 
     [Fact]
@@ -343,6 +531,10 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
         Assert.Equal("true", endpointEntry.Metadata["callbackSignatureVerificationConfigured"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["callbackSignatureVerificationOwnership"]);
+        Assert.Equal("true", endpointEntry.Metadata["callbackReplayProtectionConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["callbackReplayProtectionOwnership"]);
+        Assert.Equal("signed-callback", endpointEntry.Metadata["callbackReplayProtectionPolicy"]);
+        Assert.Equal("process-local", endpointEntry.Metadata["callbackReplayProtectionScope"]);
     }
 
     [Fact]
@@ -401,6 +593,28 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(signedPayload));
         return "v1=" + Convert.ToHexString(hash).ToLowerInvariant();
+    }
+
+    private static HttpRequestMessage CreateSignedCallbackMessage(
+        string secret,
+        string timestamp,
+        string requestBody,
+        string? keyId = null)
+    {
+        var message = new HttpRequestMessage(HttpMethod.Post, "/engine/tenant-invitations/delivery-status")
+        {
+            Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+        };
+        message.Headers.TryAddWithoutValidation("X-Cephalon-Callback-Signature-Timestamp", timestamp);
+        if (!string.IsNullOrWhiteSpace(keyId))
+        {
+            message.Headers.TryAddWithoutValidation("X-Cephalon-Callback-Key-Id", keyId);
+        }
+
+        message.Headers.TryAddWithoutValidation(
+            "X-Cephalon-Callback-Signature",
+            CreateCallbackSignature(secret, timestamp, requestBody));
+        return message;
     }
 
     [Fact]

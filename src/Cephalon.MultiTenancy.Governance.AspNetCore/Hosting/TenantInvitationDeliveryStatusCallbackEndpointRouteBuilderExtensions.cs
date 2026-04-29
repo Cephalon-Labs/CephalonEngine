@@ -52,8 +52,9 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
                 (
                     HttpContext context,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
+                    TenantInvitationDeliveryStatusCallbackReplayGuard replayGuard,
                     CancellationToken cancellationToken) =>
-                    ReconcileCallbackAsync(context, reconciler, options, routePattern, cancellationToken))
+                    ReconcileCallbackAsync(context, reconciler, replayGuard, options, routePattern, cancellationToken))
             .WithName("CephalonTenantInvitationDeliveryStatusCallback")
             .Accepts<TenantInvitationDeliveryStatusCallbackRequest>("application/json")
             .Produces<TenantInvitationDeliveryStatusReconciliationResult>(StatusCodes.Status200OK)
@@ -64,6 +65,7 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .ProducesProblem(StatusCodes.Status413PayloadTooLarge)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -93,7 +95,10 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
                     options.TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName,
                     MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName),
                 !string.IsNullOrWhiteSpace(options.TenantInvitationDeliveryStatusCallbackSigningKeyId),
-                GetSignatureToleranceSeconds(options));
+                GetSignatureToleranceSeconds(options),
+                IsCallbackReplayProtectionConfigured(options),
+                GetReplayRetentionSeconds(options),
+                GetReplayCacheLimit(options));
 
         return endpoints;
     }
@@ -101,6 +106,7 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
     private static async Task<IResult> ReconcileCallbackAsync(
         HttpContext context,
         ITenantInvitationDeliveryStatusReconciler reconciler,
+        TenantInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         MultiTenancyGovernanceAspNetCoreOptions options,
         string routePattern,
         CancellationToken cancellationToken)
@@ -152,12 +158,20 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
             return validationResult;
         }
 
+        var replayProtection = RecordCallbackReplayProtection(options, replayGuard, signatureVerification);
+        if (replayProtection.Failure is not null)
+        {
+            return replayProtection.Failure;
+        }
+
         var metadata = CopyMetadata(request.Metadata);
         metadata["aspNetCoreDeliveryStatusCallback"] = "true";
         metadata["aspNetCoreDeliveryStatusCallbackRoute"] = routePattern;
         metadata["deliveryStatusCallbackIngressOwnership"] = "cephalon-managed";
         metadata["deliveryStatusCallbackSignatureVerification"] = signatureVerification.Configured ? "verified" : "not-configured";
         metadata["deliveryStatusCallbackSignatureVerificationOwnership"] = signatureVerification.Configured ? "cephalon-managed" : "not-configured";
+        metadata["deliveryStatusCallbackReplayProtection"] = replayProtection.Configured ? replayProtection.Outcome : "not-configured";
+        metadata["deliveryStatusCallbackReplayProtectionOwnership"] = replayProtection.Configured ? "cephalon-managed" : "not-configured";
 
         if (signatureVerification.Configured)
         {
@@ -169,6 +183,23 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
             if (!string.IsNullOrWhiteSpace(signatureVerification.KeyId))
             {
                 metadata["deliveryStatusCallbackSignatureKeyId"] = signatureVerification.KeyId!;
+            }
+        }
+
+        if (replayProtection.Configured)
+        {
+            metadata["deliveryStatusCallbackReplayPolicy"] = "signed-callback";
+            metadata["deliveryStatusCallbackReplayKey"] = "signature-fingerprint";
+            metadata["deliveryStatusCallbackReplayScope"] = "process-local";
+            metadata["deliveryStatusCallbackReplayDurability"] = "none";
+            metadata["deliveryStatusCallbackReplayRetentionSeconds"] =
+                GetReplayRetentionSeconds(options).ToString(CultureInfo.InvariantCulture);
+            metadata["deliveryStatusCallbackReplayCacheLimit"] =
+                GetReplayCacheLimit(options).ToString(CultureInfo.InvariantCulture);
+
+            if (!string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
+            {
+                metadata["deliveryStatusCallbackReplayFingerprint"] = replayProtection.ReplayFingerprint!;
             }
         }
 
@@ -189,7 +220,22 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
                 request.RequireProviderMessageMatch,
             metadata: metadata);
 
-        var result = await reconciler.ReconcileAsync(reconciliationRequest, cancellationToken).ConfigureAwait(false);
+        TenantInvitationDeliveryStatusReconciliationResult result;
+        try
+        {
+            result = await reconciler.ReconcileAsync(reconciliationRequest, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            ForgetCallbackReplayProtection(replayGuard, replayProtection);
+            throw;
+        }
+
+        if (!result.Reconciled)
+        {
+            ForgetCallbackReplayProtection(replayGuard, replayProtection);
+        }
+
         return Results.Json(result, statusCode: ResolveStatusCode(result));
     }
 
@@ -310,7 +356,54 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
                 "The callback request body does not match the supplied Cephalon callback signature."));
         }
 
-        return CallbackSignatureVerificationResult.Verified(timestampSeconds, ageSeconds, suppliedKeyId);
+        return CallbackSignatureVerificationResult.Verified(
+            timestampSeconds,
+            ageSeconds,
+            suppliedKeyId,
+            CreateSha256Fingerprint(signature!));
+    }
+
+    private static CallbackReplayProtectionResult RecordCallbackReplayProtection(
+        MultiTenancyGovernanceAspNetCoreOptions options,
+        TenantInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        CallbackSignatureVerificationResult signatureVerification)
+    {
+        if (!IsCallbackReplayProtectionConfigured(options) ||
+            !signatureVerification.Configured ||
+            string.IsNullOrWhiteSpace(signatureVerification.ReplayFingerprint))
+        {
+            return CallbackReplayProtectionResult.NotConfigured();
+        }
+
+        var retentionSeconds = GetReplayRetentionSeconds(options);
+        var decision = replayGuard.TryRecord(
+            signatureVerification.ReplayFingerprint!,
+            DateTimeOffset.UtcNow,
+            TimeSpan.FromSeconds(retentionSeconds),
+            GetReplayCacheLimit(options));
+        if (decision.Accepted)
+        {
+            return CallbackReplayProtectionResult.Recorded(signatureVerification.ReplayFingerprint);
+        }
+
+        return CallbackReplayProtectionResult.Fail(
+            Results.Problem(
+                title: "Tenant invitation delivery status callback replay was rejected.",
+                detail: "The signed normalized callback request has already been accepted inside the configured process-local replay window.",
+                statusCode: StatusCodes.Status409Conflict),
+            decision.Outcome,
+            signatureVerification.ReplayFingerprint);
+    }
+
+    private static void ForgetCallbackReplayProtection(
+        TenantInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        CallbackReplayProtectionResult replayProtection)
+    {
+        if (replayProtection.Configured &&
+            !string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
+        {
+            replayGuard.Forget(replayProtection.ReplayFingerprint!);
+        }
     }
 
     private static bool SignatureMatches(
@@ -355,6 +448,12 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
         {
             return false;
         }
+    }
+
+    private static string CreateSha256Fingerprint(string value)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(value.Trim()));
+        return "sha256:" + Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     private static IResult SignatureProblem(string title, string detail)
@@ -498,9 +597,25 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
         return !string.IsNullOrWhiteSpace(options.TenantInvitationDeliveryStatusCallbackSigningSecret);
     }
 
+    private static bool IsCallbackReplayProtectionConfigured(MultiTenancyGovernanceAspNetCoreOptions options)
+    {
+        return options.EnableTenantInvitationDeliveryStatusCallbackReplayProtection &&
+            IsCallbackSignatureVerificationConfigured(options);
+    }
+
     private static int GetSignatureToleranceSeconds(MultiTenancyGovernanceAspNetCoreOptions options)
     {
         return Math.Clamp(options.TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds, 1, 86_400);
+    }
+
+    private static int GetReplayRetentionSeconds(MultiTenancyGovernanceAspNetCoreOptions options)
+    {
+        return Math.Clamp(options.TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds, 1, 86_400);
+    }
+
+    private static int GetReplayCacheLimit(MultiTenancyGovernanceAspNetCoreOptions options)
+    {
+        return Math.Clamp(options.TenantInvitationDeliveryStatusCallbackReplayCacheLimit, 1, 1_000_000);
     }
 
     private static string GetHeaderNameOrDefault(string? headerName, string defaultHeaderName)
@@ -541,15 +656,39 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
         long? Timestamp,
         int? AgeSeconds,
         string? KeyId,
+        string? ReplayFingerprint,
         IResult? Failure)
     {
         public static CallbackSignatureVerificationResult NotConfigured() =>
-            new(false, null, null, null, null);
+            new(false, null, null, null, null, null);
 
-        public static CallbackSignatureVerificationResult Verified(long timestamp, int ageSeconds, string? keyId) =>
-            new(true, timestamp, ageSeconds, keyId, null);
+        public static CallbackSignatureVerificationResult Verified(
+            long timestamp,
+            int ageSeconds,
+            string? keyId,
+            string replayFingerprint) =>
+            new(true, timestamp, ageSeconds, keyId, replayFingerprint, null);
 
         public static CallbackSignatureVerificationResult Fail(IResult failure) =>
-            new(true, null, null, null, failure);
+            new(true, null, null, null, null, failure);
+    }
+
+    private sealed record CallbackReplayProtectionResult(
+        bool Configured,
+        string Outcome,
+        string? ReplayFingerprint,
+        IResult? Failure)
+    {
+        public static CallbackReplayProtectionResult NotConfigured() =>
+            new(false, "not-configured", null, null);
+
+        public static CallbackReplayProtectionResult Recorded(string replayFingerprint) =>
+            new(true, "recorded", replayFingerprint, null);
+
+        public static CallbackReplayProtectionResult Fail(
+            IResult failure,
+            string outcome,
+            string replayFingerprint) =>
+            new(true, outcome, replayFingerprint, failure);
     }
 }
