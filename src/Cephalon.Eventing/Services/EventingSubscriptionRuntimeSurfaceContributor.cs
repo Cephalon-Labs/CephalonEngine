@@ -10,6 +10,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
     IEventSubscriptionCatalog catalog,
     IInboxCatalog inboxes,
     IEventSubscriptionExecutionBindingCatalog executionBindings,
+    IEventSubscriptionExecutionReadinessCatalog executionReadiness,
     IEventSubscriptionRuntimeCatalog runtimeStates,
     IRuntime runtime,
     IExecutionRuntimeCatalog executionGraphs,
@@ -38,6 +39,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
                     executionGraphStateIndex,
                     executionGraphs,
                     executionBindings,
+                    executionReadiness,
                     runtimeStates))
                 .ToArray());
     }
@@ -49,6 +51,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
         Dictionary<string, RuntimeExecutionGraphState> executionGraphStateIndex,
         IExecutionRuntimeCatalog executionGraphs,
         IEventSubscriptionExecutionBindingCatalog executionBindings,
+        IEventSubscriptionExecutionReadinessCatalog executionReadiness,
         IEventSubscriptionRuntimeCatalog runtimeStates)
     {
         var linkedInboxes = inboxes.Inboxes
@@ -56,6 +59,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
             .OrderBy(static inbox => inbox.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
         var executionBinding = executionBindings.GetBySubscriptionId(subscription.Id);
+        var readiness = executionReadiness.GetBySubscriptionId(subscription.Id);
         var linkedHostedExecutions = hostedExecutionLinks.TryGetValue(subscription.Id, out var matches)
             ? matches
             : [];
@@ -80,6 +84,11 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
                     : hasRuntimeState
                         ? "application-managed-state"
                         : "not-configured",
+            [EventSubscriptionRuntimeMetadataKeys.ExecutionReadiness] = readiness?.ReadinessState ?? EventSubscriptionExecutionReadinessStates.DeclaredOnly,
+            [EventSubscriptionRuntimeMetadataKeys.ExecutionPath] = readiness?.HasExecutionPath == true ? "observed" : "not-observed",
+            [EventSubscriptionRuntimeMetadataKeys.ExecutionReadinessReasons] = readiness is null || readiness.Reasons.Count == 0
+                ? "unknown"
+                : string.Join(",", readiness.Reasons),
             ["tags"] = string.Join(",", subscription.Tags)
         };
 

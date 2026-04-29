@@ -203,6 +203,7 @@ public sealed class WolverineEventingPackTests
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var bindingCatalog = provider.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var readinessCatalog = provider.GetRequiredService<IEventSubscriptionExecutionReadinessCatalog>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         var adapterSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
         var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
@@ -210,6 +211,7 @@ public sealed class WolverineEventingPackTests
         var subscriptionEntry = Assert.Single(subscriptionSurface.Entries, entry => entry.Id == "audit-projector");
         var subscribeCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.subscribe");
         var binding = Assert.Single(bindingCatalog.Bindings);
+        var readiness = Assert.Single(readinessCatalog.Readiness);
 
         Assert.Equal("wolverine-managed", adapterEntry.Metadata["subscriptionExecution"]);
         Assert.Equal("1", adapterEntry.Metadata["managedSubscriptionCount"]);
@@ -228,9 +230,20 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("message-handler", binding.ExecutionMode);
         Assert.Equal("wolverine", binding.Metadata["adapter"]);
         Assert.Equal("fixed-delay", binding.Metadata["retryPolicy"]);
+        Assert.Equal("audit-projector", readiness.SubscriptionId);
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.RuntimeBound, readiness.ReadinessState);
+        Assert.True(readiness.HasExecutionPath);
+        Assert.Equal("wolverine-managed", readiness.ExecutionOwnership);
+        Assert.Equal("message-handler", readiness.ExecutionMode);
+        Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, readiness.ExecutionRuntimeId);
+        Assert.Contains("managed-binding-available", readiness.Reasons);
+        Assert.Equal("wolverine", readiness.Metadata["adapter"]);
 
         Assert.Equal("wolverine-managed", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.DispatchRuntime]);
         Assert.Equal("runtime-bound", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionRuntime]);
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.RuntimeBound, subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionReadiness]);
+        Assert.Equal("observed", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionPath]);
+        Assert.Contains("managed-binding-available", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionReadinessReasons], StringComparison.OrdinalIgnoreCase);
         Assert.Equal("wolverine-managed", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionOwnership]);
         Assert.Equal("message-handler", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionMode]);
         Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionRuntimeId]);

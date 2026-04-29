@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T02:51:50.3260781+00:00",
+  "GeneratedAtUtc": "2026-04-29T03:06:46.605766+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -160,7 +160,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 3,
-      "TypeCount": 30
+      "TypeCount": 33
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1120,7 +1120,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 28
+      "TypeCount": 31
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -7952,6 +7952,36 @@
       }
     },
     {
+      "DisplayName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor",
+      "Declaration": "public sealed class EventSubscriptionExecutionReadinessDescriptor",
+      "Summary": "Describes the current execution-readiness posture for one declared event subscription.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventSubscriptionExecutionReadinessStates",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionexecutionreadinessstates",
+      "Declaration": "public static class EventSubscriptionExecutionReadinessStates",
+      "Summary": "Defines stable readiness-state identifiers for declared event-subscription execution paths.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventSubscriptionExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -7976,7 +8006,7 @@
       "Summary": "Defines stable metadata keys used by the event-subscriptions runtime surface.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 20,
+        "Fields": 23,
         "Properties": 0,
         "Methods": 0
       }
@@ -10379,6 +10409,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSubscriptionExecutionReadinessCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventsubscriptionexecutionreadinesscatalog",
+      "Declaration": "public interface IEventSubscriptionExecutionReadinessCatalog",
+      "Summary": "Reads execution-readiness posture for declared event subscriptions.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
       }
     },
     {
@@ -22206,6 +22251,17 @@
       "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-appid",
       "Signature": "string AppId { get; set; }",
       "Summary": "Gets or sets the App Platform application identifier to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "ApplicationManagedState",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessStates",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionexecutionreadinessstates-applicationmanagedstate",
+      "Signature": "const string ApplicationManagedState",
+      "Summary": "The subscription has reported application-managed runtime observations."
     },
     {
       "DisplayName": "Applied",
@@ -38474,6 +38530,17 @@
       "Summary": "The runtime currently declares complete dependency identity metadata."
     },
     {
+      "DisplayName": "DeclaredOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessStates",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionexecutionreadinessstates-declaredonly",
+      "Signature": "const string DeclaredOnly",
+      "Summary": "The subscription is declared but no execution path has been bound, linked, or observed."
+    },
+    {
       "DisplayName": "DeclaredSourceProviderId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus",
@@ -47934,6 +48001,17 @@
       "Summary": "Creates a new managed event-subscription execution context."
     },
     {
+      "DisplayName": "EventSubscriptionExecutionReadinessDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventSubscriptionExecutionReadinessDescriptor(string subscriptionId, string readinessState, string executionOwnership, string executionMode, string executionRuntimeId, IReadOnlyList\u003Cstring\u003E reasons, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new event-subscription execution-readiness descriptor."
+    },
+    {
       "DisplayName": "EventSubscriptionExecutionReport",
       "Category": "Constructors",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
@@ -49299,6 +49377,17 @@
     },
     {
       "DisplayName": "ExecutionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-executionmode",
+      "Signature": "string ExecutionMode { get; }",
+      "Summary": "Gets the operator-facing execution mode answer."
+    },
+    {
+      "DisplayName": "ExecutionMode",
       "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
       "NamespaceName": "Cephalon.Eventing.Services",
@@ -49585,6 +49674,17 @@
     },
     {
       "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-executionownership",
+      "Signature": "string ExecutionOwnership { get; }",
+      "Summary": "Gets the operator-facing execution ownership answer."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
       "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
       "NamespaceName": "Cephalon.Eventing.Services",
@@ -49593,6 +49693,39 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionownership",
       "Signature": "const string ExecutionOwnership",
       "Summary": "Identifies who owns the real subscription execution path."
+    },
+    {
+      "DisplayName": "ExecutionPath",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionpath",
+      "Signature": "const string ExecutionPath",
+      "Summary": "Identifies whether an execution path is currently bound, linked, or observed."
+    },
+    {
+      "DisplayName": "ExecutionReadiness",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionreadiness",
+      "Signature": "const string ExecutionReadiness",
+      "Summary": "Identifies the execution-readiness state derived from managed bindings, hosted execution links, or runtime observations."
+    },
+    {
+      "DisplayName": "ExecutionReadinessReasons",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionreadinessreasons",
+      "Signature": "const string ExecutionReadinessReasons",
+      "Summary": "Identifies the comma-separated reasons that explain the execution-readiness state."
     },
     {
       "DisplayName": "ExecutionRisk",
@@ -49934,6 +50067,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionruntimeid",
       "Signature": "string ExecutionRuntimeId { get; }",
       "Summary": "Gets the operator-facing managed execution-runtime identifier."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; }",
+      "Summary": "Gets the managed runtime identifier when a runtime-bound path exists."
     },
     {
       "DisplayName": "ExecutionRuntimeId",
@@ -55799,6 +55943,17 @@
       "Summary": "Looks up the managed execution binding for one declared subscription."
     },
     {
+      "DisplayName": "GetBySubscriptionId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSubscriptionExecutionReadinessCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptionexecutionreadinesscatalog-getbysubscriptionid-system-string",
+      "Signature": "EventSubscriptionExecutionReadinessDescriptor GetBySubscriptionId(string subscriptionId)",
+      "Summary": "Gets the current execution-readiness descriptor for a declared subscription."
+    },
+    {
       "DisplayName": "GetByTargetCellId",
       "Category": "Methods",
       "DeclaringTypeName": "ICellRouteCatalog",
@@ -57722,6 +57877,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-hasdurablestoreconfigured",
       "Signature": "bool HasDurableStoreConfigured { get; set; }",
       "Summary": "Gets a value indicating whether a durable command-journal store is currently configured."
+    },
+    {
+      "DisplayName": "HasExecutionPath",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-hasexecutionpath",
+      "Signature": "bool HasExecutionPath { get; }",
+      "Summary": "Gets a value indicating whether Cephalon can currently observe or bind an execution path for the subscription."
     },
     {
       "DisplayName": "HasFreshnessWindow",
@@ -60428,6 +60594,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-hostedexecutionids",
       "Signature": "const string HostedExecutionIds",
       "Summary": "Identifies all hosted executions linked to the declared subscription."
+    },
+    {
+      "DisplayName": "HostedExecutionLinked",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessStates",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionexecutionreadinessstates-hostedexecutionlinked",
+      "Signature": "const string HostedExecutionLinked",
+      "Summary": "The subscription is linked to a host-managed execution service."
     },
     {
       "DisplayName": "HostedExecutions",
@@ -75443,6 +75620,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets operator-facing metadata associated with the current execution attempt."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the readiness answer."
     },
     {
       "DisplayName": "Metadata",
@@ -91631,6 +91819,17 @@
       "Summary": "The current readiness report."
     },
     {
+      "DisplayName": "Readiness",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventSubscriptionExecutionReadinessCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventsubscriptionexecutionreadinesscatalog-readiness",
+      "Signature": "IReadOnlyList\u003CEventSubscriptionExecutionReadinessDescriptor\u003E Readiness { get; }",
+      "Summary": "Gets the current execution-readiness descriptors for declared event subscriptions."
+    },
+    {
       "DisplayName": "ReadinessPath",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -91651,6 +91850,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-readinessscope",
       "Signature": "string ReadinessScope { get; }",
       "Summary": "Gets the operator-facing readiness scope for this cell."
+    },
+    {
+      "DisplayName": "ReadinessState",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-readinessstate",
+      "Signature": "string ReadinessState { get; }",
+      "Summary": "Gets the stable readiness-state identifier."
     },
     {
       "DisplayName": "ReadmePath",
@@ -92146,6 +92356,17 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-tenantresolutionresult-reason",
       "Signature": "string Reason { get; }",
       "Summary": "Gets the human-readable reason associated with the result."
+    },
+    {
+      "DisplayName": "Reasons",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-reasons",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Reasons { get; }",
+      "Summary": "Gets the ordered machine-readable reasons that explain the readiness state."
     },
     {
       "DisplayName": "ReceivedAtUtc",
@@ -100607,6 +100828,17 @@
       "Summary": "The event belongs to the overall runtime lifecycle."
     },
     {
+      "DisplayName": "RuntimeBound",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessStates",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionexecutionreadinessstates-runtimebound",
+      "Signature": "const string RuntimeBound",
+      "Summary": "The subscription is bound to a managed execution runtime contributed by a companion pack."
+    },
+    {
       "DisplayName": "RuntimeEndpointIds",
       "Category": "Properties",
       "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
@@ -107691,6 +107923,17 @@
     {
       "DisplayName": "SubscriptionId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionExecutionReadinessDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor-subscriptionid",
+      "Signature": "string SubscriptionId { get; }",
+      "Summary": "Gets the stable declared subscription identifier."
+    },
+    {
+      "DisplayName": "SubscriptionId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -112582,6 +112825,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog-tryget-system-string-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor",
       "Signature": "bool TryGet(string subscriptionId, out EventSubscriptionExecutionBindingDescriptor binding)",
       "Summary": "Attempts to resolve the managed execution binding for one declared subscription."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSubscriptionExecutionReadinessCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptionexecutionreadinesscatalog-tryget-system-string-cephalon-eventing-services-eventsubscriptionexecutionreadinessdescriptor",
+      "Signature": "bool TryGet(string subscriptionId, out EventSubscriptionExecutionReadinessDescriptor readiness)",
+      "Summary": "Attempts to get the current execution-readiness descriptor for a declared subscription."
     },
     {
       "DisplayName": "TryGet",

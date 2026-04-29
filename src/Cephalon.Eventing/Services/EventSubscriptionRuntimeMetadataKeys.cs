@@ -51,6 +51,21 @@ public static class EventSubscriptionRuntimeMetadataKeys
     public const string SubscriptionRuntime = "subscriptionRuntime";
 
     /// <summary>
+    /// Identifies the execution-readiness state derived from managed bindings, hosted execution links, or runtime observations.
+    /// </summary>
+    public const string ExecutionReadiness = "executionReadiness";
+
+    /// <summary>
+    /// Identifies whether an execution path is currently bound, linked, or observed.
+    /// </summary>
+    public const string ExecutionPath = "executionPath";
+
+    /// <summary>
+    /// Identifies the comma-separated reasons that explain the execution-readiness state.
+    /// </summary>
+    public const string ExecutionReadinessReasons = "executionReadinessReasons";
+
+    /// <summary>
     /// Identifies the managed execution-runtime identifier bound to the subscription.
     /// </summary>
     public const string ExecutionRuntimeId = "executionRuntimeId";

@@ -2065,6 +2065,7 @@ public sealed class EngineBuilderTests
         var eventChannelCatalog = provider.GetRequiredService<IEventChannelCatalog>();
         var eventSubscriptionCatalog = provider.GetRequiredService<IEventSubscriptionCatalog>();
         var eventSubscriptionBindingCatalog = provider.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var eventSubscriptionReadinessCatalog = provider.GetRequiredService<IEventSubscriptionExecutionReadinessCatalog>();
         var subscriptionRuntimeCatalog = provider.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
         var subscriptionRuntimeReporter = provider.GetRequiredService<IEventSubscriptionRuntimeReporter>();
         var edgeNodeCatalog = provider.GetRequiredService<IEdgeNodeCatalog>();
@@ -2134,6 +2135,17 @@ public sealed class EngineBuilderTests
         Assert.Null(eventSubscriptionBindingCatalog.GetBySubscriptionId("audit-projector"));
         Assert.False(eventSubscriptionBindingCatalog.TryGet("audit-projector", out var unboundSubscription));
         Assert.Null(unboundSubscription);
+        var subscriptionReadiness = Assert.Single(eventSubscriptionReadinessCatalog.Readiness);
+        Assert.Equal("audit-projector", subscriptionReadiness.SubscriptionId);
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.HostedExecutionLinked, subscriptionReadiness.ReadinessState);
+        Assert.True(subscriptionReadiness.HasExecutionPath);
+        Assert.Equal("application-managed", subscriptionReadiness.ExecutionOwnership);
+        Assert.Equal("hosted-execution", subscriptionReadiness.ExecutionMode);
+        Assert.Contains("hosted-execution-linked", subscriptionReadiness.Reasons);
+        Assert.Contains("runtime-state-reported", subscriptionReadiness.Reasons);
+        Assert.Equal(
+            subscriptionReadiness.ReadinessState,
+            eventSubscriptionReadinessCatalog.GetBySubscriptionId("audit-projector")?.ReadinessState);
         Assert.Equal(2, edgeNodeCatalog.Nodes.Count);
         Assert.Contains(edgeNodeCatalog.Nodes, node => node.Id == "storefront-edge");
         Assert.Contains(edgeNodeCatalog.Nodes, node => node.Id == "warehouse-edge");
@@ -2178,6 +2190,9 @@ public sealed class EngineBuilderTests
                     entry.Metadata[EventSubscriptionRuntimeMetadataKeys.DispatchRuntime] == "application-managed" &&
                     entry.Metadata[EventSubscriptionRuntimeMetadataKeys.RuntimeState] == "reported" &&
                     entry.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionRuntime] == "hosted-execution-linked" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionReadiness] == EventSubscriptionExecutionReadinessStates.HostedExecutionLinked &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionPath] == "observed" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionReadinessReasons].Contains("hosted-execution-linked", StringComparison.OrdinalIgnoreCase) &&
                     entry.Metadata[EventSubscriptionRuntimeMetadataKeys.HostedExecutionId] == "audit-projector-pump" &&
                     entry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionGraphId] == "audit-subscription-flow" &&
                     entry.Metadata["executionGraphDisplayName"] == "Audit Subscription Flow" &&
@@ -2473,6 +2488,7 @@ public sealed class EngineBuilderTests
         Assert.Null(provider.GetService<IEventDispatchRuntimeReporter>());
         Assert.Null(provider.GetService<IEventSubscriptionRuntimeCatalog>());
         Assert.Null(provider.GetService<IEventSubscriptionRuntimeReporter>());
+        Assert.Null(provider.GetService<IEventSubscriptionExecutionReadinessCatalog>());
         Assert.Null(provider.GetService<IKnowledgeCatalog>());
         Assert.Null(provider.GetService<IKnowledgeIndexer>());
         Assert.Null(provider.GetService<IKnowledgeQueryEngine>());
@@ -2542,6 +2558,7 @@ public sealed class EngineBuilderTests
 
         using var provider = services.BuildServiceProvider();
         var reporter = provider.GetRequiredService<IEventSubscriptionRuntimeReporter>();
+        var readinessCatalog = provider.GetRequiredService<IEventSubscriptionExecutionReadinessCatalog>();
         var surfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
 
         await reporter.ReportAsync(
@@ -2562,9 +2579,17 @@ public sealed class EngineBuilderTests
             surfaces.GetByTechnology("event-driven-integration"),
             surface => surface.SurfaceId == "event-subscriptions");
         var runtimeEntry = Assert.Single(eventingSubscriptionSurface.Entries, entry => entry.Id == "audit-projection");
+        var readiness = Assert.Single(readinessCatalog.Readiness);
 
         Assert.Equal("application-managed", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.DispatchRuntime]);
         Assert.Equal("application-managed-state", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionRuntime]);
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.ApplicationManagedState, readiness.ReadinessState);
+        Assert.True(readiness.HasExecutionPath);
+        Assert.Equal("application-managed", readiness.ExecutionOwnership);
+        Assert.Equal("runtime-reported", readiness.ExecutionMode);
+        Assert.Contains("runtime-state-reported", readiness.Reasons);
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.ApplicationManagedState, runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionReadiness]);
+        Assert.Equal("observed", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionPath]);
         Assert.Equal("reported", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.RuntimeState]);
         Assert.Equal("failed", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.LastOutcome]);
         Assert.Equal("audit-msg-404", runtimeEntry.Metadata["lastMessageId"]);
@@ -2574,6 +2599,57 @@ public sealed class EngineBuilderTests
         Assert.Equal("linear", runtimeEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.ReportedMetadataPrefix}retryPolicy"]);
         Assert.Equal("00:00:30", runtimeEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.ReportedMetadataPrefix}retryWindow"]);
         Assert.Equal("Projection store unavailable", runtimeEntry.Metadata["lastError"]);
+    }
+
+    [Fact]
+    public void AddTechnologyPacksExposeDeclaredOnlySubscriptionReadiness()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["EventDrivenIntegration"]));
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "audit",
+                    displayName: "Audit",
+                    description: "Audit integration events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "audit-projection",
+                    displayName: "Audit Projection",
+                    description: "Projects audit events into a read model.",
+                    channelId: "audit",
+                    handlerId: "audit-projection-handler",
+                    deliveryMode: "application-service"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var readinessCatalog = provider.GetRequiredService<IEventSubscriptionExecutionReadinessCatalog>();
+        var surfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var readiness = Assert.Single(readinessCatalog.Readiness);
+        var runtimeEntry = Assert.Single(
+            surfaces.GetByTechnology("event-driven-integration")
+                .Single(surface => surface.SurfaceId == "event-subscriptions")
+                .Entries,
+            entry => entry.Id == "audit-projection");
+
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.DeclaredOnly, readiness.ReadinessState);
+        Assert.False(readiness.HasExecutionPath);
+        Assert.Equal("not-configured", readiness.ExecutionOwnership);
+        Assert.Equal("not-configured", readiness.ExecutionMode);
+        Assert.Contains("no-execution-path-observed", readiness.Reasons);
+        Assert.True(readinessCatalog.TryGet("audit-projection", out var resolvedReadiness));
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.DeclaredOnly, resolvedReadiness?.ReadinessState);
+        Assert.False(readinessCatalog.TryGet("missing-subscription", out resolvedReadiness));
+        Assert.Null(resolvedReadiness);
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.DeclaredOnly, runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionReadiness]);
+        Assert.Equal("not-observed", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionPath]);
+        Assert.Equal("no-execution-path-observed", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionReadinessReasons]);
     }
 
     [Fact]
