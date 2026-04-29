@@ -118,6 +118,18 @@ int RetryDelaySeconds { get; set; }
 
 Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
 
+<a id="member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-subscriptionmaxattempts"></a>
+
+##### `SubscriptionMaxAttempts`
+
+```csharp
+int SubscriptionMaxAttempts { get; set; }
+```
+
+Gets or sets the maximum number of Wolverine-managed execution attempts for one declared subscription message.
+
+Remarks: The default value of `3` keeps the provider-managed retry lane bounded so poison messages eventually report a terminal `failed` observation instead of being requeued forever. Set this to `1` to disable subscription retries while still reporting the managed execution attempt.
+
 <a id="member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-subscriptionretrydelayseconds"></a>
 
 ##### `SubscriptionRetryDelaySeconds`
@@ -222,12 +234,12 @@ public sealed class WolverineManagedEventSubscriptionExecutionRequest
 
 #### Constructors
 
-<a id="member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication"></a>
+<a id="member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication-system-int32"></a>
 
 ##### `WolverineManagedEventSubscriptionExecutionRequest`
 
 ```csharp
-WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication)
+WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication, int attempt)
 ```
 
 Creates a new infrastructure retry message for one managed event-subscription execution.
@@ -235,8 +247,19 @@ Creates a new infrastructure retry message for one managed event-subscription ex
 Parameters:
 - `subscriptionId`: The declared subscription identifier that should be retried.
 - `publication`: The staged publication that should be delivered to the subscription.
+- `attempt`: The managed execution attempt represented by this request.
 
 #### Properties
+
+<a id="member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-attempt"></a>
+
+##### `Attempt`
+
+```csharp
+int Attempt { get; }
+```
+
+Gets the managed execution attempt represented by this request.
 
 <a id="member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-publication"></a>
 

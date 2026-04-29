@@ -184,7 +184,9 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("message-handler", managedCapability.Metadata["executionMode"]);
         Assert.Equal("wolverine-subscription-execution", managedCapability.Metadata["executionRuntimeId"]);
         Assert.Equal("wolverine-dispatch-loop", managedCapability.Metadata["triggerRuntimeId"]);
-        Assert.Equal("fixed-delay", managedCapability.Metadata["retryPolicy"]);
+        Assert.Equal("bounded-fixed-delay", managedCapability.Metadata["retryPolicy"]);
+        Assert.Equal("3", managedCapability.Metadata["retryMaxAttempts"]);
+        Assert.Equal("45", managedCapability.Metadata["retryDelaySeconds"]);
 
         Assert.NotNull(eventingSurfaces);
         var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
@@ -197,7 +199,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("message-handler", managedSubscription.Metadata["executionMode"]);
         Assert.Equal("wolverine", managedSubscription.Metadata["binding.adapter"]);
         Assert.Equal("wolverine-dispatch-loop", managedSubscription.Metadata["binding.trigger"]);
-        Assert.Equal("fixed-delay", managedSubscription.Metadata["binding.retryPolicy"]);
+        Assert.Equal("bounded-fixed-delay", managedSubscription.Metadata["binding.retryPolicy"]);
+        Assert.Equal("3", managedSubscription.Metadata["binding.retryMaxAttempts"]);
         Assert.Equal("45", managedSubscription.Metadata["binding.retryDelaySeconds"]);
         Assert.Equal("audit-projector-pump", managedSubscription.Metadata["hostedExecutionId"]);
         Assert.Equal("audit-subscription-flow", managedSubscription.Metadata["executionGraphId"]);
@@ -210,6 +213,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("1", adapterEntry.Metadata["managedSubscriptionCount"]);
         Assert.Equal("audit-projector", adapterEntry.Metadata["managedSubscriptionIds"]);
         Assert.Equal("45", adapterEntry.Metadata["subscriptionRetryDelaySeconds"]);
+        Assert.Equal("3", adapterEntry.Metadata["subscriptionMaxAttempts"]);
+        Assert.Equal("bounded-fixed-delay", adapterEntry.Metadata["subscriptionRetryPolicy"]);
 
         Assert.NotNull(snapshot);
         var snapshotSubscription = Assert.Single(

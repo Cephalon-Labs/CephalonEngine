@@ -63,8 +63,11 @@ internal sealed class WolverineManagedEventSubscriptionExecutorCatalog
                     ["adapter"] = "wolverine",
                     ["technology"] = "event-driven-integration",
                     ["trigger"] = WolverineEventingRuntimeIds.DispatchRuntimeId,
-                    ["retryPolicy"] = "fixed-delay",
-                    ["retryDelaySeconds"] = Math.Max(1, options.SubscriptionRetryDelaySeconds).ToString(CultureInfo.InvariantCulture)
+                    ["retryPolicy"] = WolverineEventingRetryPolicy.GetSubscriptionPolicyId(options),
+                    ["retryMaxAttempts"] = WolverineEventingRetryPolicy.GetSubscriptionMaxAttempts(options).ToString(CultureInfo.InvariantCulture),
+                    ["retryDelaySeconds"] = WolverineEventingRetryPolicy.GetSubscriptionRetryDelaySeconds(options).ToString(CultureInfo.InvariantCulture),
+                    ["retryDurability"] = "wolverine-scheduled-message",
+                    ["retryScope"] = "provider-managed"
                 }))
             .ToArray();
     }

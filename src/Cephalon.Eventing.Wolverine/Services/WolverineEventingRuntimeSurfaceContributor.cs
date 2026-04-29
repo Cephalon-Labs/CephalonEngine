@@ -124,6 +124,8 @@ internal sealed class WolverineEventingRuntimeSurfaceContributor(
                         ["dispatchPollingIntervalSeconds"] = Math.Max(1, options.DispatchPollingIntervalSeconds).ToString(System.Globalization.CultureInfo.InvariantCulture),
                         ["retryDelaySeconds"] = Math.Max(1, options.RetryDelaySeconds).ToString(System.Globalization.CultureInfo.InvariantCulture),
                         ["subscriptionRetryDelaySeconds"] = Math.Max(1, options.SubscriptionRetryDelaySeconds).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ["subscriptionMaxAttempts"] = WolverineEventingRetryPolicy.GetSubscriptionMaxAttempts(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ["subscriptionRetryPolicy"] = WolverineEventingRetryPolicy.GetSubscriptionPolicyId(options),
                         ["dispatchMode"] = "publish-event-publication",
                         ["deliveryMode"] = "publish",
                         ["messageType"] = typeof(EventPublication).FullName ?? typeof(EventPublication).Name,

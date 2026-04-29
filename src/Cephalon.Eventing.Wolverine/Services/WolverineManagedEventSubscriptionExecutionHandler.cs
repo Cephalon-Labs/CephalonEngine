@@ -37,7 +37,7 @@ public sealed class WolverineManagedEventSubscriptionExecutionHandler
         var processor = services.GetRequiredService<WolverineManagedEventSubscriptionExecutionProcessor>();
         return processor.ProcessAsync(
             request,
-            Math.Max(1, envelope.Attempts),
+            Math.Max(request.Attempt, envelope.Attempts),
             messageBus,
             cancellationToken);
     }

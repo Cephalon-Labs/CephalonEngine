@@ -217,6 +217,8 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("1", adapterEntry.Metadata["managedSubscriptionCount"]);
         Assert.Equal("audit-projector", adapterEntry.Metadata["managedSubscriptionIds"]);
         Assert.Equal("45", adapterEntry.Metadata["subscriptionRetryDelaySeconds"]);
+        Assert.Equal("3", adapterEntry.Metadata["subscriptionMaxAttempts"]);
+        Assert.Equal("bounded-fixed-delay", adapterEntry.Metadata["subscriptionRetryPolicy"]);
         Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, adapterEntry.Metadata["subscriptionExecutionRuntimeId"]);
 
         Assert.Same(binding, bindingCatalog.GetBySubscriptionId("audit-projector"));
@@ -229,7 +231,11 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("wolverine-managed", binding.ExecutionOwnership);
         Assert.Equal("message-handler", binding.ExecutionMode);
         Assert.Equal("wolverine", binding.Metadata["adapter"]);
-        Assert.Equal("fixed-delay", binding.Metadata["retryPolicy"]);
+        Assert.Equal("bounded-fixed-delay", binding.Metadata["retryPolicy"]);
+        Assert.Equal("3", binding.Metadata["retryMaxAttempts"]);
+        Assert.Equal("45", binding.Metadata["retryDelaySeconds"]);
+        Assert.Equal("wolverine-scheduled-message", binding.Metadata["retryDurability"]);
+        Assert.Equal("provider-managed", binding.Metadata["retryScope"]);
         Assert.Equal("audit-projector", readiness.SubscriptionId);
         Assert.Equal(EventSubscriptionExecutionReadinessStates.RuntimeBound, readiness.ReadinessState);
         Assert.True(readiness.HasExecutionPath);
@@ -248,7 +254,9 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("message-handler", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionMode]);
         Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionRuntimeId]);
         Assert.Equal("wolverine", subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}adapter"]);
-        Assert.Equal("fixed-delay", subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}retryPolicy"]);
+        Assert.Equal("bounded-fixed-delay", subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}retryPolicy"]);
+        Assert.Equal("3", subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}retryMaxAttempts"]);
+        Assert.Equal("45", subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}retryDelaySeconds"]);
         Assert.Equal(WolverineEventingRuntimeIds.DispatchRuntimeId, subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}trigger"]);
 
         Assert.Equal("wolverine", subscribeCapability.Metadata["adapter"]);
@@ -256,6 +264,9 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("message-handler", subscribeCapability.Metadata["executionMode"]);
         Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, subscribeCapability.Metadata["executionRuntimeId"]);
         Assert.Equal(WolverineEventingRuntimeIds.DispatchRuntimeId, subscribeCapability.Metadata["triggerRuntimeId"]);
+        Assert.Equal("bounded-fixed-delay", subscribeCapability.Metadata["retryPolicy"]);
+        Assert.Equal("3", subscribeCapability.Metadata["retryMaxAttempts"]);
+        Assert.Equal("45", subscribeCapability.Metadata["retryDelaySeconds"]);
 
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.Eventing.Wolverine"));
         Assert.Equal(4306, diagnosticsConvention.MaximumEventId);
@@ -492,6 +503,7 @@ public sealed class WolverineEventingPackTests
         var scheduledMessage = Assert.Single(messageBus.SentMessages);
         var scheduledRequest = Assert.IsType<WolverineManagedEventSubscriptionExecutionRequest>(scheduledMessage.Message);
         Assert.Equal("audit-projector", scheduledRequest.SubscriptionId);
+        Assert.Equal(2, scheduledRequest.Attempt);
         Assert.NotNull(scheduledMessage.Options);
         Assert.Equal(TimeSpan.FromSeconds(45), scheduledMessage.Options!.ScheduleDelay);
 
@@ -500,10 +512,13 @@ public sealed class WolverineEventingPackTests
         Assert.Equal(1, stateAfterRetry.StartedCount);
         Assert.Equal(1, stateAfterRetry.RetryScheduledCount);
         Assert.True(stateAfterRetry.RetryPending);
-        Assert.Equal("fixed-delay", stateAfterRetry.Metadata["retryPolicy"]);
+        Assert.Equal("bounded-fixed-delay", stateAfterRetry.Metadata["retryPolicy"]);
+        Assert.Equal("3", stateAfterRetry.Metadata["retryMaxAttempts"]);
+        Assert.Equal("45", stateAfterRetry.Metadata["retryDelaySeconds"]);
+        Assert.Equal("retry-scheduled", stateAfterRetry.Metadata["retryOutcome"]);
         Assert.True(stateAfterRetry.Metadata.ContainsKey("nextRetryAtUtc"));
 
-        await processor.ProcessAsync(scheduledRequest, attempt: 2, messageBus);
+        await processor.ProcessAsync(scheduledRequest, scheduledRequest.Attempt, messageBus);
 
         Assert.Equal(2, probe.TotalAttempts);
         Assert.Equal(1, probe.SuccessfulAttempts);
@@ -515,6 +530,76 @@ public sealed class WolverineEventingPackTests
         Assert.Equal(4, finalState.TotalReports);
         Assert.False(finalState.RetryPending);
         Assert.Equal(2, finalState.LastAttempt);
+    }
+
+    [Fact]
+    public async Task WolverineManagedSubscriptionExecutionProcessorReportsTerminalFailureWhenMaxAttemptsAreExhausted()
+    {
+        var databaseName = $"cephalon-eventing-wolverine-subscription-terminal-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                data: new DataSettings(
+                    provider: "EntityFramework",
+                    outboxEnabled: true),
+                messaging: new MessagingSettings(provider: "Wolverine")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing();
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+            engine.AddWolverineEventing(options =>
+            {
+                options.EnableDispatchLoop = true;
+                options.EnableSubscriptionExecution = true;
+                options.SubscriptionMaxAttempts = 2;
+                options.SubscriptionRetryDelaySeconds = 45;
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var probe = provider.GetRequiredService<ManagedAuditProjectorProbe>();
+        var processor = provider.GetRequiredService<WolverineManagedEventSubscriptionExecutionProcessor>();
+        var subscriptionRuntimeCatalog = provider.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var messageBus = new TestMessageBus(hasDestinations: false);
+        probe.FailuresRemaining = 5;
+
+        var request = new WolverineManagedEventSubscriptionExecutionRequest(
+            subscriptionId: "audit-projector",
+            publication: new EventPublication(
+                id: "audit-msg-301",
+                channelId: "audit",
+                eventType: "audit.entry.recorded",
+                payload: "{\"id\":\"audit-301\"}",
+                occurredAtUtc: new DateTimeOffset(2026, 04, 26, 8, 50, 0, TimeSpan.Zero),
+                contentType: "application/json"));
+
+        await processor.ProcessAsync(request, attempt: 2, messageBus);
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal(0, probe.SuccessfulAttempts);
+        Assert.Empty(messageBus.SentMessages);
+
+        var state = Assert.Single(subscriptionRuntimeCatalog.States);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Failed, state.LastOutcome);
+        Assert.Equal(1, state.StartedCount);
+        Assert.Equal(1, state.FailedCount);
+        Assert.Equal(0, state.RetryScheduledCount);
+        Assert.Equal(2, state.TotalReports);
+        Assert.False(state.RetryPending);
+        Assert.Equal(2, state.LastAttempt);
+        Assert.Equal("bounded-fixed-delay", state.Metadata["retryPolicy"]);
+        Assert.Equal("2", state.Metadata["retryMaxAttempts"]);
+        Assert.Equal("45", state.Metadata["retryDelaySeconds"]);
+        Assert.Equal("max-attempts-exhausted", state.Metadata["retryOutcome"]);
+        Assert.Equal("true", state.Metadata["retryExhausted"]);
+        Assert.Equal("true", state.Metadata["terminalFailure"]);
     }
 
     [Fact]

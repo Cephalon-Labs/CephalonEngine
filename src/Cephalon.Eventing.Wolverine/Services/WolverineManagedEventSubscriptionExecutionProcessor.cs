@@ -33,9 +33,11 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
                 $"Managed subscription execution request references unknown subscription '{request.SubscriptionId}'.");
         }
 
-        var normalizedAttempt = Math.Max(1, attempt);
+        var normalizedAttempt = Math.Max(request.Attempt, Math.Max(1, attempt));
+        var maxAttempts = WolverineEventingRetryPolicy.GetSubscriptionMaxAttempts(options);
+        var retryDelaySeconds = WolverineEventingRetryPolicy.GetSubscriptionRetryDelaySeconds(options);
         await ReportAsync(
-            CreateReport(entry, request.Publication, normalizedAttempt, EventSubscriptionExecutionOutcomes.Started),
+            CreateReport(entry, request.Publication, normalizedAttempt, maxAttempts, retryDelaySeconds, EventSubscriptionExecutionOutcomes.Started),
             cancellationToken).ConfigureAwait(false);
 
         try
@@ -44,11 +46,11 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
                 entry.Subscription,
                 request.Publication,
                 normalizedAttempt,
-                metadata: CreateExecutionMetadata(entry, request.Publication, normalizedAttempt));
+                metadata: CreateExecutionMetadata(entry, request.Publication, normalizedAttempt, maxAttempts, retryDelaySeconds));
             await entry.Executor.ExecuteAsync(executionContext, cancellationToken).ConfigureAwait(false);
 
             await ReportAsync(
-                CreateReport(entry, request.Publication, normalizedAttempt, EventSubscriptionExecutionOutcomes.Succeeded),
+                CreateReport(entry, request.Publication, normalizedAttempt, maxAttempts, retryDelaySeconds, EventSubscriptionExecutionOutcomes.Succeeded),
                 cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -57,16 +59,29 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
         }
         catch (Exception exception)
         {
+            if (normalizedAttempt >= maxAttempts)
+            {
+                await ReportAsync(
+                    CreateTerminalFailureReport(entry, request.Publication, normalizedAttempt, maxAttempts, retryDelaySeconds, exception.Message, exception),
+                    cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
             var retryOptions = new DeliveryOptions
             {
-                ScheduleDelay = TimeSpan.FromSeconds(Math.Max(1, options.SubscriptionRetryDelaySeconds)),
+                ScheduleDelay = TimeSpan.FromSeconds(retryDelaySeconds),
                 TenantId = request.Publication.TenantId
             };
 
             await ReportAsync(
-                CreateRetryReport(entry, request.Publication, normalizedAttempt, exception.Message, exception),
+                CreateRetryReport(entry, request.Publication, normalizedAttempt, maxAttempts, retryDelaySeconds, exception.Message, exception),
                 cancellationToken).ConfigureAwait(false);
-            await messageBus.SendAsync(request, retryOptions).ConfigureAwait(false);
+            await messageBus.SendAsync(
+                new WolverineManagedEventSubscriptionExecutionRequest(
+                    request.SubscriptionId,
+                    request.Publication,
+                    attempt: normalizedAttempt + 1),
+                retryOptions).ConfigureAwait(false);
         }
     }
 
@@ -88,22 +103,26 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
         }
     }
 
-    private EventSubscriptionExecutionReport CreateRetryReport(
+    private static EventSubscriptionExecutionReport CreateRetryReport(
         WolverineManagedEventSubscriptionExecutorCatalog.ManagedSubscriptionEntry entry,
         EventPublication publication,
         int attempt,
+        int maxAttempts,
+        int retryDelaySeconds,
         string error,
         Exception exception)
     {
-        var nextRetryAtUtc = DateTimeOffset.UtcNow.AddSeconds(Math.Max(1, options.SubscriptionRetryDelaySeconds));
+        var nextRetryAtUtc = DateTimeOffset.UtcNow.AddSeconds(retryDelaySeconds);
         var metadata = CreateObservationMetadata(
             entry,
             publication,
             attempt,
+            maxAttempts,
+            retryDelaySeconds,
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["nextRetryAtUtc"] = nextRetryAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
-                ["retryPolicy"] = "fixed-delay",
+                ["retryOutcome"] = "retry-scheduled",
                 ["exceptionType"] = exception.GetType().FullName ?? exception.GetType().Name
             });
 
@@ -117,10 +136,45 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
             metadata: metadata);
     }
 
+    private static EventSubscriptionExecutionReport CreateTerminalFailureReport(
+        WolverineManagedEventSubscriptionExecutorCatalog.ManagedSubscriptionEntry entry,
+        EventPublication publication,
+        int attempt,
+        int maxAttempts,
+        int retryDelaySeconds,
+        string error,
+        Exception exception)
+    {
+        var metadata = CreateObservationMetadata(
+            entry,
+            publication,
+            attempt,
+            maxAttempts,
+            retryDelaySeconds,
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["retryOutcome"] = "max-attempts-exhausted",
+                ["retryExhausted"] = "true",
+                ["terminalFailure"] = "true",
+                ["exceptionType"] = exception.GetType().FullName ?? exception.GetType().Name
+            });
+
+        return new EventSubscriptionExecutionReport(
+            subscriptionId: entry.Subscription.Id,
+            outcome: EventSubscriptionExecutionOutcomes.Failed,
+            observedAtUtc: DateTimeOffset.UtcNow,
+            messageId: publication.Id,
+            attempt: attempt,
+            error: error,
+            metadata: metadata);
+    }
+
     private static EventSubscriptionExecutionReport CreateReport(
         WolverineManagedEventSubscriptionExecutorCatalog.ManagedSubscriptionEntry entry,
         EventPublication publication,
         int attempt,
+        int maxAttempts,
+        int retryDelaySeconds,
         string outcome)
     {
         return new EventSubscriptionExecutionReport(
@@ -129,15 +183,17 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
             observedAtUtc: DateTimeOffset.UtcNow,
             messageId: publication.Id,
             attempt: attempt,
-            metadata: CreateObservationMetadata(entry, publication, attempt));
+            metadata: CreateObservationMetadata(entry, publication, attempt, maxAttempts, retryDelaySeconds));
     }
 
     private static Dictionary<string, string> CreateExecutionMetadata(
         WolverineManagedEventSubscriptionExecutorCatalog.ManagedSubscriptionEntry entry,
         EventPublication publication,
-        int attempt)
+        int attempt,
+        int maxAttempts,
+        int retryDelaySeconds)
     {
-        var metadata = CreateObservationMetadata(entry, publication, attempt);
+        var metadata = CreateObservationMetadata(entry, publication, attempt, maxAttempts, retryDelaySeconds);
         metadata["messageId"] = publication.Id;
         return metadata;
     }
@@ -146,6 +202,8 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
         WolverineManagedEventSubscriptionExecutorCatalog.ManagedSubscriptionEntry entry,
         EventPublication publication,
         int attempt,
+        int maxAttempts,
+        int retryDelaySeconds,
         IReadOnlyDictionary<string, string>? overrides = null)
     {
         var metadata = new Dictionary<string, string>(publication.Metadata, StringComparer.OrdinalIgnoreCase)
@@ -160,6 +218,11 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
             ["deliveryMode"] = entry.Subscription.DeliveryMode,
             ["transport"] = "wolverine",
             ["attempt"] = attempt.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["retryPolicy"] = maxAttempts > 1 ? WolverineEventingRetryPolicy.BoundedFixedDelay : WolverineEventingRetryPolicy.None,
+            ["retryMaxAttempts"] = maxAttempts.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["retryDelaySeconds"] = retryDelaySeconds.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["retryDurability"] = "wolverine-scheduled-message",
+            ["retryScope"] = "provider-managed",
             ["contentType"] = publication.ContentType ?? "not-configured",
             ["headerCount"] = publication.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture)
         };

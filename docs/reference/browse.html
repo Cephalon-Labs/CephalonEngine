@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T08:24:38.5055053+00:00",
+  "GeneratedAtUtc": "2026-04-29T08:48:10.8931443+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -17619,7 +17619,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
+        "Properties": 10,
         "Methods": 0
       }
     },
@@ -17649,7 +17649,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 3,
         "Methods": 0
       }
     },
@@ -24288,6 +24288,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-attempt",
       "Signature": "int Attempt { get; }",
       "Summary": "Gets the application-managed attempt number associated with this observation."
+    },
+    {
+      "DisplayName": "Attempt",
+      "Category": "Properties",
+      "DeclaringTypeName": "WolverineManagedEventSubscriptionExecutionRequest",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-attempt",
+      "Signature": "int Attempt { get; }",
+      "Summary": "Gets the managed execution attempt represented by this request."
     },
     {
       "DisplayName": "AttemptId",
@@ -108858,6 +108869,17 @@
       "Summary": "Gets the declared subscription identifier that should be executed."
     },
     {
+      "DisplayName": "SubscriptionMaxAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "WolverineEventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-subscriptionmaxattempts",
+      "Signature": "int SubscriptionMaxAttempts { get; set; }",
+      "Summary": "Gets or sets the maximum number of Wolverine-managed execution attempts for one declared subscription message."
+    },
+    {
       "DisplayName": "SubscriptionRetryDelaySeconds",
       "Category": "Properties",
       "DeclaringTypeName": "WolverineEventingOptions",
@@ -116718,8 +116740,8 @@
       "NamespaceName": "Cephalon.Eventing.Wolverine.Services",
       "AssemblyName": "Cephalon.Eventing.Wolverine",
       "FileName": "cephalon-eventing-wolverine.md",
-      "AnchorId": "member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication",
-      "Signature": "WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication)",
+      "AnchorId": "member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication-system-int32",
+      "Signature": "WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication, int attempt)",
       "Summary": "Creates a new infrastructure retry message for one managed event-subscription execution."
     },
     {

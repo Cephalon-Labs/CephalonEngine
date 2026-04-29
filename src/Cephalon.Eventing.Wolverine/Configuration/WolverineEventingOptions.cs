@@ -7,6 +7,8 @@ namespace Cephalon.Eventing.Wolverine.Configuration;
 /// </summary>
 public sealed class WolverineEventingOptions
 {
+    private int subscriptionMaxAttempts = 3;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="WolverineEventingOptions" /> class.
     /// </summary>
@@ -53,6 +55,32 @@ public sealed class WolverineEventingOptions
     /// Gets or sets the number of seconds the Wolverine-managed subscription execution path should wait before requeueing a failed subscription attempt.
     /// </summary>
     public int SubscriptionRetryDelaySeconds { get; set; } = 30;
+
+    /// <summary>
+    /// Gets or sets the maximum number of Wolverine-managed execution attempts for one declared subscription message.
+    /// </summary>
+    /// <remarks>
+    /// The default value of <c>3</c> keeps the provider-managed retry lane bounded so poison
+    /// messages eventually report a terminal <c>failed</c> observation instead of being
+    /// requeued forever. Set this to <c>1</c> to disable subscription retries while still
+    /// reporting the managed execution attempt.
+    /// </remarks>
+    public int SubscriptionMaxAttempts
+    {
+        get => subscriptionMaxAttempts;
+        set
+        {
+            if (value < 1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "Wolverine-managed subscription max attempts must be greater than or equal to 1.");
+            }
+
+            subscriptionMaxAttempts = value;
+        }
+    }
 
     /// <summary>
     /// Gets or sets an optional callback that can extend Wolverine host wiring before the runtime starts.

@@ -1102,6 +1102,40 @@ Follow-up later:
   provider-specific inbound consumption remain future package-owned work until a package truly owns
   those paths
 
+### ENG-276 Wolverine bounded subscription retry terminal failure
+
+Status: done
+Estimate: 3
+Issue: #785
+
+Why:
+
+- the optional Wolverine companion already owns a provider-managed declared-subscription execution
+  lane, but fixed-delay retries could keep poison subscription messages cycling without one
+  terminal runtime answer
+- the smallest honest hardening proof is bounded retry for the path Wolverine actually owns, not a
+  generic inbound broker or durable inbox claim
+
+Delivered:
+
+- add `SubscriptionMaxAttempts` to `WolverineEventingOptions` with a default of `3` and validation
+  that the value stays greater than or equal to `1`
+- project `retryPolicy = bounded-fixed-delay`, `retryMaxAttempts`, `retryDelaySeconds`,
+  `retryDurability = wolverine-scheduled-message`, and `retryScope = provider-managed` through
+  `eventing.subscribe`, `IEventSubscriptionExecutionBindingCatalog`, `event-subscriptions`, and the
+  `wolverine-adapter` runtime surface
+- keep scheduling retries through Wolverine's scheduled-message pipeline while attempts remain
+  available, then report terminal `failed` runtime state with `retryExhausted = true` and
+  `terminalFailure = true` when the max-attempt budget is exhausted
+- prove both the retry-then-success path and the terminal-exhausted path with focused composition
+  coverage, and prove the ASP.NET Core operator metadata through focused hosting coverage
+
+Follow-up later:
+
+- broader inbound broker-consumption ownership, durable inbox ownership, and dispatch-loop
+  dead-letter or terminal-failure storage semantics remain future package-owned work until a
+  package truly owns those paths
+
 ### ENG-269 Agentics tool execution operator-action baseline
 
 Status: done
@@ -9046,6 +9080,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 87
 
 - ENG-275 Eventing publication runtime operator-state baseline (shipped, issue #784)
+
+### Sprint 88
+
+- ENG-276 Wolverine bounded subscription retry terminal failure (shipped, issue #785)
 
 ### Later / not scheduled yet
 

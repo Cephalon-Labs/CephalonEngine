@@ -1803,6 +1803,9 @@ Browse the published API surface by public member.
 - [Attempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-attempt): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the application-managed attempt number associated with this observation.
   - `int Attempt { get; }`
+- [Attempt](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-attempt): `Properties` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
+  - Gets the managed execution attempt represented by this request.
+  - `int Attempt { get; }`
 - [AttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome.
   - `string AttemptId { get; set; }`
@@ -24913,6 +24916,9 @@ Browse the published API surface by public member.
 - [SubscriptionId](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-subscriptionid): `Properties` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
   - Gets the declared subscription identifier that should be executed.
   - `string SubscriptionId { get; }`
+- [SubscriptionMaxAttempts](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-subscriptionmaxattempts): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=SubscriptionMaxAttempts&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
+  - Gets or sets the maximum number of Wolverine-managed execution attempts for one declared subscription message.
+  - `int SubscriptionMaxAttempts { get; set; }`
 - [SubscriptionRetryDelaySeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-subscriptionretrydelayseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=SubscriptionRetryDelaySeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the number of seconds the Wolverine-managed subscription execution path should wait before requeueing a failed subscription attempt.
   - `int SubscriptionRetryDelaySeconds { get; set; }`
@@ -27067,9 +27073,9 @@ Browse the published API surface by public member.
 - [WolverineManagedEventSubscriptionExecutionHandler](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionhandler-ctor): `Constructors` on `WolverineManagedEventSubscriptionExecutionHandler` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=WolverineManagedEventSubscriptionExecutionHandler&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
   - Initializes a new instance of the `WolverineManagedEventSubscriptionExecutionHandler` class.
   - `WolverineManagedEventSubscriptionExecutionHandler()`
-- [WolverineManagedEventSubscriptionExecutionRequest](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication): `Constructors` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=WolverineManagedEventSubscriptionExecutionRequest&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
+- [WolverineManagedEventSubscriptionExecutionRequest](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication-system-int32): `Constructors` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=WolverineManagedEventSubscriptionExecutionRequest&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
   - Creates a new infrastructure retry message for one managed event-subscription execution.
-  - `WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication)`
+  - `WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication, int attempt)`
 - [WorkerCapacity](cephalon-ids-sfid.md#member-p-cephalon-ids-sfid-configuration-sfididoptions-workercapacity): `Properties` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=WorkerCapacity&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Gets the optional worker-capacity override supplied to the generator.
   - `int? WorkerCapacity { get; set; }`

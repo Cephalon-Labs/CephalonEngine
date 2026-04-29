@@ -224,18 +224,21 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
         capabilities.Add(new Capability(
             key: "eventing.wolverine",
             displayName: "Wolverine Eventing Adapter",
-                description: "Registers Wolverine as an optional host integration path for Cephalon event-driven workloads.",
-                metadata: new Dictionary<string, string>
-                {
-                    ["technology"] = "event-driven-integration",
-                    ["adapter"] = "wolverine",
-                    ["hostWiring"] = options.EnableHostWiring ? "configured" : "disabled",
-                    ["dispatchBridge"] = options.EnableDispatchLoop && hasDispatchStore ? "wolverine-managed" : "consumer-managed",
-                    ["dispatchRuntime"] = options.EnableDispatchLoop && hasDispatchStore ? "configured" : "not-configured",
-                    ["subscriptionExecution"] = options.EnableSubscriptionExecution && hasSubscriptionExecutors ? "wolverine-managed" : "not-configured",
-                    ["dispatchLoop"] = options.EnableDispatchLoop ? "enabled" : "disabled",
-                    ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured"
-                }));
+            description: "Registers Wolverine as an optional host integration path for Cephalon event-driven workloads.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "event-driven-integration",
+                ["adapter"] = "wolverine",
+                ["hostWiring"] = options.EnableHostWiring ? "configured" : "disabled",
+                ["dispatchBridge"] = options.EnableDispatchLoop && hasDispatchStore ? "wolverine-managed" : "consumer-managed",
+                ["dispatchRuntime"] = options.EnableDispatchLoop && hasDispatchStore ? "configured" : "not-configured",
+                ["subscriptionExecution"] = options.EnableSubscriptionExecution && hasSubscriptionExecutors ? "wolverine-managed" : "not-configured",
+                ["dispatchLoop"] = options.EnableDispatchLoop ? "enabled" : "disabled",
+                ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
+                ["subscriptionRetryPolicy"] = WolverineEventingRetryPolicy.GetSubscriptionPolicyId(options),
+                ["subscriptionMaxAttempts"] = WolverineEventingRetryPolicy.GetSubscriptionMaxAttempts(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                ["subscriptionRetryDelaySeconds"] = WolverineEventingRetryPolicy.GetSubscriptionRetryDelaySeconds(options).ToString(System.Globalization.CultureInfo.InvariantCulture)
+            }));
 
         if (options.EnableDispatchLoop)
         {
@@ -270,7 +273,11 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
                     ["executionMode"] = "message-handler",
                     ["executionRuntimeId"] = WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = WolverineEventingRuntimeIds.DispatchRuntimeId,
-                    ["retryPolicy"] = "fixed-delay"
+                    ["retryPolicy"] = WolverineEventingRetryPolicy.GetSubscriptionPolicyId(options),
+                    ["retryMaxAttempts"] = WolverineEventingRetryPolicy.GetSubscriptionMaxAttempts(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["retryDelaySeconds"] = WolverineEventingRetryPolicy.GetSubscriptionRetryDelaySeconds(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["retryDurability"] = "wolverine-scheduled-message",
+                    ["retryScope"] = "provider-managed"
                 }));
         }
     }
