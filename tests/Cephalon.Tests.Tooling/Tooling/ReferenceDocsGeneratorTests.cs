@@ -297,6 +297,8 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("IEventDispatchRuntimeReporter", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventChannelDescriptor", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionExecutionReport", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventSubscriptionExecutionBindingCatalog", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventSubscriptionRuntimeMetadataKeys", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IEventSubscriptionRuntimeReporter", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionDescriptor", eventingPage.Contents, StringComparison.Ordinal);
     }

@@ -202,12 +202,14 @@ public sealed class WolverineEventingPackTests
         var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
+        var bindingCatalog = provider.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         var adapterSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
         var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         var adapterEntry = Assert.Single(adapterSurface.Entries, entry => entry.Id == "wolverine-eventing");
         var subscriptionEntry = Assert.Single(subscriptionSurface.Entries, entry => entry.Id == "audit-projector");
         var subscribeCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.subscribe");
+        var binding = Assert.Single(bindingCatalog.Bindings);
 
         Assert.Equal("wolverine-managed", adapterEntry.Metadata["subscriptionExecution"]);
         Assert.Equal("1", adapterEntry.Metadata["managedSubscriptionCount"]);
@@ -215,14 +217,26 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("45", adapterEntry.Metadata["subscriptionRetryDelaySeconds"]);
         Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, adapterEntry.Metadata["subscriptionExecutionRuntimeId"]);
 
-        Assert.Equal("wolverine-managed", subscriptionEntry.Metadata["dispatchRuntime"]);
-        Assert.Equal("runtime-bound", subscriptionEntry.Metadata["subscriptionRuntime"]);
-        Assert.Equal("wolverine-managed", subscriptionEntry.Metadata["executionOwnership"]);
-        Assert.Equal("message-handler", subscriptionEntry.Metadata["executionMode"]);
-        Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, subscriptionEntry.Metadata["executionRuntimeId"]);
-        Assert.Equal("wolverine", subscriptionEntry.Metadata["binding.adapter"]);
-        Assert.Equal("fixed-delay", subscriptionEntry.Metadata["binding.retryPolicy"]);
-        Assert.Equal(WolverineEventingRuntimeIds.DispatchRuntimeId, subscriptionEntry.Metadata["binding.trigger"]);
+        Assert.Same(binding, bindingCatalog.GetBySubscriptionId("audit-projector"));
+        Assert.True(bindingCatalog.TryGet("audit-projector", out var resolvedBinding));
+        Assert.Same(binding, resolvedBinding);
+        Assert.False(bindingCatalog.TryGet("missing-subscription", out resolvedBinding));
+        Assert.Null(resolvedBinding);
+        Assert.Equal("audit-projector", binding.SubscriptionId);
+        Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, binding.ExecutionRuntimeId);
+        Assert.Equal("wolverine-managed", binding.ExecutionOwnership);
+        Assert.Equal("message-handler", binding.ExecutionMode);
+        Assert.Equal("wolverine", binding.Metadata["adapter"]);
+        Assert.Equal("fixed-delay", binding.Metadata["retryPolicy"]);
+
+        Assert.Equal("wolverine-managed", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.DispatchRuntime]);
+        Assert.Equal("runtime-bound", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionRuntime]);
+        Assert.Equal("wolverine-managed", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionOwnership]);
+        Assert.Equal("message-handler", subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionMode]);
+        Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, subscriptionEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionRuntimeId]);
+        Assert.Equal("wolverine", subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}adapter"]);
+        Assert.Equal("fixed-delay", subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}retryPolicy"]);
+        Assert.Equal(WolverineEventingRuntimeIds.DispatchRuntimeId, subscriptionEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}trigger"]);
 
         Assert.Equal("wolverine", subscribeCapability.Metadata["adapter"]);
         Assert.Equal("wolverine-managed", subscribeCapability.Metadata["executionOwnership"]);

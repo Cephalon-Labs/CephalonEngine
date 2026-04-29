@@ -2483,7 +2483,7 @@ It executes a curated suite that validates:
 - structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` settings plus phase-8 app-profile truth
 - host-agnostic phase-8 contracts, runtime catalogs, and runtime-snapshot answers for data products, projections, inboxes, outboxes, audit stores, and authorization policies
 - `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid` through the shipped relational-first CQRS, inbox, outbox, and `Sfid` baseline
-- `Cephalon.Eventing` plus `Cephalon.Eventing.Wolverine` through the staged publication, declarative subscription, runtime-reporting, and adapter-surface path
+- `Cephalon.Eventing` plus `Cephalon.Eventing.Wolverine` through the staged publication, declarative subscription, public execution-binding catalog, runtime-reporting, and adapter-surface path
 - `Cephalon.Identity`, `Cephalon.Identity.AspNetCore`, `Cephalon.MultiTenancy`, and `Cephalon.Audit` through their runtime surfaces, adapter behavior, and package/reference-doc truth
 - low-ceremony starter output across `Cephalon.Scaffolding`, `Cephalon.Cli`, `Cephalon.TemplatePack`, adoption docs, and starter samples so generated apps stay aligned with the runtime story
 

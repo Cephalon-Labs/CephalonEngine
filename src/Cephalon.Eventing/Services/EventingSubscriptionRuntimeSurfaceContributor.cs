@@ -9,7 +9,7 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
     IEventSubscriptionCatalog catalog,
     IInboxCatalog inboxes,
-    EventSubscriptionExecutionBindingCatalog executionBindings,
+    IEventSubscriptionExecutionBindingCatalog executionBindings,
     IEventSubscriptionRuntimeCatalog runtimeStates,
     IRuntime runtime,
     IExecutionRuntimeCatalog executionGraphs,
@@ -48,7 +48,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
         Dictionary<string, RuntimeHostedExecutionState> hostedExecutionStateIndex,
         Dictionary<string, RuntimeExecutionGraphState> executionGraphStateIndex,
         IExecutionRuntimeCatalog executionGraphs,
-        EventSubscriptionExecutionBindingCatalog executionBindings,
+        IEventSubscriptionExecutionBindingCatalog executionBindings,
         IEventSubscriptionRuntimeCatalog runtimeStates)
     {
         var linkedInboxes = inboxes.Inboxes
@@ -62,18 +62,18 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
         var hasRuntimeState = runtimeStates.TryGet(subscription.Id, out var runtimeState) && runtimeState is not null;
         var metadata = new Dictionary<string, string>(subscription.Metadata, StringComparer.OrdinalIgnoreCase)
         {
-            ["channelId"] = subscription.ChannelId,
-            ["handlerId"] = subscription.HandlerId,
-            ["deliveryMode"] = subscription.DeliveryMode,
-            ["dispatchRuntime"] = executionBinding is not null
+            [EventSubscriptionRuntimeMetadataKeys.ChannelId] = subscription.ChannelId,
+            [EventSubscriptionRuntimeMetadataKeys.HandlerId] = subscription.HandlerId,
+            [EventSubscriptionRuntimeMetadataKeys.DeliveryMode] = subscription.DeliveryMode,
+            [EventSubscriptionRuntimeMetadataKeys.DispatchRuntime] = executionBinding is not null
                 ? executionBinding.ExecutionOwnership
                 : linkedHostedExecutions.Count > 0 || hasRuntimeState
                     ? "application-managed"
                     : "not-configured",
-            ["inbox"] = linkedInboxes.Length > 0 ? "available" : "not-configured",
-            ["inboxLink"] = linkedInboxes.Length > 0 ? "application-managed" : "not-configured",
-            ["runtimeState"] = hasRuntimeState ? "reported" : "not-reported",
-            ["subscriptionRuntime"] = executionBinding is not null
+            [EventSubscriptionRuntimeMetadataKeys.Inbox] = linkedInboxes.Length > 0 ? "available" : "not-configured",
+            [EventSubscriptionRuntimeMetadataKeys.InboxLink] = linkedInboxes.Length > 0 ? "application-managed" : "not-configured",
+            [EventSubscriptionRuntimeMetadataKeys.RuntimeState] = hasRuntimeState ? "reported" : "not-reported",
+            [EventSubscriptionRuntimeMetadataKeys.SubscriptionRuntime] = executionBinding is not null
                 ? "runtime-bound"
                 : linkedHostedExecutions.Count > 0
                     ? "hosted-execution-linked"
@@ -85,13 +85,13 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
 
         if (executionBinding is not null)
         {
-            metadata["executionRuntimeId"] = executionBinding.ExecutionRuntimeId;
-            metadata["executionOwnership"] = executionBinding.ExecutionOwnership;
-            metadata["executionMode"] = executionBinding.ExecutionMode;
+            metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionRuntimeId] = executionBinding.ExecutionRuntimeId;
+            metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionOwnership] = executionBinding.ExecutionOwnership;
+            metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionMode] = executionBinding.ExecutionMode;
 
             if (executionBinding.Metadata.Count > 0)
             {
-                metadata["bindingMetadataKeys"] = string.Join(
+                metadata[EventSubscriptionRuntimeMetadataKeys.BindingMetadataKeys] = string.Join(
                     ",",
                     executionBinding.Metadata.Keys.OrderBy(static key => key, StringComparer.OrdinalIgnoreCase));
 
@@ -99,7 +99,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
                 {
                     if (!string.IsNullOrWhiteSpace(pair.Key))
                     {
-                        metadata[$"binding.{pair.Key.Trim()}"] = pair.Value;
+                        metadata[$"{EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix}{pair.Key.Trim()}"] = pair.Value;
                     }
                 }
             }
@@ -107,18 +107,18 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
 
         if (linkedInboxes.Length > 0)
         {
-            metadata["inboxIds"] = string.Join(",", linkedInboxes.Select(static inbox => inbox.Id));
+            metadata[EventSubscriptionRuntimeMetadataKeys.InboxIds] = string.Join(",", linkedInboxes.Select(static inbox => inbox.Id));
         }
 
         if (linkedHostedExecutions.Count > 0)
         {
-            metadata["hostedExecutionIds"] = string.Join(",", linkedHostedExecutions.Select(static execution => execution.Id));
+            metadata[EventSubscriptionRuntimeMetadataKeys.HostedExecutionIds] = string.Join(",", linkedHostedExecutions.Select(static execution => execution.Id));
         }
 
         if (linkedHostedExecutions.Count == 1)
         {
             var hostedExecution = linkedHostedExecutions[0];
-            metadata["hostedExecutionId"] = hostedExecution.Id;
+            metadata[EventSubscriptionRuntimeMetadataKeys.HostedExecutionId] = hostedExecution.Id;
             metadata["hostedExecutionDisplayName"] = hostedExecution.DisplayName;
             metadata["hostedExecutionKind"] = hostedExecution.Kind;
             metadata["hostedExecutionStartsWithHost"] = hostedExecution.StartsWithHost.ToString().ToLowerInvariant();
@@ -134,7 +134,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
                 var executionGraph = executionGraphs.GetById(hostedExecution.ExecutionGraphId!);
                 if (executionGraph is not null)
                 {
-                    metadata["executionGraphId"] = executionGraph.Id;
+                    metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionGraphId] = executionGraph.Id;
                     metadata["executionGraphDisplayName"] = executionGraph.DisplayName;
 
                     if (executionGraphStateIndex.TryGetValue(executionGraph.Id, out var executionGraphState))
@@ -148,7 +148,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
 
         if (runtimeState is not null)
         {
-            metadata["lastOutcome"] = runtimeState.LastOutcome ?? "unknown";
+            metadata[EventSubscriptionRuntimeMetadataKeys.LastOutcome] = runtimeState.LastOutcome ?? "unknown";
             metadata["lastObservedAtUtc"] = runtimeState.LastObservedAtUtc?.ToString("O") ?? string.Empty;
             metadata["lastAttempt"] = runtimeState.LastAttempt.ToString(CultureInfo.InvariantCulture);
             metadata["startedCount"] = runtimeState.StartedCount.ToString(CultureInfo.InvariantCulture);
@@ -157,7 +157,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
             metadata["retryScheduledCount"] = runtimeState.RetryScheduledCount.ToString(CultureInfo.InvariantCulture);
             metadata["skippedCount"] = runtimeState.SkippedCount.ToString(CultureInfo.InvariantCulture);
             metadata["totalReports"] = runtimeState.TotalReports.ToString(CultureInfo.InvariantCulture);
-            metadata["retryPending"] = runtimeState.RetryPending.ToString().ToLowerInvariant();
+            metadata[EventSubscriptionRuntimeMetadataKeys.RetryPending] = runtimeState.RetryPending.ToString().ToLowerInvariant();
 
             if (!string.IsNullOrWhiteSpace(runtimeState.LastMessageId))
             {
@@ -179,7 +179,7 @@ internal sealed class EventingSubscriptionRuntimeSurfaceContributor(
                 {
                     if (!string.IsNullOrWhiteSpace(pair.Key))
                     {
-                        metadata[$"reported.{pair.Key.Trim()}"] = pair.Value;
+                        metadata[$"{EventSubscriptionRuntimeMetadataKeys.ReportedMetadataPrefix}{pair.Key.Trim()}"] = pair.Value;
                     }
                 }
             }

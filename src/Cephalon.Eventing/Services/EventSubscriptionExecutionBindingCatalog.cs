@@ -1,6 +1,6 @@
 namespace Cephalon.Eventing.Services;
 
-internal sealed class EventSubscriptionExecutionBindingCatalog
+internal sealed class EventSubscriptionExecutionBindingCatalog : IEventSubscriptionExecutionBindingCatalog
 {
     private readonly Dictionary<string, EventSubscriptionExecutionBindingDescriptor> index;
 
@@ -47,5 +47,11 @@ internal sealed class EventSubscriptionExecutionBindingCatalog
         return index.TryGetValue(subscriptionId.Trim(), out var binding)
             ? binding
             : null;
+    }
+
+    public bool TryGet(string subscriptionId, out EventSubscriptionExecutionBindingDescriptor? binding)
+    {
+        binding = GetBySubscriptionId(subscriptionId);
+        return binding is not null;
     }
 }

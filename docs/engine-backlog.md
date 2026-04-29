@@ -11,12 +11,12 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
-- treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
+- treat the core eventing execution-binding catalog as the adapter-neutral read seam and the Wolverine-managed event-subscription lane as the first optional eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
@@ -736,6 +736,27 @@ Delivered:
 Follow-up later:
 
 - adoption samples, operator automation, and richer docs can build on the same explicit module-owned activation path; ambient behavior-to-REST auto-publication remains out of scope unless a future proof preserves the same ownership split
+
+### ENG-263 Eventing subscription execution binding catalog baseline
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `Cephalon.Eventing` already had adapter-neutral subscription execution binding contributors, but downstream code still had to inspect the `event-subscriptions` metadata payload to read the active binding set
+- the smallest honest next proof is a public core read contract plus stable metadata vocabulary, not a second broker story or a mandatory Wolverine dependency
+
+Delivered:
+
+- add `IEventSubscriptionExecutionBindingCatalog` so hosts and companion packs can read active managed subscription bindings directly by subscription id
+- add `EventSubscriptionRuntimeMetadataKeys` so operator/runtime consumers can reference stable `event-subscriptions` metadata keys such as `dispatchRuntime`, `subscriptionRuntime`, `executionRuntimeId`, `executionOwnership`, `executionMode`, `binding.*`, and `reported.*`
+- keep `Cephalon.Eventing.Wolverine` as the optional `provider-managed` proof that contributes a `wolverine-managed` binding through the existing adapter-neutral contributor seam
+- prove both the application-managed empty-catalog path and the Wolverine-managed bound path through focused composition, package-surface, and reference-doc coverage — issue #772
+
+Follow-up later:
+
+- richer retry-policy vocabulary, generic inbound broker consumption, non-Wolverine managed subscription proofs, and operator automation remain future work until a package truly owns those paths
 
 ## Completed foundation work
 

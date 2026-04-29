@@ -11,7 +11,7 @@
 - defaults to `dispatchBridge = consumer-managed` when the pack is only being used for host wiring and runtime-surface projection
 - can opt into a `wolverine-managed` durable dispatch loop on top of `IEventDispatchStore` by enabling `EnableDispatchLoop`
 - can opt into `wolverine-managed` declared subscription execution on top of that staged-event dispatch loop by enabling `EnableSubscriptionExecution`
-- keeps managed subscription ownership explicit by requiring declared `IEventSubscriptionExecutor` registrations and projecting binding metadata back through the shared eventing runtime surfaces
+- keeps managed subscription ownership explicit by requiring declared `IEventSubscriptionExecutor` registrations and projecting binding metadata back through `IEventSubscriptionExecutionBindingCatalog` plus the shared eventing runtime surfaces
 - projects that managed loop back through hosted-execution, execution-graph, capability, and event-dispatch runtime surfaces without leaking Wolverine APIs into the core eventing contract
 - schedules fixed-delay managed subscription retries through Wolverine's own scheduled-message pipeline instead of inventing a second retry subsystem
 - contributes named dispatch-runtime descriptors that flow through `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, `/engine/outboxes`, and `snapshot.EventDispatchRuntimes` / `snapshot.EventDispatchStates`, with canonical aggregate summaries projected back into those runtime descriptors
@@ -44,7 +44,7 @@ That runtime story is now visible in several complementary places:
 - `/engine/event-dispatch-runtimes` publishes the named runtime descriptors such as the Wolverine-managed loop id, ownership metadata, the outbox/runtime ids it is responsible for, and a live aggregate `Summary` once dispatch reports start arriving
 - `/engine/outboxes` now also shows the effective `DispatchPolicy` for each outbox, so the same managed loop is visible as `wolverine-managed` / `runtime-managed` without reading runtime-specific metadata by hand
 - `event-dispatches` can now project configured dispatch-runtime descriptor metadata for each outbox path before any runtime report exists, then layer the latest operator-facing report metadata on top once dispatch activity starts
-- `event-subscriptions` can now project `dispatchRuntime = wolverine-managed`, `subscriptionRuntime = runtime-bound`, `executionRuntimeId`, `executionOwnership`, `executionMode`, and `binding.*` metadata for the declared subscriptions this pack actually owns
+- `IEventSubscriptionExecutionBindingCatalog` and `event-subscriptions` can now project `dispatchRuntime = wolverine-managed`, `subscriptionRuntime = runtime-bound`, `executionRuntimeId`, `executionOwnership`, `executionMode`, and `binding.*` metadata for the declared subscriptions this pack actually owns
 - `eventing.subscribe` now appears only when the managed subscription path is truly enabled, so capability discovery stops overstating what the pack owns
 - `/engine/diagnostics` now exposes the Wolverine-specific diagnostics convention so host operators can discover the stable `4300-4306` event ids without reading the source
 

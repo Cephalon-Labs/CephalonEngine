@@ -2064,6 +2064,7 @@ public sealed class EngineBuilderTests
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var eventChannelCatalog = provider.GetRequiredService<IEventChannelCatalog>();
         var eventSubscriptionCatalog = provider.GetRequiredService<IEventSubscriptionCatalog>();
+        var eventSubscriptionBindingCatalog = provider.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
         var subscriptionRuntimeCatalog = provider.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
         var subscriptionRuntimeReporter = provider.GetRequiredService<IEventSubscriptionRuntimeReporter>();
         var edgeNodeCatalog = provider.GetRequiredService<IEdgeNodeCatalog>();
@@ -2129,6 +2130,10 @@ public sealed class EngineBuilderTests
         Assert.Contains(eventChannelCatalog.Channels, channel => channel.Id == "audit");
         Assert.Single(eventSubscriptionCatalog.Subscriptions);
         Assert.Contains(eventSubscriptionCatalog.Subscriptions, subscription => subscription.Id == "audit-projector");
+        Assert.Empty(eventSubscriptionBindingCatalog.Bindings);
+        Assert.Null(eventSubscriptionBindingCatalog.GetBySubscriptionId("audit-projector"));
+        Assert.False(eventSubscriptionBindingCatalog.TryGet("audit-projector", out var unboundSubscription));
+        Assert.Null(unboundSubscription);
         Assert.Equal(2, edgeNodeCatalog.Nodes.Count);
         Assert.Contains(edgeNodeCatalog.Nodes, node => node.Id == "storefront-edge");
         Assert.Contains(edgeNodeCatalog.Nodes, node => node.Id == "warehouse-edge");
@@ -2169,21 +2174,21 @@ public sealed class EngineBuilderTests
                 .Single(surface => surface.SurfaceId == "event-subscriptions")
                 .Entries,
                 entry => entry.Id == "audit-projector" &&
-                    entry.Metadata["channelId"] == "audit" &&
-                    entry.Metadata["dispatchRuntime"] == "application-managed" &&
-                    entry.Metadata["runtimeState"] == "reported" &&
-                    entry.Metadata["subscriptionRuntime"] == "hosted-execution-linked" &&
-                    entry.Metadata["hostedExecutionId"] == "audit-projector-pump" &&
-                    entry.Metadata["executionGraphId"] == "audit-subscription-flow" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.ChannelId] == "audit" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.DispatchRuntime] == "application-managed" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.RuntimeState] == "reported" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionRuntime] == "hosted-execution-linked" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.HostedExecutionId] == "audit-projector-pump" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.ExecutionGraphId] == "audit-subscription-flow" &&
                     entry.Metadata["executionGraphDisplayName"] == "Audit Subscription Flow" &&
-                    entry.Metadata["lastOutcome"] == "retry-scheduled" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.LastOutcome] == "retry-scheduled" &&
                     entry.Metadata["lastMessageId"] == "audit-msg-001" &&
                     entry.Metadata["lastAttempt"] == "2" &&
                     entry.Metadata["retryScheduledCount"] == "1" &&
                     entry.Metadata["totalReports"] == "2" &&
-                    entry.Metadata["retryPending"] == "true" &&
-                    entry.Metadata["reported.nextRetryAtUtc"] == "2026-04-04T09:36:00.0000000+00:00" &&
-                    entry.Metadata["reported.retryPolicy"] == "exponential" &&
+                    entry.Metadata[EventSubscriptionRuntimeMetadataKeys.RetryPending] == "true" &&
+                    entry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.ReportedMetadataPrefix}nextRetryAtUtc"] == "2026-04-04T09:36:00.0000000+00:00" &&
+                    entry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.ReportedMetadataPrefix}retryPolicy"] == "exponential" &&
                     entry.Metadata["lastError"] == "Transient projection failure");
         Assert.Same(runtime.Manifest, snapshot.Manifest);
         Assert.Equal(RuntimeStatus.Created, snapshot.Status.Status);
@@ -2201,8 +2206,8 @@ public sealed class EngineBuilderTests
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
             entry => entry.Id == "audit-projector" &&
-                entry.Metadata["lastOutcome"] == "retry-scheduled" &&
-                entry.Metadata["retryPending"] == "true");
+                entry.Metadata[EventSubscriptionRuntimeMetadataKeys.LastOutcome] == "retry-scheduled" &&
+                entry.Metadata[EventSubscriptionRuntimeMetadataKeys.RetryPending] == "true");
     }
 
     [Fact]
@@ -2558,16 +2563,16 @@ public sealed class EngineBuilderTests
             surface => surface.SurfaceId == "event-subscriptions");
         var runtimeEntry = Assert.Single(eventingSubscriptionSurface.Entries, entry => entry.Id == "audit-projection");
 
-        Assert.Equal("application-managed", runtimeEntry.Metadata["dispatchRuntime"]);
-        Assert.Equal("application-managed-state", runtimeEntry.Metadata["subscriptionRuntime"]);
-        Assert.Equal("reported", runtimeEntry.Metadata["runtimeState"]);
-        Assert.Equal("failed", runtimeEntry.Metadata["lastOutcome"]);
+        Assert.Equal("application-managed", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.DispatchRuntime]);
+        Assert.Equal("application-managed-state", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionRuntime]);
+        Assert.Equal("reported", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.RuntimeState]);
+        Assert.Equal("failed", runtimeEntry.Metadata[EventSubscriptionRuntimeMetadataKeys.LastOutcome]);
         Assert.Equal("audit-msg-404", runtimeEntry.Metadata["lastMessageId"]);
         Assert.Equal("3", runtimeEntry.Metadata["lastAttempt"]);
         Assert.Equal("1", runtimeEntry.Metadata["failedCount"]);
         Assert.Equal("1", runtimeEntry.Metadata["totalReports"]);
-        Assert.Equal("linear", runtimeEntry.Metadata["reported.retryPolicy"]);
-        Assert.Equal("00:00:30", runtimeEntry.Metadata["reported.retryWindow"]);
+        Assert.Equal("linear", runtimeEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.ReportedMetadataPrefix}retryPolicy"]);
+        Assert.Equal("00:00:30", runtimeEntry.Metadata[$"{EventSubscriptionRuntimeMetadataKeys.ReportedMetadataPrefix}retryWindow"]);
         Assert.Equal("Projection store unavailable", runtimeEntry.Metadata["lastError"]);
     }
 

@@ -72,7 +72,7 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 | `Cephalon.Behaviors.Http` module-owned behavior REST projection | REST profile metadata plus explicit module-owned public REST activation, Cephalon-managed materialization, governance, and runtime catalogs | mixed: `application-managed` profile/publication activation plus `cephalon-managed` materialization/runtime catalog truth | `M2` | Keep profile metadata explicitly non-publishing and continue adoption/operator automation proof without inventing ambient REST publication |
 | `Cephalon.Data` shared CDC runtime plus provider-native pumps | Shared and provider-native data execution truth | `cephalon-managed` plus `provider-managed` | `M3` | More package-level external adoption proof and operator docs per provider family |
 | `Cephalon.Edge.KubernetesGateway` and `Cephalon.Edge.Traefik` | Provider-specific control-plane automation | `provider-managed` | `M3` | More adoption-quality samples and package publishing guidance outside the repo |
-| `Cephalon.Eventing` core package | Channel descriptors, staged publication, subscription runtime truth, and managed-execution binding vocabulary | mixed: `application-managed` baseline plus companion-bound execution truth | `M1` | Keep the adapter-neutral execution seam narrow and truthful without claiming generic broker/inbox ownership in the core pack |
+| `Cephalon.Eventing` core package | Channel descriptors, staged publication, subscription runtime truth, public managed-execution binding catalog, and stable subscription runtime metadata vocabulary | mixed: `application-managed` baseline plus companion-bound execution truth | `M1` | Keep the adapter-neutral execution seam narrow and truthful without claiming generic broker/inbox ownership in the core pack |
 | `Cephalon.Eventing.Wolverine` | Optional Wolverine-managed staged dispatch and subscription execution baseline | `provider-managed` | `M2` | Broaden inbound-consumption, retry-policy, and operator-automation proof only when the runtime truly owns those paths |
 | `Cephalon.Agentics` | Tool descriptors, managed tool dispatch, and agent-workload runtime surface | mixed: `application-managed` descriptors plus `cephalon-managed` dispatcher/run-state baseline | `M2` | Broader operator automation, retry/queue semantics, memory persistence, and provider-specific AI orchestration only after a package truly owns those paths |
 | `Cephalon.Retrieval` | Knowledge collection descriptors plus managed lexical indexing, query execution, and freshness state | mixed: `application-managed` source documents plus `cephalon-managed` index/query baseline | `M2` | Provider-specific vector/search engines, durable or distributed indexes, reindex automation, and operator remediation only after a package truly owns those paths |
@@ -216,6 +216,14 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 ### Sprint 73
 
 - `ENG-261` Multi-tenancy governance invitation delivery status reconciliation baseline (shipped)
+
+### Sprint 74
+
+- `ENG-262` Behavior REST profile runtime ownership metadata baseline (shipped)
+
+### Sprint 75
+
+- `ENG-263` Eventing subscription execution binding catalog baseline (shipped)
 
 ### Later / not scheduled yet
 

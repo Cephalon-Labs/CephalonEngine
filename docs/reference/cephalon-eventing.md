@@ -1108,6 +1108,221 @@ string SubscriptionId { get; }
 
 Gets the stable declared subscription identifier.
 
+<a id="type-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys"></a>
+
+### `EventSubscriptionRuntimeMetadataKeys`
+
+Defines stable metadata keys used by the event-subscriptions runtime surface.
+
+Remarks: These keys appear in the `event-subscriptions` technology runtime surface so operators and companion packs can distinguish descriptor-only, application-managed, hosted-execution-linked, and runtime-bound subscription paths without parsing provider-specific metadata.
+
+#### Declaration
+```csharp
+public static class EventSubscriptionRuntimeMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-bindingmetadatakeys"></a>
+
+##### `BindingMetadataKeys`
+
+```csharp
+const string BindingMetadataKeys
+```
+
+Identifies the comma-separated metadata keys contributed by the managed execution binding.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-bindingmetadataprefix"></a>
+
+##### `BindingMetadataPrefix`
+
+```csharp
+const string BindingMetadataPrefix
+```
+
+Prefix for individual managed execution-binding metadata entries.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+const string ChannelId
+```
+
+Identifies the logical event channel consumed by the declared subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode"></a>
+
+##### `DeliveryMode`
+
+```csharp
+const string DeliveryMode
+```
+
+Identifies the declared delivery mode for the subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-dispatchruntime"></a>
+
+##### `DispatchRuntime`
+
+```csharp
+const string DispatchRuntime
+```
+
+Identifies who owns the dispatch path feeding subscription execution.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executiongraphid"></a>
+
+##### `ExecutionGraphId`
+
+```csharp
+const string ExecutionGraphId
+```
+
+Identifies the execution graph linked to the subscription's hosted execution.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+const string ExecutionMode
+```
+
+Identifies the execution mode used by the managed subscription binding.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+const string ExecutionOwnership
+```
+
+Identifies who owns the real subscription execution path.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+const string ExecutionRuntimeId
+```
+
+Identifies the managed execution-runtime identifier bound to the subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerid"></a>
+
+##### `HandlerId`
+
+```csharp
+const string HandlerId
+```
+
+Identifies the logical handler or consumer declared for the subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-hostedexecutionid"></a>
+
+##### `HostedExecutionId`
+
+```csharp
+const string HostedExecutionId
+```
+
+Identifies the single hosted execution linked to the declared subscription when exactly one exists.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-hostedexecutionids"></a>
+
+##### `HostedExecutionIds`
+
+```csharp
+const string HostedExecutionIds
+```
+
+Identifies all hosted executions linked to the declared subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inbox"></a>
+
+##### `Inbox`
+
+```csharp
+const string Inbox
+```
+
+Identifies whether an inbox is available for the subscription's channel.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboxids"></a>
+
+##### `InboxIds`
+
+```csharp
+const string InboxIds
+```
+
+Identifies the linked inbox identifiers that can observe the subscription channel.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboxlink"></a>
+
+##### `InboxLink`
+
+```csharp
+const string InboxLink
+```
+
+Identifies who owns the inbox linkage for the subscription's channel.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+const string LastOutcome
+```
+
+Identifies the latest reported subscription execution outcome.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-reportedmetadataprefix"></a>
+
+##### `ReportedMetadataPrefix`
+
+```csharp
+const string ReportedMetadataPrefix
+```
+
+Prefix for individual runtime-observation metadata entries.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-retrypending"></a>
+
+##### `RetryPending`
+
+```csharp
+const string RetryPending
+```
+
+Identifies whether the latest runtime observation says a retry is pending.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-runtimestate"></a>
+
+##### `RuntimeState`
+
+```csharp
+const string RuntimeState
+```
+
+Identifies whether runtime observations have been reported for the subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionruntime"></a>
+
+##### `SubscriptionRuntime`
+
+```csharp
+const string SubscriptionRuntime
+```
+
+Identifies the subscription execution posture, such as application-managed or runtime-bound.
+
 <a id="type-cephalon-eventing-services-eventsubscriptionruntimestate"></a>
 
 ### `EventSubscriptionRuntimeState`
@@ -1630,6 +1845,64 @@ Registers one or more event subscription descriptors with the supplied registry.
 
 Parameters:
 - `subscriptions`: The registry that collects contributed subscription descriptors.
+
+<a id="type-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog"></a>
+
+### `IEventSubscriptionExecutionBindingCatalog`
+
+Exposes managed execution bindings for declared event subscriptions.
+
+Remarks: The catalog is a host-agnostic read contract for companion packs that bind declared subscriptions to a real execution runtime. An empty catalog is a valid answer and means the active eventing pack is still descriptor-first or application-managed for subscription execution.
+
+#### Declaration
+```csharp
+public interface IEventSubscriptionExecutionBindingCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog-bindings"></a>
+
+##### `Bindings`
+
+```csharp
+IReadOnlyList<EventSubscriptionExecutionBindingDescriptor> Bindings { get; }
+```
+
+Gets the currently active managed execution bindings ordered by subscription identifier.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog-getbysubscriptionid-system-string"></a>
+
+##### `GetBySubscriptionId`
+
+```csharp
+EventSubscriptionExecutionBindingDescriptor GetBySubscriptionId(string subscriptionId)
+```
+
+Looks up the managed execution binding for one declared subscription.
+
+Returns: The managed execution binding when one is active; otherwise, `null`.
+
+Parameters:
+- `subscriptionId`: The stable declared subscription identifier.
+
+<a id="member-m-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog-tryget-system-string-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string subscriptionId, out EventSubscriptionExecutionBindingDescriptor binding)
+```
+
+Attempts to resolve the managed execution binding for one declared subscription.
+
+Returns: `true` when a binding exists; otherwise, `false`.
+
+Parameters:
+- `subscriptionId`: The stable declared subscription identifier.
+- `binding`: When this method returns, contains the resolved binding when one is active.
 
 <a id="type-cephalon-eventing-services-ieventsubscriptionexecutionbindingcontributor"></a>
 

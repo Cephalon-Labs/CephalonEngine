@@ -73,6 +73,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         {
             services.TryAddSingleton<IEventSubscriptionCatalog, EventSubscriptionCatalog>();
             services.TryAddSingleton<EventSubscriptionExecutionBindingCatalog>();
+            services.TryAddSingleton<IEventSubscriptionExecutionBindingCatalog>(
+                static provider => provider.GetRequiredService<EventSubscriptionExecutionBindingCatalog>());
             services.TryAddSingleton<EventSubscriptionRuntimeCatalog>();
             services.TryAddSingleton<IEventSubscriptionRuntimeCatalog>(static provider => provider.GetRequiredService<EventSubscriptionRuntimeCatalog>());
             services.TryAddSingleton<IEventSubscriptionRuntimeReporter>(static provider => provider.GetRequiredService<EventSubscriptionRuntimeCatalog>());

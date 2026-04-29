@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T02:33:07.957071+00:00",
+  "GeneratedAtUtc": "2026-04-29T02:51:50.3260781+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -160,7 +160,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 3,
-      "TypeCount": 28
+      "TypeCount": 30
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1120,7 +1120,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 26
+      "TypeCount": 28
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -7967,6 +7967,21 @@
       }
     },
     {
+      "DisplayName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys",
+      "Declaration": "public static class EventSubscriptionRuntimeMetadataKeys",
+      "Summary": "Defines stable metadata keys used by the event-subscriptions runtime surface.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 20,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -10334,6 +10349,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSubscriptionExecutionBindingCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog",
+      "Declaration": "public interface IEventSubscriptionExecutionBindingCatalog",
+      "Summary": "Exposes managed execution bindings for declared event subscriptions.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
       }
     },
     {
@@ -26501,6 +26531,28 @@
       "Summary": "The stable kind identifier used when the documentation surface is scoped to one binding."
     },
     {
+      "DisplayName": "BindingMetadataKeys",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-bindingmetadatakeys",
+      "Signature": "const string BindingMetadataKeys",
+      "Summary": "Identifies the comma-separated metadata keys contributed by the managed execution binding."
+    },
+    {
+      "DisplayName": "BindingMetadataPrefix",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-bindingmetadataprefix",
+      "Signature": "const string BindingMetadataPrefix",
+      "Summary": "Prefix for individual managed execution-binding metadata entries."
+    },
+    {
       "DisplayName": "BindingMode",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointOverrideDescriptor",
@@ -26543,6 +26595,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-bindings",
       "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E Bindings { get; }",
       "Summary": "Gets all backend-for-frontend client bindings visible to the current runtime."
+    },
+    {
+      "DisplayName": "Bindings",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventSubscriptionExecutionBindingCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog-bindings",
+      "Signature": "IReadOnlyList\u003CEventSubscriptionExecutionBindingDescriptor\u003E Bindings { get; }",
+      "Summary": "Gets the currently active managed execution bindings ordered by subscription identifier."
     },
     {
       "DisplayName": "Bindings",
@@ -30844,6 +30907,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptiondescriptor-channelid",
       "Signature": "string ChannelId { get; }",
       "Summary": "Gets the logical event channel that the subscription consumes."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-channelid",
+      "Signature": "const string ChannelId",
+      "Summary": "Identifies the logical event channel consumed by the declared subscription."
     },
     {
       "DisplayName": "ChannelId",
@@ -39236,6 +39310,17 @@
       "Summary": "Gets the declared delivery mode for the subscription."
     },
     {
+      "DisplayName": "DeliveryMode",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode",
+      "Signature": "const string DeliveryMode",
+      "Summary": "Identifies the declared delivery mode for the subscription."
+    },
+    {
       "DisplayName": "DeliveryStatusReconciliationOwnership",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
@@ -41973,6 +42058,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatchretrypending",
       "Signature": "const string DispatchRetryPending",
       "Summary": "Indicates that the linked outbox dispatch runtime has a retry pending."
+    },
+    {
+      "DisplayName": "DispatchRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-dispatchruntime",
+      "Signature": "const string DispatchRuntime",
+      "Summary": "Identifies who owns the dispatch path feeding subscription execution."
     },
     {
       "DisplayName": "DisplayName",
@@ -48829,6 +48925,17 @@
     },
     {
       "DisplayName": "ExecutionGraphId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executiongraphid",
+      "Signature": "const string ExecutionGraphId",
+      "Summary": "Identifies the execution graph linked to the subscription\u0027s hosted execution."
+    },
+    {
+      "DisplayName": "ExecutionGraphId",
       "Category": "Properties",
       "DeclaringTypeName": "HostedExecutionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
@@ -49192,6 +49299,17 @@
     },
     {
       "DisplayName": "ExecutionMode",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionmode",
+      "Signature": "const string ExecutionMode",
+      "Summary": "Identifies the execution mode used by the managed subscription binding."
+    },
+    {
+      "DisplayName": "ExecutionMode",
       "Category": "Properties",
       "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
@@ -49464,6 +49582,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionownership",
       "Signature": "string ExecutionOwnership { get; }",
       "Summary": "Gets the operator-facing ownership mode for the managed execution runtime."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionownership",
+      "Signature": "const string ExecutionOwnership",
+      "Summary": "Identifies who owns the real subscription execution path."
     },
     {
       "DisplayName": "ExecutionRisk",
@@ -49805,6 +49934,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-executionruntimeid",
       "Signature": "string ExecutionRuntimeId { get; }",
       "Summary": "Gets the operator-facing managed execution-runtime identifier."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionruntimeid",
+      "Signature": "const string ExecutionRuntimeId",
+      "Summary": "Identifies the managed execution-runtime identifier bound to the subscription."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -55648,6 +55788,17 @@
       "Summary": "Gets the latest reported durable-execution state for one stream."
     },
     {
+      "DisplayName": "GetBySubscriptionId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSubscriptionExecutionBindingCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog-getbysubscriptionid-system-string",
+      "Signature": "EventSubscriptionExecutionBindingDescriptor GetBySubscriptionId(string subscriptionId)",
+      "Summary": "Looks up the managed execution binding for one declared subscription."
+    },
+    {
       "DisplayName": "GetByTargetCellId",
       "Category": "Methods",
       "DeclaringTypeName": "ICellRouteCatalog",
@@ -56812,6 +56963,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptiondescriptor-handlerid",
       "Signature": "string HandlerId { get; }",
       "Summary": "Gets the logical handler or consumer identifier that receives the event."
+    },
+    {
+      "DisplayName": "HandlerId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerid",
+      "Signature": "const string HandlerId",
+      "Summary": "Identifies the logical handler or consumer declared for the subscription."
     },
     {
       "DisplayName": "HasActiveReporter",
@@ -60236,6 +60398,17 @@
     },
     {
       "DisplayName": "HostedExecutionId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-hostedexecutionid",
+      "Signature": "const string HostedExecutionId",
+      "Summary": "Identifies the single hosted execution linked to the declared subscription when exactly one exists."
+    },
+    {
+      "DisplayName": "HostedExecutionId",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeHostedExecutionState",
       "NamespaceName": "Cephalon.Engine.Runtime",
@@ -60244,6 +60417,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-hostedexecutionid",
       "Signature": "string HostedExecutionId { get; set; }",
       "Summary": "The stable hosted-execution identifier."
+    },
+    {
+      "DisplayName": "HostedExecutionIds",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-hostedexecutionids",
+      "Signature": "const string HostedExecutionIds",
+      "Summary": "Identifies all hosted executions linked to the declared subscription."
     },
     {
       "DisplayName": "HostedExecutions",
@@ -62193,6 +62377,17 @@
       "Summary": "Ignore the exception for resilience accounting."
     },
     {
+      "DisplayName": "Inbox",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inbox",
+      "Signature": "const string Inbox",
+      "Summary": "Identifies whether an inbox is available for the subscription\u0027s channel."
+    },
+    {
       "DisplayName": "InboxDescriptor",
       "Category": "Constructors",
       "DeclaringTypeName": "InboxDescriptor",
@@ -62246,6 +62441,28 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-inboxes",
       "Signature": "IReadOnlyList\u003CInboxDescriptor\u003E Inboxes { get; set; }",
       "Summary": "Gets the inbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "InboxIds",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboxids",
+      "Signature": "const string InboxIds",
+      "Summary": "Identifies the linked inbox identifiers that can observe the subscription channel."
+    },
+    {
+      "DisplayName": "InboxLink",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboxlink",
+      "Signature": "const string InboxLink",
+      "Summary": "Identifies who owns the inbox linkage for the subscription\u0027s channel."
     },
     {
       "DisplayName": "InboxMessage",
@@ -69000,6 +69217,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutcome",
       "Signature": "string LastOutcome { get; }",
       "Summary": "Gets the latest reported dispatch outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-lastoutcome",
+      "Signature": "const string LastOutcome",
+      "Summary": "Identifies the latest reported subscription execution outcome."
     },
     {
       "DisplayName": "LastOutcome",
@@ -94681,6 +94909,17 @@
       "Summary": "Reports an edge-managed materialization observation for one traffic automation answer."
     },
     {
+      "DisplayName": "ReportedMetadataPrefix",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-reportedmetadataprefix",
+      "Signature": "const string ReportedMetadataPrefix",
+      "Summary": "Prefix for individual runtime-observation metadata entries."
+    },
+    {
       "DisplayName": "ReportedOutboxCount",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeSummary",
@@ -99126,6 +99365,17 @@
     },
     {
       "DisplayName": "RetryPending",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-retrypending",
+      "Signature": "const string RetryPending",
+      "Summary": "Identifies whether the latest runtime observation says a retry is pending."
+    },
+    {
+      "DisplayName": "RetryPending",
       "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
@@ -100630,6 +100880,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-ieventdispatchruntimedescriptorcatalog-runtimes",
       "Signature": "IReadOnlyList\u003CEventDispatchRuntimeDescriptor\u003E Runtimes { get; }",
       "Summary": "Gets the configured dispatch runtimes visible to the current runtime."
+    },
+    {
+      "DisplayName": "RuntimeState",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-runtimestate",
+      "Signature": "const string RuntimeState",
+      "Summary": "Identifies whether runtime observations have been reported for the subscription."
     },
     {
       "DisplayName": "RuntimeStatus",
@@ -107483,6 +107744,17 @@
       "Summary": "Gets or sets the number of seconds the Wolverine-managed subscription execution path should wait before requeueing a failed subscription attempt."
     },
     {
+      "DisplayName": "SubscriptionRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionruntime",
+      "Signature": "const string SubscriptionRuntime",
+      "Summary": "Identifies the subscription execution posture, such as application-managed or runtime-bound."
+    },
+    {
       "DisplayName": "Subscriptions",
       "Category": "Properties",
       "DeclaringTypeName": "EventingOptions",
@@ -112299,6 +112571,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptioncatalog-tryget-system-string-cephalon-eventing-services-eventsubscriptiondescriptor",
       "Signature": "bool TryGet(string subscriptionId, out EventSubscriptionDescriptor subscription)",
       "Summary": "Attempts to resolve a subscription descriptor by identifier."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSubscriptionExecutionBindingCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog-tryget-system-string-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor",
+      "Signature": "bool TryGet(string subscriptionId, out EventSubscriptionExecutionBindingDescriptor binding)",
+      "Summary": "Attempts to resolve the managed execution binding for one declared subscription."
     },
     {
       "DisplayName": "TryGet",
