@@ -1,6 +1,4 @@
-using Cephalon.Abstractions.Agentics;
-
-namespace Cephalon.Agentics.Services;
+namespace Cephalon.Abstractions.Agentics;
 
 /// <summary>
 /// Describes the result returned by one managed agent-tool executor.

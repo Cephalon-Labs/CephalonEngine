@@ -36,7 +36,7 @@
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
 - `/engine/event-dispatch-runtimes` and `/engine/event-dispatches` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
-- `/engine/agent-tool-runs` when agentics packs register the abstraction-level agent-tool run-state catalog
+- `/engine/agent-tool-runs` and `POST /engine/agent-tools/{toolId}/runs` when agentics packs register the abstraction-level agent-tool run-state catalog and dispatcher action seam
 - `/engine/knowledge-indexes` and `POST /engine/knowledge-indexes/{collectionId}/reindex` when retrieval packs register the abstraction-level knowledge-index catalog and indexer command seam
 - `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
 - `/health`, `/health/live`, and `/health/ready` surfaces
@@ -486,12 +486,15 @@ including reported outcome, retry intent, timestamps, and totals from
 host route surface and the broader runtime snapshot without forcing adapter packs to re-aggregate
 state by hand.
 
-The host now also exposes additive agent-tool run-state answers directly. When a selected agentics
-pack registers `IAgentToolRunCatalog`, `/engine/agent-tool-runs`,
-`/engine/agent-tool-runs/{runId}`, and `/engine/agent-tool-runs/by-tool/{toolId}` publish the
-latest reported run posture from the abstraction-level catalog, while `/engine/snapshot` carries the
-same entries through `AgentToolRuns`. That keeps host adapters able to publish agent-tool runtime
-truth without depending on `Cephalon.Agentics` implementation types.
+The host now also exposes additive agent-tool run-state answers and a bounded operator action
+directly. When a selected agentics pack registers `IAgentToolRunCatalog` and `IAgentToolDispatcher`,
+`/engine/agent-tool-runs`, `/engine/agent-tool-runs/{runId}`,
+`/engine/agent-tool-runs/by-tool/{toolId}`, and `POST /engine/agent-tools/{toolId}/runs` publish or
+create the latest reported run posture from abstraction-level contracts, while `/engine/snapshot`
+carries the same entries through `AgentToolRuns`. The action route accepts optional run id, actor id,
+correlation id, attempt, string arguments, and metadata, then records safe route-trigger metadata on
+the returned run. That keeps host adapters able to publish and trigger agent-tool runtime truth
+without depending on `Cephalon.Agentics` implementation types.
 
 The host now also exposes additive retrieval index-state answers and a manual reindex action
 directly. When a selected retrieval pack registers `IKnowledgeIndexCatalog` and `IKnowledgeIndexer`,

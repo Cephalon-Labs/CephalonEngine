@@ -48,16 +48,20 @@ internal sealed class AgentToolDispatcher(
                     continue;
 
                 case AgentToolExecutionDecisionKinds.ApprovalRequired:
-                    var approvalRequired = AgentToolExecutionResult.ApprovalRequired(
-                        decision.Reason ?? "Agent-tool execution requires approval.",
-                        decision.Metadata);
+                    var approvalRequired = WithRequestMetadata(
+                        context,
+                        AgentToolExecutionResult.ApprovalRequired(
+                            decision.Reason ?? "Agent-tool execution requires approval.",
+                            decision.Metadata));
                     await RecordResultAsync(context, approvalRequired, cancellationToken).ConfigureAwait(false);
                     return approvalRequired;
 
                 case AgentToolExecutionDecisionKinds.Deny:
-                    var denied = AgentToolExecutionResult.Denied(
-                        decision.Reason ?? "Agent-tool execution was denied by policy.",
-                        decision.Metadata);
+                    var denied = WithRequestMetadata(
+                        context,
+                        AgentToolExecutionResult.Denied(
+                            decision.Reason ?? "Agent-tool execution was denied by policy.",
+                            decision.Metadata));
                     await RecordResultAsync(context, denied, cancellationToken).ConfigureAwait(false);
                     return denied;
 
@@ -87,8 +91,9 @@ internal sealed class AgentToolDispatcher(
                     $"Agent tool executor for tool '{tool.Id}' returned a null execution result.");
             }
 
-            await RecordResultAsync(context, result, cancellationToken).ConfigureAwait(false);
-            return result;
+            var mergedResult = WithRequestMetadata(context, result);
+            await RecordResultAsync(context, mergedResult, cancellationToken).ConfigureAwait(false);
+            return mergedResult;
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
@@ -154,5 +159,40 @@ internal sealed class AgentToolDispatcher(
             outputSummary: outputSummary,
             error: error,
             metadata: metadata);
+    }
+
+    private static AgentToolExecutionResult WithRequestMetadata(
+        AgentToolExecutionContext context,
+        AgentToolExecutionResult result)
+    {
+        var metadata = MergeMetadata(context.Metadata, result.Metadata);
+        return new AgentToolExecutionResult(
+            result.Outcome,
+            result.OutputSummary,
+            result.Error,
+            metadata);
+    }
+
+    private static IReadOnlyDictionary<string, string> MergeMetadata(
+        IReadOnlyDictionary<string, string> requestMetadata,
+        IReadOnlyDictionary<string, string> resultMetadata)
+    {
+        if (requestMetadata.Count == 0)
+        {
+            return resultMetadata;
+        }
+
+        if (resultMetadata.Count == 0)
+        {
+            return requestMetadata;
+        }
+
+        var metadata = new Dictionary<string, string>(requestMetadata, StringComparer.OrdinalIgnoreCase);
+        foreach (var pair in resultMetadata)
+        {
+            metadata[pair.Key] = pair.Value;
+        }
+
+        return metadata;
     }
 }

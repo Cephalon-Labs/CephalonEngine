@@ -1591,6 +1591,8 @@ Current note:
 
 `GET /engine/agent-tool-runs` exposes the operator-facing run-state catalog for agent-tool runs
 when an agentics pack registers the abstraction-level `IAgentToolRunCatalog`.
+`POST /engine/agent-tools/{toolId}/runs` requests one bounded managed tool run when the active
+runtime also registers the abstraction-level `IAgentToolDispatcher`.
 
 Current payload highlights:
 
@@ -1603,14 +1605,20 @@ Current payload highlights:
   `404` when that run does not exist
 - `GET /engine/agent-tool-runs/by-tool/{toolId}` narrows the same catalog to all runs reported for
   one tool id
+- `POST /engine/agent-tools/{toolId}/runs` accepts optional body fields for `runId`, `actorId`,
+  `correlationId`, `attempt`, string `arguments`, and safe `metadata`, generates route-owned
+  defaults when they are absent, returns the `AgentToolExecutionResult`, returns `404` when execution
+  is not active or the tool id is unknown, and returns `409` when the tool exists but no executor is
+  registered
 - the same run-state catalog is also available through `/engine/snapshot` in `AgentToolRuns` when
   operators want one merged runtime answer
 
 Current note:
 
-- the read contract lives in `Cephalon.Abstractions.Agentics` so `Cephalon.Engine` and host
-  adapters can expose it without referencing `Cephalon.Agentics`; the agentics pack still owns the
-  dispatcher, executor, policy, observer, reporter, and in-memory catalog implementation
+- the read and action contracts live in `Cephalon.Abstractions.Agentics` so `Cephalon.Engine` and
+  host adapters can expose them without referencing `Cephalon.Agentics`; the agentics pack still owns
+  the dispatcher implementation, executor, policy, observer, reporter, and in-memory catalog
+  implementation
 
 ## Knowledge index surface
 
@@ -1683,6 +1691,9 @@ Current `Cephalon.Agentics` highlights:
 - managed tool execution now flows through `IAgentToolDispatcher` when `AgenticRuntimeOptions.EnableExecution` is enabled
 - each tool entry reports execution readiness through `executionEnabled`, `executionOwnership`, `executorConfigured`, and `executorCount`; tools without an executor are reported as `awaiting-executor` instead of being described as fully managed
 - reported runs flow into `IAgentToolRunCatalog` and surface `runtimeState`, `runCount`, `lastRunId`, `lastOutcome`, `totalReports`, approval/denial counters, actor/correlation details, and `reported.*` metadata on the same technology surface, while `/engine/agent-tool-runs*` and `snapshot.AgentToolRuns` expose the direct run-state read seam
+- operators can now request one bounded managed tool run through
+  `POST /engine/agent-tools/{toolId}/runs`; the route records supplied or generated run id, actor,
+  correlation id, attempt, arguments, and safe trigger metadata on the same run-state answer
 - approval-required and denied outcomes are policy decisions, not executor failures, so operators can distinguish "waiting for approval" from broken execution
 - the phase 13 `cell-based-architecture` baseline now also projects `cell-boundaries`, `cell-routes`, `cell-health-isolations`, and `cell-traffic-automations` surfaces whose entries stay aligned with `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, `snapshot.CellHealthIsolations`, and `snapshot.CellTrafficAutomations`, so operators can read module ownership, blast-radius posture, source-cell to target-cell routing posture, health-isolation posture, effective automation/trigger/action/materialization modes, policy source, dependency linkage, and transport hints from one shared runtime truth
 - the same traffic-automation surface now also carries first-class `providerId` plus `edgeNodeIds` targeting and ASP.NET Core drill-down routes on `/engine/cell-traffic-automations/providers/{providerId}` plus `/engine/cell-traffic-automations/edge-nodes/{edgeNodeId}`, so operators can correlate shared cell posture with provider control planes and edge-node topology without inventing a second traffic registry

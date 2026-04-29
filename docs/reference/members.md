@@ -465,7 +465,7 @@ Browse the published API surface by public member.
 - [ActorId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-actorid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional actor identifier responsible for the run.
   - `string ActorId { get; }`
-- [ActorId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-actorid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-actorid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the optional actor identifier responsible for the request.
   - `string ActorId { get; }`
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-actorid): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
@@ -1113,10 +1113,10 @@ Browse the published API surface by public member.
 - [AgentToolExecutionReport](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionreport-ctor-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionReport&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Creates a new runtime observation for an agent-tool run.
   - `AgentToolExecutionReport(string toolId, string runId, string outcome, DateTimeOffset observedAtUtc, string actorId, string correlationId, int attempt, string outputSummary, string error, IReadOnlyDictionary<string, string> metadata)`
-- [AgentToolExecutionRequest](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionrequest-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionRequest&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [AgentToolExecutionRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolexecutionrequest-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=AgentToolExecutionRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Creates a new agent-tool execution request.
   - `AgentToolExecutionRequest(string toolId, string runId, IReadOnlyDictionary<string, string> arguments, string actorId, string correlationId, int attempt, IReadOnlyDictionary<string, string> metadata)`
-- [AgentToolExecutionResult](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionResult&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [AgentToolExecutionResult](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=AgentToolExecutionResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Creates a new agent-tool execution result.
   - `AgentToolExecutionResult(string outcome, string outputSummary, string error, IReadOnlyDictionary<string, string> metadata)`
 - [AgentToolRuns](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-agenttoolruns): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=AgentToolRuns&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
@@ -1650,7 +1650,7 @@ Browse the published API surface by public member.
 - [ApprovalRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-approvalrequired): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the outcome identifier used when a tool run needs an approval step before execution.
   - `const string ApprovalRequired`
-- [ApprovalRequired](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-approvalrequired-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [ApprovalRequired](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-approvalrequired-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Creates an approval-required execution result.
   - `AgentToolExecutionResult ApprovalRequired(string outputSummary, IReadOnlyDictionary<string, string> metadata)`
 - [ApprovalRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-approvalrequired): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApprovalRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -1728,7 +1728,7 @@ Browse the published API surface by public member.
 - [Arguments](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-arguments): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Arguments&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets optional string arguments supplied to the tool executor.
   - `IReadOnlyDictionary<string, string> Arguments { get; }`
-- [Arguments](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-arguments): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Arguments&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Arguments](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-arguments): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Arguments&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets optional string arguments supplied to the tool executor.
   - `IReadOnlyDictionary<string, string> Arguments { get; }`
 - [AsCqrs](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-ascqrs): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=AsCqrs&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
@@ -1779,7 +1779,7 @@ Browse the published API surface by public member.
 - [Attempt](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-attempt): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the execution attempt number.
   - `int Attempt { get; }`
-- [Attempt](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-attempt): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Attempt](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-attempt): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the execution attempt number.
   - `int Attempt { get; }`
 - [Attempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-attempt): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -5121,7 +5121,7 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-correlationid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional correlation identifier associated with the run.
   - `string CorrelationId { get; }`
-- [CorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-correlationid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-correlationid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the optional correlation identifier for the request.
   - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-correlationid): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
@@ -5997,7 +5997,7 @@ Browse the published API surface by public member.
 - [Denied](cephalon-abstractions.md#member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-denied): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Denied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the outcome identifier used when a policy denies a tool run.
   - `const string Denied`
-- [Denied](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-denied-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Denied&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Denied](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-denied-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Denied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Creates a denied execution result.
   - `AgentToolExecutionResult Denied(string error, IReadOnlyDictionary<string, string> metadata)`
 - [Denied](cephalon-abstractions.md#member-f-cephalon-abstractions-capabilities-capabilityaccess-denied): `Fields` on `CapabilityAccess` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Denied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
@@ -8151,7 +8151,7 @@ Browse the published API surface by public member.
 - [Error](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-error): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Error&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional operator-facing error summary.
   - `string Error { get; }`
-- [Error](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionresult-error): `Properties` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Error&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Error](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionresult-error): `Properties` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the optional operator-facing error summary.
   - `string Error { get; }`
 - [Error](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-error): `Fields` on `BehaviorFaultSeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
@@ -8463,7 +8463,7 @@ Browse the published API surface by public member.
 - [ExcludeTenantAdministrationEndpointFromDescription](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludetenantadministrationendpointfromdescription): `Properties` on `MultiTenancyGovernanceAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ExcludeTenantAdministrationEndpointFromDescription&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether the tenant-administration command endpoint should be excluded from OpenAPI descriptions.
   - `bool ExcludeTenantAdministrationEndpointFromDescription { get; set; }`
-- [ExecuteAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttooldispatcher-executeasync-cephalon-agentics-services-agenttoolexecutionrequest-system-threading-cancellationtoken): `Methods` on `IAgentToolDispatcher` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [ExecuteAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-iagenttooldispatcher-executeasync-cephalon-abstractions-agentics-agenttoolexecutionrequest-system-threading-cancellationtoken): `Methods` on `IAgentToolDispatcher` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Executes one registered agent tool.
   - `ValueTask<AgentToolExecutionResult> ExecuteAsync(AgentToolExecutionRequest request, CancellationToken cancellationToken)`
 - [ExecuteAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolexecutor-executeasync-cephalon-agentics-services-agenttoolexecutioncontext-system-threading-cancellationtoken): `Methods` on `IAgentToolExecutor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
@@ -9162,7 +9162,7 @@ Browse the published API surface by public member.
 - [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-failed): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the outcome identifier used when a tool run fails.
   - `const string Failed`
-- [Failed](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-failed-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Failed&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Failed](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-failed-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Creates a failed execution result.
   - `AgentToolExecutionResult Failed(string error, IReadOnlyDictionary<string, string> metadata)`
 - [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-failed): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
@@ -15741,10 +15741,10 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-metadata): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets optional operator-facing metadata captured alongside the observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
-- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-metadata): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-metadata): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets optional operator-facing metadata associated with the request.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
-- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionresult-metadata): `Properties` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionresult-metadata): `Properties` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets optional metadata captured by the executor.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-metadata): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
@@ -17960,7 +17960,7 @@ Browse the published API surface by public member.
 - [Outcome](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-outcome): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the stable outcome identifier.
   - `string Outcome { get; }`
-- [Outcome](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionresult-outcome): `Properties` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionresult-outcome): `Properties` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the stable execution outcome identifier.
   - `string Outcome { get; }`
 - [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-outcome): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
@@ -18062,7 +18062,7 @@ Browse the published API surface by public member.
 - [OutputSummary](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-outputsummary): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=OutputSummary&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional operator-facing output summary.
   - `string OutputSummary { get; }`
-- [OutputSummary](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionresult-outputsummary): `Properties` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=OutputSummary&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [OutputSummary](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionresult-outputsummary): `Properties` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutputSummary&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the optional operator-facing output summary.
   - `string OutputSummary { get; }`
 - [OutputType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-outputtype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutputType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
@@ -22737,7 +22737,7 @@ Browse the published API surface by public member.
 - [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-runid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the stable run identifier.
   - `string RunId { get; }`
-- [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-runid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [RunId](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-runid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=RunId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the stable run identifier for this execution.
   - `string RunId { get; }`
 - [RunId](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-runid): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=RunId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
@@ -23505,7 +23505,7 @@ Browse the published API surface by public member.
 - [Skipped](cephalon-abstractions.md#member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-skipped): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the outcome identifier used when a tool run is intentionally skipped.
   - `const string Skipped`
-- [Skipped](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-skipped-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Skipped](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-skipped-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Creates a skipped execution result.
   - `AgentToolExecutionResult Skipped(string outputSummary, IReadOnlyDictionary<string, string> metadata)`
 - [Skipped](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-skipped): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -24757,7 +24757,7 @@ Browse the published API surface by public member.
 - [Succeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-succeeded): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the outcome identifier used when a tool run completes successfully.
   - `const string Succeeded`
-- [Succeeded](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionresult-succeeded-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [Succeeded](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-succeeded-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionResult` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Creates a successful execution result.
   - `AgentToolExecutionResult Succeeded(string outputSummary, IReadOnlyDictionary<string, string> metadata)`
 - [Succeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-succeeded): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
@@ -25765,7 +25765,7 @@ Browse the published API surface by public member.
 - [ToolId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-toolid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the stable tool identifier.
   - `string ToolId { get; }`
-- [ToolId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionrequest-toolid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [ToolId](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-toolid): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the stable tool identifier to execute.
   - `string ToolId { get; }`
 - [ToolId](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-toolid): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)

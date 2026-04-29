@@ -44,7 +44,8 @@ Current baseline packages:
 - `Cephalon.Agentics`
   - runtime services and capability activation for `AgenticWorkloads`
   - registers `IAgentToolCatalog` when the profile is selected
-  - registers the Cephalon-managed `IAgentToolDispatcher`, abstraction-level `IAgentToolRunCatalog`, and `IAgentToolRunReporter` when execution is enabled
+  - registers the Cephalon-managed abstraction-level `IAgentToolDispatcher`, abstraction-level `IAgentToolRunCatalog`, and `IAgentToolRunReporter` when execution is enabled
+  - lets ASP.NET Core hosts trigger one bounded managed run through `POST /engine/agent-tools/{toolId}/runs` without taking a dependency on implementation types
   - lets modules add `IAgentToolExecutor`, `IAgentToolExecutionPolicy`, and `IAgentToolExecutionObserver` services without making the host own the tool loop
 - `Cephalon.Eventing`
   - runtime services and capability activation for `EventDrivenIntegration`
@@ -232,7 +233,8 @@ Shipped pack-specific extension points:
   - `IAgentToolExecutor` for the managed execution implementation of one registered tool
   - `IAgentToolExecutionPolicy` for approval-required or deny decisions before an executor runs
   - `IAgentToolExecutionObserver` for audit, telemetry, or projection hooks after each run report is recorded
-  - abstraction-level `IAgentToolRunCatalog` for runtime-state reads and `IAgentToolRunReporter` for controlled report writes
+  - abstraction-level `Cephalon.Abstractions.Agentics.IAgentToolDispatcher`, `AgentToolExecutionRequest`, and `AgentToolExecutionResult` for host-neutral tool-run actions
+  - abstraction-level `Cephalon.Abstractions.Agentics.IAgentToolRunCatalog` for runtime-state reads and `IAgentToolRunReporter` for controlled report writes
 - `Cephalon.Retrieval`
   - `IKnowledgeCollectionContributor` and `IKnowledgeCollectionRegistry`
   - `IKnowledgeDocumentProvider` for module-owned source documents
@@ -282,7 +284,7 @@ For `Cephalon.Agentics`, `AgentToolDescriptor` can now also link back to:
 
 That keeps AI-facing tool metadata anchored in the same module, capability, execution-graph, hosted-execution, and runtime-story contracts the engine already exposes.
 
-When execution is enabled, `Cephalon.Agentics` also owns one narrow tool-dispatch loop. The dispatcher is still host-agnostic: modules contribute descriptors through `IAgentToolContributor`, register exactly one `IAgentToolExecutor` for each executable tool id, and optionally add policy or observer services. Runtime surfaces then report whether each tool is `cephalon-managed`, `awaiting-executor`, or `not-configured`, plus the latest run outcome and counts. The direct run-state read seam now lives in `Cephalon.Abstractions.Agentics`, so ASP.NET Core hosts and tooling can read `/engine/agent-tool-runs`, `/engine/agent-tool-runs/{runId}`, `/engine/agent-tool-runs/by-tool/{toolId}`, and `snapshot.AgentToolRuns` without depending on `Cephalon.Agentics` implementation types. That is the boundary of the current managed proof; broader autonomous planning, memory stores, retries, queues, or provider-specific AI orchestration remain future companion work unless another package explicitly owns them.
+When execution is enabled, `Cephalon.Agentics` also owns one narrow tool-dispatch loop. The dispatcher is still host-agnostic: modules contribute descriptors through `IAgentToolContributor`, register exactly one `IAgentToolExecutor` for each executable tool id, and optionally add policy or observer services. Runtime surfaces then report whether each tool is `cephalon-managed`, `awaiting-executor`, or `not-configured`, plus the latest run outcome and counts. The direct run-state read seam and the bounded dispatch action contract now live in `Cephalon.Abstractions.Agentics`, so ASP.NET Core hosts and tooling can read `/engine/agent-tool-runs`, `/engine/agent-tool-runs/{runId}`, `/engine/agent-tool-runs/by-tool/{toolId}`, trigger `POST /engine/agent-tools/{toolId}/runs`, and read `snapshot.AgentToolRuns` without depending on `Cephalon.Agentics` implementation types. That is the boundary of the current managed proof; broader autonomous planning, memory stores, retries, queues, or provider-specific AI orchestration remain future companion work unless another package explicitly owns them.
 
 When ingestion and querying are enabled, `Cephalon.Retrieval` now owns one narrow lexical retrieval loop. Modules still own the source material through `IKnowledgeDocumentProvider`, while the pack owns indexing, bounded query execution, index state, freshness reporting, and manual operator reindexing for registered collections. Runtime surfaces report `indexingOwnership`, `queryOwnership`, provider readiness, latest index outcome, document count, query count, freshness state, and a query fingerprint rather than raw query text. ASP.NET Core hosts can request the same bounded indexer path through `POST /engine/knowledge-indexes/{collectionId}/reindex` without referencing retrieval implementation types. That is the boundary of the current managed proof; vector databases, embeddings, distributed indexes, durable search clusters, rerankers, provider-specific semantic search, and background reindex scheduling or automation remain future companion work unless another package explicitly owns them.
 

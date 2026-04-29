@@ -1,4 +1,4 @@
-namespace Cephalon.Agentics.Services;
+namespace Cephalon.Abstractions.Agentics;
 
 /// <summary>
 /// Dispatches registered agent tools through Cephalon-managed execution, policy, and run-state services.

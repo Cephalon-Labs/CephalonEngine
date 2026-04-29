@@ -1,4 +1,4 @@
-namespace Cephalon.Agentics.Services;
+namespace Cephalon.Abstractions.Agentics;
 
 /// <summary>
 /// Describes one request to execute an agent tool through the Cephalon-managed agentics runtime.

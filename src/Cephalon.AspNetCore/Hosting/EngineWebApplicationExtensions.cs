@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
@@ -2040,6 +2041,52 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runs);
             })
             .WithName("GetCephalonAgentToolRunsByTool");
+        engineGroup.MapPost(
+                "/agent-tools/{toolId}/runs",
+                async (
+                    string toolId,
+                    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] AgentToolExecutionHttpRequest? request,
+                    HttpContext httpContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    var dispatcher = httpContext.RequestServices.GetService<IAgentToolDispatcher>();
+                    if (dispatcher is null)
+                    {
+                        return Results.NotFound(new
+                        {
+                            error = "Agent-tool execution is not available in the active runtime."
+                        });
+                    }
+
+                    try
+                    {
+                        var executionRequest = CreateAgentToolExecutionRequest(toolId, request, httpContext);
+                        var result = await dispatcher.ExecuteAsync(executionRequest, cancellationToken).ConfigureAwait(false);
+                        return Results.Ok(result);
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        return Results.BadRequest(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                        when (IsUnregisteredAgentTool(exception))
+                    {
+                        return Results.NotFound(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                        when (IsMissingAgentToolExecutor(exception))
+                    {
+                        return Results.Conflict(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                    {
+                        return Results.Problem(
+                            title: "Agent-tool execution failed.",
+                            detail: exception.Message,
+                            statusCode: StatusCodes.Status500InternalServerError);
+                    }
+                })
+            .WithName("RunCephalonAgentTool");
         engineGroup.MapGet("/event-subscription-readiness", (HttpContext httpContext) =>
             {
                 var readiness = httpContext.RequestServices
@@ -3223,6 +3270,72 @@ public static class EngineWebApplicationExtensions
         };
     }
 
+    private static AgentToolExecutionRequest CreateAgentToolExecutionRequest(
+        string toolId,
+        AgentToolExecutionHttpRequest? request,
+        HttpContext httpContext)
+    {
+        var metadata = CopyAgentToolMetadata(request?.Metadata);
+        metadata["trigger"] = "aspnetcore-operator-route";
+        metadata["route"] = "/engine/agent-tools/{toolId}/runs";
+
+        return new AgentToolExecutionRequest(
+            toolId,
+            string.IsNullOrWhiteSpace(request?.RunId) ? CreateAgentToolRunId() : request.RunId,
+            request?.Arguments,
+            ResolveAgentToolActorId(httpContext, request?.ActorId),
+            string.IsNullOrWhiteSpace(request?.CorrelationId) ? httpContext.TraceIdentifier : request.CorrelationId,
+            request?.Attempt ?? 1,
+            metadata);
+    }
+
+    private static string CreateAgentToolRunId()
+    {
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"aspnetcore-agent-tool-{DateTimeOffset.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid():N}");
+    }
+
+    private static string? ResolveAgentToolActorId(HttpContext httpContext, string? actorId)
+    {
+        if (!string.IsNullOrWhiteSpace(actorId))
+        {
+            return actorId.Trim();
+        }
+
+        var userName = httpContext.User.Identity?.Name;
+        return string.IsNullOrWhiteSpace(userName) ? null : userName.Trim();
+    }
+
+    private static bool IsUnregisteredAgentTool(InvalidOperationException exception)
+    {
+        return exception.Message.Contains(
+            "is not registered in the active agentics runtime",
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsMissingAgentToolExecutor(InvalidOperationException exception)
+    {
+        return exception.Message.Contains(
+            "No agent tool executor is registered",
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static Dictionary<string, string> CopyAgentToolMetadata(IReadOnlyDictionary<string, string>? metadata)
+    {
+        if (metadata is null)
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        return metadata
+            .Where(static pair => !string.IsNullOrWhiteSpace(pair.Key))
+            .ToDictionary(
+                static pair => pair.Key.Trim(),
+                static pair => pair.Value,
+                StringComparer.OrdinalIgnoreCase);
+    }
+
     private static string CreateKnowledgeReindexRunId()
     {
         return string.Create(
@@ -3246,6 +3359,21 @@ public static class EngineWebApplicationExtensions
         return exception.Message.Contains(
             "is not registered in the active retrieval runtime",
             StringComparison.OrdinalIgnoreCase);
+    }
+
+    private sealed class AgentToolExecutionHttpRequest
+    {
+        public string? RunId { get; init; }
+
+        public IReadOnlyDictionary<string, string>? Arguments { get; init; }
+
+        public string? ActorId { get; init; }
+
+        public string? CorrelationId { get; init; }
+
+        public int? Attempt { get; init; }
+
+        public IReadOnlyDictionary<string, string>? Metadata { get; init; }
     }
 
     private static string LoadEmbeddedAsset(string resourceName, string assetDescription)

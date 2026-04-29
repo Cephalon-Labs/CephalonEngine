@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Agentics.Services;

@@ -39,6 +39,7 @@ Source structure:
 
 - `AppModel` -> `Cephalon.Abstractions.AppModel`
 - `AppModel/Scaffolding` -> `Cephalon.Abstractions.AppModel.Scaffolding`
+- `Agentics` -> `Cephalon.Abstractions.Agentics`
 - `Capabilities` -> `Cephalon.Abstractions.Capabilities`
 - `Health` -> `Cephalon.Abstractions.Health`
 - `Localization` -> `Cephalon.Abstractions.Localization`

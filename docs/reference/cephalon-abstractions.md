@@ -104,6 +104,263 @@ const string Succeeded
 
 Gets the outcome identifier used when a tool run completes successfully.
 
+<a id="type-cephalon-abstractions-agentics-agenttoolexecutionrequest"></a>
+
+### `AgentToolExecutionRequest`
+
+Describes one request to execute an agent tool through the Cephalon-managed agentics runtime.
+
+#### Declaration
+```csharp
+public sealed class AgentToolExecutionRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-agentics-agenttoolexecutionrequest-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AgentToolExecutionRequest`
+
+```csharp
+AgentToolExecutionRequest(string toolId, string runId, IReadOnlyDictionary<string, string> arguments, string actorId, string correlationId, int attempt, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new agent-tool execution request.
+
+Parameters:
+- `toolId`: The stable tool identifier to execute.
+- `runId`: The stable run identifier. A generated identifier is used when omitted.
+- `arguments`: Optional string arguments supplied to the tool executor.
+- `actorId`: The optional actor identifier responsible for the request.
+- `correlationId`: The optional correlation identifier for the request.
+- `attempt`: The execution attempt number.
+- `metadata`: Optional operator-facing metadata associated with the request.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; }
+```
+
+Gets the optional actor identifier responsible for the request.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-arguments"></a>
+
+##### `Arguments`
+
+```csharp
+IReadOnlyDictionary<string, string> Arguments { get; }
+```
+
+Gets optional string arguments supplied to the tool executor.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-attempt"></a>
+
+##### `Attempt`
+
+```csharp
+int Attempt { get; }
+```
+
+Gets the execution attempt number.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the request.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata associated with the request.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-runid"></a>
+
+##### `RunId`
+
+```csharp
+string RunId { get; }
+```
+
+Gets the stable run identifier for this execution.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-toolid"></a>
+
+##### `ToolId`
+
+```csharp
+string ToolId { get; }
+```
+
+Gets the stable tool identifier to execute.
+
+<a id="type-cephalon-abstractions-agentics-agenttoolexecutionresult"></a>
+
+### `AgentToolExecutionResult`
+
+Describes the result returned by one managed agent-tool executor.
+
+#### Declaration
+```csharp
+public sealed class AgentToolExecutionResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AgentToolExecutionResult`
+
+```csharp
+AgentToolExecutionResult(string outcome, string outputSummary, string error, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new agent-tool execution result.
+
+Parameters:
+- `outcome`: The stable execution outcome identifier.
+- `outputSummary`: The optional operator-facing output summary.
+- `error`: The optional operator-facing error summary.
+- `metadata`: Optional metadata captured by the executor.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionresult-error"></a>
+
+##### `Error`
+
+```csharp
+string Error { get; }
+```
+
+Gets the optional operator-facing error summary.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional metadata captured by the executor.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable execution outcome identifier.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolexecutionresult-outputsummary"></a>
+
+##### `OutputSummary`
+
+```csharp
+string OutputSummary { get; }
+```
+
+Gets the optional operator-facing output summary.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-approvalrequired-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+AgentToolExecutionResult ApprovalRequired(string outputSummary, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates an approval-required execution result.
+
+Returns: An approval-required execution result.
+
+Parameters:
+- `outputSummary`: The optional operator-facing output summary.
+- `metadata`: Optional metadata captured by the policy layer.
+
+<a id="member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-denied-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Denied`
+
+```csharp
+AgentToolExecutionResult Denied(string error, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a denied execution result.
+
+Returns: A denied execution result.
+
+Parameters:
+- `error`: The operator-facing denial reason.
+- `metadata`: Optional metadata captured by the policy layer.
+
+<a id="member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-failed-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Failed`
+
+```csharp
+AgentToolExecutionResult Failed(string error, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a failed execution result.
+
+Returns: A failed execution result.
+
+Parameters:
+- `error`: The operator-facing error summary.
+- `metadata`: Optional metadata captured by the executor.
+
+<a id="member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-skipped-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Skipped`
+
+```csharp
+AgentToolExecutionResult Skipped(string outputSummary, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a skipped execution result.
+
+Returns: A skipped execution result.
+
+Parameters:
+- `outputSummary`: The optional operator-facing output summary.
+- `metadata`: Optional metadata captured by the executor.
+
+<a id="member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-succeeded-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Succeeded`
+
+```csharp
+AgentToolExecutionResult Succeeded(string outputSummary, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a successful execution result.
+
+Returns: A successful execution result.
+
+Parameters:
+- `outputSummary`: The optional operator-facing output summary.
+- `metadata`: Optional metadata captured by the executor.
+
 <a id="type-cephalon-abstractions-agentics-agenttoolrunstate"></a>
 
 ### `AgentToolRunState`
@@ -336,6 +593,35 @@ int TotalReports { get; }
 ```
 
 Gets the total number of observations reported for this run.
+
+<a id="type-cephalon-abstractions-agentics-iagenttooldispatcher"></a>
+
+### `IAgentToolDispatcher`
+
+Dispatches registered agent tools through Cephalon-managed execution, policy, and run-state services.
+
+#### Declaration
+```csharp
+public interface IAgentToolDispatcher
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-agentics-iagenttooldispatcher-executeasync-cephalon-abstractions-agentics-agenttoolexecutionrequest-system-threading-cancellationtoken"></a>
+
+##### `ExecuteAsync`
+
+```csharp
+ValueTask<AgentToolExecutionResult> ExecuteAsync(AgentToolExecutionRequest request, CancellationToken cancellationToken)
+```
+
+Executes one registered agent tool.
+
+Returns: The result produced by the managed execution path.
+
+Parameters:
+- `request`: The execution request to dispatch.
+- `cancellationToken`: The cancellation token for the current execution attempt.
 
 <a id="type-cephalon-abstractions-agentics-iagenttoolruncatalog"></a>
 

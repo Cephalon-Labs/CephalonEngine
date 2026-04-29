@@ -1371,21 +1371,40 @@ public sealed class AspNetCoreHostingTests
         app.MapCephalon();
 
         await app.StartAsync();
-        var dispatcher = app.Services.GetRequiredService<IAgentToolDispatcher>();
-        var result = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
-            toolId: "host-operator",
-            runId: "host-run-001",
-            actorId: "operator",
-            correlationId: "corr-host-run-001"));
         var client = app.GetTestClient();
 
+        var executionResponse = await client.PostAsJsonAsync(
+            "/engine/agent-tools/host-operator/runs",
+            new
+            {
+                runId = "host-run-001",
+                actorId = "operator",
+                correlationId = "corr-host-run-001",
+                arguments = new Dictionary<string, string>
+                {
+                    ["subject"] = "operator route"
+                },
+                metadata = new Dictionary<string, string>
+                {
+                    ["requestedBy"] = "hosting-test"
+                }
+            });
+        var result = await executionResponse.Content.ReadFromJsonAsync<AgentToolExecutionResult>();
         var runs = await client.GetFromJsonAsync<AgentToolRunState[]>("/engine/agent-tool-runs");
         var run = await client.GetFromJsonAsync<AgentToolRunState>("/engine/agent-tool-runs/host-run-001");
         var toolRuns = await client.GetFromJsonAsync<AgentToolRunState[]>("/engine/agent-tool-runs/by-tool/host-operator");
         var missingRun = await client.GetAsync("/engine/agent-tool-runs/missing-run");
+        var missingToolExecution = await client.PostAsync(
+            "/engine/agent-tools/missing-tool/runs",
+            null);
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
+        Assert.Equal(HttpStatusCode.OK, executionResponse.StatusCode);
+        Assert.NotNull(result);
         Assert.Equal(AgentToolExecutionOutcomes.Succeeded, result.Outcome);
+        Assert.Equal("aspnetcore-operator-route", result.Metadata["trigger"]);
+        Assert.Equal("/engine/agent-tools/{toolId}/runs", result.Metadata["route"]);
+        Assert.Equal("hosting-test", result.Metadata["requestedBy"]);
         var listedRun = Assert.Single(runs!);
         Assert.Equal("host-operator", listedRun.ToolId);
         Assert.Equal("host-run-001", listedRun.RunId);
@@ -1397,9 +1416,14 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal(2, listedRun.TotalReports);
         Assert.True(listedRun.IsTerminal);
         Assert.False(listedRun.RequiresApproval);
+        Assert.Equal("aspnetcore-operator-route", listedRun.Metadata["trigger"]);
+        Assert.Equal("/engine/agent-tools/{toolId}/runs", listedRun.Metadata["route"]);
+        Assert.Equal("hosting-test", listedRun.Metadata["requestedBy"]);
+        Assert.Equal(nameof(HostingAgentToolExecutor), listedRun.Metadata["executor"]);
         Assert.Equal(listedRun.RunId, run!.RunId);
         Assert.Equal(listedRun.RunId, Assert.Single(toolRuns!).RunId);
         Assert.Equal(HttpStatusCode.NotFound, missingRun.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, missingToolExecution.StatusCode);
         Assert.Equal(listedRun.RunId, Assert.Single(snapshot!.AgentToolRuns).RunId);
     }
 

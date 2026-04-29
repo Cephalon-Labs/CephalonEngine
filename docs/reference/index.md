@@ -15,12 +15,12 @@ Quick links:
 
 ### Core
 
-- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 21 namespaces and 535 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
+- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 21 namespaces and 538 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
 - [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 98 public types. [Browse](browse.html?assembly=Cephalon.Engine)
 
 ### Technology Packs
 
-- [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 17 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
+- [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 14 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
 - [Cephalon.Edge](cephalon-edge.md): Edge-native delivery runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge)
 - [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 30 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
 - [Cephalon.Retrieval](cephalon-retrieval.md): Knowledge retrieval runtime services and extension points. Contains 3 namespaces and 13 public types. [Browse](browse.html?assembly=Cephalon.Retrieval)

@@ -6,7 +6,7 @@
 
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
-- agentics read contracts such as `AgentToolExecutionOutcomes`, `AgentToolRunState`, and `IAgentToolRunCatalog`
+- agentics read and operator-action contracts such as `AgentToolExecutionOutcomes`, `AgentToolExecutionRequest`, `AgentToolExecutionResult`, `AgentToolRunState`, `IAgentToolDispatcher`, and `IAgentToolRunCatalog`
 - retrieval read and operator-action contracts such as `KnowledgeIndexState`, `KnowledgeIndexFreshnessStates`, `KnowledgeIndexingOutcomes`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, `KnowledgeIndexingRequest`, and `KnowledgeIndexingResult`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
@@ -29,7 +29,10 @@
 - `Behaviors/IBehaviorModuleBuilder.cs`
 - `Behaviors/OwnedBehaviorRegistration.cs`
 - `Agentics/AgentToolExecutionOutcomes.cs`
+- `Agentics/AgentToolExecutionRequest.cs`
+- `Agentics/AgentToolExecutionResult.cs`
 - `Agentics/AgentToolRunState.cs`
+- `Agentics/IAgentToolDispatcher.cs`
 - `Agentics/IAgentToolRunCatalog.cs`
 - `Retrieval/IKnowledgeIndexCatalog.cs`
 - `Retrieval/IKnowledgeIndexer.cs`
