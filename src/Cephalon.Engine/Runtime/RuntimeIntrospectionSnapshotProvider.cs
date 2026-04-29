@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Features;
 using Cephalon.Abstractions.Patterns;
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
@@ -45,6 +46,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
         var eventSubscriptionExecutionReadinessCatalog = serviceProvider.GetService(typeof(IEventSubscriptionExecutionReadinessCatalog)) as IEventSubscriptionExecutionReadinessCatalog;
         var agentToolRunCatalog = serviceProvider.GetService(typeof(IAgentToolRunCatalog)) as IAgentToolRunCatalog;
+        var knowledgeIndexCatalog = serviceProvider.GetService(typeof(IKnowledgeIndexCatalog)) as IKnowledgeIndexCatalog;
         var cdcCaptureRuntimeStateCatalog = serviceProvider.GetService(typeof(ICdcCaptureRuntimeStateCatalog)) as ICdcCaptureRuntimeStateCatalog;
         var cdcCaptureExecutionRuntimeCatalog = serviceProvider.GetService(typeof(ICdcCaptureExecutionRuntimeCatalog)) as ICdcCaptureExecutionRuntimeCatalog;
         var featureFlagRuntimeCatalog = serviceProvider.GetService(typeof(IFeatureFlagRuntimeCatalog)) as IFeatureFlagRuntimeCatalog;
@@ -88,6 +90,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             DatabaseMigrationPlaybook = databaseMigrationOperationalPlaybookProvider.CreatePlaybook(),
             DatabaseTopology = databaseTopologyOperationalSnapshotProvider.CreateSnapshot(),
             AgentToolRuns = agentToolRunCatalog?.Runs ?? [],
+            KnowledgeIndexes = knowledgeIndexCatalog?.States ?? [],
             EventDispatchRuntimes = eventDispatchRuntimeDescriptorCatalog?.Runtimes ?? [],
             EventDispatchStates = eventDispatchRuntimeCatalog?.States ?? [],
             EventSubscriptionExecutionReadiness = eventSubscriptionExecutionReadinessCatalog?.Readiness ?? [],

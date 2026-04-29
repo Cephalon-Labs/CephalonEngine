@@ -10,6 +10,7 @@ using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Agentics.Services;

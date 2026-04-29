@@ -1612,6 +1612,31 @@ Current note:
   adapters can expose it without referencing `Cephalon.Agentics`; the agentics pack still owns the
   dispatcher, executor, policy, observer, reporter, and in-memory catalog implementation
 
+## Knowledge index surface
+
+`GET /engine/knowledge-indexes` exposes the operator-facing index-state catalog for managed
+retrieval indexes when a retrieval pack registers the abstraction-level `IKnowledgeIndexCatalog`.
+
+Current payload highlights:
+
+- each entry carries a stable `collectionId`, latest indexing run id and outcome, observation and
+  indexed timestamps, source freshness, document count, freshness state, indexing counters, query
+  count, latest query timestamp, query fingerprint, query length, matched-count summary, actor,
+  correlation id, error summary, and safe metadata
+- `GET /engine/knowledge-indexes/{collectionId}` narrows the same catalog to one collection and
+  returns `404` when no activity has been recorded for that collection
+- the same index-state catalog is also available through `/engine/snapshot` in `KnowledgeIndexes`
+  when operators want one merged runtime answer
+
+Current note:
+
+- the read contract lives in `Cephalon.Abstractions.Retrieval` so `Cephalon.Engine` and host
+  adapters can expose index posture without taking a direct dependency on `Cephalon.Retrieval`
+  implementation types
+- the indexing and query write path remains owned by the selected retrieval pack through
+  `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and registered `IKnowledgeDocumentProvider`
+  services
+
 ## Authorization policy surface
 
 `GET /engine/authorization-policies` exposes the operator-facing authorization-policy catalog contributed by active modules.
@@ -1665,6 +1690,9 @@ Current `Cephalon.Retrieval` highlights:
 - `indexingOwnership` reports `cephalon-managed`, `awaiting-provider`, or `not-configured` so missing document providers do not look like a ready index
 - `queryOwnership` reports `cephalon-managed`, `awaiting-index`, `awaiting-provider`, or `not-configured` so query readiness stays separate from collection registration
 - `runtimeState`, `freshnessState`, `documentCount`, `queryCount`, latest index outcome fields, and latest query match counts are projected through `/engine/technology-surfaces` and `/engine/snapshot`
+- the same typed index-state answer is also available through `/engine/knowledge-indexes*` and
+  `snapshot.KnowledgeIndexes`, so operators do not need to parse technology-surface metadata when
+  they only need collection index posture
 - `lastQueryFingerprint` and `lastQueryLength` are reported instead of raw query text so operator introspection can correlate activity without leaking user prompts or private search terms
 - this is a Cephalon-managed lexical in-process baseline; vector search, embeddings, durable search storage, distributed indexes, rerankers, provider-specific search engines, and reindex automation stay outside the current compatibility promise until a package owns them explicitly
 

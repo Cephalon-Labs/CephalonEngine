@@ -10,6 +10,7 @@ using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Features;
 using Cephalon.Abstractions.Localization;
 using Cephalon.Abstractions.Patterns;
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
@@ -2470,6 +2471,22 @@ public static class EngineWebApplicationExtensions
         engineGroup.MapGet("/technology-surfaces/{technologyId}", (string technologyId, [FromServices] ITechnologyRuntimeCatalog catalog) =>
                 TypedResults.Ok(catalog.GetByTechnology(technologyId)))
             .WithName("GetCephalonTechnologySurface");
+        engineGroup.MapGet("/knowledge-indexes", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IKnowledgeIndexCatalog>();
+                IReadOnlyList<KnowledgeIndexState> states = catalog?.States ?? [];
+
+                return TypedResults.Ok(states);
+            })
+            .WithName("GetCephalonKnowledgeIndexes");
+        engineGroup.MapGet("/knowledge-indexes/{collectionId}", (string collectionId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IKnowledgeIndexCatalog>();
+                var state = catalog?.GetByCollectionId(collectionId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            })
+            .WithName("GetCephalonKnowledgeIndex");
         engineGroup.MapGet("/transports", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Transports))
             .WithName("GetCephalonTransports");
         engineGroup.MapGet("/dependencies", ([FromServices] RuntimeHealthEvaluator health) => TypedResults.Ok(health.EvaluateDependencies()))

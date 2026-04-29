@@ -17,6 +17,7 @@ using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Localization;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Patterns;
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Tenancy;
@@ -2093,18 +2094,31 @@ public sealed class AspNetCoreHostingTests
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
         var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces");
         var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        var knowledgeIndexes = await client.GetFromJsonAsync<KnowledgeIndexState[]>("/engine/knowledge-indexes");
+        var runbooksIndex = await client.GetFromJsonAsync<KnowledgeIndexState>("/engine/knowledge-indexes/runbooks");
+        var missingIndex = await client.GetAsync("/engine/knowledge-indexes/missing");
 
         Assert.NotNull(manifest);
         Assert.Equal("modular-vertical-slice", manifest.AppProfile.BlueprintId);
         Assert.NotNull(snapshot);
         Assert.Equal(RuntimeStatus.Started, snapshot.Status.Status);
         Assert.Equal("modular-vertical-slice", snapshot.Manifest.AppProfile.BlueprintId);
-        Assert.Equal(11, snapshot.TechnologySurfaces.Count);
+        Assert.Equal(12, snapshot.TechnologySurfaces.Count);
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Eventing");
         Assert.NotNull(surfaces);
-        Assert.Equal(11, surfaces.Length);
+        Assert.Equal(12, surfaces.Length);
         Assert.NotNull(eventingSurfaces);
         Assert.Equal(2, eventingSurfaces.Length);
+        Assert.NotNull(knowledgeIndexes);
+        var knowledgeIndex = Assert.Single(knowledgeIndexes, state => state.CollectionId == "runbooks");
+        Assert.Equal(KnowledgeIndexingOutcomes.Succeeded, knowledgeIndex.LastOutcome);
+        Assert.Equal(KnowledgeIndexFreshnessStates.Fresh, knowledgeIndex.FreshnessState);
+        Assert.Equal(2, knowledgeIndex.DocumentCount);
+        Assert.Equal(1, knowledgeIndex.QueryCount);
+        Assert.NotNull(runbooksIndex);
+        Assert.Equal("runbooks", runbooksIndex.CollectionId);
+        Assert.Equal("hosting-retrieval-index-001", runbooksIndex.LastRunId);
+        Assert.Equal(HttpStatusCode.NotFound, missingIndex.StatusCode);
 
         var agentics = Assert.Single(surfaces, surface => surface.TechnologyId == "agentic-workloads");
         Assert.Contains(agentics.Entries, entry => entry.Id == "planner");
@@ -2169,6 +2183,13 @@ public sealed class AspNetCoreHostingTests
             entry => entry.Id == "audit-projector" &&
                 entry.Metadata["lastOutcome"] == "retry-scheduled" &&
                 entry.Metadata["retryPending"] == "true");
+        Assert.Contains(
+            snapshot.KnowledgeIndexes,
+            state => state.CollectionId == "runbooks" &&
+                state.LastOutcome == KnowledgeIndexingOutcomes.Succeeded &&
+                state.FreshnessState == KnowledgeIndexFreshnessStates.Fresh &&
+                state.DocumentCount == 2 &&
+                state.QueryCount == 1);
 
         var retrieval = Assert.Single(surfaces, surface => surface.TechnologyId == "knowledge-retrieval");
         Assert.Contains(retrieval.Entries, entry => entry.Id == "docs");
@@ -2182,12 +2203,21 @@ public sealed class AspNetCoreHostingTests
             entry.Metadata["queryCount"] == "1");
 
         var tenancySurfaces = surfaces.Where(surface => surface.TechnologyId == "multi-tenancy").ToArray();
-        Assert.Equal(6, tenancySurfaces.Length);
+        Assert.Equal(7, tenancySurfaces.Length);
         Assert.Contains(
             tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-resolution").Entries,
             entry => entry.Id == "tenant-runtime" &&
                 entry.Metadata["configuredTenantCount"] == "1" &&
                 entry.Metadata["defaultTenantId"] == "tenant-001");
+        Assert.Contains(
+            tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-administration").Entries,
+            entry => entry.Id == "tenant-administration-runtime" &&
+                entry.Metadata["ownership"] == "cephalon-managed" &&
+                entry.Metadata["workflowEnabled"] == "true" &&
+                entry.Metadata["membershipAdministrationOwnership"] == "cephalon-managed" &&
+                entry.Metadata["invitationAdministrationOwnership"] == "cephalon-managed" &&
+                entry.Metadata["publicOnboardingOwnership"] == "application-managed" &&
+                entry.Metadata["identityProviderSyncOwnership"] == "application-managed");
         Assert.Contains(
             tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-governance-boundaries").Entries,
             entry => entry.Id == "tenant-membership" &&
@@ -2244,33 +2274,40 @@ public sealed class AspNetCoreHostingTests
                 entry.Metadata["invitationStoreOwnership"] == "cephalon-managed" &&
                 entry.Metadata["durableStoreOwnership"] == "application-managed" &&
                 entry.Metadata["validationOwnership"] == "cephalon-managed");
+        var domainOwnershipSurface = tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-domain-ownership");
+        var domainOwnershipRuntime = Assert.Single(
+            domainOwnershipSurface.Entries,
+            entry => entry.Id == "tenant-domain-ownership-runtime");
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["ownership"]);
+        Assert.Equal("Cephalon.MultiTenancy.Governance", domainOwnershipRuntime.Metadata["package"]);
+        Assert.Equal("1", domainOwnershipRuntime.Metadata["domainOwnershipCount"]);
+        Assert.Equal("0", domainOwnershipRuntime.Metadata["runtimeDomainOwnershipCount"]);
+        Assert.Equal("in-memory", domainOwnershipRuntime.Metadata["domainOwnershipStoreKind"]);
+        Assert.Equal("false", domainOwnershipRuntime.Metadata["domainOwnershipStoreDurable"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["domainOwnershipStoreOwnership"]);
+        Assert.Equal("application-managed", domainOwnershipRuntime.Metadata["durableStoreOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["validationOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["verificationWorkflowOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["proofEvaluationOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["proofChallengeIssuanceOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["proofPublicationPlanningOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["proofVerificationRunnerOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["proofPollingRunnerOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["httpProofCollectionOwnership"]);
+        Assert.Equal("true", domainOwnershipRuntime.Metadata["dnsTxtProofCollectionEnabled"]);
+        Assert.Equal("false", domainOwnershipRuntime.Metadata["dnsTxtProofResolverConfigured"]);
+        Assert.Equal("not-configured", domainOwnershipRuntime.Metadata["dnsTxtProofCollectionOwnership"]);
+        Assert.Equal("cephalon-managed", domainOwnershipRuntime.Metadata["externalProofPollingOwnership"]);
+        Assert.Equal("application-managed", domainOwnershipRuntime.Metadata["backgroundProofPollingOwnership"]);
+        Assert.Equal("mixed", domainOwnershipRuntime.Metadata["proofPublicationOwnership"]);
+        Assert.Equal("application-managed", domainOwnershipRuntime.Metadata["verificationExecutionOwnership"]);
+        Assert.Equal("mixed", domainOwnershipRuntime.Metadata["dnsHttpProofCollectionOwnership"]);
         Assert.Contains(
-            tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-domain-ownership").Entries,
-            entry => entry.Id == "tenant-domain-ownership-runtime" &&
-                entry.Metadata["ownership"] == "cephalon-managed" &&
-                entry.Metadata["package"] == "Cephalon.MultiTenancy.Governance" &&
+            domainOwnershipSurface.Entries,
+            entry => entry.Id == "tenant-domain-ownership:tenant-001" &&
                 entry.Metadata["domainOwnershipCount"] == "1" &&
-                entry.Metadata["runtimeDomainOwnershipCount"] == "0" &&
-                entry.Metadata["domainOwnershipStoreKind"] == "in-memory" &&
-                entry.Metadata["domainOwnershipStoreDurable"] == "false" &&
-                entry.Metadata["domainOwnershipStoreOwnership"] == "cephalon-managed" &&
-                entry.Metadata["durableStoreOwnership"] == "application-managed" &&
-                entry.Metadata["validationOwnership"] == "cephalon-managed" &&
-                entry.Metadata["verificationWorkflowOwnership"] == "cephalon-managed" &&
-                entry.Metadata["proofEvaluationOwnership"] == "cephalon-managed" &&
-                entry.Metadata["proofChallengeIssuanceOwnership"] == "cephalon-managed" &&
-                entry.Metadata["proofPublicationPlanningOwnership"] == "cephalon-managed" &&
-                entry.Metadata["proofVerificationRunnerOwnership"] == "cephalon-managed" &&
-                entry.Metadata["proofPollingRunnerOwnership"] == "cephalon-managed" &&
-                entry.Metadata["httpProofCollectionOwnership"] == "cephalon-managed" &&
-                entry.Metadata["dnsTxtProofCollectionEnabled"] == "true" &&
-                entry.Metadata["dnsTxtProofResolverConfigured"] == "false" &&
-                entry.Metadata["dnsTxtProofCollectionOwnership"] == "not-configured" &&
-                entry.Metadata["externalProofPollingOwnership"] == "cephalon-managed" &&
-                entry.Metadata["backgroundProofPollingOwnership"] == "application-managed" &&
-                entry.Metadata["proofPublicationOwnership"] == "application-managed" &&
-                entry.Metadata["verificationExecutionOwnership"] == "application-managed" &&
-                entry.Metadata["dnsHttpProofCollectionOwnership"] == "mixed");
+                entry.Metadata["verifiedDomainOwnershipCount"] == "1" &&
+                entry.Metadata["sourceModuleIds"] == "platform-test");
         Assert.Contains(
             tenancySurfaces.Single(surface => surface.SurfaceId == "tenant-governance-actions").Entries,
             entry => entry.Id == "tenant-governance-action-runtime" &&

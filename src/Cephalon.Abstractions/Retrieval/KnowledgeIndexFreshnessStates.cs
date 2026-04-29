@@ -1,4 +1,4 @@
-namespace Cephalon.Retrieval.Services;
+namespace Cephalon.Abstractions.Retrieval;
 
 /// <summary>
 /// Defines stable freshness state identifiers for managed retrieval indexes.

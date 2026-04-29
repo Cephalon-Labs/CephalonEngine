@@ -144,6 +144,10 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("AgentToolExecutionOutcomes", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("AgentToolRunState", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IAgentToolRunCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Abstractions.Retrieval", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IKnowledgeIndexCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("KnowledgeIndexState", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("KnowledgeIndexingOutcomes", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Abstractions.Authorization", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("AuthorizationPolicyDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Abstractions.Tenancy", abstractionsPage.Contents, StringComparison.Ordinal);
@@ -186,6 +190,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("EventDispatchStates", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionExecutionReadiness", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("AgentToolRuns", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("KnowledgeIndexes", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("AuthorizationPolicies", enginePage.Contents, StringComparison.Ordinal);
     }
 

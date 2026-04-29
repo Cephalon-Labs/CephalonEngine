@@ -3963,7 +3963,7 @@ Browse the published API surface by public member.
 - [CollectionId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexingresult-collectionid): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - The collection identifier that was indexed.
   - `string CollectionId { get; set; }`
-- [CollectionId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-collectionid): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [CollectionId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-collectionid): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The collection identifier represented by this state.
   - `string CollectionId { get; set; }`
 - [CollectionId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-collectionid): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
@@ -7092,7 +7092,7 @@ Browse the published API surface by public member.
 - [DocumentCount](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexingresult-documentcount): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=DocumentCount&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - The number of documents stored in the replacement index.
   - `int DocumentCount { get; set; }`
-- [DocumentCount](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-documentcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=DocumentCount&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [DocumentCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-documentcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=DocumentCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of documents currently stored in the managed index.
   - `int DocumentCount { get; set; }`
 - [DocumentId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-documentid): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=DocumentId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
@@ -9189,10 +9189,10 @@ Browse the published API surface by public member.
 - [Failed](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-failed): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Failed&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling fails for one message.
   - `const string Failed`
-- [Failed](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-failed): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Failed&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-failed): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest indexing run failed.
   - `const string Failed`
-- [Failed](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexingoutcomes-failed): `Fields` on `KnowledgeIndexingOutcomes` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Failed&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexingoutcomes-failed): `Fields` on `KnowledgeIndexingOutcomes` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Indexing failed before a replacement index could be published.
   - `const string Failed`
 - [Failed](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-failed): `Fields` on `RuntimeLifecycleEventOutcome` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Failed&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
@@ -9231,7 +9231,7 @@ Browse the published API surface by public member.
 - [FailedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-failedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `failed` observations reported so far.
   - `int FailedCount { get; set; }`
-- [FailedCount](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-failedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-failedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of indexing runs that have failed.
   - `int FailedCount { get; set; }`
 - [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-failedcount): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
@@ -9402,7 +9402,7 @@ Browse the published API surface by public member.
 - [Fresh](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturefreshnessstates-fresh): `Fields` on `CdcCaptureFreshnessStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Fresh&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the provider reports the capture as fresh.
   - `const string Fresh`
-- [Fresh](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-fresh): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Fresh&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Fresh](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-fresh): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Fresh&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest successful index is within the configured freshness window.
   - `const string Fresh`
 - [Freshness](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-freshness): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Freshness&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
@@ -9426,7 +9426,7 @@ Browse the published API surface by public member.
 - [FreshnessStaleAfterSeconds](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-freshnessstaleafterseconds): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=FreshnessStaleAfterSeconds&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Gets or sets the number of seconds after which the latest successful index is considered stale for operator reporting.
   - `int FreshnessStaleAfterSeconds { get; set; }`
-- [FreshnessState](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-freshnessstate): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=FreshnessState&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [FreshnessState](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-freshnessstate): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshnessState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The operator-facing freshness state captured for the latest indexing observation.
   - `string FreshnessState { get; set; }`
 - [FreshUntilUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-freshuntilutc): `Properties` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshUntilUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -9798,7 +9798,7 @@ Browse the published API surface by public member.
 - [GetByClientId](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyclientid-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets all backend-for-frontend client bindings owned by the requested client identifier.
   - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetByClientId(string clientId)`
-- [GetByCollectionId](cephalon-retrieval.md#member-m-cephalon-retrieval-services-iknowledgeindexcatalog-getbycollectionid-system-string): `Methods` on `IKnowledgeIndexCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=GetByCollectionId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [GetByCollectionId](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-iknowledgeindexcatalog-getbycollectionid-system-string): `Methods` on `IKnowledgeIndexCatalog` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCollectionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the latest index state for a collection when one exists.
   - `KnowledgeIndexState GetByCollectionId(string collectionId)`
 - [GetByCompensationActionId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbycompensationactionid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCompensationActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
@@ -13767,13 +13767,16 @@ Browse the published API surface by public member.
 - [KnowledgeDocumentProviderContext](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgedocumentprovidercontext-ctor-cephalon-retrieval-services-knowledgecollectiondescriptor-system-string-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeDocumentProviderContext` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeDocumentProviderContext&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Creates provider context for a managed indexing request.
   - `KnowledgeDocumentProviderContext(KnowledgeCollectionDescriptor collection, string runId, DateTimeOffset requestedAtUtc, string actorId, string correlationId, IReadOnlyDictionary<string, string> metadata)`
+- [KnowledgeIndexes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-knowledgeindexes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=KnowledgeIndexes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the latest managed retrieval index states visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<KnowledgeIndexState> KnowledgeIndexes { get; set; }`
 - [KnowledgeIndexingRequest](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgeindexingrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeIndexingRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeIndexingRequest&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Creates a managed indexing request.
   - `KnowledgeIndexingRequest(string collectionId, string runId, string actorId, string correlationId, DateTimeOffset? requestedAtUtc, IReadOnlyDictionary<string, string> metadata)`
 - [KnowledgeIndexingResult](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgeindexingresult-ctor-system-string-system-string-system-string-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeIndexingResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeIndexingResult&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Describes the result of a managed indexing attempt.
   - `KnowledgeIndexingResult(string CollectionId, string RunId, string Outcome, DateTimeOffset ObservedAtUtc, DateTimeOffset? IndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string Error, IReadOnlyDictionary<string, string> Metadata)`
-- [KnowledgeIndexState](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgeindexstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeIndexState&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [KnowledgeIndexState](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgeindexstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeIndexState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Describes the latest managed index and query execution state for one knowledge collection.
   - `KnowledgeIndexState(string CollectionId, string LastRunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, DateTimeOffset? LastIndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string FreshnessState, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int QueryCount, DateTimeOffset? LastQueriedAtUtc, string LastQueryFingerprint, int LastQueryLength, int LastQueryMatchedCount, string LastActorId, string LastCorrelationId, string LastError, IReadOnlyDictionary<string, string> Metadata)`
 - [KnowledgeQueryMatch](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgequerymatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeQueryMatch&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
@@ -13836,7 +13839,7 @@ Browse the published API surface by public member.
 - [LastActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastactorid): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - The actor identifier from the latest observation when one was reported.
   - `string LastActorId { get; set; }`
-- [LastActorId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastactorid): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastActorId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastactorid): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest actor identifier when one was supplied by an indexing request.
   - `string LastActorId { get; set; }`
 - [LastAdministrationActor](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowmetadatakeys-lastadministrationactor): `Fields` on `TenantAdministrationWorkflowMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastAdministrationActor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
@@ -13914,7 +13917,7 @@ Browse the published API surface by public member.
 - [LastCorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastcorrelationid): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - The correlation identifier from the latest observation when one was reported.
   - `string LastCorrelationId { get; set; }`
-- [LastCorrelationId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastcorrelationid): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastCorrelationId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastCorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastcorrelationid): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest correlation identifier when one was supplied by an indexing request.
   - `string LastCorrelationId { get; set; }`
 - [LastDeliveryActor](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliveryactor): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastDeliveryActor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
@@ -14037,7 +14040,7 @@ Browse the published API surface by public member.
 - [LastError](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lasterror): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastError&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last operator-facing error summary when a failure was reported.
   - `string LastError { get; set; }`
-- [LastError](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lasterror): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastError&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lasterror): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest operator-facing error summary when indexing failed.
   - `string LastError { get; set; }`
 - [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lasterror): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
@@ -14112,7 +14115,7 @@ Browse the published API surface by public member.
 - [LastHttpStatusCode](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lasthttpstatuscode): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastHttpStatusCode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The latest HTTP success status code returned by the durable execution strategy when one was reported.
   - `int? LastHttpStatusCode { get; set; }`
-- [LastIndexedAtUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastindexedatutc): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastIndexedAtUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastIndexedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastindexedatutc): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastIndexedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the latest replacement index was published.
   - `DateTimeOffset? LastIndexedAtUtc { get; set; }`
 - [LastKnownVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastknownversion): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastKnownVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
@@ -14157,7 +14160,7 @@ Browse the published API surface by public member.
 - [LastObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastobservedatutc): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The UTC timestamp when the last observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
-- [LastObservedAtUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastobservedatutc): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastobservedatutc): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the latest indexing observation was recorded.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedatutc): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
@@ -14208,7 +14211,7 @@ Browse the published API surface by public member.
 - [LastOutcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastoutcome): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last reported outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
-- [LastOutcome](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastoutcome): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastoutcome): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest indexing outcome when one has been observed.
   - `string LastOutcome { get; set; }`
 - [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastoutcome): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
@@ -14334,16 +14337,16 @@ Browse the published API surface by public member.
 - [LastPublisherType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastpublishertype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastPublisherType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The last concrete publisher implementation type that accepted or rejected the publication when one was reported.
   - `string LastPublisherType { get; set; }`
-- [LastQueriedAtUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastqueriedatutc): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastQueriedAtUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastQueriedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastqueriedatutc): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastQueriedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the latest query was executed.
   - `DateTimeOffset? LastQueriedAtUtc { get; set; }`
-- [LastQueryFingerprint](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastqueryfingerprint): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastQueryFingerprint&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastQueryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastqueryfingerprint): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastQueryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - A non-reversible SHA-256 fingerprint of the latest query text.
   - `string LastQueryFingerprint { get; set; }`
-- [LastQueryLength](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastquerylength): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastQueryLength&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastQueryLength](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastquerylength): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastQueryLength&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The character length of the latest query text.
   - `int LastQueryLength { get; set; }`
-- [LastQueryMatchedCount](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastquerymatchedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastQueryMatchedCount&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastQueryMatchedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastquerymatchedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastQueryMatchedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of matches returned by the latest query.
   - `int LastQueryMatchedCount { get; set; }`
 - [LastReason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastreason): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastReason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
@@ -14373,7 +14376,7 @@ Browse the published API surface by public member.
 - [LastReportId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastreportid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastReportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest stable report identifier when the active runtime supplied one.
   - `string LastReportId { get; set; }`
-- [LastRunId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-lastrunid): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastRunId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastRunId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastrunid): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastRunId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest indexing run identifier when one has been observed.
   - `string LastRunId { get; set; }`
 - [LastStage](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststage): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastStage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
@@ -15963,7 +15966,7 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexingresult-metadata): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Optional operator-facing metadata captured with the result.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
-- [Metadata](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-metadata): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-metadata): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Optional operator-facing metadata captured with the latest indexing observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-metadata): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
@@ -17239,7 +17242,7 @@ Browse the published API surface by public member.
 - [NotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-notfound): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - No invitation matched the supplied tenant and invitation identifiers.
   - `const string NotFound`
-- [NotIndexed](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-notindexed): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=NotIndexed&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [NotIndexed](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-notindexed): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotIndexed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The collection has not been indexed.
   - `const string NotIndexed`
 - [NotNeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-notneeded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotNeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -20241,7 +20244,7 @@ Browse the published API surface by public member.
 - [QueryAsync](cephalon-retrieval.md#member-m-cephalon-retrieval-services-iknowledgequeryengine-queryasync-cephalon-retrieval-services-knowledgequeryrequest-system-threading-cancellationtoken): `Methods` on `IKnowledgeQueryEngine` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Queries the active managed index for a collection.
   - `ValueTask<KnowledgeQueryResult> QueryAsync(KnowledgeQueryRequest request, CancellationToken cancellationToken)`
-- [QueryCount](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-querycount): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryCount&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [QueryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-querycount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of managed queries executed against this collection.
   - `int QueryCount { get; set; }`
 - [QueryText](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryrequest-querytext): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryText&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
@@ -23511,10 +23514,10 @@ Browse the published API surface by public member.
 - [Skipped](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-skipped): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling intentionally skips one message.
   - `const string Skipped`
-- [Skipped](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-skipped): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Skipped](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-skipped): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest indexing run was skipped.
   - `const string Skipped`
-- [Skipped](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexingoutcomes-skipped): `Fields` on `KnowledgeIndexingOutcomes` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Skipped](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexingoutcomes-skipped): `Fields` on `KnowledgeIndexingOutcomes` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Indexing was skipped because required runtime inputs were not available.
   - `const string Skipped`
 - [SkippedCandidateIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-skippedcandidateids): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCandidateIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
@@ -23535,7 +23538,7 @@ Browse the published API surface by public member.
 - [SkippedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-skippedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `skipped` observations reported so far.
   - `int SkippedCount { get; set; }`
-- [SkippedCount](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-skippedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [SkippedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-skippedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of indexing runs that have been skipped.
   - `int SkippedCount { get; set; }`
 - [SkippedCount](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-skippedcount): `Fields` on `TenantDomainOwnershipProofPollingMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
@@ -23679,7 +23682,7 @@ Browse the published API surface by public member.
 - [SourceFreshnessUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexingresult-sourcefreshnessutc): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=SourceFreshnessUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - The newest source-document timestamp observed during indexing.
   - `DateTimeOffset? SourceFreshnessUtc { get; set; }`
-- [SourceFreshnessUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-sourcefreshnessutc): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=SourceFreshnessUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [SourceFreshnessUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-sourcefreshnessutc): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceFreshnessUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The newest source-document timestamp observed during the latest successful indexing run.
   - `DateTimeOffset? SourceFreshnessUtc { get; set; }`
 - [SourceHealthIsolationIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcehealthisolationids): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceHealthIsolationIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
@@ -24109,7 +24112,7 @@ Browse the published API surface by public member.
 - [Stale](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturefreshnessstates-stale): `Fields` on `CdcCaptureFreshnessStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Stale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the provider reports the capture as stale.
   - `const string Stale`
-- [Stale](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexfreshnessstates-stale): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Stale&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Stale](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-stale): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Stale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest successful index is older than the configured freshness window.
   - `const string Stale`
 - [StaleAfterSeconds](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-staleafterseconds): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=StaleAfterSeconds&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
@@ -24193,7 +24196,7 @@ Browse the published API surface by public member.
 - [Started](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-started): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Started&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling begins for one message.
   - `const string Started`
-- [Started](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexingoutcomes-started): `Fields` on `KnowledgeIndexingOutcomes` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Started&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Started](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexingoutcomes-started): `Fields` on `KnowledgeIndexingOutcomes` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Started&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Indexing started for a collection.
   - `const string Started`
 - [Started](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-started): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Started&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
@@ -24229,7 +24232,7 @@ Browse the published API surface by public member.
 - [StartedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-startedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `started` observations reported so far.
   - `int StartedCount { get; set; }`
-- [StartedCount](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-startedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-startedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of indexing runs that have started.
   - `int StartedCount { get; set; }`
 - [Starting](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-starting): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Starting&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
@@ -24397,7 +24400,7 @@ Browse the published API surface by public member.
 - [States](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventsubscriptionruntimecatalog-states): `Properties` on `IEventSubscriptionRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=States&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the currently known runtime-state entries ordered by subscription identifier.
   - `IReadOnlyList<EventSubscriptionRuntimeState> States { get; }`
-- [States](cephalon-retrieval.md#member-p-cephalon-retrieval-services-iknowledgeindexcatalog-states): `Properties` on `IKnowledgeIndexCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=States&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [States](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-iknowledgeindexcatalog-states): `Properties` on `IKnowledgeIndexCatalog` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the latest index state reported for registered knowledge collections.
   - `IReadOnlyList<KnowledgeIndexState> States { get; }`
 - [States](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-states): `Properties` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
@@ -24769,7 +24772,7 @@ Browse the published API surface by public member.
 - [Succeeded](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-succeeded): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling completes successfully for one message.
   - `const string Succeeded`
-- [Succeeded](cephalon-retrieval.md#member-f-cephalon-retrieval-services-knowledgeindexingoutcomes-succeeded): `Fields` on `KnowledgeIndexingOutcomes` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Succeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexingoutcomes-succeeded): `Fields` on `KnowledgeIndexingOutcomes` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Indexing completed successfully.
   - `const string Succeeded`
 - [Succeeded](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded): `Fields` on `RuntimeLifecycleEventOutcome` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
@@ -24790,7 +24793,7 @@ Browse the published API surface by public member.
 - [SucceededCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-succeededcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `succeeded` observations reported so far.
   - `int SucceededCount { get; set; }`
-- [SucceededCount](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-succeededcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-succeededcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of indexing runs that have completed successfully.
   - `int SucceededCount { get; set; }`
 - [SucceededMigrationTargetCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-succeededmigrationtargetcount): `Properties` on `DatabaseTopologyOperationalSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededMigrationTargetCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -25807,7 +25810,7 @@ Browse the published API surface by public member.
 - [TotalIndexedDocuments](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryresult-totalindexeddocuments): `Properties` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=TotalIndexedDocuments&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - The number of indexed documents available at query time.
   - `int TotalIndexedDocuments { get; set; }`
-- [TotalIndexRuns](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgeindexstate-totalindexruns): `Properties` on `KnowledgeIndexState` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=TotalIndexRuns&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [TotalIndexRuns](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-totalindexruns): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalIndexRuns&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the total number of indexing observations recorded for this collection.
   - `int TotalIndexRuns { get; }`
 - [TotalProducedMessageCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-totalproducedmessagecount): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalProducedMessageCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -26074,7 +26077,7 @@ Browse the published API surface by public member.
 - [TryGet](cephalon-retrieval.md#member-m-cephalon-retrieval-services-iknowledgecatalog-tryget-system-string-cephalon-retrieval-services-knowledgecollectiondescriptor): `Methods` on `IKnowledgeCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Attempts to resolve a knowledge collection descriptor by identifier.
   - `bool TryGet(string collectionId, out KnowledgeCollectionDescriptor collection)`
-- [TryGet](cephalon-retrieval.md#member-m-cephalon-retrieval-services-iknowledgeindexcatalog-tryget-system-string-cephalon-retrieval-services-knowledgeindexstate): `Methods` on `IKnowledgeIndexCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [TryGet](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-iknowledgeindexcatalog-tryget-system-string-cephalon-abstractions-retrieval-knowledgeindexstate): `Methods` on `IKnowledgeIndexCatalog` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Attempts to resolve the latest index state for a collection.
   - `bool TryGet(string collectionId, out KnowledgeIndexState state)`
 - [TryGet](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-tryget-system-string-system-string-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)

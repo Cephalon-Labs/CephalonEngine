@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Retrieval.Configuration;
 using System.Globalization;

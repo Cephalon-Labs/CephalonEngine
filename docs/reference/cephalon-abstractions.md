@@ -22,6 +22,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Abstractions.Modules`
 - `Cephalon.Abstractions.Patterns`
 - `Cephalon.Abstractions.Resilience`
+- `Cephalon.Abstractions.Retrieval`
 - `Cephalon.Abstractions.Technologies`
 - `Cephalon.Abstractions.Tenancy`
 - `Cephalon.Abstractions.Transports`
@@ -57992,6 +57993,450 @@ IReadOnlyList<string> TransportIds { get; set; }
 ```
 
 The transport identifiers whose HTTP surfaces are covered by the policy.
+
+<a id="namespace-cephalon-abstractions-retrieval"></a>
+
+## Namespace Cephalon.Abstractions.Retrieval
+
+<a id="type-cephalon-abstractions-retrieval-iknowledgeindexcatalog"></a>
+
+### `IKnowledgeIndexCatalog`
+
+Exposes operator-facing index and query execution state for the active retrieval runtime.
+
+#### Declaration
+```csharp
+public interface IKnowledgeIndexCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-retrieval-iknowledgeindexcatalog-states"></a>
+
+##### `States`
+
+```csharp
+IReadOnlyList<KnowledgeIndexState> States { get; }
+```
+
+Gets the latest index state reported for registered knowledge collections.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-retrieval-iknowledgeindexcatalog-getbycollectionid-system-string"></a>
+
+##### `GetByCollectionId`
+
+```csharp
+KnowledgeIndexState GetByCollectionId(string collectionId)
+```
+
+Gets the latest index state for a collection when one exists.
+
+Returns: The latest state for the collection, or `null` when no activity has been recorded.
+
+Parameters:
+- `collectionId`: The collection identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-retrieval-iknowledgeindexcatalog-tryget-system-string-cephalon-abstractions-retrieval-knowledgeindexstate"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string collectionId, out KnowledgeIndexState state)
+```
+
+Attempts to resolve the latest index state for a collection.
+
+Returns: `true` when state exists; otherwise `false`.
+
+Parameters:
+- `collectionId`: The collection identifier to resolve.
+- `state`: When this method returns, contains the state if one was recorded.
+
+<a id="type-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates"></a>
+
+### `KnowledgeIndexFreshnessStates`
+
+Defines stable freshness state identifiers for managed retrieval indexes.
+
+#### Declaration
+```csharp
+public static class KnowledgeIndexFreshnessStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-failed"></a>
+
+##### `Failed`
+
+```csharp
+const string Failed
+```
+
+The latest indexing run failed.
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-fresh"></a>
+
+##### `Fresh`
+
+```csharp
+const string Fresh
+```
+
+The latest successful index is within the configured freshness window.
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-notindexed"></a>
+
+##### `NotIndexed`
+
+```csharp
+const string NotIndexed
+```
+
+The collection has not been indexed.
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-skipped"></a>
+
+##### `Skipped`
+
+```csharp
+const string Skipped
+```
+
+The latest indexing run was skipped.
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-stale"></a>
+
+##### `Stale`
+
+```csharp
+const string Stale
+```
+
+The latest successful index is older than the configured freshness window.
+
+<a id="type-cephalon-abstractions-retrieval-knowledgeindexingoutcomes"></a>
+
+### `KnowledgeIndexingOutcomes`
+
+Defines stable outcome identifiers emitted by managed retrieval indexing.
+
+#### Declaration
+```csharp
+public static class KnowledgeIndexingOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexingoutcomes-failed"></a>
+
+##### `Failed`
+
+```csharp
+const string Failed
+```
+
+Indexing failed before a replacement index could be published.
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexingoutcomes-skipped"></a>
+
+##### `Skipped`
+
+```csharp
+const string Skipped
+```
+
+Indexing was skipped because required runtime inputs were not available.
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexingoutcomes-started"></a>
+
+##### `Started`
+
+```csharp
+const string Started
+```
+
+Indexing started for a collection.
+
+<a id="member-f-cephalon-abstractions-retrieval-knowledgeindexingoutcomes-succeeded"></a>
+
+##### `Succeeded`
+
+```csharp
+const string Succeeded
+```
+
+Indexing completed successfully.
+
+<a id="type-cephalon-abstractions-retrieval-knowledgeindexstate"></a>
+
+### `KnowledgeIndexState`
+
+Describes the latest managed index and query execution state for one knowledge collection.
+
+#### Declaration
+```csharp
+public sealed class KnowledgeIndexState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-retrieval-knowledgeindexstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `KnowledgeIndexState`
+
+```csharp
+KnowledgeIndexState(string CollectionId, string LastRunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, DateTimeOffset? LastIndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string FreshnessState, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int QueryCount, DateTimeOffset? LastQueriedAtUtc, string LastQueryFingerprint, int LastQueryLength, int LastQueryMatchedCount, string LastActorId, string LastCorrelationId, string LastError, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the latest managed index and query execution state for one knowledge collection.
+
+Parameters:
+- `CollectionId`: The collection identifier represented by this state.
+- `LastRunId`: The latest indexing run identifier when one has been observed.
+- `LastOutcome`: The latest indexing outcome when one has been observed.
+- `LastObservedAtUtc`: The UTC timestamp when the latest indexing observation was recorded.
+- `LastIndexedAtUtc`: The UTC timestamp when the latest replacement index was published.
+- `SourceFreshnessUtc`: The newest source-document timestamp observed during the latest successful indexing run.
+- `DocumentCount`: The number of documents currently stored in the managed index.
+- `FreshnessState`: The operator-facing freshness state captured for the latest indexing observation.
+- `StartedCount`: The number of indexing runs that have started.
+- `SucceededCount`: The number of indexing runs that have completed successfully.
+- `FailedCount`: The number of indexing runs that have failed.
+- `SkippedCount`: The number of indexing runs that have been skipped.
+- `QueryCount`: The number of managed queries executed against this collection.
+- `LastQueriedAtUtc`: The UTC timestamp when the latest query was executed.
+- `LastQueryFingerprint`: A non-reversible SHA-256 fingerprint of the latest query text.
+- `LastQueryLength`: The character length of the latest query text.
+- `LastQueryMatchedCount`: The number of matches returned by the latest query.
+- `LastActorId`: The latest actor identifier when one was supplied by an indexing request.
+- `LastCorrelationId`: The latest correlation identifier when one was supplied by an indexing request.
+- `LastError`: The latest operator-facing error summary when indexing failed.
+- `Metadata`: Optional operator-facing metadata captured with the latest indexing observation.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-collectionid"></a>
+
+##### `CollectionId`
+
+```csharp
+string CollectionId { get; set; }
+```
+
+The collection identifier represented by this state.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-documentcount"></a>
+
+##### `DocumentCount`
+
+```csharp
+int DocumentCount { get; set; }
+```
+
+The number of documents currently stored in the managed index.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; set; }
+```
+
+The number of indexing runs that have failed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-freshnessstate"></a>
+
+##### `FreshnessState`
+
+```csharp
+string FreshnessState { get; set; }
+```
+
+The operator-facing freshness state captured for the latest indexing observation.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastactorid"></a>
+
+##### `LastActorId`
+
+```csharp
+string LastActorId { get; set; }
+```
+
+The latest actor identifier when one was supplied by an indexing request.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastcorrelationid"></a>
+
+##### `LastCorrelationId`
+
+```csharp
+string LastCorrelationId { get; set; }
+```
+
+The latest correlation identifier when one was supplied by an indexing request.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; set; }
+```
+
+The latest operator-facing error summary when indexing failed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastindexedatutc"></a>
+
+##### `LastIndexedAtUtc`
+
+```csharp
+DateTimeOffset? LastIndexedAtUtc { get; set; }
+```
+
+The UTC timestamp when the latest replacement index was published.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the latest indexing observation was recorded.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; set; }
+```
+
+The latest indexing outcome when one has been observed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastqueriedatutc"></a>
+
+##### `LastQueriedAtUtc`
+
+```csharp
+DateTimeOffset? LastQueriedAtUtc { get; set; }
+```
+
+The UTC timestamp when the latest query was executed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastqueryfingerprint"></a>
+
+##### `LastQueryFingerprint`
+
+```csharp
+string LastQueryFingerprint { get; set; }
+```
+
+A non-reversible SHA-256 fingerprint of the latest query text.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastquerylength"></a>
+
+##### `LastQueryLength`
+
+```csharp
+int LastQueryLength { get; set; }
+```
+
+The character length of the latest query text.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastquerymatchedcount"></a>
+
+##### `LastQueryMatchedCount`
+
+```csharp
+int LastQueryMatchedCount { get; set; }
+```
+
+The number of matches returned by the latest query.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-lastrunid"></a>
+
+##### `LastRunId`
+
+```csharp
+string LastRunId { get; set; }
+```
+
+The latest indexing run identifier when one has been observed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Optional operator-facing metadata captured with the latest indexing observation.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-querycount"></a>
+
+##### `QueryCount`
+
+```csharp
+int QueryCount { get; set; }
+```
+
+The number of managed queries executed against this collection.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-skippedcount"></a>
+
+##### `SkippedCount`
+
+```csharp
+int SkippedCount { get; set; }
+```
+
+The number of indexing runs that have been skipped.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-sourcefreshnessutc"></a>
+
+##### `SourceFreshnessUtc`
+
+```csharp
+DateTimeOffset? SourceFreshnessUtc { get; set; }
+```
+
+The newest source-document timestamp observed during the latest successful indexing run.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-startedcount"></a>
+
+##### `StartedCount`
+
+```csharp
+int StartedCount { get; set; }
+```
+
+The number of indexing runs that have started.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-succeededcount"></a>
+
+##### `SucceededCount`
+
+```csharp
+int SucceededCount { get; set; }
+```
+
+The number of indexing runs that have completed successfully.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexstate-totalindexruns"></a>
+
+##### `TotalIndexRuns`
+
+```csharp
+int TotalIndexRuns { get; }
+```
+
+Gets the total number of indexing observations recorded for this collection.
 
 <a id="namespace-cephalon-abstractions-technologies"></a>
 

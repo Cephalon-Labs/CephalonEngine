@@ -7,6 +7,7 @@
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - agentics read contracts such as `AgentToolExecutionOutcomes`, `AgentToolRunState`, and `IAgentToolRunCatalog`
+- retrieval read contracts such as `KnowledgeIndexState`, `KnowledgeIndexFreshnessStates`, `KnowledgeIndexingOutcomes`, and `IKnowledgeIndexCatalog`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
 - execution/runtime-catalog contracts such as `DurableExecutionRuntimeDescriptor`, `IDurableExecutionRuntimeCatalog`, `DurableExecutionRuntimeState`, `IDurableExecutionRuntimeStateCatalog`, `SagaChoreographyRuntimeDescriptor`, `ISagaChoreographyRuntimeCatalog`, `SagaChoreographyPublicationRuntimeState`, and `ISagaChoreographyPublicationRuntimeStateCatalog`
@@ -30,6 +31,10 @@
 - `Agentics/AgentToolExecutionOutcomes.cs`
 - `Agentics/AgentToolRunState.cs`
 - `Agentics/IAgentToolRunCatalog.cs`
+- `Retrieval/IKnowledgeIndexCatalog.cs`
+- `Retrieval/KnowledgeIndexFreshnessStates.cs`
+- `Retrieval/KnowledgeIndexingOutcomes.cs`
+- `Retrieval/KnowledgeIndexState.cs`
 - `Capabilities/Capability.cs`
 - `Capabilities/ICapabilityRegistry.cs`
 - `Features/FeatureFlagDescriptor.cs`
@@ -170,6 +175,7 @@
 - `Localization`
 - `Modules`
 - `Patterns`
+- `Retrieval`
 - `Tenancy`
 - `Technologies`
 - `Transports`
@@ -189,6 +195,13 @@ The same host-agnostic rule now covers agent-tool run-state reads. `AgentToolExe
 operator tooling can read latest agent-tool run posture through `/engine/snapshot` and host routes
 without referencing `Cephalon.Agentics` directly. The implementation and write path still belong to
 the selected agentics pack through its dispatcher, executors, policies, observers, and reporter.
+
+The same host-agnostic rule now covers retrieval index-state reads. `KnowledgeIndexState`,
+`KnowledgeIndexFreshnessStates`, `KnowledgeIndexingOutcomes`, and `IKnowledgeIndexCatalog` live
+here so `Cephalon.Engine`, host adapters, and operator tooling can read managed knowledge-index
+posture through `/engine/snapshot` and host routes without referencing `Cephalon.Retrieval`
+directly. The indexing, query execution, document-provider integration, and write path still belong
+to the selected retrieval pack.
 
 The phase-8 families stay runtime-neutral on purpose:
 

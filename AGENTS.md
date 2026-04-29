@@ -179,6 +179,7 @@ Current source layout:
 - `src/Cephalon.Abstractions/Localization` -> `Cephalon.Abstractions.Localization`
 - `src/Cephalon.Abstractions/Modules` -> `Cephalon.Abstractions.Modules`
 - `src/Cephalon.Abstractions/Patterns` -> `Cephalon.Abstractions.Patterns`
+- `src/Cephalon.Abstractions/Retrieval` -> `Cephalon.Abstractions.Retrieval`
 - `src/Cephalon.Abstractions/Technologies` -> `Cephalon.Abstractions.Technologies`
 - `src/Cephalon.Abstractions/Transports` -> `Cephalon.Abstractions.Transports`
 - `src/Cephalon.Engine/AppModel` -> `Cephalon.Engine.AppModel`

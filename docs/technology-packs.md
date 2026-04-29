@@ -55,7 +55,7 @@ Current baseline packages:
   - projects runtime truth for the current Wolverine-backed outbox, dispatch loop, managed subscription bindings, and subscription readiness without turning Wolverine into an engine-core dependency
 - `Cephalon.Retrieval`
   - runtime services and capability activation for `KnowledgeRetrieval`
-  - registers `IKnowledgeCatalog`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, and `IKnowledgeQueryEngine` when the profile and options enable those paths
+  - registers `IKnowledgeCatalog`, the abstraction-level `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, and `IKnowledgeQueryEngine` when the profile and options enable those paths
   - lets modules add `IKnowledgeDocumentProvider` services so Cephalon can build a managed lexical index without making hosts own the retrieval loop
 - `Cephalon.MultiTenancy`
   - runtime services and capability activation for `MultiTenancy`
@@ -236,7 +236,8 @@ Shipped pack-specific extension points:
 - `Cephalon.Retrieval`
   - `IKnowledgeCollectionContributor` and `IKnowledgeCollectionRegistry`
   - `IKnowledgeDocumentProvider` for module-owned source documents
-  - `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and `IKnowledgeIndexCatalog` for the current managed lexical runtime path
+  - `IKnowledgeIndexer` and `IKnowledgeQueryEngine` for the current managed lexical runtime path
+  - abstraction-level `Cephalon.Abstractions.Retrieval.IKnowledgeIndexCatalog` for runtime-state reads through `/engine/knowledge-indexes` and `snapshot.KnowledgeIndexes`
 - `Cephalon.MultiTenancy`
   - `ITenantResolver` for host-neutral tenant resolution
   - `ITenantContextAccessor` for ambient tenant context in the current async flow

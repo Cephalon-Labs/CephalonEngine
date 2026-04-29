@@ -72,6 +72,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-resilience): 8 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience)
 
+## `Cephalon.Abstractions.Retrieval`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-retrieval): 4 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval)
+
 ## `Cephalon.Abstractions.Technologies`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-technologies): 41 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
@@ -726,7 +730,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Retrieval.Services`
 
-- [Cephalon.Retrieval](cephalon-retrieval.md#namespace-cephalon-retrieval-services): 18 public types [Browse](browse.html?assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
+- [Cephalon.Retrieval](cephalon-retrieval.md#namespace-cephalon-retrieval-services): 14 public types [Browse](browse.html?assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
 
 ## `Cephalon.Scaffolding.Generation`
 

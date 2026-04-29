@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Features;
 using Cephalon.Abstractions.Patterns;
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
@@ -34,7 +35,7 @@ namespace Cephalon.Engine.Runtime;
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
 /// without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details,
 /// diagnostics conventions, data product details, CDC capture details, data projection details, outbox details, inbox details,
-/// agent-tool run-state details, event-dispatch runtime details, event-subscription execution-readiness details,
+/// agent-tool run-state details, retrieval index-state details, event-dispatch runtime details, event-subscription execution-readiness details,
 /// durable-execution runtime details, authorization-policy details, database-migration playbook details,
 /// database-topology posture details, and lifecycle story data.
 /// </remarks>
@@ -135,6 +136,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the latest reported agent-tool run states visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<AgentToolRunState> AgentToolRuns { get; init; } = [];
+
+    /// <summary>
+    /// Gets the latest managed retrieval index states visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<KnowledgeIndexState> KnowledgeIndexes { get; init; } = [];
 
     /// <summary>
     /// Gets the configured event-dispatch runtimes visible to the runtime at the time the snapshot was created.

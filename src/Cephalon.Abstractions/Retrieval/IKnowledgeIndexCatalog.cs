@@ -1,4 +1,4 @@
-namespace Cephalon.Retrieval.Services;
+namespace Cephalon.Abstractions.Retrieval;
 
 /// <summary>
 /// Exposes operator-facing index and query execution state for the active retrieval runtime.

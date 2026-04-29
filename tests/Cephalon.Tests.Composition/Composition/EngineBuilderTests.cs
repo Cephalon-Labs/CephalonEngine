@@ -9,6 +9,7 @@ using Cephalon.Engine.Trust;
 using Cephalon.Engine.Transports;
 using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Patterns;
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
 using Cephalon.Abstractions.Audit;
@@ -2218,6 +2219,13 @@ public sealed class EngineBuilderTests
                 entry.Metadata["freshnessState"] == KnowledgeIndexFreshnessStates.Fresh &&
                 entry.Metadata["documentCount"] == "2" &&
                 entry.Metadata["queryCount"] == "1");
+        Assert.Contains(
+            snapshot.KnowledgeIndexes,
+            state => state.CollectionId == "runbooks" &&
+                state.LastOutcome == KnowledgeIndexingOutcomes.Succeeded &&
+                state.FreshnessState == KnowledgeIndexFreshnessStates.Fresh &&
+                state.DocumentCount == 2 &&
+                state.QueryCount == 1);
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Eventing");
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,

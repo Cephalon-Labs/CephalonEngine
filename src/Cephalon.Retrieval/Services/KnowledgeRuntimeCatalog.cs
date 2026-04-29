@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Retrieval.Configuration;
 using System.Globalization;
 using System.Security.Cryptography;

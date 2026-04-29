@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Retrieval;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Retrieval.Configuration;
 using Cephalon.Retrieval.Services;

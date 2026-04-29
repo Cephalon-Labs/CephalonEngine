@@ -1,4 +1,4 @@
-namespace Cephalon.Retrieval.Services;
+namespace Cephalon.Abstractions.Retrieval;
 
 /// <summary>
 /// Defines stable outcome identifiers emitted by managed retrieval indexing.

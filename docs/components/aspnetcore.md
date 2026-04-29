@@ -37,6 +37,7 @@
 - `/engine/event-dispatch-runtimes` and `/engine/event-dispatches` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
 - `/engine/agent-tool-runs` when agentics packs register the abstraction-level agent-tool run-state catalog
+- `/engine/knowledge-indexes` when retrieval packs register the abstraction-level knowledge-index catalog
 - `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
 - `/health`, `/health/live`, and `/health/ready` surfaces
 - opt-in HTTP request/response logging with bounded request and response body capture plus default sensitive-value redaction under `Engine:Observability:HttpLogging`
@@ -491,6 +492,13 @@ pack registers `IAgentToolRunCatalog`, `/engine/agent-tool-runs`,
 latest reported run posture from the abstraction-level catalog, while `/engine/snapshot` carries the
 same entries through `AgentToolRuns`. That keeps host adapters able to publish agent-tool runtime
 truth without depending on `Cephalon.Agentics` implementation types.
+
+The host now also exposes additive retrieval index-state answers directly. When a selected retrieval
+pack registers `IKnowledgeIndexCatalog`, `/engine/knowledge-indexes` and
+`/engine/knowledge-indexes/{collectionId}` publish the latest managed index and query posture from
+the abstraction-level catalog, while `/engine/snapshot` carries the same entries through
+`KnowledgeIndexes`. That keeps host adapters able to publish knowledge-index runtime truth without
+depending on `Cephalon.Retrieval` implementation types.
 
 ## Related docs
 
