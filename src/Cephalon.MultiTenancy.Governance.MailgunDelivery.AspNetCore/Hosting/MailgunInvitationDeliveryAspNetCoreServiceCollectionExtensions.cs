@@ -33,6 +33,7 @@ public static class MailgunInvitationDeliveryAspNetCoreServiceCollectionExtensio
         services.RemoveAll<MailgunInvitationDeliveryAspNetCoreOptions>();
         services.AddSingleton(options);
         services.TryAddSingleton<MailgunInvitationDeliveryStatusCallbackRuntimeCatalog>();
+        services.TryAddSingleton<MailgunInvitationDeliveryStatusCallbackReplayGuard>();
         services.TryAddSingleton<MailgunWebhookDeliveryStatusMapper>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MailgunInvitationDeliveryStatusRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, MailgunInvitationDeliveryAspNetCoreDiagnosticsConventionContributor>());

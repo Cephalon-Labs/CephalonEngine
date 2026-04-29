@@ -30,8 +30,8 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
     /// <remarks>
     /// The endpoint translates Mailgun webhook JSON payloads into the host-agnostic
     /// <see cref="ITenantInvitationDeliveryStatusReconciler" />. It can also verify Mailgun HMAC-SHA256 webhook
-    /// signatures when configured. Replay-token protection, durable inboxing, and provider polling remain host-managed
-    /// or future provider-pack responsibilities.
+    /// signatures and reject bounded process-local token replays when configured. Durable inboxing and provider polling
+    /// remain host-managed or future provider-pack responsibilities.
     /// </remarks>
     public static IEndpointRouteBuilder MapCephalonMailgunInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)
     {
@@ -52,15 +52,17 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                     HttpContext context,
                     MailgunWebhookDeliveryStatusMapper mapper,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
+                    MailgunInvitationDeliveryStatusCallbackReplayGuard replayGuard,
                     ILoggerFactory loggerFactory,
                     CancellationToken cancellationToken) =>
-                    TranslateCallbackAsync(context, mapper, reconciler, loggerFactory, options, routePattern, cancellationToken))
+                    TranslateCallbackAsync(context, mapper, reconciler, replayGuard, loggerFactory, options, routePattern, cancellationToken))
             .WithName("CephalonMailgunInvitationDeliveryStatusCallback")
             .Accepts<JsonElement>("application/json")
             .Produces<MailgunInvitationDeliveryStatusCallbackResult>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .ProducesProblem(StatusCodes.Status413PayloadTooLarge)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -87,7 +89,10 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                 options.RequireSignedWebhook,
                 options.GetWebhookSigningKey() is not null,
                 options.GetSignedWebhookSignatureToleranceSeconds(),
-                options.AcceptParentSignature);
+                options.AcceptParentSignature,
+                options.IsSignedWebhookReplayProtectionConfigured(),
+                options.GetSignedWebhookReplayRetentionSeconds(),
+                options.GetSignedWebhookReplayCacheLimit());
 
         return endpoints;
     }
@@ -96,6 +101,7 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
         HttpContext context,
         MailgunWebhookDeliveryStatusMapper mapper,
         ITenantInvitationDeliveryStatusReconciler reconciler,
+        MailgunInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         ILoggerFactory loggerFactory,
         MailgunInvitationDeliveryAspNetCoreOptions options,
         string routePattern,
@@ -154,6 +160,13 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                     statusCode: StatusCodes.Status413PayloadTooLarge);
             }
 
+            var replayProtection = RecordSignedWebhookReplayProtection(options, replayGuard, signatureVerification);
+            if (replayProtection.Failure is not null)
+            {
+                MailgunInvitationDeliveryAspNetCoreLogs.CallbackReplayRejected(logger, replayProtection.Outcome);
+                return replayProtection.Failure;
+            }
+
             var eventResults = new List<MailgunInvitationDeliveryStatusCallbackEventResult>(eventCount);
             var translatedEvents = 0;
             var reconciledEvents = 0;
@@ -161,36 +174,53 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
             var deniedEvents = 0;
             var index = 0;
 
-            foreach (var item in eventElements)
+            try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var mapping = mapper.Map(item, index);
-                if (!mapping.Translated)
+                foreach (var item in eventElements)
                 {
-                    skippedEvents++;
-                    eventResults.Add(mapping.ToSkippedEventResult());
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var mapping = mapper.Map(item, index);
+                    if (!mapping.Translated)
+                    {
+                        skippedEvents++;
+                        eventResults.Add(mapping.ToSkippedEventResult());
+                        index++;
+                        continue;
+                    }
+
+                    translatedEvents++;
+                    var reconciliationRequest = ApplySignatureAndReplayProtectionMetadata(
+                        mapping.Request!,
+                        signatureVerification,
+                        replayProtection,
+                        options);
+                    var reconciliation = await reconciler
+                        .ReconcileAsync(reconciliationRequest, cancellationToken)
+                        .ConfigureAwait(false);
+
+                    if (reconciliation.Reconciled)
+                    {
+                        reconciledEvents++;
+                    }
+                    else
+                    {
+                        deniedEvents++;
+                    }
+
+                    eventResults.Add(mapping.ToReconciledEventResult(reconciliation));
                     index++;
-                    continue;
                 }
+            }
+            catch
+            {
+                ForgetSignedWebhookReplayProtection(replayGuard, replayProtection);
+                throw;
+            }
 
-                translatedEvents++;
-                var reconciliationRequest = ApplySignatureVerificationMetadata(mapping.Request!, signatureVerification, options);
-                var reconciliation = await reconciler
-                    .ReconcileAsync(reconciliationRequest, cancellationToken)
-                    .ConfigureAwait(false);
-
-                if (reconciliation.Reconciled)
-                {
-                    reconciledEvents++;
-                }
-                else
-                {
-                    deniedEvents++;
-                }
-
-                eventResults.Add(mapping.ToReconciledEventResult(reconciliation));
-                index++;
+            if (translatedEvents > 0 && reconciledEvents == 0)
+            {
+                ForgetSignedWebhookReplayProtection(replayGuard, replayProtection);
             }
 
             MailgunInvitationDeliveryAspNetCoreLogs.CallbackAccepted(
@@ -211,7 +241,9 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                 signatureVerification.Verified,
                 signatureVerification.Outcome,
                 signatureVerification.SignatureField,
-                eventResults);
+                eventResults,
+                replayProtection.Configured,
+                replayProtection.Outcome);
 
             return Results.Json(result, SerializerOptions);
         }
@@ -389,6 +421,7 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                 timestampSeconds,
                 ageSeconds,
                 CreateSha256Fingerprint(signature),
+                CreateSha256Fingerprint(token),
                 "signature");
         }
 
@@ -400,6 +433,7 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                 timestampSeconds,
                 ageSeconds,
                 CreateSha256Fingerprint(parentSignature),
+                CreateSha256Fingerprint(token),
                 "parent-signature");
         }
 
@@ -418,28 +452,94 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                 : root;
     }
 
-    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureVerificationMetadata(
+    private static SignedWebhookReplayProtectionResult RecordSignedWebhookReplayProtection(
+        MailgunInvitationDeliveryAspNetCoreOptions options,
+        MailgunInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        SignedWebhookVerificationResult signatureVerification)
+    {
+        if (!options.IsSignedWebhookReplayProtectionConfigured() ||
+            !signatureVerification.Verified ||
+            string.IsNullOrWhiteSpace(signatureVerification.TokenFingerprint))
+        {
+            return SignedWebhookReplayProtectionResult.NotConfigured();
+        }
+
+        var decision = replayGuard.TryRecord(
+            signatureVerification.TokenFingerprint!,
+            DateTimeOffset.UtcNow,
+            TimeSpan.FromSeconds(options.GetSignedWebhookReplayRetentionSeconds()),
+            options.GetSignedWebhookReplayCacheLimit());
+        if (decision.Accepted)
+        {
+            return SignedWebhookReplayProtectionResult.Recorded(signatureVerification.TokenFingerprint);
+        }
+
+        return SignedWebhookReplayProtectionResult.Fail(
+            decision.Outcome,
+            signatureVerification.TokenFingerprint,
+            Results.Problem(
+                title: "Mailgun signed webhook replay was rejected.",
+                detail: "The verified Mailgun webhook token has already been accepted inside the configured process-local replay window.",
+                statusCode: StatusCodes.Status409Conflict));
+    }
+
+    private static void ForgetSignedWebhookReplayProtection(
+        MailgunInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        SignedWebhookReplayProtectionResult replayProtection)
+    {
+        if (replayProtection.Configured &&
+            !string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
+        {
+            replayGuard.Forget(replayProtection.ReplayFingerprint!);
+        }
+    }
+
+    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureAndReplayProtectionMetadata(
         TenantInvitationDeliveryStatusReconciliationRequest request,
         SignedWebhookVerificationResult signatureVerification,
+        SignedWebhookReplayProtectionResult replayProtection,
         MailgunInvitationDeliveryAspNetCoreOptions options)
     {
-        if (!signatureVerification.Configured)
+        if (!signatureVerification.Configured &&
+            !replayProtection.Configured)
         {
             return request;
         }
 
         var metadata = CopyMetadata(request.Metadata);
-        metadata["mailgunWebhookSignatureVerification"] = "verified";
-        metadata["mailgunWebhookSignatureVerificationOwnership"] = "cephalon-managed";
-        metadata["mailgunWebhookSignatureAlgorithm"] = "hmac-sha256";
-        metadata["mailgunWebhookSignaturePayload"] = "timestamp+token";
-        metadata["mailgunWebhookSignatureTimestamp"] =
-            signatureVerification.Timestamp!.Value.ToString(CultureInfo.InvariantCulture);
-        metadata["mailgunWebhookSignatureAgeSeconds"] =
-            signatureVerification.AgeSeconds!.Value.ToString(CultureInfo.InvariantCulture);
-        metadata["mailgunWebhookSignatureFingerprint"] = signatureVerification.SignatureFingerprint!;
-        metadata["mailgunWebhookSignatureField"] = signatureVerification.SignatureField ?? "signature";
-        metadata["mailgunWebhookParentSignatureAccepted"] = options.AcceptParentSignature.ToString().ToLowerInvariant();
+        if (signatureVerification.Configured)
+        {
+            metadata["mailgunWebhookSignatureVerification"] = "verified";
+            metadata["mailgunWebhookSignatureVerificationOwnership"] = "cephalon-managed";
+            metadata["mailgunWebhookSignatureAlgorithm"] = "hmac-sha256";
+            metadata["mailgunWebhookSignaturePayload"] = "timestamp+token";
+            metadata["mailgunWebhookSignatureTimestamp"] =
+                signatureVerification.Timestamp!.Value.ToString(CultureInfo.InvariantCulture);
+            metadata["mailgunWebhookSignatureAgeSeconds"] =
+                signatureVerification.AgeSeconds!.Value.ToString(CultureInfo.InvariantCulture);
+            metadata["mailgunWebhookSignatureFingerprint"] = signatureVerification.SignatureFingerprint!;
+            metadata["mailgunWebhookSignatureField"] = signatureVerification.SignatureField ?? "signature";
+            metadata["mailgunWebhookParentSignatureAccepted"] = options.AcceptParentSignature.ToString().ToLowerInvariant();
+        }
+
+        if (replayProtection.Configured)
+        {
+            metadata["mailgunWebhookReplayProtection"] = replayProtection.Outcome;
+            metadata["mailgunWebhookReplayProtectionOwnership"] = "cephalon-managed";
+            metadata["mailgunWebhookReplayProtectionPolicy"] = "signed-webhook-token";
+            metadata["mailgunWebhookReplayProtectionKey"] = "token-fingerprint";
+            metadata["mailgunWebhookReplayProtectionScope"] = "process-local";
+            metadata["mailgunWebhookReplayProtectionDurability"] = "none";
+            metadata["mailgunWebhookReplayProtectionRetentionSeconds"] =
+                options.GetSignedWebhookReplayRetentionSeconds().ToString(CultureInfo.InvariantCulture);
+            metadata["mailgunWebhookReplayProtectionCacheLimit"] =
+                options.GetSignedWebhookReplayCacheLimit().ToString(CultureInfo.InvariantCulture);
+
+            if (!string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
+            {
+                metadata["mailgunWebhookReplayProtectionFingerprint"] = replayProtection.ReplayFingerprint!;
+            }
+        }
 
         return new TenantInvitationDeliveryStatusReconciliationRequest(
             tenantId: request.TenantId,
@@ -608,21 +708,42 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
         long? Timestamp,
         int? AgeSeconds,
         string? SignatureFingerprint,
+        string? TokenFingerprint,
         string? SignatureField,
         string Outcome,
         IResult? Failure)
     {
         public static SignedWebhookVerificationResult NotConfigured() =>
-            new(false, false, null, null, null, null, "not-configured", null);
+            new(false, false, null, null, null, null, null, "not-configured", null);
 
         public static SignedWebhookVerificationResult CreateVerified(
             long timestamp,
             int ageSeconds,
             string signatureFingerprint,
+            string tokenFingerprint,
             string signatureField) =>
-            new(true, true, timestamp, ageSeconds, signatureFingerprint, signatureField, "verified", null);
+            new(true, true, timestamp, ageSeconds, signatureFingerprint, tokenFingerprint, signatureField, "verified", null);
 
         public static SignedWebhookVerificationResult Fail(string outcome, IResult failure) =>
-            new(true, false, null, null, null, null, outcome, failure);
+            new(true, false, null, null, null, null, null, outcome, failure);
+    }
+
+    private sealed record SignedWebhookReplayProtectionResult(
+        bool Configured,
+        string Outcome,
+        string? ReplayFingerprint,
+        IResult? Failure)
+    {
+        public static SignedWebhookReplayProtectionResult NotConfigured() =>
+            new(false, "not-configured", null, null);
+
+        public static SignedWebhookReplayProtectionResult Recorded(string replayFingerprint) =>
+            new(true, "recorded", replayFingerprint, null);
+
+        public static SignedWebhookReplayProtectionResult Fail(
+            string outcome,
+            string replayFingerprint,
+            IResult failure) =>
+            new(true, outcome, replayFingerprint, failure);
     }
 }

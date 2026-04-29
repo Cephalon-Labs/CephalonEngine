@@ -123,6 +123,8 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.False(result.SignedWebhookVerified);
         Assert.Equal("not-configured", result.SignedWebhookVerificationOutcome);
         Assert.Null(result.SignedWebhookSignatureField);
+        Assert.False(result.SignedWebhookReplayProtectionEnabled);
+        Assert.Equal("not-configured", result.SignedWebhookReplayProtectionOutcome);
         var eventResult = Assert.Single(result.Events);
         Assert.True(eventResult.Translated);
         Assert.True(eventResult.Reconciled);
@@ -158,6 +160,9 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("application-managed", endpointEntry.Metadata["mailgunWebhookInboxOwnership"]);
         Assert.Equal("not-configured", endpointEntry.Metadata["mailgunWebhookSignatureVerificationOwnership"]);
         Assert.Equal("not-configured", endpointEntry.Metadata["mailgunWebhookReplayProtectionOwnership"]);
+        Assert.Equal("false", endpointEntry.Metadata["mailgunWebhookReplayProtectionConfigured"]);
+        Assert.Equal("none", endpointEntry.Metadata["mailgunWebhookReplayProtectionPolicy"]);
+        Assert.Equal("none", endpointEntry.Metadata["mailgunWebhookReplayProtectionScope"]);
         Assert.Equal("false", endpointEntry.Metadata["mailgunWebhookSignatureVerificationRequired"]);
         Assert.Equal("false", endpointEntry.Metadata["mailgunWebhookSigningKeyConfigured"]);
         Assert.Equal("timestamp+token", endpointEntry.Metadata["mailgunWebhookSignaturePayload"]);
@@ -172,6 +177,9 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Contains(
             diagnosticsConvention.Events,
             definition => definition.Name == "MailgunInvitationDeliveryStatusCallbackSignatureRejected");
+        Assert.Contains(
+            diagnosticsConvention.Events,
+            definition => definition.Name == "MailgunInvitationDeliveryStatusCallbackReplayRejected");
     }
 
     [Fact]
@@ -244,6 +252,8 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.True(result.SignedWebhookVerified);
         Assert.Equal("verified", result.SignedWebhookVerificationOutcome);
         Assert.Equal("parent-signature", result.SignedWebhookSignatureField);
+        Assert.True(result.SignedWebhookReplayProtectionEnabled);
+        Assert.Equal("recorded", result.SignedWebhookReplayProtectionOutcome);
         Assert.Equal(1, result.ReconciledEvents);
         Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
         Assert.Equal("verified", invitation.Metadata["mailgunWebhookSignatureVerification"]);
@@ -256,11 +266,111 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal(
             "sha256:" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(signature))).ToLowerInvariant(),
             invitation.Metadata["mailgunWebhookSignatureFingerprint"]);
+        Assert.Equal("recorded", invitation.Metadata["mailgunWebhookReplayProtection"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["mailgunWebhookReplayProtectionOwnership"]);
+        Assert.Equal("signed-webhook-token", invitation.Metadata["mailgunWebhookReplayProtectionPolicy"]);
+        Assert.Equal("token-fingerprint", invitation.Metadata["mailgunWebhookReplayProtectionKey"]);
+        Assert.Equal("process-local", invitation.Metadata["mailgunWebhookReplayProtectionScope"]);
+        Assert.Equal("none", invitation.Metadata["mailgunWebhookReplayProtectionDurability"]);
+        Assert.Equal("300", invitation.Metadata["mailgunWebhookReplayProtectionRetentionSeconds"]);
+        Assert.Equal("4096", invitation.Metadata["mailgunWebhookReplayProtectionCacheLimit"]);
+        Assert.Equal(CreateSha256Fingerprint(token), invitation.Metadata["mailgunWebhookReplayProtectionFingerprint"]);
         Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookSignatureVerificationOwnership"]);
         Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookSignatureVerificationRequired"]);
         Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookSigningKeyConfigured"]);
         Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookParentSignatureAccepted"]);
+        Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookReplayProtectionConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookReplayProtectionOwnership"]);
+        Assert.Equal("signed-webhook-token", endpointEntry.Metadata["mailgunWebhookReplayProtectionPolicy"]);
+        Assert.Equal("token-fingerprint", endpointEntry.Metadata["mailgunWebhookReplayProtectionKey"]);
+        Assert.Equal("process-local", endpointEntry.Metadata["mailgunWebhookReplayProtectionScope"]);
+        Assert.Equal("none", endpointEntry.Metadata["mailgunWebhookReplayProtectionDurability"]);
+        Assert.Equal("300", endpointEntry.Metadata["mailgunWebhookReplayProtectionRetentionSeconds"]);
+        Assert.Equal("4096", endpointEntry.Metadata["mailgunWebhookReplayProtectionCacheLimit"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonMailgunInvitationDeliveryStatusCallbacksRejectsSignedWebhookReplayBeforeReconciliation()
+    {
+        const string signingKey = "mailgun-signing-key-replay-302";
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.Services.AddCephalonMailgunInvitationDeliveryAspNetCore(configure: options =>
+        {
+            options.RequireStatusCallbackAuthorization = false;
+            options.RequireSignedWebhook = true;
+            options.WebhookSigningKey = signingKey;
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-mailgun-replay",
+                    tenantId: "tenant-mailgun-replay",
+                    inviteeId: "replay@example.test",
+                    inviteeKind: "email",
+                    displayName: "Mailgun Replay Callback Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "<mailgun-message-replay@example.test>"
+                    }));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonMailgunInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        var token = "mailgun-token-replay-302-abcdefghijklmnopqrstuvwxyz";
+        var signature = CreateMailgunSignature(signingKey, timestamp, token);
+        var payload = CreateSignedMailgunEnvelopePayload(
+            CreateMailgunDeliveredEvent(
+                "mailgun-event-replay-302",
+                "mailgun-message-replay@example.test",
+                "tenant-mailgun-replay",
+                "invite-mailgun-replay",
+                "corr-mailgun-replay-302"),
+            timestamp,
+            token,
+            signature);
+
+        var firstResponse = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/mailgun",
+            new StringContent(payload, Encoding.UTF8, "application/json"));
+        var secondResponse = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/mailgun",
+            new StringContent(payload, Encoding.UTF8, "application/json"));
+
+        var firstResult = await firstResponse.Content.ReadFromJsonAsync<MailgunInvitationDeliveryStatusCallbackResult>(SerializerOptions);
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var observations = app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations;
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-mailgun-status-callbacks");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.NotNull(firstResult);
+        Assert.True(firstResult.SignedWebhookReplayProtectionEnabled);
+        Assert.Equal("recorded", firstResult.SignedWebhookReplayProtectionOutcome);
+        Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
+        Assert.Single(observations);
+        Assert.Equal("recorded", invitation.Metadata["mailgunWebhookReplayProtection"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["mailgunWebhookReplayProtectionOwnership"]);
+        Assert.Equal(CreateSha256Fingerprint(token), invitation.Metadata["mailgunWebhookReplayProtectionFingerprint"]);
+        Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookReplayProtectionConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookReplayProtectionOwnership"]);
+        Assert.Equal("process-local", endpointEntry.Metadata["mailgunWebhookReplayProtectionScope"]);
+        Assert.Equal("none", endpointEntry.Metadata["mailgunWebhookReplayProtectionDurability"]);
     }
 
     [Fact]
@@ -454,4 +564,7 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(signingKey));
         return Convert.ToHexString(hmac.ComputeHash(Encoding.UTF8.GetBytes(timestamp + token))).ToLowerInvariant();
     }
+
+    private static string CreateSha256Fingerprint(string value) =>
+        "sha256:" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value.Trim()))).ToLowerInvariant();
 }

@@ -8,8 +8,8 @@ namespace Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configurat
 /// </summary>
 /// <remarks>
 /// This adapter translates Mailgun webhook payloads and can require Mailgun HMAC-SHA256 webhook signature
-/// verification before reconciliation. Replay-token protection, durable callback inboxes, and provider polling are
-/// intentionally separate slices.
+/// verification before reconciliation. It can also reject duplicate signed webhook tokens inside a bounded
+/// process-local replay window. Durable callback inboxes and provider polling are intentionally separate slices.
 /// </remarks>
 public sealed class MailgunInvitationDeliveryAspNetCoreOptions
 {
@@ -17,6 +17,8 @@ public sealed class MailgunInvitationDeliveryAspNetCoreOptions
     internal const int DefaultMaxRequestBodyBytes = 256 * 1024;
     internal const int DefaultMaxEventsPerRequest = 1000;
     internal const int DefaultSignedWebhookSignatureToleranceSeconds = 300;
+    internal const int DefaultSignedWebhookReplayRetentionSeconds = 300;
+    internal const int DefaultSignedWebhookReplayCacheLimit = 4096;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MailgunInvitationDeliveryAspNetCoreOptions" /> class.
@@ -153,6 +155,35 @@ public sealed class MailgunInvitationDeliveryAspNetCoreOptions
     public bool AcceptParentSignature { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether verified Mailgun signed webhook tokens should be protected against
+    /// replay inside the current process.
+    /// </summary>
+    /// <remarks>
+    /// Replay protection is active only when <see cref="RequireSignedWebhook" /> is enabled and the request signature
+    /// verifies successfully. The built-in guard stores bounded token fingerprints in memory and does not claim
+    /// distributed replay protection or durable provider callback inbox ownership.
+    /// </remarks>
+    public bool EnableSignedWebhookReplayProtection { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the process-local retention window, in seconds, for verified Mailgun webhook token fingerprints.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint clamps the effective retention to at least one second. The default matches the signature timestamp
+    /// tolerance.
+    /// </remarks>
+    public int SignedWebhookReplayRetentionSeconds { get; set; } = DefaultSignedWebhookReplayRetentionSeconds;
+
+    /// <summary>
+    /// Gets or sets the maximum number of verified Mailgun webhook token fingerprints retained in the current process.
+    /// </summary>
+    /// <remarks>
+    /// When the bounded cache is full, the oldest token fingerprint is evicted before recording a new accepted signed
+    /// callback.
+    /// </remarks>
+    public int SignedWebhookReplayCacheLimit { get; set; } = DefaultSignedWebhookReplayCacheLimit;
+
+    /// <summary>
     /// Reads Mailgun ASP.NET Core callback options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -192,6 +223,9 @@ public sealed class MailgunInvitationDeliveryAspNetCoreOptions
         options.WebhookSigningKey = Normalize(section["WebhookSigningKey"]);
         options.SignedWebhookSignatureToleranceSeconds = ParseInt32(section["SignedWebhookSignatureToleranceSeconds"], options.SignedWebhookSignatureToleranceSeconds);
         options.AcceptParentSignature = ParseBoolean(section["AcceptParentSignature"], options.AcceptParentSignature);
+        options.EnableSignedWebhookReplayProtection = ParseBoolean(section["EnableSignedWebhookReplayProtection"], options.EnableSignedWebhookReplayProtection);
+        options.SignedWebhookReplayRetentionSeconds = ParseInt32(section["SignedWebhookReplayRetentionSeconds"], options.SignedWebhookReplayRetentionSeconds);
+        options.SignedWebhookReplayCacheLimit = ParseInt32(section["SignedWebhookReplayCacheLimit"], options.SignedWebhookReplayCacheLimit);
         return options;
     }
 
@@ -209,6 +243,15 @@ public sealed class MailgunInvitationDeliveryAspNetCoreOptions
 
     internal int GetSignedWebhookSignatureToleranceSeconds() =>
         Math.Clamp(SignedWebhookSignatureToleranceSeconds, 1, 86_400);
+
+    internal bool IsSignedWebhookReplayProtectionConfigured() =>
+        RequireSignedWebhook && EnableSignedWebhookReplayProtection;
+
+    internal int GetSignedWebhookReplayRetentionSeconds() =>
+        Math.Clamp(SignedWebhookReplayRetentionSeconds, 1, 86_400);
+
+    internal int GetSignedWebhookReplayCacheLimit() =>
+        Math.Clamp(SignedWebhookReplayCacheLimit, 1, 1_000_000);
 
     private static int ParseInt32(string? value, int defaultValue)
     {

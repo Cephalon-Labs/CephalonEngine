@@ -19,6 +19,8 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
     /// <param name="signedWebhookVerificationOutcome">The Mailgun webhook signature verification outcome.</param>
     /// <param name="signedWebhookSignatureField">The Mailgun signature field that verified the callback, when configured.</param>
     /// <param name="events">Per-event translation and reconciliation results.</param>
+    /// <param name="signedWebhookReplayProtectionEnabled">A value indicating whether process-local replay protection was enabled for this verified signed callback.</param>
+    /// <param name="signedWebhookReplayProtectionOutcome">The replay-protection outcome for this callback.</param>
     public MailgunInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -30,7 +32,9 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
         bool signedWebhookVerified,
         string signedWebhookVerificationOutcome,
         string? signedWebhookSignatureField,
-        IReadOnlyList<MailgunInvitationDeliveryStatusCallbackEventResult> events)
+        IReadOnlyList<MailgunInvitationDeliveryStatusCallbackEventResult> events,
+        bool signedWebhookReplayProtectionEnabled = false,
+        string signedWebhookReplayProtectionOutcome = "not-configured")
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -55,6 +59,10 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
             ? null
             : signedWebhookSignatureField.Trim();
         Events = events ?? throw new ArgumentNullException(nameof(events));
+        SignedWebhookReplayProtectionEnabled = signedWebhookReplayProtectionEnabled;
+        SignedWebhookReplayProtectionOutcome = string.IsNullOrWhiteSpace(signedWebhookReplayProtectionOutcome)
+            ? "unknown"
+            : signedWebhookReplayProtectionOutcome.Trim();
     }
 
     /// <summary>
@@ -106,6 +114,16 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
     /// Gets the Mailgun signature field that verified the callback, when configured.
     /// </summary>
     public string? SignedWebhookSignatureField { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether process-local replay protection was enabled for this verified signed callback.
+    /// </summary>
+    public bool SignedWebhookReplayProtectionEnabled { get; }
+
+    /// <summary>
+    /// Gets the replay-protection outcome for this callback.
+    /// </summary>
+    public string SignedWebhookReplayProtectionOutcome { get; }
 
     /// <summary>
     /// Gets per-event translation and reconciliation results.

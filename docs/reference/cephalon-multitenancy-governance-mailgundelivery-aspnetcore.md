@@ -18,7 +18,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures ASP.NET Core Mailgun webhook callback translation for tenant-invitation delivery status updates.
 
-Remarks: This adapter translates Mailgun webhook payloads and can require Mailgun HMAC-SHA256 webhook signature verification before reconciliation. Replay-token protection, durable callback inboxes, and provider polling are intentionally separate slices.
+Remarks: This adapter translates Mailgun webhook payloads and can require Mailgun HMAC-SHA256 webhook signature verification before reconciliation. It can also reject duplicate signed webhook tokens inside a bounded process-local replay window. Durable callback inboxes and provider polling are intentionally separate slices.
 
 #### Declaration
 ```csharp
@@ -60,6 +60,18 @@ string Actor { get; set; }
 ```
 
 Gets or sets the actor value recorded on translated Mailgun delivery status observations.
+
+<a id="member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration-mailguninvitationdeliveryaspnetcoreoptions-enablesignedwebhookreplayprotection"></a>
+
+##### `EnableSignedWebhookReplayProtection`
+
+```csharp
+bool EnableSignedWebhookReplayProtection { get; set; }
+```
+
+Gets or sets a value indicating whether verified Mailgun signed webhook tokens should be protected against replay inside the current process.
+
+Remarks: Replay protection is active only when `RequireSignedWebhook` is enabled and the request signature verifies successfully. The built-in guard stores bounded token fingerprints in memory and does not claim distributed replay protection or durable provider callback inbox ownership.
 
 <a id="member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration-mailguninvitationdeliveryaspnetcoreoptions-enablestatuscallbackendpoint"></a>
 
@@ -172,6 +184,30 @@ bool RequireStatusCallbackAuthorization { get; set; }
 Gets or sets a value indicating whether the Mailgun callback endpoint should require authorization.
 
 Remarks: The endpoint performs an in-handler authorization check by default. Hosts can satisfy it with ASP.NET Core authentication, a gateway, or deliberately disable it for trusted test hosts.
+
+<a id="member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration-mailguninvitationdeliveryaspnetcoreoptions-signedwebhookreplaycachelimit"></a>
+
+##### `SignedWebhookReplayCacheLimit`
+
+```csharp
+int SignedWebhookReplayCacheLimit { get; set; }
+```
+
+Gets or sets the maximum number of verified Mailgun webhook token fingerprints retained in the current process.
+
+Remarks: When the bounded cache is full, the oldest token fingerprint is evicted before recording a new accepted signed callback.
+
+<a id="member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration-mailguninvitationdeliveryaspnetcoreoptions-signedwebhookreplayretentionseconds"></a>
+
+##### `SignedWebhookReplayRetentionSeconds`
+
+```csharp
+int SignedWebhookReplayRetentionSeconds { get; set; }
+```
+
+Gets or sets the process-local retention window, in seconds, for verified Mailgun webhook token fingerprints.
+
+Remarks: The endpoint clamps the effective retention to at least one second. The default matches the signature timestamp tolerance.
 
 <a id="member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration-mailguninvitationdeliveryaspnetcoreoptions-signedwebhooksignaturetoleranceseconds"></a>
 
@@ -442,12 +478,12 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackeventresult"></a>
+<a id="member-m-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackeventresult-system-boolean-system-string"></a>
 
 ##### `MailgunInvitationDeliveryStatusCallbackResult`
 
 ```csharp
-MailgunInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool signedWebhookVerificationRequired, bool signedWebhookVerified, string signedWebhookVerificationOutcome, string signedWebhookSignatureField, IReadOnlyList<MailgunInvitationDeliveryStatusCallbackEventResult> events)
+MailgunInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool signedWebhookVerificationRequired, bool signedWebhookVerified, string signedWebhookVerificationOutcome, string signedWebhookSignatureField, IReadOnlyList<MailgunInvitationDeliveryStatusCallbackEventResult> events, bool signedWebhookReplayProtectionEnabled, string signedWebhookReplayProtectionOutcome)
 ```
 
 Creates a Mailgun callback translation response.
@@ -464,6 +500,8 @@ Parameters:
 - `signedWebhookVerificationOutcome`: The Mailgun webhook signature verification outcome.
 - `signedWebhookSignatureField`: The Mailgun signature field that verified the callback, when configured.
 - `events`: Per-event translation and reconciliation results.
+- `signedWebhookReplayProtectionEnabled`: A value indicating whether process-local replay protection was enabled for this verified signed callback.
+- `signedWebhookReplayProtectionOutcome`: The replay-protection outcome for this callback.
 
 #### Properties
 
@@ -506,6 +544,26 @@ string RoutePattern { get; }
 ```
 
 Gets the endpoint route pattern that accepted the callback.
+
+<a id="member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-signedwebhookreplayprotectionenabled"></a>
+
+##### `SignedWebhookReplayProtectionEnabled`
+
+```csharp
+bool SignedWebhookReplayProtectionEnabled { get; }
+```
+
+Gets a value indicating whether process-local replay protection was enabled for this verified signed callback.
+
+<a id="member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-signedwebhookreplayprotectionoutcome"></a>
+
+##### `SignedWebhookReplayProtectionOutcome`
+
+```csharp
+string SignedWebhookReplayProtectionOutcome { get; }
+```
+
+Gets the replay-protection outcome for this callback.
 
 <a id="member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-signedwebhooksignaturefield"></a>
 
@@ -600,7 +658,7 @@ IEndpointRouteBuilder MapCephalonMailgunInvitationDeliveryStatusCallbacks(this I
 
 Maps the optional Mailgun webhook tenant-invitation delivery status callback endpoint.
 
-Remarks: The endpoint translates Mailgun webhook JSON payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. It can also verify Mailgun HMAC-SHA256 webhook signatures when configured. Replay-token protection, durable inboxing, and provider polling remain host-managed or future provider-pack responsibilities.
+Remarks: The endpoint translates Mailgun webhook JSON payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. It can also verify Mailgun HMAC-SHA256 webhook signatures and reject bounded process-local token replays when configured. Durable inboxing and provider polling remain host-managed or future provider-pack responsibilities.
 
 Returns: The same endpoint route builder for fluent routing composition.
 

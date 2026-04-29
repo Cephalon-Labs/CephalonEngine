@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T22:29:00.0520662+00:00",
+  "GeneratedAtUtc": "2026-04-29T22:51:11.9959434+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -13012,7 +13012,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 17,
+        "Properties": 20,
         "Methods": 1
       }
     },
@@ -13117,7 +13117,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 13,
         "Methods": 0
       }
     },
@@ -48977,6 +48977,17 @@
       "Summary": "Gets or sets a value indicating whether verified SendGrid signed Event Webhook requests should be protected against replay inside the current process."
     },
     {
+      "DisplayName": "EnableSignedWebhookReplayProtection",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration-mailguninvitationdeliveryaspnetcoreoptions-enablesignedwebhookreplayprotection",
+      "Signature": "bool EnableSignedWebhookReplayProtection { get; set; }",
+      "Summary": "Gets or sets a value indicating whether verified Mailgun signed webhook tokens should be protected against replay inside the current process."
+    },
+    {
       "DisplayName": "EnableSnapshots",
       "Category": "Properties",
       "DeclaringTypeName": "EventSourcingOptions",
@@ -75867,8 +75878,8 @@
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md",
-      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackeventresult",
-      "Signature": "MailgunInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool signedWebhookVerificationRequired, bool signedWebhookVerified, string signedWebhookVerificationOutcome, string signedWebhookSignatureField, IReadOnlyList\u003CMailgunInvitationDeliveryStatusCallbackEventResult\u003E events)",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackeventresult-system-boolean-system-string",
+      "Signature": "MailgunInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool signedWebhookVerificationRequired, bool signedWebhookVerified, string signedWebhookVerificationOutcome, string signedWebhookSignatureField, IReadOnlyList\u003CMailgunInvitationDeliveryStatusCallbackEventResult\u003E events, bool signedWebhookReplayProtectionEnabled, string signedWebhookReplayProtectionOutcome)",
       "Summary": "Creates a Mailgun callback translation response."
     },
     {
@@ -108787,6 +108798,50 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookverified",
       "Signature": "bool SignedEventWebhookVerified { get; }",
       "Summary": "Gets a value indicating whether the required SendGrid signed Event Webhook signature verified."
+    },
+    {
+      "DisplayName": "SignedWebhookReplayCacheLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration-mailguninvitationdeliveryaspnetcoreoptions-signedwebhookreplaycachelimit",
+      "Signature": "int SignedWebhookReplayCacheLimit { get; set; }",
+      "Summary": "Gets or sets the maximum number of verified Mailgun webhook token fingerprints retained in the current process."
+    },
+    {
+      "DisplayName": "SignedWebhookReplayProtectionEnabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-signedwebhookreplayprotectionenabled",
+      "Signature": "bool SignedWebhookReplayProtectionEnabled { get; }",
+      "Summary": "Gets a value indicating whether process-local replay protection was enabled for this verified signed callback."
+    },
+    {
+      "DisplayName": "SignedWebhookReplayProtectionOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackresult-signedwebhookreplayprotectionoutcome",
+      "Signature": "string SignedWebhookReplayProtectionOutcome { get; }",
+      "Summary": "Gets the replay-protection outcome for this callback."
+    },
+    {
+      "DisplayName": "SignedWebhookReplayRetentionSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration-mailguninvitationdeliveryaspnetcoreoptions-signedwebhookreplayretentionseconds",
+      "Signature": "int SignedWebhookReplayRetentionSeconds { get; set; }",
+      "Summary": "Gets or sets the process-local retention window, in seconds, for verified Mailgun webhook token fingerprints."
     },
     {
       "DisplayName": "SignedWebhookSignatureField",

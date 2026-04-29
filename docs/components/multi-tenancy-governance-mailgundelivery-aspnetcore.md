@@ -17,8 +17,10 @@
 - optional Mailgun HMAC-SHA256 webhook signature verification over `timestamp + token` when `RequireSignedWebhook` and `WebhookSigningKey` are configured
 - Mailgun `parent-signature` verification for subaccount events when `AcceptParentSignature` remains enabled
 - safe signed-webhook metadata such as verification outcome, algorithm, timestamp, age, signature field, signature fingerprint, and parent-signature posture without storing the signing key, raw signature, raw payload, or recipient email
+- bounded process-local replay protection for verified signed webhook tokens when `EnableSignedWebhookReplayProtection` remains enabled
+- safe replay metadata such as replay outcome, policy, key type, scope, durability, retention, cache limit, and token fingerprint without storing the raw token
 - runtime truth through the `tenant-invitation-delivery-mailgun-status-callbacks` technology surface
-- stable diagnostics for accepted Mailgun callback payloads and rejected signed-webhook verification attempts
+- stable diagnostics for accepted Mailgun callback payloads, rejected signed-webhook verification attempts, and rejected signed-webhook token replays
 
 ## Main surfaces
 
@@ -77,7 +79,10 @@ Configuration example:
             "RequireSignedWebhook": true,
             "WebhookSigningKey": "${MAILGUN_WEBHOOK_SIGNING_KEY}",
             "SignedWebhookSignatureToleranceSeconds": 300,
-            "AcceptParentSignature": true
+            "AcceptParentSignature": true,
+            "EnableSignedWebhookReplayProtection": true,
+            "SignedWebhookReplayRetentionSeconds": 300,
+            "SignedWebhookReplayCacheLimit": 4096
           }
         }
       }
@@ -92,7 +97,9 @@ The endpoint returns `MailgunInvitationDeliveryStatusCallbackResult` with aggreg
 
 When `RequireSignedWebhook` is enabled, the endpoint verifies Mailgun's HMAC-SHA256 signature before translation or reconciliation. Verification uses the `signature.token`, `signature.timestamp`, and `signature.signature` values from Mailgun's signed JSON envelope, computes the lowercase hex digest over `timestamp + token` with `WebhookSigningKey`, enforces `SignedWebhookSignatureToleranceSeconds`, and fails closed with `401` for missing, malformed, stale, or invalid signatures. Mailgun subaccount events can also include `signature.parent-signature`; Cephalon accepts that field by default so hosts can validate subaccount events with the parent account signing key. Runtime metadata reports signature verification as `cephalon-managed` only when this option is enabled and keeps the signing key and raw signature out of runtime output.
 
-ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, Mailgun TLS client-certificate checks, or other host controls. This baseline does not protect Mailgun replay tokens, does not own durable callback inboxes, does not create distributed event-id ledgers, and does not poll providers. Runtime metadata reports replay protection as `not-configured` so operators do not confuse signed webhook authentication with durable replay or exactly-once delivery.
+When `RequireSignedWebhook` and `EnableSignedWebhookReplayProtection` are both enabled, verified Mailgun tokens are recorded as SHA-256 token fingerprints in a bounded process-local cache. A duplicate token inside `SignedWebhookReplayRetentionSeconds` is rejected with `409` before reconciliation and emits diagnostic `4570`. Runtime and reconciliation metadata report `mailgunWebhookReplayProtectionOwnership = cephalon-managed`, `mailgunWebhookReplayProtectionPolicy = signed-webhook-token`, `mailgunWebhookReplayProtectionKey = token-fingerprint`, `mailgunWebhookReplayProtectionScope = process-local`, and `mailgunWebhookReplayProtectionDurability = none` so operators can distinguish this from a durable or distributed inbox.
+
+ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, Mailgun TLS client-certificate checks, or other host controls. This baseline owns process-local Mailgun replay-token rejection only; durable callback inboxes, distributed replay ledgers, distributed event-id ledgers, provider polling, and exactly-once delivery remain future provider-pack or application-owned work.
 
 ## Provider references
 

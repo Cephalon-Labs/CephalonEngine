@@ -27,7 +27,11 @@ internal sealed class MailgunInvitationDeliveryStatusRuntimeSurfaceContributor(
         var signedWebhookSigningKeyConfigured = endpoint?.SignedWebhookSigningKeyConfigured ?? options.GetWebhookSigningKey() is not null;
         var signedWebhookSignatureToleranceSeconds = endpoint?.SignedWebhookSignatureToleranceSeconds ?? options.GetSignedWebhookSignatureToleranceSeconds();
         var acceptParentSignature = endpoint?.AcceptParentSignature ?? options.AcceptParentSignature;
+        var signedWebhookReplayProtectionConfigured = endpoint?.SignedWebhookReplayProtectionConfigured ?? options.IsSignedWebhookReplayProtectionConfigured();
+        var signedWebhookReplayRetentionSeconds = endpoint?.SignedWebhookReplayRetentionSeconds ?? options.GetSignedWebhookReplayRetentionSeconds();
+        var signedWebhookReplayCacheLimit = endpoint?.SignedWebhookReplayCacheLimit ?? options.GetSignedWebhookReplayCacheLimit();
         var signatureVerificationOwnership = requireSignedWebhook ? "cephalon-managed" : "not-configured";
+        var replayProtectionOwnership = signedWebhookReplayProtectionConfigured ? "cephalon-managed" : "not-configured";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -56,10 +60,15 @@ internal sealed class MailgunInvitationDeliveryStatusRuntimeSurfaceContributor(
             ["mailgunWebhookParentSignatureField"] = "signature.parent-signature",
             ["mailgunWebhookParentSignatureAccepted"] = acceptParentSignature.ToString().ToLowerInvariant(),
             ["mailgunWebhookSignatureToleranceSeconds"] = signedWebhookSignatureToleranceSeconds.ToString(CultureInfo.InvariantCulture),
-            ["mailgunWebhookReplayProtectionOwnership"] = "not-configured",
-            ["mailgunWebhookReplayProtectionPolicy"] = "none",
-            ["mailgunWebhookReplayProtectionScope"] = "none",
+            ["mailgunWebhookReplayProtectionConfigured"] = signedWebhookReplayProtectionConfigured.ToString().ToLowerInvariant(),
+            ["mailgunWebhookReplayProtectionOwnership"] = replayProtectionOwnership,
+            ["mailgunWebhookReplayProtectionPolicy"] = signedWebhookReplayProtectionConfigured ? "signed-webhook-token" : "none",
+            ["mailgunWebhookReplayProtectionKey"] = signedWebhookReplayProtectionConfigured ? "token-fingerprint" : "none",
+            ["mailgunWebhookReplayProtectionScope"] = signedWebhookReplayProtectionConfigured ? "process-local" : "none",
             ["mailgunWebhookReplayProtectionDurability"] = "none",
+            ["mailgunWebhookReplayProtectionRetentionSeconds"] = signedWebhookReplayRetentionSeconds.ToString(CultureInfo.InvariantCulture),
+            ["mailgunWebhookReplayProtectionCacheLimit"] = signedWebhookReplayCacheLimit.ToString(CultureInfo.InvariantCulture),
+            ["mailgunWebhookReplayProtectionRequiresSignature"] = "true",
             ["tenantInvitationDeliveryStatusReconcilerDependency"] = "ITenantInvitationDeliveryStatusReconciler",
             ["routePattern"] = routePattern,
             ["httpMethod"] = "POST",
@@ -134,7 +143,10 @@ internal sealed class MailgunInvitationDeliveryStatusCallbackRuntimeCatalog
         bool requireSignedWebhook,
         bool signedWebhookSigningKeyConfigured,
         int signedWebhookSignatureToleranceSeconds,
-        bool acceptParentSignature)
+        bool acceptParentSignature,
+        bool signedWebhookReplayProtectionConfigured,
+        int signedWebhookReplayRetentionSeconds,
+        int signedWebhookReplayCacheLimit)
     {
         lock (syncRoot)
         {
@@ -152,7 +164,10 @@ internal sealed class MailgunInvitationDeliveryStatusCallbackRuntimeCatalog
                 requireSignedWebhook,
                 signedWebhookSigningKeyConfigured,
                 signedWebhookSignatureToleranceSeconds,
-                acceptParentSignature);
+                acceptParentSignature,
+                signedWebhookReplayProtectionConfigured,
+                signedWebhookReplayRetentionSeconds,
+                signedWebhookReplayCacheLimit);
         }
     }
 }
@@ -171,4 +186,7 @@ internal sealed record MailgunInvitationDeliveryStatusCallbackEndpointRuntimeSna
     bool RequireSignedWebhook,
     bool SignedWebhookSigningKeyConfigured,
     int SignedWebhookSignatureToleranceSeconds,
-    bool AcceptParentSignature);
+    bool AcceptParentSignature,
+    bool SignedWebhookReplayProtectionConfigured,
+    int SignedWebhookReplayRetentionSeconds,
+    int SignedWebhookReplayCacheLimit);
