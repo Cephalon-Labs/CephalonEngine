@@ -306,9 +306,6 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 - `ENG-283` Retrieval query operator action seam (shipped, issue #792)
 - `ENG-284` Multi-tenancy invitation delivery status callback endpoint baseline (shipped, issue #793)
 - `ENG-285` Multi-tenancy invitation delivery status callback signature verification baseline (shipped, issue #800)
-
-### Sprint 96
-
 - `ENG-286` Multi-tenancy invitation delivery status callback replay protection baseline (shipped, issue #801)
 
 ### Later / not scheduled yet
