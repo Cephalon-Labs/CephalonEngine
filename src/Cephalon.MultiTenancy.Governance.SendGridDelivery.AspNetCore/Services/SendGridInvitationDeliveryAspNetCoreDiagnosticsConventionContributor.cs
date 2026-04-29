@@ -31,6 +31,13 @@ internal static class SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions
         MessageTemplate: "SendGrid invitation delivery status callback replay rejected with outcome {Outcome}.",
         Description: "Emitted when the ASP.NET Core SendGrid Event Webhook callback endpoint rejects a duplicate verified signed webhook inside the process-local replay window.");
 
+    public static readonly DiagnosticEventDefinition SendGridInvitationDeliveryStatusCallbackDuplicateEventSkipped = new(
+        Id: 4565,
+        Name: "SendGridInvitationDeliveryStatusCallbackDuplicateEventSkipped",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "SendGrid invitation delivery status callback duplicate event skipped for observation {ObservationId}.",
+        Description: "Emitted when the ASP.NET Core SendGrid Event Webhook callback endpoint skips a translated event whose SendGrid event id is already recorded in the observation store.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
@@ -39,7 +46,8 @@ internal static class SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions
         [
             SendGridInvitationDeliveryStatusCallbackAccepted,
             SendGridInvitationDeliveryStatusCallbackSignatureRejected,
-            SendGridInvitationDeliveryStatusCallbackReplayRejected
+            SendGridInvitationDeliveryStatusCallbackReplayRejected,
+            SendGridInvitationDeliveryStatusCallbackDuplicateEventSkipped
         ]);
 }
 
@@ -69,6 +77,14 @@ internal static class SendGridInvitationDeliveryAspNetCoreLogs
                 SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions.SendGridInvitationDeliveryStatusCallbackReplayRejected.Name),
             "SendGrid invitation delivery status callback replay rejected with outcome {Outcome}.");
 
+    private static readonly Action<ILogger, string, Exception?> CallbackDuplicateEventSkippedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            new EventId(
+                SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions.SendGridInvitationDeliveryStatusCallbackDuplicateEventSkipped.Id,
+                SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions.SendGridInvitationDeliveryStatusCallbackDuplicateEventSkipped.Name),
+            "SendGrid invitation delivery status callback duplicate event skipped for observation {ObservationId}.");
+
     public static void CallbackAccepted(
         ILogger logger,
         int eventCount,
@@ -82,4 +98,7 @@ internal static class SendGridInvitationDeliveryAspNetCoreLogs
 
     public static void CallbackReplayRejected(ILogger logger, string outcome) =>
         CallbackReplayRejectedMessage(logger, outcome, null);
+
+    public static void CallbackDuplicateEventSkipped(ILogger logger, string observationId) =>
+        CallbackDuplicateEventSkippedMessage(logger, observationId, null);
 }

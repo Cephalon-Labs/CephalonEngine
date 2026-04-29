@@ -12,12 +12,13 @@
 - `sg_message_id` correlation back to the stored SendGrid `X-Message-ID` provider message id by using the prefix before the first dot by default
 - optional SendGrid signed Event Webhook verification with ECDSA-SHA256 over `X-Twilio-Email-Event-Webhook-Timestamp` plus the exact raw request body bytes
 - bounded process-local replay protection for verified SendGrid signed Event Webhook callbacks, keyed by safe signature fingerprints
+- observation-store-backed SendGrid event-id idempotency that skips duplicate translated `sg_event_id` observations before reconciliation
 - safe status metadata such as SendGrid event id, message id, event type, status, bounce type, reason, event timestamp, and translation ownership
-- safe signed-webhook metadata such as verification outcome, replay outcome, algorithm, timestamp, age, and signature fingerprint without storing the public key or raw signature
+- safe signed-webhook and idempotency metadata such as verification outcome, replay outcome, event-id idempotency outcome, algorithm, timestamp, age, signature fingerprint, and observation id without storing the public key, raw signature, raw payload, or recipient email
 - observation-id seeding from `sg_event_id` through the normalized delivery-status observation store
 - optional engagement-event mapping when a host deliberately sets `MapEngagementEventsAsDelivered`
 - runtime truth through the `tenant-invitation-delivery-sendgrid-status-callbacks` technology surface
-- stable diagnostics for accepted SendGrid callback payloads, rejected signed-webhook verification attempts, and rejected signed-callback replays
+- stable diagnostics for accepted SendGrid callback payloads, rejected signed-webhook verification attempts, rejected signed-callback replays, and duplicate event-id skips
 
 ## Main surfaces
 
@@ -80,7 +81,8 @@ Configuration example:
             "SignedEventWebhookSignatureToleranceSeconds": 300,
             "EnableSignedEventWebhookReplayProtection": true,
             "SignedEventWebhookReplayRetentionSeconds": 300,
-            "SignedEventWebhookReplayCacheLimit": 4096
+            "SignedEventWebhookReplayCacheLimit": 4096,
+            "EnableEventWebhookEventIdIdempotency": true
           }
         }
       }
@@ -97,7 +99,9 @@ When `RequireSignedEventWebhook` is enabled, the endpoint verifies the SendGrid 
 
 When signed verification is required, `EnableSignedEventWebhookReplayProtection` is enabled by default. The endpoint records the verified signature fingerprint in a bounded process-local cache, returns `409` for a duplicate signed request inside `SignedEventWebhookReplayRetentionSeconds`, and reports replay policy/key/scope/durability/retention/cache posture through callback results, reconciliation metadata, diagnostics `4564`, and the runtime surface. The cache is intentionally non-durable and per process; it reduces accidental or malicious local replays without claiming cross-node replay protection or exactly-once delivery.
 
-ASP.NET Core authorization is still enabled by default and can be combined with SendGrid OAuth, gateway policy, or other host controls. Durable callback inboxes, distributed replay protection, provider polling, bounce orchestration beyond status translation, dynamic-template lifecycle management, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, public onboarding, tenant-admin UI, and distributed/provider-backed governance stores remain later provider-pack or application-owned work.
+When `EnableEventWebhookEventIdIdempotency` is enabled and the governance delivery-status observation store is enabled, each translated event with `sg_event_id` uses its stable `sendgrid:{sg_event_id}` observation id as an idempotency key against `ITenantInvitationDeliveryStatusObservationStore`. A duplicate event id is skipped before the reconciler is invoked, returns `200` with `DuplicateEvents` plus a per-event `duplicate-skipped` outcome, emits diagnostic `4565`, and reports `cephalon-managed` event-id idempotency posture through reconciliation metadata and the runtime surface. Durability follows the configured observation store: in-memory stores are process-local, while the built-in file store can persist observed ids locally. If the observation store is disabled, this idempotency lane reports `not-configured`.
+
+ASP.NET Core authorization is still enabled by default and can be combined with SendGrid OAuth, gateway policy, or other host controls. Durable callback inboxes, distributed replay protection, distributed event-id ledgers, provider polling, bounce orchestration beyond status translation, dynamic-template lifecycle management, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, public onboarding, tenant-admin UI, and distributed/provider-backed governance stores remain later provider-pack or application-owned work.
 
 ## Provider references
 

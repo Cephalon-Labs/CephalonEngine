@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T19:49:14.3015933+00:00",
+  "GeneratedAtUtc": "2026-04-29T20:27:06.3351147+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -15824,7 +15824,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 21,
+        "Properties": 22,
         "Methods": 1
       }
     },
@@ -15929,7 +15929,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 13,
         "Methods": 0
       }
     },
@@ -46382,6 +46382,17 @@
       "Summary": "Gets a value indicating whether the latest report represents a process-local duplicate-completed suppression."
     },
     {
+      "DisplayName": "DuplicateEvents",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-duplicateevents",
+      "Signature": "int DuplicateEvents { get; }",
+      "Summary": "Gets the number of translated SendGrid events skipped because their event id was already observed."
+    },
+    {
       "DisplayName": "DuplicateEvidencePresent",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates",
@@ -48338,6 +48349,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enabledomainownershipverificationworkflow",
       "Signature": "bool EnableDomainOwnershipVerificationWorkflow { get; set; }",
       "Summary": "Gets or sets a value indicating whether the built-in tenant-domain ownership verification workflow executor is active."
+    },
+    {
+      "DisplayName": "EnableEventWebhookEventIdIdempotency",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-enableeventwebhookeventididempotency",
+      "Signature": "bool EnableEventWebhookEventIdIdempotency { get; set; }",
+      "Summary": "Gets or sets a value indicating whether SendGrid Event Webhook event identifiers should be used to skip duplicate translated events that are already present in the delivery-status observation store."
     },
     {
       "DisplayName": "EnableExecution",
@@ -107432,8 +107454,8 @@
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
-      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-system-boolean-system-boolean-system-string-system-boolean-system-string",
-      "Signature": "SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList\u003CSendGridInvitationDeliveryStatusCallbackEventResult\u003E events, bool signedEventWebhookVerificationRequired, bool signedEventWebhookVerified, string signedEventWebhookVerificationOutcome, bool signedEventWebhookReplayProtectionEnabled, string signedEventWebhookReplayProtectionOutcome)",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-system-boolean-system-boolean-system-string-system-boolean-system-string-system-int32",
+      "Signature": "SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList\u003CSendGridInvitationDeliveryStatusCallbackEventResult\u003E events, bool signedEventWebhookVerificationRequired, bool signedEventWebhookVerified, string signedEventWebhookVerificationOutcome, bool signedEventWebhookReplayProtectionEnabled, string signedEventWebhookReplayProtectionOutcome, int duplicateEvents)",
       "Summary": "Creates a SendGrid callback translation response."
     },
     {
@@ -117903,7 +117925,7 @@
       "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-translatedevents",
       "Signature": "int TranslatedEvents { get; }",
-      "Summary": "Gets the number of events translated into Cephalon reconciliation requests."
+      "Summary": "Gets the number of events translated into Cephalon delivery-status events."
     },
     {
       "DisplayName": "TransportDescriptor",

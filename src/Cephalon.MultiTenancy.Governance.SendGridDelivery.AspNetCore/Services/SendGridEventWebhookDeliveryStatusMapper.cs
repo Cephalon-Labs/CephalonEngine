@@ -130,6 +130,8 @@ internal sealed class SendGridEventWebhookDeliveryStatusMapper(SendGridInvitatio
             ["sendGridEventWebhookSignatureVerificationOwnership"] = "not-configured",
             ["sendGridEventWebhookReplayProtection"] = "not-configured",
             ["sendGridEventWebhookReplayProtectionOwnership"] = "not-configured",
+            ["sendGridEventWebhookEventIdIdempotency"] = "not-configured",
+            ["sendGridEventWebhookEventIdIdempotencyOwnership"] = "not-configured",
             ["sendGridEventIndex"] = index.ToString(CultureInfo.InvariantCulture),
             ["sendGridProviderMessageIdSource"] = options.NormalizeProviderMessageIdFromSgMessageId
                 ? "sg_message_id-prefix"
@@ -351,4 +353,18 @@ internal sealed record SendGridEventWebhookDeliveryStatusMappingResult(
             translated: true,
             reconciled: reconciliation.Reconciled,
             reconciliation.Reason);
+
+    public SendGridInvitationDeliveryStatusCallbackEventResult ToDuplicateEventResult(string reason) =>
+        new(
+            Index,
+            SendGridEventId,
+            SendGridMessageId,
+            SendGridEventType,
+            TenantId,
+            InvitationId,
+            Status,
+            "duplicate-skipped",
+            translated: true,
+            reconciled: false,
+            reason);
 }

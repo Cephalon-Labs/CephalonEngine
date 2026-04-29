@@ -20,6 +20,7 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
     /// <param name="signedEventWebhookVerificationOutcome">The signed Event Webhook verification outcome for this callback.</param>
     /// <param name="signedEventWebhookReplayProtectionEnabled">A value indicating whether process-local replay protection was enabled for this verified signed callback.</param>
     /// <param name="signedEventWebhookReplayProtectionOutcome">The replay-protection outcome for this callback.</param>
+    /// <param name="duplicateEvents">The number of translated SendGrid events skipped because their event id was already observed.</param>
     public SendGridInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -32,7 +33,8 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
         bool signedEventWebhookVerified = false,
         string signedEventWebhookVerificationOutcome = "not-configured",
         bool signedEventWebhookReplayProtectionEnabled = false,
-        string signedEventWebhookReplayProtectionOutcome = "not-configured")
+        string signedEventWebhookReplayProtectionOutcome = "not-configured",
+        int duplicateEvents = 0)
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -55,6 +57,7 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
         SignedEventWebhookReplayProtectionOutcome = string.IsNullOrWhiteSpace(signedEventWebhookReplayProtectionOutcome)
             ? "unknown"
             : signedEventWebhookReplayProtectionOutcome.Trim();
+        DuplicateEvents = duplicateEvents;
     }
 
     /// <summary>
@@ -68,7 +71,7 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
     public int TotalEvents { get; }
 
     /// <summary>
-    /// Gets the number of events translated into Cephalon reconciliation requests.
+    /// Gets the number of events translated into Cephalon delivery-status events.
     /// </summary>
     public int TranslatedEvents { get; }
 
@@ -86,6 +89,11 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
     /// Gets the number of translated events denied by the reconciler.
     /// </summary>
     public int DeniedEvents { get; }
+
+    /// <summary>
+    /// Gets the number of translated SendGrid events skipped because their event id was already observed.
+    /// </summary>
+    public int DuplicateEvents { get; }
 
     /// <summary>
     /// Gets per-event translation and reconciliation results.

@@ -99,6 +99,7 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal(1, result.ReconciledEvents);
         Assert.Equal(0, result.SkippedEvents);
         Assert.Equal(0, result.DeniedEvents);
+        Assert.Equal(0, result.DuplicateEvents);
         Assert.False(result.SignedEventWebhookVerificationRequired);
         Assert.False(result.SignedEventWebhookVerified);
         Assert.Equal("not-configured", result.SignedEventWebhookVerificationOutcome);
@@ -127,6 +128,12 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal("sendgrid-message-295.filter-001", invitation.Metadata["sendGridMessageId"]);
         Assert.Equal("not-configured", invitation.Metadata["sendGridEventWebhookReplayProtection"]);
         Assert.Equal("not-configured", invitation.Metadata["sendGridEventWebhookReplayProtectionOwnership"]);
+        Assert.Equal("pending-record", invitation.Metadata["sendGridEventWebhookEventIdIdempotency"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["sendGridEventWebhookEventIdIdempotencyOwnership"]);
+        Assert.Equal("sendgrid-event-id", invitation.Metadata["sendGridEventWebhookEventIdIdempotencyPolicy"]);
+        Assert.Equal("sg_event_id", invitation.Metadata["sendGridEventWebhookEventIdIdempotencyKey"]);
+        Assert.Equal("observation-store", invitation.Metadata["sendGridEventWebhookEventIdIdempotencyScope"]);
+        Assert.Equal("sendgrid:sg-event-295", invitation.Metadata["sendGridEventWebhookEventIdObservationId"]);
         Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
         Assert.Equal("sendgrid-event-webhook", observation.Source);
         Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
@@ -141,10 +148,18 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal("not-configured", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionOwnership"]);
         Assert.Equal("none", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionPolicy"]);
         Assert.Equal("none", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionScope"]);
+        Assert.Equal("true", endpointEntry.Metadata["sendGridEventWebhookEventIdIdempotencyConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["sendGridEventWebhookEventIdIdempotencyOwnership"]);
+        Assert.Equal("sendgrid-event-id", endpointEntry.Metadata["sendGridEventWebhookEventIdIdempotencyPolicy"]);
+        Assert.Equal("sg_event_id", endpointEntry.Metadata["sendGridEventWebhookEventIdIdempotencyKey"]);
+        Assert.Equal("observation-store", endpointEntry.Metadata["sendGridEventWebhookEventIdIdempotencyScope"]);
         Assert.Equal("true", endpointEntry.Metadata["normalizeProviderMessageIdFromSgMessageId"]);
         Assert.Contains(
             diagnosticsConvention.Events,
             definition => definition.Name == "SendGridInvitationDeliveryStatusCallbackAccepted");
+        Assert.Contains(
+            diagnosticsConvention.Events,
+            definition => definition.Name == "SendGridInvitationDeliveryStatusCallbackDuplicateEventSkipped");
     }
 
     [Fact]
@@ -224,6 +239,7 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal("verified", result.SignedEventWebhookVerificationOutcome);
         Assert.True(result.SignedEventWebhookReplayProtectionEnabled);
         Assert.Equal("recorded", result.SignedEventWebhookReplayProtectionOutcome);
+        Assert.Equal(0, result.DuplicateEvents);
         Assert.Equal(1, result.ReconciledEvents);
         Assert.Equal("verified", invitation.Metadata["sendGridEventWebhookSignatureVerification"]);
         Assert.Equal("cephalon-managed", invitation.Metadata["sendGridEventWebhookSignatureVerificationOwnership"]);
@@ -238,6 +254,8 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal("process-local", invitation.Metadata["sendGridEventWebhookReplayProtectionScope"]);
         Assert.Equal("none", invitation.Metadata["sendGridEventWebhookReplayProtectionDurability"]);
         Assert.StartsWith("sha256:", invitation.Metadata["sendGridEventWebhookReplayProtectionFingerprint"], StringComparison.Ordinal);
+        Assert.Equal("pending-record", invitation.Metadata["sendGridEventWebhookEventIdIdempotency"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["sendGridEventWebhookEventIdIdempotencyOwnership"]);
         Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["sendGridEventWebhookSignatureVerificationOwnership"]);
         Assert.Equal("true", endpointEntry.Metadata["sendGridEventWebhookSignatureVerificationRequired"]);
@@ -258,6 +276,9 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Contains(
             diagnosticsConvention.Events,
             definition => definition.Name == "SendGridInvitationDeliveryStatusCallbackReplayRejected");
+        Assert.Contains(
+            diagnosticsConvention.Events,
+            definition => definition.Name == "SendGridInvitationDeliveryStatusCallbackDuplicateEventSkipped");
     }
 
     [Fact]
@@ -396,6 +417,99 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonSendGridInvitationDeliveryStatusCallbacksSkipsDuplicateSendGridEventIdBeforeReconciliation()
+    {
+        using var signingKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.Services.AddCephalonSendGridInvitationDeliveryAspNetCore(configure: options =>
+        {
+            options.RequireStatusCallbackAuthorization = false;
+            options.RequireSignedEventWebhook = true;
+            options.SignedEventWebhookPublicKey = signingKey.ExportSubjectPublicKeyInfoPem();
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-sendgrid-event-idempotency",
+                    tenantId: "tenant-sendgrid-event-idempotency",
+                    inviteeId: "event-idempotency@example.test",
+                    inviteeKind: "email",
+                    displayName: "SendGrid Event Idempotency Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "sendgrid-message-298"
+                    }));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonSendGridInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var payload = JsonSerializer.Serialize(
+            new object[]
+            {
+                new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["event"] = "delivered",
+                    ["timestamp"] = 1777478400,
+                    ["sg_event_id"] = "sg-event-298",
+                    ["sg_message_id"] = "sendgrid-message-298.filter-001",
+                    ["status"] = "2.0.0",
+                    ["reason"] = "250 OK",
+                    ["cephalonTenantId"] = "tenant-sendgrid-event-idempotency",
+                    ["cephalonInvitationId"] = "invite-sendgrid-event-idempotency"
+                }
+            },
+            SerializerOptions);
+        var firstTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        var secondTimestamp = (DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 1).ToString(CultureInfo.InvariantCulture);
+        using var firstRequest = CreateSignedSendGridRequest(payload, firstTimestamp, CreateSendGridSignature(signingKey, firstTimestamp, payload));
+        using var secondRequest = CreateSignedSendGridRequest(payload, secondTimestamp, CreateSendGridSignature(signingKey, secondTimestamp, payload));
+
+        var firstResponse = await client.SendAsync(firstRequest);
+        var secondResponse = await client.SendAsync(secondRequest);
+
+        var firstResult = await firstResponse.Content.ReadFromJsonAsync<SendGridInvitationDeliveryStatusCallbackResult>(SerializerOptions);
+        var secondResult = await secondResponse.Content.ReadFromJsonAsync<SendGridInvitationDeliveryStatusCallbackResult>(SerializerOptions);
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var observations = app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations;
+        var duplicateEvent = Assert.Single(secondResult!.Events);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-sendgrid-status-callbacks");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+        Assert.NotNull(firstResult);
+        Assert.NotNull(secondResult);
+        Assert.Equal(1, firstResult.ReconciledEvents);
+        Assert.Equal(0, firstResult.DuplicateEvents);
+        Assert.Equal(0, secondResult.ReconciledEvents);
+        Assert.Equal(1, secondResult.TranslatedEvents);
+        Assert.Equal(1, secondResult.DuplicateEvents);
+        Assert.True(duplicateEvent.Translated);
+        Assert.False(duplicateEvent.Reconciled);
+        Assert.Equal("duplicate-skipped", duplicateEvent.Outcome);
+        Assert.Single(observations);
+        Assert.Equal("sendgrid:sg-event-298", observations[0].ObservationId);
+        Assert.Equal("sendgrid:sg-event-298", invitation.Metadata["sendGridEventWebhookEventIdObservationId"]);
+        Assert.Equal("pending-record", invitation.Metadata["sendGridEventWebhookEventIdIdempotency"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["sendGridEventWebhookEventIdIdempotencyOwnership"]);
+        Assert.Equal("observation-store", endpointEntry.Metadata["sendGridEventWebhookEventIdIdempotencyScope"]);
+    }
+
+    [Fact]
     public async Task MapCephalonSendGridInvitationDeliveryStatusCallbacksSkipsUnrelatedEventsWithoutLeakingRecipientEmail()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -442,6 +556,7 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal(0, result.ReconciledEvents);
         Assert.Equal(1, result.SkippedEvents);
         Assert.Equal(0, result.DeniedEvents);
+        Assert.Equal(0, result.DuplicateEvents);
         var eventResult = Assert.Single(result.Events);
         Assert.False(eventResult.Translated);
         Assert.False(eventResult.Reconciled);

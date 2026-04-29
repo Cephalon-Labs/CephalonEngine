@@ -1,15 +1,20 @@
 using Cephalon.Abstractions.Technologies;
+using Cephalon.MultiTenancy.Governance.Configuration;
 using Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 namespace Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting;
 
 internal sealed class SendGridInvitationDeliveryStatusRuntimeSurfaceContributor(
     SendGridInvitationDeliveryAspNetCoreOptions options,
-    SendGridInvitationDeliveryStatusCallbackRuntimeCatalog runtimeCatalog) : ITechnologyRuntimeContributor
+    SendGridInvitationDeliveryStatusCallbackRuntimeCatalog runtimeCatalog,
+    IServiceProvider serviceProvider) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var governanceOptions = serviceProvider.GetService<MultiTenancyGovernanceOptions>();
+        var observationStoreConfigured = governanceOptions?.EnableInvitationDeliveryStatusObservationStore == true;
         var endpoint = runtimeCatalog.Endpoint;
         var endpointEnabled = options.EnableStatusCallbackEndpoint;
         var endpointMapped = endpoint is not null;
@@ -31,8 +36,12 @@ internal sealed class SendGridInvitationDeliveryStatusRuntimeSurfaceContributor(
         var signedEventWebhookReplayProtectionConfigured = endpoint?.SignedEventWebhookReplayProtectionConfigured ?? options.IsSignedEventWebhookReplayProtectionConfigured();
         var signedEventWebhookReplayRetentionSeconds = endpoint?.SignedEventWebhookReplayRetentionSeconds ?? options.GetSignedEventWebhookReplayRetentionSeconds();
         var signedEventWebhookReplayCacheLimit = endpoint?.SignedEventWebhookReplayCacheLimit ?? options.GetSignedEventWebhookReplayCacheLimit();
+        var eventIdIdempotencyConfigured =
+            (endpoint?.EventWebhookEventIdIdempotencyConfigured ?? options.IsEventWebhookEventIdIdempotencyConfigured()) &&
+            observationStoreConfigured;
         var signatureVerificationOwnership = requireSignedEventWebhook ? "cephalon-managed" : "not-configured";
         var replayProtectionOwnership = signedEventWebhookReplayProtectionConfigured ? "cephalon-managed" : "not-configured";
+        var eventIdIdempotencyOwnership = eventIdIdempotencyConfigured ? "cephalon-managed" : "not-configured";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -70,6 +79,12 @@ internal sealed class SendGridInvitationDeliveryStatusRuntimeSurfaceContributor(
             ["sendGridEventWebhookReplayProtectionRetentionSeconds"] = signedEventWebhookReplayRetentionSeconds.ToString(CultureInfo.InvariantCulture),
             ["sendGridEventWebhookReplayProtectionCacheLimit"] = signedEventWebhookReplayCacheLimit.ToString(CultureInfo.InvariantCulture),
             ["sendGridEventWebhookReplayProtectionRequiresSignature"] = "true",
+            ["sendGridEventWebhookEventIdIdempotencyConfigured"] = eventIdIdempotencyConfigured.ToString().ToLowerInvariant(),
+            ["sendGridEventWebhookEventIdIdempotencyOwnership"] = eventIdIdempotencyOwnership,
+            ["sendGridEventWebhookEventIdIdempotencyPolicy"] = eventIdIdempotencyConfigured ? "sendgrid-event-id" : "none",
+            ["sendGridEventWebhookEventIdIdempotencyKey"] = eventIdIdempotencyConfigured ? "sg_event_id" : "none",
+            ["sendGridEventWebhookEventIdIdempotencyScope"] = eventIdIdempotencyConfigured ? "observation-store" : "none",
+            ["sendGridEventWebhookEventIdIdempotencyDurability"] = "observation-store-dependent",
             ["tenantInvitationDeliveryStatusReconcilerDependency"] = "ITenantInvitationDeliveryStatusReconciler",
             ["routePattern"] = routePattern,
             ["httpMethod"] = "POST",
@@ -148,7 +163,8 @@ internal sealed class SendGridInvitationDeliveryStatusCallbackRuntimeCatalog
         int signedEventWebhookSignatureToleranceSeconds,
         bool signedEventWebhookReplayProtectionConfigured,
         int signedEventWebhookReplayRetentionSeconds,
-        int signedEventWebhookReplayCacheLimit)
+        int signedEventWebhookReplayCacheLimit,
+        bool eventWebhookEventIdIdempotencyConfigured)
     {
         lock (syncRoot)
         {
@@ -170,7 +186,8 @@ internal sealed class SendGridInvitationDeliveryStatusCallbackRuntimeCatalog
                 signedEventWebhookSignatureToleranceSeconds,
                 signedEventWebhookReplayProtectionConfigured,
                 signedEventWebhookReplayRetentionSeconds,
-                signedEventWebhookReplayCacheLimit);
+                signedEventWebhookReplayCacheLimit,
+                eventWebhookEventIdIdempotencyConfigured);
         }
     }
 }
@@ -193,4 +210,5 @@ internal sealed record SendGridInvitationDeliveryStatusCallbackEndpointRuntimeSn
     int SignedEventWebhookSignatureToleranceSeconds,
     bool SignedEventWebhookReplayProtectionConfigured,
     int SignedEventWebhookReplayRetentionSeconds,
-    int SignedEventWebhookReplayCacheLimit);
+    int SignedEventWebhookReplayCacheLimit,
+    bool EventWebhookEventIdIdempotencyConfigured);

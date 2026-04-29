@@ -1,3 +1,4 @@
+using Cephalon.MultiTenancy.Governance.Configuration;
 using Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration;
 using Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Services;
 using Cephalon.MultiTenancy.Governance.Services;
@@ -52,10 +53,12 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                     HttpContext context,
                     SendGridEventWebhookDeliveryStatusMapper mapper,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
+                    ITenantInvitationDeliveryStatusObservationStore observationStore,
+                    MultiTenancyGovernanceOptions governanceOptions,
                     SendGridInvitationDeliveryStatusCallbackReplayGuard replayGuard,
                     ILoggerFactory loggerFactory,
                     CancellationToken cancellationToken) =>
-                    TranslateCallbackAsync(context, mapper, reconciler, replayGuard, loggerFactory, options, routePattern, cancellationToken))
+                    TranslateCallbackAsync(context, mapper, reconciler, observationStore, governanceOptions, replayGuard, loggerFactory, options, routePattern, cancellationToken))
             .WithName("CephalonSendGridInvitationDeliveryStatusCallback")
             .Accepts<JsonElement>("application/json")
             .Produces<SendGridInvitationDeliveryStatusCallbackResult>(StatusCodes.Status200OK)
@@ -92,7 +95,8 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                 options.GetSignedEventWebhookSignatureToleranceSeconds(),
                 options.IsSignedEventWebhookReplayProtectionConfigured(),
                 options.GetSignedEventWebhookReplayRetentionSeconds(),
-                options.GetSignedEventWebhookReplayCacheLimit());
+                options.GetSignedEventWebhookReplayCacheLimit(),
+                options.IsEventWebhookEventIdIdempotencyConfigured());
 
         return endpoints;
     }
@@ -101,6 +105,8 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
         HttpContext context,
         SendGridEventWebhookDeliveryStatusMapper mapper,
         ITenantInvitationDeliveryStatusReconciler reconciler,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
+        MultiTenancyGovernanceOptions governanceOptions,
         SendGridInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         ILoggerFactory loggerFactory,
         SendGridInvitationDeliveryAspNetCoreOptions options,
@@ -171,6 +177,7 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
             var reconciledEvents = 0;
             var skippedEvents = 0;
             var deniedEvents = 0;
+            var duplicateEvents = 0;
             var index = 0;
 
             try
@@ -189,7 +196,29 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                     }
 
                     translatedEvents++;
-                    var reconciliationRequest = ApplySignatureAndReplayMetadata(mapping.Request!, signatureVerification, replayProtection, options);
+                    var eventIdIdempotency = EvaluateEventWebhookEventIdIdempotency(
+                        options,
+                        governanceOptions,
+                        observationStore,
+                        mapping.Request!);
+                    if (eventIdIdempotency.Duplicate)
+                    {
+                        duplicateEvents++;
+                        SendGridInvitationDeliveryAspNetCoreLogs.CallbackDuplicateEventSkipped(
+                            logger,
+                            eventIdIdempotency.ObservationId!);
+                        eventResults.Add(mapping.ToDuplicateEventResult("The SendGrid event id was already recorded in the delivery-status observation store."));
+                        index++;
+                        continue;
+                    }
+
+                    var reconciliationRequest = ApplySignatureReplayAndEventIdIdempotencyMetadata(
+                        mapping.Request!,
+                        signatureVerification,
+                        replayProtection,
+                        eventIdIdempotency,
+                        observationStore,
+                        options);
                     var reconciliation = await reconciler
                         .ReconcileAsync(reconciliationRequest, cancellationToken)
                         .ConfigureAwait(false);
@@ -213,7 +242,7 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                 throw;
             }
 
-            if (translatedEvents > 0 && reconciledEvents == 0)
+            if (translatedEvents > 0 && reconciledEvents == 0 && duplicateEvents == 0)
             {
                 ForgetSignedEventWebhookReplayProtection(replayGuard, replayProtection);
             }
@@ -237,7 +266,8 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                 signatureVerification.Verified,
                 signatureVerification.Outcome,
                 replayProtection.Configured,
-                replayProtection.Outcome);
+                replayProtection.Outcome,
+                duplicateEvents);
 
             return Results.Json(result, SerializerOptions);
         }
@@ -440,27 +470,60 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
         }
     }
 
-    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureAndReplayMetadata(
+    private static EventWebhookEventIdIdempotencyResult EvaluateEventWebhookEventIdIdempotency(
+        SendGridInvitationDeliveryAspNetCoreOptions options,
+        MultiTenancyGovernanceOptions governanceOptions,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
+        TenantInvitationDeliveryStatusReconciliationRequest request)
+    {
+        if (!options.IsEventWebhookEventIdIdempotencyConfigured() ||
+            !governanceOptions.EnableInvitationDeliveryStatusObservationStore)
+        {
+            return EventWebhookEventIdIdempotencyResult.NotConfigured();
+        }
+
+        if (!request.Metadata.TryGetValue(TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId, out var observationId) ||
+            string.IsNullOrWhiteSpace(observationId) ||
+            !observationId.Trim().StartsWith("sendgrid:", StringComparison.OrdinalIgnoreCase))
+        {
+            return EventWebhookEventIdIdempotencyResult.EventIdMissing();
+        }
+
+        var normalizedObservationId = observationId.Trim();
+        var duplicate = observationStore.Observations.Any(
+            observation => string.Equals(observation.ObservationId, normalizedObservationId, StringComparison.OrdinalIgnoreCase));
+        return duplicate
+            ? EventWebhookEventIdIdempotencyResult.DuplicateSkipped(normalizedObservationId)
+            : EventWebhookEventIdIdempotencyResult.PendingRecord(normalizedObservationId);
+    }
+
+    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureReplayAndEventIdIdempotencyMetadata(
         TenantInvitationDeliveryStatusReconciliationRequest request,
         SignedEventWebhookVerificationResult signatureVerification,
         SignedEventWebhookReplayProtectionResult replayProtection,
+        EventWebhookEventIdIdempotencyResult eventIdIdempotency,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
         SendGridInvitationDeliveryAspNetCoreOptions options)
     {
-        if (!signatureVerification.Configured)
+        if (!signatureVerification.Configured &&
+            !eventIdIdempotency.Configured)
         {
             return request;
         }
 
         var metadata = CopyMetadata(request.Metadata);
-        metadata["sendGridEventWebhookSignatureVerification"] = "verified";
-        metadata["sendGridEventWebhookSignatureVerificationOwnership"] = "cephalon-managed";
-        metadata["sendGridEventWebhookSignatureAlgorithm"] = "ecdsa-sha256";
-        metadata["sendGridEventWebhookSignaturePayload"] = "timestamp+raw-body";
-        metadata["sendGridEventWebhookSignatureTimestamp"] =
-            signatureVerification.Timestamp!.Value.ToString(CultureInfo.InvariantCulture);
-        metadata["sendGridEventWebhookSignatureAgeSeconds"] =
-            signatureVerification.AgeSeconds!.Value.ToString(CultureInfo.InvariantCulture);
-        metadata["sendGridEventWebhookSignatureFingerprint"] = signatureVerification.SignatureFingerprint!;
+        if (signatureVerification.Configured)
+        {
+            metadata["sendGridEventWebhookSignatureVerification"] = "verified";
+            metadata["sendGridEventWebhookSignatureVerificationOwnership"] = "cephalon-managed";
+            metadata["sendGridEventWebhookSignatureAlgorithm"] = "ecdsa-sha256";
+            metadata["sendGridEventWebhookSignaturePayload"] = "timestamp+raw-body";
+            metadata["sendGridEventWebhookSignatureTimestamp"] =
+                signatureVerification.Timestamp!.Value.ToString(CultureInfo.InvariantCulture);
+            metadata["sendGridEventWebhookSignatureAgeSeconds"] =
+                signatureVerification.AgeSeconds!.Value.ToString(CultureInfo.InvariantCulture);
+            metadata["sendGridEventWebhookSignatureFingerprint"] = signatureVerification.SignatureFingerprint!;
+        }
 
         if (replayProtection.Configured)
         {
@@ -478,6 +541,22 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
             if (!string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
             {
                 metadata["sendGridEventWebhookReplayProtectionFingerprint"] = replayProtection.ReplayFingerprint!;
+            }
+        }
+
+        if (eventIdIdempotency.Configured)
+        {
+            metadata["sendGridEventWebhookEventIdIdempotency"] = eventIdIdempotency.Outcome;
+            metadata["sendGridEventWebhookEventIdIdempotencyOwnership"] = "cephalon-managed";
+            metadata["sendGridEventWebhookEventIdIdempotencyPolicy"] = "sendgrid-event-id";
+            metadata["sendGridEventWebhookEventIdIdempotencyKey"] = "sg_event_id";
+            metadata["sendGridEventWebhookEventIdIdempotencyScope"] = "observation-store";
+            metadata["sendGridEventWebhookEventIdIdempotencyStoreKind"] = observationStore.StoreKind;
+            metadata["sendGridEventWebhookEventIdIdempotencyDurability"] =
+                observationStore.IsDurable ? "local-file" : "none";
+            if (!string.IsNullOrWhiteSpace(eventIdIdempotency.ObservationId))
+            {
+                metadata["sendGridEventWebhookEventIdObservationId"] = eventIdIdempotency.ObservationId!;
             }
         }
 
@@ -739,5 +818,24 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
             string replayFingerprint,
             IResult failure) =>
             new(true, outcome, replayFingerprint, failure);
+    }
+
+    private sealed record EventWebhookEventIdIdempotencyResult(
+        bool Configured,
+        bool Duplicate,
+        string Outcome,
+        string? ObservationId)
+    {
+        public static EventWebhookEventIdIdempotencyResult NotConfigured() =>
+            new(false, false, "not-configured", null);
+
+        public static EventWebhookEventIdIdempotencyResult EventIdMissing() =>
+            new(true, false, "event-id-missing", null);
+
+        public static EventWebhookEventIdIdempotencyResult PendingRecord(string observationId) =>
+            new(true, false, "pending-record", observationId);
+
+        public static EventWebhookEventIdIdempotencyResult DuplicateSkipped(string observationId) =>
+            new(true, true, "duplicate-skipped", observationId);
     }
 }
