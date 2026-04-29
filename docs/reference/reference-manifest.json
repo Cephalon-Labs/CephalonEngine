@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T16:15:44.25699+00:00",
+  "GeneratedAtUtc": "2026-04-29T17:04:24.2112893+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -249,6 +249,14 @@
       "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
       "NamespaceCount": 3,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "Category": "Phase 8 Companion Packs",
+      "Description": "SendGrid Mail Send API invitation delivery sender companion package for Cephalon multi-tenancy governance workloads.",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "NamespaceCount": 3,
+      "TypeCount": 5
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -1325,6 +1333,27 @@
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-registration",
       "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-sendgriddelivery-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-sendgriddelivery-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-sendgriddelivery-services",
+      "TypeCount": 3
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
@@ -11565,6 +11594,21 @@
       }
     },
     {
+      "DisplayName": "ISendGridInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-services-isendgridinvitationdeliveryclient",
+      "Declaration": "public interface ISendGridInvitationDeliveryClient",
+      "Summary": "Sends SendGrid invitation delivery messages for the SendGrid companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IServerSentEventsModule",
       "NamespaceName": "Cephalon.AspNetCore.Transports.ServerSentEvents",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -15645,6 +15689,66 @@
       }
     },
     {
+      "DisplayName": "SendGridInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult",
+      "Declaration": "public sealed class SendGridInvitationDeliveryClientResult",
+      "Summary": "Describes the result returned by a SendGrid invitation delivery client.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage",
+      "Declaration": "public sealed class SendGridInvitationDeliveryMessage",
+      "Summary": "Describes a prepared SendGrid invitation delivery message.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions",
+      "Declaration": "public sealed class SendGridInvitationDeliveryOptions",
+      "Summary": "Configures SendGrid Mail Send API delivery for tenant invitations dispatched by the governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 20,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-hosting-sendgridinvitationdeliveryservicecollectionextensions",
+      "Declaration": "public static class SendGridInvitationDeliveryServiceCollectionExtensions",
+      "Summary": "Adds SendGrid Mail Send API invitation delivery services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 1,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "SerilogHostApplicationBuilderExtensions",
       "NamespaceName": "Cephalon.Observability.Serilog.Hosting",
       "AssemblyName": "Cephalon.Observability.Serilog",
@@ -18077,6 +18181,17 @@
     {
       "DisplayName": "Accepted",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-accepted",
+      "Signature": "bool Accepted { get; }",
+      "Summary": "Gets a value indicating whether the SendGrid API accepted the request."
+    },
+    {
+      "DisplayName": "Accepted",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -18161,6 +18276,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-acceptedcount",
       "Signature": "long AcceptedCount { get; }",
       "Summary": "Gets the number of coordinator attempts accepted for execution."
+    },
+    {
+      "DisplayName": "AcceptedStatusCodes",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-acceptedstatuscodes",
+      "Signature": "IReadOnlyList\u003Cint\u003E AcceptedStatusCodes { get; set; }",
+      "Summary": "Gets or sets response status codes that indicate the SendGrid API accepted the request."
     },
     {
       "DisplayName": "AcceptInvitation",
@@ -21353,6 +21479,28 @@
       "Summary": "Adds Redis dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonSendGridInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "SendGridInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-hosting-sendgridinvitationdeliveryservicecollectionextensions-addcephalonsendgridinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonSendGridInvitationDelivery(this IServiceCollection services, Action\u003CSendGridInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds SendGrid invitation delivery using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonSendGridInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "SendGridInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-hosting-sendgridinvitationdeliveryservicecollectionextensions-addcephalonsendgridinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonSendGridInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action\u003CSendGridInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds SendGrid invitation delivery using configuration as the primary source of Mail Send API settings."
+    },
+    {
       "DisplayName": "AddCephalonSerilog",
       "Category": "Methods",
       "DeclaringTypeName": "SerilogHostApplicationBuilderExtensions",
@@ -22715,6 +22863,17 @@
       "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-apikey",
       "Signature": "string ApiKey { get; set; }",
       "Summary": "Gets or sets the optional API key used for Elasticsearch API-key authentication."
+    },
+    {
+      "DisplayName": "ApiKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-apikey",
+      "Signature": "string ApiKey { get; set; }",
+      "Summary": "Gets or sets the SendGrid API key used as the bearer token."
     },
     {
       "DisplayName": "ApiRoutesOptions",
@@ -26446,6 +26605,17 @@
       "Summary": "Gets the base delay in milliseconds used by the retry policy."
     },
     {
+      "DisplayName": "BaseUrl",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-baseurl",
+      "Signature": "string BaseUrl { get; set; }",
+      "Summary": "Gets or sets the SendGrid v3 API base URL."
+    },
+    {
       "DisplayName": "BatchLimit",
       "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipProofPollingMetadataKeys",
@@ -29128,6 +29298,28 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-technologyselection-catalog",
       "Signature": "IReadOnlyList\u003CTechnologyDescriptor\u003E Catalog { get; }",
       "Summary": "Gets the technology profiles available to the runtime."
+    },
+    {
+      "DisplayName": "Categories",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-categories",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Categories { get; }",
+      "Summary": "Gets SendGrid categories attached to the message."
+    },
+    {
+      "DisplayName": "Categories",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-categories",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Categories { get; set; }",
+      "Summary": "Gets or sets SendGrid message categories added to each request."
     },
     {
       "DisplayName": "Category",
@@ -38557,6 +38749,28 @@
       "Summary": "Gets the current manifest schema version emitted by the engine."
     },
     {
+      "DisplayName": "CustomArgs",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-customargs",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E CustomArgs { get; }",
+      "Summary": "Gets SendGrid custom arguments attached to the personalization."
+    },
+    {
+      "DisplayName": "CustomArgs",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-customargs",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E CustomArgs { get; set; }",
+      "Summary": "Gets or sets SendGrid custom arguments added to each personalization."
+    },
+    {
       "DisplayName": "Data",
       "Category": "Properties",
       "DeclaringTypeName": "AppProfile",
@@ -47620,6 +47834,17 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-enabled",
+      "Signature": "bool Enabled { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the SendGrid invitation sender should be registered."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -48210,6 +48435,17 @@
       "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-enableruntimesurface",
       "Signature": "bool EnableRuntimeSurface { get; set; }",
       "Summary": "Gets or sets a value indicating whether the pack should publish its runtime surface into Cephalon technology introspection."
+    },
+    {
+      "DisplayName": "EnableSandboxMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-enablesandboxmode",
+      "Signature": "bool EnableSandboxMode { get; set; }",
+      "Summary": "Gets or sets a value indicating whether SendGrid sandbox mode should be enabled."
     },
     {
       "DisplayName": "EnableSensitiveDataLogging",
@@ -54495,6 +54731,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "SendGridInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds SendGrid invitation delivery options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "SfidIdOptions",
       "NamespaceName": "Cephalon.Ids.Sfid.Configuration",
       "AssemblyName": "Cephalon.Ids.Sfid",
@@ -54581,6 +54828,28 @@
       "Summary": "Gets or sets the optional sender display name used in the SMTP message."
     },
     {
+      "DisplayName": "FromEmail",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-fromemail",
+      "Signature": "string FromEmail { get; }",
+      "Summary": "Gets the sender email address."
+    },
+    {
+      "DisplayName": "FromEmail",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-fromemail",
+      "Signature": "string FromEmail { get; set; }",
+      "Summary": "Gets or sets the verified sender email address used in the SendGrid message."
+    },
+    {
       "DisplayName": "FromManifest",
       "Category": "Methods",
       "DeclaringTypeName": "ModulePackageReference",
@@ -54590,6 +54859,28 @@
       "AnchorId": "member-m-cephalon-engine-configuration-modulepackagereference-frommanifest-system-string-system-string",
       "Signature": "ModulePackageReference FromManifest(string manifestPath, string id)",
       "Summary": "Creates a manifest-backed package reference."
+    },
+    {
+      "DisplayName": "FromName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-fromname",
+      "Signature": "string FromName { get; }",
+      "Summary": "Gets the optional sender display name."
+    },
+    {
+      "DisplayName": "FromName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-fromname",
+      "Signature": "string FromName { get; set; }",
+      "Summary": "Gets or sets the optional sender display name used in the SendGrid message."
     },
     {
       "DisplayName": "FromNodeId",
@@ -62085,6 +62376,28 @@
     {
       "DisplayName": "Headers",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; }",
+      "Summary": "Gets safe SendGrid message headers."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; set; }",
+      "Summary": "Gets or sets additional SendGrid message headers added to each request."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -62965,6 +63278,17 @@
     {
       "DisplayName": "HtmlBody",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-htmlbody",
+      "Signature": "string HtmlBody { get; }",
+      "Summary": "Gets the optional HTML message body."
+    },
+    {
+      "DisplayName": "HtmlBody",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -62972,6 +63296,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-htmlbody",
       "Signature": "string HtmlBody { get; }",
       "Summary": "Gets the optional HTML message body."
+    },
+    {
+      "DisplayName": "HtmlBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-htmlbodytemplate",
+      "Signature": "string HtmlBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the optional HTML SendGrid message body template."
     },
     {
       "DisplayName": "HtmlBodyTemplate",
@@ -62994,6 +63329,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-httpdelivery-hosting-httpinvitationdeliveryservicecollectionextensions-httpclientname",
       "Signature": "const string HttpClientName",
       "Summary": "The named HTTP client used by the HTTP invitation delivery sender."
+    },
+    {
+      "DisplayName": "HttpClientName",
+      "Category": "Fields",
+      "DeclaringTypeName": "SendGridInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-sendgriddelivery-hosting-sendgridinvitationdeliveryservicecollectionextensions-httpclientname",
+      "Signature": "const string HttpClientName",
+      "Summary": "The named HTTP client used by the SendGrid invitation delivery client."
     },
     {
       "DisplayName": "HttpCollectionFailed",
@@ -64754,6 +65100,28 @@
       "AnchorId": "member-p-cephalon-identity-aspnetcore-configuration-identityaspnetcoreoptions-includeallclaimsassubjectattributes",
       "Signature": "bool IncludeAllClaimsAsSubjectAttributes { get; set; }",
       "Summary": "Gets or sets a value indicating whether unmatched claims should be projected into \u0060Attributes\u0060."
+    },
+    {
+      "DisplayName": "IncludeContextCustomArgs",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-includecontextcustomargs",
+      "Signature": "bool IncludeContextCustomArgs { get; set; }",
+      "Summary": "Gets or sets a value indicating whether safe Cephalon custom arguments should be added to the SendGrid request."
+    },
+    {
+      "DisplayName": "IncludeContextHeaders",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-includecontextheaders",
+      "Signature": "bool IncludeContextHeaders { get; set; }",
+      "Summary": "Gets or sets a value indicating whether safe Cephalon context headers should be added to the SendGrid request."
     },
     {
       "DisplayName": "IncludeContextHeaders",
@@ -77474,6 +77842,17 @@
     {
       "DisplayName": "MessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-messageid",
+      "Signature": "string MessageId { get; }",
+      "Summary": "Gets the deterministic Cephalon message identifier carried in SendGrid custom arguments."
+    },
+    {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -78845,6 +79224,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional project metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional safe client metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -92571,6 +92961,17 @@
     {
       "DisplayName": "ProviderMessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-providermessageid",
+      "Signature": "string ProviderMessageId { get; }",
+      "Summary": "Gets the SendGrid message identifier when one is known."
+    },
+    {
+      "DisplayName": "ProviderMessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -92666,6 +93067,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-providermessageidheadername",
       "Signature": "string ProviderMessageIdHeaderName { get; set; }",
       "Summary": "Gets or sets the response header that contains the provider message identifier."
+    },
+    {
+      "DisplayName": "ProviderMessageIdHeaderName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-providermessageidheadername",
+      "Signature": "string ProviderMessageIdHeaderName { get; set; }",
+      "Summary": "Gets or sets the SendGrid response header that contains the provider message identifier."
     },
     {
       "DisplayName": "ProviderMessageMismatch",
@@ -95255,6 +95667,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the provider-facing outcome reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -95591,6 +96014,17 @@
       "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-recipientaddressmetadatakey",
       "Signature": "string RecipientAddressMetadataKey { get; set; }",
+      "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
+    },
+    {
+      "DisplayName": "RecipientEmailMetadataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-recipientemailmetadatakey",
+      "Signature": "string RecipientEmailMetadataKey { get; set; }",
       "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
     },
     {
@@ -104900,6 +105334,17 @@
       "Summary": "Gets the sampling duration in seconds used by the breaker."
     },
     {
+      "DisplayName": "SandboxMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-sandboxmode",
+      "Signature": "bool SandboxMode { get; }",
+      "Summary": "Gets a value indicating whether SendGrid sandbox mode should be enabled."
+    },
+    {
       "DisplayName": "SaslMechanism",
       "Category": "Properties",
       "DeclaringTypeName": "KafkaDependencyDefinition",
@@ -106255,6 +106700,17 @@
     {
       "DisplayName": "SendAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "ISendGridInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-services-isendgridinvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CSendGridInvitationDeliveryClientResult\u003E SendAsync(SendGridInvitationDeliveryMessage message, CancellationToken cancellationToken)",
+      "Summary": "Sends one SendGrid invitation delivery message."
+    },
+    {
+      "DisplayName": "SendAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "ISmtpInvitationDeliveryClient",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -106306,6 +106762,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-senderid",
       "Signature": "string SenderId { get; }",
       "Summary": "Gets the stable sender identifier used by configuration, runtime metadata, and diagnostics."
+    },
+    {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-senderid",
+      "Signature": "string SenderId { get; set; }",
+      "Summary": "Gets or sets the sender identifier used by \u0060TenantInvitationDeliveryRequest.SenderId\u0060."
     },
     {
       "DisplayName": "SenderId",
@@ -106416,6 +106883,38 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-sendernotconfigured",
       "Signature": "const string SenderNotConfigured",
       "Summary": "No matching delivery sender was registered."
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryClientResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-ctor-system-boolean-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "SendGridInvitationDeliveryClientResult(bool accepted, int? statusCode, string providerMessageId, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a SendGrid invitation delivery client result."
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryMessage",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-boolean",
+      "Signature": "SendGridInvitationDeliveryMessage(string messageId, string fromEmail, string fromName, string toEmail, string toName, string subject, string textBody, string htmlBody, IReadOnlyList\u003Cstring\u003E categories, IReadOnlyDictionary\u003Cstring, string\u003E customArgs, IReadOnlyDictionary\u003Cstring, string\u003E headers, bool sandboxMode)",
+      "Summary": "Creates a prepared SendGrid invitation delivery message."
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-ctor",
+      "Signature": "SendGridInvitationDeliveryOptions()"
     },
     {
       "DisplayName": "ServerId",
@@ -110762,6 +111261,17 @@
     {
       "DisplayName": "StatusCode",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-statuscode",
+      "Signature": "int? StatusCode { get; }",
+      "Summary": "Gets the HTTP status code returned by SendGrid when one is known."
+    },
+    {
+      "DisplayName": "StatusCode",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -111422,6 +111932,17 @@
     {
       "DisplayName": "Subject",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-subject",
+      "Signature": "string Subject { get; }",
+      "Summary": "Gets the message subject."
+    },
+    {
+      "DisplayName": "Subject",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -111638,6 +112159,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch",
       "Signature": "const string SubjectMismatch",
       "Summary": "The matching tenant-governance action has a different subject boundary."
+    },
+    {
+      "DisplayName": "SubjectTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-subjecttemplate",
+      "Signature": "string SubjectTemplate { get; set; }",
+      "Summary": "Gets or sets the SendGrid message subject template."
     },
     {
       "DisplayName": "SubjectTemplate",
@@ -112285,6 +112817,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
       "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-supportedchannels",
+      "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
+      "Summary": "Gets or sets delivery channels accepted by this sender."
+    },
+    {
+      "DisplayName": "SupportedChannels",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-supportedchannels",
       "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
       "Summary": "Gets or sets delivery channels accepted by this sender."
     },
@@ -115690,6 +116233,17 @@
     {
       "DisplayName": "TextBody",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-textbody",
+      "Signature": "string TextBody { get; }",
+      "Summary": "Gets the plain-text message body."
+    },
+    {
+      "DisplayName": "TextBody",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -115697,6 +116251,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-textbody",
       "Signature": "string TextBody { get; }",
       "Summary": "Gets the plain-text message body."
+    },
+    {
+      "DisplayName": "TextBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-textbodytemplate",
+      "Signature": "string TextBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the plain-text SendGrid message body template."
     },
     {
       "DisplayName": "TextBodyTemplate",
@@ -115829,6 +116394,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-timeoutseconds",
       "Signature": "int TimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the maximum time allowed for the HTTP delivery request."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the maximum time allowed for the SendGrid API request."
     },
     {
       "DisplayName": "TimeoutSeconds",
@@ -115996,6 +116572,17 @@
       "Summary": "Gets the optional recipient display name."
     },
     {
+      "DisplayName": "ToEmail",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-toemail",
+      "Signature": "string ToEmail { get; }",
+      "Summary": "Gets the recipient email address."
+    },
+    {
       "DisplayName": "Token",
       "Category": "Properties",
       "DeclaringTypeName": "NatsDependencyDefinition",
@@ -116005,6 +116592,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-token",
       "Signature": "string Token { get; set; }",
       "Summary": "Gets or sets the optional auth token used for token-based NATS authentication."
+    },
+    {
+      "DisplayName": "ToName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-toname",
+      "Signature": "string ToName { get; }",
+      "Summary": "Gets the optional recipient display name."
     },
     {
       "DisplayName": "Tone",

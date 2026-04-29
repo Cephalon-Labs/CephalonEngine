@@ -97,5 +97,7 @@ This is intentionally not a provider-specific email, SMS, chat, CRM, or identity
 - [Cephalon.MultiTenancy](multi-tenancy.md)
 - [Cephalon.MultiTenancy.Governance](multi-tenancy-governance.md)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](multi-tenancy-governance-aspnetcore.md)
+- [Cephalon.MultiTenancy.Governance.SendGridDelivery](multi-tenancy-governance-sendgriddelivery.md)
+- [Cephalon.MultiTenancy.Governance.SmtpDelivery](multi-tenancy-governance-smtpdelivery.md)
 - [Technology packs](../technology-packs.md)
 - [Operations](../operations.md)

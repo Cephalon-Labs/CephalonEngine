@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Data.Postgres\Cephalon.Data.Postgres.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.AspNetCore\Cephalon.MultiTenancy.Governance.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.HttpDelivery\Cephalon.MultiTenancy.Governance.HttpDelivery.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.SendGridDelivery\Cephalon.MultiTenancy.Governance.SendGridDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.SmtpDelivery\Cephalon.MultiTenancy.Governance.SmtpDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance\Cephalon.MultiTenancy.Governance.csproj" />
     <ProjectReference Include="..\..\tests\Cephalon.Tests.Support\Cephalon.Tests.Support.csproj" />

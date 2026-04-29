@@ -444,6 +444,18 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Registration)
 
+## `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.SendGridDelivery](cephalon-multitenancy-governance-sendgriddelivery.md#namespace-cephalon-multitenancy-governance-sendgriddelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.SendGridDelivery](cephalon-multitenancy-governance-sendgriddelivery.md#namespace-cephalon-multitenancy-governance-sendgriddelivery-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting)
+
+## `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services`
+
+- [Cephalon.MultiTenancy.Governance.SendGridDelivery](cephalon-multitenancy-governance-sendgriddelivery.md#namespace-cephalon-multitenancy-governance-sendgriddelivery-services): 3 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services)
+
 ## `Cephalon.MultiTenancy.Governance.Services`
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 130 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)

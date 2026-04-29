@@ -48,6 +48,7 @@ When working in this repository:
 - `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, and `Cephalon.Edge` are the baseline technology companion packages
 - `Cephalon.MultiTenancy.Governance` is the multi-tenancy governance companion package for membership, invitation, invitation delivery dispatch, invitation delivery status reconciliation, tenant administration, domain ownership, and approval/remediation runtime proofs
 - `Cephalon.MultiTenancy.Governance.HttpDelivery` is the optional HTTP webhook invitation-delivery sender companion package for the multi-tenancy governance dispatcher, including provider-neutral idempotency headers, optional signed webhook request headers, and bounded in-process retry/backoff
+- `Cephalon.MultiTenancy.Governance.SendGridDelivery` is the optional SendGrid Mail Send API invitation-delivery sender companion package for the multi-tenancy governance dispatcher
 - `Cephalon.Scaffolding` is the generation companion package for turning blueprint scaffold plans into concrete files
 - `templates/Cephalon.TemplatePack` is the installable `dotnet new` surface for the shipped blueprint starters
 - `docs/module-authoring.md` and `samples/Cephalon.ReferenceModule.*` are the module-authoring baseline
@@ -295,6 +296,9 @@ Current source layout:
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Services` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Services`
+- `src/Cephalon.MultiTenancy.Governance.SendGridDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration`
+- `src/Cephalon.MultiTenancy.Governance.SendGridDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting`
+- `src/Cephalon.MultiTenancy.Governance.SendGridDelivery/Services` -> `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services`
 - `src/Cephalon.Scaffolding/Generation` -> `Cephalon.Scaffolding.Generation`
 - `src/Cephalon.Scaffolding/IO` -> `Cephalon.Scaffolding.IO`
 - `templates/Cephalon.TemplatePack/templates` -> installable `dotnet new` blueprint templates

@@ -81,7 +81,7 @@ Configuration example:
 
 The sender returns `dispatched` only when the SMTP client reports that the relay accepted the message. Unsupported channels are reported as `suppressed`; invalid recipient resolution, relay errors, and timeouts are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store, queues retryable sender failures when the retry queue is enabled, and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
 
-This package intentionally owns SMTP relay handoff only. It does not own SendGrid, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce/webhook translation, provider polling, distributed retry queues, cross-node leases, public onboarding, or tenant-admin UI. Those should remain application-managed or future provider-specific companion packs until a package owns them explicitly.
+This package intentionally owns SMTP relay handoff only. It does not own SendGrid Mail Send API handoff, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce/webhook translation, provider polling, distributed retry queues, cross-node leases, public onboarding, or tenant-admin UI. SendGrid Mail Send handoff now lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; the other paths should remain application-managed or future provider-specific companion packs until a package owns them explicitly.
 
 ## Related docs
 
@@ -89,5 +89,6 @@ This package intentionally owns SMTP relay handoff only. It does not own SendGri
 - [Cephalon.MultiTenancy.Governance](multi-tenancy-governance.md)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](multi-tenancy-governance-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](multi-tenancy-governance-httpdelivery.md)
+- [Cephalon.MultiTenancy.Governance.SendGridDelivery](multi-tenancy-governance-sendgriddelivery.md)
 - [Technology packs](../technology-packs.md)
 - [Operations](../operations.md)
