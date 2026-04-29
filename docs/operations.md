@@ -1107,6 +1107,7 @@ Current shipped event-id ranges include:
 - `Cephalon.MultiTenancy.Governance`: `4510-4549`, `4552-4557`
 - `Cephalon.MultiTenancy.Governance.HttpDelivery`: `4550-4551`
 - `Cephalon.MultiTenancy.Governance.MailgunDelivery`: `4566-4567`
+- `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`: `4568`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery`: `4560-4561`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`: `4562-4565`
 - `Cephalon.MultiTenancy.Governance.SmtpDelivery`: `4558-4559`
@@ -1258,6 +1259,7 @@ Current payload highlights:
 - `tenant-administration-http-endpoints` reports the ASP.NET Core governance adapter's optional command endpoint posture, including route pattern, `POST` method, mapped/configured/disabled state, authorization requirement, optional policy, endpoint-description visibility, and application-managed boundaries for public onboarding, tenant-admin UI, provider-specific invitation senders, external invitation delivery, and identity-provider sync
 - `tenant-invitation-delivery-status-http-endpoints` reports the ASP.NET Core governance adapter's optional normalized callback and bounded observation-read endpoint posture, including callback route pattern, `POST` method, mapped/configured/disabled state, authorization requirement, optional policy, provider-message-match enforcement, endpoint-description visibility, provider-neutral callback signature verification configuration, safe signature header names, signing key-id configuration, timestamp tolerance, signed-callback replay protection policy/key/scope/durability/retention/cache-limit posture, observation read route pattern, `GET` method, authorization posture, response contract, default/max limits, and application-managed boundaries for provider-specific callback inboxes, provider-specific payload translation, provider-specific signature verification, and provider polling
 - `tenant-invitation-delivery-sendgrid-status-callbacks` reports the optional SendGrid ASP.NET Core callback translator's route/auth/body-limit/event-limit/translation/signature/replay/event-id-idempotency posture, including safe signed-webhook verification metadata, bounded process-local signed-callback replay policy/key/scope/durability/retention/cache-limit truth, and observation-store-backed `sg_event_id` duplicate-skip truth without exposing SendGrid public keys, raw signatures, recipient emails, or raw payload bodies
+- `tenant-invitation-delivery-mailgun-status-callbacks` reports the optional Mailgun ASP.NET Core callback translator's route/auth/body-limit/event-limit/translation/signature/replay posture, including explicit `not-configured` signature/replay truth and application-managed inbox/polling boundaries without exposing recipient emails or raw payload bodies
 - `tenant-domain-ownership` reports the governance companion's Cephalon-managed declared domain-ownership catalog, store, validation, in-process verification-workflow, proof-challenge issuance, proof-publication planning, HTTP file proof-publication state, proof-evaluation, HTTP file proof-collection, configured DNS TXT proof-collection, proof-verification runner, on-demand proof-polling runner, and opt-in background proof-polling posture, including domain ownership count, tenant count, contributor count, configured domain count, runtime domain ownership count, domain-ownership-store kind, domain-ownership-store durability, domain-ownership-store ownership, durable-store ownership, validation ownership, verification-workflow ownership, proof-challenge issuance ownership, proof-publication planning ownership, HTTP proof-publication ownership, published HTTP proof count, proof-evaluation ownership, HTTP proof-collection ownership, DNS TXT proof-collection enablement, DNS TXT resolver configuration, proof-verification runner ownership, external proof-polling ownership, background proof-polling ownership, background polling interval/batch/run counts/latest outcome, DNS/provider proof-publication ownership, status breakdown, verification-method breakdown, and contributing module ids without exposing individual domain names
 - `tenant-governance-actions` reports the governance companion's Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture, including action count, tenant count, contributor count, configured action count, runtime action count, decision ownership, workflow execution ownership, action-store kind, action-store durability, action-store ownership, durable-store ownership, notification-delivery ownership, status breakdown, action-kind breakdown, subject-kind breakdown, and contributing module ids without exposing individual action metadata
 - boundary entries outside the current membership, invitation, tenant-administration, declared domain-ownership, and governance-action proofs still carry `plannedOwnership = companion-planned`, `basePackageOwnership = not-owned`, and `suggestedPackage = Cephalon.MultiTenancy.Governance` so operators can distinguish current runtime ownership from planned companion work
@@ -1272,11 +1274,12 @@ Current note:
 - hosts can install `Cephalon.MultiTenancy.Governance.SendGridDelivery` and call `AddCephalonSendGridInvitationDelivery(...)` when invitation dispatch should POST a templated Mail Send API payload to SendGrid through a replaceable client seam while still recording outcome truth through the governance dispatcher
 - hosts can install `Cephalon.MultiTenancy.Governance.MailgunDelivery` and call `AddCephalonMailgunInvitationDelivery(...)` when invitation dispatch should POST a templated multipart Messages API payload to Mailgun through a replaceable client seam while still recording outcome truth through the governance dispatcher
 - ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` and call `MapCephalonSendGridInvitationDeliveryStatusCallbacks()` when SendGrid Event Webhook arrays should be translated into the existing delivery-status reconciler without custom host glue; when `RequireSignedEventWebhook` is enabled, the same endpoint can reject duplicate verified signed callbacks inside a bounded process-local replay window
+- ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore` and call `MapCephalonMailgunInvitationDeliveryStatusCallbacks()` when Mailgun webhook objects should be translated into the existing delivery-status reconciler without custom host glue; Mailgun signature verification, replay-token protection, and durable inboxing remain separate follow-through
 - hosts can enable `EnableInvitationDeliveryRetryQueue` when `sender-failed` dispatch outcomes should be retained for an explicit `ITenantInvitationDeliveryRetryRunner.RetryPendingAsync(...)` pass; configure `InvitationDeliveryRetryQueueFilePath` only when the local retry queue should survive process restarts
 - the tenant-administration command endpoint is fail-closed by default; keep `RequireTenantAdministrationAuthorization = true` for real hosts, set `TenantAdministrationAuthorizationPolicy` when a named ASP.NET Core policy should guard the command surface, and disable authorization only for deliberate internal/test hosts
 - the delivery status callback and observation read endpoints are fail-closed by default; keep `RequireTenantInvitationDeliveryStatusCallbackAuthorization = true` and `RequireTenantInvitationDeliveryStatusObservationAuthorization = true` for real hosts, set the related authorization policy when a named ASP.NET Core policy should guard callback ingress or observation reads, keep `RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch = true` unless the host deliberately owns another correlation boundary, and keep provider-neutral signed callback replay protection enabled when `TenantInvitationDeliveryStatusCallbackSigningSecret` is configured
 - the SendGrid callback endpoint is also fail-closed by default; keep `RequireStatusCallbackAuthorization = true` for real hosts, enable `RequireSignedEventWebhook` with a SendGrid public key when callbacks should be verified before parsing, and keep `EnableSignedEventWebhookReplayProtection = true` unless the host has a stronger replay boundary outside Cephalon
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, SES/Microsoft Graph or other additional provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, Mailgun and other non-SendGrid provider-specific delivery-status callback payload translation and callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, SES/Microsoft Graph or other additional provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, Mailgun signature verification/replay-token protection, other non-SendGrid provider-specific delivery-status callback payload translation and callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
 
 Tenant-administration command endpoint configuration:
 
@@ -1534,7 +1537,66 @@ Operational notes:
 - the sender carries deterministic Cephalon message ids through Mailgun `v:*` user variables and safe `h:*` headers, and captures the JSON `id` response property as the provider message id by default
 - `EnableTestMode` adds `o:testmode=yes` so Mailgun processes the request without delivering to recipients
 - sender metadata records endpoint host, Mailgun status code, configured domain, test-mode posture, Cephalon message id, sender id, recipient email, recipient metadata key, tag count, variable count, header count, and safe client metadata, but it does not record the API key, authorization header, raw request body, or message bodies
-- this package owns Mailgun Messages API handoff only; Mailgun webhook callback translation/signature verification, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce handling, provider polling, distributed retry queues, callback inboxes, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns Mailgun Messages API handoff only; Mailgun webhook callback translation lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`, while Mailgun signature verification/replay-token protection, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce handling, provider polling, distributed retry queues, callback inboxes, and tenant-admin UI remain future provider-pack or application-owned work
+
+### Mailgun invitation delivery status callbacks
+
+`Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore` translates Mailgun webhook payloads into the existing tenant-invitation delivery-status reconciler. It is optional and separate from the outbound Mailgun sender so hosts can choose whether Mailgun should call back into the application.
+
+Configuration:
+
+```json
+{
+  "Engine": {
+    "MultiTenancy": {
+      "Governance": {
+        "MailgunInvitationDelivery": {
+          "AspNetCore": {
+            "EnableStatusCallbackEndpoint": true,
+            "StatusCallbackRoutePattern": "/engine/tenant-invitations/delivery-status/mailgun",
+            "RequireStatusCallbackAuthorization": true,
+            "StatusCallbackAuthorizationPolicy": "mailgun-webhook",
+            "ExcludeStatusCallbackEndpointFromDescription": true,
+            "RequireProviderMessageMatch": true,
+            "RecordStatus": true,
+            "Source": "mailgun-webhook",
+            "Actor": "mailgun",
+            "MaxRequestBodyBytes": 262144,
+            "MaxEventsPerRequest": 1000,
+            "MapEngagementEventsAsDelivered": false,
+            "NormalizeProviderMessageIdWithAngleBrackets": true
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+builder.Services.AddCephalonMailgunInvitationDelivery(builder.Configuration);
+builder.Services.AddCephalonMailgunInvitationDeliveryAspNetCore(builder.Configuration);
+
+builder.AddCephalon(engine =>
+{
+    engine.AddMultiTenancyGovernance();
+});
+
+var app = builder.Build();
+app.MapCephalonMailgunInvitationDeliveryStatusCallbacks();
+```
+
+Operational notes:
+
+- Mailgun posts webhook payloads as JSON event objects; the endpoint also accepts JSON arrays for controlled replay and test harness scenarios, with bounded body size and event count
+- the outbound sender stores Cephalon context in Mailgun `v:*` user variables; callback events without `cephalonTenantId` and `cephalonInvitationId` are skipped instead of being attached to the wrong invitation
+- `message.headers.message-id` is wrapped in angle brackets by default so it can match the Mailgun Messages API JSON `id` captured during dispatch
+- delivery events map narrowly: `accepted` to `accepted`, `delivered` to `delivered`, `failed` plus temporary severity to `deferred`, `failed` plus permanent severity to `bounced`, other `failed` events to `failed`, and `complained`/`unsubscribed` to `suppressed`; `opened` and `clicked` are skipped unless a host deliberately enables engagement-event mapping
+- the endpoint is authorization-required by default and should stay protected by ASP.NET Core policy, a gateway, or another host-owned control because this baseline does not verify Mailgun webhook signatures
+- responses include aggregate and per-event translation outcomes but do not echo recipient email addresses or raw Mailgun payloads
+- the package projects `tenant-invitation-delivery-mailgun-status-callbacks` with route/auth/translation posture and explicit signature/replay non-ownership; it still does not claim Mailgun HMAC signature verification, replay-token protection, durable callback inboxes, distributed replay protection, distributed event-id ledgers, provider polling, or exactly-once delivery
 
 ### SendGrid invitation delivery sender
 

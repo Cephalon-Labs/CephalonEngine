@@ -440,6 +440,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](cephalon-multitenancy-governance-httpdelivery.md#namespace-cephalon-multitenancy-governance-httpdelivery-services): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services)
 
+## `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore](cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md#namespace-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore](cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md#namespace-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting): 4 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting)
+
 ## `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration`
 
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery](cephalon-multitenancy-governance-mailgundelivery.md#namespace-cephalon-multitenancy-governance-mailgundelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration)

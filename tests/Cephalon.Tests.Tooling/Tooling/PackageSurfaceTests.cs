@@ -1376,6 +1376,18 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void MultiTenancyGovernanceMailgunDeliveryAspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting.MailgunInvitationDeliveryAspNetCoreServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration.MailgunInvitationDeliveryAspNetCoreOptions),
+            typeof(global::Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting.MailgunInvitationDeliveryAspNetCoreServiceCollectionExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting.MailgunInvitationDeliveryStatusCallbackEventResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting.MailgunInvitationDeliveryStatusCallbackResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting.MailgunInvitationDeliveryStatusEndpointRouteBuilderExtensions));
+    }
+
+    [Fact]
     public void MultiTenancyGovernanceSendGridDeliveryAspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
     {
         AssertExportedTypes(

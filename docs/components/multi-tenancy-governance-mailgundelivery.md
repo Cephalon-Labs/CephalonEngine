@@ -88,7 +88,7 @@ Set `BaseUrl` to `https://api.eu.mailgun.net` for Mailgun EU regional sending. T
 
 The sender returns `dispatched` only when the Mailgun API accepts the Messages API request. Unsupported channels are reported as `suppressed`; invalid recipient resolution, HTTP errors, non-accepted status codes, and timeouts are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store, queues retryable sender failures when the retry queue is enabled, and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
 
-This package intentionally owns Mailgun Messages API handoff only. It does not own Mailgun webhook callback translation, Mailgun signature verification, provider polling, durable callback inboxes, distributed replay protection, distributed event-id ledgers, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, cross-node leases, public onboarding, or tenant-admin UI. SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; SMTP relay handoff lives in `Cephalon.MultiTenancy.Governance.SmtpDelivery`; the other paths should remain application-managed or future provider-specific companion packs until a package owns them explicitly.
+This package intentionally owns Mailgun Messages API handoff only. Mailgun webhook payload translation lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`; Mailgun signature verification, replay-token protection, provider polling, durable callback inboxes, distributed replay protection, distributed event-id ledgers, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, cross-node leases, public onboarding, and tenant-admin UI remain application-managed or future provider-specific companion work until a package owns them explicitly. SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; SMTP relay handoff lives in `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
 
 ## Related docs
 
@@ -96,6 +96,7 @@ This package intentionally owns Mailgun Messages API handoff only. It does not o
 - [Cephalon.MultiTenancy.Governance](multi-tenancy-governance.md)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](multi-tenancy-governance-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](multi-tenancy-governance-httpdelivery.md)
+- [Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore](multi-tenancy-governance-mailgundelivery-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.SendGridDelivery](multi-tenancy-governance-sendgriddelivery.md)
 - [Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore](multi-tenancy-governance-sendgriddelivery-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.SmtpDelivery](multi-tenancy-governance-smtpdelivery.md)

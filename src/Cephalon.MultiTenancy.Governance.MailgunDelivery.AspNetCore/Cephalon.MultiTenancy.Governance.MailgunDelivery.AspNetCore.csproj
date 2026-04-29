@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>ASP.NET Core Mailgun webhook callback translation companion package for Cephalon multi-tenancy governance workloads.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+    <ProjectReference Include="..\Cephalon.MultiTenancy.Governance\Cephalon.MultiTenancy.Governance.csproj" />
+  </ItemGroup>
+</Project>
