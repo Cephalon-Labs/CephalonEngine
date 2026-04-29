@@ -728,6 +728,65 @@ public sealed class WolverineEventingPackTests
     }
 
     [Fact]
+    public async Task WolverineManagedDispatchLoopSchedulesRetryWhenWolverinePublishFails()
+    {
+        var dispatchItem = new EventDispatchItem(
+            outboxId: "entity-framework-outbox",
+            messageId: "evt-402",
+            channelId: "catalog-events",
+            eventType: "catalog.item.created",
+            payload: "{\"id\":\"item-402\"}",
+            occurredAtUtc: new DateTimeOffset(2026, 04, 04, 13, 10, 0, TimeSpan.Zero),
+            createdAtUtc: new DateTimeOffset(2026, 04, 04, 13, 10, 1, TimeSpan.Zero),
+            dispatchAttemptCount: 1,
+            contentType: "application/json");
+        var options = new WolverineEventingOptions
+        {
+            EnableDispatchLoop = true,
+            DispatchBatchSize = 10,
+            DispatchPollingIntervalSeconds = 60,
+            RetryDelaySeconds = 30,
+            DispatchMaxAttempts = 3
+        };
+        var dispatchStore = new TestEventDispatchStore(dispatchItem);
+        var runtimeReporter = new TestEventDispatchRuntimeReporter();
+        var publishException = new InvalidOperationException("Simulated Wolverine publish failure.");
+        var messageBus = new TestMessageBus(hasDestinations: true, publishException);
+        var service = new WolverineEventDispatchHostedService(
+            options,
+            dispatchStore,
+            runtimeReporter,
+            messageBus,
+            NullLogger<WolverineEventDispatchHostedService>.Instance);
+
+        await service.DispatchOnceAsync();
+
+        Assert.Empty(messageBus.PublishedMessages);
+        Assert.NotEmpty(await dispatchStore.ReadPendingAsync(10));
+        Assert.Collection(
+            dispatchStore.AppliedReports,
+            report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
+            report =>
+            {
+                Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, report.Outcome);
+                Assert.Equal("Simulated Wolverine publish failure.", report.Error);
+                Assert.Equal("bounded-fixed-delay", report.Metadata["retryPolicy"]);
+                Assert.Equal("3", report.Metadata["retryMaxAttempts"]);
+                Assert.Equal("30", report.Metadata["retryDelaySeconds"]);
+                Assert.Equal("dispatch-store-delayed-eligibility", report.Metadata["retryDurability"]);
+                Assert.Equal("provider-managed", report.Metadata["retryScope"]);
+                Assert.Equal("retry-scheduled", report.Metadata["retryOutcome"]);
+                Assert.Equal("publish", report.Metadata["routing"]);
+                Assert.Equal(typeof(InvalidOperationException).FullName, report.Metadata["exceptionType"]);
+                Assert.True(report.Metadata.ContainsKey("nextRetryAtUtc"));
+            });
+        Assert.Collection(
+            runtimeReporter.Reported,
+            report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
+            report => Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, report.Outcome));
+    }
+
+    [Fact]
     public async Task WolverineManagedDispatchLoopReportsTerminalFailureWhenMaxAttemptsAreExhausted()
     {
         var dispatchItem = new EventDispatchItem(
@@ -785,6 +844,67 @@ public sealed class WolverineEventingPackTests
             report => Assert.Equal(EventDispatchExecutionOutcomes.Failed, report.Outcome));
     }
 
+    [Fact]
+    public async Task WolverineManagedDispatchLoopReportsTerminalFailureWhenPublishFailuresExhaustMaxAttempts()
+    {
+        var dispatchItem = new EventDispatchItem(
+            outboxId: "entity-framework-outbox",
+            messageId: "evt-403",
+            channelId: "catalog-events",
+            eventType: "catalog.item.created",
+            payload: "{\"id\":\"item-403\"}",
+            occurredAtUtc: new DateTimeOffset(2026, 04, 04, 13, 15, 0, TimeSpan.Zero),
+            createdAtUtc: new DateTimeOffset(2026, 04, 04, 13, 15, 1, TimeSpan.Zero),
+            dispatchAttemptCount: 1,
+            contentType: "application/json");
+        var options = new WolverineEventingOptions
+        {
+            EnableDispatchLoop = true,
+            DispatchBatchSize = 10,
+            DispatchPollingIntervalSeconds = 60,
+            RetryDelaySeconds = 30,
+            DispatchMaxAttempts = 2
+        };
+        var dispatchStore = new TestEventDispatchStore(dispatchItem);
+        var runtimeReporter = new TestEventDispatchRuntimeReporter();
+        var publishException = new InvalidOperationException("Simulated Wolverine terminal publish failure.");
+        var messageBus = new TestMessageBus(hasDestinations: true, publishException);
+        var service = new WolverineEventDispatchHostedService(
+            options,
+            dispatchStore,
+            runtimeReporter,
+            messageBus,
+            NullLogger<WolverineEventDispatchHostedService>.Instance);
+
+        await service.DispatchOnceAsync();
+
+        Assert.Empty(messageBus.PublishedMessages);
+        Assert.Empty(await dispatchStore.ReadPendingAsync(10));
+        Assert.Collection(
+            dispatchStore.AppliedReports,
+            report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
+            report =>
+            {
+                Assert.Equal(EventDispatchExecutionOutcomes.Failed, report.Outcome);
+                Assert.Equal("Simulated Wolverine terminal publish failure.", report.Error);
+                Assert.Equal("bounded-fixed-delay", report.Metadata["retryPolicy"]);
+                Assert.Equal("2", report.Metadata["retryMaxAttempts"]);
+                Assert.Equal("30", report.Metadata["retryDelaySeconds"]);
+                Assert.Equal("dispatch-store-delayed-eligibility", report.Metadata["retryDurability"]);
+                Assert.Equal("provider-managed", report.Metadata["retryScope"]);
+                Assert.Equal("max-attempts-exhausted", report.Metadata["retryOutcome"]);
+                Assert.Equal("true", report.Metadata["retryExhausted"]);
+                Assert.Equal("true", report.Metadata["terminalFailure"]);
+                Assert.Equal("publish", report.Metadata["routing"]);
+                Assert.Equal(typeof(InvalidOperationException).FullName, report.Metadata["exceptionType"]);
+                Assert.False(report.Metadata.ContainsKey("nextRetryAtUtc"));
+            });
+        Assert.Collection(
+            runtimeReporter.Reported,
+            report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
+            report => Assert.Equal(EventDispatchExecutionOutcomes.Failed, report.Outcome));
+    }
+
     private sealed class TestEventDispatchStore(params EventDispatchItem[] items) : IEventDispatchStore
     {
         private readonly List<EventDispatchItem> pendingItems = [.. items];
@@ -829,7 +949,7 @@ public sealed class WolverineEventingPackTests
         }
     }
 
-    private sealed class TestMessageBus(bool hasDestinations) : IMessageBus
+    private sealed class TestMessageBus(bool hasDestinations, Exception? publishException = null) : IMessageBus
     {
         private readonly IReadOnlyList<Envelope> destinations = hasDestinations ? [new Envelope(new object())] : [];
 
@@ -868,6 +988,11 @@ public sealed class WolverineEventingPackTests
 
         public ValueTask PublishAsync<T>(T message, DeliveryOptions? options = null)
         {
+            if (publishException is not null)
+            {
+                throw publishException;
+            }
+
             if (message is EventPublication publication)
             {
                 PublishedMessages.Add(publication);

@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, eventing bounded in-process idempotency proof, eventing publication runtime-state proof, Wolverine bounded subscription retry proof, Wolverine bounded dispatch terminal-failure proof, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, eventing bounded in-process idempotency proof, eventing publication runtime-state proof, Wolverine bounded subscription retry proof, Wolverine bounded dispatch terminal-failure proof, Wolverine dispatch publish-exception proof, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
@@ -1171,6 +1171,38 @@ Follow-up later:
 - broader inbound broker-consumption ownership, durable inbox ownership, broker-specific
   dead-letter queues, provider-specific dead-letter storage, and cross-node exactly-once delivery
   remain future package-owned work until a package truly owns those paths
+
+### ENG-278 Wolverine dispatch publish-exception terminal proof
+
+Status: done
+Estimate: 2
+Issue: #787
+
+Why:
+
+- `ENG-277` made the Wolverine-managed dispatch loop bounded for both no-destination and
+  publish-failure paths, but the exact `IMessageBus.PublishAsync(...)` exception branch needed
+  focused proof so the docs did not rely on an inferred failure mode
+- the smallest honest follow-through is test-backed runtime proof for the publish-exception path,
+  not a new generic dead-letter queue, inbox, or broker-consumption claim
+
+Delivered:
+
+- prove that when Wolverine has destinations but `PublishAsync(...)` throws before the
+  max-attempt budget is exhausted, the dispatch loop reports `retry-scheduled` with
+  `routing = publish`, `exceptionType`, `nextRetryAtUtc`, and bounded fixed-delay metadata
+- prove that when the same publish exception occurs on the final attempt, the dispatch loop
+  reports terminal `failed` state with `retryOutcome = max-attempts-exhausted`,
+  `retryExhausted = true`, `terminalFailure = true`, `routing = publish`, and no
+  `nextRetryAtUtc`
+- prove the terminal publish-failure report removes the staged publication from pending-dispatch
+  reads through the same `EventDispatchRuntimeMetadataKeys` terminal metadata contract
+
+Follow-up later:
+
+- broker-specific dead-letter queues, durable inbox ownership, generic inbound broker
+  consumption, and cross-node exactly-once delivery remain future package-owned work until a
+  package truly owns those paths
 
 ### ENG-269 Agentics tool execution operator-action baseline
 
@@ -9124,6 +9156,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 89
 
 - ENG-277 Wolverine dispatch terminal retry failure (shipped, issue #786)
+
+### Sprint 90
+
+- ENG-278 Wolverine dispatch publish-exception terminal proof (shipped, issue #787)
 
 ### Later / not scheduled yet
 
