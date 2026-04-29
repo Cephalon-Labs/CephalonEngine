@@ -932,6 +932,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Eventing.Services.EventDispatchItem),
             typeof(global::Cephalon.Eventing.Services.EventDispatchExecutionOutcomes),
             typeof(global::Cephalon.Eventing.Services.EventDispatchExecutionReport),
+            typeof(global::Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys),
             typeof(global::Cephalon.Eventing.Services.EventPublication),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionContext),

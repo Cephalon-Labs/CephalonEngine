@@ -608,6 +608,128 @@ string TenantId { get; }
 
 Gets the tenant identifier associated with the message.
 
+<a id="type-cephalon-eventing-services-eventdispatchruntimemetadatakeys"></a>
+
+### `EventDispatchRuntimeMetadataKeys`
+
+Defines stable metadata keys used by event-dispatch runtime observations.
+
+Remarks: These keys appear in dispatch runtime reports and the derived event-dispatch runtime surfaces so operators and dispatch stores can distinguish retryable failures from terminal failures without parsing provider-specific metadata.
+
+#### Declaration
+```csharp
+public static class EventDispatchRuntimeMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-nextretryatutc"></a>
+
+##### `NextRetryAtUtc`
+
+```csharp
+const string NextRetryAtUtc
+```
+
+Identifies the next UTC time when a retryable dispatch failure should become eligible again.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydelayseconds"></a>
+
+##### `RetryDelaySeconds`
+
+```csharp
+const string RetryDelaySeconds
+```
+
+Identifies the retry delay in seconds when the active dispatch runtime uses a delayed retry policy.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydurability"></a>
+
+##### `RetryDurability`
+
+```csharp
+const string RetryDurability
+```
+
+Identifies where retry eligibility is persisted.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryexhausted"></a>
+
+##### `RetryExhausted`
+
+```csharp
+const string RetryExhausted
+```
+
+Identifies whether the retry budget was exhausted for the latest observation.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrymaxattempts"></a>
+
+##### `RetryMaxAttempts`
+
+```csharp
+const string RetryMaxAttempts
+```
+
+Identifies the maximum number of dispatch attempts allowed for one staged message.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryoutcome"></a>
+
+##### `RetryOutcome`
+
+```csharp
+const string RetryOutcome
+```
+
+Identifies the retry decision represented by the latest observation.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypolicy"></a>
+
+##### `RetryPolicy`
+
+```csharp
+const string RetryPolicy
+```
+
+Identifies the retry policy applied by the active dispatch runtime.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryscope"></a>
+
+##### `RetryScope`
+
+```csharp
+const string RetryScope
+```
+
+Identifies who owns the retry policy.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-terminalfailure"></a>
+
+##### `TerminalFailure`
+
+```csharp
+const string TerminalFailure
+```
+
+Identifies whether the latest failure should stop re-entering pending-dispatch reads.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchruntimemetadatakeys-isterminalfailure-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsTerminalFailure`
+
+```csharp
+bool IsTerminalFailure(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the supplied metadata describes a terminal failure.
+
+Returns: `true` when either `TerminalFailure` or `RetryExhausted` is set to `true`; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch observation metadata to inspect.
+
 <a id="type-cephalon-eventing-services-eventpublication"></a>
 
 ### `EventPublication`

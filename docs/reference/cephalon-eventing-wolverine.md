@@ -58,6 +58,18 @@ int DispatchBatchSize { get; set; }
 
 Gets or sets the maximum number of staged events the Wolverine-owned dispatch loop should read per polling cycle.
 
+<a id="member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchmaxattempts"></a>
+
+##### `DispatchMaxAttempts`
+
+```csharp
+int DispatchMaxAttempts { get; set; }
+```
+
+Gets or sets the maximum number of Wolverine-managed dispatch attempts for one staged event publication.
+
+Remarks: The default value of `3` keeps the provider-managed dispatch lane bounded so poison staged publications eventually report a terminal `failed` observation instead of re-entering pending-dispatch reads forever. Set this to `1` to disable dispatch retries while still reporting the managed dispatch attempt.
+
 <a id="member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchpollingintervalseconds"></a>
 
 ##### `DispatchPollingIntervalSeconds`

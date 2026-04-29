@@ -129,10 +129,13 @@ internal sealed class Neo4jEventDispatchStore : IEventDispatchStore
             }
 
             var dispatchAttemptCount = Math.Max(record["dispatchAttemptCount"].As<int>(), report.Attempt);
-            var dispatchedAtUtc = normalizedOutcome is EventDispatchExecutionOutcomes.Succeeded or EventDispatchExecutionOutcomes.Skipped
+            var terminalFailure = normalizedOutcome == EventDispatchExecutionOutcomes.Failed &&
+                EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata);
+            var dispatchedAtUtc = normalizedOutcome is EventDispatchExecutionOutcomes.Succeeded or EventDispatchExecutionOutcomes.Skipped || terminalFailure
                 ? observedAtUtc.UtcDateTime.ToString("O", CultureInfo.InvariantCulture)
                 : null;
-            var nextAttemptAtUtc = normalizedOutcome is EventDispatchExecutionOutcomes.Failed or EventDispatchExecutionOutcomes.RetryScheduled
+            var nextAttemptAtUtc = !terminalFailure &&
+                (normalizedOutcome is EventDispatchExecutionOutcomes.Failed or EventDispatchExecutionOutcomes.RetryScheduled)
                 ? TryGetNextAttemptAtUtc(report.Metadata)?.ToString("O", CultureInfo.InvariantCulture)
                 : null;
 
@@ -209,7 +212,7 @@ internal sealed class Neo4jEventDispatchStore : IEventDispatchStore
 
     private static DateTimeOffset? TryGetNextAttemptAtUtc(IReadOnlyDictionary<string, string> metadata)
     {
-        if (!metadata.TryGetValue("nextRetryAtUtc", out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
+        if (!metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.NextRetryAtUtc, out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
         {
             return null;
         }

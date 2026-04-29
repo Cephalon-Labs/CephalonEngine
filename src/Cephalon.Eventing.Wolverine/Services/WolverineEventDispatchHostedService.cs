@@ -127,6 +127,8 @@ internal sealed class WolverineEventDispatchHostedService(
         CancellationToken cancellationToken)
     {
         var attempt = checked(item.DispatchAttemptCount + 1);
+        var maxAttempts = WolverineEventingRetryPolicy.GetDispatchMaxAttempts(options);
+        var retryDelaySeconds = WolverineEventingRetryPolicy.GetDispatchRetryDelaySeconds(options);
         var deliveryOptions = CreateDeliveryOptions(item, attempt);
         var publication = CreatePublication(item);
         var managedSubscriptionCount = managedSubscriptions?.CountForChannel(item.ChannelId) ?? 0;
@@ -161,7 +163,7 @@ internal sealed class WolverineEventDispatchHostedService(
                 item,
                 attempt,
                 EventDispatchExecutionOutcomes.Started,
-                metadata: CreateObservationMetadata(item, deliveryOptions, managedSubscriptionCount)),
+                metadata: CreateObservationMetadata(item, deliveryOptions, managedSubscriptionCount, maxAttempts, retryDelaySeconds)),
             cancellationToken).ConfigureAwait(false);
 
         try
@@ -173,6 +175,24 @@ internal sealed class WolverineEventDispatchHostedService(
                 activity?.SetTag("cephalon.dispatch_result", "no-destinations");
                 activity?.SetStatus(ActivityStatusCode.Error, "No configured destinations");
 
+                if (attempt >= maxAttempts)
+                {
+                    await ApplyObservationAsync(
+                        dispatchStore,
+                        runtimeReporter,
+                        CreateTerminalFailureReport(
+                            item,
+                            attempt,
+                            "Wolverine does not have any configured destinations for Cephalon event publications.",
+                            deliveryOptions,
+                            managedSubscriptionCount,
+                            maxAttempts,
+                            retryDelaySeconds,
+                            null),
+                        cancellationToken).ConfigureAwait(false);
+                    return;
+                }
+
                 await ApplyObservationAsync(
                     dispatchStore,
                     runtimeReporter,
@@ -182,6 +202,8 @@ internal sealed class WolverineEventDispatchHostedService(
                         "Wolverine does not have any configured destinations for Cephalon event publications.",
                         deliveryOptions,
                         managedSubscriptionCount,
+                        maxAttempts,
+                        retryDelaySeconds,
                         null),
                     cancellationToken).ConfigureAwait(false);
                 return;
@@ -209,7 +231,7 @@ internal sealed class WolverineEventDispatchHostedService(
                     item,
                     attempt,
                     EventDispatchExecutionOutcomes.Succeeded,
-                    metadata: CreateObservationMetadata(item, deliveryOptions, managedSubscriptionCount)),
+                    metadata: CreateObservationMetadata(item, deliveryOptions, managedSubscriptionCount, maxAttempts, retryDelaySeconds)),
                 cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -225,10 +247,28 @@ internal sealed class WolverineEventDispatchHostedService(
             activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
             activity?.SetTag("cephalon.dispatch_result", "failed");
 
+            if (attempt >= maxAttempts)
+            {
+                await ApplyObservationAsync(
+                    dispatchStore,
+                    runtimeReporter,
+                    CreateTerminalFailureReport(
+                        item,
+                        attempt,
+                        exception.Message,
+                        deliveryOptions,
+                        managedSubscriptionCount,
+                        maxAttempts,
+                        retryDelaySeconds,
+                        exception),
+                    cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
             await ApplyObservationAsync(
                 dispatchStore,
                 runtimeReporter,
-                CreateRetryReport(item, attempt, exception.Message, deliveryOptions, managedSubscriptionCount, exception),
+                CreateRetryReport(item, attempt, exception.Message, deliveryOptions, managedSubscriptionCount, maxAttempts, retryDelaySeconds, exception),
                 cancellationToken).ConfigureAwait(false);
         }
     }
@@ -255,23 +295,27 @@ internal sealed class WolverineEventDispatchHostedService(
         }
     }
 
-    private EventDispatchExecutionReport CreateRetryReport(
+    private static EventDispatchExecutionReport CreateRetryReport(
         EventDispatchItem item,
         int attempt,
         string error,
         DeliveryOptions deliveryOptions,
         int managedSubscriptionCount,
+        int maxAttempts,
+        int retryDelaySeconds,
         Exception? exception)
     {
-        var nextRetryAtUtc = DateTimeOffset.UtcNow.AddSeconds(Math.Max(1, options.RetryDelaySeconds));
+        var nextRetryAtUtc = DateTimeOffset.UtcNow.AddSeconds(retryDelaySeconds);
         var retryMetadata = CreateObservationMetadata(
             item,
             deliveryOptions,
             managedSubscriptionCount,
+            maxAttempts,
+            retryDelaySeconds,
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                ["nextRetryAtUtc"] = nextRetryAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
-                ["retryPolicy"] = "fixed-delay",
+                [EventDispatchRuntimeMetadataKeys.NextRetryAtUtc] = nextRetryAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+                [EventDispatchRuntimeMetadataKeys.RetryOutcome] = "retry-scheduled",
                 ["routing"] = exception is null ? "no-destinations" : "publish"
             });
         if (exception is not null)
@@ -285,6 +329,43 @@ internal sealed class WolverineEventDispatchHostedService(
             EventDispatchExecutionOutcomes.RetryScheduled,
             error: error,
             metadata: retryMetadata);
+    }
+
+    private static EventDispatchExecutionReport CreateTerminalFailureReport(
+        EventDispatchItem item,
+        int attempt,
+        string error,
+        DeliveryOptions deliveryOptions,
+        int managedSubscriptionCount,
+        int maxAttempts,
+        int retryDelaySeconds,
+        Exception? exception)
+    {
+        var metadata = CreateObservationMetadata(
+            item,
+            deliveryOptions,
+            managedSubscriptionCount,
+            maxAttempts,
+            retryDelaySeconds,
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                [EventDispatchRuntimeMetadataKeys.RetryOutcome] = "max-attempts-exhausted",
+                [EventDispatchRuntimeMetadataKeys.RetryExhausted] = "true",
+                [EventDispatchRuntimeMetadataKeys.TerminalFailure] = "true",
+                ["routing"] = exception is null ? "no-destinations" : "publish"
+            });
+
+        if (exception is not null)
+        {
+            metadata["exceptionType"] = exception.GetType().FullName ?? exception.GetType().Name;
+        }
+
+        return CreateReport(
+            item,
+            attempt,
+            EventDispatchExecutionOutcomes.Failed,
+            error: error,
+            metadata: metadata);
     }
 
     private static EventPublication CreatePublication(EventDispatchItem item)
@@ -357,6 +438,8 @@ internal sealed class WolverineEventDispatchHostedService(
         EventDispatchItem item,
         DeliveryOptions deliveryOptions,
         int managedSubscriptionCount,
+        int maxAttempts,
+        int retryDelaySeconds,
         IReadOnlyDictionary<string, string>? overrides = null)
     {
         var deliveryMode = managedSubscriptionCount > 0
@@ -372,6 +455,11 @@ internal sealed class WolverineEventDispatchHostedService(
             ["deliveryMode"] = deliveryMode,
             ["transport"] = "wolverine",
             ["channelId"] = item.ChannelId,
+            [EventDispatchRuntimeMetadataKeys.RetryPolicy] = maxAttempts > 1 ? WolverineEventingRetryPolicy.BoundedFixedDelay : WolverineEventingRetryPolicy.None,
+            [EventDispatchRuntimeMetadataKeys.RetryMaxAttempts] = maxAttempts.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            [EventDispatchRuntimeMetadataKeys.RetryDelaySeconds] = retryDelaySeconds.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            [EventDispatchRuntimeMetadataKeys.RetryDurability] = "dispatch-store-delayed-eligibility",
+            [EventDispatchRuntimeMetadataKeys.RetryScope] = "provider-managed",
             ["contentType"] = item.ContentType ?? "not-configured",
             ["headerCount"] = deliveryOptions.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["managedSubscriptionCount"] = managedSubscriptionCount.ToString(System.Globalization.CultureInfo.InvariantCulture)

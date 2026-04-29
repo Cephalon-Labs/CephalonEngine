@@ -135,6 +135,8 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("7", adapterEntry.Metadata["dispatchBatchSize"]);
         Assert.Equal("3", adapterEntry.Metadata["dispatchPollingIntervalSeconds"]);
         Assert.Equal("45", adapterEntry.Metadata["retryDelaySeconds"]);
+        Assert.Equal("3", adapterEntry.Metadata["dispatchMaxAttempts"]);
+        Assert.Equal("bounded-fixed-delay", adapterEntry.Metadata["dispatchRetryPolicy"]);
         Assert.Equal("0", adapterEntry.Metadata["reportedTotalCount"]);
         Assert.Equal("0", adapterEntry.Metadata["reportedRetryPendingCount"]);
         Assert.Equal("not-reported", adapterEntry.Metadata["lastOutcome"]);
@@ -331,8 +333,10 @@ public sealed class WolverineEventingPackTests
             {
                 ["publisherId"] = WolverineEventingRuntimeIds.PublisherId,
                 ["dispatchBridge"] = "wolverine-managed",
-                ["nextRetryAtUtc"] = "2026-04-04T14:06:00.0000000+00:00",
-                ["retryPolicy"] = "fixed-delay"
+                [EventDispatchRuntimeMetadataKeys.NextRetryAtUtc] = "2026-04-04T14:06:00.0000000+00:00",
+                [EventDispatchRuntimeMetadataKeys.RetryPolicy] = "bounded-fixed-delay",
+                [EventDispatchRuntimeMetadataKeys.RetryMaxAttempts] = "3",
+                [EventDispatchRuntimeMetadataKeys.RetryDelaySeconds] = "30"
             }));
 
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
@@ -358,7 +362,9 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("true", dispatchEntry.Metadata["retryPending"]);
         Assert.Equal("evt-500", dispatchEntry.Metadata["lastMessageId"]);
         Assert.Equal("2026-04-04T14:06:00.0000000+00:00", dispatchEntry.Metadata["reported.nextRetryAtUtc"]);
-        Assert.Equal("fixed-delay", dispatchEntry.Metadata["reported.retryPolicy"]);
+        Assert.Equal("bounded-fixed-delay", dispatchEntry.Metadata["reported.retryPolicy"]);
+        Assert.Equal("3", dispatchEntry.Metadata["reported.retryMaxAttempts"]);
+        Assert.Equal("30", dispatchEntry.Metadata["reported.retryDelaySeconds"]);
         Assert.Equal("wolverine-managed", dispatchEntry.Metadata[$"dispatchRuntime.{WolverineEventingRuntimeIds.DispatchRuntimeId}.dispatchBridge"]);
         Assert.True(runtimeDescriptor!.Summary.HasReports);
         Assert.Equal(["entity-framework-outbox"], runtimeDescriptor.Summary.ReportedOutboxIds);
@@ -622,7 +628,8 @@ public sealed class WolverineEventingPackTests
             EnableDispatchLoop = true,
             DispatchBatchSize = 10,
             DispatchPollingIntervalSeconds = 60,
-            RetryDelaySeconds = 30
+            RetryDelaySeconds = 30,
+            DispatchMaxAttempts = 3
         };
         var dispatchStore = new TestEventDispatchStore(dispatchItem);
         var runtimeReporter = new TestEventDispatchRuntimeReporter();
@@ -705,7 +712,12 @@ public sealed class WolverineEventingPackTests
             {
                 Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, report.Outcome);
                 Assert.Equal("Wolverine does not have any configured destinations for Cephalon event publications.", report.Error);
-                Assert.Equal("fixed-delay", report.Metadata["retryPolicy"]);
+                Assert.Equal("bounded-fixed-delay", report.Metadata["retryPolicy"]);
+                Assert.Equal("3", report.Metadata["retryMaxAttempts"]);
+                Assert.Equal("30", report.Metadata["retryDelaySeconds"]);
+                Assert.Equal("dispatch-store-delayed-eligibility", report.Metadata["retryDurability"]);
+                Assert.Equal("provider-managed", report.Metadata["retryScope"]);
+                Assert.Equal("retry-scheduled", report.Metadata["retryOutcome"]);
                 Assert.Equal("no-destinations", report.Metadata["routing"]);
                 Assert.True(report.Metadata.ContainsKey("nextRetryAtUtc"));
             });
@@ -713,6 +725,64 @@ public sealed class WolverineEventingPackTests
             runtimeReporter.Reported,
             report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
             report => Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, report.Outcome));
+    }
+
+    [Fact]
+    public async Task WolverineManagedDispatchLoopReportsTerminalFailureWhenMaxAttemptsAreExhausted()
+    {
+        var dispatchItem = new EventDispatchItem(
+            outboxId: "entity-framework-outbox",
+            messageId: "evt-401",
+            channelId: "catalog-events",
+            eventType: "catalog.item.created",
+            payload: "{\"id\":\"item-401\"}",
+            occurredAtUtc: new DateTimeOffset(2026, 04, 04, 13, 05, 0, TimeSpan.Zero),
+            createdAtUtc: new DateTimeOffset(2026, 04, 04, 13, 05, 1, TimeSpan.Zero),
+            dispatchAttemptCount: 1,
+            contentType: "application/json");
+        var options = new WolverineEventingOptions
+        {
+            EnableDispatchLoop = true,
+            DispatchBatchSize = 10,
+            DispatchPollingIntervalSeconds = 60,
+            RetryDelaySeconds = 30,
+            DispatchMaxAttempts = 2
+        };
+        var dispatchStore = new TestEventDispatchStore(dispatchItem);
+        var runtimeReporter = new TestEventDispatchRuntimeReporter();
+        var messageBus = new TestMessageBus(hasDestinations: false);
+        var service = new WolverineEventDispatchHostedService(
+            options,
+            dispatchStore,
+            runtimeReporter,
+            messageBus,
+            NullLogger<WolverineEventDispatchHostedService>.Instance);
+
+        await service.DispatchOnceAsync();
+
+        Assert.Empty(messageBus.PublishedMessages);
+        Assert.Empty(await dispatchStore.ReadPendingAsync(10));
+        Assert.Collection(
+            dispatchStore.AppliedReports,
+            report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
+            report =>
+            {
+                Assert.Equal(EventDispatchExecutionOutcomes.Failed, report.Outcome);
+                Assert.Equal("Wolverine does not have any configured destinations for Cephalon event publications.", report.Error);
+                Assert.Equal("bounded-fixed-delay", report.Metadata["retryPolicy"]);
+                Assert.Equal("2", report.Metadata["retryMaxAttempts"]);
+                Assert.Equal("30", report.Metadata["retryDelaySeconds"]);
+                Assert.Equal("dispatch-store-delayed-eligibility", report.Metadata["retryDurability"]);
+                Assert.Equal("provider-managed", report.Metadata["retryScope"]);
+                Assert.Equal("max-attempts-exhausted", report.Metadata["retryOutcome"]);
+                Assert.Equal("true", report.Metadata["retryExhausted"]);
+                Assert.Equal("true", report.Metadata["terminalFailure"]);
+                Assert.False(report.Metadata.ContainsKey("nextRetryAtUtc"));
+            });
+        Assert.Collection(
+            runtimeReporter.Reported,
+            report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
+            report => Assert.Equal(EventDispatchExecutionOutcomes.Failed, report.Outcome));
     }
 
     private sealed class TestEventDispatchStore(params EventDispatchItem[] items) : IEventDispatchStore
@@ -737,7 +807,8 @@ public sealed class WolverineEventingPackTests
         {
             cancellationToken.ThrowIfCancellationRequested();
             AppliedReports.Add(report);
-            if (report.Outcome is EventDispatchExecutionOutcomes.Succeeded or EventDispatchExecutionOutcomes.Skipped)
+            if (report.Outcome is EventDispatchExecutionOutcomes.Succeeded or EventDispatchExecutionOutcomes.Skipped ||
+                report.Outcome == EventDispatchExecutionOutcomes.Failed && EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata))
             {
                 pendingItems.RemoveAll(item => string.Equals(item.MessageId, report.MessageId, StringComparison.OrdinalIgnoreCase));
             }

@@ -85,6 +85,14 @@ internal sealed class MongoDbEventDispatchStore(
                 break;
 
             case EventDispatchExecutionOutcomes.Failed:
+                entry.DispatchedAtUtc = EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata)
+                    ? observedAtUtc.UtcDateTime
+                    : null;
+                entry.NextAttemptAtUtc = EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata)
+                    ? null
+                    : TryGetNextAttemptAtUtc(report.Metadata);
+                break;
+
             case EventDispatchExecutionOutcomes.RetryScheduled:
                 entry.DispatchedAtUtc = null;
                 entry.NextAttemptAtUtc = TryGetNextAttemptAtUtc(report.Metadata);
@@ -132,7 +140,7 @@ internal sealed class MongoDbEventDispatchStore(
 
     private static DateTime? TryGetNextAttemptAtUtc(IReadOnlyDictionary<string, string> metadata)
     {
-        if (!metadata.TryGetValue("nextRetryAtUtc", out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
+        if (!metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.NextRetryAtUtc, out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
         {
             return null;
         }

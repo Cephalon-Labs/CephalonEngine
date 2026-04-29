@@ -71,6 +71,11 @@ public sealed class EventDispatchHostingTests
         var descriptor = Assert.Single(runtimeDescriptors);
         Assert.Equal("wolverine-dispatch-loop", descriptor.Id);
         Assert.Equal("wolverine", descriptor.Metadata["adapter"]);
+        Assert.Equal("bounded-fixed-delay", descriptor.Metadata["retryPolicy"]);
+        Assert.Equal("3", descriptor.Metadata["retryMaxAttempts"]);
+        Assert.Equal("20", descriptor.Metadata["retryDelaySeconds"]);
+        Assert.Equal("dispatch-store-delayed-eligibility", descriptor.Metadata["retryDurability"]);
+        Assert.Equal("provider-managed", descriptor.Metadata["retryScope"]);
         Assert.Equal(["entity-framework-outbox"], descriptor.OutboxIds);
         Assert.NotNull(runtimeDescriptor);
         Assert.Equal("wolverine-dispatch-loop", runtimeDescriptor.Id);
@@ -96,7 +101,10 @@ public sealed class EventDispatchHostingTests
             {
                 ["publisherId"] = "wolverine-dispatch-loop",
                 ["dispatchBridge"] = "wolverine-managed",
-                ["nextRetryAtUtc"] = "2026-04-11T09:45:00.0000000+00:00"
+                [EventDispatchRuntimeMetadataKeys.NextRetryAtUtc] = "2026-04-11T09:45:00.0000000+00:00",
+                [EventDispatchRuntimeMetadataKeys.RetryPolicy] = "bounded-fixed-delay",
+                [EventDispatchRuntimeMetadataKeys.RetryMaxAttempts] = "3",
+                [EventDispatchRuntimeMetadataKeys.RetryDelaySeconds] = "20"
             }));
 
         var states = await client.GetFromJsonAsync<EventDispatchRuntimeState[]>("/engine/event-dispatches");
@@ -110,6 +118,9 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("retry-scheduled", reportedState.LastOutcome);
         Assert.True(reportedState.RetryPending);
         Assert.Equal("evt-900", reportedState.LastMessageId);
+        Assert.Equal("bounded-fixed-delay", reportedState.Metadata["retryPolicy"]);
+        Assert.Equal("3", reportedState.Metadata["retryMaxAttempts"]);
+        Assert.Equal("20", reportedState.Metadata["retryDelaySeconds"]);
         Assert.NotNull(state);
         Assert.Equal("entity-framework-outbox", state.OutboxId);
         Assert.NotNull(enrichedRuntimeDescriptor);
@@ -208,6 +219,9 @@ public sealed class EventDispatchHostingTests
         var adapterSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
         var adapterEntry = Assert.Single(adapterSurface.Entries);
         Assert.Equal("wolverine-managed", adapterEntry.Metadata["dispatchBridge"]);
+        Assert.Equal("bounded-fixed-delay", adapterEntry.Metadata["dispatchRetryPolicy"]);
+        Assert.Equal("3", adapterEntry.Metadata["dispatchMaxAttempts"]);
+        Assert.Equal("20", adapterEntry.Metadata["retryDelaySeconds"]);
         Assert.Equal("wolverine-managed", adapterEntry.Metadata["subscriptionExecution"]);
         Assert.Equal("wolverine-subscription-execution", adapterEntry.Metadata["subscriptionExecutionRuntimeId"]);
         Assert.Equal("1", adapterEntry.Metadata["managedSubscriptionCount"]);

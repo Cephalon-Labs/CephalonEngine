@@ -100,9 +100,12 @@ internal sealed class RedisEventDispatchStore(
             ? DateTimeOffset.UtcNow
             : report.ObservedAtUtc;
 
-        var nextAttemptAtUtc = NormalizeOutcome(report.Outcome) switch
+        var normalizedOutcome = NormalizeOutcome(report.Outcome);
+        var terminalFailure = normalizedOutcome == EventDispatchExecutionOutcomes.Failed &&
+            EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata);
+        var nextAttemptAtUtc = normalizedOutcome switch
         {
-            EventDispatchExecutionOutcomes.Failed => TryGetNextAttemptAtUtc(report.Metadata),
+            EventDispatchExecutionOutcomes.Failed when !terminalFailure => TryGetNextAttemptAtUtc(report.Metadata),
             EventDispatchExecutionOutcomes.RetryScheduled => TryGetNextAttemptAtUtc(report.Metadata),
             _ => null
         };
@@ -110,17 +113,18 @@ internal sealed class RedisEventDispatchStore(
         var updates = new HashEntry[]
         {
             new("DispatchAttemptCount", Math.Max(ParseInt(values, "DispatchAttemptCount"), report.Attempt)),
-            new("DispatchedAtUtc", ShouldMarkDispatched(report.Outcome) ? observedAtUtc.UtcDateTime.ToString("O", CultureInfo.InvariantCulture) : string.Empty),
+            new("DispatchedAtUtc", ShouldMarkDispatched(normalizedOutcome) || terminalFailure ? observedAtUtc.UtcDateTime.ToString("O", CultureInfo.InvariantCulture) : string.Empty),
             new("NextAttemptAtUtc", nextAttemptAtUtc?.ToString("O", CultureInfo.InvariantCulture) ?? string.Empty)
         };
 
         await db.HashSetAsync(hashKey, updates).ConfigureAwait(false);
 
         var pendingKey = PendingSetKey();
-        switch (NormalizeOutcome(report.Outcome))
+        switch (normalizedOutcome)
         {
             case EventDispatchExecutionOutcomes.Succeeded:
             case EventDispatchExecutionOutcomes.Skipped:
+            case EventDispatchExecutionOutcomes.Failed when terminalFailure:
                 _ = await db.SortedSetRemoveAsync(pendingKey, report.MessageId).ConfigureAwait(false);
                 break;
 
@@ -182,7 +186,7 @@ internal sealed class RedisEventDispatchStore(
 
     private static DateTimeOffset? TryGetNextAttemptAtUtc(IReadOnlyDictionary<string, string> metadata)
     {
-        if (!metadata.TryGetValue("nextRetryAtUtc", out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
+        if (!metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.NextRetryAtUtc, out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
         {
             return null;
         }

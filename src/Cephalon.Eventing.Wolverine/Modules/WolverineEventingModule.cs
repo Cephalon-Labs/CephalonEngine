@@ -231,13 +231,16 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
                 ["adapter"] = "wolverine",
                 ["hostWiring"] = options.EnableHostWiring ? "configured" : "disabled",
                 ["dispatchBridge"] = options.EnableDispatchLoop && hasDispatchStore ? "wolverine-managed" : "consumer-managed",
-                ["dispatchRuntime"] = options.EnableDispatchLoop && hasDispatchStore ? "configured" : "not-configured",
-                ["subscriptionExecution"] = options.EnableSubscriptionExecution && hasSubscriptionExecutors ? "wolverine-managed" : "not-configured",
-                ["dispatchLoop"] = options.EnableDispatchLoop ? "enabled" : "disabled",
-                ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
-                ["subscriptionRetryPolicy"] = WolverineEventingRetryPolicy.GetSubscriptionPolicyId(options),
-                ["subscriptionMaxAttempts"] = WolverineEventingRetryPolicy.GetSubscriptionMaxAttempts(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
-                ["subscriptionRetryDelaySeconds"] = WolverineEventingRetryPolicy.GetSubscriptionRetryDelaySeconds(options).ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    ["dispatchRuntime"] = options.EnableDispatchLoop && hasDispatchStore ? "configured" : "not-configured",
+                    ["subscriptionExecution"] = options.EnableSubscriptionExecution && hasSubscriptionExecutors ? "wolverine-managed" : "not-configured",
+                    ["dispatchLoop"] = options.EnableDispatchLoop ? "enabled" : "disabled",
+                    ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
+                    ["dispatchRetryPolicy"] = WolverineEventingRetryPolicy.GetDispatchPolicyId(options),
+                    ["dispatchMaxAttempts"] = WolverineEventingRetryPolicy.GetDispatchMaxAttempts(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["dispatchRetryDelaySeconds"] = WolverineEventingRetryPolicy.GetDispatchRetryDelaySeconds(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["subscriptionRetryPolicy"] = WolverineEventingRetryPolicy.GetSubscriptionPolicyId(options),
+                    ["subscriptionMaxAttempts"] = WolverineEventingRetryPolicy.GetSubscriptionMaxAttempts(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["subscriptionRetryDelaySeconds"] = WolverineEventingRetryPolicy.GetSubscriptionRetryDelaySeconds(options).ToString(System.Globalization.CultureInfo.InvariantCulture)
             }));
 
         if (options.EnableDispatchLoop)
@@ -255,7 +258,12 @@ internal sealed class WolverineEventingModule(Action<WolverineEventingOptions>? 
                     ["dispatchRuntimeId"] = WolverineEventingRuntimeIds.DispatchRuntimeId,
                     ["hostedExecutionId"] = WolverineEventingRuntimeIds.HostedExecutionId,
                     ["executionGraphId"] = WolverineEventingRuntimeIds.ExecutionGraphId,
-                    ["publisherId"] = WolverineEventingRuntimeIds.PublisherId
+                    ["publisherId"] = WolverineEventingRuntimeIds.PublisherId,
+                    ["retryPolicy"] = WolverineEventingRetryPolicy.GetDispatchPolicyId(options),
+                    ["retryMaxAttempts"] = WolverineEventingRetryPolicy.GetDispatchMaxAttempts(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["retryDelaySeconds"] = WolverineEventingRetryPolicy.GetDispatchRetryDelaySeconds(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["retryDurability"] = "dispatch-store-delayed-eligibility",
+                    ["retryScope"] = "provider-managed"
                 }));
         }
 

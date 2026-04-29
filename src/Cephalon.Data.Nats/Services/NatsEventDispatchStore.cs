@@ -126,6 +126,14 @@ internal sealed class NatsEventDispatchStore(INatsConnection nats, string bucket
                 break;
 
             case EventDispatchExecutionOutcomes.Failed:
+                record.DispatchedAtUtc = EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata)
+                    ? observedAtUtc
+                    : null;
+                record.NextAttemptAtUtc = EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata)
+                    ? null
+                    : TryGetNextAttemptAtUtc(report.Metadata);
+                break;
+
             case EventDispatchExecutionOutcomes.RetryScheduled:
                 record.DispatchedAtUtc = null;
                 record.NextAttemptAtUtc = TryGetNextAttemptAtUtc(report.Metadata);
@@ -210,7 +218,7 @@ internal sealed class NatsEventDispatchStore(INatsConnection nats, string bucket
 
     private static DateTimeOffset? TryGetNextAttemptAtUtc(IReadOnlyDictionary<string, string> metadata)
     {
-        if (!metadata.TryGetValue("nextRetryAtUtc", out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
+        if (!metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.NextRetryAtUtc, out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
         {
             return null;
         }

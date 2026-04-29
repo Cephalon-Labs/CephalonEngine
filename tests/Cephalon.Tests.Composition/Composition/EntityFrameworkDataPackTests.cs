@@ -1243,7 +1243,7 @@ public sealed class EntityFrameworkDataPackTests
             error: "Broker temporarily unavailable",
             metadata: new Dictionary<string, string>
             {
-                ["nextRetryAtUtc"] = nextRetryAtUtc.ToString("O")
+                [EventDispatchRuntimeMetadataKeys.NextRetryAtUtc] = nextRetryAtUtc.ToString("O")
             }));
 
         var pendingDuringBackoff = await dispatchStore.ReadPendingAsync(10);
@@ -1259,6 +1259,72 @@ public sealed class EntityFrameworkDataPackTests
 
         var outboxEntry = await dbContext.OutboxMessages.SingleAsync();
         Assert.Equal(2, outboxEntry.DispatchAttemptCount);
+        Assert.NotNull(outboxEntry.DispatchedAtUtc);
+        Assert.Null(outboxEntry.NextAttemptAtUtc);
+        Assert.Empty(await dispatchStore.ReadPendingAsync(10));
+    }
+
+    [Fact]
+    public async Task AddEntityFrameworkDataStopsPendingReadsForTerminalDispatchFailures()
+    {
+        var databaseName = $"cephalon-data-ef-event-dispatch-terminal-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                data: new DataSettings(
+                    provider: "EntityFramework",
+                    outboxEnabled: true),
+                messaging: new MessagingSettings(provider: "InMemoryChannels")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+            });
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<OutboxCatalogDbContext>();
+
+        await publisher.PublishAsync(new EventPublication(
+            id: "evt-terminal-200",
+            channelId: "catalog-events",
+            eventType: "catalog.item.created",
+            payload: "{\"id\":\"item-terminal-200\"}",
+            occurredAtUtc: DateTimeOffset.UtcNow,
+            correlationId: "corr-terminal-200"));
+
+        Assert.Single(await dispatchStore.ReadPendingAsync(10));
+
+        await dispatchStore.ApplyReportAsync(new EventDispatchExecutionReport(
+            outboxId: "entity-framework-outbox",
+            channelId: "catalog-events",
+            outcome: EventDispatchExecutionOutcomes.Failed,
+            observedAtUtc: DateTimeOffset.UtcNow,
+            messageId: "evt-terminal-200",
+            attempt: 3,
+            error: "Dispatch retry budget exhausted.",
+            metadata: new Dictionary<string, string>
+            {
+                [EventDispatchRuntimeMetadataKeys.TerminalFailure] = "true",
+                [EventDispatchRuntimeMetadataKeys.RetryExhausted] = "true"
+            }));
+
+        var outboxEntry = await dbContext.OutboxMessages.SingleAsync();
+        Assert.Equal(3, outboxEntry.DispatchAttemptCount);
         Assert.NotNull(outboxEntry.DispatchedAtUtc);
         Assert.Null(outboxEntry.NextAttemptAtUtc);
         Assert.Empty(await dispatchStore.ReadPendingAsync(10));

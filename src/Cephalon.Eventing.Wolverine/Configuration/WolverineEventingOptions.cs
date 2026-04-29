@@ -7,6 +7,7 @@ namespace Cephalon.Eventing.Wolverine.Configuration;
 /// </summary>
 public sealed class WolverineEventingOptions
 {
+    private int dispatchMaxAttempts = 3;
     private int subscriptionMaxAttempts = 3;
 
     /// <summary>
@@ -50,6 +51,32 @@ public sealed class WolverineEventingOptions
     /// Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
     /// </summary>
     public int RetryDelaySeconds { get; set; } = 30;
+
+    /// <summary>
+    /// Gets or sets the maximum number of Wolverine-managed dispatch attempts for one staged event publication.
+    /// </summary>
+    /// <remarks>
+    /// The default value of <c>3</c> keeps the provider-managed dispatch lane bounded so poison
+    /// staged publications eventually report a terminal <c>failed</c> observation instead of
+    /// re-entering pending-dispatch reads forever. Set this to <c>1</c> to disable dispatch
+    /// retries while still reporting the managed dispatch attempt.
+    /// </remarks>
+    public int DispatchMaxAttempts
+    {
+        get => dispatchMaxAttempts;
+        set
+        {
+            if (value < 1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "Wolverine-managed dispatch max attempts must be greater than or equal to 1.");
+            }
+
+            dispatchMaxAttempts = value;
+        }
+    }
 
     /// <summary>
     /// Gets or sets the number of seconds the Wolverine-managed subscription execution path should wait before requeueing a failed subscription attempt.

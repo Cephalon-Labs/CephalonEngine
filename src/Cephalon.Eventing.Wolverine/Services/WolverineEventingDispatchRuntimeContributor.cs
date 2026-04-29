@@ -37,7 +37,12 @@ internal sealed class WolverineEventingDispatchRuntimeContributor(
                 ["hostWiring"] = options.EnableHostWiring ? "configured" : "external",
                 ["publisherId"] = WolverineEventingRuntimeIds.PublisherId,
                 ["hostedExecutionId"] = WolverineEventingRuntimeIds.HostedExecutionId,
-                ["executionGraphId"] = WolverineEventingRuntimeIds.ExecutionGraphId
+                ["executionGraphId"] = WolverineEventingRuntimeIds.ExecutionGraphId,
+                ["retryPolicy"] = WolverineEventingRetryPolicy.GetDispatchPolicyId(options),
+                ["retryMaxAttempts"] = WolverineEventingRetryPolicy.GetDispatchMaxAttempts(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                ["retryDelaySeconds"] = WolverineEventingRetryPolicy.GetDispatchRetryDelaySeconds(options).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                ["retryDurability"] = "dispatch-store-delayed-eligibility",
+                ["retryScope"] = "provider-managed"
             },
             outboxIds: outboxIds));
     }

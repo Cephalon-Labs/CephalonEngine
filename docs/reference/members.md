@@ -6768,6 +6768,9 @@ Browse the published API surface by public member.
 - [Dispatching](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatching): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Dispatching&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the linked outbox dispatch runtime is actively dispatching publications.
   - `const string Dispatching`
+- [DispatchMaxAttempts](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchmaxattempts): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=DispatchMaxAttempts&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
+  - Gets or sets the maximum number of Wolverine-managed dispatch attempts for one staged event publication.
+  - `int DispatchMaxAttempts { get; set; }`
 - [DispatchPolicy](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-dispatchpolicy): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DispatchPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective dispatch-execution policy for the outbox.
   - `OutboxDispatchPolicyDescriptor DispatchPolicy { get; }`
@@ -13740,6 +13743,9 @@ Browse the published API surface by public member.
 - [IsTerminal](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-isterminal): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsTerminal&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets a value indicating whether the latest report represents a terminal outcome for this run.
   - `bool IsTerminal { get; }`
+- [IsTerminalFailure](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchruntimemetadatakeys-isterminalfailure-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsTerminalFailure&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the supplied metadata describes a terminal failure.
+  - `bool IsTerminalFailure(IReadOnlyDictionary<string, string> metadata)`
 - [IsTruncated](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-istruncated): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsTruncated&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the bounded command journal has truncated older entries.
   - `bool IsTruncated { get; }`
@@ -16999,6 +17005,9 @@ Browse the published API surface by public member.
 - [NextAttemptAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-nextattemptatutc): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=NextAttemptAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the outbox row becomes eligible for the next dispatch attempt, when delayed retry is in effect.
   - `DateTimeOffset? NextAttemptAtUtc { get; set; }`
+- [NextRetryAtUtc](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-nextretryatutc): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=NextRetryAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the next UTC time when a retryable dispatch failure should become eligible again.
+  - `const string NextRetryAtUtc`
 - [NextTimerDueAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-nexttimerdueatutc): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=NextTimerDueAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the earliest UTC due timestamp across the currently pending timers when one exists.
   - `DateTimeOffset? NextTimerDueAtUtc { get; }`
@@ -22452,9 +22461,15 @@ Browse the published API surface by public member.
 - [RetryDelayMilliseconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrydelaymilliseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=RetryDelayMilliseconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the fixed delay, in milliseconds, between retry attempts.
   - `int RetryDelayMilliseconds { get; set; }`
+- [RetryDelaySeconds](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydelayseconds): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryDelaySeconds&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the retry delay in seconds when the active dispatch runtime uses a delayed retry policy.
+  - `const string RetryDelaySeconds`
 - [RetryDelaySeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-retrydelayseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=RetryDelaySeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
   - `int RetryDelaySeconds { get; set; }`
+- [RetryDurability](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydurability): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryDurability&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies where retry eligibility is persisted.
+  - `const string RetryDurability`
 - [RetryEligible](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-retryeligible): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryEligible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current retry posture is eligible for one safe retry.
   - `const string RetryEligible`
@@ -22551,6 +22566,9 @@ Browse the published API surface by public member.
 - [RetryExecutionPolicyState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-retryexecutionpolicystate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryExecutionPolicyState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector retry-execution policy state that informed provider-specific materialization.
   - `string RetryExecutionPolicyState { get; set; }`
+- [RetryExhausted](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryexhausted): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryExhausted&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether the retry budget was exhausted for the latest observation.
+  - `const string RetryExhausted`
 - [RetryFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-retryfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic retry fingerprint currently associated with automatic background retry execution.
   - `string RetryFingerprint { get; set; }`
@@ -22602,6 +22620,12 @@ Browse the published API surface by public member.
 - [RetryHistoryPresent](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-retryhistorypresent): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryHistoryPresent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The bounded command journal currently retains matching retry history.
   - `const string RetryHistoryPresent`
+- [RetryMaxAttempts](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrymaxattempts): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryMaxAttempts&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the maximum number of dispatch attempts allowed for one staged message.
+  - `const string RetryMaxAttempts`
+- [RetryOutcome](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryoutcome): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the retry decision represented by the latest observation.
+  - `const string RetryOutcome`
 - [RetryPending](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-retrypending): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest report says another retry attempt is pending.
   - `bool RetryPending { get; }`
@@ -22614,6 +22638,9 @@ Browse the published API surface by public member.
 - [RetryPendingCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPendingCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of owned outboxes whose latest report still says another retry is pending.
   - `int RetryPendingCount { get; }`
+- [RetryPolicy](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypolicy): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryPolicy&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the retry policy applied by the active dispatch runtime.
+  - `const string RetryPolicy`
 - [RetryReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutioncategories-retryready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently exposes one retry-ready candidate for automatic background retry execution.
   - `const string RetryReady`
@@ -22641,6 +22668,9 @@ Browse the published API surface by public member.
 - [RetryScheduledSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-retryscheduledsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryScheduledSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of subscription-retry observations produced by the latest publication observation.
   - `int RetryScheduledSubscriptionCount { get; set; }`
+- [RetryScope](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryscope): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScope&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies who owns the retry policy.
+  - `const string RetryScope`
 - [RetrySelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-retryselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean): `Constructors` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetrySelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `RetrySelection` class.
   - `RetrySelection(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)`
@@ -25864,6 +25894,9 @@ Browse the published API surface by public member.
 - [Tenants](cephalon-multitenancy.md#member-p-cephalon-multitenancy-configuration-multitenancyruntimeoptions-tenants): `Properties` on `MultiTenancyRuntimeOptions` in `Cephalon.MultiTenancy.Configuration` (`Cephalon.MultiTenancy`) [Browse](browse.html?q=Tenants&assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Configuration&scope=members)
   - Gets the configured tenants that the built-in resolver can match by id, key, or domain.
   - `List<TenantContext> Tenants { get; }`
+- [TerminalFailure](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-terminalfailure): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TerminalFailure&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether the latest failure should stop re-entering pending-dispatch reads.
+  - `const string TerminalFailure`
 - [Tests](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-tests): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tests&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a test project.
   - `const string Tests`

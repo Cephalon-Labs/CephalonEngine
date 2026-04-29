@@ -129,6 +129,26 @@ internal sealed class QdrantEventDispatchStore : IEventDispatchStore, IDisposabl
                 break;
 
             case EventDispatchExecutionOutcomes.Failed:
+                if (EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata))
+                {
+                    updatedPoint.Payload["dispatched_at_utc"] = observedAtUtc.UtcDateTime.ToString("O", CultureInfo.InvariantCulture);
+                    updatedPoint.Payload.Remove("next_attempt_at_utc");
+                    break;
+                }
+
+                updatedPoint.Payload.Remove("dispatched_at_utc");
+                var failedNextAttemptAtUtc = TryGetNextAttemptAtUtc(report.Metadata);
+                if (failedNextAttemptAtUtc is null)
+                {
+                    updatedPoint.Payload.Remove("next_attempt_at_utc");
+                }
+                else
+                {
+                    updatedPoint.Payload["next_attempt_at_utc"] = failedNextAttemptAtUtc.Value.UtcDateTime.ToString("O", CultureInfo.InvariantCulture);
+                }
+
+                break;
+
             case EventDispatchExecutionOutcomes.RetryScheduled:
                 updatedPoint.Payload.Remove("dispatched_at_utc");
                 var nextAttemptAtUtc = TryGetNextAttemptAtUtc(report.Metadata);
@@ -259,7 +279,7 @@ internal sealed class QdrantEventDispatchStore : IEventDispatchStore, IDisposabl
 
     private static DateTimeOffset? TryGetNextAttemptAtUtc(IReadOnlyDictionary<string, string> metadata)
     {
-        if (!metadata.TryGetValue("nextRetryAtUtc", out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
+        if (!metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.NextRetryAtUtc, out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
         {
             return null;
         }

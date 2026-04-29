@@ -56,7 +56,7 @@ Current baseline packages:
   - can opt into a Cephalon-managed direct in-process subscription execution lane through `EnableInProcessSubscriptionExecution`, registered `IEventSubscriptionExecutor` services, and `IEventPublisher`, including bounded process-local retries through `InProcessSubscriptionMaxAttempts` / `InProcessSubscriptionRetryDelayMilliseconds` and duplicate-completed execution suppression through `EnableInProcessSubscriptionIdempotency` / `InProcessSubscriptionIdempotencyRetentionMinutes` when explicitly configured, without claiming durable broker, durable inbox, cross-node exactly-once, durable retry-queue, or distributed retry ownership
 - `Cephalon.Eventing.Wolverine`
   - optional companion adapter proof for managed dispatch over `EventDrivenIntegration`
-  - projects runtime truth for the current Wolverine-backed outbox, dispatch loop, managed subscription bindings, bounded provider-managed subscription retry, terminal exhausted-attempt failure posture, and subscription readiness without turning Wolverine into an engine-core dependency
+  - projects runtime truth for the current Wolverine-backed outbox, dispatch loop, bounded provider-managed dispatch retry with terminal storage semantics, managed subscription bindings, bounded provider-managed subscription retry, terminal exhausted-attempt failure posture, and subscription readiness without turning Wolverine into an engine-core dependency
 - `Cephalon.Retrieval`
   - runtime services and capability activation for `KnowledgeRetrieval`
   - registers `IKnowledgeCatalog`, the abstraction-level `IKnowledgeIndexCatalog` and `IKnowledgeIndexer`, plus `IKnowledgeQueryEngine` when the profile and options enable those paths

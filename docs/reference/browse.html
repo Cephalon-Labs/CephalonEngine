@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T08:48:10.8931443+00:00",
+  "GeneratedAtUtc": "2026-04-29T09:14:06.1965387+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -263,7 +263,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 3,
-      "TypeCount": 30
+      "TypeCount": 31
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1237,7 +1237,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 28
+      "TypeCount": 29
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -7826,6 +7826,21 @@
         "Fields": 0,
         "Properties": 6,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchruntimemetadatakeys",
+      "Declaration": "public static class EventDispatchRuntimeMetadataKeys",
+      "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 9,
+        "Properties": 0,
+        "Methods": 1
       }
     },
     {
@@ -17619,7 +17634,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 10,
+        "Properties": 11,
         "Methods": 0
       }
     },
@@ -42468,6 +42483,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatching",
       "Signature": "const string Dispatching",
       "Summary": "Indicates that the linked outbox dispatch runtime is actively dispatching publications."
+    },
+    {
+      "DisplayName": "DispatchMaxAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "WolverineEventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
+      "AssemblyName": "Cephalon.Eventing.Wolverine",
+      "FileName": "cephalon-eventing-wolverine.md",
+      "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchmaxattempts",
+      "Signature": "int DispatchMaxAttempts { get; set; }",
+      "Summary": "Gets or sets the maximum number of Wolverine-managed dispatch attempts for one staged event publication."
     },
     {
       "DisplayName": "DispatchPolicy",
@@ -67979,6 +68005,17 @@
       "Summary": "Gets a value indicating whether the latest report represents a terminal outcome for this run."
     },
     {
+      "DisplayName": "IsTerminalFailure",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchruntimemetadatakeys-isterminalfailure-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsTerminalFailure(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the supplied metadata describes a terminal failure."
+    },
+    {
       "DisplayName": "IsTruncated",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
@@ -79877,6 +79914,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-nextattemptatutc",
       "Signature": "DateTimeOffset? NextAttemptAtUtc { get; set; }",
       "Summary": "Gets or sets the time at which the outbox row becomes eligible for the next dispatch attempt, when delayed retry is in effect."
+    },
+    {
+      "DisplayName": "NextRetryAtUtc",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-nextretryatutc",
+      "Signature": "const string NextRetryAtUtc",
+      "Summary": "Identifies the next UTC time when a retryable dispatch failure should become eligible again."
     },
     {
       "DisplayName": "NextTimerDueAtUtc",
@@ -99841,6 +99889,17 @@
     },
     {
       "DisplayName": "RetryDelaySeconds",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydelayseconds",
+      "Signature": "const string RetryDelaySeconds",
+      "Summary": "Identifies the retry delay in seconds when the active dispatch runtime uses a delayed retry policy."
+    },
+    {
+      "DisplayName": "RetryDelaySeconds",
       "Category": "Properties",
       "DeclaringTypeName": "WolverineEventingOptions",
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -99849,6 +99908,17 @@
       "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-retrydelayseconds",
       "Signature": "int RetryDelaySeconds { get; set; }",
       "Summary": "Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt."
+    },
+    {
+      "DisplayName": "RetryDurability",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydurability",
+      "Signature": "const string RetryDurability",
+      "Summary": "Identifies where retry eligibility is persisted."
     },
     {
       "DisplayName": "RetryEligible",
@@ -100203,6 +100273,17 @@
       "Summary": "Gets the current managed-connector retry-execution policy state that informed provider-specific materialization."
     },
     {
+      "DisplayName": "RetryExhausted",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryexhausted",
+      "Signature": "const string RetryExhausted",
+      "Summary": "Identifies whether the retry budget was exhausted for the latest observation."
+    },
+    {
       "DisplayName": "RetryFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -100390,6 +100471,28 @@
       "Summary": "The bounded command journal currently retains matching retry history."
     },
     {
+      "DisplayName": "RetryMaxAttempts",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrymaxattempts",
+      "Signature": "const string RetryMaxAttempts",
+      "Summary": "Identifies the maximum number of dispatch attempts allowed for one staged message."
+    },
+    {
+      "DisplayName": "RetryOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryoutcome",
+      "Signature": "const string RetryOutcome",
+      "Summary": "Identifies the retry decision represented by the latest observation."
+    },
+    {
       "DisplayName": "RetryPending",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
@@ -100432,6 +100535,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount",
       "Signature": "int RetryPendingCount { get; }",
       "Summary": "Gets the number of owned outboxes whose latest report still says another retry is pending."
+    },
+    {
+      "DisplayName": "RetryPolicy",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypolicy",
+      "Signature": "const string RetryPolicy",
+      "Summary": "Identifies the retry policy applied by the active dispatch runtime."
     },
     {
       "DisplayName": "RetryReady",
@@ -100531,6 +100645,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-retryscheduledsubscriptioncount",
       "Signature": "int RetryScheduledSubscriptionCount { get; set; }",
       "Summary": "The number of subscription-retry observations produced by the latest publication observation."
+    },
+    {
+      "DisplayName": "RetryScope",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryscope",
+      "Signature": "const string RetryScope",
+      "Summary": "Identifies who owns the retry policy."
     },
     {
       "DisplayName": "RetrySelection",
@@ -112332,6 +112457,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-configuration-multitenancyruntimeoptions-tenants",
       "Signature": "List\u003CTenantContext\u003E Tenants { get; }",
       "Summary": "Gets the configured tenants that the built-in resolver can match by id, key, or domain."
+    },
+    {
+      "DisplayName": "TerminalFailure",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-terminalfailure",
+      "Signature": "const string TerminalFailure",
+      "Summary": "Identifies whether the latest failure should stop re-entering pending-dispatch reads."
     },
     {
       "DisplayName": "Tests",

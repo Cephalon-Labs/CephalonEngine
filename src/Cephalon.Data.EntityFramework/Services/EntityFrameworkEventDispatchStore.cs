@@ -86,8 +86,12 @@ internal sealed class EntityFrameworkEventDispatchStore(
                 break;
 
             case EventDispatchExecutionOutcomes.Failed:
-                entry.DispatchedAtUtc = null;
-                entry.NextAttemptAtUtc = TryGetNextAttemptAtUtc(report.Metadata);
+                entry.DispatchedAtUtc = EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata)
+                    ? observedAtUtc
+                    : null;
+                entry.NextAttemptAtUtc = EventDispatchRuntimeMetadataKeys.IsTerminalFailure(report.Metadata)
+                    ? null
+                    : TryGetNextAttemptAtUtc(report.Metadata);
                 break;
 
             case EventDispatchExecutionOutcomes.RetryScheduled:
@@ -134,7 +138,7 @@ internal sealed class EntityFrameworkEventDispatchStore(
 
     private static DateTimeOffset? TryGetNextAttemptAtUtc(IReadOnlyDictionary<string, string> metadata)
     {
-        if (!metadata.TryGetValue("nextRetryAtUtc", out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
+        if (!metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.NextRetryAtUtc, out var rawValue) || string.IsNullOrWhiteSpace(rawValue))
         {
             return null;
         }
