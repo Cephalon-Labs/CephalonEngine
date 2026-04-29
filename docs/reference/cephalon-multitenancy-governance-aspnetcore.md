@@ -67,6 +67,16 @@ bool EnableTenantAdministrationCommandEndpoint { get; set; }
 
 Gets or sets a value indicating whether the tenant-administration command endpoint should be mapped.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantinvitationdeliverydispatchendpoint"></a>
+
+##### `EnableTenantInvitationDeliveryDispatchEndpoint`
+
+```csharp
+bool EnableTenantInvitationDeliveryDispatchEndpoint { get; set; }
+```
+
+Gets or sets a value indicating whether the tenant-invitation delivery dispatch endpoint should be mapped.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantinvitationdeliverystatuscallbackendpoint"></a>
 
 ##### `EnableTenantInvitationDeliveryStatusCallbackEndpoint`
@@ -119,6 +129,16 @@ bool ExcludeTenantAdministrationEndpointFromDescription { get; set; }
 
 Gets or sets a value indicating whether the tenant-administration command endpoint should be excluded from OpenAPI descriptions.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludetenantinvitationdeliverydispatchendpointfromdescription"></a>
+
+##### `ExcludeTenantInvitationDeliveryDispatchEndpointFromDescription`
+
+```csharp
+bool ExcludeTenantInvitationDeliveryDispatchEndpointFromDescription { get; set; }
+```
+
+Gets or sets a value indicating whether the tenant-invitation delivery dispatch endpoint should be excluded from OpenAPI descriptions.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludetenantinvitationdeliverystatuscallbackendpointfromdescription"></a>
 
 ##### `ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription`
@@ -150,6 +170,18 @@ bool RequireTenantAdministrationAuthorization { get; set; }
 Gets or sets a value indicating whether the tenant-administration command endpoint should require authorization.
 
 Remarks: The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core authorization middleware do not execute tenant-administration commands anonymously.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantinvitationdeliverydispatchauthorization"></a>
+
+##### `RequireTenantInvitationDeliveryDispatchAuthorization`
+
+```csharp
+bool RequireTenantInvitationDeliveryDispatchAuthorization { get; set; }
+```
+
+Gets or sets a value indicating whether the tenant-invitation delivery dispatch endpoint should require authorization.
+
+Remarks: The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core authorization middleware do not dispatch tenant invitations anonymously.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantinvitationdeliverystatuscallbackauthorization"></a>
 
@@ -220,6 +252,28 @@ string TenantAdministrationCommandRoutePattern { get; set; }
 Gets or sets the endpoint route pattern used for tenant-administration workflow commands.
 
 Remarks: The default route stays under `/engine` because the endpoint is an operator/admin surface, not an application-owned public onboarding API.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverydispatchauthorizationpolicy"></a>
+
+##### `TenantInvitationDeliveryDispatchAuthorizationPolicy`
+
+```csharp
+string TenantInvitationDeliveryDispatchAuthorizationPolicy { get; set; }
+```
+
+Gets or sets the optional ASP.NET Core authorization policy required by the tenant-invitation delivery dispatch endpoint.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverydispatchroutepattern"></a>
+
+##### `TenantInvitationDeliveryDispatchRoutePattern`
+
+```csharp
+string TenantInvitationDeliveryDispatchRoutePattern { get; set; }
+```
+
+Gets or sets the endpoint route pattern used for tenant-invitation delivery dispatch requests.
+
+Remarks: The default route stays under `/engine` because the endpoint is an operator/action surface over the host-agnostic dispatcher, not a product-owned public onboarding API.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbackauthorizationpolicy"></a>
 
@@ -508,6 +562,36 @@ IEndpointRouteBuilder MapCephalonTenantDomainOwnershipHttpProofs(this IEndpointR
 Maps the tenant-domain ownership HTTP proof publication endpoint.
 
 Remarks: This endpoint is opt-in and reads proof-file state from `ITenantDomainOwnershipHttpProofPublicationCatalog`. The core governance package remains host-agnostic and only records the proof state that this adapter serves.
+
+Returns: The same endpoint route builder for fluent routing composition.
+
+Parameters:
+- `endpoints`: The endpoint route builder to extend.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverydispatchendpointroutebuilderextensions"></a>
+
+### `TenantInvitationDeliveryDispatchEndpointRouteBuilderExtensions`
+
+Maps ASP.NET Core endpoints for tenant-invitation delivery dispatch requests.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryDispatchEndpointRouteBuilderExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverydispatchendpointroutebuilderextensions-mapcephalontenantinvitationdeliverydispatches-microsoft-aspnetcore-routing-iendpointroutebuilder"></a>
+
+##### `MapCephalonTenantInvitationDeliveryDispatches`
+
+```csharp
+IEndpointRouteBuilder MapCephalonTenantInvitationDeliveryDispatches(this IEndpointRouteBuilder endpoints)
+```
+
+Maps the optional tenant-invitation delivery dispatch endpoint.
+
+Remarks: The endpoint is opt-in, executes the host-agnostic `ITenantInvitationDeliveryDispatcher`, and performs a fail-closed authorization check by default. It does not implement provider-specific senders, durable retry queues, public onboarding, tenant-admin UI, provider polling, or identity-provider synchronization.
 
 Returns: The same endpoint route builder for fluent routing composition.
 

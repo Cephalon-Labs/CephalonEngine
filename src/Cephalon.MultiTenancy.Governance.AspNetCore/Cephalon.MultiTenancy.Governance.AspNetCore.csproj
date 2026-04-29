@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Description>ASP.NET Core HTTP proof publication and tenant-administration command adapter for Cephalon multi-tenancy governance.</Description>
+    <Description>ASP.NET Core HTTP proof publication, tenant-administration command, invitation delivery dispatch, and delivery status adapter for Cephalon multi-tenancy governance.</Description>
   </PropertyGroup>
 
   <ItemGroup>

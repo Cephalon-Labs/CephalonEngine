@@ -488,6 +488,8 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, validation, delivery dispatch, sender readiness, delivery-run, delivery-status reconciliation, and observation-store posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-administration` technology surface — Cephalon-managed host-driven tenant-administration workflow posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-administration-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-administration command endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
+- `tenant-invitation-delivery-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-invitation delivery dispatch endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
+- `tenant-invitation-delivery-status-http-endpoints` technology surface — ASP.NET Core adapter posture for optional normalized delivery-status callback and observation read endpoints from `Cephalon.MultiTenancy.Governance.AspNetCore`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, HTTP proof publication, proof-evaluation, HTTP proof collection, configured DNS TXT proof collection, proof-verification runner, bounded proof-polling runner, and opt-in background proof-polling posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 

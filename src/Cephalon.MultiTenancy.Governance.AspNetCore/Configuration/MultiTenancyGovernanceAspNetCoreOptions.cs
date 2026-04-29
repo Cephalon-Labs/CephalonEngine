@@ -9,6 +9,7 @@ namespace Cephalon.MultiTenancy.Governance.AspNetCore.Configuration;
 public sealed class MultiTenancyGovernanceAspNetCoreOptions
 {
     internal const string DefaultTenantAdministrationCommandRoutePattern = "/engine/tenant-administration/commands";
+    internal const string DefaultTenantInvitationDeliveryDispatchRoutePattern = "/engine/tenant-invitations/delivery-dispatches";
     internal const string DefaultTenantInvitationDeliveryStatusCallbackRoutePattern = "/engine/tenant-invitations/delivery-status";
     internal const string DefaultTenantInvitationDeliveryStatusObservationRoutePattern = "/engine/tenant-invitations/delivery-status/observations";
     internal const string DefaultTenantInvitationDeliveryStatusCallbackSignatureHeaderName = "X-Cephalon-Callback-Signature";
@@ -78,6 +79,40 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
     /// Gets or sets a value indicating whether the tenant-administration command endpoint should be excluded from OpenAPI descriptions.
     /// </summary>
     public bool ExcludeTenantAdministrationEndpointFromDescription { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the tenant-invitation delivery dispatch endpoint should be mapped.
+    /// </summary>
+    public bool EnableTenantInvitationDeliveryDispatchEndpoint { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the endpoint route pattern used for tenant-invitation delivery dispatch requests.
+    /// </summary>
+    /// <remarks>
+    /// The default route stays under <c>/engine</c> because the endpoint is an operator/action surface over the
+    /// host-agnostic dispatcher, not a product-owned public onboarding API.
+    /// </remarks>
+    public string TenantInvitationDeliveryDispatchRoutePattern { get; set; } =
+        DefaultTenantInvitationDeliveryDispatchRoutePattern;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the tenant-invitation delivery dispatch endpoint should require authorization.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core
+    /// authorization middleware do not dispatch tenant invitations anonymously.
+    /// </remarks>
+    public bool RequireTenantInvitationDeliveryDispatchAuthorization { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the optional ASP.NET Core authorization policy required by the tenant-invitation delivery dispatch endpoint.
+    /// </summary>
+    public string? TenantInvitationDeliveryDispatchAuthorizationPolicy { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the tenant-invitation delivery dispatch endpoint should be excluded from OpenAPI descriptions.
+    /// </summary>
+    public bool ExcludeTenantInvitationDeliveryDispatchEndpointFromDescription { get; set; } = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether the tenant-invitation delivery status callback endpoint should be mapped.
@@ -263,6 +298,11 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
         options.RequireTenantAdministrationAuthorization = ParseBoolean(section["RequireTenantAdministrationAuthorization"], options.RequireTenantAdministrationAuthorization);
         options.TenantAdministrationAuthorizationPolicy = Normalize(section["TenantAdministrationAuthorizationPolicy"]);
         options.ExcludeTenantAdministrationEndpointFromDescription = ParseBoolean(section["ExcludeTenantAdministrationEndpointFromDescription"], options.ExcludeTenantAdministrationEndpointFromDescription);
+        options.EnableTenantInvitationDeliveryDispatchEndpoint = ParseBoolean(section["EnableTenantInvitationDeliveryDispatchEndpoint"], options.EnableTenantInvitationDeliveryDispatchEndpoint);
+        options.TenantInvitationDeliveryDispatchRoutePattern = Normalize(section["TenantInvitationDeliveryDispatchRoutePattern"]) ?? options.TenantInvitationDeliveryDispatchRoutePattern;
+        options.RequireTenantInvitationDeliveryDispatchAuthorization = ParseBoolean(section["RequireTenantInvitationDeliveryDispatchAuthorization"], options.RequireTenantInvitationDeliveryDispatchAuthorization);
+        options.TenantInvitationDeliveryDispatchAuthorizationPolicy = Normalize(section["TenantInvitationDeliveryDispatchAuthorizationPolicy"]);
+        options.ExcludeTenantInvitationDeliveryDispatchEndpointFromDescription = ParseBoolean(section["ExcludeTenantInvitationDeliveryDispatchEndpointFromDescription"], options.ExcludeTenantInvitationDeliveryDispatchEndpointFromDescription);
         options.EnableTenantInvitationDeliveryStatusCallbackEndpoint = ParseBoolean(section["EnableTenantInvitationDeliveryStatusCallbackEndpoint"], options.EnableTenantInvitationDeliveryStatusCallbackEndpoint);
         options.TenantInvitationDeliveryStatusCallbackRoutePattern = Normalize(section["TenantInvitationDeliveryStatusCallbackRoutePattern"]) ?? options.TenantInvitationDeliveryStatusCallbackRoutePattern;
         options.RequireTenantInvitationDeliveryStatusCallbackAuthorization = ParseBoolean(section["RequireTenantInvitationDeliveryStatusCallbackAuthorization"], options.RequireTenantInvitationDeliveryStatusCallbackAuthorization);

@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.AspNetCore
 
-`Cephalon.MultiTenancy.Governance.AspNetCore` is the optional ASP.NET Core host adapter for tenant-domain ownership HTTP proof publication, tenant-administration workflow commands, normalized tenant-invitation delivery status callbacks, and bounded reads over normalized delivery-status observation history.
+`Cephalon.MultiTenancy.Governance.AspNetCore` is the optional ASP.NET Core host adapter for tenant-domain ownership HTTP proof publication, tenant-administration workflow commands, tenant-invitation delivery dispatch requests, normalized tenant-invitation delivery status callbacks, and bounded reads over normalized delivery-status observation history.
 
 ## What it owns
 
@@ -9,6 +9,9 @@
 - opt-in ASP.NET Core routing for tenant-administration workflow commands over the host-agnostic governance workflow
 - default `POST /engine/tenant-administration/commands` command endpoint mapping
 - fail-closed tenant-administration authorization by default, with an optional ASP.NET Core policy override
+- opt-in ASP.NET Core routing for tenant-invitation delivery dispatch requests over the host-agnostic invitation delivery dispatcher
+- default `POST /engine/tenant-invitations/delivery-dispatches` dispatch endpoint mapping
+- fail-closed delivery-dispatch authorization by default, with an optional ASP.NET Core policy override
 - opt-in ASP.NET Core routing for normalized tenant-invitation delivery status callbacks over the host-agnostic invitation delivery status reconciler
 - default `POST /engine/tenant-invitations/delivery-status` callback endpoint mapping
 - fail-closed delivery-status callback authorization by default, with an optional ASP.NET Core policy override
@@ -20,6 +23,7 @@
 - fail-closed delivery-status observation authorization by default, with an optional ASP.NET Core policy override
 - bounded and filterable observation reads by tenant id, invitation id, status, outcome, source, correlation id, reconciled, recorded, and limit
 - adapter runtime truth through the `tenant-administration-http-endpoints` technology surface
+- adapter runtime truth through the `tenant-invitation-delivery-http-endpoints` technology surface
 - adapter runtime truth through the `tenant-invitation-delivery-status-http-endpoints` technology surface
 - host configuration for enabling/disabling endpoints, route patterns, cache-control header, authorization posture, endpoint-description visibility, callback signature headers, callback signing key id, timestamp tolerance, signed-callback replay retention, signed-callback replay cache limits, observation read default limit, and observation read max limit
 - serving only proof files that the host-agnostic governance catalog reports as published for the current request host and path
@@ -29,8 +33,11 @@
 
 - `Configuration/MultiTenancyGovernanceAspNetCoreOptions.cs`
 - `Hosting/MultiTenancyGovernanceAspNetCoreServiceCollectionExtensions.cs`
+- `Hosting/MultiTenancyGovernanceAspNetCoreInvitationDeliveryRuntimeSurfaceContributor.cs`
 - `Hosting/MultiTenancyGovernanceAspNetCoreWebApplicationBuilderExtensions.cs`
 - `Hosting/TenantAdministrationEndpointRouteBuilderExtensions.cs`
+- `Hosting/TenantInvitationDeliveryDispatchEndpointRouteBuilderExtensions.cs`
+- `Hosting/TenantInvitationDeliveryDispatchEndpointRuntimeCatalog.cs`
 - `Hosting/TenantDomainOwnershipHttpProofEndpointRouteBuilderExtensions.cs`
 - `Hosting/TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderExtensions.cs`
 - `Hosting/TenantInvitationDeliveryStatusObservationEndpointRouteBuilderExtensions.cs`
@@ -55,6 +62,7 @@ builder.AddCephalonMultiTenancyGovernanceAspNetCore();
 var app = builder.Build();
 app.MapCephalonTenantDomainOwnershipHttpProofs();
 app.MapCephalonTenantAdministrationCommands();
+app.MapCephalonTenantInvitationDeliveryDispatches();
 app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
 app.MapCephalonTenantInvitationDeliveryStatusObservations();
 ```
@@ -62,6 +70,8 @@ app.MapCephalonTenantInvitationDeliveryStatusObservations();
 By default, published proof files are served from `/.well-known/cephalon/{**proofPath}` with `Cache-Control: no-store` and are excluded from OpenAPI/endpoint descriptions. Hosts can override those defaults through `Engine:MultiTenancy:Governance:AspNetCore`.
 
 By default, tenant-administration commands are mapped at `POST /engine/tenant-administration/commands`, are excluded from endpoint descriptions, and require authorization. The handler also performs a fail-closed authorization check so a host that accidentally omits authorization middleware does not execute membership or invitation mutations anonymously. Hosts can deliberately disable the command endpoint, change the route, disable the authorization requirement for an internal/test host, or require a named ASP.NET Core policy with `TenantAdministrationAuthorizationPolicy`.
+
+By default, tenant-invitation delivery dispatch requests are mapped at `POST /engine/tenant-invitations/delivery-dispatches`, are excluded from endpoint descriptions, and require authorization. The handler performs the same fail-closed authorization check before it calls `ITenantInvitationDeliveryDispatcher`, adds safe adapter metadata such as `aspNetCoreInvitationDeliveryDispatch`, the mapped route, and dispatch endpoint ownership, and defaults the dispatch source to `aspnetcore-invitation-delivery-dispatch` when the request does not supply one. Hosts can deliberately disable the dispatch endpoint, change the route, disable the authorization requirement for an internal/test host, or require a named ASP.NET Core policy with `TenantInvitationDeliveryDispatchAuthorizationPolicy`. The endpoint exposes the engine-owned dispatch action only; registered sender behavior, external provider delivery, durable retry queues, and provider-specific sender semantics stay with the configured sender package or application code.
 
 By default, delivery-status callbacks are mapped at `POST /engine/tenant-invitations/delivery-status`, are excluded from endpoint descriptions, require authorization, and enforce provider-message matching even if the callback body attempts to disable that safety check. The request body is `TenantInvitationDeliveryStatusCallbackRequest`, a provider-neutral normalized shape with tenant id, invitation id, status, provider message id, sender id, channel, reason, observed timestamp, source, actor, correlation id, and safe metadata. Provider-specific webhook bodies should be translated into that shape by the host or a later provider companion before reaching this endpoint.
 
@@ -71,11 +81,11 @@ When signed callback replay protection is enabled, which is the default, the end
 
 By default, delivery-status observations are read from `GET /engine/tenant-invitations/delivery-status/observations`, are excluded from endpoint descriptions, require authorization, and return `TenantInvitationDeliveryStatusObservationQueryResult`. The response includes observation-store kind, durability, ownership, total/matched/returned counts, effective limit, normalized filters, and the bounded `TenantInvitationDeliveryStatusObservationDescriptor` records ordered by newest recorded observation first. Hosts can filter by `tenantId`, `invitationId`, `status`, `outcome`, `source`, `correlationId`, `reconciled`, and `recorded`, and can pass `limit`; `TenantInvitationDeliveryStatusObservationMaxLimit` clamps the response so one operator read cannot dump unbounded history.
 
-The adapter reports its command endpoint posture through the `tenant-administration-http-endpoints` runtime surface and its callback plus observation read endpoint posture through `tenant-invitation-delivery-status-http-endpoints`. A mapped endpoint reports `cephalon-managed`; an enabled but unmapped endpoint reports `host-mapping-required`; a disabled endpoint reports `not-configured`. The delivery-status surface reports callback route, method, authorization posture, endpoint-description posture, provider-message-match enforcement, provider-neutral callback signature verification posture, signed-callback replay posture, observation read route, `GET` method, authorization posture, response contract, bounded default/max limits, and explicit `application-managed` boundaries for provider-specific callback inboxes, provider-specific payload translation, provider-specific signature verification, and provider polling.
+The adapter reports its command endpoint posture through the `tenant-administration-http-endpoints` runtime surface, its dispatch endpoint posture through `tenant-invitation-delivery-http-endpoints`, and its callback plus observation read endpoint posture through `tenant-invitation-delivery-status-http-endpoints`. A mapped endpoint reports `cephalon-managed`; an enabled but unmapped endpoint reports `host-mapping-required`; a disabled endpoint reports `not-configured`. The delivery-dispatch surface reports route, `POST` method, authorization posture, endpoint-description posture, `TenantInvitationDeliveryRequest`/`TenantInvitationDeliveryResult` contracts, and explicit `application-managed` boundaries for provider-specific senders, durable retry queues, public onboarding, tenant-admin UI, identity-provider sync, and provider polling. The delivery-status surface reports callback route, method, authorization posture, endpoint-description posture, provider-message-match enforcement, provider-neutral callback signature verification posture, signed-callback replay posture, observation read route, `GET` method, authorization posture, response contract, bounded default/max limits, and explicit `application-managed` boundaries for provider-specific callback inboxes, provider-specific payload translation, provider-specific signature verification, and provider polling.
 
 The callback surface also reports whether provider-neutral callback signature verification is configured, which safe header names are expected, whether a signing key id is configured, the effective timestamp tolerance, whether signed replay protection is active, the replay policy, replay key shape, process-local scope, non-durable posture, retention seconds, and cache limit. It never exposes the configured signing secret or received signature value; reconciled observations may store only a safe `sha256:` replay fingerprint for correlation. Provider-specific payload translation and provider-specific signature verification remain separate application/provider-pack responsibilities.
 
-This package does not issue challenges, plan proof instructions, mutate DNS records, call domain providers, verify collected evidence, run background polling, dispatch invitation delivery, implement provider-specific invitation senders, translate provider-specific callback payloads, verify provider-specific callback signatures, poll delivery providers, create identity-provider users, or provide a backoffice UI. Those responsibilities stay in `Cephalon.MultiTenancy.Governance`, future provider-specific packs, or consumer applications. The adapter only serves the HTTP file content that the host-agnostic publication catalog has already accepted as published, exposes the workflow command endpoint that the host explicitly maps, accepts normalized status callback requests for the reconciler the governance core already owns, optionally verifies the normalized callback body's Cephalon HMAC signature, rejects process-local signed replays before reconciliation, and exposes a bounded read endpoint over normalized observation history that the governance core already recorded.
+This package does not issue challenges, plan proof instructions, mutate DNS records, call domain providers, verify collected evidence, run background polling, implement provider-specific invitation senders, translate provider-specific callback payloads, verify provider-specific callback signatures, poll delivery providers, create identity-provider users, run durable delivery queues, or provide a backoffice UI. Those responsibilities stay in `Cephalon.MultiTenancy.Governance`, future provider-specific packs, or consumer applications. The adapter only serves the HTTP file content that the host-agnostic publication catalog has already accepted as published, exposes the workflow command endpoint that the host explicitly maps, exposes a delivery-dispatch action endpoint over the dispatcher the governance core already owns, accepts normalized status callback requests for the reconciler the governance core already owns, optionally verifies the normalized callback body's Cephalon HMAC signature, rejects process-local signed replays before reconciliation, and exposes a bounded read endpoint over normalized observation history that the governance core already recorded.
 
 ## Related docs
 

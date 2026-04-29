@@ -119,6 +119,150 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryDispatchesDispatchesInvitationAndReportsMappedRuntimeSurface()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        var sender = new RecordingTenantInvitationDeliverySender("test-email");
+        builder.Services.AddSingleton<ITenantInvitationDeliverySender>(sender);
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-dispatch-http",
+                    tenantId: "tenant-dispatch-http",
+                    inviteeId: "user-dispatch-http",
+                    displayName: "Dispatch Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore(options =>
+        {
+            options.RequireTenantInvitationDeliveryDispatchAuthorization = false;
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryDispatches();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var dispatchedAtUtc = new DateTimeOffset(2026, 04, 29, 15, 0, 0, TimeSpan.Zero);
+        var request = new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-dispatch-http",
+            invitationId: "invite-dispatch-http",
+            channel: "email",
+            senderId: "test-email",
+            actor: "tenant-operator",
+            atUtc: dispatchedAtUtc,
+            correlationId: "delivery-dispatch-http-001",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["dispatchReason"] = "welcome"
+            });
+
+        var response = await client.PostAsJsonAsync("/engine/tenant-invitations/delivery-dispatches", request);
+        var result = await response.Content.ReadFromJsonAsync<TenantInvitationDeliveryResult>();
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var run = Assert.Single(app.Services.GetRequiredService<ITenantInvitationDeliveryRunCatalog>().Runs);
+        var context = Assert.Single(sender.Contexts);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.True(result.Dispatched);
+        Assert.True(result.Recorded);
+        Assert.Equal(TenantInvitationDeliveryOutcomes.Dispatched, result.Outcome);
+        Assert.Equal("provider-message-dispatch-http", result.ProviderMessageId);
+        Assert.Equal("tenant-dispatch-http", context.TenantId);
+        Assert.Equal("invite-dispatch-http", context.InvitationId);
+        Assert.Equal("email", context.Channel);
+        Assert.Equal("test-email", context.RequestedSenderId);
+        Assert.Equal(TenantInvitationDeliveryOutcomes.Dispatched, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryOutcome]);
+        Assert.Equal("provider-message-dispatch-http", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId]);
+        Assert.Equal("aspnetcore-invitation-delivery-dispatch", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliverySource]);
+        Assert.Equal("tenant-operator", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryActor]);
+        Assert.Equal("delivery-dispatch-http-001", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryCorrelationId]);
+        Assert.Equal("true", invitation.Metadata["aspNetCoreInvitationDeliveryDispatch"]);
+        Assert.Equal("/engine/tenant-invitations/delivery-dispatches", invitation.Metadata["aspNetCoreInvitationDeliveryDispatchRoute"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["invitationDeliveryDispatchEndpointOwnership"]);
+        Assert.Equal("welcome", invitation.Metadata["dispatchReason"]);
+        Assert.Equal("accepted", invitation.Metadata["senderMetadata"]);
+        Assert.Equal(TenantInvitationDeliveryOutcomes.Dispatched, run.Outcome);
+        Assert.Equal("provider-message-dispatch-http", run.ProviderMessageId);
+        Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
+        Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
+        Assert.Equal("false", endpointEntry.Metadata["requireAuthorization"]);
+        Assert.Equal("/engine/tenant-invitations/delivery-dispatches", endpointEntry.Metadata["routePattern"]);
+        Assert.Equal("POST", endpointEntry.Metadata["httpMethod"]);
+        Assert.Equal("TenantInvitationDeliveryRequest", endpointEntry.Metadata["requestBodyContract"]);
+        Assert.Equal("TenantInvitationDeliveryResult", endpointEntry.Metadata["responseBodyContract"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantInvitationDeliveryDispatchEndpointOwnership"]);
+        Assert.Equal("application-managed", endpointEntry.Metadata["providerSpecificSenderOwnership"]);
+        Assert.Equal("application-managed", endpointEntry.Metadata["durableRetryQueueOwnership"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryDispatchesDeniesAnonymousByDefault()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        var sender = new RecordingTenantInvitationDeliverySender("test-email");
+        builder.Services.AddSingleton<ITenantInvitationDeliverySender>(sender);
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-dispatch-http",
+                    tenantId: "tenant-dispatch-http",
+                    inviteeId: "user-dispatch-http",
+                    displayName: "Dispatch Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore();
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryDispatches();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/tenant-invitations/delivery-dispatches",
+            new TenantInvitationDeliveryRequest(
+                tenantId: "tenant-dispatch-http",
+                invitationId: "invite-dispatch-http",
+                channel: "email",
+                senderId: "test-email"));
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Empty(sender.Contexts);
+        Assert.Empty(app.Services.GetRequiredService<ITenantInvitationDeliveryRunCatalog>().Runs);
+        Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryOutcome));
+        Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
+        Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
+        Assert.Equal("true", endpointEntry.Metadata["requireAuthorization"]);
+        Assert.Equal("none", endpointEntry.Metadata["authorizationPolicy"]);
+    }
+
+    [Fact]
     public async Task MapCephalonTenantInvitationDeliveryStatusCallbacksReconcilesStatusAndReportsMappedRuntimeSurface()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -742,6 +886,32 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("true", endpointEntry.Metadata["observationEndpointMapped"]);
         Assert.Equal("true", endpointEntry.Metadata["observationRequireAuthorization"]);
         Assert.Equal("none", endpointEntry.Metadata["observationAuthorizationPolicy"]);
+    }
+
+    private sealed class RecordingTenantInvitationDeliverySender(string senderId) : ITenantInvitationDeliverySender
+    {
+        public string SenderId { get; } = senderId;
+
+        public List<TenantInvitationDeliveryContext> Contexts { get; } = [];
+
+        public ValueTask<TenantInvitationDeliverySenderResult> SendAsync(
+            TenantInvitationDeliveryContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            Contexts.Add(context);
+            return ValueTask.FromResult(new TenantInvitationDeliverySenderResult(
+                TenantInvitationDeliveryOutcomes.Dispatched,
+                dispatched: true,
+                providerMessageId: "provider-message-dispatch-http",
+                reason: "Accepted by hosting test sender.",
+                dispatchedAtUtc: context.DispatchedAtUtc,
+                metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["senderMetadata"] = "accepted"
+                }));
+        }
     }
 
     private static string CreateCallbackSignature(string secret, string timestamp, string requestBody)
