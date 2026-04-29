@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T01:03:23.1078691+00:00",
+  "GeneratedAtUtc": "2026-04-29T01:20:20.8128046+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8427,7 +8427,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 22,
         "Methods": 1
       }
     },
@@ -73182,6 +73182,17 @@
     {
       "DisplayName": "MaxAttempts",
       "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-maxattempts",
+      "Signature": "int MaxAttempts { get; set; }",
+      "Summary": "Gets or sets the total number of HTTP dispatch attempts for transient delivery failures."
+    },
+    {
+      "DisplayName": "MaxAttempts",
+      "Category": "Properties",
       "DeclaringTypeName": "RetrySelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -97814,6 +97825,17 @@
       "Summary": "The current shared runtime truth exposes one safe retry candidate."
     },
     {
+      "DisplayName": "RetryDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrydelaymilliseconds",
+      "Signature": "int RetryDelayMilliseconds { get; set; }",
+      "Summary": "Gets or sets the fixed delay, in milliseconds, between retry attempts."
+    },
+    {
       "DisplayName": "RetryDelaySeconds",
       "Category": "Properties",
       "DeclaringTypeName": "WolverineEventingOptions",
@@ -98505,6 +98527,28 @@
       "AnchorId": "member-m-cephalon-engine-configuration-retrysettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean",
       "Signature": "RetrySettings(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)",
       "Summary": "Initializes a new instance of the \u0060RetrySettings\u0060 class."
+    },
+    {
+      "DisplayName": "RetryStatusCodes",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrystatuscodes",
+      "Signature": "IReadOnlyList\u003Cint\u003E RetryStatusCodes { get; set; }",
+      "Summary": "Gets or sets response status codes that should be retried when the dispatch has attempts remaining."
+    },
+    {
+      "DisplayName": "RetryTransportFailures",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrytransportfailures",
+      "Signature": "bool RetryTransportFailures { get; set; }",
+      "Summary": "Gets or sets a value indicating whether transient transport failures should be retried when attempts remain."
     },
     {
       "DisplayName": "Revoked",

@@ -12,6 +12,8 @@ namespace Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration;
 /// </remarks>
 public sealed class HttpInvitationDeliveryOptions
 {
+    private static readonly int[] DefaultRetryStatusCodes = [408, 429, 500, 502, 503, 504];
+
     /// <summary>
     /// Creates HTTP invitation delivery options with the default sender identifier and timeout.
     /// </summary>
@@ -43,6 +45,35 @@ public sealed class HttpInvitationDeliveryOptions
     /// Gets or sets the maximum time allowed for the HTTP delivery request.
     /// </summary>
     public int TimeoutSeconds { get; set; } = 10;
+
+    /// <summary>
+    /// Gets or sets the total number of HTTP dispatch attempts for transient delivery failures.
+    /// </summary>
+    /// <remarks>
+    /// The value is clamped to the supported range of 1 through 10. The default preserves single-attempt behavior.
+    /// </remarks>
+    public int MaxAttempts { get; set; } = 1;
+
+    /// <summary>
+    /// Gets or sets the fixed delay, in milliseconds, between retry attempts.
+    /// </summary>
+    /// <remarks>
+    /// The value is clamped to the supported range of 0 through 60000 milliseconds.
+    /// </remarks>
+    public int RetryDelayMilliseconds { get; set; } = 250;
+
+    /// <summary>
+    /// Gets or sets response status codes that should be retried when the dispatch has attempts remaining.
+    /// </summary>
+    /// <remarks>
+    /// The default covers common transient HTTP responses: 408, 429, 500, 502, 503, and 504.
+    /// </remarks>
+    public IReadOnlyList<int> RetryStatusCodes { get; set; } = DefaultRetryStatusCodes;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether transient transport failures should be retried when attempts remain.
+    /// </summary>
+    public bool RetryTransportFailures { get; set; } = true;
 
     /// <summary>
     /// Gets or sets explicit response status codes that indicate the webhook accepted the dispatch.
@@ -145,6 +176,10 @@ public sealed class HttpInvitationDeliveryOptions
             Endpoint = section["Endpoint"]?.Trim(),
             Method = section["Method"]?.Trim() ?? "POST",
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 10),
+            MaxAttempts = GetInt32(section["MaxAttempts"], defaultValue: 1),
+            RetryDelayMilliseconds = GetInt32(section["RetryDelayMilliseconds"], defaultValue: 250),
+            RetryStatusCodes = ParseInt32List(section.GetSection("RetryStatusCodes"), DefaultRetryStatusCodes),
+            RetryTransportFailures = GetBoolean(section["RetryTransportFailures"], defaultValue: true),
             ExpectedStatusCodes = ParseInt32List(section.GetSection("ExpectedStatusCodes")),
             SupportedChannels = ParseStringList(section.GetSection("SupportedChannels")),
             Headers = ParseDictionary(section.GetSection("Headers")),
@@ -181,6 +216,10 @@ public sealed class HttpInvitationDeliveryOptions
 
     internal TimeSpan GetTimeout() => TimeSpan.FromSeconds(Math.Max(1, TimeoutSeconds));
 
+    internal int GetMaxAttempts() => Math.Clamp(MaxAttempts, 1, 10);
+
+    internal TimeSpan GetRetryDelay() => TimeSpan.FromMilliseconds(Math.Clamp(RetryDelayMilliseconds, 0, 60_000));
+
     internal int GetResponseBodyMetadataLimit() => Math.Clamp(ResponseBodyMetadataLimit, 0, 16 * 1024);
 
     private static bool GetBoolean(string? value, bool defaultValue)
@@ -193,7 +232,15 @@ public sealed class HttpInvitationDeliveryOptions
         return int.TryParse(value, out var parsed) ? parsed : defaultValue;
     }
 
-    private static int[] ParseInt32List(IConfigurationSection section)
+    private static int[] ParseInt32List(IConfigurationSection section, IReadOnlyList<int>? defaultValues = null)
+    {
+        var parsedValues = ParseConfiguredInt32List(section);
+        return parsedValues.Length > 0 || section.Exists() || defaultValues is null
+            ? parsedValues
+            : defaultValues.ToArray();
+    }
+
+    private static int[] ParseConfiguredInt32List(IConfigurationSection section)
     {
         if (!string.IsNullOrWhiteSpace(section.Value))
         {

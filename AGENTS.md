@@ -46,7 +46,7 @@ When working in this repository:
 - `Cephalon.Cli` is the user-facing shell for blueprint-driven generation
 - `Cephalon.ReferenceDocs` is the optional repo-local reference-doc publishing tool for XML-comment-driven API output
 - `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, and `Cephalon.Edge` are the baseline technology companion packages
-- `Cephalon.MultiTenancy.Governance.HttpDelivery` is the optional HTTP webhook invitation-delivery sender companion package for the multi-tenancy governance dispatcher, including optional signed webhook request headers
+- `Cephalon.MultiTenancy.Governance.HttpDelivery` is the optional HTTP webhook invitation-delivery sender companion package for the multi-tenancy governance dispatcher, including optional signed webhook request headers and bounded in-process retry/backoff
 - `Cephalon.Scaffolding` is the generation companion package for turning blueprint scaffold plans into concrete files
 - `templates/Cephalon.TemplatePack` is the installable `dotnet new` surface for the shipped blueprint starters
 - `docs/module-authoring.md` and `samples/Cephalon.ReferenceModule.*` are the module-authoring baseline

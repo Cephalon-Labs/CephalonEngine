@@ -15276,6 +15276,9 @@ Browse the published API surface by public member.
 - [MaxAgeDays](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-maxagedays): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxAgeDays&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum age, in days, to retain durable audit rows.
   - `int? MaxAgeDays { get; }`
+- [MaxAttempts](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-maxattempts): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=MaxAttempts&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the total number of HTTP dispatch attempts for transient delivery failures.
+  - `int MaxAttempts { get; set; }`
 - [MaxAttempts](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-maxattempts): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxAttempts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum retry attempts requested for the policy.
   - `int? MaxAttempts { get; }`
@@ -22005,6 +22008,9 @@ Browse the published API surface by public member.
 - [RetryCandidate](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-retrycandidate): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryCandidate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth exposes one safe retry candidate.
   - `const string RetryCandidate`
+- [RetryDelayMilliseconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrydelaymilliseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=RetryDelayMilliseconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the fixed delay, in milliseconds, between retry attempts.
+  - `int RetryDelayMilliseconds { get; set; }`
 - [RetryDelaySeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-retrydelayseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=RetryDelaySeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
   - `int RetryDelaySeconds { get; set; }`
@@ -22194,6 +22200,12 @@ Browse the published API surface by public member.
 - [RetrySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-retrysettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean): `Constructors` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RetrySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `RetrySettings` class.
   - `RetrySettings(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)`
+- [RetryStatusCodes](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrystatuscodes): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=RetryStatusCodes&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets response status codes that should be retried when the dispatch has attempts remaining.
+  - `IReadOnlyList<int> RetryStatusCodes { get; set; }`
+- [RetryTransportFailures](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrytransportfailures): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=RetryTransportFailures&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether transient transport failures should be retried when attempts remain.
+  - `bool RetryTransportFailures { get; set; }`
 - [Revoked](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-revoked): `Fields` on `TenantInvitationStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Revoked&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The invitation has been revoked before acceptance.
   - `const string Revoked`

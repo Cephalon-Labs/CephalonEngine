@@ -621,11 +621,11 @@ Delivered:
 - add `Cephalon.MultiTenancy.Governance.HttpDelivery` as an optional companion package with `HttpInvitationDeliveryOptions`, `AddCephalonHttpInvitationDelivery(...)`, and `HttpInvitationDeliveryPayload`
 - implement a provider-managed `http-webhook` sender that posts bounded JSON payloads to configured HTTP or HTTPS endpoints, supports configurable method, timeout, headers, accepted status codes, supported channels, provider-message id header capture, and safe sender metadata
 - publish diagnostics `4550-4551`, add the package to the supported reference-doc/default catalog and package-surface guardrails, and prove dispatched/suppressed outcomes through focused composition tests over the existing governance dispatcher and store metadata
-- keep provider-specific email/SMS/chat/CRM/identity-provider semantics, retry queues, callbacks, public onboarding, tenant-admin UI, and identity-provider sync outside this proof
+- keep provider-specific email/SMS/chat/CRM/identity-provider semantics, durable retry queues, callbacks, public onboarding, tenant-admin UI, and identity-provider sync outside this proof
 
 Follow-up later:
 
-- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; webhook signing is then covered by `ENG-258`
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, durable retry queues, callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; webhook signing is covered by `ENG-258` and bounded in-process retry is covered by `ENG-259`
 
 ### ENG-258 Multi-tenancy governance HTTP invitation delivery webhook signing baseline
 
@@ -642,11 +642,33 @@ Delivered:
 - add `SigningSecret`, `SigningKeyId`, and configurable signature header names to `HttpInvitationDeliveryOptions`
 - sign `{unixTimestamp}.{jsonBody}` with HMAC-SHA256 when `SigningSecret` is configured, emit `v1=<lowercase hex>` signature, timestamp, and optional key-id headers, and record only safe `httpSigned`/`httpSigningKeyId` metadata
 - preserve unsigned behavior when no signing secret is configured and prove signed delivery through focused composition coverage over the existing governance dispatcher and HTTP sender
-- keep provider-specific auth semantics, retry queues, delivery-status callbacks, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
+- keep provider-specific auth semantics, durable retry queues, delivery-status callbacks, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
 
 Follow-up later:
 
-- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, retry queues, delivery-status callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, durable retry queues, delivery-status callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; bounded in-process retry is covered by `ENG-259`
+
+### ENG-259 Multi-tenancy governance HTTP invitation delivery retry baseline
+
+Status: done
+Estimate: 5
+
+Why:
+
+- after `ENG-258`, `Cephalon.MultiTenancy.Governance.HttpDelivery` could send and sign real webhook payloads, but transient webhook responses or temporary transport failures still completed as single-shot sender failures
+- the smallest honest reliability proof is bounded in-process retry/backoff inside the existing HTTP sender, not a durable delivery queue, provider callback reconciler, provider-specific invitation connector, or distributed scheduler
+
+Delivered:
+
+- add `MaxAttempts`, `RetryDelayMilliseconds`, `RetryStatusCodes`, and `RetryTransportFailures` to `HttpInvitationDeliveryOptions`, with configuration binding and XML comments for generated reference docs
+- create a fresh HTTP request per attempt over the same serialized payload, retry configured transient status codes plus transient transport failures when attempts remain, and keep `TimeoutSeconds` as the dispatch budget for the attempt loop
+- record safe attempt/retry metadata such as `httpAttemptCount`, `httpMaxAttempts`, `httpRetried`, `httpRetryReason`, `httpRetryDelayMilliseconds`, and `httpRetryStatusCodes` without copying secrets or signatures
+- prove retry behavior through focused composition coverage over the existing governance dispatcher and HTTP sender
+- keep durable retry queues, delivery-status callbacks, provider-specific email/SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
+
+Follow-up later:
+
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, durable retry queues, delivery-status callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
 
 ## Completed foundation work
 

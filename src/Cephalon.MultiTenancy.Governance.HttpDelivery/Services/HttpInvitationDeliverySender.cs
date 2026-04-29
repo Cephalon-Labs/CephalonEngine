@@ -59,51 +59,101 @@ internal sealed class HttpInvitationDeliverySender(
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeout.CancelAfter(options.GetTimeout());
 
+            var maxAttempts = options.GetMaxAttempts();
+            var retryDelay = options.GetRetryDelay();
             var requestBody = JsonSerializer.Serialize(BuildPayload(context), SerializerOptions);
-            using var request = new HttpRequestMessage(options.GetHttpMethod(), endpoint)
-            {
-                Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
-            };
-            AddHeaders(request);
-            AddSignatureHeaders(request, context, requestBody);
-
             var client = httpClientFactory.CreateClient(HttpInvitationDeliveryServiceCollectionExtensions.HttpClientName);
-            using var response = await client
-                .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token)
-                .ConfigureAwait(false);
+            var retried = false;
+            string? retryReason = null;
 
-            var statusCode = (int)response.StatusCode;
-            var metadata = BuildBaseMetadata(response.StatusCode, response.ReasonPhrase);
-            var providerMessageId = GetProviderMessageId(response);
-
-            if (options.IncludeResponseBodyInMetadata)
+            for (var attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                metadata["httpResponseBody"] = await ReadResponseBodyAsync(response, timeout.Token).ConfigureAwait(false);
+                var finalAttempt = attempt == maxAttempts;
+                try
+                {
+                    using var request = CreateRequest(endpoint, context, requestBody);
+                    using var response = await client
+                        .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token)
+                        .ConfigureAwait(false);
+
+                    var statusCode = (int)response.StatusCode;
+                    var providerMessageId = GetProviderMessageId(response);
+                    var accepted = IsAccepted(statusCode, response.IsSuccessStatusCode);
+
+                    if (!accepted && !finalAttempt && ShouldRetryStatus(statusCode))
+                    {
+                        retryReason = $"HTTP status code {statusCode}.";
+                        retried = true;
+                        response.Dispose();
+                        await DelayBeforeRetryAsync(retryDelay, timeout.Token).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    var metadata = BuildBaseMetadata(response.StatusCode, response.ReasonPhrase, attempt, maxAttempts, retried, retryReason);
+
+                    if (options.IncludeResponseBodyInMetadata)
+                    {
+                        metadata["httpResponseBody"] = await ReadResponseBodyAsync(response, timeout.Token).ConfigureAwait(false);
+                    }
+
+                    if (accepted)
+                    {
+                        HttpInvitationDeliveryLogs.Accepted(logger, SenderId, context.TenantId, context.InvitationId, statusCode);
+
+                        return new TenantInvitationDeliverySenderResult(
+                            TenantInvitationDeliveryOutcomes.Dispatched,
+                            dispatched: true,
+                            providerMessageId: providerMessageId,
+                            reason: $"HTTP invitation delivery webhook accepted dispatch with status code {statusCode}.",
+                            dispatchedAtUtc: context.DispatchedAtUtc,
+                            metadata: metadata);
+                    }
+
+                    var reason = $"HTTP invitation delivery webhook returned status code {statusCode}.";
+                    HttpInvitationDeliveryLogs.Failed(logger, SenderId, context.TenantId, context.InvitationId, reason, null);
+
+                    return new TenantInvitationDeliverySenderResult(
+                        TenantInvitationDeliveryOutcomes.SenderFailed,
+                        dispatched: false,
+                        providerMessageId: providerMessageId,
+                        reason: reason,
+                        dispatchedAtUtc: context.DispatchedAtUtc,
+                        metadata: metadata);
+                }
+                catch (HttpRequestException exception) when (!finalAttempt && options.RetryTransportFailures)
+                {
+                    retryReason = exception.GetType().Name;
+                    retried = true;
+                    await DelayBeforeRetryAsync(retryDelay, timeout.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+                {
+                    var reason = $"HTTP invitation delivery webhook timed out after {Math.Max(1, options.TimeoutSeconds)} seconds.";
+                    HttpInvitationDeliveryLogs.Failed(logger, SenderId, context.TenantId, context.InvitationId, reason, exception);
+
+                    return new TenantInvitationDeliverySenderResult(
+                        TenantInvitationDeliveryOutcomes.SenderFailed,
+                        dispatched: false,
+                        reason: reason,
+                        dispatchedAtUtc: context.DispatchedAtUtc,
+                        metadata: BuildBaseMetadata(null, reason, attempt, maxAttempts, retried, retryReason));
+                }
+                catch (Exception exception)
+                {
+                    var reason = "HTTP invitation delivery webhook failed before accepting dispatch.";
+                    HttpInvitationDeliveryLogs.Failed(logger, SenderId, context.TenantId, context.InvitationId, reason, exception);
+
+                    var metadata = BuildBaseMetadata(null, reason, attempt, maxAttempts, retried, retryReason);
+                    metadata["httpExceptionType"] = exception.GetType().Name;
+
+                    return new TenantInvitationDeliverySenderResult(
+                        TenantInvitationDeliveryOutcomes.SenderFailed,
+                        dispatched: false,
+                        reason: reason,
+                        dispatchedAtUtc: context.DispatchedAtUtc,
+                        metadata: metadata);
+                }
             }
-
-            if (IsAccepted(statusCode, response.IsSuccessStatusCode))
-            {
-                HttpInvitationDeliveryLogs.Accepted(logger, SenderId, context.TenantId, context.InvitationId, statusCode);
-
-                return new TenantInvitationDeliverySenderResult(
-                    TenantInvitationDeliveryOutcomes.Dispatched,
-                    dispatched: true,
-                    providerMessageId: providerMessageId,
-                    reason: $"HTTP invitation delivery webhook accepted dispatch with status code {statusCode}.",
-                    dispatchedAtUtc: context.DispatchedAtUtc,
-                    metadata: metadata);
-            }
-
-            var reason = $"HTTP invitation delivery webhook returned status code {statusCode}.";
-            HttpInvitationDeliveryLogs.Failed(logger, SenderId, context.TenantId, context.InvitationId, reason, null);
-
-            return new TenantInvitationDeliverySenderResult(
-                TenantInvitationDeliveryOutcomes.SenderFailed,
-                dispatched: false,
-                providerMessageId: providerMessageId,
-                reason: reason,
-                dispatchedAtUtc: context.DispatchedAtUtc,
-                metadata: metadata);
         }
         catch (OperationCanceledException exception) when (!cancellationToken.IsCancellationRequested)
         {
@@ -132,6 +182,20 @@ internal sealed class HttpInvitationDeliverySender(
                 dispatchedAtUtc: context.DispatchedAtUtc,
                 metadata: metadata);
         }
+
+        throw new InvalidOperationException("HTTP invitation delivery completed without producing a sender result.");
+    }
+
+    private HttpRequestMessage CreateRequest(Uri endpoint, TenantInvitationDeliveryContext context, string requestBody)
+    {
+        var request = new HttpRequestMessage(options.GetHttpMethod(), endpoint)
+        {
+            Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+        };
+        AddHeaders(request);
+        AddSignatureHeaders(request, context, requestBody);
+
+        return request;
     }
 
     private HttpInvitationDeliveryPayload BuildPayload(TenantInvitationDeliveryContext context)
@@ -219,6 +283,21 @@ internal sealed class HttpInvitationDeliverySender(
             : isSuccessStatusCode;
     }
 
+    private bool ShouldRetryStatus(int statusCode)
+    {
+        return options.RetryStatusCodes.Contains(statusCode);
+    }
+
+    private static async ValueTask DelayBeforeRetryAsync(TimeSpan retryDelay, CancellationToken cancellationToken)
+    {
+        if (retryDelay <= TimeSpan.Zero)
+        {
+            return;
+        }
+
+        await Task.Delay(retryDelay, cancellationToken).ConfigureAwait(false);
+    }
+
     private string? GetProviderMessageId(HttpResponseMessage response)
     {
         if (string.IsNullOrWhiteSpace(options.ProviderMessageIdHeaderName))
@@ -243,14 +322,34 @@ internal sealed class HttpInvitationDeliverySender(
         return body[..limit];
     }
 
-    private Dictionary<string, string> BuildBaseMetadata(HttpStatusCode? statusCode, string? reason)
+    private Dictionary<string, string> BuildBaseMetadata(
+        HttpStatusCode? statusCode,
+        string? reason,
+        int attemptCount = 0,
+        int? maxAttempts = null,
+        bool retried = false,
+        string? retryReason = null)
     {
+        var configuredMaxAttempts = maxAttempts ?? options.GetMaxAttempts();
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["httpSenderId"] = SenderId,
             ["httpEndpointHost"] = options.TryGetEndpoint()?.Host ?? string.Empty,
-            ["httpSigned"] = options.IsSigningEnabled ? "true" : "false"
+            ["httpSigned"] = options.IsSigningEnabled ? "true" : "false",
+            ["httpAttemptCount"] = Math.Max(0, attemptCount).ToString(CultureInfo.InvariantCulture),
+            ["httpMaxAttempts"] = configuredMaxAttempts.ToString(CultureInfo.InvariantCulture),
+            ["httpRetried"] = retried ? "true" : "false"
         };
+
+        if (configuredMaxAttempts > 1)
+        {
+            metadata["httpRetryDelayMilliseconds"] = Math.Clamp(options.RetryDelayMilliseconds, 0, 60_000).ToString(CultureInfo.InvariantCulture);
+            metadata["httpRetryTransportFailures"] = options.RetryTransportFailures ? "true" : "false";
+            if (options.RetryStatusCodes.Count > 0)
+            {
+                metadata["httpRetryStatusCodes"] = string.Join(",", options.RetryStatusCodes);
+            }
+        }
 
         if (options.IsSigningEnabled && !string.IsNullOrWhiteSpace(options.SigningKeyId))
         {
@@ -265,6 +364,11 @@ internal sealed class HttpInvitationDeliverySender(
         if (!string.IsNullOrWhiteSpace(reason))
         {
             metadata["httpReason"] = reason.Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(retryReason))
+        {
+            metadata["httpRetryReason"] = retryReason.Trim();
         }
 
         return metadata;

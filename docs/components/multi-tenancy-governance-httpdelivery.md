@@ -7,11 +7,11 @@
 - one provider-managed `ITenantInvitationDeliverySender` implementation for HTTP or HTTPS webhook endpoints
 - configuration-driven setup through `Engine:MultiTenancy:Governance:HttpInvitationDelivery`
 - code-first setup through `AddCephalonHttpInvitationDelivery(...)`
-- bounded HTTP dispatch with configurable method, timeout, headers, accepted status codes, and supported channels
+- bounded HTTP dispatch with configurable method, timeout, headers, accepted status codes, supported channels, and in-process retry/backoff for transient outcomes
 - JSON invitation delivery payload shaping through `HttpInvitationDeliveryPayload`
 - optional HMAC-SHA256 webhook signing over the exact JSON body plus dispatch timestamp
 - provider-message id capture from a configurable response header
-- safe sender metadata such as HTTP endpoint host, status code, reason, signing enablement/key id, optional bounded response body excerpt, and exception type
+- safe sender metadata such as HTTP endpoint host, status code, reason, signing enablement/key id, attempt count, retry posture/reason, optional bounded response body excerpt, and exception type
 - stable diagnostics for accepted and failed HTTP invitation dispatch attempts
 
 ## Main surfaces
@@ -56,6 +56,10 @@ Configuration example:
           "Endpoint": "https://notifications.internal.example/invitations",
           "Method": "POST",
           "TimeoutSeconds": 10,
+          "MaxAttempts": 3,
+          "RetryDelayMilliseconds": 250,
+          "RetryStatusCodes": [408, 429, 500, 502, 503, 504],
+          "RetryTransportFailures": true,
           "ExpectedStatusCodes": [202],
           "SupportedChannels": ["email", "webhook"],
           "SigningSecret": "${INVITATION_DELIVERY_SIGNING_SECRET}",
@@ -76,9 +80,11 @@ Configuration example:
 
 When `SigningSecret` is configured, the sender serializes the payload once, computes `HMACSHA256(secret, "{unixTimestamp}.{jsonBody}")`, and sends the signature as `v1=<lowercase hex>` in `SignatureHeaderName`. The timestamp and optional key id are sent in their configured headers. Runtime metadata records only `httpSigned` and the optional `httpSigningKeyId`; it never records the shared secret or generated signature.
 
+When `MaxAttempts` is greater than 1, the sender retries non-accepted responses whose status code appears in `RetryStatusCodes`, and it retries transient `HttpRequestException` failures when `RetryTransportFailures` is enabled. Each attempt uses a fresh `HttpRequestMessage` over the same serialized payload, the fixed `RetryDelayMilliseconds` delay runs inside the configured timeout budget, and sender metadata records `httpAttemptCount`, `httpMaxAttempts`, `httpRetried`, `httpRetryReason`, and the active retry policy. This is an in-process resilience baseline for a single dispatch call, not a durable delivery queue.
+
 The sender returns `dispatched` only when the webhook returns an accepted response according to `ExpectedStatusCodes`, or any successful 2xx response when no explicit status list is configured. Unsupported channels are reported as `suppressed`; transport errors, non-accepted responses, timeouts, and endpoint failures are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
 
-This is intentionally not a provider-specific email, SMS, chat, CRM, or identity-provider connector. Provider-specific authentication models, message templates, user provisioning, retry queues, delivery-status callbacks, human inboxes, and external provider reconciliation remain future companion or application-managed work until a package owns those paths explicitly.
+This is intentionally not a provider-specific email, SMS, chat, CRM, or identity-provider connector. Provider-specific authentication models, message templates, user provisioning, durable retry queues, delivery-status callbacks, human inboxes, and external provider reconciliation remain future companion or application-managed work until a package owns those paths explicitly.
 
 ## Related docs
 

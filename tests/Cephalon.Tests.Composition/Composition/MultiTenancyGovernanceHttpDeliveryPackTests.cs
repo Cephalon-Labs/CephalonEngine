@@ -116,6 +116,86 @@ public sealed class MultiTenancyGovernanceHttpDeliveryPackTests
     }
 
     [Fact]
+    public async Task HttpInvitationDeliverySenderRetriesTransientStatusBeforeAcceptingDispatch()
+    {
+        var capturedRequests = new List<CapturedRequest>();
+        var attempts = 0;
+        var handler = new CapturingHttpMessageHandler(async request =>
+        {
+            capturedRequests.Add(await CapturedRequest.FromAsync(request));
+            attempts++;
+
+            if (attempts == 1)
+            {
+                return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
+            }
+
+            var response = new HttpResponseMessage(HttpStatusCode.Accepted);
+            response.Headers.Add("X-Cephalon-Provider-Message-Id", "provider-message-259");
+
+            return response;
+        });
+
+        var services = new ServiceCollection();
+        services.AddCephalonHttpInvitationDelivery(options =>
+        {
+            options.Endpoint = "https://delivery.example.test/invitations";
+            options.ExpectedStatusCodes = [202];
+            options.MaxAttempts = 2;
+            options.RetryDelayMilliseconds = 0;
+            options.RetryStatusCodes = [503];
+        });
+        services.AddHttpClient(HttpInvitationDeliveryServiceCollectionExtensions.HttpClientName)
+            .ConfigurePrimaryHttpMessageHandler(() => handler);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-http-retry",
+                    tenantId: "tenant-http",
+                    inviteeId: "user-http",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+
+        var result = await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-http",
+            invitationId: "invite-http-retry",
+            channel: "webhook",
+            senderId: "http-webhook",
+            atUtc: new DateTimeOffset(2026, 04, 29, 6, 30, 0, TimeSpan.Zero)));
+
+        Assert.True(result.Dispatched);
+        Assert.Equal(TenantInvitationDeliveryOutcomes.Dispatched, result.Outcome);
+        Assert.Equal("provider-message-259", result.ProviderMessageId);
+        Assert.Equal(2, capturedRequests.Count);
+        Assert.Equal("202", result.Metadata["httpStatusCode"]);
+        Assert.Equal("2", result.Metadata["httpAttemptCount"]);
+        Assert.Equal("2", result.Metadata["httpMaxAttempts"]);
+        Assert.Equal("true", result.Metadata["httpRetried"]);
+        Assert.Equal("HTTP status code 503.", result.Metadata["httpRetryReason"]);
+        Assert.Equal("0", result.Metadata["httpRetryDelayMilliseconds"]);
+        Assert.Equal("503", result.Metadata["httpRetryStatusCodes"]);
+        Assert.Equal("true", result.Metadata["httpRetryTransportFailures"]);
+        Assert.All(capturedRequests, captured =>
+        {
+            Assert.Equal(HttpMethod.Post, captured.Method);
+            Assert.Equal("https://delivery.example.test/invitations", captured.RequestUri);
+        });
+    }
+
+    [Fact]
     public async Task HttpInvitationDeliverySenderSuppressesUnsupportedChannelWithoutHttpCall()
     {
         var handler = new CapturingHttpMessageHandler(_ => throw new InvalidOperationException("Unexpected HTTP dispatch."));

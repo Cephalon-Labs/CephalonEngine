@@ -112,6 +112,18 @@ bool IncludeResponseBodyInMetadata { get; set; }
 
 Gets or sets a value indicating whether a bounded response body excerpt should be copied into sender metadata.
 
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-maxattempts"></a>
+
+##### `MaxAttempts`
+
+```csharp
+int MaxAttempts { get; set; }
+```
+
+Gets or sets the total number of HTTP dispatch attempts for transient delivery failures.
+
+Remarks: The value is clamped to the supported range of 1 through 10. The default preserves single-attempt behavior.
+
 <a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-method"></a>
 
 ##### `Method`
@@ -141,6 +153,40 @@ int ResponseBodyMetadataLimit { get; set; }
 ```
 
 Gets or sets the maximum response body characters copied into sender metadata when enabled.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrydelaymilliseconds"></a>
+
+##### `RetryDelayMilliseconds`
+
+```csharp
+int RetryDelayMilliseconds { get; set; }
+```
+
+Gets or sets the fixed delay, in milliseconds, between retry attempts.
+
+Remarks: The value is clamped to the supported range of 0 through 60000 milliseconds.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrystatuscodes"></a>
+
+##### `RetryStatusCodes`
+
+```csharp
+IReadOnlyList<int> RetryStatusCodes { get; set; }
+```
+
+Gets or sets response status codes that should be retried when the dispatch has attempts remaining.
+
+Remarks: The default covers common transient HTTP responses: 408, 429, 500, 502, 503, and 504.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrytransportfailures"></a>
+
+##### `RetryTransportFailures`
+
+```csharp
+bool RetryTransportFailures { get; set; }
+```
+
+Gets or sets a value indicating whether transient transport failures should be retried when attempts remain.
 
 <a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-senderid"></a>
 
