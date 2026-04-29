@@ -9,9 +9,10 @@
 - code-first setup through `AddCephalonHttpInvitationDelivery(...)`
 - bounded HTTP dispatch with configurable method, timeout, headers, accepted status codes, supported channels, and in-process retry/backoff for transient outcomes
 - JSON invitation delivery payload shaping through `HttpInvitationDeliveryPayload`
+- provider-neutral idempotency headers for receiver-side duplicate suppression across retry attempts
 - optional HMAC-SHA256 webhook signing over the exact JSON body plus dispatch timestamp
 - provider-message id capture from a configurable response header
-- safe sender metadata such as HTTP endpoint host, status code, reason, signing enablement/key id, attempt count, retry posture/reason, optional bounded response body excerpt, and exception type
+- safe sender metadata such as HTTP endpoint host, status code, reason, idempotency posture/key source, signing enablement/key id, attempt count, retry posture/reason, optional bounded response body excerpt, and exception type
 - stable diagnostics for accepted and failed HTTP invitation dispatch attempts
 
 ## Main surfaces
@@ -60,6 +61,9 @@ Configuration example:
           "RetryDelayMilliseconds": 250,
           "RetryStatusCodes": [408, 429, 500, 502, 503, 504],
           "RetryTransportFailures": true,
+          "EnableIdempotencyHeader": true,
+          "IdempotencyHeaderName": "X-Cephalon-Idempotency-Key",
+          "IdempotencyMetadataKey": "idempotencyKey",
           "ExpectedStatusCodes": [202],
           "SupportedChannels": ["email", "webhook"],
           "SigningSecret": "${INVITATION_DELIVERY_SIGNING_SECRET}",
@@ -79,6 +83,8 @@ Configuration example:
 ```
 
 When `SigningSecret` is configured, the sender serializes the payload once, computes `HMACSHA256(secret, "{unixTimestamp}.{jsonBody}")`, and sends the signature as `v1=<lowercase hex>` in `SignatureHeaderName`. The timestamp and optional key id are sent in their configured headers. Runtime metadata records only `httpSigned` and the optional `httpSigningKeyId`; it never records the shared secret or generated signature.
+
+When `EnableIdempotencyHeader` is enabled, the sender sends `IdempotencyHeaderName` on every webhook attempt. If dispatch metadata contains `IdempotencyMetadataKey`, that header-safe value becomes the idempotency key; overlong or header-unsafe metadata values are deterministically hashed before being sent. When metadata is absent, the sender derives a stable hashed key from tenant id, invitation id, channel, and sender id. The derived key is safe to record and stays identical across retry attempts, while intentional provider-specific duplicate-handling semantics remain on the receiver.
 
 When `MaxAttempts` is greater than 1, the sender retries non-accepted responses whose status code appears in `RetryStatusCodes`, and it retries transient `HttpRequestException` failures when `RetryTransportFailures` is enabled. Each attempt uses a fresh `HttpRequestMessage` over the same serialized payload, the fixed `RetryDelayMilliseconds` delay runs inside the configured timeout budget, and sender metadata records `httpAttemptCount`, `httpMaxAttempts`, `httpRetried`, `httpRetryReason`, and the active retry policy. This is an in-process resilience baseline for a single dispatch call, not a durable delivery queue.
 

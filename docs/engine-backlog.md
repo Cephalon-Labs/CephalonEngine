@@ -668,6 +668,28 @@ Delivered:
 
 Follow-up later:
 
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, durable retry queues, delivery-status callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; provider-neutral idempotency headers are covered by `ENG-260`
+
+### ENG-260 Multi-tenancy governance HTTP invitation delivery idempotency baseline
+
+Status: done
+Estimate: 5
+
+Why:
+
+- after `ENG-259`, `Cephalon.MultiTenancy.Governance.HttpDelivery` could retry transient webhook outcomes, but receivers still needed a stable provider-neutral key to suppress duplicate side effects across retry attempts
+- the smallest honest safety proof is an idempotency header produced by the HTTP sender, not a durable retry queue, callback reconciler, or provider-specific invitation connector
+
+Delivered:
+
+- add `EnableIdempotencyHeader`, `IdempotencyHeaderName`, and `IdempotencyMetadataKey` to `HttpInvitationDeliveryOptions`, with configuration binding and XML comments for generated reference docs
+- send the configured idempotency header on every webhook attempt, using caller-supplied header-safe dispatch metadata when present, hashing overlong/header-unsafe metadata values, or deriving a hashed key from tenant id, invitation id, channel, and sender id when absent
+- keep the same idempotency key across retry attempts and record safe `httpIdempotencyHeaderName`, `httpIdempotencyKey`, and `httpIdempotencyKeySource` metadata
+- prove default derived keys and metadata-supplied keys through focused composition coverage over the existing governance dispatcher and HTTP sender
+- keep durable retry queues, delivery-status callbacks, provider-specific email/SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
+
+Follow-up later:
+
 - provider-specific email/SMS/chat/CRM/identity-provider invitation senders, durable retry queues, delivery-status callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
 
 ## Completed foundation work

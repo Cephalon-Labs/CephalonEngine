@@ -188,11 +188,137 @@ public sealed class MultiTenancyGovernanceHttpDeliveryPackTests
         Assert.Equal("0", result.Metadata["httpRetryDelayMilliseconds"]);
         Assert.Equal("503", result.Metadata["httpRetryStatusCodes"]);
         Assert.Equal("true", result.Metadata["httpRetryTransportFailures"]);
+        Assert.Equal("X-Cephalon-Idempotency-Key", result.Metadata["httpIdempotencyHeaderName"]);
+        Assert.Equal("derived", result.Metadata["httpIdempotencyKeySource"]);
+        Assert.StartsWith("cephalon-invitation-", result.Metadata["httpIdempotencyKey"], StringComparison.Ordinal);
         Assert.All(capturedRequests, captured =>
         {
             Assert.Equal(HttpMethod.Post, captured.Method);
             Assert.Equal("https://delivery.example.test/invitations", captured.RequestUri);
+            Assert.Equal(result.Metadata["httpIdempotencyKey"], captured.Headers["X-Cephalon-Idempotency-Key"]);
         });
+    }
+
+    [Fact]
+    public async Task HttpInvitationDeliverySenderUsesMetadataIdempotencyKeyWhenConfigured()
+    {
+        var capturedRequests = new List<CapturedRequest>();
+        var handler = new CapturingHttpMessageHandler(async request =>
+        {
+            capturedRequests.Add(await CapturedRequest.FromAsync(request));
+            return new HttpResponseMessage(HttpStatusCode.Accepted);
+        });
+
+        var services = new ServiceCollection();
+        services.AddCephalonHttpInvitationDelivery(options =>
+        {
+            options.Endpoint = "https://delivery.example.test/invitations";
+            options.IdempotencyHeaderName = "Idempotency-Key";
+            options.IdempotencyMetadataKey = "deliveryIdempotencyKey";
+        });
+        services.AddHttpClient(HttpInvitationDeliveryServiceCollectionExtensions.HttpClientName)
+            .ConfigurePrimaryHttpMessageHandler(() => handler);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-http-idempotency",
+                    tenantId: "tenant-http",
+                    inviteeId: "user-http",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+
+        var result = await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-http",
+            invitationId: "invite-http-idempotency",
+            channel: "webhook",
+            senderId: "http-webhook",
+            atUtc: new DateTimeOffset(2026, 04, 29, 7, 0, 0, TimeSpan.Zero),
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["deliveryIdempotencyKey"] = "external-dispatch-260"
+            }));
+
+        var captured = Assert.Single(capturedRequests);
+
+        Assert.True(result.Dispatched);
+        Assert.Equal("Idempotency-Key", result.Metadata["httpIdempotencyHeaderName"]);
+        Assert.Equal("external-dispatch-260", result.Metadata["httpIdempotencyKey"]);
+        Assert.Equal("metadata", result.Metadata["httpIdempotencyKeySource"]);
+        Assert.Equal("external-dispatch-260", captured.Headers["Idempotency-Key"]);
+    }
+
+    [Fact]
+    public async Task HttpInvitationDeliverySenderHashesUnsafeMetadataIdempotencyKeyBeforeSendingHeader()
+    {
+        var capturedRequests = new List<CapturedRequest>();
+        var handler = new CapturingHttpMessageHandler(async request =>
+        {
+            capturedRequests.Add(await CapturedRequest.FromAsync(request));
+            return new HttpResponseMessage(HttpStatusCode.Accepted);
+        });
+
+        var services = new ServiceCollection();
+        services.AddCephalonHttpInvitationDelivery(options =>
+        {
+            options.Endpoint = "https://delivery.example.test/invitations";
+            options.IdempotencyMetadataKey = "deliveryIdempotencyKey";
+        });
+        services.AddHttpClient(HttpInvitationDeliveryServiceCollectionExtensions.HttpClientName)
+            .ConfigurePrimaryHttpMessageHandler(() => handler);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-http-idempotency-safe",
+                    tenantId: "tenant-http",
+                    inviteeId: "user-http",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+
+        var result = await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-http",
+            invitationId: "invite-http-idempotency-safe",
+            channel: "webhook",
+            senderId: "http-webhook",
+            atUtc: new DateTimeOffset(2026, 04, 29, 7, 0, 0, TimeSpan.Zero),
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["deliveryIdempotencyKey"] = "external-dispatch-260\r\nunsafe"
+            }));
+
+        var captured = Assert.Single(capturedRequests);
+
+        Assert.True(result.Dispatched);
+        Assert.Equal("metadata", result.Metadata["httpIdempotencyKeySource"]);
+        Assert.StartsWith("cephalon-custom-", result.Metadata["httpIdempotencyKey"], StringComparison.Ordinal);
+        Assert.Equal(result.Metadata["httpIdempotencyKey"], captured.Headers["X-Cephalon-Idempotency-Key"]);
+        Assert.DoesNotContain("\r", captured.Headers["X-Cephalon-Idempotency-Key"], StringComparison.Ordinal);
+        Assert.DoesNotContain("\n", captured.Headers["X-Cephalon-Idempotency-Key"], StringComparison.Ordinal);
     }
 
     [Fact]

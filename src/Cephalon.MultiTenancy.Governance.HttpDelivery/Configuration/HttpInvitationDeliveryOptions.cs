@@ -97,6 +97,29 @@ public sealed class HttpInvitationDeliveryOptions
     public IReadOnlyDictionary<string, string> Headers { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
+    /// Gets or sets a value indicating whether an idempotency key header should be added to delivery requests.
+    /// </summary>
+    /// <remarks>
+    /// The key stays stable across retry attempts for the same dispatch and helps receivers de-duplicate side effects.
+    /// </remarks>
+    public bool EnableIdempotencyHeader { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the request header that carries the delivery idempotency key.
+    /// </summary>
+    public string IdempotencyHeaderName { get; set; } = "X-Cephalon-Idempotency-Key";
+
+    /// <summary>
+    /// Gets or sets the dispatch metadata key that can supply a caller-owned idempotency key.
+    /// </summary>
+    /// <remarks>
+    /// When the metadata key is absent or empty, the sender derives a stable hashed key from the tenant, invitation,
+    /// channel, and sender identifiers. Caller-supplied values that are too long or unsafe for HTTP headers are hashed
+    /// before being sent.
+    /// </remarks>
+    public string IdempotencyMetadataKey { get; set; } = "idempotencyKey";
+
+    /// <summary>
     /// Gets or sets the shared secret used to sign webhook payloads with HMAC-SHA256.
     /// </summary>
     /// <remarks>
@@ -183,6 +206,9 @@ public sealed class HttpInvitationDeliveryOptions
             ExpectedStatusCodes = ParseInt32List(section.GetSection("ExpectedStatusCodes")),
             SupportedChannels = ParseStringList(section.GetSection("SupportedChannels")),
             Headers = ParseDictionary(section.GetSection("Headers")),
+            EnableIdempotencyHeader = GetBoolean(section["EnableIdempotencyHeader"], defaultValue: true),
+            IdempotencyHeaderName = section["IdempotencyHeaderName"]?.Trim() ?? "X-Cephalon-Idempotency-Key",
+            IdempotencyMetadataKey = section["IdempotencyMetadataKey"]?.Trim() ?? "idempotencyKey",
             SigningSecret = section["SigningSecret"]?.Trim(),
             SigningKeyId = section["SigningKeyId"]?.Trim(),
             SignatureHeaderName = section["SignatureHeaderName"]?.Trim() ?? "X-Cephalon-Webhook-Signature",

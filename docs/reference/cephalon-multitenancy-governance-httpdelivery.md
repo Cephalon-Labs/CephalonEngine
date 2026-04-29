@@ -50,6 +50,18 @@ bool Enabled { get; set; }
 
 Gets or sets a value indicating whether the HTTP invitation sender should be registered.
 
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-enableidempotencyheader"></a>
+
+##### `EnableIdempotencyHeader`
+
+```csharp
+bool EnableIdempotencyHeader { get; set; }
+```
+
+Gets or sets a value indicating whether an idempotency key header should be added to delivery requests.
+
+Remarks: The key stays stable across retry attempts for the same dispatch and helps receivers de-duplicate side effects.
+
 <a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-endpoint"></a>
 
 ##### `Endpoint`
@@ -81,6 +93,28 @@ IReadOnlyDictionary<string, string> Headers { get; set; }
 ```
 
 Gets or sets additional HTTP headers added to every delivery request.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-idempotencyheadername"></a>
+
+##### `IdempotencyHeaderName`
+
+```csharp
+string IdempotencyHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the delivery idempotency key.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-idempotencymetadatakey"></a>
+
+##### `IdempotencyMetadataKey`
+
+```csharp
+string IdempotencyMetadataKey { get; set; }
+```
+
+Gets or sets the dispatch metadata key that can supply a caller-owned idempotency key.
+
+Remarks: When the metadata key is absent or empty, the sender derives a stable hashed key from the tenant, invitation, channel, and sender identifiers. Caller-supplied values that are too long or unsafe for HTTP headers are hashed before being sent.
 
 <a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-includeinvitationmetadata"></a>
 

@@ -7863,6 +7863,9 @@ Browse the published API surface by public member.
 - [EnableHttpProofPublicationEndpoint](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enablehttpproofpublicationendpoint): `Properties` on `MultiTenancyGovernanceAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=EnableHttpProofPublicationEndpoint&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether the HTTP proof publication endpoint should be mapped.
   - `bool EnableHttpProofPublicationEndpoint { get; set; }`
+- [EnableIdempotencyHeader](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-enableidempotencyheader): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=EnableIdempotencyHeader&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether an idempotency key header should be added to delivery requests.
+  - `bool EnableIdempotencyHeader { get; set; }`
 - [EnableIngestion](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-enableingestion): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=EnableIngestion&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Gets or sets a value indicating whether ingestion features are enabled.
   - `bool EnableIngestion { get; set; }`
@@ -12129,6 +12132,12 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-id): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable transport identifier.
   - `string Id { get; }`
+- [IdempotencyHeaderName](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-idempotencyheadername): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=IdempotencyHeaderName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the request header that carries the delivery idempotency key.
+  - `string IdempotencyHeaderName { get; set; }`
+- [IdempotencyMetadataKey](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-idempotencymetadatakey): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=IdempotencyMetadataKey&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the dispatch metadata key that can supply a caller-owned idempotency key.
+  - `string IdempotencyMetadataKey { get; set; }`
 - [IdempotencyRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-idempotencyrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IdempotencyRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Automatic retry cannot run because cross-node idempotency evidence is incomplete or unsafe.
   - `const string IdempotencyRisk`

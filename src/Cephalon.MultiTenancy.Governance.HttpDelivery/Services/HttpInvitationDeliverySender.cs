@@ -54,6 +54,7 @@ internal sealed class HttpInvitationDeliverySender(
                 metadata: BuildBaseMetadata(null, reason));
         }
 
+        IdempotencyDescriptor? idempotency = null;
         try
         {
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -62,6 +63,7 @@ internal sealed class HttpInvitationDeliverySender(
             var maxAttempts = options.GetMaxAttempts();
             var retryDelay = options.GetRetryDelay();
             var requestBody = JsonSerializer.Serialize(BuildPayload(context), SerializerOptions);
+            idempotency = BuildIdempotency(context);
             var client = httpClientFactory.CreateClient(HttpInvitationDeliveryServiceCollectionExtensions.HttpClientName);
             var retried = false;
             string? retryReason = null;
@@ -71,7 +73,7 @@ internal sealed class HttpInvitationDeliverySender(
                 var finalAttempt = attempt == maxAttempts;
                 try
                 {
-                    using var request = CreateRequest(endpoint, context, requestBody);
+                    using var request = CreateRequest(endpoint, context, requestBody, idempotency);
                     using var response = await client
                         .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token)
                         .ConfigureAwait(false);
@@ -89,7 +91,7 @@ internal sealed class HttpInvitationDeliverySender(
                         continue;
                     }
 
-                    var metadata = BuildBaseMetadata(response.StatusCode, response.ReasonPhrase, attempt, maxAttempts, retried, retryReason);
+                    var metadata = BuildBaseMetadata(response.StatusCode, response.ReasonPhrase, attempt, maxAttempts, retried, retryReason, idempotency);
 
                     if (options.IncludeResponseBodyInMetadata)
                     {
@@ -136,14 +138,14 @@ internal sealed class HttpInvitationDeliverySender(
                         dispatched: false,
                         reason: reason,
                         dispatchedAtUtc: context.DispatchedAtUtc,
-                        metadata: BuildBaseMetadata(null, reason, attempt, maxAttempts, retried, retryReason));
+                        metadata: BuildBaseMetadata(null, reason, attempt, maxAttempts, retried, retryReason, idempotency));
                 }
                 catch (Exception exception)
                 {
                     var reason = "HTTP invitation delivery webhook failed before accepting dispatch.";
                     HttpInvitationDeliveryLogs.Failed(logger, SenderId, context.TenantId, context.InvitationId, reason, exception);
 
-                    var metadata = BuildBaseMetadata(null, reason, attempt, maxAttempts, retried, retryReason);
+                    var metadata = BuildBaseMetadata(null, reason, attempt, maxAttempts, retried, retryReason, idempotency);
                     metadata["httpExceptionType"] = exception.GetType().Name;
 
                     return new TenantInvitationDeliverySenderResult(
@@ -165,14 +167,14 @@ internal sealed class HttpInvitationDeliverySender(
                 dispatched: false,
                 reason: reason,
                 dispatchedAtUtc: context.DispatchedAtUtc,
-                metadata: BuildBaseMetadata(null, reason));
+                metadata: BuildBaseMetadata(null, reason, idempotency: idempotency));
         }
         catch (Exception exception)
         {
             var reason = "HTTP invitation delivery webhook failed before accepting dispatch.";
             HttpInvitationDeliveryLogs.Failed(logger, SenderId, context.TenantId, context.InvitationId, reason, exception);
 
-            var metadata = BuildBaseMetadata(null, reason);
+            var metadata = BuildBaseMetadata(null, reason, idempotency: idempotency);
             metadata["httpExceptionType"] = exception.GetType().Name;
 
             return new TenantInvitationDeliverySenderResult(
@@ -186,16 +188,91 @@ internal sealed class HttpInvitationDeliverySender(
         throw new InvalidOperationException("HTTP invitation delivery completed without producing a sender result.");
     }
 
-    private HttpRequestMessage CreateRequest(Uri endpoint, TenantInvitationDeliveryContext context, string requestBody)
+    private HttpRequestMessage CreateRequest(
+        Uri endpoint,
+        TenantInvitationDeliveryContext context,
+        string requestBody,
+        IdempotencyDescriptor? idempotency)
     {
         var request = new HttpRequestMessage(options.GetHttpMethod(), endpoint)
         {
             Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
         };
         AddHeaders(request);
+        AddIdempotencyHeader(request, idempotency);
         AddSignatureHeaders(request, context, requestBody);
 
         return request;
+    }
+
+    private IdempotencyDescriptor? BuildIdempotency(TenantInvitationDeliveryContext context)
+    {
+        if (!options.EnableIdempotencyHeader)
+        {
+            return null;
+        }
+
+        var headerName = GetHeaderNameOrDefault(options.IdempotencyHeaderName, "X-Cephalon-Idempotency-Key");
+        var metadataKey = string.IsNullOrWhiteSpace(options.IdempotencyMetadataKey)
+            ? "idempotencyKey"
+            : options.IdempotencyMetadataKey.Trim();
+
+        if (context.Metadata.TryGetValue(metadataKey, out var configuredKey) &&
+            !string.IsNullOrWhiteSpace(configuredKey))
+        {
+            return new IdempotencyDescriptor(headerName, NormalizeConfiguredIdempotencyKey(configuredKey), "metadata");
+        }
+
+        return new IdempotencyDescriptor(headerName, CreateDerivedIdempotencyKey(context), "derived");
+    }
+
+    private string CreateDerivedIdempotencyKey(TenantInvitationDeliveryContext context)
+    {
+        var material = string.Join(
+            '\n',
+            "cephalon-http-invitation-delivery",
+            "v1",
+            context.TenantId.Trim().ToLowerInvariant(),
+            context.InvitationId.Trim().ToLowerInvariant(),
+            context.Channel.Trim().ToLowerInvariant(),
+            SenderId.ToLowerInvariant());
+
+        return "cephalon-invitation-" + ToBase64Url(SHA256.HashData(Encoding.UTF8.GetBytes(material)));
+    }
+
+    private static string NormalizeConfiguredIdempotencyKey(string key)
+    {
+        var normalized = key.Trim();
+        return ShouldHashConfiguredIdempotencyKey(normalized)
+            ? "cephalon-custom-" + ToBase64Url(SHA256.HashData(Encoding.UTF8.GetBytes(normalized)))
+            : normalized;
+    }
+
+    private static bool ShouldHashConfiguredIdempotencyKey(string key)
+    {
+        if (key.Length > 512)
+        {
+            return true;
+        }
+
+        foreach (var character in key)
+        {
+            if (character < '!' || character > '~')
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string ToBase64Url(byte[] bytes)
+    {
+        return Convert
+            .ToBase64String(bytes)
+            .TrimEnd('=')
+            .Replace('+', '-')
+            .Replace('/', '_');
     }
 
     private HttpInvitationDeliveryPayload BuildPayload(TenantInvitationDeliveryContext context)
@@ -239,6 +316,16 @@ internal sealed class HttpInvitationDeliverySender(
         {
             SetRequestHeader(request, keyIdHeaderName, options.SigningKeyId.Trim());
         }
+    }
+
+    private static void AddIdempotencyHeader(HttpRequestMessage request, IdempotencyDescriptor? idempotency)
+    {
+        if (idempotency is null)
+        {
+            return;
+        }
+
+        SetRequestHeader(request, idempotency.HeaderName, idempotency.Key);
     }
 
     private static string CreateSignature(string secret, string timestamp, string requestBody)
@@ -328,7 +415,8 @@ internal sealed class HttpInvitationDeliverySender(
         int attemptCount = 0,
         int? maxAttempts = null,
         bool retried = false,
-        string? retryReason = null)
+        string? retryReason = null,
+        IdempotencyDescriptor? idempotency = null)
     {
         var configuredMaxAttempts = maxAttempts ?? options.GetMaxAttempts();
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -356,6 +444,13 @@ internal sealed class HttpInvitationDeliverySender(
             metadata["httpSigningKeyId"] = options.SigningKeyId.Trim();
         }
 
+        if (idempotency is not null)
+        {
+            metadata["httpIdempotencyHeaderName"] = idempotency.HeaderName;
+            metadata["httpIdempotencyKey"] = idempotency.Key;
+            metadata["httpIdempotencyKeySource"] = idempotency.Source;
+        }
+
         if (statusCode is not null)
         {
             metadata["httpStatusCode"] = ((int)statusCode.Value).ToString(CultureInfo.InvariantCulture);
@@ -373,6 +468,8 @@ internal sealed class HttpInvitationDeliverySender(
 
         return metadata;
     }
+
+    private sealed record IdempotencyDescriptor(string HeaderName, string Key, string Source);
 }
 
 internal static class HttpInvitationDeliveryLogs

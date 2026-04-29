@@ -94,7 +94,7 @@ Current baseline packages:
 - `Cephalon.MultiTenancy.Governance.HttpDelivery`
   - optional HTTP webhook sender companion for `Cephalon.MultiTenancy.Governance`
   - registers a provider-managed `ITenantInvitationDeliverySender` with sender id `http-webhook` by default
-  - reads `Engine:MultiTenancy:Governance:HttpInvitationDelivery` or code-first options for endpoint, method, headers, accepted status codes, timeout, supported channels, bounded in-process retry/backoff, and optional HMAC-SHA256 webhook signing
+  - reads `Engine:MultiTenancy:Governance:HttpInvitationDelivery` or code-first options for endpoint, method, headers, accepted status codes, timeout, supported channels, provider-neutral idempotency headers, bounded in-process retry/backoff, and optional HMAC-SHA256 webhook signing
   - emits `Cephalon.MultiTenancy.Governance.HttpDelivery` diagnostics while leaving provider-specific email, SMS, chat, CRM, identity-provider, durable retry queue, delivery-status callback, and provider-reconciliation semantics to future provider packs or applications
 - `Cephalon.Edge`
   - runtime services and capability activation for `EdgeNativeDelivery`

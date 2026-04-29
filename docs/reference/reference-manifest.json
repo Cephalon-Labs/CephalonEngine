@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T01:20:20.8128046+00:00",
+  "GeneratedAtUtc": "2026-04-29T01:42:10.9750353+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8427,7 +8427,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 22,
+        "Properties": 25,
         "Methods": 1
       }
     },
@@ -46087,6 +46087,17 @@
       "Summary": "Gets or sets a value indicating whether the HTTP proof publication endpoint should be mapped."
     },
     {
+      "DisplayName": "EnableIdempotencyHeader",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-enableidempotencyheader",
+      "Signature": "bool EnableIdempotencyHeader { get; set; }",
+      "Summary": "Gets or sets a value indicating whether an idempotency key header should be added to delivery requests."
+    },
+    {
       "DisplayName": "EnableIngestion",
       "Category": "Properties",
       "DeclaringTypeName": "RetrievalOptions",
@@ -61683,6 +61694,28 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-transportdescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable transport identifier."
+    },
+    {
+      "DisplayName": "IdempotencyHeaderName",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-idempotencyheadername",
+      "Signature": "string IdempotencyHeaderName { get; set; }",
+      "Summary": "Gets or sets the request header that carries the delivery idempotency key."
+    },
+    {
+      "DisplayName": "IdempotencyMetadataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-idempotencymetadatakey",
+      "Signature": "string IdempotencyMetadataKey { get; set; }",
+      "Summary": "Gets or sets the dispatch metadata key that can supply a caller-owned idempotency key."
     },
     {
       "DisplayName": "IdempotencyRisk",
