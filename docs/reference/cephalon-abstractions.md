@@ -58054,6 +58054,35 @@ Parameters:
 - `collectionId`: The collection identifier to resolve.
 - `state`: When this method returns, contains the state if one was recorded.
 
+<a id="type-cephalon-abstractions-retrieval-iknowledgeindexer"></a>
+
+### `IKnowledgeIndexer`
+
+Builds and replaces managed indexes for registered knowledge collections.
+
+#### Declaration
+```csharp
+public interface IKnowledgeIndexer
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-retrieval-iknowledgeindexer-indexasync-cephalon-abstractions-retrieval-knowledgeindexingrequest-system-threading-cancellationtoken"></a>
+
+##### `IndexAsync`
+
+```csharp
+ValueTask<KnowledgeIndexingResult> IndexAsync(KnowledgeIndexingRequest request, CancellationToken cancellationToken)
+```
+
+Indexes the documents supplied by providers for the requested collection.
+
+Returns: The final indexing result recorded for operator introspection.
+
+Parameters:
+- `request`: The indexing request to execute.
+- `cancellationToken`: A token that can cancel the indexing run.
+
 <a id="type-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates"></a>
 
 ### `KnowledgeIndexFreshnessStates`
@@ -58169,6 +58198,225 @@ const string Succeeded
 ```
 
 Indexing completed successfully.
+
+<a id="type-cephalon-abstractions-retrieval-knowledgeindexingrequest"></a>
+
+### `KnowledgeIndexingRequest`
+
+Describes a managed indexing request for one knowledge collection.
+
+#### Declaration
+```csharp
+public sealed class KnowledgeIndexingRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-retrieval-knowledgeindexingrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `KnowledgeIndexingRequest`
+
+```csharp
+KnowledgeIndexingRequest(string collectionId, string runId, string actorId, string correlationId, DateTimeOffset? requestedAtUtc, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a managed indexing request.
+
+Parameters:
+- `collectionId`: The collection identifier to index.
+- `runId`: The stable run identifier for this indexing attempt.
+- `actorId`: The optional actor that requested indexing.
+- `correlationId`: The optional correlation identifier for this indexing attempt.
+- `requestedAtUtc`: The optional UTC timestamp when indexing was requested.
+- `metadata`: Optional operator-facing metadata attached to the indexing request.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; }
+```
+
+Gets the optional actor that requested indexing.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-collectionid"></a>
+
+##### `CollectionId`
+
+```csharp
+string CollectionId { get; }
+```
+
+Gets the collection identifier to index.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for this indexing attempt.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata attached to the indexing request.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-requestedatutc"></a>
+
+##### `RequestedAtUtc`
+
+```csharp
+DateTimeOffset RequestedAtUtc { get; }
+```
+
+Gets the UTC timestamp when indexing was requested.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-runid"></a>
+
+##### `RunId`
+
+```csharp
+string RunId { get; }
+```
+
+Gets the stable run identifier for this indexing attempt.
+
+<a id="type-cephalon-abstractions-retrieval-knowledgeindexingresult"></a>
+
+### `KnowledgeIndexingResult`
+
+Describes the result of a managed indexing attempt.
+
+#### Declaration
+```csharp
+public sealed class KnowledgeIndexingResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-retrieval-knowledgeindexingresult-ctor-system-string-system-string-system-string-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `KnowledgeIndexingResult`
+
+```csharp
+KnowledgeIndexingResult(string CollectionId, string RunId, string Outcome, DateTimeOffset ObservedAtUtc, DateTimeOffset? IndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string Error, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the result of a managed indexing attempt.
+
+Parameters:
+- `CollectionId`: The collection identifier that was indexed.
+- `RunId`: The stable indexing run identifier.
+- `Outcome`: The stable indexing outcome identifier.
+- `ObservedAtUtc`: The UTC timestamp when the outcome was observed.
+- `IndexedAtUtc`: The UTC timestamp when the replacement index was published.
+- `SourceFreshnessUtc`: The newest source-document timestamp observed during indexing.
+- `DocumentCount`: The number of documents stored in the replacement index.
+- `Error`: The operator-facing error summary when indexing failed.
+- `Metadata`: Optional operator-facing metadata captured with the result.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-collectionid"></a>
+
+##### `CollectionId`
+
+```csharp
+string CollectionId { get; set; }
+```
+
+The collection identifier that was indexed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-documentcount"></a>
+
+##### `DocumentCount`
+
+```csharp
+int DocumentCount { get; set; }
+```
+
+The number of documents stored in the replacement index.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-error"></a>
+
+##### `Error`
+
+```csharp
+string Error { get; set; }
+```
+
+The operator-facing error summary when indexing failed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-indexedatutc"></a>
+
+##### `IndexedAtUtc`
+
+```csharp
+DateTimeOffset? IndexedAtUtc { get; set; }
+```
+
+The UTC timestamp when the replacement index was published.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Optional operator-facing metadata captured with the result.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset ObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the outcome was observed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; set; }
+```
+
+The stable indexing outcome identifier.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-runid"></a>
+
+##### `RunId`
+
+```csharp
+string RunId { get; set; }
+```
+
+The stable indexing run identifier.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-sourcefreshnessutc"></a>
+
+##### `SourceFreshnessUtc`
+
+```csharp
+DateTimeOffset? SourceFreshnessUtc { get; set; }
+```
+
+The newest source-document timestamp observed during indexing.
 
 <a id="type-cephalon-abstractions-retrieval-knowledgeindexstate"></a>
 

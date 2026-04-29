@@ -1,4 +1,4 @@
-namespace Cephalon.Retrieval.Services;
+namespace Cephalon.Abstractions.Retrieval;
 
 /// <summary>
 /// Builds and replaces managed indexes for registered knowledge collections.

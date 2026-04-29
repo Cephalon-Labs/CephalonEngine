@@ -2097,6 +2097,14 @@ public sealed class AspNetCoreHostingTests
         var knowledgeIndexes = await client.GetFromJsonAsync<KnowledgeIndexState[]>("/engine/knowledge-indexes");
         var runbooksIndex = await client.GetFromJsonAsync<KnowledgeIndexState>("/engine/knowledge-indexes/runbooks");
         var missingIndex = await client.GetAsync("/engine/knowledge-indexes/missing");
+        var reindexResponse = await client.PostAsync(
+            "/engine/knowledge-indexes/runbooks/reindex?runId=hosting-retrieval-reindex-001&actorId=hosting-operator&correlationId=corr-hosting-retrieval-reindex-001",
+            null);
+        var reindexResult = await reindexResponse.Content.ReadFromJsonAsync<KnowledgeIndexingResult>();
+        var reindexedRunbooksIndex = await client.GetFromJsonAsync<KnowledgeIndexState>("/engine/knowledge-indexes/runbooks");
+        var missingReindex = await client.PostAsync(
+            "/engine/knowledge-indexes/missing/reindex?runId=hosting-retrieval-reindex-missing-001",
+            null);
 
         Assert.NotNull(manifest);
         Assert.Equal("modular-vertical-slice", manifest.AppProfile.BlueprintId);
@@ -2119,6 +2127,20 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("runbooks", runbooksIndex.CollectionId);
         Assert.Equal("hosting-retrieval-index-001", runbooksIndex.LastRunId);
         Assert.Equal(HttpStatusCode.NotFound, missingIndex.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, reindexResponse.StatusCode);
+        Assert.NotNull(reindexResult);
+        Assert.Equal("runbooks", reindexResult.CollectionId);
+        Assert.Equal("hosting-retrieval-reindex-001", reindexResult.RunId);
+        Assert.Equal(KnowledgeIndexingOutcomes.Succeeded, reindexResult.Outcome);
+        Assert.Equal(2, reindexResult.DocumentCount);
+        Assert.Equal("aspnetcore-operator-route", reindexResult.Metadata["trigger"]);
+        Assert.Equal("/engine/knowledge-indexes/{collectionId}/reindex", reindexResult.Metadata["route"]);
+        Assert.NotNull(reindexedRunbooksIndex);
+        Assert.Equal("hosting-retrieval-reindex-001", reindexedRunbooksIndex.LastRunId);
+        Assert.Equal("hosting-operator", reindexedRunbooksIndex.LastActorId);
+        Assert.Equal("corr-hosting-retrieval-reindex-001", reindexedRunbooksIndex.LastCorrelationId);
+        Assert.Equal(2, reindexedRunbooksIndex.SucceededCount);
+        Assert.Equal(HttpStatusCode.NotFound, missingReindex.StatusCode);
 
         var agentics = Assert.Single(surfaces, surface => surface.TechnologyId == "agentic-workloads");
         Assert.Contains(agentics.Entries, entry => entry.Id == "planner");

@@ -1616,6 +1616,8 @@ Current note:
 
 `GET /engine/knowledge-indexes` exposes the operator-facing index-state catalog for managed
 retrieval indexes when a retrieval pack registers the abstraction-level `IKnowledgeIndexCatalog`.
+`POST /engine/knowledge-indexes/{collectionId}/reindex` requests a manual reindex when the active
+runtime also registers the abstraction-level `IKnowledgeIndexer`.
 
 Current payload highlights:
 
@@ -1625,17 +1627,21 @@ Current payload highlights:
   correlation id, error summary, and safe metadata
 - `GET /engine/knowledge-indexes/{collectionId}` narrows the same catalog to one collection and
   returns `404` when no activity has been recorded for that collection
+- `POST /engine/knowledge-indexes/{collectionId}/reindex` accepts optional `runId`, `actorId`, and
+  `correlationId` query values, generates safe defaults when they are absent, returns the
+  `KnowledgeIndexingResult` for the replacement run, and returns `404` when indexing is not active
+  or the collection is not registered
 - the same index-state catalog is also available through `/engine/snapshot` in `KnowledgeIndexes`
   when operators want one merged runtime answer
 
 Current note:
 
-- the read contract lives in `Cephalon.Abstractions.Retrieval` so `Cephalon.Engine` and host
-  adapters can expose index posture without taking a direct dependency on `Cephalon.Retrieval`
-  implementation types
-- the indexing and query write path remains owned by the selected retrieval pack through
-  `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and registered `IKnowledgeDocumentProvider`
-  services
+- the read contract and manual reindex command seam live in `Cephalon.Abstractions.Retrieval` so
+  `Cephalon.Engine` and host adapters can expose and remediate index posture without taking a direct
+  dependency on `Cephalon.Retrieval` implementation types
+- the indexer implementation and query write path remain owned by the selected retrieval pack
+  through `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and registered
+  `IKnowledgeDocumentProvider` services
 
 ## Authorization policy surface
 
@@ -1693,8 +1699,11 @@ Current `Cephalon.Retrieval` highlights:
 - the same typed index-state answer is also available through `/engine/knowledge-indexes*` and
   `snapshot.KnowledgeIndexes`, so operators do not need to parse technology-surface metadata when
   they only need collection index posture
+- operators can now request a bounded manual reindex through
+  `POST /engine/knowledge-indexes/{collectionId}/reindex`; the route records the supplied or
+  generated run id, actor, correlation id, and safe trigger metadata on the same index-state answer
 - `lastQueryFingerprint` and `lastQueryLength` are reported instead of raw query text so operator introspection can correlate activity without leaking user prompts or private search terms
-- this is a Cephalon-managed lexical in-process baseline; vector search, embeddings, durable search storage, distributed indexes, rerankers, provider-specific search engines, and reindex automation stay outside the current compatibility promise until a package owns them explicitly
+- this is a Cephalon-managed lexical in-process baseline; vector search, embeddings, durable search storage, distributed indexes, rerankers, provider-specific search engines, and background reindex scheduling or automation stay outside the current compatibility promise until a package owns them explicitly
 
 ## Trust surface
 

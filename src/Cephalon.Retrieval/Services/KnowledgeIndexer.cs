@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Retrieval;
+
 namespace Cephalon.Retrieval.Services;
 
 internal sealed class KnowledgeIndexer(

@@ -146,7 +146,10 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("IAgentToolRunCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Abstractions.Retrieval", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IKnowledgeIndexCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IKnowledgeIndexer", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("KnowledgeIndexState", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("KnowledgeIndexingRequest", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("KnowledgeIndexingResult", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("KnowledgeIndexingOutcomes", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Abstractions.Authorization", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("AuthorizationPolicyDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);

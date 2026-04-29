@@ -2487,6 +2487,59 @@ public static class EngineWebApplicationExtensions
                 return state is null ? Results.NotFound() : Results.Ok(state);
             })
             .WithName("GetCephalonKnowledgeIndex");
+        engineGroup.MapPost(
+                "/knowledge-indexes/{collectionId}/reindex",
+                async (
+                    string collectionId,
+                    [FromQuery] string? runId,
+                    [FromQuery] string? actorId,
+                    [FromQuery] string? correlationId,
+                    HttpContext httpContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    var indexer = httpContext.RequestServices.GetService<IKnowledgeIndexer>();
+                    if (indexer is null)
+                    {
+                        return Results.NotFound(new
+                        {
+                            error = "Knowledge indexing is not available in the active runtime."
+                        });
+                    }
+
+                    try
+                    {
+                        var request = new KnowledgeIndexingRequest(
+                            collectionId,
+                            string.IsNullOrWhiteSpace(runId) ? CreateKnowledgeReindexRunId() : runId,
+                            ResolveKnowledgeReindexActorId(httpContext, actorId),
+                            string.IsNullOrWhiteSpace(correlationId) ? httpContext.TraceIdentifier : correlationId,
+                            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                ["trigger"] = "aspnetcore-operator-route",
+                                ["route"] = "/engine/knowledge-indexes/{collectionId}/reindex"
+                            });
+
+                        var result = await indexer.IndexAsync(request, cancellationToken).ConfigureAwait(false);
+                        return Results.Ok(result);
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        return Results.BadRequest(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                        when (IsUnregisteredKnowledgeCollection(exception))
+                    {
+                        return Results.NotFound(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                    {
+                        return Results.Problem(
+                            title: "Knowledge indexing failed.",
+                            detail: exception.Message,
+                            statusCode: StatusCodes.Status500InternalServerError);
+                    }
+                })
+            .WithName("ReindexCephalonKnowledgeIndex");
         engineGroup.MapGet("/transports", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Transports))
             .WithName("GetCephalonTransports");
         engineGroup.MapGet("/dependencies", ([FromServices] RuntimeHealthEvaluator health) => TypedResults.Ok(health.EvaluateDependencies()))
@@ -3168,6 +3221,31 @@ public static class EngineWebApplicationExtensions
             Predicate = predicate,
             ResponseWriter = HealthResponseWriter.WriteAsync
         };
+    }
+
+    private static string CreateKnowledgeReindexRunId()
+    {
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"aspnetcore-reindex-{DateTimeOffset.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid():N}");
+    }
+
+    private static string? ResolveKnowledgeReindexActorId(HttpContext httpContext, string? actorId)
+    {
+        if (!string.IsNullOrWhiteSpace(actorId))
+        {
+            return actorId.Trim();
+        }
+
+        var userName = httpContext.User.Identity?.Name;
+        return string.IsNullOrWhiteSpace(userName) ? null : userName.Trim();
+    }
+
+    private static bool IsUnregisteredKnowledgeCollection(InvalidOperationException exception)
+    {
+        return exception.Message.Contains(
+            "is not registered in the active retrieval runtime",
+            StringComparison.OrdinalIgnoreCase);
     }
 
     private static string LoadEmbeddedAsset(string resourceName, string assetDescription)

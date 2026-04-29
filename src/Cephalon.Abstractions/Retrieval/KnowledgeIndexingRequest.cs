@@ -1,4 +1,4 @@
-namespace Cephalon.Retrieval.Services;
+namespace Cephalon.Abstractions.Retrieval;
 
 /// <summary>
 /// Describes a managed indexing request for one knowledge collection.
