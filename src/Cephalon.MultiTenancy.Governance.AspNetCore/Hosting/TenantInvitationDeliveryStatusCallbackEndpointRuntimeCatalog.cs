@@ -21,7 +21,13 @@ internal sealed class TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatal
         bool requireAuthorization,
         string? authorizationPolicy,
         bool excludeFromDescription,
-        bool requireProviderMessageMatch)
+        bool requireProviderMessageMatch,
+        bool callbackSignatureVerificationConfigured,
+        string signatureHeaderName,
+        string signatureTimestampHeaderName,
+        string signatureKeyIdHeaderName,
+        bool signatureKeyIdConfigured,
+        int signatureToleranceSeconds)
     {
         lock (syncRoot)
         {
@@ -30,7 +36,13 @@ internal sealed class TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatal
                 requireAuthorization,
                 authorizationPolicy,
                 excludeFromDescription,
-                requireProviderMessageMatch);
+                requireProviderMessageMatch,
+                callbackSignatureVerificationConfigured,
+                signatureHeaderName,
+                signatureTimestampHeaderName,
+                signatureKeyIdHeaderName,
+                signatureKeyIdConfigured,
+                signatureToleranceSeconds);
         }
     }
 }
@@ -40,4 +52,10 @@ internal sealed record TenantInvitationDeliveryStatusCallbackEndpointRuntimeSnap
     bool RequireAuthorization,
     string? AuthorizationPolicy,
     bool ExcludeFromDescription,
-    bool RequireProviderMessageMatch);
+    bool RequireProviderMessageMatch,
+    bool CallbackSignatureVerificationConfigured,
+    string SignatureHeaderName,
+    string SignatureTimestampHeaderName,
+    string SignatureKeyIdHeaderName,
+    bool SignatureKeyIdConfigured,
+    int SignatureToleranceSeconds);

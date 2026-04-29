@@ -199,6 +199,70 @@ Gets or sets the endpoint route pattern used for normalized tenant-invitation de
 
 Remarks: The default route stays under `/engine` because the endpoint is an operator/provider-adapter ingress surface, not an application-owned public onboarding API.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbacksignatureheadername"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackSignatureHeaderName`
+
+```csharp
+string TenantInvitationDeliveryStatusCallbackSignatureHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the callback signature.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbacksignaturekeyidheadername"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName`
+
+```csharp
+string TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the optional callback signing key identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbacksignaturetimestampheadername"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName`
+
+```csharp
+string TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the Unix timestamp included in the callback signature.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbacksignaturetoleranceseconds"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds`
+
+```csharp
+int TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds { get; set; }
+```
+
+Gets or sets the allowed clock skew, in seconds, for signed delivery-status callback timestamps.
+
+Remarks: The endpoint clamps the effective tolerance to at least one second. The default is five minutes.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbacksigningkeyid"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackSigningKeyId`
+
+```csharp
+string TenantInvitationDeliveryStatusCallbackSigningKeyId { get; set; }
+```
+
+Gets or sets the optional signing key identifier expected on signed delivery-status callback requests.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbacksigningsecret"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackSigningSecret`
+
+```csharp
+string TenantInvitationDeliveryStatusCallbackSigningSecret { get; set; }
+```
+
+Gets or sets the shared secret used to verify normalized delivery-status callback request bodies with HMAC-SHA256.
+
+Remarks: When a value is configured, every callback request must include a valid Cephalon callback signature before the request is reconciled. Leave this empty when the host uses ASP.NET Core authorization or a provider-specific companion to authenticate callback ingress instead.
+
 #### Methods
 
 <a id="member-m-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>

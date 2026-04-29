@@ -7,13 +7,19 @@ using Cephalon.MultiTenancy.Governance.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
 namespace Cephalon.Tests.Hosting;
 
 public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
 {
+    private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
+
     [Fact]
     public async Task MapCephalonTenantAdministrationCommandsAppliesWorkflowAndReportsMappedRuntimeSurface()
     {
@@ -196,8 +202,147 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("true", endpointEntry.Metadata["requireProviderMessageMatch"]);
         Assert.Equal("/engine/tenant-invitations/delivery-status", endpointEntry.Metadata["routePattern"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantInvitationDeliveryStatusCallbackEndpointOwnership"]);
+        Assert.Equal("false", endpointEntry.Metadata["callbackSignatureVerificationConfigured"]);
+        Assert.Equal("not-configured", endpointEntry.Metadata["callbackSignatureVerificationOwnership"]);
         Assert.Equal("application-managed", endpointEntry.Metadata["providerSpecificCallbackTranslationOwnership"]);
         Assert.Equal("application-managed", endpointEntry.Metadata["providerPollingOwnership"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryStatusCallbacksVerifiesConfiguredCallbackSignature()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-signed-callback",
+                    tenantId: "tenant-signed-callback",
+                    inviteeId: "user-signed-callback",
+                    displayName: "Signed Callback Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "provider-message-signed"
+                    }));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore(options =>
+        {
+            options.RequireTenantInvitationDeliveryStatusCallbackAuthorization = false;
+            options.TenantInvitationDeliveryStatusCallbackSigningSecret = "status-callback-secret";
+            options.TenantInvitationDeliveryStatusCallbackSigningKeyId = "callback-key-1";
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var request = new TenantInvitationDeliveryStatusCallbackRequest
+        {
+            TenantId = "tenant-signed-callback",
+            InvitationId = "invite-signed-callback",
+            Status = TenantInvitationDeliveryStatuses.Delivered,
+            ProviderMessageId = "provider-message-signed",
+            SenderId = "http-webhook",
+            Channel = "email",
+            Actor = "signed-provider",
+            CorrelationId = "delivery-callback-signed"
+        };
+        var requestBody = JsonSerializer.Serialize(request, SerializerOptions);
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        using var message = new HttpRequestMessage(HttpMethod.Post, "/engine/tenant-invitations/delivery-status")
+        {
+            Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+        };
+        message.Headers.TryAddWithoutValidation("X-Cephalon-Callback-Signature-Timestamp", timestamp);
+        message.Headers.TryAddWithoutValidation("X-Cephalon-Callback-Key-Id", "callback-key-1");
+        message.Headers.TryAddWithoutValidation(
+            "X-Cephalon-Callback-Signature",
+            CreateCallbackSignature("status-callback-secret", timestamp, requestBody));
+
+        var response = await client.SendAsync(message);
+        var result = await response.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusReconciliationResult>();
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.True(result.Reconciled);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
+        Assert.Equal("verified", invitation.Metadata["deliveryStatusCallbackSignatureVerification"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["deliveryStatusCallbackSignatureVerificationOwnership"]);
+        Assert.Equal(timestamp, invitation.Metadata["deliveryStatusCallbackSignatureTimestamp"]);
+        Assert.Equal("callback-key-1", invitation.Metadata["deliveryStatusCallbackSignatureKeyId"]);
+        Assert.Equal("true", endpointEntry.Metadata["callbackSignatureVerificationConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["callbackSignatureVerificationOwnership"]);
+        Assert.Equal("true", endpointEntry.Metadata["signatureKeyIdConfigured"]);
+        Assert.Equal("X-Cephalon-Callback-Signature", endpointEntry.Metadata["signatureHeaderName"]);
+        Assert.Equal("X-Cephalon-Callback-Signature-Timestamp", endpointEntry.Metadata["signatureTimestampHeaderName"]);
+        Assert.Equal("X-Cephalon-Callback-Key-Id", endpointEntry.Metadata["signatureKeyIdHeaderName"]);
+        Assert.Equal("300", endpointEntry.Metadata["signatureToleranceSeconds"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryStatusCallbacksRejectsUnsignedConfiguredCallback()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-unsigned-callback",
+                    tenantId: "tenant-unsigned-callback",
+                    inviteeId: "user-unsigned-callback",
+                    displayName: "Unsigned Callback Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore(options =>
+        {
+            options.RequireTenantInvitationDeliveryStatusCallbackAuthorization = false;
+            options.TenantInvitationDeliveryStatusCallbackSigningSecret = "status-callback-secret";
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/tenant-invitations/delivery-status",
+            new TenantInvitationDeliveryStatusCallbackRequest
+            {
+                TenantId = "tenant-unsigned-callback",
+                InvitationId = "invite-unsigned-callback",
+                Status = TenantInvitationDeliveryStatuses.Delivered
+            });
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
+        Assert.Equal("true", endpointEntry.Metadata["callbackSignatureVerificationConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["callbackSignatureVerificationOwnership"]);
     }
 
     [Fact]
@@ -248,6 +393,14 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
         Assert.Equal("true", endpointEntry.Metadata["requireAuthorization"]);
         Assert.Equal("none", endpointEntry.Metadata["authorizationPolicy"]);
+    }
+
+    private static string CreateCallbackSignature(string secret, string timestamp, string requestBody)
+    {
+        var signedPayload = $"{timestamp}.{requestBody}";
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
+        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(signedPayload));
+        return "v1=" + Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     [Fact]

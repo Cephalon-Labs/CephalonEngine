@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
 namespace Cephalon.MultiTenancy.Governance.AspNetCore.Hosting;
 
@@ -15,6 +19,8 @@ namespace Cephalon.MultiTenancy.Governance.AspNetCore.Hosting;
 public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderExtensions
 {
     private const string DefaultCallbackSource = "aspnetcore-delivery-status-callback";
+    private const int MaxCallbackBodyBytes = 64 * 1024;
+    private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
 
     /// <summary>
     /// Maps the optional tenant-invitation delivery status callback endpoint.
@@ -45,10 +51,9 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
                 routePattern,
                 (
                     HttpContext context,
-                    TenantInvitationDeliveryStatusCallbackRequest? request,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
                     CancellationToken cancellationToken) =>
-                    ReconcileCallbackAsync(context, request, reconciler, options, routePattern, cancellationToken))
+                    ReconcileCallbackAsync(context, reconciler, options, routePattern, cancellationToken))
             .WithName("CephalonTenantInvitationDeliveryStatusCallback")
             .Accepts<TenantInvitationDeliveryStatusCallbackRequest>("application/json")
             .Produces<TenantInvitationDeliveryStatusReconciliationResult>(StatusCodes.Status200OK)
@@ -59,6 +64,7 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status413PayloadTooLarge)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         if (options.ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription)
@@ -75,14 +81,25 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
                 options.RequireTenantInvitationDeliveryStatusCallbackAuthorization,
                 Normalize(options.TenantInvitationDeliveryStatusCallbackAuthorizationPolicy),
                 options.ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription,
-                options.RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch);
+                options.RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch,
+                IsCallbackSignatureVerificationConfigured(options),
+                GetHeaderNameOrDefault(
+                    options.TenantInvitationDeliveryStatusCallbackSignatureHeaderName,
+                    MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureHeaderName),
+                GetHeaderNameOrDefault(
+                    options.TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName,
+                    MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName),
+                GetHeaderNameOrDefault(
+                    options.TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName,
+                    MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName),
+                !string.IsNullOrWhiteSpace(options.TenantInvitationDeliveryStatusCallbackSigningKeyId),
+                GetSignatureToleranceSeconds(options));
 
         return endpoints;
     }
 
     private static async Task<IResult> ReconcileCallbackAsync(
         HttpContext context,
-        TenantInvitationDeliveryStatusCallbackRequest? request,
         ITenantInvitationDeliveryStatusReconciler reconciler,
         MultiTenancyGovernanceAspNetCoreOptions options,
         string routePattern,
@@ -92,6 +109,33 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
         if (authorizationResult is not null)
         {
             return authorizationResult;
+        }
+
+        var requestBody = await ReadRequestBodyAsync(context, cancellationToken).ConfigureAwait(false);
+        if (requestBody.Failure is not null)
+        {
+            return requestBody.Failure;
+        }
+
+        var signatureVerification = VerifyCallbackSignature(context, options, requestBody.Body);
+        if (signatureVerification.Failure is not null)
+        {
+            return signatureVerification.Failure;
+        }
+
+        TenantInvitationDeliveryStatusCallbackRequest? request;
+        try
+        {
+            request = JsonSerializer.Deserialize<TenantInvitationDeliveryStatusCallbackRequest>(
+                requestBody.Body,
+                SerializerOptions);
+        }
+        catch (JsonException)
+        {
+            return Results.Problem(
+                title: "Tenant invitation delivery status callback request is invalid.",
+                detail: "Send a valid JSON TenantInvitationDeliveryStatusCallbackRequest body.",
+                statusCode: StatusCodes.Status400BadRequest);
         }
 
         if (request is null)
@@ -112,6 +156,21 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
         metadata["aspNetCoreDeliveryStatusCallback"] = "true";
         metadata["aspNetCoreDeliveryStatusCallbackRoute"] = routePattern;
         metadata["deliveryStatusCallbackIngressOwnership"] = "cephalon-managed";
+        metadata["deliveryStatusCallbackSignatureVerification"] = signatureVerification.Configured ? "verified" : "not-configured";
+        metadata["deliveryStatusCallbackSignatureVerificationOwnership"] = signatureVerification.Configured ? "cephalon-managed" : "not-configured";
+
+        if (signatureVerification.Configured)
+        {
+            metadata["deliveryStatusCallbackSignatureTimestamp"] =
+                signatureVerification.Timestamp!.Value.ToString(CultureInfo.InvariantCulture);
+            metadata["deliveryStatusCallbackSignatureAgeSeconds"] =
+                signatureVerification.AgeSeconds!.Value.ToString(CultureInfo.InvariantCulture);
+
+            if (!string.IsNullOrWhiteSpace(signatureVerification.KeyId))
+            {
+                metadata["deliveryStatusCallbackSignatureKeyId"] = signatureVerification.KeyId!;
+            }
+        }
 
         var reconciliationRequest = new TenantInvitationDeliveryStatusReconciliationRequest(
             tenantId: request.TenantId!,
@@ -132,6 +191,175 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
 
         var result = await reconciler.ReconcileAsync(reconciliationRequest, cancellationToken).ConfigureAwait(false);
         return Results.Json(result, statusCode: ResolveStatusCode(result));
+    }
+
+    private static async Task<CallbackRequestBodyReadResult> ReadRequestBodyAsync(
+        HttpContext context,
+        CancellationToken cancellationToken)
+    {
+        if (context.Request.ContentLength > MaxCallbackBodyBytes)
+        {
+            return CallbackRequestBodyReadResult.Fail(Results.Problem(
+                title: "Tenant invitation delivery status callback request is too large.",
+                detail: $"The callback request body must be no larger than {MaxCallbackBodyBytes} bytes.",
+                statusCode: StatusCodes.Status413PayloadTooLarge));
+        }
+
+        using var buffer = new MemoryStream();
+        var chunk = new byte[8192];
+        while (true)
+        {
+            var bytesRead = await context.Request.Body
+                .ReadAsync(chunk.AsMemory(0, chunk.Length), cancellationToken)
+                .ConfigureAwait(false);
+            if (bytesRead == 0)
+            {
+                break;
+            }
+
+            if (buffer.Length + bytesRead > MaxCallbackBodyBytes)
+            {
+                return CallbackRequestBodyReadResult.Fail(Results.Problem(
+                    title: "Tenant invitation delivery status callback request is too large.",
+                    detail: $"The callback request body must be no larger than {MaxCallbackBodyBytes} bytes.",
+                    statusCode: StatusCodes.Status413PayloadTooLarge));
+            }
+
+            buffer.Write(chunk, 0, bytesRead);
+        }
+
+        return CallbackRequestBodyReadResult.Success(buffer.ToArray());
+    }
+
+    private static CallbackSignatureVerificationResult VerifyCallbackSignature(
+        HttpContext context,
+        MultiTenancyGovernanceAspNetCoreOptions options,
+        byte[] requestBody)
+    {
+        var secret = Normalize(options.TenantInvitationDeliveryStatusCallbackSigningSecret);
+        if (secret is null)
+        {
+            return CallbackSignatureVerificationResult.NotConfigured();
+        }
+
+        var signatureHeaderName = GetHeaderNameOrDefault(
+            options.TenantInvitationDeliveryStatusCallbackSignatureHeaderName,
+            MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureHeaderName);
+        if (!TryGetSingleHeader(context, signatureHeaderName, out var signature))
+        {
+            return CallbackSignatureVerificationResult.Fail(SignatureProblem(
+                "Tenant invitation delivery status callback signature is required.",
+                $"Set the {signatureHeaderName} header to a Cephalon callback signature."));
+        }
+
+        var timestampHeaderName = GetHeaderNameOrDefault(
+            options.TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName,
+            MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName);
+        if (!TryGetSingleHeader(context, timestampHeaderName, out var timestamp))
+        {
+            return CallbackSignatureVerificationResult.Fail(SignatureProblem(
+                "Tenant invitation delivery status callback signature timestamp is required.",
+                $"Set the {timestampHeaderName} header to the Unix timestamp included in the callback signature."));
+        }
+
+        if (!long.TryParse(timestamp, NumberStyles.None, CultureInfo.InvariantCulture, out var timestampSeconds))
+        {
+            return CallbackSignatureVerificationResult.Fail(SignatureProblem(
+                "Tenant invitation delivery status callback signature timestamp is invalid.",
+                "The callback signature timestamp must be a Unix timestamp in seconds."));
+        }
+
+        DateTimeOffset signedAtUtc;
+        try
+        {
+            signedAtUtc = DateTimeOffset.FromUnixTimeSeconds(timestampSeconds);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return CallbackSignatureVerificationResult.Fail(SignatureProblem(
+                "Tenant invitation delivery status callback signature timestamp is invalid.",
+                "The callback signature timestamp is outside the supported Unix timestamp range."));
+        }
+
+        var ageSeconds = (int)Math.Abs(Math.Round((DateTimeOffset.UtcNow - signedAtUtc).TotalSeconds));
+        var toleranceSeconds = GetSignatureToleranceSeconds(options);
+        if (ageSeconds > toleranceSeconds)
+        {
+            return CallbackSignatureVerificationResult.Fail(SignatureProblem(
+                "Tenant invitation delivery status callback signature timestamp is outside the allowed tolerance.",
+                $"The callback signature timestamp must be within {toleranceSeconds} seconds of the current UTC time."));
+        }
+
+        var expectedKeyId = Normalize(options.TenantInvitationDeliveryStatusCallbackSigningKeyId);
+        var keyIdHeaderName = GetHeaderNameOrDefault(
+            options.TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName,
+            MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName);
+        TryGetSingleHeader(context, keyIdHeaderName, out var suppliedKeyId);
+        if (expectedKeyId is not null &&
+            !string.Equals(expectedKeyId, suppliedKeyId, StringComparison.Ordinal))
+        {
+            return CallbackSignatureVerificationResult.Fail(SignatureProblem(
+                "Tenant invitation delivery status callback signing key id is invalid.",
+                $"Set the {keyIdHeaderName} header to the configured callback signing key id."));
+        }
+
+        if (!SignatureMatches(secret, timestamp!, requestBody, signature!))
+        {
+            return CallbackSignatureVerificationResult.Fail(SignatureProblem(
+                "Tenant invitation delivery status callback signature is invalid.",
+                "The callback request body does not match the supplied Cephalon callback signature."));
+        }
+
+        return CallbackSignatureVerificationResult.Verified(timestampSeconds, ageSeconds, suppliedKeyId);
+    }
+
+    private static bool SignatureMatches(
+        string secret,
+        string timestamp,
+        byte[] requestBody,
+        string signature)
+    {
+        if (!TryParseV1Signature(signature, out var suppliedSignature))
+        {
+            return false;
+        }
+
+        var timestampBytes = Encoding.UTF8.GetBytes(timestamp);
+        var signedPayload = new byte[timestampBytes.Length + 1 + requestBody.Length];
+        Buffer.BlockCopy(timestampBytes, 0, signedPayload, 0, timestampBytes.Length);
+        signedPayload[timestampBytes.Length] = (byte)'.';
+        Buffer.BlockCopy(requestBody, 0, signedPayload, timestampBytes.Length + 1, requestBody.Length);
+
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
+        var expectedSignature = hmac.ComputeHash(signedPayload);
+        return suppliedSignature.Length == expectedSignature.Length &&
+            CryptographicOperations.FixedTimeEquals(suppliedSignature, expectedSignature);
+    }
+
+    private static bool TryParseV1Signature(string signature, out byte[] signatureBytes)
+    {
+        signatureBytes = [];
+        var normalizedSignature = Normalize(signature);
+        if (normalizedSignature is null ||
+            !normalizedSignature.StartsWith("v1=", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        try
+        {
+            signatureBytes = Convert.FromHexString(normalizedSignature.AsSpan(3));
+            return signatureBytes.Length > 0;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+
+    private static IResult SignatureProblem(string title, string detail)
+    {
+        return Results.Problem(title: title, detail: detail, statusCode: StatusCodes.Status401Unauthorized);
     }
 
     private static IResult? Validate(TenantInvitationDeliveryStatusCallbackRequest request)
@@ -265,10 +493,63 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
                 StringComparer.OrdinalIgnoreCase);
     }
 
+    private static bool IsCallbackSignatureVerificationConfigured(MultiTenancyGovernanceAspNetCoreOptions options)
+    {
+        return !string.IsNullOrWhiteSpace(options.TenantInvitationDeliveryStatusCallbackSigningSecret);
+    }
+
+    private static int GetSignatureToleranceSeconds(MultiTenancyGovernanceAspNetCoreOptions options)
+    {
+        return Math.Clamp(options.TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds, 1, 86_400);
+    }
+
+    private static string GetHeaderNameOrDefault(string? headerName, string defaultHeaderName)
+    {
+        return Normalize(headerName) ?? defaultHeaderName;
+    }
+
+    private static bool TryGetSingleHeader(HttpContext context, string headerName, out string? value)
+    {
+        value = null;
+        if (!context.Request.Headers.TryGetValue(headerName, out var values) ||
+            values.Count != 1 ||
+            string.IsNullOrWhiteSpace(values[0]))
+        {
+            return false;
+        }
+
+        value = values[0]!.Trim();
+        return true;
+    }
+
     private static string? Normalize(string? value)
     {
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
+    }
+
+    private sealed record CallbackRequestBodyReadResult(byte[] Body, IResult? Failure)
+    {
+        public static CallbackRequestBodyReadResult Success(byte[] body) => new(body, null);
+
+        public static CallbackRequestBodyReadResult Fail(IResult failure) => new([], failure);
+    }
+
+    private sealed record CallbackSignatureVerificationResult(
+        bool Configured,
+        long? Timestamp,
+        int? AgeSeconds,
+        string? KeyId,
+        IResult? Failure)
+    {
+        public static CallbackSignatureVerificationResult NotConfigured() =>
+            new(false, null, null, null, null);
+
+        public static CallbackSignatureVerificationResult Verified(long timestamp, int ageSeconds, string? keyId) =>
+            new(true, timestamp, ageSeconds, keyId, null);
+
+        public static CallbackSignatureVerificationResult Fail(IResult failure) =>
+            new(true, null, null, null, failure);
     }
 }

@@ -10,6 +10,9 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
 {
     internal const string DefaultTenantAdministrationCommandRoutePattern = "/engine/tenant-administration/commands";
     internal const string DefaultTenantInvitationDeliveryStatusCallbackRoutePattern = "/engine/tenant-invitations/delivery-status";
+    internal const string DefaultTenantInvitationDeliveryStatusCallbackSignatureHeaderName = "X-Cephalon-Callback-Signature";
+    internal const string DefaultTenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName = "X-Cephalon-Callback-Signature-Timestamp";
+    internal const string DefaultTenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName = "X-Cephalon-Callback-Key-Id";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MultiTenancyGovernanceAspNetCoreOptions" /> class.
@@ -118,6 +121,47 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
     public bool RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets the shared secret used to verify normalized delivery-status callback request bodies with HMAC-SHA256.
+    /// </summary>
+    /// <remarks>
+    /// When a value is configured, every callback request must include a valid Cephalon callback signature before the
+    /// request is reconciled. Leave this empty when the host uses ASP.NET Core authorization or a provider-specific
+    /// companion to authenticate callback ingress instead.
+    /// </remarks>
+    public string? TenantInvitationDeliveryStatusCallbackSigningSecret { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional signing key identifier expected on signed delivery-status callback requests.
+    /// </summary>
+    public string? TenantInvitationDeliveryStatusCallbackSigningKeyId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the request header that carries the callback signature.
+    /// </summary>
+    public string TenantInvitationDeliveryStatusCallbackSignatureHeaderName { get; set; } =
+        DefaultTenantInvitationDeliveryStatusCallbackSignatureHeaderName;
+
+    /// <summary>
+    /// Gets or sets the request header that carries the Unix timestamp included in the callback signature.
+    /// </summary>
+    public string TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName { get; set; } =
+        DefaultTenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName;
+
+    /// <summary>
+    /// Gets or sets the request header that carries the optional callback signing key identifier.
+    /// </summary>
+    public string TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName { get; set; } =
+        DefaultTenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName;
+
+    /// <summary>
+    /// Gets or sets the allowed clock skew, in seconds, for signed delivery-status callback timestamps.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint clamps the effective tolerance to at least one second. The default is five minutes.
+    /// </remarks>
+    public int TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds { get; set; } = 300;
+
+    /// <summary>
     /// Reads ASP.NET Core governance adapter options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -154,7 +198,21 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
         options.TenantInvitationDeliveryStatusCallbackAuthorizationPolicy = Normalize(section["TenantInvitationDeliveryStatusCallbackAuthorizationPolicy"]);
         options.ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription = ParseBoolean(section["ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription"], options.ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription);
         options.RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch = ParseBoolean(section["RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch"], options.RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch);
+        options.TenantInvitationDeliveryStatusCallbackSigningSecret = Normalize(section["TenantInvitationDeliveryStatusCallbackSigningSecret"]);
+        options.TenantInvitationDeliveryStatusCallbackSigningKeyId = Normalize(section["TenantInvitationDeliveryStatusCallbackSigningKeyId"]);
+        options.TenantInvitationDeliveryStatusCallbackSignatureHeaderName = Normalize(section["TenantInvitationDeliveryStatusCallbackSignatureHeaderName"]) ?? options.TenantInvitationDeliveryStatusCallbackSignatureHeaderName;
+        options.TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName = Normalize(section["TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName"]) ?? options.TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName;
+        options.TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName = Normalize(section["TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName"]) ?? options.TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName;
+        options.TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds = ParseInt32(section["TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds"], options.TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds);
         return options;
+    }
+
+    private static int ParseInt32(string? value, int defaultValue)
+    {
+        var normalizedValue = Normalize(value);
+        return normalizedValue is not null && int.TryParse(normalizedValue, out var parsed)
+            ? parsed
+            : defaultValue;
     }
 
     private static bool ParseBoolean(string? value, bool defaultValue)

@@ -23,6 +23,21 @@ internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceCo
             options.ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription;
         var requireProviderMessageMatch = callbackEndpoint?.RequireProviderMessageMatch ??
             options.RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch;
+        var callbackSignatureVerificationConfigured = callbackEndpoint?.CallbackSignatureVerificationConfigured ??
+            !string.IsNullOrWhiteSpace(options.TenantInvitationDeliveryStatusCallbackSigningSecret);
+        var signatureHeaderName = callbackEndpoint?.SignatureHeaderName ??
+            Normalize(options.TenantInvitationDeliveryStatusCallbackSignatureHeaderName) ??
+            MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureHeaderName;
+        var signatureTimestampHeaderName = callbackEndpoint?.SignatureTimestampHeaderName ??
+            Normalize(options.TenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName) ??
+            MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName;
+        var signatureKeyIdHeaderName = callbackEndpoint?.SignatureKeyIdHeaderName ??
+            Normalize(options.TenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName) ??
+            MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName;
+        var signatureKeyIdConfigured = callbackEndpoint?.SignatureKeyIdConfigured ??
+            !string.IsNullOrWhiteSpace(options.TenantInvitationDeliveryStatusCallbackSigningKeyId);
+        var signatureToleranceSeconds = callbackEndpoint?.SignatureToleranceSeconds ??
+            Math.Max(1, options.TenantInvitationDeliveryStatusCallbackSignatureToleranceSeconds);
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -50,6 +65,13 @@ internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceCo
             ["authorizationPolicy"] = authorizationPolicy ?? "none",
             ["excludeFromDescription"] = excludeFromDescription.ToString().ToLowerInvariant(),
             ["requireProviderMessageMatch"] = requireProviderMessageMatch.ToString().ToLowerInvariant(),
+            ["callbackSignatureVerificationConfigured"] = callbackSignatureVerificationConfigured.ToString().ToLowerInvariant(),
+            ["callbackSignatureVerificationOwnership"] = callbackSignatureVerificationConfigured ? endpointOwnership : "not-configured",
+            ["signatureHeaderName"] = signatureHeaderName,
+            ["signatureTimestampHeaderName"] = signatureTimestampHeaderName,
+            ["signatureKeyIdHeaderName"] = signatureKeyIdHeaderName,
+            ["signatureKeyIdConfigured"] = signatureKeyIdConfigured.ToString().ToLowerInvariant(),
+            ["signatureToleranceSeconds"] = signatureToleranceSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["providerSpecificCallbackTranslationOwnership"] = "application-managed",
             ["providerSpecificSignatureVerificationOwnership"] = "application-managed",
             ["providerPollingOwnership"] = "application-managed",
