@@ -218,6 +218,124 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryStatusObservationsReadsFilteredBoundedHistoryAndReportsMappedRuntimeSurface()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-observation-delivered",
+                    tenantId: "tenant-observation",
+                    inviteeId: "user-observation-delivered",
+                    displayName: "Observation Delivered Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "provider-message-observation-delivered"
+                    }));
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-observation-bounced",
+                    tenantId: "tenant-observation",
+                    inviteeId: "user-observation-bounced",
+                    displayName: "Observation Bounced Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "provider-message-observation-bounced"
+                    }));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore(options =>
+        {
+            options.RequireTenantInvitationDeliveryStatusCallbackAuthorization = false;
+            options.RequireTenantInvitationDeliveryStatusObservationAuthorization = false;
+            options.TenantInvitationDeliveryStatusObservationDefaultLimit = 2;
+            options.TenantInvitationDeliveryStatusObservationMaxLimit = 1;
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
+        app.MapCephalonTenantInvitationDeliveryStatusObservations();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var deliveredAtUtc = new DateTimeOffset(2026, 04, 29, 14, 0, 0, TimeSpan.Zero);
+
+        await client.PostAsJsonAsync(
+            "/engine/tenant-invitations/delivery-status",
+            new TenantInvitationDeliveryStatusCallbackRequest
+            {
+                TenantId = "tenant-observation",
+                InvitationId = "invite-observation-delivered",
+                Status = TenantInvitationDeliveryStatuses.Delivered,
+                ProviderMessageId = "provider-message-observation-delivered",
+                SenderId = "http-webhook",
+                Channel = "email",
+                ObservedAtUtc = deliveredAtUtc,
+                Actor = "notification-provider",
+                CorrelationId = "delivery-observation-delivered"
+            });
+        await client.PostAsJsonAsync(
+            "/engine/tenant-invitations/delivery-status",
+            new TenantInvitationDeliveryStatusCallbackRequest
+            {
+                TenantId = "tenant-observation",
+                InvitationId = "invite-observation-bounced",
+                Status = TenantInvitationDeliveryStatuses.Bounced,
+                ProviderMessageId = "provider-message-observation-bounced",
+                SenderId = "http-webhook",
+                Channel = "email",
+                ObservedAtUtc = deliveredAtUtc.AddMinutes(1),
+                Actor = "notification-provider",
+                CorrelationId = "delivery-observation-bounced"
+            });
+
+        var response = await client.GetAsync("/engine/tenant-invitations/delivery-status/observations?tenantId=tenant-observation&status=delivered&limit=25");
+        var result = await response.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusObservationQueryResult>();
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.Equal("in-memory", result.StoreKind);
+        Assert.False(result.IsDurable);
+        Assert.Equal("cephalon-managed", result.Ownership);
+        Assert.Equal(2, result.TotalCount);
+        Assert.Equal(1, result.MatchedCount);
+        Assert.Equal(1, result.ReturnedCount);
+        Assert.Equal(1, result.Limit);
+        Assert.Equal("tenant-observation", result.Filters["tenantId"]);
+        Assert.Equal("delivered", result.Filters["status"]);
+        var observation = Assert.Single(result.Observations);
+        Assert.Equal("tenant-observation", observation.TenantId);
+        Assert.Equal("invite-observation-delivered", observation.InvitationId);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, observation.Status);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, observation.Outcome);
+        Assert.Equal(deliveredAtUtc, observation.ObservedAtUtc);
+        Assert.Equal("delivery-observation-delivered", observation.CorrelationId);
+        Assert.Equal("mapped", endpointEntry.Metadata["observationEndpointRuntimeState"]);
+        Assert.Equal("true", endpointEntry.Metadata["observationEndpointMapped"]);
+        Assert.Equal("false", endpointEntry.Metadata["observationRequireAuthorization"]);
+        Assert.Equal("/engine/tenant-invitations/delivery-status/observations", endpointEntry.Metadata["observationRoutePattern"]);
+        Assert.Equal("GET", endpointEntry.Metadata["observationHttpMethod"]);
+        Assert.Equal("TenantInvitationDeliveryStatusObservationQueryResult", endpointEntry.Metadata["observationResponseBodyContract"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantInvitationDeliveryStatusObservationEndpointOwnership"]);
+        Assert.Equal("1", endpointEntry.Metadata["observationDefaultLimit"]);
+        Assert.Equal("1", endpointEntry.Metadata["observationMaxLimit"]);
+        Assert.Equal("application-managed", endpointEntry.Metadata["providerSpecificCallbackInboxOwnership"]);
+    }
+
+    [Fact]
     public async Task MapCephalonTenantInvitationDeliveryStatusCallbacksVerifiesConfiguredCallbackSignature()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -592,6 +710,38 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
         Assert.Equal("true", endpointEntry.Metadata["requireAuthorization"]);
         Assert.Equal("none", endpointEntry.Metadata["authorizationPolicy"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryStatusObservationsDeniesAnonymousByDefault()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance();
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore();
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryStatusObservations();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var response = await client.GetAsync("/engine/tenant-invitations/delivery-status/observations");
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal("mapped", endpointEntry.Metadata["observationEndpointRuntimeState"]);
+        Assert.Equal("true", endpointEntry.Metadata["observationEndpointMapped"]);
+        Assert.Equal("true", endpointEntry.Metadata["observationRequireAuthorization"]);
+        Assert.Equal("none", endpointEntry.Metadata["observationAuthorizationPolicy"]);
     }
 
     private static string CreateCallbackSignature(string secret, string timestamp, string requestBody)

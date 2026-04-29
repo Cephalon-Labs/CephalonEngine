@@ -10,6 +10,7 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
 {
     internal const string DefaultTenantAdministrationCommandRoutePattern = "/engine/tenant-administration/commands";
     internal const string DefaultTenantInvitationDeliveryStatusCallbackRoutePattern = "/engine/tenant-invitations/delivery-status";
+    internal const string DefaultTenantInvitationDeliveryStatusObservationRoutePattern = "/engine/tenant-invitations/delivery-status/observations";
     internal const string DefaultTenantInvitationDeliveryStatusCallbackSignatureHeaderName = "X-Cephalon-Callback-Signature";
     internal const string DefaultTenantInvitationDeliveryStatusCallbackSignatureTimestampHeaderName = "X-Cephalon-Callback-Signature-Timestamp";
     internal const string DefaultTenantInvitationDeliveryStatusCallbackSignatureKeyIdHeaderName = "X-Cephalon-Callback-Key-Id";
@@ -188,6 +189,50 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
     public int TenantInvitationDeliveryStatusCallbackReplayCacheLimit { get; set; } = 4096;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the delivery status observation read endpoint should be mapped.
+    /// </summary>
+    public bool EnableTenantInvitationDeliveryStatusObservationEndpoint { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the endpoint route pattern used for reading normalized tenant-invitation delivery status observations.
+    /// </summary>
+    /// <remarks>
+    /// The default route stays under <c>/engine</c> because the endpoint is an operator/audit surface over Cephalon's
+    /// normalized observation store, not a provider-specific callback inbox.
+    /// </remarks>
+    public string TenantInvitationDeliveryStatusObservationRoutePattern { get; set; } =
+        DefaultTenantInvitationDeliveryStatusObservationRoutePattern;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the delivery status observation read endpoint should require authorization.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core
+    /// authorization middleware do not expose invitation delivery audit data anonymously.
+    /// </remarks>
+    public bool RequireTenantInvitationDeliveryStatusObservationAuthorization { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the optional ASP.NET Core authorization policy required by the delivery status observation read endpoint.
+    /// </summary>
+    public string? TenantInvitationDeliveryStatusObservationAuthorizationPolicy { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the delivery status observation read endpoint should be excluded from OpenAPI descriptions.
+    /// </summary>
+    public bool ExcludeTenantInvitationDeliveryStatusObservationEndpointFromDescription { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the default number of observations returned when a read request does not specify a limit.
+    /// </summary>
+    public int TenantInvitationDeliveryStatusObservationDefaultLimit { get; set; } = 100;
+
+    /// <summary>
+    /// Gets or sets the maximum number of observations returned by one read request.
+    /// </summary>
+    public int TenantInvitationDeliveryStatusObservationMaxLimit { get; set; } = 500;
+
+    /// <summary>
     /// Reads ASP.NET Core governance adapter options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -233,6 +278,13 @@ public sealed class MultiTenancyGovernanceAspNetCoreOptions
         options.EnableTenantInvitationDeliveryStatusCallbackReplayProtection = ParseBoolean(section["EnableTenantInvitationDeliveryStatusCallbackReplayProtection"], options.EnableTenantInvitationDeliveryStatusCallbackReplayProtection);
         options.TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds = ParseInt32(section["TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds"], options.TenantInvitationDeliveryStatusCallbackReplayRetentionSeconds);
         options.TenantInvitationDeliveryStatusCallbackReplayCacheLimit = ParseInt32(section["TenantInvitationDeliveryStatusCallbackReplayCacheLimit"], options.TenantInvitationDeliveryStatusCallbackReplayCacheLimit);
+        options.EnableTenantInvitationDeliveryStatusObservationEndpoint = ParseBoolean(section["EnableTenantInvitationDeliveryStatusObservationEndpoint"], options.EnableTenantInvitationDeliveryStatusObservationEndpoint);
+        options.TenantInvitationDeliveryStatusObservationRoutePattern = Normalize(section["TenantInvitationDeliveryStatusObservationRoutePattern"]) ?? options.TenantInvitationDeliveryStatusObservationRoutePattern;
+        options.RequireTenantInvitationDeliveryStatusObservationAuthorization = ParseBoolean(section["RequireTenantInvitationDeliveryStatusObservationAuthorization"], options.RequireTenantInvitationDeliveryStatusObservationAuthorization);
+        options.TenantInvitationDeliveryStatusObservationAuthorizationPolicy = Normalize(section["TenantInvitationDeliveryStatusObservationAuthorizationPolicy"]);
+        options.ExcludeTenantInvitationDeliveryStatusObservationEndpointFromDescription = ParseBoolean(section["ExcludeTenantInvitationDeliveryStatusObservationEndpointFromDescription"], options.ExcludeTenantInvitationDeliveryStatusObservationEndpointFromDescription);
+        options.TenantInvitationDeliveryStatusObservationDefaultLimit = ParseInt32(section["TenantInvitationDeliveryStatusObservationDefaultLimit"], options.TenantInvitationDeliveryStatusObservationDefaultLimit);
+        options.TenantInvitationDeliveryStatusObservationMaxLimit = ParseInt32(section["TenantInvitationDeliveryStatusObservationMaxLimit"], options.TenantInvitationDeliveryStatusObservationMaxLimit);
         return options;
     }
 

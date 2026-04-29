@@ -1336,6 +1336,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.TenantAdministrationEndpointRouteBuilderExtensions),
             typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.TenantDomainOwnershipHttpProofEndpointRouteBuilderExtensions),
             typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.TenantInvitationDeliveryStatusObservationEndpointRouteBuilderExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.TenantInvitationDeliveryStatusObservationQueryResult),
             typeof(global::Cephalon.MultiTenancy.Governance.AspNetCore.Hosting.TenantInvitationDeliveryStatusCallbackRequest));
     }
 

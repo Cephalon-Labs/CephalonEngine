@@ -89,6 +89,16 @@ Gets or sets a value indicating whether signed delivery-status callbacks should 
 
 Remarks: Replay protection is active only when `TenantInvitationDeliveryStatusCallbackSigningSecret` is configured and the request signature verifies successfully. The built-in guard stores bounded signature fingerprints in memory and does not claim durable inbox storage, cross-node deduplication, or distributed exactly-once delivery.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantinvitationdeliverystatusobservationendpoint"></a>
+
+##### `EnableTenantInvitationDeliveryStatusObservationEndpoint`
+
+```csharp
+bool EnableTenantInvitationDeliveryStatusObservationEndpoint { get; set; }
+```
+
+Gets or sets a value indicating whether the delivery status observation read endpoint should be mapped.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludefromdescription"></a>
 
 ##### `ExcludeFromDescription`
@@ -118,6 +128,16 @@ bool ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription { get;
 ```
 
 Gets or sets a value indicating whether the delivery status callback endpoint should be excluded from OpenAPI descriptions.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludetenantinvitationdeliverystatusobservationendpointfromdescription"></a>
+
+##### `ExcludeTenantInvitationDeliveryStatusObservationEndpointFromDescription`
+
+```csharp
+bool ExcludeTenantInvitationDeliveryStatusObservationEndpointFromDescription { get; set; }
+```
+
+Gets or sets a value indicating whether the delivery status observation read endpoint should be excluded from OpenAPI descriptions.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantadministrationauthorization"></a>
 
@@ -154,6 +174,18 @@ bool RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch { get; se
 Gets or sets a value indicating whether callback requests must keep provider message matching enabled.
 
 Remarks: Provider message matching is enforced by default so a generic callback cannot opt out of the host-agnostic reconciliation safety check unless the host deliberately relaxes this setting.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantinvitationdeliverystatusobservationauthorization"></a>
+
+##### `RequireTenantInvitationDeliveryStatusObservationAuthorization`
+
+```csharp
+bool RequireTenantInvitationDeliveryStatusObservationAuthorization { get; set; }
+```
+
+Gets or sets a value indicating whether the delivery status observation read endpoint should require authorization.
+
+Remarks: The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core authorization middleware do not expose invitation delivery audit data anonymously.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-routepattern"></a>
 
@@ -298,6 +330,48 @@ string TenantInvitationDeliveryStatusCallbackSigningSecret { get; set; }
 Gets or sets the shared secret used to verify normalized delivery-status callback request bodies with HMAC-SHA256.
 
 Remarks: When a value is configured, every callback request must include a valid Cephalon callback signature before the request is reconciled. Leave this empty when the host uses ASP.NET Core authorization or a provider-specific companion to authenticate callback ingress instead.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatusobservationauthorizationpolicy"></a>
+
+##### `TenantInvitationDeliveryStatusObservationAuthorizationPolicy`
+
+```csharp
+string TenantInvitationDeliveryStatusObservationAuthorizationPolicy { get; set; }
+```
+
+Gets or sets the optional ASP.NET Core authorization policy required by the delivery status observation read endpoint.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatusobservationdefaultlimit"></a>
+
+##### `TenantInvitationDeliveryStatusObservationDefaultLimit`
+
+```csharp
+int TenantInvitationDeliveryStatusObservationDefaultLimit { get; set; }
+```
+
+Gets or sets the default number of observations returned when a read request does not specify a limit.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatusobservationmaxlimit"></a>
+
+##### `TenantInvitationDeliveryStatusObservationMaxLimit`
+
+```csharp
+int TenantInvitationDeliveryStatusObservationMaxLimit { get; set; }
+```
+
+Gets or sets the maximum number of observations returned by one read request.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatusobservationroutepattern"></a>
+
+##### `TenantInvitationDeliveryStatusObservationRoutePattern`
+
+```csharp
+string TenantInvitationDeliveryStatusObservationRoutePattern { get; set; }
+```
+
+Gets or sets the endpoint route pattern used for reading normalized tenant-invitation delivery status observations.
+
+Remarks: The default route stays under `/engine` because the endpoint is an operator/audit surface over Cephalon's normalized observation store, not a provider-specific callback inbox.
 
 #### Methods
 
@@ -638,3 +712,150 @@ string TenantId { get; set; }
 ```
 
 Gets or sets the tenant identifier that owns the invitation.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationendpointroutebuilderextensions"></a>
+
+### `TenantInvitationDeliveryStatusObservationEndpointRouteBuilderExtensions`
+
+Maps ASP.NET Core endpoints for reading normalized tenant-invitation delivery status observations.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilderExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationendpointroutebuilderextensions-mapcephalontenantinvitationdeliverystatusobservations-microsoft-aspnetcore-routing-iendpointroutebuilder"></a>
+
+##### `MapCephalonTenantInvitationDeliveryStatusObservations`
+
+```csharp
+IEndpointRouteBuilder MapCephalonTenantInvitationDeliveryStatusObservations(this IEndpointRouteBuilder endpoints)
+```
+
+Maps the optional tenant-invitation delivery status observation read endpoint.
+
+Remarks: The endpoint is opt-in, reads the host-agnostic `ITenantInvitationDeliveryStatusObservationStore`, and performs a fail-closed authorization check by default. It exposes bounded normalized observation history only; provider-specific callback inboxes, provider polling, and distributed replay semantics remain application-managed or future provider-pack responsibilities.
+
+Returns: The same endpoint route builder for fluent routing composition.
+
+Parameters:
+- `endpoints`: The endpoint route builder to extend.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult"></a>
+
+### `TenantInvitationDeliveryStatusObservationQueryResult`
+
+Describes a bounded read of normalized tenant-invitation delivery status observations.
+
+Remarks: The result is an operator/audit view over `ITenantInvitationDeliveryStatusObservationStore`. It does not represent a provider-specific callback inbox, provider polling state, or distributed replay ledger.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryStatusObservationQueryResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-ctor"></a>
+
+##### `TenantInvitationDeliveryStatusObservationQueryResult`
+
+```csharp
+TenantInvitationDeliveryStatusObservationQueryResult()
+```
+
+Initializes a new instance of the `TenantInvitationDeliveryStatusObservationQueryResult` class.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-filters"></a>
+
+##### `Filters`
+
+```csharp
+IReadOnlyDictionary<string, string> Filters { get; set; }
+```
+
+Gets the normalized filters applied to this read.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-isdurable"></a>
+
+##### `IsDurable`
+
+```csharp
+bool IsDurable { get; set; }
+```
+
+Gets a value indicating whether the underlying observation store survives process restarts.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-limit"></a>
+
+##### `Limit`
+
+```csharp
+int Limit { get; set; }
+```
+
+Gets the effective response limit used for this read.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-matchedcount"></a>
+
+##### `MatchedCount`
+
+```csharp
+int MatchedCount { get; set; }
+```
+
+Gets the number of observations that matched the supplied endpoint filters before the response limit was applied.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-observations"></a>
+
+##### `Observations`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> Observations { get; set; }
+```
+
+Gets the normalized delivery status observations returned by this read.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; set; }
+```
+
+Gets the ownership mode reported by the underlying observation store.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-returnedcount"></a>
+
+##### `ReturnedCount`
+
+```csharp
+int ReturnedCount { get; set; }
+```
+
+Gets the number of observations included in this response after filtering and limiting.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-storekind"></a>
+
+##### `StoreKind`
+
+```csharp
+string StoreKind { get; set; }
+```
+
+Gets the observation store kind, such as `in-memory` or `file`.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-totalcount"></a>
+
+##### `TotalCount`
+
+```csharp
+int TotalCount { get; set; }
+```
+
+Gets the number of observations in the store before endpoint filters are applied.

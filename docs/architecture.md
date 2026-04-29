@@ -174,6 +174,8 @@ GraphQL prefix family (`/graphql`, `/graphql/schema`, `/graphql-sse`, `/graphql-
 
 `templates/Cephalon.TemplatePack` is the installable `dotnet new` companion surface. It packages the current shipped blueprint starters as lightweight templates for teams that want a fast entry point without using the repo-local CLI.
 
+`Cephalon.MultiTenancy.Governance.AspNetCore` also maps `MapCephalonTenantInvitationDeliveryStatusObservations()` for bounded/filterable `GET /engine/tenant-invitations/delivery-status/observations` reads over the host-agnostic delivery-status observation store. That keeps operator/audit visibility in the adapter while provider-specific callback inboxes, provider polling, distributed replay ledgers, and exactly-once delivery remain future package-owned work.
+
 `docs/module-authoring.md` and `samples/Cephalon.ReferenceModule.*` are the module-authoring companions. They show how a reusable module package should register services, expose capabilities, participate in lifecycle, contribute localization, and optionally own a transport surface.
 
 `Cephalon.Benchmarks` is the performance companion project. It measures composition, runtime lifecycle, and scaffolding paths through public engine APIs so regressions can be caught without relying on playground hosts.

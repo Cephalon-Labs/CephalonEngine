@@ -77,7 +77,7 @@ public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderEx
         ApplyAuthorizationMetadata(endpoints, builder, options);
 
         endpoints.ServiceProvider
-            .GetService<TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatalog>()
+            .GetService<TenantInvitationDeliveryStatusEndpointRuntimeCatalog>()
             ?.RecordCallbackEndpointMapped(
                 routePattern,
                 options.RequireTenantInvitationDeliveryStatusCallbackAuthorization,

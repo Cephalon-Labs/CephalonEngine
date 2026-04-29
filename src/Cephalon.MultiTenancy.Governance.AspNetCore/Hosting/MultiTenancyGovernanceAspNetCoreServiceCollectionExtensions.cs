@@ -36,7 +36,7 @@ public static class MultiTenancyGovernanceAspNetCoreServiceCollectionExtensions
         services.RemoveAll<MultiTenancyGovernanceAspNetCoreOptions>();
         services.AddSingleton(options);
         services.TryAddSingleton<TenantAdministrationEndpointRuntimeCatalog>();
-        services.TryAddSingleton<TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatalog>();
+        services.TryAddSingleton<TenantInvitationDeliveryStatusEndpointRuntimeCatalog>();
         services.TryAddSingleton<TenantInvitationDeliveryStatusCallbackReplayGuard>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceAspNetCoreAdministrationRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceContributor>());

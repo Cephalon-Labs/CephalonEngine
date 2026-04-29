@@ -5,11 +5,12 @@ namespace Cephalon.MultiTenancy.Governance.AspNetCore.Hosting;
 
 internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceContributor(
     MultiTenancyGovernanceAspNetCoreOptions options,
-    TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatalog runtimeCatalog) : ITechnologyRuntimeContributor
+    TenantInvitationDeliveryStatusEndpointRuntimeCatalog runtimeCatalog) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
         var callbackEndpoint = runtimeCatalog.CallbackEndpoint;
+        var observationEndpoint = runtimeCatalog.ObservationEndpoint;
         var endpointEnabled = options.EnableTenantInvitationDeliveryStatusCallbackEndpoint;
         var endpointMapped = callbackEndpoint is not null;
         var routePattern = callbackEndpoint?.RoutePattern ??
@@ -50,6 +51,25 @@ internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceCo
         var endpointOwnership = !endpointEnabled
             ? "not-configured"
             : endpointMapped ? "cephalon-managed" : "host-mapping-required";
+        var observationEndpointEnabled = options.EnableTenantInvitationDeliveryStatusObservationEndpoint;
+        var observationEndpointMapped = observationEndpoint is not null;
+        var observationRoutePattern = observationEndpoint?.RoutePattern ??
+            Normalize(options.TenantInvitationDeliveryStatusObservationRoutePattern) ??
+            MultiTenancyGovernanceAspNetCoreOptions.DefaultTenantInvitationDeliveryStatusObservationRoutePattern;
+        var observationRequireAuthorization = observationEndpoint?.RequireAuthorization ??
+            options.RequireTenantInvitationDeliveryStatusObservationAuthorization;
+        var observationAuthorizationPolicy = Normalize(observationEndpoint?.AuthorizationPolicy) ??
+            Normalize(options.TenantInvitationDeliveryStatusObservationAuthorizationPolicy);
+        var observationExcludeFromDescription = observationEndpoint?.ExcludeFromDescription ??
+            options.ExcludeTenantInvitationDeliveryStatusObservationEndpointFromDescription;
+        var observationDefaultLimit = observationEndpoint?.DefaultLimit ?? GetObservationDefaultLimit(options);
+        var observationMaxLimit = observationEndpoint?.MaxLimit ?? GetObservationMaxLimit(options);
+        var observationRuntimeState = !observationEndpointEnabled
+            ? "disabled"
+            : observationEndpointMapped ? "mapped" : "configured-not-mapped";
+        var observationEndpointOwnership = !observationEndpointEnabled
+            ? "not-configured"
+            : observationEndpointMapped ? "cephalon-managed" : "host-mapping-required";
 
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -87,6 +107,24 @@ internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceCo
             ["callbackReplayProtectionRetentionSeconds"] = replayRetentionSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["callbackReplayProtectionCacheLimit"] = replayCacheLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["callbackReplayProtectionRequiresSignature"] = "true",
+            ["tenantInvitationDeliveryStatusObservationEndpointOwnership"] = observationEndpointOwnership,
+            ["observationEndpointEnabled"] = observationEndpointEnabled.ToString().ToLowerInvariant(),
+            ["observationEndpointMapped"] = observationEndpointMapped.ToString().ToLowerInvariant(),
+            ["observationEndpointRuntimeState"] = observationRuntimeState,
+            ["observationRoutePattern"] = observationRoutePattern,
+            ["observationHttpMethod"] = "GET",
+            ["observationResponseBodyContract"] = "TenantInvitationDeliveryStatusObservationQueryResult",
+            ["observationStoreDependency"] = "ITenantInvitationDeliveryStatusObservationStore",
+            ["observationStoreReadOwnership"] = observationEndpointOwnership,
+            ["observationRequireAuthorization"] = observationRequireAuthorization.ToString().ToLowerInvariant(),
+            ["observationAuthorizationPolicyConfigured"] = (observationAuthorizationPolicy is not null).ToString().ToLowerInvariant(),
+            ["observationAuthorizationPolicy"] = observationAuthorizationPolicy ?? "none",
+            ["observationExcludeFromDescription"] = observationExcludeFromDescription.ToString().ToLowerInvariant(),
+            ["observationDefaultLimit"] = observationDefaultLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["observationMaxLimit"] = observationMaxLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["observationEndpointScope"] = "normalized-observation-history",
+            ["observationEndpointDurability"] = "store-dependent",
+            ["providerSpecificCallbackInboxOwnership"] = "application-managed",
             ["providerSpecificCallbackTranslationOwnership"] = "application-managed",
             ["providerSpecificSignatureVerificationOwnership"] = "application-managed",
             ["providerPollingOwnership"] = "application-managed",
@@ -121,5 +159,18 @@ internal sealed class MultiTenancyGovernanceAspNetCoreInvitationRuntimeSurfaceCo
     {
         return options.EnableTenantInvitationDeliveryStatusCallbackReplayProtection &&
             callbackSignatureVerificationConfigured;
+    }
+
+    private static int GetObservationDefaultLimit(MultiTenancyGovernanceAspNetCoreOptions options)
+    {
+        return Math.Clamp(
+            options.TenantInvitationDeliveryStatusObservationDefaultLimit,
+            1,
+            GetObservationMaxLimit(options));
+    }
+
+    private static int GetObservationMaxLimit(MultiTenancyGovernanceAspNetCoreOptions options)
+    {
+        return Math.Clamp(options.TenantInvitationDeliveryStatusObservationMaxLimit, 1, 1_000_000);
     }
 }

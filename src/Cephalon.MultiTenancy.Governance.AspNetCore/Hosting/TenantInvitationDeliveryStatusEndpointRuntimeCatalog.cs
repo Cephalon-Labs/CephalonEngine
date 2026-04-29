@@ -1,9 +1,10 @@
 namespace Cephalon.MultiTenancy.Governance.AspNetCore.Hosting;
 
-internal sealed class TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatalog
+internal sealed class TenantInvitationDeliveryStatusEndpointRuntimeCatalog
 {
     private readonly object syncRoot = new();
     private TenantInvitationDeliveryStatusCallbackEndpointRuntimeSnapshot? callbackEndpoint;
+    private TenantInvitationDeliveryStatusObservationEndpointRuntimeSnapshot? observationEndpoint;
 
     public TenantInvitationDeliveryStatusCallbackEndpointRuntimeSnapshot? CallbackEndpoint
     {
@@ -12,6 +13,17 @@ internal sealed class TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatal
             lock (syncRoot)
             {
                 return callbackEndpoint;
+            }
+        }
+    }
+
+    public TenantInvitationDeliveryStatusObservationEndpointRuntimeSnapshot? ObservationEndpoint
+    {
+        get
+        {
+            lock (syncRoot)
+            {
+                return observationEndpoint;
             }
         }
     }
@@ -51,6 +63,26 @@ internal sealed class TenantInvitationDeliveryStatusCallbackEndpointRuntimeCatal
                 replayCacheLimit);
         }
     }
+
+    public void RecordObservationEndpointMapped(
+        string routePattern,
+        bool requireAuthorization,
+        string? authorizationPolicy,
+        bool excludeFromDescription,
+        int defaultLimit,
+        int maxLimit)
+    {
+        lock (syncRoot)
+        {
+            observationEndpoint = new TenantInvitationDeliveryStatusObservationEndpointRuntimeSnapshot(
+                routePattern,
+                requireAuthorization,
+                authorizationPolicy,
+                excludeFromDescription,
+                defaultLimit,
+                maxLimit);
+        }
+    }
 }
 
 internal sealed record TenantInvitationDeliveryStatusCallbackEndpointRuntimeSnapshot(
@@ -68,3 +100,11 @@ internal sealed record TenantInvitationDeliveryStatusCallbackEndpointRuntimeSnap
     bool CallbackReplayProtectionConfigured,
     int ReplayRetentionSeconds,
     int ReplayCacheLimit);
+
+internal sealed record TenantInvitationDeliveryStatusObservationEndpointRuntimeSnapshot(
+    string RoutePattern,
+    bool RequireAuthorization,
+    string? AuthorizationPolicy,
+    bool ExcludeFromDescription,
+    int DefaultLimit,
+    int MaxLimit);
