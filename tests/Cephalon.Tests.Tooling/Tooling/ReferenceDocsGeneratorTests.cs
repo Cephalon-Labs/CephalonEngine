@@ -441,6 +441,16 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("ITenantAdministrationWorkflow", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantAdministrationWorkflowRequest", governancePage.Contents, StringComparison.Ordinal);
         Assert.Contains("TenantAdministrationWorkflowResult", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("ITenantInvitationDeliveryDispatcher", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("ITenantInvitationDeliverySender", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("ITenantInvitationDeliveryRunCatalog", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantInvitationDeliveryRequest", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantInvitationDeliveryResult", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantInvitationDeliveryContext", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantInvitationDeliverySenderResult", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantInvitationDeliveryRunDescriptor", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantInvitationDeliveryOutcomes", governancePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantInvitationDeliveryMetadataKeys", governancePage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]

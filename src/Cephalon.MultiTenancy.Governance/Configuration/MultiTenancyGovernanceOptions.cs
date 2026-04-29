@@ -50,6 +50,20 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableInvitationValidation { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active.
+    /// </summary>
+    /// <remarks>
+    /// The dispatcher owns invitation lookup, pending/expiry checks, runtime reporting, and outcome persistence. It
+    /// requires a registered <see cref="ITenantInvitationDeliverySender" /> before any external delivery can happen.
+    /// </remarks>
+    public bool EnableInvitationDeliveryDispatch { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the maximum number of invitation delivery dispatch attempts retained in the runtime catalog.
+    /// </summary>
+    public int InvitationDeliveryRunHistoryLimit { get; set; } = 100;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in tenant-domain ownership validator is active.
     /// </summary>
     public bool EnableDomainOwnershipValidation { get; set; } = true;
@@ -157,7 +171,8 @@ public sealed class MultiTenancyGovernanceOptions
     /// </summary>
     /// <remarks>
     /// The workflow mutates Cephalon-managed membership and invitation stores through explicit host-driven commands. It does
-    /// not provide public onboarding screens, invitation delivery, tenant-admin HTTP endpoints, or identity-provider sync.
+    /// not provide public onboarding screens, tenant-admin HTTP endpoints, provider-specific delivery senders, or
+    /// identity-provider sync.
     /// </remarks>
     public bool EnableTenantAdministrationWorkflow { get; set; } = true;
 

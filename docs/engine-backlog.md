@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, and ASP.NET Core tenant-administration command endpoint proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, and host-agnostic governance invitation delivery dispatch proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving and the fail-closed tenant-administration command endpoint; distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, invitation delivery, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving and the fail-closed tenant-administration command endpoint; distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -541,7 +541,7 @@ Delivered:
 
 Follow-up later:
 
-- actual DNS proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, notification/delivery, invitation delivery, remediation execution beyond status transitions, identity-provider synchronization, tenant-admin UI/backoffice flows, and public onboarding remain future governance slices until the package truly owns those paths; host-driven tenant administration workflow commands are now covered by `ENG-254`, and the ASP.NET Core command endpoint is covered by `ENG-255`
+- actual DNS proof publication, provider-backed proof publication or mutation, domain lifecycle automation beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, external human-task inboxes, provider-specific notification/invitation senders, remediation execution beyond status transitions, identity-provider synchronization, tenant-admin UI/backoffice flows, and public onboarding remain future governance slices until the package truly owns those paths; host-driven tenant administration workflow commands are now covered by `ENG-254`, the ASP.NET Core command endpoint is covered by `ENG-255`, and host-agnostic invitation delivery dispatch is covered by `ENG-256`
 
 ### ENG-254 Multi-tenancy governance tenant administration workflow baseline
 
@@ -562,7 +562,7 @@ Delivered:
 
 Follow-up later:
 
-- tenant-admin backoffice UI, public onboarding, invitation delivery, identity-provider synchronization, remediation execution beyond state transitions, distributed/provider-backed governance stores, and actual DNS/provider proof publication remain future governance slices until a package truly owns those paths; the ASP.NET Core command endpoint is now covered by `ENG-255`
+- tenant-admin backoffice UI, public onboarding, provider-specific notification/invitation senders, identity-provider synchronization, remediation execution beyond state transitions, distributed/provider-backed governance stores, and actual DNS/provider proof publication remain future governance slices until a package truly owns those paths; the ASP.NET Core command endpoint is now covered by `ENG-255`, and host-agnostic invitation delivery dispatch is covered by `ENG-256`
 
 ### ENG-255 Multi-tenancy governance ASP.NET Core tenant administration endpoint baseline
 
@@ -583,7 +583,28 @@ Delivered:
 
 Follow-up later:
 
-- tenant-admin backoffice UI, public onboarding, invitation delivery, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
+- tenant-admin backoffice UI, public onboarding, provider-specific notification/invitation senders, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; host-agnostic invitation delivery dispatch is now covered by `ENG-256`
+
+### ENG-256 Multi-tenancy governance invitation delivery dispatch baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-255`, the governance family could issue invitations and expose an optional tenant-administration command endpoint, but consumer apps still had to hand-write dispatch, sender selection, outcome metadata, and runtime reporting
+- the smallest honest next proof is host-agnostic dispatch through registered sender extensions, not a built-in email/SMS/identity-provider sender or public onboarding flow
+
+Delivered:
+
+- add public `ITenantInvitationDeliveryDispatcher`, `ITenantInvitationDeliverySender`, `ITenantInvitationDeliveryRunCatalog`, request/result/context/sender-result/run/outcome/metadata-key contracts, and a bounded in-memory run catalog
+- implement pending/unexpired invitation lookup over the merged invitation catalog, deterministic sender selection, `sender-not-configured`, `sender-failed`, `suppressed`, `store-failed`, and `dispatched` outcomes, and delivery outcome metadata persistence through `ITenantInvitationStore`
+- publish `tenancy.invitation.delivery-dispatch`, stable diagnostics `4548-4549`, and `tenant-invitations`/`tenant-administration` runtime metadata for dispatch ownership, sender readiness, external delivery ownership, run counts, and latest delivery outcome
+- prove the slice with focused composition, package-surface, reference-doc, source, component-doc, operations, compatibility, roadmap, backlog, and project-memory alignment
+
+Follow-up later:
+
+- provider-specific email/SMS/chat/identity-provider invitation senders, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
 
 ## Completed foundation work
 
@@ -8421,9 +8442,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-255 Multi-tenancy governance ASP.NET Core tenant administration endpoint baseline (shipped)
 
+### Sprint 68
+
+- ENG-256 Multi-tenancy governance invitation delivery dispatch baseline (shipped)
+
 ### Later / not scheduled yet
 
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, notification/delivery, invitation delivery, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
 
 ### Foundation Sprint 1
 

@@ -320,6 +320,18 @@ bool EnableGovernanceActionWorkflow { get; set; }
 
 Gets or sets a value indicating whether the built-in tenant-governance action workflow executor is active.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverydispatch"></a>
+
+##### `EnableInvitationDeliveryDispatch`
+
+```csharp
+bool EnableInvitationDeliveryDispatch { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active.
+
+Remarks: The dispatcher owns invitation lookup, pending/expiry checks, runtime reporting, and outcome persistence. It requires a registered `ITenantInvitationDeliverySender` before any external delivery can happen.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationvalidation"></a>
 
 ##### `EnableInvitationValidation`
@@ -350,7 +362,7 @@ bool EnableTenantAdministrationWorkflow { get; set; }
 
 Gets or sets a value indicating whether the built-in tenant-administration workflow executor is active.
 
-Remarks: The workflow mutates Cephalon-managed membership and invitation stores through explicit host-driven commands. It does not provide public onboarding screens, invitation delivery, tenant-admin HTTP endpoints, or identity-provider sync.
+Remarks: The workflow mutates Cephalon-managed membership and invitation stores through explicit host-driven commands. It does not provide public onboarding screens, tenant-admin HTTP endpoints, provider-specific delivery senders, or identity-provider sync.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-governanceactions"></a>
 
@@ -371,6 +383,16 @@ string GovernanceActionStoreFilePath { get; set; }
 ```
 
 Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryrunhistorylimit"></a>
+
+##### `InvitationDeliveryRunHistoryLimit`
+
+```csharp
+int InvitationDeliveryRunHistoryLimit { get; set; }
+```
+
+Gets or sets the maximum number of invitation delivery dispatch attempts retained in the runtime catalog.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitations"></a>
 
@@ -1421,6 +1443,155 @@ Registers one or more tenant invitations with the supplied registry.
 
 Parameters:
 - `invitations`: The registry that collects contributed invitations.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliverydispatcher"></a>
+
+### `ITenantInvitationDeliveryDispatcher`
+
+Dispatches tenant invitation delivery through a registered sender and records delivery outcome metadata.
+
+Remarks: The dispatcher owns host-agnostic lookup, validation, runtime reporting, and outcome persistence. Actual transport delivery, such as email, SMS, chat, or an identity-provider invite, is supplied by `ITenantInvitationDeliverySender` implementations registered by the host or an optional provider companion package.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationDeliveryDispatcher
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliverydispatcher-dispatchasync-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-system-threading-cancellationtoken"></a>
+
+##### `DispatchAsync`
+
+```csharp
+ValueTask<TenantInvitationDeliveryResult> DispatchAsync(TenantInvitationDeliveryRequest request, CancellationToken cancellationToken)
+```
+
+Dispatches one tenant invitation delivery request.
+
+Returns: The dispatch outcome.
+
+Parameters:
+- `request`: The tenant invitation delivery request.
+- `cancellationToken`: A token that cancels dispatch before a sender is invoked or state is stored.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog"></a>
+
+### `ITenantInvitationDeliveryRunCatalog`
+
+Exposes runtime tenant invitation delivery dispatch attempts observed by the governance companion pack.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationDeliveryRunCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of recorded tenant invitation delivery dispatch attempts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog-latestrun"></a>
+
+##### `LatestRun`
+
+```csharp
+TenantInvitationDeliveryRunDescriptor LatestRun { get; }
+```
+
+Gets the latest recorded tenant invitation delivery dispatch attempt when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog-runs"></a>
+
+##### `Runs`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryRunDescriptor> Runs { get; }
+```
+
+Gets the recorded tenant invitation delivery dispatch attempts.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog-getbyinvitationid-system-string"></a>
+
+##### `GetByInvitationId`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryRunDescriptor> GetByInvitationId(string invitationId)
+```
+
+Gets recorded tenant invitation delivery dispatch attempts for one invitation identifier.
+
+Returns: The matching dispatch attempts.
+
+Parameters:
+- `invitationId`: The invitation identifier.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog-getbytenantid-system-string"></a>
+
+##### `GetByTenantId`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryRunDescriptor> GetByTenantId(string tenantId)
+```
+
+Gets recorded tenant invitation delivery dispatch attempts for one tenant.
+
+Returns: The matching dispatch attempts.
+
+Parameters:
+- `tenantId`: The tenant identifier.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender"></a>
+
+### `ITenantInvitationDeliverySender`
+
+Sends tenant invitation delivery payloads for a host or provider-specific channel.
+
+Remarks: Sender implementations own external delivery behavior and provider semantics. Cephalon calls the sender only after resolving a pending invitation and records the returned outcome without assuming that every provider can guarantee final recipient delivery.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationDeliverySender
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-senderid"></a>
+
+##### `SenderId`
+
+```csharp
+string SenderId { get; }
+```
+
+Gets the stable sender identifier used by configuration, runtime metadata, and diagnostics.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-sendasync-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-system-threading-cancellationtoken"></a>
+
+##### `SendAsync`
+
+```csharp
+ValueTask<TenantInvitationDeliverySenderResult> SendAsync(TenantInvitationDeliveryContext context, CancellationToken cancellationToken)
+```
+
+Sends or queues one tenant invitation delivery payload.
+
+Returns: The provider-specific sender outcome normalized for Cephalon runtime reporting.
+
+Parameters:
+- `context`: The delivery context resolved by the governance companion pack.
+- `cancellationToken`: A token that cancels sender execution.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationregistry"></a>
 
@@ -9926,6 +10097,934 @@ string TenantId { get; }
 ```
 
 Gets the tenant identifier that was targeted.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext"></a>
+
+### `TenantInvitationDeliveryContext`
+
+Describes the tenant invitation payload passed to an invitation delivery sender.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryContext
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-ctor-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryContext`
+
+```csharp
+TenantInvitationDeliveryContext(TenantInvitationDescriptor invitation, string channel, string requestedSenderId, string source, string actor, DateTimeOffset dispatchedAtUtc, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery context.
+
+Parameters:
+- `invitation`: The invitation being delivered.
+- `channel`: The requested delivery channel.
+- `requestedSenderId`: The requested sender identifier when one was specified.
+- `source`: The source that requested delivery dispatch.
+- `actor`: The actor that requested delivery dispatch when known.
+- `dispatchedAtUtc`: The UTC timestamp used for dispatch.
+- `correlationId`: The optional correlation identifier for delivery dispatch.
+- `metadata`: Optional request metadata for the sender.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested delivery dispatch when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; }
+```
+
+Gets the requested delivery channel.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for delivery dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-dispatchedatutc"></a>
+
+##### `DispatchedAtUtc`
+
+```csharp
+DateTimeOffset DispatchedAtUtc { get; }
+```
+
+Gets the UTC timestamp used for dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing invitation name.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-invitation"></a>
+
+##### `Invitation`
+
+```csharp
+TenantInvitationDescriptor Invitation { get; }
+```
+
+Gets the invitation being delivered.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-inviteeid"></a>
+
+##### `InviteeId`
+
+```csharp
+string InviteeId { get; }
+```
+
+Gets the invitee identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-inviteekind"></a>
+
+##### `InviteeKind`
+
+```csharp
+string InviteeKind { get; }
+```
+
+Gets the invitee kind, such as user, group, service, or organization.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional request metadata for the sender.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-requestedsenderid"></a>
+
+##### `RequestedSenderId`
+
+```csharp
+string RequestedSenderId { get; }
+```
+
+Gets the requested sender identifier when one was specified.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-roles"></a>
+
+##### `Roles`
+
+```csharp
+IReadOnlyList<string> Roles { get; }
+```
+
+Gets the tenant-local roles proposed by the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that requested delivery dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys"></a>
+
+### `TenantInvitationDeliveryMetadataKeys`
+
+Defines stable metadata keys written by tenant invitation delivery dispatch.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverydispatchownership"></a>
+
+##### `DeliveryDispatchOwnership`
+
+```csharp
+const string DeliveryDispatchOwnership
+```
+
+Metadata key describing Cephalon ownership of the host-agnostic dispatch pipeline.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-externaldeliveryownership"></a>
+
+##### `ExternalDeliveryOwnership`
+
+```csharp
+const string ExternalDeliveryOwnership
+```
+
+Metadata key describing who owns provider-specific external delivery.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliveryactor"></a>
+
+##### `LastDeliveryActor`
+
+```csharp
+const string LastDeliveryActor
+```
+
+Metadata key containing the actor that requested the last delivery dispatch.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverychannel"></a>
+
+##### `LastDeliveryChannel`
+
+```csharp
+const string LastDeliveryChannel
+```
+
+Metadata key containing the delivery channel used by the last dispatch attempt.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverycorrelationid"></a>
+
+##### `LastDeliveryCorrelationId`
+
+```csharp
+const string LastDeliveryCorrelationId
+```
+
+Metadata key containing the correlation identifier for the last delivery dispatch.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverydispatchedatutc"></a>
+
+##### `LastDeliveryDispatchedAtUtc`
+
+```csharp
+const string LastDeliveryDispatchedAtUtc
+```
+
+Metadata key containing the UTC timestamp when delivery dispatch was evaluated.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliveryoutcome"></a>
+
+##### `LastDeliveryOutcome`
+
+```csharp
+const string LastDeliveryOutcome
+```
+
+Metadata key containing the last tenant invitation delivery outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliveryprovidermessageid"></a>
+
+##### `LastDeliveryProviderMessageId`
+
+```csharp
+const string LastDeliveryProviderMessageId
+```
+
+Metadata key containing the provider message identifier returned by the sender.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverysenderid"></a>
+
+##### `LastDeliverySenderId`
+
+```csharp
+const string LastDeliverySenderId
+```
+
+Metadata key containing the sender identifier used by the last dispatch attempt.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverysource"></a>
+
+##### `LastDeliverySource`
+
+```csharp
+const string LastDeliverySource
+```
+
+Metadata key containing the source that requested the last delivery dispatch.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes"></a>
+
+### `TenantInvitationDeliveryOutcomes`
+
+Defines stable outcomes for tenant invitation delivery dispatch.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Invitation delivery dispatch is disabled.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-dispatched"></a>
+
+##### `Dispatched`
+
+```csharp
+const string Dispatched
+```
+
+The invitation was dispatched through a configured sender.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-invitationexpired"></a>
+
+##### `InvitationExpired`
+
+```csharp
+const string InvitationExpired
+```
+
+The requested invitation expired before dispatch.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-invitationnotfound"></a>
+
+##### `InvitationNotFound`
+
+```csharp
+const string InvitationNotFound
+```
+
+The requested invitation was not found.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-invitationnotpending"></a>
+
+##### `InvitationNotPending`
+
+```csharp
+const string InvitationNotPending
+```
+
+The requested invitation is no longer pending.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-senderfailed"></a>
+
+##### `SenderFailed`
+
+```csharp
+const string SenderFailed
+```
+
+The sender failed or returned a failed outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-sendernotconfigured"></a>
+
+##### `SenderNotConfigured`
+
+```csharp
+const string SenderNotConfigured
+```
+
+No matching delivery sender was registered.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+The dispatch outcome could not be persisted.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-suppressed"></a>
+
+##### `Suppressed`
+
+```csharp
+const string Suppressed
+```
+
+The sender deliberately suppressed delivery.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest"></a>
+
+### `TenantInvitationDeliveryRequest`
+
+Describes a tenant invitation delivery dispatch request.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryRequest`
+
+```csharp
+TenantInvitationDeliveryRequest(string tenantId, string invitationId, string channel, string senderId, string source, string actor, DateTimeOffset? atUtc, string correlationId, bool recordDelivery, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery dispatch request.
+
+Parameters:
+- `tenantId`: The tenant identifier that owns the invitation.
+- `invitationId`: The invitation identifier to deliver.
+- `channel`: The requested delivery channel.
+- `senderId`: The preferred delivery sender identifier.
+- `source`: The source that requested delivery dispatch.
+- `actor`: The actor that requested delivery dispatch when known.
+- `atUtc`: The UTC timestamp used for dispatch. The runtime clock is used when omitted.
+- `correlationId`: The optional correlation identifier for delivery dispatch.
+- `recordDelivery`: A value indicating whether delivery outcome metadata should be recorded on the invitation.
+- `metadata`: Optional delivery dispatch metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that requested delivery dispatch when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; }
+```
+
+Gets the requested delivery channel.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for delivery dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier to deliver.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional delivery dispatch metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-recorddelivery"></a>
+
+##### `RecordDelivery`
+
+```csharp
+bool RecordDelivery { get; }
+```
+
+Gets a value indicating whether delivery outcome metadata should be recorded on the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-senderid"></a>
+
+##### `SenderId`
+
+```csharp
+string SenderId { get; }
+```
+
+Gets the preferred delivery sender identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that requested delivery dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that owns the invitation.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult"></a>
+
+### `TenantInvitationDeliveryResult`
+
+Describes the result of tenant invitation delivery dispatch.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-ctor-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryResult`
+
+```csharp
+TenantInvitationDeliveryResult(string tenantId, string invitationId, string outcome, bool dispatched, bool recorded, DateTimeOffset dispatchedAtUtc, string channel, string senderId, string providerMessageId, TenantInvitationDescriptor invitation, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery dispatch result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `invitationId`: The invitation identifier that was evaluated.
+- `outcome`: The stable delivery dispatch outcome.
+- `dispatched`: A value indicating whether a sender accepted the dispatch.
+- `recorded`: A value indicating whether delivery outcome metadata was recorded.
+- `dispatchedAtUtc`: The UTC timestamp used for dispatch.
+- `channel`: The delivery channel used by the dispatch attempt.
+- `senderId`: The delivery sender identifier used by the dispatch attempt.
+- `providerMessageId`: The provider message identifier returned by the sender.
+- `invitation`: The resulting invitation descriptor when one exists.
+- `reason`: The operator-facing delivery dispatch reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; }
+```
+
+Gets the delivery channel used by the dispatch attempt.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-dispatched"></a>
+
+##### `Dispatched`
+
+```csharp
+bool Dispatched { get; }
+```
+
+Gets a value indicating whether a sender accepted the dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-dispatchedatutc"></a>
+
+##### `DispatchedAtUtc`
+
+```csharp
+DateTimeOffset DispatchedAtUtc { get; }
+```
+
+Gets the UTC timestamp used for dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-invitation"></a>
+
+##### `Invitation`
+
+```csharp
+TenantInvitationDescriptor Invitation { get; }
+```
+
+Gets the resulting invitation descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable delivery dispatch outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-providermessageid"></a>
+
+##### `ProviderMessageId`
+
+```csharp
+string ProviderMessageId { get; }
+```
+
+Gets the provider message identifier returned by the sender.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing delivery dispatch reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-recorded"></a>
+
+##### `Recorded`
+
+```csharp
+bool Recorded { get; }
+```
+
+Gets a value indicating whether delivery outcome metadata was recorded.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-senderid"></a>
+
+##### `SenderId`
+
+```csharp
+string SenderId { get; }
+```
+
+Gets the delivery sender identifier used by the dispatch attempt.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor"></a>
+
+### `TenantInvitationDeliveryRunDescriptor`
+
+Describes one observed tenant invitation delivery dispatch attempt.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryRunDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-ctor-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryRunDescriptor`
+
+```csharp
+TenantInvitationDeliveryRunDescriptor(string tenantId, string invitationId, string outcome, bool dispatched, bool recorded, DateTimeOffset dispatchedAtUtc, string channel, string senderId, string providerMessageId, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery dispatch run descriptor.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `invitationId`: The invitation identifier that was evaluated.
+- `outcome`: The stable delivery dispatch outcome.
+- `dispatched`: A value indicating whether a sender accepted the dispatch.
+- `recorded`: A value indicating whether delivery outcome metadata was recorded.
+- `dispatchedAtUtc`: The UTC timestamp used for dispatch.
+- `channel`: The delivery channel used by the dispatch attempt.
+- `senderId`: The delivery sender identifier used by the dispatch attempt.
+- `providerMessageId`: The provider message identifier returned by the sender.
+- `reason`: The operator-facing delivery dispatch reason.
+- `metadata`: Optional run metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; }
+```
+
+Gets the delivery channel used by the dispatch attempt.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-dispatched"></a>
+
+##### `Dispatched`
+
+```csharp
+bool Dispatched { get; }
+```
+
+Gets a value indicating whether a sender accepted the dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-dispatchedatutc"></a>
+
+##### `DispatchedAtUtc`
+
+```csharp
+DateTimeOffset DispatchedAtUtc { get; }
+```
+
+Gets the UTC timestamp used for dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional run metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable delivery dispatch outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-providermessageid"></a>
+
+##### `ProviderMessageId`
+
+```csharp
+string ProviderMessageId { get; }
+```
+
+Gets the provider message identifier returned by the sender.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing delivery dispatch reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-recorded"></a>
+
+##### `Recorded`
+
+```csharp
+bool Recorded { get; }
+```
+
+Gets a value indicating whether delivery outcome metadata was recorded.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-senderid"></a>
+
+##### `SenderId`
+
+```csharp
+string SenderId { get; }
+```
+
+Gets the delivery sender identifier used by the dispatch attempt.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult"></a>
+
+### `TenantInvitationDeliverySenderResult`
+
+Describes the outcome returned by a tenant invitation delivery sender.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliverySenderResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-ctor-system-string-system-boolean-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliverySenderResult`
+
+```csharp
+TenantInvitationDeliverySenderResult(string outcome, bool dispatched, string providerMessageId, string reason, DateTimeOffset? dispatchedAtUtc, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery sender result.
+
+Parameters:
+- `outcome`: The sender outcome.
+- `dispatched`: A value indicating whether the sender accepted the dispatch.
+- `providerMessageId`: The provider message identifier returned by the sender.
+- `reason`: The provider-facing outcome reason.
+- `dispatchedAtUtc`: The UTC timestamp reported by the sender.
+- `metadata`: Optional sender metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-dispatched"></a>
+
+##### `Dispatched`
+
+```csharp
+bool Dispatched { get; }
+```
+
+Gets a value indicating whether the sender accepted the dispatch.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-dispatchedatutc"></a>
+
+##### `DispatchedAtUtc`
+
+```csharp
+DateTimeOffset? DispatchedAtUtc { get; }
+```
+
+Gets the UTC timestamp reported by the sender.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional sender metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the sender outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-providermessageid"></a>
+
+##### `ProviderMessageId`
+
+```csharp
+string ProviderMessageId { get; }
+```
+
+Gets the provider message identifier returned by the sender.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the provider-facing outcome reason.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdescriptor"></a>
 

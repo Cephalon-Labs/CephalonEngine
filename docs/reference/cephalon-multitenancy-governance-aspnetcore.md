@@ -237,7 +237,7 @@ IEndpointRouteBuilder MapCephalonTenantAdministrationCommands(this IEndpointRout
 
 Maps the optional tenant-administration command endpoint.
 
-Remarks: The endpoint is opt-in, executes the host-agnostic `ITenantAdministrationWorkflow`, and performs a fail-closed authorization check by default. It does not provide public onboarding, tenant-admin UI, invitation delivery, or identity-provider synchronization.
+Remarks: The endpoint is opt-in, executes the host-agnostic `ITenantAdministrationWorkflow`, and performs a fail-closed authorization check by default. It does not provide public onboarding, tenant-admin UI, provider-specific invitation senders, external invitation delivery, or identity-provider synchronization.
 
 Returns: The same endpoint route builder for fluent routing composition.
 

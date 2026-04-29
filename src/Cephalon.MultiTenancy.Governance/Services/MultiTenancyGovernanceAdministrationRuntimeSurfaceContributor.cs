@@ -7,10 +7,20 @@ namespace Cephalon.MultiTenancy.Governance.Services;
 internal sealed class MultiTenancyGovernanceAdministrationRuntimeSurfaceContributor(
     MultiTenancyGovernanceOptions options,
     ITenantMembershipStore membershipStore,
-    ITenantInvitationStore invitationStore) : ITechnologyRuntimeContributor
+    ITenantInvitationStore invitationStore,
+    IEnumerable<ITenantInvitationDeliverySender> deliverySenders) : ITechnologyRuntimeContributor
 {
+    private readonly ITenantInvitationDeliverySender[] deliverySenders = deliverySenders
+        .Where(static sender => !string.IsNullOrWhiteSpace(sender.SenderId))
+        .OrderBy(static sender => sender.SenderId, StringComparer.OrdinalIgnoreCase)
+        .ToArray();
+
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var deliverySenderConfigured = deliverySenders.Length > 0;
+        var invitationDeliveryOwnership = options.EnableInvitationDeliveryDispatch && deliverySenderConfigured
+            ? "mixed"
+            : "application-managed";
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["ownership"] = options.EnableTenantAdministrationWorkflow ? "cephalon-managed" : "not-configured",
@@ -39,7 +49,11 @@ internal sealed class MultiTenancyGovernanceAdministrationRuntimeSurfaceContribu
                 TenantAdministrationWorkflowCommands.ExpireInvitation),
             ["publicOnboardingOwnership"] = "application-managed",
             ["tenantAdminEndpointOwnership"] = "application-managed",
-            ["invitationDeliveryOwnership"] = "application-managed",
+            ["invitationDeliveryOwnership"] = invitationDeliveryOwnership,
+            ["invitationDeliveryDispatchOwnership"] = options.EnableInvitationDeliveryDispatch ? "cephalon-managed" : "not-configured",
+            ["invitationDeliverySenderOwnership"] = deliverySenderConfigured ? "provider-managed" : "not-configured",
+            ["externalInvitationDeliveryOwnership"] = deliverySenderConfigured ? "provider-managed" : "application-managed",
+            ["invitationDeliverySenderCount"] = deliverySenders.Length.ToString(CultureInfo.InvariantCulture),
             ["identityProviderSyncOwnership"] = "application-managed"
         };
 
@@ -53,7 +67,7 @@ internal sealed class MultiTenancyGovernanceAdministrationRuntimeSurfaceContribu
             technologyId: "multi-tenancy",
             surfaceId: "tenant-administration",
             displayName: "Tenant Administration",
-            description: "Projects Cephalon-managed tenant-administration workflow ownership without claiming public onboarding, notification delivery, or identity-provider synchronization.",
+            description: "Projects Cephalon-managed tenant-administration workflow ownership without claiming public onboarding, provider-specific notification delivery, or identity-provider synchronization.",
             entries: [entry]);
     }
 }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Description>Tenant membership, invitation, declared domain ownership, proof challenge issuance, proof publication planning, proof evaluation, approval/remediation action decision, in-process governance workflow, and opt-in durable action storage companion package for Cephalon multi-tenancy workloads.</Description>
+    <Description>Tenant membership, invitation, invitation delivery dispatch, declared domain ownership, proof challenge issuance, proof publication planning, proof evaluation, approval/remediation action decision, in-process governance workflow, and opt-in durable governance storage companion package for Cephalon multi-tenancy workloads.</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -8,9 +8,15 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
     MultiTenancyGovernanceOptions options,
     ITenantInvitationCatalog catalog,
     ITenantInvitationStore invitationStore,
-    IEnumerable<ITenantInvitationContributor> contributors) : ITechnologyRuntimeContributor
+    IEnumerable<ITenantInvitationContributor> contributors,
+    IEnumerable<ITenantInvitationDeliverySender> deliverySenders,
+    ITenantInvitationDeliveryRunCatalog deliveryRunCatalog) : ITechnologyRuntimeContributor
 {
     private readonly ITenantInvitationContributor[] contributors = contributors.ToArray();
+    private readonly ITenantInvitationDeliverySender[] deliverySenders = deliverySenders
+        .Where(static sender => !string.IsNullOrWhiteSpace(sender.SenderId))
+        .OrderBy(static sender => sender.SenderId, StringComparer.OrdinalIgnoreCase)
+        .ToArray();
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -29,7 +35,7 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             technologyId: "multi-tenancy",
             surfaceId: "tenant-invitations",
             displayName: "Tenant Invitations",
-            description: "Projects tenant invitation catalog and Cephalon-managed invitation validation truth from the governance companion pack.",
+            description: "Projects tenant invitation catalog, validation, delivery dispatch, and delivery outcome truth from the governance companion pack.",
             entries: entries);
     }
 
@@ -59,6 +65,17 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             ["invitationStoreOwnership"] = invitationStore.Ownership,
             ["validationEnabled"] = options.EnableInvitationValidation.ToString().ToLowerInvariant(),
             ["validationOwnership"] = options.EnableInvitationValidation ? "cephalon-managed" : "not-configured",
+            ["deliveryDispatchEnabled"] = options.EnableInvitationDeliveryDispatch.ToString().ToLowerInvariant(),
+            ["deliveryDispatchOwnership"] = options.EnableInvitationDeliveryDispatch ? "cephalon-managed" : "not-configured",
+            ["deliverySenderCount"] = deliverySenders.Length.ToString(CultureInfo.InvariantCulture),
+            ["deliverySenderIds"] = deliverySenders.Length == 0 ? "none" : string.Join(",", deliverySenders.Select(static sender => sender.SenderId)),
+            ["deliverySenderOwnership"] = deliverySenders.Length == 0 ? "not-configured" : "provider-managed",
+            ["externalDeliveryOwnership"] = deliverySenders.Length == 0 ? "application-managed" : "provider-managed",
+            ["invitationDeliveryOwnership"] = options.EnableInvitationDeliveryDispatch && deliverySenders.Length > 0 ? "mixed" : "application-managed",
+            ["deliveryRunCount"] = deliveryRunCatalog.Count.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRunHistoryLimit"] = Math.Max(1, options.InvitationDeliveryRunHistoryLimit).ToString(CultureInfo.InvariantCulture),
+            ["latestDeliveryOutcome"] = deliveryRunCatalog.LatestRun?.Outcome ?? "none",
+            ["latestDeliveryAtUtc"] = deliveryRunCatalog.LatestRun?.DispatchedAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none",
             ["durableStoreOwnership"] = invitationStore.IsDurable ? invitationStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown)
@@ -71,9 +88,13 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             metadata: metadata);
     }
 
-    private static TechnologyRuntimeEntry CreateTenantEntry(IGrouping<string, TenantInvitationDescriptor> group)
+    private TechnologyRuntimeEntry CreateTenantEntry(IGrouping<string, TenantInvitationDescriptor> group)
     {
         var invitations = group.ToArray();
+        var deliveryRuns = deliveryRunCatalog.GetByTenantId(group.Key);
+        var latestDeliveryRun = deliveryRuns
+            .OrderByDescending(static run => run.DispatchedAtUtc)
+            .FirstOrDefault();
         var pendingCount = invitations.Count(static invitation =>
             string.Equals(invitation.Status, TenantInvitationStatuses.Pending, StringComparison.OrdinalIgnoreCase));
         var acceptedCount = invitations.Count(static invitation =>
@@ -112,7 +133,10 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             ["roleCount"] = roles.Length.ToString(CultureInfo.InvariantCulture),
             ["roles"] = roles.Length == 0 ? "none" : string.Join(",", roles),
             ["inviteeKindBreakdown"] = inviteeKindBreakdown.Length == 0 ? "none" : string.Join(",", inviteeKindBreakdown),
-            ["sourceModuleIds"] = sourceModuleIds.Length == 0 ? "none" : string.Join(",", sourceModuleIds)
+            ["sourceModuleIds"] = sourceModuleIds.Length == 0 ? "none" : string.Join(",", sourceModuleIds),
+            ["deliveryRunCount"] = deliveryRuns.Count.ToString(CultureInfo.InvariantCulture),
+            ["latestDeliveryOutcome"] = latestDeliveryRun?.Outcome ?? "none",
+            ["latestDeliveryAtUtc"] = latestDeliveryRun?.DispatchedAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none"
         };
 
         return new TechnologyRuntimeEntry(

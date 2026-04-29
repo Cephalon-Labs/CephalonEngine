@@ -22,7 +22,7 @@ public static class TenantAdministrationEndpointRouteBuilderExtensions
     /// <remarks>
     /// The endpoint is opt-in, executes the host-agnostic <see cref="ITenantAdministrationWorkflow" />, and performs
     /// a fail-closed authorization check by default. It does not provide public onboarding, tenant-admin UI,
-    /// invitation delivery, or identity-provider synchronization.
+    /// provider-specific invitation senders, external invitation delivery, or identity-provider synchronization.
     /// </remarks>
     public static IEndpointRouteBuilder MapCephalonTenantAdministrationCommands(this IEndpointRouteBuilder endpoints)
     {

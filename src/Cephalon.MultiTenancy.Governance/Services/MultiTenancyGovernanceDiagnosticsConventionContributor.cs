@@ -276,10 +276,24 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Denied tenant administration workflow command '{Command}' for tenant '{TenantId}' and {TargetKind} '{TargetId}'. Outcome: {Outcome}. Reason: {Reason}.",
         Description: "Emitted when the governance companion rejects or cannot persist a tenant-administration workflow command.");
 
+    public static readonly DiagnosticEventDefinition TenantInvitationDeliveryDispatched = new(
+        Id: 4548,
+        Name: "TenantInvitationDeliveryDispatched",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Dispatched tenant invitation delivery for tenant '{TenantId}' and invitation '{InvitationId}' through sender '{SenderId}' on channel '{Channel}'.",
+        Description: "Emitted when the governance companion dispatches a tenant invitation through a registered delivery sender.");
+
+    public static readonly DiagnosticEventDefinition TenantInvitationDeliveryDispatchDenied = new(
+        Id: 4549,
+        Name: "TenantInvitationDeliveryDispatchDenied",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Denied tenant invitation delivery dispatch for tenant '{TenantId}' and invitation '{InvitationId}'. Outcome: {Outcome}. Reason: {Reason}.",
+        Description: "Emitted when the governance companion cannot dispatch or record tenant invitation delivery.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation, tenant-administration workflow commands, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP proof publication, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation/delivery dispatch, tenant-administration workflow commands, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP proof publication, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -319,7 +333,9 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             DomainOwnershipHttpProofPublished,
             DomainOwnershipHttpProofPublicationDenied,
             TenantAdministrationWorkflowApplied,
-            TenantAdministrationWorkflowDenied
+            TenantAdministrationWorkflowDenied,
+            TenantInvitationDeliveryDispatched,
+            TenantInvitationDeliveryDispatchDenied
         ]);
 }
 
@@ -420,6 +436,22 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowDenied.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowDenied.Name),
             MultiTenancyGovernanceDiagnosticsConventions.TenantAdministrationWorkflowDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> TenantInvitationDeliveryDispatchedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryDispatched.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryDispatched.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryDispatched.MessageTemplate);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> TenantInvitationDeliveryDispatchDeniedMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryDispatchDenied.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryDispatchDenied.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryDispatchDenied.MessageTemplate);
 
     private static readonly Action<ILogger, string, string, string, string, Exception?> GovernanceActionStorePersistedMessage =
         LoggerMessage.Define<string, string, string, string>(
@@ -759,6 +791,28 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         TenantAdministrationWorkflowDeniedMessage(logger, command, tenantId, targetKind, targetId, outcome, reason, exception);
+    }
+
+    public static void TenantInvitationDeliveryDispatched(
+        ILogger logger,
+        string tenantId,
+        string invitationId,
+        string senderId,
+        string channel,
+        Exception? exception)
+    {
+        TenantInvitationDeliveryDispatchedMessage(logger, tenantId, invitationId, senderId, channel, exception);
+    }
+
+    public static void TenantInvitationDeliveryDispatchDenied(
+        ILogger logger,
+        string tenantId,
+        string invitationId,
+        string outcome,
+        string reason,
+        Exception? exception)
+    {
+        TenantInvitationDeliveryDispatchDeniedMessage(logger, tenantId, invitationId, outcome, reason, exception);
     }
 
     public static void GovernanceActionStorePersisted(

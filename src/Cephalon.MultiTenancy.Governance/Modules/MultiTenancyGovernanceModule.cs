@@ -31,6 +31,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
 
     private bool hasMembershipContributors;
     private bool hasInvitationContributors;
+    private bool hasInvitationDeliverySenders;
     private bool hasDomainOwnershipContributors;
     private bool hasGovernanceActionContributors;
 
@@ -60,11 +61,13 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
 
         hasMembershipContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantMembershipContributor));
         hasInvitationContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantInvitationContributor));
+        hasInvitationDeliverySenders = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantInvitationDeliverySender));
         hasDomainOwnershipContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantDomainOwnershipContributor));
         hasGovernanceActionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(ITenantGovernanceActionContributor));
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<ILogger<TenantMembershipEvaluator>>(NullLogger<TenantMembershipEvaluator>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationValidator>>(NullLogger<TenantInvitationValidator>.Instance);
+        services.TryAddSingleton<ILogger<TenantInvitationDeliveryDispatcher>>(NullLogger<TenantInvitationDeliveryDispatcher>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipVerificationWorkflow>>(NullLogger<TenantDomainOwnershipVerificationWorkflow>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofEvaluator>>(NullLogger<TenantDomainOwnershipProofEvaluator>.Instance);
@@ -97,6 +100,9 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<TenantDomainOwnershipProofPollingRuntimeReporter>();
         services.TryAddSingleton<ITenantDomainOwnershipProofPollingRuntimeCatalog>(
             static serviceProvider => serviceProvider.GetRequiredService<TenantDomainOwnershipProofPollingRuntimeReporter>());
+        services.TryAddSingleton<TenantInvitationDeliveryRunReporter>();
+        services.TryAddSingleton<ITenantInvitationDeliveryRunCatalog>(
+            static serviceProvider => serviceProvider.GetRequiredService<TenantInvitationDeliveryRunReporter>());
         services.TryAddSingleton<TenantDomainOwnershipProofPollingHostedService>();
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
         services.TryAddSingleton<ITenantInvitationCatalog, TenantInvitationCatalog>();
@@ -112,6 +118,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         if (options.EnableInvitationValidation)
         {
             services.TryAddSingleton<ITenantInvitationValidator, TenantInvitationValidator>();
+        }
+
+        if (options.EnableInvitationDeliveryDispatch)
+        {
+            services.TryAddSingleton<ITenantInvitationDeliveryDispatcher, TenantInvitationDeliveryDispatcher>();
         }
 
         if (options.EnableDomainOwnershipValidation)
@@ -247,6 +258,12 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         var httpProofPublicationOwnership = httpProofPublicationEnabled ? "cephalon-managed" : "not-configured";
         var proofPublicationOwnership = httpProofPublicationEnabled ? "mixed" : "application-managed";
         var administrationWorkflowOwnership = options.EnableTenantAdministrationWorkflow ? "cephalon-managed" : "not-configured";
+        var invitationDeliveryDispatchOwnership = options.EnableInvitationDeliveryDispatch ? "cephalon-managed" : "not-configured";
+        var invitationDeliverySenderOwnership = hasInvitationDeliverySenders ? "provider-managed" : "not-configured";
+        var invitationExternalDeliveryOwnership = hasInvitationDeliverySenders ? "provider-managed" : "application-managed";
+        var invitationDeliveryOwnership = options.EnableInvitationDeliveryDispatch && hasInvitationDeliverySenders
+            ? "mixed"
+            : "application-managed";
 
         capabilities.Add(new Capability(
             key: "tenancy.membership.catalog",
@@ -304,7 +321,9 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["ownership"] = "cephalon-managed",
                 ["runtimeSurface"] = "tenant-invitations",
                 ["configuredInvitationCount"] = options.Invitations.Count.ToString(CultureInfo.InvariantCulture),
-                ["hasInvitationContributors"] = hasInvitationContributors.ToString().ToLowerInvariant()
+                ["hasInvitationContributors"] = hasInvitationContributors.ToString().ToLowerInvariant(),
+                ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
+                ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
         capabilities.Add(new Capability(
@@ -320,7 +339,9 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["storeKind"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "in-memory" : "file",
                 ["storeDurable"] = (!string.IsNullOrWhiteSpace(options.InvitationStoreFilePath)).ToString().ToLowerInvariant(),
                 ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "application-managed" : "cephalon-managed",
-                ["administrationWorkflowOwnership"] = administrationWorkflowOwnership
+                ["administrationWorkflowOwnership"] = administrationWorkflowOwnership,
+                ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
+                ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
         if (options.EnableInvitationValidation)
@@ -338,12 +359,32 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 }));
         }
 
+        if (options.EnableInvitationDeliveryDispatch)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.invitation.delivery-dispatch",
+                displayName: "Tenant Invitation Delivery Dispatch",
+                description: "Dispatches pending tenant invitations through registered delivery senders and records dispatch outcomes without owning provider-specific delivery channels.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
+                    ["deliverySenderOwnership"] = invitationDeliverySenderOwnership,
+                    ["externalDeliveryOwnership"] = invitationExternalDeliveryOwnership,
+                    ["senderConfigured"] = hasInvitationDeliverySenders.ToString().ToLowerInvariant(),
+                    ["runtimeSurface"] = "tenant-invitations",
+                    ["runHistoryLimit"] = Math.Max(1, options.InvitationDeliveryRunHistoryLimit).ToString(CultureInfo.InvariantCulture)
+                }));
+        }
+
         if (options.EnableTenantAdministrationWorkflow)
         {
             capabilities.Add(new Capability(
                 key: "tenancy.administration.workflow",
                 displayName: "Tenant Administration Workflow",
-                description: "Applies host-driven tenant administration commands over Cephalon-managed membership and invitation stores without claiming public onboarding, notification delivery, tenant-admin endpoints, or identity-provider synchronization.",
+                description: "Applies host-driven tenant administration commands over Cephalon-managed membership and invitation stores without claiming public onboarding, provider-specific notification delivery, tenant-admin endpoints, or identity-provider synchronization.",
                 metadata: new Dictionary<string, string>
                 {
                     ["technology"] = "multi-tenancy",
@@ -357,7 +398,10 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["invitationStoreDurable"] = (!string.IsNullOrWhiteSpace(options.InvitationStoreFilePath)).ToString().ToLowerInvariant(),
                     ["publicOnboardingOwnership"] = "application-managed",
                     ["tenantAdminEndpointOwnership"] = "application-managed",
-                    ["invitationDeliveryOwnership"] = "application-managed",
+                    ["invitationDeliveryOwnership"] = invitationDeliveryOwnership,
+                    ["invitationDeliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
+                    ["invitationDeliverySenderOwnership"] = invitationDeliverySenderOwnership,
+                    ["externalInvitationDeliveryOwnership"] = invitationExternalDeliveryOwnership,
                     ["identityProviderSyncOwnership"] = "application-managed",
                     ["runtimeSurface"] = "tenant-administration"
                 }));
