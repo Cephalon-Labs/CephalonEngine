@@ -110,6 +110,9 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<TenantInvitationDeliveryRetryRuntimeReporter>();
         services.TryAddSingleton<ITenantInvitationDeliveryRetryRuntimeCatalog>(
             static serviceProvider => serviceProvider.GetRequiredService<TenantInvitationDeliveryRetryRuntimeReporter>());
+        services.TryAddSingleton<TenantInvitationDeliveryRetryExecutionCoordinator>();
+        services.TryAddSingleton<ITenantInvitationDeliveryRetryExecutionCoordinationCatalog>(
+            static serviceProvider => serviceProvider.GetRequiredService<TenantInvitationDeliveryRetryExecutionCoordinator>());
         services.TryAddSingleton<TenantInvitationDeliveryRunReporter>();
         services.TryAddSingleton<ITenantInvitationDeliveryRunCatalog>(
             static serviceProvider => serviceProvider.GetRequiredService<TenantInvitationDeliveryRunReporter>());
@@ -303,6 +306,14 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         var invitationDeliveryRetryBackgroundOwnership = TenantInvitationDeliveryRetryConfiguration.ResolveBackgroundSchedulingOwnership(options);
         var invitationDeliveryRetryBackgroundIntervalSeconds =
             TenantInvitationDeliveryRetryConfiguration.ResolveBackgroundSchedulingIntervalSeconds(options);
+        var invitationDeliveryRetryExecutionCoordinationEnabled =
+            TenantInvitationDeliveryRetryConfiguration.IsExecutionCoordinationEnabled(options);
+        var invitationDeliveryRetryExecutionCoordinationOwnership =
+            TenantInvitationDeliveryRetryConfiguration.ResolveExecutionCoordinationOwnership(options);
+        var invitationDeliveryRetryExecutionCoordinationScope =
+            TenantInvitationDeliveryRetryConfiguration.ResolveExecutionCoordinationScope(options);
+        var invitationDeliveryRetryExecutionCoordinationMode =
+            TenantInvitationDeliveryRetryConfiguration.ResolveExecutionCoordinationMode(options);
         var invitationDeliverySenderOwnership = hasInvitationDeliverySenders ? "provider-managed" : "not-configured";
         var invitationExternalDeliveryOwnership = hasInvitationDeliverySenders ? "provider-managed" : "application-managed";
         var invitationExternalDeliveryStatusOwnership = options.EnableInvitationDeliveryStatusReconciliation ? "provider-managed" : "application-managed";
@@ -379,6 +390,10 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["deliveryRetryBackgroundOwnership"] = invitationDeliveryRetryBackgroundOwnership,
                 ["deliveryRetryBackgroundIntervalSeconds"] = invitationDeliveryRetryBackgroundIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                 ["deliveryRetryBackgroundRunOnStartup"] = options.InvitationDeliveryRetryBackgroundRunOnStartup.ToString().ToLowerInvariant(),
+                ["deliveryRetryExecutionCoordinationEnabled"] = invitationDeliveryRetryExecutionCoordinationEnabled.ToString().ToLowerInvariant(),
+                ["deliveryRetryExecutionCoordinationOwnership"] = invitationDeliveryRetryExecutionCoordinationOwnership,
+                ["deliveryRetryExecutionCoordinationScope"] = invitationDeliveryRetryExecutionCoordinationScope,
+                ["deliveryRetryExecutionCoordinationMode"] = invitationDeliveryRetryExecutionCoordinationMode,
                 ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
@@ -408,6 +423,10 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["deliveryRetryBackgroundOwnership"] = invitationDeliveryRetryBackgroundOwnership,
                 ["deliveryRetryBackgroundIntervalSeconds"] = invitationDeliveryRetryBackgroundIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                 ["deliveryRetryBackgroundRunOnStartup"] = options.InvitationDeliveryRetryBackgroundRunOnStartup.ToString().ToLowerInvariant(),
+                ["deliveryRetryExecutionCoordinationEnabled"] = invitationDeliveryRetryExecutionCoordinationEnabled.ToString().ToLowerInvariant(),
+                ["deliveryRetryExecutionCoordinationOwnership"] = invitationDeliveryRetryExecutionCoordinationOwnership,
+                ["deliveryRetryExecutionCoordinationScope"] = invitationDeliveryRetryExecutionCoordinationScope,
+                ["deliveryRetryExecutionCoordinationMode"] = invitationDeliveryRetryExecutionCoordinationMode,
                 ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
@@ -449,6 +468,10 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["deliveryRetryBackgroundOwnership"] = invitationDeliveryRetryBackgroundOwnership,
                     ["deliveryRetryBackgroundIntervalSeconds"] = invitationDeliveryRetryBackgroundIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                     ["deliveryRetryBackgroundRunOnStartup"] = options.InvitationDeliveryRetryBackgroundRunOnStartup.ToString().ToLowerInvariant(),
+                    ["deliveryRetryExecutionCoordinationEnabled"] = invitationDeliveryRetryExecutionCoordinationEnabled.ToString().ToLowerInvariant(),
+                    ["deliveryRetryExecutionCoordinationOwnership"] = invitationDeliveryRetryExecutionCoordinationOwnership,
+                    ["deliveryRetryExecutionCoordinationScope"] = invitationDeliveryRetryExecutionCoordinationScope,
+                    ["deliveryRetryExecutionCoordinationMode"] = invitationDeliveryRetryExecutionCoordinationMode,
                     ["senderConfigured"] = hasInvitationDeliverySenders.ToString().ToLowerInvariant(),
                     ["runtimeSurface"] = "tenant-invitations",
                     ["runHistoryLimit"] = Math.Max(1, options.InvitationDeliveryRunHistoryLimit).ToString(CultureInfo.InvariantCulture)
@@ -480,11 +503,39 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["backgroundRetryOwnership"] = invitationDeliveryRetryBackgroundOwnership,
                     ["backgroundRetryIntervalSeconds"] = invitationDeliveryRetryBackgroundIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                     ["backgroundRetryRunOnStartup"] = options.InvitationDeliveryRetryBackgroundRunOnStartup.ToString().ToLowerInvariant(),
+                    ["executionCoordinationEnabled"] = invitationDeliveryRetryExecutionCoordinationEnabled.ToString().ToLowerInvariant(),
+                    ["executionCoordinationOwnership"] = invitationDeliveryRetryExecutionCoordinationOwnership,
+                    ["executionCoordinationScope"] = invitationDeliveryRetryExecutionCoordinationScope,
+                    ["executionCoordinationMode"] = invitationDeliveryRetryExecutionCoordinationMode,
                     ["distributedRetryOwnership"] = "application-managed",
                     ["exactlyOnceOwnership"] = "application-managed",
                     ["providerSpecificSenderOwnership"] = "application-managed",
                     ["runtimeSurface"] = "tenant-invitations"
                 }));
+
+            if (invitationDeliveryRetryExecutionCoordinationEnabled)
+            {
+                capabilities.Add(new Capability(
+                    key: "tenancy.invitation.delivery-retry-execution-coordination",
+                    displayName: "Tenant Invitation Delivery Retry Execution Coordination",
+                    description: "Coordinates bounded tenant invitation delivery retry runner passes inside one host process and skips overlapping executions instead of dispatching the same local retry queue concurrently.",
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["technology"] = "multi-tenancy",
+                        ["package"] = "Cephalon.MultiTenancy.Governance",
+                        ["ownership"] = "cephalon-managed",
+                        ["executionOwnership"] = "cephalon-managed",
+                        ["deliveryRetryQueueOwnership"] = invitationDeliveryRetryQueueOwnership,
+                        ["executionCoordinationEnabled"] = invitationDeliveryRetryExecutionCoordinationEnabled.ToString().ToLowerInvariant(),
+                        ["executionCoordinationOwnership"] = invitationDeliveryRetryExecutionCoordinationOwnership,
+                        ["executionCoordinationScope"] = invitationDeliveryRetryExecutionCoordinationScope,
+                        ["executionCoordinationMode"] = invitationDeliveryRetryExecutionCoordinationMode,
+                        ["distributedRetryOwnership"] = "application-managed",
+                        ["crossNodeLeaseOwnership"] = "application-managed",
+                        ["exactlyOnceOwnership"] = "application-managed",
+                        ["runtimeSurface"] = "tenant-invitations"
+                    }));
+            }
         }
 
         if (invitationDeliveryRetryBackgroundEnabled)
@@ -512,6 +563,10 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["backgroundRetryOwnership"] = invitationDeliveryRetryBackgroundOwnership,
                     ["backgroundRetryIntervalSeconds"] = invitationDeliveryRetryBackgroundIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                     ["backgroundRetryRunOnStartup"] = options.InvitationDeliveryRetryBackgroundRunOnStartup.ToString().ToLowerInvariant(),
+                    ["executionCoordinationEnabled"] = invitationDeliveryRetryExecutionCoordinationEnabled.ToString().ToLowerInvariant(),
+                    ["executionCoordinationOwnership"] = invitationDeliveryRetryExecutionCoordinationOwnership,
+                    ["executionCoordinationScope"] = invitationDeliveryRetryExecutionCoordinationScope,
+                    ["executionCoordinationMode"] = invitationDeliveryRetryExecutionCoordinationMode,
                     ["distributedRetryOwnership"] = "application-managed",
                     ["exactlyOnceOwnership"] = "application-managed",
                     ["providerSpecificSenderOwnership"] = "application-managed",

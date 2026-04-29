@@ -102,6 +102,15 @@ public sealed class MultiTenancyGovernanceOptions
     public int InvitationDeliveryRetryMaxItems { get; set; } = 25;
 
     /// <summary>
+    /// Gets or sets a value indicating whether concurrent invitation delivery retry runner passes are coordinated in-process.
+    /// </summary>
+    /// <remarks>
+    /// Process-local coordination prevents overlapping manual and background retry passes inside the same host process. It does
+    /// not provide distributed queues, cross-node leases, or exactly-once delivery across multiple running nodes.
+    /// </remarks>
+    public bool EnableInvitationDeliveryRetryExecutionCoordination { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the built-in invitation delivery retry hosted service is active.
     /// </summary>
     /// <remarks>

@@ -7,6 +7,7 @@ internal sealed class TenantInvitationDeliveryRetryRunner(
     MultiTenancyGovernanceOptions options,
     ITenantInvitationDeliveryRetryStore retryQueue,
     ITenantInvitationDeliveryDispatcher dispatcher,
+    TenantInvitationDeliveryRetryExecutionCoordinator executionCoordinator,
     TimeProvider timeProvider) : ITenantInvitationDeliveryRetryRunner
 {
     internal const string DefaultRetrySource = "invitation-delivery-retry-runner";
@@ -19,6 +20,44 @@ internal sealed class TenantInvitationDeliveryRetryRunner(
 
         var effectiveRequest = request ?? new TenantInvitationDeliveryRetryRequest();
         var atUtc = effectiveRequest.AtUtc ?? timeProvider.GetUtcNow();
+        var executionLease = executionCoordinator.TryBegin(atUtc);
+        if (!executionLease.ShouldExecute)
+        {
+            return EnrichResultWithExecutionCoordination(CreateResult(
+                TenantInvitationDeliveryRetryOutcomes.AlreadyRunning,
+                attemptedCount: 0,
+                dispatchedCount: 0,
+                failedCount: 0,
+                exhaustedCount: 0,
+                terminalCount: 0,
+                atUtc,
+                deliveryResults: []));
+        }
+
+        var completed = false;
+        try
+        {
+            var result = await RetryPendingCoreAsync(effectiveRequest, atUtc, cancellationToken).ConfigureAwait(false);
+            executionCoordinator.MarkCompleted(executionLease, result, timeProvider.GetUtcNow());
+            completed = true;
+            return EnrichResultWithExecutionCoordination(result);
+        }
+        catch (Exception exception)
+        {
+            if (!completed)
+            {
+                executionCoordinator.MarkFailed(executionLease, exception, timeProvider.GetUtcNow());
+            }
+
+            throw;
+        }
+    }
+
+    private async ValueTask<TenantInvitationDeliveryRetryResult> RetryPendingCoreAsync(
+        TenantInvitationDeliveryRetryRequest effectiveRequest,
+        DateTimeOffset atUtc,
+        CancellationToken cancellationToken)
+    {
         if (!options.EnableInvitationDeliveryRetryQueue)
         {
             return CreateResult(
@@ -59,7 +98,7 @@ internal sealed class TenantInvitationDeliveryRetryRunner(
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var metadata = BuildRetryMetadata(entry, effectiveRequest, atUtc);
+            var metadata = BuildRetryMetadata(entry, effectiveRequest, atUtc, executionCoordinator.Current);
             var result = await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
                 entry.TenantId,
                 entry.InvitationId,
@@ -128,6 +167,25 @@ internal sealed class TenantInvitationDeliveryRetryRunner(
             deliveryResults);
     }
 
+    private TenantInvitationDeliveryRetryResult EnrichResultWithExecutionCoordination(
+        TenantInvitationDeliveryRetryResult result)
+    {
+        var metadata = CopyMetadata(result.Metadata);
+        AddExecutionCoordinationMetadata(metadata, executionCoordinator.Current);
+
+        return new TenantInvitationDeliveryRetryResult(
+            result.Outcome,
+            result.AttemptedCount,
+            result.DispatchedCount,
+            result.FailedCount,
+            result.ExhaustedCount,
+            result.TerminalCount,
+            result.RemainingPendingCount,
+            result.AtUtc,
+            result.DeliveryResults,
+            metadata);
+    }
+
     private TenantInvitationDeliveryRetryResult CreateResult(
         string outcome,
         int attemptedCount,
@@ -184,7 +242,8 @@ internal sealed class TenantInvitationDeliveryRetryRunner(
     private static Dictionary<string, string> BuildRetryMetadata(
         TenantInvitationDeliveryRetryDescriptor entry,
         TenantInvitationDeliveryRetryRequest request,
-        DateTimeOffset atUtc)
+        DateTimeOffset atUtc,
+        TenantInvitationDeliveryRetryExecutionCoordinationSnapshot executionCoordination)
     {
         var metadata = CopyMetadata(entry.Metadata);
         foreach (var pair in request.Metadata)
@@ -201,7 +260,36 @@ internal sealed class TenantInvitationDeliveryRetryRunner(
         metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueLastAttemptAtUtc] =
             atUtc.ToString("O", CultureInfo.InvariantCulture);
         metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueOwnership] = "cephalon-managed";
+        AddExecutionCoordinationMetadata(metadata, executionCoordination);
         return metadata;
+    }
+
+    private static void AddExecutionCoordinationMetadata(
+        Dictionary<string, string> metadata,
+        TenantInvitationDeliveryRetryExecutionCoordinationSnapshot executionCoordination)
+    {
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordination] =
+            executionCoordination.Enabled.ToString().ToLowerInvariant();
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationOwnership] =
+            executionCoordination.Ownership;
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationScope] =
+            executionCoordination.Scope;
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationMode] =
+            executionCoordination.Mode;
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationInProgress] =
+            executionCoordination.IsRunning.ToString().ToLowerInvariant();
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationAttemptCount] =
+            executionCoordination.AttemptCount.ToString(CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationAcceptedCount] =
+            executionCoordination.AcceptedCount.ToString(CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationSkippedCount] =
+            executionCoordination.SkippedCount.ToString(CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationCompletedCount] =
+            executionCoordination.CompletedCount.ToString(CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationFailedCount] =
+            executionCoordination.FailedCount.ToString(CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecutionCoordinationLastOutcome] =
+            executionCoordination.LastOutcome ?? "none";
     }
 
     private static Dictionary<string, string> CopyMetadata(IReadOnlyDictionary<string, string>? metadata)

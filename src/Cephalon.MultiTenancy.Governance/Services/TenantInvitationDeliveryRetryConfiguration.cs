@@ -36,4 +36,36 @@ internal static class TenantInvitationDeliveryRetryConfiguration
             ? "not-configured"
             : "application-managed";
     }
+
+    public static bool IsExecutionCoordinationEnabled(MultiTenancyGovernanceOptions options)
+    {
+        return options.EnableInvitationDeliveryRetryExecutionCoordination &&
+            IsRetryRunnerEnabled(options);
+    }
+
+    public static string ResolveExecutionCoordinationOwnership(MultiTenancyGovernanceOptions options)
+    {
+        if (IsExecutionCoordinationEnabled(options))
+        {
+            return "cephalon-managed";
+        }
+
+        return IsRetryRunnerEnabled(options)
+            ? "application-managed"
+            : "not-configured";
+    }
+
+    public static string ResolveExecutionCoordinationScope(MultiTenancyGovernanceOptions options)
+    {
+        return IsExecutionCoordinationEnabled(options)
+            ? TenantInvitationDeliveryRetryExecutionCoordinator.ScopeProcessLocal
+            : TenantInvitationDeliveryRetryExecutionCoordinator.ScopeNone;
+    }
+
+    public static string ResolveExecutionCoordinationMode(MultiTenancyGovernanceOptions options)
+    {
+        return IsExecutionCoordinationEnabled(options)
+            ? TenantInvitationDeliveryRetryExecutionCoordinator.ModeSkipOverlap
+            : TenantInvitationDeliveryRetryExecutionCoordinator.ModeDisabled;
+    }
 }

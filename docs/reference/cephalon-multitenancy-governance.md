@@ -344,6 +344,18 @@ Gets or sets a value indicating whether the built-in invitation delivery retry h
 
 Remarks: This option is disabled by default so installing the governance package never starts recurring delivery attempts without an explicit host decision. When enabled, the hosted service schedules the bounded retry runner; it still does not provide distributed queues, cross-node leases, exactly-once delivery, or provider-specific senders.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliveryretryexecutioncoordination"></a>
+
+##### `EnableInvitationDeliveryRetryExecutionCoordination`
+
+```csharp
+bool EnableInvitationDeliveryRetryExecutionCoordination { get; set; }
+```
+
+Gets or sets a value indicating whether concurrent invitation delivery retry runner passes are coordinated in-process.
+
+Remarks: Process-local coordination prevents overlapping manual and background retry passes inside the same host process. It does not provide distributed queues, cross-node leases, or exactly-once delivery across multiple running nodes.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliveryretryqueue"></a>
 
 ##### `EnableInvitationDeliveryRetryQueue`
@@ -1614,6 +1626,31 @@ Returns: The dispatch outcome.
 Parameters:
 - `request`: The tenant invitation delivery request.
 - `cancellationToken`: A token that cancels dispatch before a sender is invoked or state is stored.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryexecutioncoordinationcatalog"></a>
+
+### `ITenantInvitationDeliveryRetryExecutionCoordinationCatalog`
+
+Exposes runtime state for process-local tenant-invitation delivery retry execution coordination.
+
+Remarks: The catalog reports the in-process overlap guard used by bounded retry runner passes. It does not represent distributed retry leases, cross-node exactly-once delivery, or provider-specific sender ownership.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationDeliveryRetryExecutionCoordinationCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryexecutioncoordinationcatalog-current"></a>
+
+##### `Current`
+
+```csharp
+TenantInvitationDeliveryRetryExecutionCoordinationSnapshot Current { get; }
+```
+
+Gets the latest tenant-invitation delivery retry execution coordination snapshot.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryrunner"></a>
 
@@ -10764,6 +10801,116 @@ const string DeliveryRetryExecution
 
 Metadata key that marks a dispatch request created by the retry runner.
 
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordination"></a>
+
+##### `DeliveryRetryExecutionCoordination`
+
+```csharp
+const string DeliveryRetryExecutionCoordination
+```
+
+Metadata key describing whether retry execution coordination was enabled for the retry runner.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationacceptedcount"></a>
+
+##### `DeliveryRetryExecutionCoordinationAcceptedCount`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationAcceptedCount
+```
+
+Metadata key containing the number of retry execution coordination attempts accepted for execution.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationattemptcount"></a>
+
+##### `DeliveryRetryExecutionCoordinationAttemptCount`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationAttemptCount
+```
+
+Metadata key containing the number of attempts to enter retry execution coordination.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationcompletedcount"></a>
+
+##### `DeliveryRetryExecutionCoordinationCompletedCount`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationCompletedCount
+```
+
+Metadata key containing the number of coordinated retry passes completed with a retry result.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationfailedcount"></a>
+
+##### `DeliveryRetryExecutionCoordinationFailedCount`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationFailedCount
+```
+
+Metadata key containing the number of coordinated retry passes that ended with an unhandled failure.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationinprogress"></a>
+
+##### `DeliveryRetryExecutionCoordinationInProgress`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationInProgress
+```
+
+Metadata key describing whether a coordinated retry execution is currently running.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationlastoutcome"></a>
+
+##### `DeliveryRetryExecutionCoordinationLastOutcome`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationLastOutcome
+```
+
+Metadata key containing the latest retry execution coordination outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationmode"></a>
+
+##### `DeliveryRetryExecutionCoordinationMode`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationMode
+```
+
+Metadata key describing the retry execution coordination mode.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationownership"></a>
+
+##### `DeliveryRetryExecutionCoordinationOwnership`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationOwnership
+```
+
+Metadata key describing Cephalon ownership of retry execution coordination.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationscope"></a>
+
+##### `DeliveryRetryExecutionCoordinationScope`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationScope
+```
+
+Metadata key describing the retry execution coordination scope.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecutioncoordinationskippedcount"></a>
+
+##### `DeliveryRetryExecutionCoordinationSkippedCount`
+
+```csharp
+const string DeliveryRetryExecutionCoordinationSkippedCount
+```
+
+Metadata key containing the number of retry execution coordination attempts skipped because another pass was already running.
+
 <a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueattempt"></a>
 
 ##### `DeliveryRetryQueueAttempt`
@@ -11831,6 +11978,209 @@ Parameters:
 - `lastReason`: The updated latest reason.
 - `metadata`: The updated metadata.
 
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot"></a>
+
+### `TenantInvitationDeliveryRetryExecutionCoordinationSnapshot`
+
+Describes the latest runtime state of process-local tenant-invitation delivery retry execution coordination.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryRetryExecutionCoordinationSnapshot
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-ctor-system-boolean-system-string-system-string-system-string-system-boolean-system-int64-system-int64-system-int64-system-int64-system-int64-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryRetryExecutionCoordinationSnapshot`
+
+```csharp
+TenantInvitationDeliveryRetryExecutionCoordinationSnapshot(bool enabled, string ownership, string scope, string mode, bool isRunning, long attemptCount, long acceptedCount, long skippedCount, long completedCount, long failedCount, DateTimeOffset? lastStartedAtUtc, DateTimeOffset? lastCompletedAtUtc, DateTimeOffset? lastSkippedAtUtc, string lastOutcome, string lastError, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-invitation delivery retry execution coordination snapshot.
+
+Parameters:
+- `enabled`: A value indicating whether process-local retry execution coordination is effectively enabled.
+- `ownership`: The retry execution coordination ownership mode.
+- `scope`: The coordination scope, such as process-local or none.
+- `mode`: The coordination mode, such as skip-overlap or disabled.
+- `isRunning`: A value indicating whether a coordinated retry pass is currently running.
+- `attemptCount`: The number of attempts to enter the coordinator.
+- `acceptedCount`: The number of coordinator attempts accepted for execution.
+- `skippedCount`: The number of coordinator attempts skipped because another pass was already running.
+- `completedCount`: The number of coordinated retry passes completed with a retry result.
+- `failedCount`: The number of coordinated retry passes that ended with an unhandled failure.
+- `lastStartedAtUtc`: The UTC timestamp when the latest accepted coordinated retry pass started.
+- `lastCompletedAtUtc`: The UTC timestamp when the latest coordinated retry pass completed or failed.
+- `lastSkippedAtUtc`: The UTC timestamp when the latest overlapping retry pass was skipped.
+- `lastOutcome`: The latest coordination or retry runner outcome.
+- `lastError`: The latest unhandled coordinated retry error message.
+- `metadata`: Optional runtime metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-acceptedcount"></a>
+
+##### `AcceptedCount`
+
+```csharp
+long AcceptedCount { get; }
+```
+
+Gets the number of coordinator attempts accepted for execution.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-attemptcount"></a>
+
+##### `AttemptCount`
+
+```csharp
+long AttemptCount { get; }
+```
+
+Gets the number of attempts to enter the coordinator.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-completedcount"></a>
+
+##### `CompletedCount`
+
+```csharp
+long CompletedCount { get; }
+```
+
+Gets the number of coordinated retry passes completed with a retry result.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool Enabled { get; }
+```
+
+Gets a value indicating whether process-local retry execution coordination is effectively enabled.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+long FailedCount { get; }
+```
+
+Gets the number of coordinated retry passes that ended with an unhandled failure.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-isrunning"></a>
+
+##### `IsRunning`
+
+```csharp
+bool IsRunning { get; }
+```
+
+Gets a value indicating whether a coordinated retry pass is currently running.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-lastcompletedatutc"></a>
+
+##### `LastCompletedAtUtc`
+
+```csharp
+DateTimeOffset? LastCompletedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the latest coordinated retry pass completed or failed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; }
+```
+
+Gets the latest unhandled coordinated retry error message.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; }
+```
+
+Gets the latest coordination or retry runner outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-lastskippedatutc"></a>
+
+##### `LastSkippedAtUtc`
+
+```csharp
+DateTimeOffset? LastSkippedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the latest overlapping retry pass was skipped.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-laststartedatutc"></a>
+
+##### `LastStartedAtUtc`
+
+```csharp
+DateTimeOffset? LastStartedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the latest accepted coordinated retry pass started.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional runtime metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the coordination mode, such as skip-overlap or disabled.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; }
+```
+
+Gets the retry execution coordination ownership mode.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-scope"></a>
+
+##### `Scope`
+
+```csharp
+string Scope { get; }
+```
+
+Gets the coordination scope, such as process-local or none.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-skippedcount"></a>
+
+##### `SkippedCount`
+
+```csharp
+long SkippedCount { get; }
+```
+
+Gets the number of coordinator attempts skipped because another pass was already running.
+
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes"></a>
 
 ### `TenantInvitationDeliveryRetryOutcomes`
@@ -11843,6 +12193,16 @@ public static class TenantInvitationDeliveryRetryOutcomes
 ```
 
 #### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-alreadyrunning"></a>
+
+##### `AlreadyRunning`
+
+```csharp
+const string AlreadyRunning
+```
+
+Another coordinated retry runner pass is already running in this host process.
 
 <a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-disabled"></a>
 

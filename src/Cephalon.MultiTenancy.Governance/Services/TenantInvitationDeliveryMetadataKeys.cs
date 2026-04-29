@@ -226,6 +226,61 @@ public static class TenantInvitationDeliveryMetadataKeys
     public const string DeliveryRetryExecution = "deliveryRetryExecution";
 
     /// <summary>
+    /// Metadata key describing whether retry execution coordination was enabled for the retry runner.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordination = "deliveryRetryExecutionCoordination";
+
+    /// <summary>
+    /// Metadata key describing Cephalon ownership of retry execution coordination.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationOwnership = "deliveryRetryExecutionCoordinationOwnership";
+
+    /// <summary>
+    /// Metadata key describing the retry execution coordination scope.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationScope = "deliveryRetryExecutionCoordinationScope";
+
+    /// <summary>
+    /// Metadata key describing the retry execution coordination mode.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationMode = "deliveryRetryExecutionCoordinationMode";
+
+    /// <summary>
+    /// Metadata key describing whether a coordinated retry execution is currently running.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationInProgress = "deliveryRetryExecutionCoordinationInProgress";
+
+    /// <summary>
+    /// Metadata key containing the number of attempts to enter retry execution coordination.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationAttemptCount = "deliveryRetryExecutionCoordinationAttemptCount";
+
+    /// <summary>
+    /// Metadata key containing the number of retry execution coordination attempts accepted for execution.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationAcceptedCount = "deliveryRetryExecutionCoordinationAcceptedCount";
+
+    /// <summary>
+    /// Metadata key containing the number of retry execution coordination attempts skipped because another pass was already running.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationSkippedCount = "deliveryRetryExecutionCoordinationSkippedCount";
+
+    /// <summary>
+    /// Metadata key containing the number of coordinated retry passes completed with a retry result.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationCompletedCount = "deliveryRetryExecutionCoordinationCompletedCount";
+
+    /// <summary>
+    /// Metadata key containing the number of coordinated retry passes that ended with an unhandled failure.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationFailedCount = "deliveryRetryExecutionCoordinationFailedCount";
+
+    /// <summary>
+    /// Metadata key containing the latest retry execution coordination outcome.
+    /// </summary>
+    public const string DeliveryRetryExecutionCoordinationLastOutcome = "deliveryRetryExecutionCoordinationLastOutcome";
+
+    /// <summary>
     /// Metadata key that marks a dispatch request created by automatic background retry scheduling.
     /// </summary>
     public const string DeliveryRetryBackgroundScheduling = "deliveryRetryBackgroundScheduling";

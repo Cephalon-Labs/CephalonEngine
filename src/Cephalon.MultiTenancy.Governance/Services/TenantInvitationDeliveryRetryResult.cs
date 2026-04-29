@@ -104,6 +104,7 @@ public sealed class TenantInvitationDeliveryRetryResult
         {
             TenantInvitationDeliveryRetryOutcomes.Disabled => TenantInvitationDeliveryRetryOutcomes.Disabled,
             TenantInvitationDeliveryRetryOutcomes.NoPendingRetries => TenantInvitationDeliveryRetryOutcomes.NoPendingRetries,
+            TenantInvitationDeliveryRetryOutcomes.AlreadyRunning => TenantInvitationDeliveryRetryOutcomes.AlreadyRunning,
             TenantInvitationDeliveryRetryOutcomes.Retried => TenantInvitationDeliveryRetryOutcomes.Retried,
             TenantInvitationDeliveryRetryOutcomes.Partial => TenantInvitationDeliveryRetryOutcomes.Partial,
             TenantInvitationDeliveryRetryOutcomes.Failed => TenantInvitationDeliveryRetryOutcomes.Failed,

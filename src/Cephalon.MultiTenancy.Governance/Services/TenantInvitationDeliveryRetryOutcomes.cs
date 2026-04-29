@@ -16,6 +16,11 @@ public static class TenantInvitationDeliveryRetryOutcomes
     public const string NoPendingRetries = "no-pending-retries";
 
     /// <summary>
+    /// Another coordinated retry runner pass is already running in this host process.
+    /// </summary>
+    public const string AlreadyRunning = "already-running";
+
+    /// <summary>
     /// Every attempted retry entry dispatched successfully.
     /// </summary>
     public const string Retried = "retried";
