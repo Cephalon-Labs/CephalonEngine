@@ -11,12 +11,12 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
-- treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, abstraction-level publication dispatcher, `/engine/event-subscription-readiness`, `POST /engine/event-publications`, `snapshot.EventSubscriptionExecutionReadiness`, and the opt-in direct in-process execution lane as adapter-neutral engine-owned proof, while the Wolverine-managed event-subscription lane remains an optional provider-managed proof instead of an engine requirement
+- treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, abstraction-level publication dispatcher, `/engine/event-subscription-readiness`, `POST /engine/event-publications`, `snapshot.EventSubscriptionExecutionReadiness`, the opt-in direct in-process execution lane, and bounded process-local retry metadata as adapter-neutral engine-owned proof, while the Wolverine-managed event-subscription lane remains an optional provider-managed proof instead of an engine requirement
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus the abstraction-level `/engine/agent-tool-runs`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
@@ -991,6 +991,41 @@ Follow-up later:
 - durable broker dispatch, inbox/idempotency ownership, retry queues, distributed subscription
   scheduling, and provider-specific inbound consumption remain future package-owned work until a
   package truly owns those paths
+
+### ENG-273 Eventing in-process subscription retry baseline
+
+Status: done
+Estimate: 5
+Issue: #782
+
+Why:
+
+- after `ENG-272`, the core in-process eventing lane could execute and publish through real
+  operator actions, but transient executor failures still ended as a single failed attempt unless a
+  consumer selected a provider-managed companion runtime
+- the smallest honest next proof is bounded process-local retry over the existing direct
+  `IEventPublisher` / `IEventSubscriptionExecutor` lane, not a durable broker retry queue, inbox,
+  or distributed subscription scheduler
+
+Delivered:
+
+- add `EventingOptions.InProcessSubscriptionMaxAttempts` and
+  `InProcessSubscriptionRetryDelayMilliseconds` with safe defaults that preserve
+  `retryPolicy = none`
+- retry failing in-process subscription executors inline up to the configured maximum attempts,
+  reporting `retry-scheduled` observations before retries and final `succeeded` or `failed`
+  runtime state through the existing subscription runtime catalog
+- project `retryPolicy = bounded-in-process`, `retryMaxAttempts`, `retryDelayMilliseconds`,
+  `retryDurability = none`, and `retryScope = process-local` through capabilities, managed
+  execution bindings, `event-publishers`, `event-subscriptions`, and `reported.*` metadata
+- prove the host path with focused ASP.NET Core hosting coverage that fails once, retries, succeeds,
+  and verifies runtime counters plus capability/surface metadata
+
+Follow-up later:
+
+- durable broker dispatch, inbox/idempotency ownership, durable retry queues, distributed
+  subscription scheduling, and provider-specific inbound consumption remain future package-owned
+  work until a package truly owns those paths
 
 ### ENG-269 Agentics tool execution operator-action baseline
 
@@ -8924,6 +8959,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 84
 
 - ENG-272 Eventing publication operator action baseline (shipped, issue #781)
+
+### Sprint 85
+
+- ENG-273 Eventing in-process subscription retry baseline (shipped, issue #782)
 
 ### Later / not scheduled yet
 

@@ -1,4 +1,5 @@
 using System.Globalization;
+using Cephalon.Eventing.Configuration;
 
 namespace Cephalon.Eventing.Services;
 
@@ -6,14 +7,22 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
 {
     private readonly Dictionary<string, ManagedSubscriptionEntry> index;
     private readonly Dictionary<string, IReadOnlyList<ManagedSubscriptionEntry>> channelIndex;
+    private readonly int maxAttempts;
+    private readonly string retryPolicy;
+    private readonly int retryDelayMilliseconds;
 
     public InProcessEventSubscriptionExecutorCatalog(
+        EventingOptions options,
         IEventSubscriptionCatalog subscriptions,
         IEnumerable<IEventSubscriptionExecutor> executors)
     {
+        ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(subscriptions);
         ArgumentNullException.ThrowIfNull(executors);
 
+        maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
+        retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
+        retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
         index = new Dictionary<string, ManagedSubscriptionEntry>(StringComparer.OrdinalIgnoreCase);
         foreach (var executor in executors)
         {
@@ -58,7 +67,11 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
                     ["technology"] = "event-driven-integration",
                     ["trigger"] = InProcessEventingRuntimeIds.PublisherId,
                     ["deliveryMode"] = "direct",
-                    ["retryPolicy"] = "none",
+                    ["retryPolicy"] = retryPolicy,
+                    ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
+                    ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+                    ["retryDurability"] = "none",
+                    ["retryScope"] = "process-local",
                     ["channelId"] = entry.Subscription.ChannelId,
                     ["handlerId"] = entry.Subscription.HandlerId,
                     ["subscriptionTagCount"] = entry.Subscription.Tags.Count.ToString(CultureInfo.InvariantCulture)

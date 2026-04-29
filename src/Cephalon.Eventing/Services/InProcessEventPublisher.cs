@@ -46,60 +46,95 @@ internal sealed class InProcessEventPublisher(
             publication.Id,
             attempt: 1);
 
+        var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
+        var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
+        var retryDelay = TimeSpan.FromMilliseconds(retryDelayMilliseconds);
         foreach (var entry in entries)
         {
-            var metadata = CreateExecutionMetadata(publication, entry.Subscription);
-            await runtimeReporter.ReportAsync(
-                new EventSubscriptionExecutionReport(
-                    subscriptionId: entry.Subscription.Id,
-                    outcome: EventSubscriptionExecutionOutcomes.Started,
-                    observedAtUtc: DateTimeOffset.UtcNow,
-                    messageId: publication.Id,
-                    attempt: 1,
-                    metadata: metadata),
-                cancellationToken).ConfigureAwait(false);
-
-            try
+            Exception? finalFailure = null;
+            for (var attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                await entry.Executor.ExecuteAsync(
-                    new EventSubscriptionExecutionContext(
-                        entry.Subscription,
-                        publication,
-                        attempt: 1,
-                        metadata: metadata),
-                    cancellationToken).ConfigureAwait(false);
-
+                var metadata = CreateExecutionMetadata(publication, entry.Subscription, attempt, maxAttempts, retryDelayMilliseconds);
                 await runtimeReporter.ReportAsync(
                     new EventSubscriptionExecutionReport(
                         subscriptionId: entry.Subscription.Id,
-                        outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                        outcome: EventSubscriptionExecutionOutcomes.Started,
                         observedAtUtc: DateTimeOffset.UtcNow,
                         messageId: publication.Id,
-                        attempt: 1,
-                        metadata: metadata),
-                    cancellationToken).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception exception)
-            {
-                await runtimeReporter.ReportAsync(
-                    new EventSubscriptionExecutionReport(
-                        subscriptionId: entry.Subscription.Id,
-                        outcome: EventSubscriptionExecutionOutcomes.Failed,
-                        observedAtUtc: DateTimeOffset.UtcNow,
-                        messageId: publication.Id,
-                        attempt: 1,
-                        error: exception.Message,
+                        attempt: attempt,
                         metadata: metadata),
                     cancellationToken).ConfigureAwait(false);
 
-                failures.Add(exception);
-                if (!options.ContinueInProcessSubscriptionExecutionAfterFailure)
+                try
+                {
+                    await entry.Executor.ExecuteAsync(
+                        new EventSubscriptionExecutionContext(
+                            entry.Subscription,
+                            publication,
+                            attempt: attempt,
+                            metadata: metadata),
+                        cancellationToken).ConfigureAwait(false);
+
+                    await runtimeReporter.ReportAsync(
+                        new EventSubscriptionExecutionReport(
+                            subscriptionId: entry.Subscription.Id,
+                            outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                            observedAtUtc: DateTimeOffset.UtcNow,
+                            messageId: publication.Id,
+                            attempt: attempt,
+                            metadata: metadata),
+                        cancellationToken).ConfigureAwait(false);
+
+                    finalFailure = null;
+                    break;
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
                     throw;
+                }
+                catch (Exception exception)
+                {
+                    finalFailure = exception;
+                    if (attempt < maxAttempts)
+                    {
+                        await runtimeReporter.ReportAsync(
+                            new EventSubscriptionExecutionReport(
+                                subscriptionId: entry.Subscription.Id,
+                                outcome: EventSubscriptionExecutionOutcomes.RetryScheduled,
+                                observedAtUtc: DateTimeOffset.UtcNow,
+                                messageId: publication.Id,
+                                attempt: attempt,
+                                error: exception.Message,
+                                metadata: CreateRetryScheduledMetadata(metadata, retryDelay)),
+                            cancellationToken).ConfigureAwait(false);
+
+                        if (retryDelay > TimeSpan.Zero)
+                        {
+                            await Task.Delay(retryDelay, cancellationToken).ConfigureAwait(false);
+                        }
+
+                        continue;
+                    }
+
+                    await runtimeReporter.ReportAsync(
+                        new EventSubscriptionExecutionReport(
+                            subscriptionId: entry.Subscription.Id,
+                            outcome: EventSubscriptionExecutionOutcomes.Failed,
+                            observedAtUtc: DateTimeOffset.UtcNow,
+                            messageId: publication.Id,
+                            attempt: attempt,
+                            error: exception.Message,
+                            metadata: metadata),
+                        cancellationToken).ConfigureAwait(false);
+                }
+            }
+
+            if (finalFailure is not null)
+            {
+                failures.Add(finalFailure);
+                if (!options.ContinueInProcessSubscriptionExecutionAfterFailure)
+                {
+                    System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(finalFailure).Throw();
                 }
             }
         }
@@ -129,7 +164,10 @@ internal sealed class InProcessEventPublisher(
 
     private static Dictionary<string, string> CreateExecutionMetadata(
         EventPublication publication,
-        EventSubscriptionDescriptor subscription)
+        EventSubscriptionDescriptor subscription,
+        int attempt,
+        int maxAttempts,
+        int retryDelayMilliseconds)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -139,12 +177,16 @@ internal sealed class InProcessEventPublisher(
             ["executionOwnership"] = "cephalon-managed",
             ["executionMode"] = "in-process-direct",
             ["deliveryMode"] = "direct",
-            ["retryPolicy"] = "none",
+            ["retryPolicy"] = maxAttempts > 1 ? InProcessEventingRetryPolicy.BoundedInProcess : InProcessEventingRetryPolicy.None,
+            ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
+            ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+            ["retryDurability"] = "none",
+            ["retryScope"] = "process-local",
             ["channelId"] = publication.ChannelId,
             ["eventType"] = publication.EventType,
             ["subscriptionId"] = subscription.Id,
             ["handlerId"] = subscription.HandlerId,
-            ["attempt"] = "1",
+            ["attempt"] = attempt.ToString(CultureInfo.InvariantCulture),
             ["headerCount"] = publication.Headers.Count.ToString(CultureInfo.InvariantCulture),
             ["publicationMetadataCount"] = publication.Metadata.Count.ToString(CultureInfo.InvariantCulture)
         };
@@ -173,5 +215,17 @@ internal sealed class InProcessEventPublisher(
         }
 
         return metadata;
+    }
+
+    private static Dictionary<string, string> CreateRetryScheduledMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        TimeSpan retryDelay)
+    {
+        var retryMetadata = new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase)
+        {
+            ["nextRetryAtUtc"] = DateTimeOffset.UtcNow.Add(retryDelay).ToString("O", CultureInfo.InvariantCulture)
+        };
+
+        return retryMetadata;
     }
 }

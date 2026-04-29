@@ -1716,7 +1716,12 @@ Current `Cephalon.Eventing` highlights:
 - `Cephalon.Eventing` can move a subscription to `runtime-bound` itself when
   `EnableInProcessSubscriptionExecution` is selected and a matching `IEventSubscriptionExecutor`
   exists; that path is `cephalon-managed`, direct, process-local, and reports
-  `eventing.publish` / `eventing.subscribe` metadata with `retryPolicy = none`
+  `eventing.publish` / `eventing.subscribe` metadata with `retryPolicy = none` by default
+- when `InProcessSubscriptionMaxAttempts` is greater than `1`, that same core path reports
+  `retryPolicy = bounded-in-process`, `retryMaxAttempts`, `retryDelayMilliseconds`,
+  `retryDurability = none`, and `retryScope = process-local`, emits `retry-scheduled`
+  observations between attempts, and updates `event-subscriptions` counters such as
+  `retryScheduledCount`, `lastAttempt`, and `reported.retryPolicy`
 - Wolverine or another companion adapter can still move one subscription to provider-managed
   `runtime-bound` ownership for brokered or staged dispatch scenarios, while hosted execution links
   and application-managed reports remain truthful non-provider-owned states

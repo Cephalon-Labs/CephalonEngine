@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T06:40:23.1799055+00:00",
+  "GeneratedAtUtc": "2026-04-29T07:43:59.2041817+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -7781,7 +7781,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -63880,6 +63880,28 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfault-innerfaults",
       "Signature": "IReadOnlyList\u003CBehaviorFault\u003E InnerFaults { get; set; }",
       "Summary": "Gets or sets nested faults."
+    },
+    {
+      "DisplayName": "InProcessSubscriptionMaxAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionmaxattempts",
+      "Signature": "int InProcessSubscriptionMaxAttempts { get; set; }",
+      "Summary": "Gets or sets the maximum number of direct in-process execution attempts per matching subscription."
+    },
+    {
+      "DisplayName": "InProcessSubscriptionRetryDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrydelaymilliseconds",
+      "Signature": "int InProcessSubscriptionRetryDelayMilliseconds { get; set; }",
+      "Summary": "Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt."
     },
     {
       "DisplayName": "InputType",

@@ -12663,6 +12663,12 @@ Browse the published API surface by public member.
 - [InnerFaults](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfault-innerfaults): `Properties` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=InnerFaults&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets or sets nested faults.
   - `IReadOnlyList<BehaviorFault> InnerFaults { get; set; }`
+- [InProcessSubscriptionMaxAttempts](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionmaxattempts): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionMaxAttempts&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the maximum number of direct in-process execution attempts per matching subscription.
+  - `int InProcessSubscriptionMaxAttempts { get; set; }`
+- [InProcessSubscriptionRetryDelayMilliseconds](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrydelaymilliseconds): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionRetryDelayMilliseconds&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt.
+  - `int InProcessSubscriptionRetryDelayMilliseconds { get; set; }`
 - [InputType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-inputtype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=InputType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the durable workflow input type name.
   - `string InputType { get; }`

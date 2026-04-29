@@ -50,6 +50,59 @@ public sealed class EventingOptions
     /// </remarks>
     public bool EnableInProcessSubscriptionExecution { get; set; }
 
+    private int inProcessSubscriptionMaxAttempts = 1;
+    private int inProcessSubscriptionRetryDelayMilliseconds;
+
+    /// <summary>
+    /// Gets or sets the maximum number of direct in-process execution attempts per matching subscription.
+    /// </summary>
+    /// <remarks>
+    /// The default value of <c>1</c> preserves the no-retry baseline. Values greater than <c>1</c>
+    /// enable a bounded, process-local retry loop; this still does not provide durable broker,
+    /// inbox, or distributed retry guarantees.
+    /// </remarks>
+    public int InProcessSubscriptionMaxAttempts
+    {
+        get => inProcessSubscriptionMaxAttempts;
+        set
+        {
+            if (value < 1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "In-process subscription max attempts must be greater than or equal to 1.");
+            }
+
+            inProcessSubscriptionMaxAttempts = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt.
+    /// </summary>
+    /// <remarks>
+    /// The delay is applied only when <see cref="InProcessSubscriptionMaxAttempts" /> is greater
+    /// than <c>1</c>. The default value of <c>0</c> retries immediately and is useful for tests
+    /// and lightweight process-local remediation paths.
+    /// </remarks>
+    public int InProcessSubscriptionRetryDelayMilliseconds
+    {
+        get => inProcessSubscriptionRetryDelayMilliseconds;
+        set
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "In-process subscription retry delay must be greater than or equal to 0 milliseconds.");
+            }
+
+            inProcessSubscriptionRetryDelayMilliseconds = value;
+        }
+    }
+
     /// <summary>
     /// Gets or sets a value indicating whether the in-process publisher should continue executing
     /// later subscriptions on the same channel after one subscription fails.

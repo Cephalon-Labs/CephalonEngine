@@ -94,6 +94,30 @@ bool EnableSubscriptions { get; set; }
 
 Gets or sets a value indicating whether subscription features are enabled.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionmaxattempts"></a>
+
+##### `InProcessSubscriptionMaxAttempts`
+
+```csharp
+int InProcessSubscriptionMaxAttempts { get; set; }
+```
+
+Gets or sets the maximum number of direct in-process execution attempts per matching subscription.
+
+Remarks: The default value of `1` preserves the no-retry baseline. Values greater than `1` enable a bounded, process-local retry loop; this still does not provide durable broker, inbox, or distributed retry guarantees.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrydelaymilliseconds"></a>
+
+##### `InProcessSubscriptionRetryDelayMilliseconds`
+
+```csharp
+int InProcessSubscriptionRetryDelayMilliseconds { get; set; }
+```
+
+Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt.
+
+Remarks: The delay is applied only when `InProcessSubscriptionMaxAttempts` is greater than `1`. The default value of `0` retries immediately and is useful for tests and lightweight process-local remediation paths.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-subscriptions"></a>
 
 ##### `Subscriptions`

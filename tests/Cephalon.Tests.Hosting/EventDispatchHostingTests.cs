@@ -331,6 +331,105 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonRetriesCoreInProcessEventSubscriptionFailuresWithinConfiguredBound()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+                options.InProcessSubscriptionMaxAttempts = 2;
+                options.InProcessSubscriptionRetryDelayMilliseconds = 0;
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        probe.FailuresRemaining = 1;
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "audit-retry-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-retry-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 04, 29, 10, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-retry-001",
+                tenantId: "tenant-retry-001"));
+        }
+
+        var client = app.GetTestClient();
+        var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(2, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+        Assert.Equal("audit-retry-001", probe.LastMessageId);
+
+        var runtimeState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, runtimeState.LastOutcome);
+        Assert.Equal("audit-retry-001", runtimeState.LastMessageId);
+        Assert.Equal(2, runtimeState.LastAttempt);
+        Assert.Equal(2, runtimeState.StartedCount);
+        Assert.Equal(1, runtimeState.SucceededCount);
+        Assert.Equal(0, runtimeState.FailedCount);
+        Assert.Equal(1, runtimeState.RetryScheduledCount);
+        Assert.False(runtimeState.RetryPending);
+        Assert.Equal("2", runtimeState.Metadata["attempt"]);
+        Assert.Equal("bounded-in-process", runtimeState.Metadata["retryPolicy"]);
+        Assert.Equal("2", runtimeState.Metadata["retryMaxAttempts"]);
+        Assert.Equal("0", runtimeState.Metadata["retryDelayMilliseconds"]);
+        Assert.Equal("none", runtimeState.Metadata["retryDurability"]);
+        Assert.Equal("process-local", runtimeState.Metadata["retryScope"]);
+
+        var binding = Assert.Single(bindingCatalog.Bindings);
+        Assert.Equal("bounded-in-process", binding.Metadata["retryPolicy"]);
+        Assert.Equal("2", binding.Metadata["retryMaxAttempts"]);
+        Assert.Equal("0", binding.Metadata["retryDelayMilliseconds"]);
+
+        Assert.NotNull(capabilities);
+        var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Equal("bounded-in-process", publishCapability.Metadata["retryPolicy"]);
+        Assert.Equal("2", publishCapability.Metadata["retryMaxAttempts"]);
+        var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("bounded-in-process", subscribeCapability.Metadata["retryPolicy"]);
+        Assert.Equal("process-local", subscribeCapability.Metadata["retryScope"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
+        var publisherEntry = Assert.Single(publisherSurface.Entries);
+        Assert.Equal("bounded-in-process", publisherEntry.Metadata["retryPolicy"]);
+        Assert.Equal("2", publisherEntry.Metadata["retryMaxAttempts"]);
+        Assert.Equal("none", publisherEntry.Metadata["retryDurability"]);
+
+        var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var subscriptionEntry = Assert.Single(subscriptionSurface.Entries, entry => entry.Id == "audit-projector");
+        Assert.Equal("bounded-in-process", subscriptionEntry.Metadata["binding.retryPolicy"]);
+        Assert.Equal("2", subscriptionEntry.Metadata["binding.retryMaxAttempts"]);
+        Assert.Equal("succeeded", subscriptionEntry.Metadata["lastOutcome"]);
+        Assert.Equal("2", subscriptionEntry.Metadata["lastAttempt"]);
+        Assert.Equal("1", subscriptionEntry.Metadata["retryScheduledCount"]);
+        Assert.Equal("bounded-in-process", subscriptionEntry.Metadata["reported.retryPolicy"]);
+        Assert.Equal("process-local", subscriptionEntry.Metadata["reported.retryScope"]);
+    }
+
+    [Fact]
     public async Task MapCephalonExecutesCoreInProcessEventSubscriptionsWithoutWolverine()
     {
         var builder = WebApplication.CreateSlimBuilder();

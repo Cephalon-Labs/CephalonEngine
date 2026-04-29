@@ -174,6 +174,9 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
         if (options.EnablePublishing && hasPublishingPath)
         {
+            var inProcessRetryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
+            var inProcessRetryMaxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture);
+            var inProcessRetryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture);
             var publishMetadata = hasInProcessSubscriptionExecutionPath
                 ? new Dictionary<string, string>
                 {
@@ -185,7 +188,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
                     ["publicationDispatcher"] = "available",
-                    ["retryPolicy"] = "none",
+                    ["retryPolicy"] = inProcessRetryPolicy,
+                    ["retryMaxAttempts"] = inProcessRetryMaxAttempts,
+                    ["retryDelayMilliseconds"] = inProcessRetryDelayMilliseconds,
+                    ["retryDurability"] = "none",
+                    ["retryScope"] = "process-local",
                     ["runtimeState"] = "available"
                 }
                 : new Dictionary<string, string>
@@ -224,10 +231,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
         if (options.EnableSubscriptions && hasInProcessSubscriptionExecutionPath)
         {
+            var retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
             capabilities.Add(new Capability(
                 key: "eventing.subscribe",
                 displayName: "Managed Event Subscription Execution",
-                description: "Executes declared event subscriptions through the built-in in-process direct publisher without durable broker, inbox, or retry ownership.",
+                description: "Executes declared event subscriptions through the built-in in-process direct publisher with optional bounded process-local retries and without durable broker or inbox ownership.",
                 metadata: new Dictionary<string, string>
                 {
                     ["technology"] = "event-driven-integration",
@@ -236,7 +244,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["executionMode"] = "in-process-direct",
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
-                    ["retryPolicy"] = "none"
+                    ["retryPolicy"] = retryPolicy,
+                    ["retryMaxAttempts"] = InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture),
+                    ["retryDelayMilliseconds"] = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture),
+                    ["retryDurability"] = "none",
+                    ["retryScope"] = "process-local"
                 }));
         }
 

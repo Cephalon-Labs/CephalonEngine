@@ -11,6 +11,9 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
+        var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
+        var retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
         var channelIds = channels.Channels
             .Select(static channel => channel.Id)
             .OrderBy(static channelId => channelId, StringComparer.OrdinalIgnoreCase)
@@ -41,7 +44,11 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["publicationDispatcher"] = "available",
                         ["executionMode"] = "in-process-direct",
                         ["deliveryMode"] = "direct",
-                        ["retryPolicy"] = "none",
+                        ["retryPolicy"] = retryPolicy,
+                        ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
+                        ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+                        ["retryDurability"] = "none",
+                        ["retryScope"] = "process-local",
                         ["channelCount"] = channelIds.Length.ToString(CultureInfo.InvariantCulture),
                         ["channelIds"] = string.Join(",", channelIds),
                         ["subscriptionExecutorCount"] = subscriptionIds.Length.ToString(CultureInfo.InvariantCulture),
