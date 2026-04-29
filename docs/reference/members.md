@@ -498,7 +498,7 @@ Browse the published API surface by public member.
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-actorid): `Properties` on `KnowledgeIndexingRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional actor that requested indexing.
   - `string ActorId { get; }`
-- [ActorId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryrequest-actorid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional actor that requested the query.
   - `string ActorId { get; }`
 - [ActorType](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-actortype): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
@@ -3996,13 +3996,13 @@ Browse the published API surface by public member.
 - [CollectionId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-collectionid): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The collection identifier represented by this state.
   - `string CollectionId { get; set; }`
-- [CollectionId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-collectionid): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [CollectionId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-collectionid): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The collection identifier that produced the match.
   - `string CollectionId { get; set; }`
-- [CollectionId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryrequest-collectionid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [CollectionId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-collectionid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the collection identifier to query.
   - `string CollectionId { get; }`
-- [CollectionId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryresult-collectionid): `Properties` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [CollectionId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-collectionid): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The collection identifier that was queried.
   - `string CollectionId { get; set; }`
 - [Collections](cephalon-retrieval.md#member-p-cephalon-retrieval-services-iknowledgecatalog-collections): `Properties` on `IKnowledgeCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Collections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
@@ -4908,7 +4908,7 @@ Browse the published API surface by public member.
 - [Contents](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedfile-contents): `Properties` on `RenderedFile` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Contents&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the contents that should be written to the file.
   - `string Contents { get; }`
-- [ContentSnippet](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-contentsnippet): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=ContentSnippet&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [ContentSnippet](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-contentsnippet): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContentSnippet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - A short content snippet around the matched text.
   - `string ContentSnippet { get; set; }`
 - [ContentType](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-contenttype): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ContentType&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
@@ -5214,7 +5214,7 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-correlationid): `Properties` on `KnowledgeIndexingRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional correlation identifier for this indexing attempt.
   - `string CorrelationId { get; }`
-- [CorrelationId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryrequest-correlationid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-correlationid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional correlation identifier for the query.
   - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-correlationid): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -7137,7 +7137,7 @@ Browse the published API surface by public member.
 - [DocumentCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-documentcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=DocumentCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of documents currently stored in the managed index.
   - `int DocumentCount { get; set; }`
-- [DocumentId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-documentid): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=DocumentId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [DocumentId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-documentid): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=DocumentId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The matched document identifier.
   - `string DocumentId { get; set; }`
 - [DocumentName](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-documentname): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=DocumentName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
@@ -11172,7 +11172,7 @@ Browse the published API surface by public member.
 - [HasManualCommandsForAllTargets](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasmanualcommandsforalltargets): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasManualCommandsForAllTargets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether every target in this group publishes a direct or manual command path.
   - `bool HasManualCommandsForAllTargets { get; }`
-- [HasMatches](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryresult-hasmatches): `Properties` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=HasMatches&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [HasMatches](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-hasmatches): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatches&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets a value indicating whether the query returned at least one match.
   - `bool HasMatches { get; }`
 - [HasMatchingAdapterFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystatus-hasmatchingadapterfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMatchingAdapterFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -13911,13 +13911,13 @@ Browse the published API surface by public member.
 - [KnowledgeIndexState](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgeindexstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeIndexState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Describes the latest managed index and query execution state for one knowledge collection.
   - `KnowledgeIndexState(string CollectionId, string LastRunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, DateTimeOffset? LastIndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string FreshnessState, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int QueryCount, DateTimeOffset? LastQueriedAtUtc, string LastQueryFingerprint, int LastQueryLength, int LastQueryMatchedCount, string LastActorId, string LastCorrelationId, string LastError, IReadOnlyDictionary<string, string> Metadata)`
-- [KnowledgeQueryMatch](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgequerymatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeQueryMatch&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [KnowledgeQueryMatch](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgequerymatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeQueryMatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Describes one ranked document match returned by the managed query engine.
   - `KnowledgeQueryMatch(string CollectionId, string DocumentId, string Title, string ContentSnippet, int Score, Uri Uri, IReadOnlyList<string> Tags, DateTimeOffset? LastModifiedAtUtc, IReadOnlyDictionary<string, string> Metadata)`
-- [KnowledgeQueryRequest](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgequeryrequest-ctor-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeQueryRequest&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [KnowledgeQueryRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgequeryrequest-ctor-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeQueryRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Creates a managed retrieval query request.
   - `KnowledgeQueryRequest(string collectionId, string queryText, int? maxResults, string actorId, string correlationId, IReadOnlyDictionary<string, string> metadata)`
-- [KnowledgeQueryResult](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgequeryresult-ctor-system-string-system-string-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-retrieval-services-knowledgequerymatch-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeQueryResult&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [KnowledgeQueryResult](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgequeryresult-ctor-system-string-system-string-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-abstractions-retrieval-knowledgequerymatch-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeQueryResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Describes the result of a managed retrieval query.
   - `KnowledgeQueryResult(string CollectionId, string QueryText, DateTimeOffset QueriedAtUtc, IReadOnlyList<KnowledgeQueryMatch> Matches, int TotalIndexedDocuments, IReadOnlyDictionary<string, string> Metadata)`
 - [KnowledgeRetrieval](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-knowledgeretrieval): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=KnowledgeRetrieval&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
@@ -14274,7 +14274,7 @@ Browse the published API surface by public member.
 - [LastModifiedAtUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgedocument-lastmodifiedatutc): `Properties` on `KnowledgeDocument` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastModifiedAtUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the UTC timestamp when the source document was last modified.
   - `DateTimeOffset? LastModifiedAtUtc { get; }`
-- [LastModifiedAtUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-lastmodifiedatutc): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=LastModifiedAtUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [LastModifiedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-lastmodifiedatutc): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastModifiedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the matched source document was last modified.
   - `DateTimeOffset? LastModifiedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastobservedatutc): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
@@ -15483,7 +15483,7 @@ Browse the published API surface by public member.
 - [MatchedTags](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedtags): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedTags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the included tags that matched the published endpoint.
   - `IReadOnlyList<string> MatchedTags { get; }`
-- [Matches](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryresult-matches): `Properties` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Matches&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Matches](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-matches): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Matches&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The ranked matches returned by the managed query engine.
   - `IReadOnlyList<KnowledgeQueryMatch> Matches { get; set; }`
 - [MatchingAdapterFingerprint](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrycategories-matchingadapterfingerprint): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchingAdapterFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -15714,7 +15714,7 @@ Browse the published API surface by public member.
 - [MaxRestartAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRestartAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum number of manual restarts.
   - `int MaxRestartAttempts { get; }`
-- [MaxResults](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryrequest-maxresults): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=MaxResults&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [MaxResults](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-maxresults): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxResults&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional maximum number of matches to return.
   - `int? MaxResults { get; }`
 - [MaxRetryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxretrycount): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxRetryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
@@ -16128,13 +16128,13 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-metadata): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Optional operator-facing metadata captured with the latest indexing observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
-- [Metadata](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-metadata): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-metadata): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The operator-facing metadata attached to the matched document.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
-- [Metadata](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryrequest-metadata): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-metadata): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets optional request metadata used by provider-specific query engines.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
-- [Metadata](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryresult-metadata): `Properties` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-metadata): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Optional operator-facing metadata captured with the query result.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-metadata): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
@@ -20409,7 +20409,7 @@ Browse the published API surface by public member.
 
 ## Q
 
-- [QueriedAtUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryresult-queriedatutc): `Properties` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueriedAtUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [QueriedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-queriedatutc): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueriedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the query executed.
   - `DateTimeOffset QueriedAtUtc { get; set; }`
 - [Query](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointbindingsource-query): `Fields` on `RestEndpointBindingSource` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Query&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
@@ -20421,16 +20421,16 @@ Browse the published API surface by public member.
 - [QueryAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproduct-1-queryasync-system-threading-cancellationtoken): `Methods` on `IDataProduct<T>` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Queries the current value of the data product.
   - `ValueTask<T> QueryAsync(CancellationToken cancellationToken)`
-- [QueryAsync](cephalon-retrieval.md#member-m-cephalon-retrieval-services-iknowledgequeryengine-queryasync-cephalon-retrieval-services-knowledgequeryrequest-system-threading-cancellationtoken): `Methods` on `IKnowledgeQueryEngine` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [QueryAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-iknowledgequeryengine-queryasync-cephalon-abstractions-retrieval-knowledgequeryrequest-system-threading-cancellationtoken): `Methods` on `IKnowledgeQueryEngine` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Queries the active managed index for a collection.
   - `ValueTask<KnowledgeQueryResult> QueryAsync(KnowledgeQueryRequest request, CancellationToken cancellationToken)`
 - [QueryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-querycount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of managed queries executed against this collection.
   - `int QueryCount { get; set; }`
-- [QueryText](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryrequest-querytext): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryText&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [QueryText](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-querytext): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryText&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the text to search for.
   - `string QueryText { get; }`
-- [QueryText](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryresult-querytext): `Properties` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryText&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [QueryText](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-querytext): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryText&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The query text supplied by the caller.
   - `string QueryText { get; set; }`
 - [QueueLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-queuelimit): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueueLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
@@ -23382,7 +23382,7 @@ Browse the published API surface by public member.
 - [ScopeId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-scopeid): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScopeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable scope identifier.
   - `string ScopeId { get; }`
-- [Score](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-score): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Score&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Score](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-score): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Score&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The lexical relevance score assigned by the managed query engine.
   - `int Score { get; set; }`
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-hosting-apiroutesoptions-sectionname): `Fields` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
@@ -25312,7 +25312,7 @@ Browse the published API surface by public member.
 - [Tags](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgedocument-tags): `Properties` on `KnowledgeDocument` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Tags&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the normalized tags that classify the document.
   - `IReadOnlyList<string> Tags { get; }`
-- [Tags](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-tags): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Tags&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-tags): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The normalized tags attached to the matched document.
   - `IReadOnlyList<string> Tags { get; set; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-tags): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
@@ -25990,7 +25990,7 @@ Browse the published API surface by public member.
 - [Title](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgedocument-title): `Properties` on `KnowledgeDocument` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Title&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the human-readable document title.
   - `string Title { get; }`
-- [Title](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-title): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Title&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Title](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-title): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Title&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The matched document title.
   - `string Title { get; set; }`
 - [Title](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-title): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Title&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
@@ -26071,7 +26071,7 @@ Browse the published API surface by public member.
 - [TotalCount](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-totalcount): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the total number of matching entries before paging was applied.
   - `int TotalCount { get; }`
-- [TotalIndexedDocuments](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequeryresult-totalindexeddocuments): `Properties` on `KnowledgeQueryResult` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=TotalIndexedDocuments&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [TotalIndexedDocuments](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-totalindexeddocuments): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalIndexedDocuments&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of indexed documents available at query time.
   - `int TotalIndexedDocuments { get; set; }`
 - [TotalIndexRuns](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-totalindexruns): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalIndexRuns&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
@@ -26689,7 +26689,7 @@ Browse the published API surface by public member.
 - [Uri](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgedocument-uri): `Properties` on `KnowledgeDocument` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Uri&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets an optional document URI for operator drill-down.
   - `Uri Uri { get; }`
-- [Uri](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgequerymatch-uri): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Uri&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [Uri](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-uri): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Uri&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The optional source document URI.
   - `Uri Uri { get; set; }`
 - [Uri](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-uri): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Uri&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)

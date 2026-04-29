@@ -1,4 +1,5 @@
 using Cephalon.Retrieval.Configuration;
+using Cephalon.Abstractions.Retrieval;
 using System.Globalization;
 
 namespace Cephalon.Retrieval.Services;
@@ -39,13 +40,20 @@ internal sealed class KnowledgeQueryEngine(
             .Take(limit)
             .ToArray();
 
-        runtimeCatalog.RecordQuery(request, matches.Length, queriedAtUtc);
-
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["queryLimit"] = limit.ToString(CultureInfo.InvariantCulture),
             ["totalIndexedDocuments"] = documents.Count.ToString(CultureInfo.InvariantCulture)
         };
+        foreach (var pair in request.Metadata)
+        {
+            if (!string.IsNullOrWhiteSpace(pair.Key))
+            {
+                metadata[pair.Key.Trim()] = pair.Value;
+            }
+        }
+
+        runtimeCatalog.RecordQuery(request, matches.Length, queriedAtUtc, metadata);
 
         return ValueTask.FromResult(new KnowledgeQueryResult(
             request.CollectionId,

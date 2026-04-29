@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, eventing bounded in-process idempotency proof, eventing publication runtime-state proof, Wolverine bounded subscription retry proof, Wolverine bounded dispatch terminal-failure proof, Wolverine dispatch publish-exception proof, first-class event-dispatch terminal-failure operator posture, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, agentics bounded process-local retry proof, agentics process-local duplicate-completed idempotency proof, agentics approval-required and terminal-failure operator posture, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, eventing bounded in-process idempotency proof, eventing publication runtime-state proof, Wolverine bounded subscription retry proof, Wolverine bounded dispatch terminal-failure proof, Wolverine dispatch publish-exception proof, first-class event-dispatch terminal-failure operator posture, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, agentics bounded process-local retry proof, agentics process-local duplicate-completed idempotency proof, agentics approval-required and terminal-failure operator posture, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval query operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
@@ -19,7 +19,7 @@ Current focus:
 - treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, abstraction-level publication dispatcher, abstraction-level publication runtime-state catalog, abstraction-level dispatch-state/summary terminal posture, `/engine/event-subscription-readiness`, `POST /engine/event-publications`, `/engine/event-publications/runtime*`, `/engine/event-dispatches/terminal-failures`, `snapshot.EventSubscriptionExecutionReadiness`, `snapshot.EventPublicationStates`, `snapshot.EventDispatchStates`, the opt-in direct in-process execution lane, bounded process-local retry metadata, and bounded process-local duplicate-completed execution suppression metadata as adapter-neutral engine-owned proof, while the Wolverine-managed dispatch and event-subscription lanes remain optional provider-managed proofs instead of engine requirements
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
-- treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
+- treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
 - keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-agnostic invitation delivery status reconciliation over provider or receiver observations, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving and the fail-closed tenant-administration command endpoint; distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, provider-specific delivery-status callback endpoints or provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 
 ### ENG-230 Engine surface maturity model and audit baseline
@@ -100,7 +100,7 @@ Delivered:
 
 Follow-up later:
 
-- vector databases, embedding pipelines, durable or distributed indexes, rerankers, provider-specific semantic search, and distributed scheduler coordination remain future work until a package owns those paths explicitly; manual operator reindexing later shipped in `ENG-268` and opt-in in-process background reindexing later shipped in `ENG-270`
+- vector databases, embedding pipelines, durable or distributed indexes, rerankers, provider-specific semantic search, and distributed scheduler coordination remain future work until a package owns those paths explicitly; manual operator reindexing later shipped in `ENG-268`, opt-in in-process background reindexing later shipped in `ENG-270`, and the bounded query operator action later shipped in `ENG-283`
 
 ### ENG-234 Multi-tenancy governance, membership, and domain workflow companion split
 
@@ -863,7 +863,7 @@ Follow-up later:
 - vector databases, embedding pipelines, durable or distributed indexes, rerankers,
   provider-specific semantic search, and distributed scheduler coordination remain future
   work until a package truly owns those paths; opt-in in-process background reindexing later
-  shipped in `ENG-270`
+  shipped in `ENG-270`, and the bounded query operator action later shipped in `ENG-283`
 
 ### ENG-268 Retrieval reindex operator-action baseline
 
@@ -1356,6 +1356,40 @@ Follow-up later:
   exactly-once delivery, autonomous planning, memory persistence, distributed scheduling,
   provider-specific AI orchestration, and broader agent operator workflows remain future
   package-owned work until a package truly owns those paths
+
+### ENG-283 Retrieval query operator action seam
+
+Status: done
+Estimate: 3
+Issue: #792
+
+Why:
+
+- after `ENG-267`, `ENG-268`, and `ENG-270`, operators could read, remediate, and schedule retrieval
+  indexes, but a host adapter still could not execute one bounded query without referencing the
+  retrieval implementation package
+- the smallest honest action proof is a host-agnostic query request/result contract plus an ASP.NET
+  Core route over the existing managed lexical query engine, not a vector database, embedding
+  pipeline, reranker, durable search cluster, or semantic provider adapter claim
+
+Delivered:
+
+- promote `IKnowledgeQueryEngine`, `KnowledgeQueryRequest`, `KnowledgeQueryResult`, and
+  `KnowledgeQueryMatch` to `Cephalon.Abstractions.Retrieval`
+- keep `Cephalon.Retrieval` as the implementation owner for bounded lexical query execution, query
+  result ranking, and runtime query observations
+- add `POST /engine/knowledge-indexes/{collectionId}/queries` with safe actor, correlation, trigger,
+  route, and metadata flow into the same index-state catalog while runtime introspection records
+  query fingerprint and length instead of raw query text
+- prove the successful query route, missing-collection `404`, invalid-query `400`, package-surface,
+  and docs alignment paths through focused hosting/composition/tooling coverage
+
+Follow-up later:
+
+- vector databases, embedding pipelines, durable or distributed indexes, rerankers,
+  provider-specific semantic search, distributed scheduler coordination, leader election, and
+  multi-node freshness or search orchestration remain later package-owned work until a package truly
+  owns those paths
 
 ## Completed foundation work
 
@@ -9284,6 +9318,26 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 90
 
 - ENG-278 Wolverine dispatch publish-exception terminal proof (shipped, issue #787)
+
+### Sprint 91
+
+- ENG-279 First-class event-dispatch terminal-failure runtime posture (shipped, issue #788)
+
+### Sprint 92
+
+- ENG-280 Agentics bounded in-process retry posture (shipped, issue #789)
+
+### Sprint 93
+
+- ENG-281 Agentics process-local duplicate-run idempotency posture (shipped, issue #790)
+
+### Sprint 94
+
+- ENG-282 Agentics approval-required and terminal-failure operator posture (shipped, issue #791)
+
+### Sprint 95
+
+- ENG-283 Retrieval query operator action seam (shipped, issue #792)
 
 ### Later / not scheduled yet
 

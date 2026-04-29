@@ -217,9 +217,11 @@ internal sealed class KnowledgeRuntimeCatalog(RetrievalOptions options) : IKnowl
     internal void RecordQuery(
         KnowledgeQueryRequest request,
         int matchedCount,
-        DateTimeOffset queriedAtUtc)
+        DateTimeOffset queriedAtUtc,
+        IReadOnlyDictionary<string, string> metadata)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(metadata);
 
         lock (gate)
         {
@@ -230,7 +232,10 @@ internal sealed class KnowledgeRuntimeCatalog(RetrievalOptions options) : IKnowl
                 LastQueriedAtUtc = queriedAtUtc,
                 LastQueryFingerprint = CreateQueryFingerprint(request.QueryText),
                 LastQueryLength = request.QueryText.Length,
-                LastQueryMatchedCount = matchedCount
+                LastQueryMatchedCount = matchedCount,
+                LastActorId = request.ActorId,
+                LastCorrelationId = request.CorrelationId,
+                Metadata = metadata
             };
         }
     }

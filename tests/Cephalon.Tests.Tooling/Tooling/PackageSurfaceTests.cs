@@ -71,11 +71,15 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Agentics.IAgentToolRunCatalog),
             typeof(global::Cephalon.Abstractions.Retrieval.IKnowledgeIndexCatalog),
             typeof(global::Cephalon.Abstractions.Retrieval.IKnowledgeIndexer),
+            typeof(global::Cephalon.Abstractions.Retrieval.IKnowledgeQueryEngine),
             typeof(global::Cephalon.Abstractions.Retrieval.KnowledgeIndexFreshnessStates),
             typeof(global::Cephalon.Abstractions.Retrieval.KnowledgeIndexingOutcomes),
             typeof(global::Cephalon.Abstractions.Retrieval.KnowledgeIndexingRequest),
             typeof(global::Cephalon.Abstractions.Retrieval.KnowledgeIndexingResult),
             typeof(global::Cephalon.Abstractions.Retrieval.KnowledgeIndexState),
+            typeof(global::Cephalon.Abstractions.Retrieval.KnowledgeQueryMatch),
+            typeof(global::Cephalon.Abstractions.Retrieval.KnowledgeQueryRequest),
+            typeof(global::Cephalon.Abstractions.Retrieval.KnowledgeQueryResult),
             typeof(global::Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionContext),
             typeof(global::Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionHandling),
             typeof(global::Cephalon.Abstractions.Resilience.BehaviorExecutionResilienceSelection),
@@ -1110,13 +1114,9 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Retrieval.Services.IKnowledgeCollectionContributor),
             typeof(global::Cephalon.Retrieval.Services.IKnowledgeCollectionRegistry),
             typeof(global::Cephalon.Retrieval.Services.IKnowledgeDocumentProvider),
-            typeof(global::Cephalon.Retrieval.Services.IKnowledgeQueryEngine),
             typeof(global::Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor),
             typeof(global::Cephalon.Retrieval.Services.KnowledgeDocument),
-            typeof(global::Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext),
-            typeof(global::Cephalon.Retrieval.Services.KnowledgeQueryMatch),
-            typeof(global::Cephalon.Retrieval.Services.KnowledgeQueryRequest),
-            typeof(global::Cephalon.Retrieval.Services.KnowledgeQueryResult));
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext));
     }
 
     [Fact]

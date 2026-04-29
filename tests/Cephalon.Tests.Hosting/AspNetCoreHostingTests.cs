@@ -2250,6 +2250,33 @@ public sealed class AspNetCoreHostingTests
         var missingReindex = await client.PostAsync(
             "/engine/knowledge-indexes/missing/reindex?runId=hosting-retrieval-reindex-missing-001",
             null);
+        var queryResponse = await client.PostAsJsonAsync(
+            "/engine/knowledge-indexes/runbooks/queries",
+            new
+            {
+                queryText = "retrieval freshness",
+                maxResults = 1,
+                actorId = "hosting-query-operator",
+                correlationId = "corr-hosting-retrieval-query-route-001",
+                metadata = new Dictionary<string, string>
+                {
+                    ["purpose"] = "operator-query-test"
+                }
+            });
+        var queryResult = await queryResponse.Content.ReadFromJsonAsync<KnowledgeQueryResult>();
+        var queriedRunbooksIndex = await client.GetFromJsonAsync<KnowledgeIndexState>("/engine/knowledge-indexes/runbooks");
+        var missingQuery = await client.PostAsJsonAsync(
+            "/engine/knowledge-indexes/missing/queries",
+            new
+            {
+                queryText = "retrieval freshness"
+            });
+        var invalidQuery = await client.PostAsJsonAsync(
+            "/engine/knowledge-indexes/runbooks/queries",
+            new
+            {
+                queryText = string.Empty
+            });
 
         Assert.NotNull(manifest);
         Assert.Equal("modular-vertical-slice", manifest.AppProfile.BlueprintId);
@@ -2286,6 +2313,31 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("corr-hosting-retrieval-reindex-001", reindexedRunbooksIndex.LastCorrelationId);
         Assert.Equal(2, reindexedRunbooksIndex.SucceededCount);
         Assert.Equal(HttpStatusCode.NotFound, missingReindex.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, queryResponse.StatusCode);
+        Assert.NotNull(queryResult);
+        Assert.Equal("runbooks", queryResult.CollectionId);
+        Assert.Equal("retrieval freshness", queryResult.QueryText);
+        Assert.True(queryResult.HasMatches);
+        Assert.Single(queryResult.Matches);
+        Assert.Equal("runbook.retrieval-freshness", queryResult.Matches[0].DocumentId);
+        Assert.Equal(2, queryResult.TotalIndexedDocuments);
+        Assert.Equal("1", queryResult.Metadata["queryLimit"]);
+        Assert.Equal("2", queryResult.Metadata["totalIndexedDocuments"]);
+        Assert.Equal("aspnetcore-operator-route", queryResult.Metadata["trigger"]);
+        Assert.Equal("/engine/knowledge-indexes/{collectionId}/queries", queryResult.Metadata["route"]);
+        Assert.Equal("operator-query-test", queryResult.Metadata["purpose"]);
+        Assert.NotNull(queriedRunbooksIndex);
+        Assert.Equal(2, queriedRunbooksIndex.QueryCount);
+        Assert.Equal("hosting-query-operator", queriedRunbooksIndex.LastActorId);
+        Assert.Equal("corr-hosting-retrieval-query-route-001", queriedRunbooksIndex.LastCorrelationId);
+        Assert.Equal("aspnetcore-operator-route", queriedRunbooksIndex.Metadata["trigger"]);
+        Assert.Equal("/engine/knowledge-indexes/{collectionId}/queries", queriedRunbooksIndex.Metadata["route"]);
+        Assert.Equal("operator-query-test", queriedRunbooksIndex.Metadata["purpose"]);
+        Assert.NotNull(queriedRunbooksIndex.LastQueryFingerprint);
+        Assert.Equal("retrieval freshness".Length, queriedRunbooksIndex.LastQueryLength);
+        Assert.Equal(1, queriedRunbooksIndex.LastQueryMatchedCount);
+        Assert.Equal(HttpStatusCode.NotFound, missingQuery.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, invalidQuery.StatusCode);
 
         var agentics = Assert.Single(surfaces, surface => surface.TechnologyId == "agentic-workloads");
         Assert.Contains(agentics.Entries, entry => entry.Id == "planner");

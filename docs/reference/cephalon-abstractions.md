@@ -59144,6 +59144,35 @@ Parameters:
 - `request`: The indexing request to execute.
 - `cancellationToken`: A token that can cancel the indexing run.
 
+<a id="type-cephalon-abstractions-retrieval-iknowledgequeryengine"></a>
+
+### `IKnowledgeQueryEngine`
+
+Executes managed retrieval queries over indexed knowledge documents.
+
+#### Declaration
+```csharp
+public interface IKnowledgeQueryEngine
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-retrieval-iknowledgequeryengine-queryasync-cephalon-abstractions-retrieval-knowledgequeryrequest-system-threading-cancellationtoken"></a>
+
+##### `QueryAsync`
+
+```csharp
+ValueTask<KnowledgeQueryResult> QueryAsync(KnowledgeQueryRequest request, CancellationToken cancellationToken)
+```
+
+Queries the active managed index for a collection.
+
+Returns: The query result, including any ranked matches found in the current index.
+
+Parameters:
+- `request`: The query request to execute.
+- `cancellationToken`: A token that can cancel the query execution.
+
 <a id="type-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates"></a>
 
 ### `KnowledgeIndexFreshnessStates`
@@ -59746,6 +59775,328 @@ int TotalIndexRuns { get; }
 ```
 
 Gets the total number of indexing observations recorded for this collection.
+
+<a id="type-cephalon-abstractions-retrieval-knowledgequerymatch"></a>
+
+### `KnowledgeQueryMatch`
+
+Describes one ranked document match returned by the managed query engine.
+
+#### Declaration
+```csharp
+public sealed class KnowledgeQueryMatch
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-retrieval-knowledgequerymatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `KnowledgeQueryMatch`
+
+```csharp
+KnowledgeQueryMatch(string CollectionId, string DocumentId, string Title, string ContentSnippet, int Score, Uri Uri, IReadOnlyList<string> Tags, DateTimeOffset? LastModifiedAtUtc, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes one ranked document match returned by the managed query engine.
+
+Parameters:
+- `CollectionId`: The collection identifier that produced the match.
+- `DocumentId`: The matched document identifier.
+- `Title`: The matched document title.
+- `ContentSnippet`: A short content snippet around the matched text.
+- `Score`: The lexical relevance score assigned by the managed query engine.
+- `Uri`: The optional source document URI.
+- `Tags`: The normalized tags attached to the matched document.
+- `LastModifiedAtUtc`: The UTC timestamp when the matched source document was last modified.
+- `Metadata`: The operator-facing metadata attached to the matched document.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-collectionid"></a>
+
+##### `CollectionId`
+
+```csharp
+string CollectionId { get; set; }
+```
+
+The collection identifier that produced the match.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-contentsnippet"></a>
+
+##### `ContentSnippet`
+
+```csharp
+string ContentSnippet { get; set; }
+```
+
+A short content snippet around the matched text.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-documentid"></a>
+
+##### `DocumentId`
+
+```csharp
+string DocumentId { get; set; }
+```
+
+The matched document identifier.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-lastmodifiedatutc"></a>
+
+##### `LastModifiedAtUtc`
+
+```csharp
+DateTimeOffset? LastModifiedAtUtc { get; set; }
+```
+
+The UTC timestamp when the matched source document was last modified.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+The operator-facing metadata attached to the matched document.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-score"></a>
+
+##### `Score`
+
+```csharp
+int Score { get; set; }
+```
+
+The lexical relevance score assigned by the managed query engine.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; set; }
+```
+
+The normalized tags attached to the matched document.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-title"></a>
+
+##### `Title`
+
+```csharp
+string Title { get; set; }
+```
+
+The matched document title.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequerymatch-uri"></a>
+
+##### `Uri`
+
+```csharp
+Uri Uri { get; set; }
+```
+
+The optional source document URI.
+
+<a id="type-cephalon-abstractions-retrieval-knowledgequeryrequest"></a>
+
+### `KnowledgeQueryRequest`
+
+Describes a managed retrieval query request for one knowledge collection.
+
+#### Declaration
+```csharp
+public sealed class KnowledgeQueryRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-retrieval-knowledgequeryrequest-ctor-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `KnowledgeQueryRequest`
+
+```csharp
+KnowledgeQueryRequest(string collectionId, string queryText, int? maxResults, string actorId, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a managed retrieval query request.
+
+Parameters:
+- `collectionId`: The collection identifier to query.
+- `queryText`: The text to search for.
+- `maxResults`: The optional maximum number of matches to return. When omitted, the runtime default is used.
+- `actorId`: The optional actor that requested the query.
+- `correlationId`: The optional correlation identifier for the query.
+- `metadata`: Optional request metadata used by provider-specific query engines.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; }
+```
+
+Gets the optional actor that requested the query.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-collectionid"></a>
+
+##### `CollectionId`
+
+```csharp
+string CollectionId { get; }
+```
+
+Gets the collection identifier to query.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the query.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-maxresults"></a>
+
+##### `MaxResults`
+
+```csharp
+int? MaxResults { get; }
+```
+
+Gets the optional maximum number of matches to return.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional request metadata used by provider-specific query engines.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-querytext"></a>
+
+##### `QueryText`
+
+```csharp
+string QueryText { get; }
+```
+
+Gets the text to search for.
+
+<a id="type-cephalon-abstractions-retrieval-knowledgequeryresult"></a>
+
+### `KnowledgeQueryResult`
+
+Describes the result of a managed retrieval query.
+
+#### Declaration
+```csharp
+public sealed class KnowledgeQueryResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-retrieval-knowledgequeryresult-ctor-system-string-system-string-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-abstractions-retrieval-knowledgequerymatch-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `KnowledgeQueryResult`
+
+```csharp
+KnowledgeQueryResult(string CollectionId, string QueryText, DateTimeOffset QueriedAtUtc, IReadOnlyList<KnowledgeQueryMatch> Matches, int TotalIndexedDocuments, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the result of a managed retrieval query.
+
+Parameters:
+- `CollectionId`: The collection identifier that was queried.
+- `QueryText`: The query text supplied by the caller.
+- `QueriedAtUtc`: The UTC timestamp when the query executed.
+- `Matches`: The ranked matches returned by the managed query engine.
+- `TotalIndexedDocuments`: The number of indexed documents available at query time.
+- `Metadata`: Optional operator-facing metadata captured with the query result.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryresult-collectionid"></a>
+
+##### `CollectionId`
+
+```csharp
+string CollectionId { get; set; }
+```
+
+The collection identifier that was queried.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryresult-hasmatches"></a>
+
+##### `HasMatches`
+
+```csharp
+bool HasMatches { get; }
+```
+
+Gets a value indicating whether the query returned at least one match.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryresult-matches"></a>
+
+##### `Matches`
+
+```csharp
+IReadOnlyList<KnowledgeQueryMatch> Matches { get; set; }
+```
+
+The ranked matches returned by the managed query engine.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Optional operator-facing metadata captured with the query result.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryresult-queriedatutc"></a>
+
+##### `QueriedAtUtc`
+
+```csharp
+DateTimeOffset QueriedAtUtc { get; set; }
+```
+
+The UTC timestamp when the query executed.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryresult-querytext"></a>
+
+##### `QueryText`
+
+```csharp
+string QueryText { get; set; }
+```
+
+The query text supplied by the caller.
+
+<a id="member-p-cephalon-abstractions-retrieval-knowledgequeryresult-totalindexeddocuments"></a>
+
+##### `TotalIndexedDocuments`
+
+```csharp
+int TotalIndexedDocuments { get; set; }
+```
+
+The number of indexed documents available at query time.
 
 <a id="namespace-cephalon-abstractions-technologies"></a>
 

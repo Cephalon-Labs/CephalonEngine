@@ -39,7 +39,7 @@
 - `/engine/event-publications/runtime` when eventing packs register the abstraction-level publication runtime-state catalog
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
 - `/engine/agent-tool-runs` and `POST /engine/agent-tools/{toolId}/runs` when agentics packs register the abstraction-level agent-tool run-state catalog and dispatcher action seam
-- `/engine/knowledge-indexes` and `POST /engine/knowledge-indexes/{collectionId}/reindex` when retrieval packs register the abstraction-level knowledge-index catalog and indexer command seam
+- `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, and `POST /engine/knowledge-indexes/{collectionId}/reindex` when retrieval packs register the abstraction-level knowledge-index catalog, query command seam, and indexer command seam
 - `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
 - `/health`, `/health/live`, and `/health/ready` surfaces
 - opt-in HTTP request/response logging with bounded request and response body capture plus default sensitive-value redaction under `Engine:Observability:HttpLogging`
@@ -521,13 +521,15 @@ correlation id, attempt, string arguments, and metadata, then records safe route
 the returned run. That keeps host adapters able to publish and trigger agent-tool runtime truth
 without depending on `Cephalon.Agentics` implementation types.
 
-The host now also exposes additive retrieval index-state answers and a manual reindex action
-directly. When a selected retrieval pack registers `IKnowledgeIndexCatalog` and `IKnowledgeIndexer`,
-`/engine/knowledge-indexes`, `/engine/knowledge-indexes/{collectionId}`, and
-`POST /engine/knowledge-indexes/{collectionId}/reindex` publish or refresh the latest managed index
-and query posture from abstraction-level contracts, while `/engine/snapshot` carries the same entries
-through `KnowledgeIndexes`. That keeps host adapters able to publish and remediate knowledge-index
-runtime truth without depending on `Cephalon.Retrieval` implementation types.
+The host now also exposes additive retrieval index-state answers, bounded query execution, and a
+manual reindex action directly. When a selected retrieval pack registers `IKnowledgeIndexCatalog`,
+`IKnowledgeQueryEngine`, and `IKnowledgeIndexer`, `/engine/knowledge-indexes`,
+`/engine/knowledge-indexes/{collectionId}`, `POST /engine/knowledge-indexes/{collectionId}/queries`,
+and `POST /engine/knowledge-indexes/{collectionId}/reindex` publish, query, or refresh the latest
+managed index and query posture from abstraction-level contracts, while `/engine/snapshot` carries
+the same entries through `KnowledgeIndexes`. That keeps host adapters able to publish, query, and
+remediate knowledge-index runtime truth without depending on `Cephalon.Retrieval` implementation
+types.
 
 ## Related docs
 

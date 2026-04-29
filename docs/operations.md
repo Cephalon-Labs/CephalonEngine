@@ -1723,6 +1723,8 @@ Current note:
 retrieval indexes when a retrieval pack registers the abstraction-level `IKnowledgeIndexCatalog`.
 `POST /engine/knowledge-indexes/{collectionId}/reindex` requests a manual reindex when the active
 runtime also registers the abstraction-level `IKnowledgeIndexer`.
+`POST /engine/knowledge-indexes/{collectionId}/queries` executes one bounded operator query when the
+active runtime also registers the abstraction-level `IKnowledgeQueryEngine`.
 
 Current payload highlights:
 
@@ -1736,6 +1738,10 @@ Current payload highlights:
   `correlationId` query values, generates safe defaults when they are absent, returns the
   `KnowledgeIndexingResult` for the replacement run, and returns `404` when indexing is not active
   or the collection is not registered
+- `POST /engine/knowledge-indexes/{collectionId}/queries` accepts a JSON body with `queryText`,
+  optional `maxResults`, `actorId`, `correlationId`, and safe metadata, returns the
+  `KnowledgeQueryResult` for the current index, returns `404` when querying is not active or the
+  collection is not registered, and returns `400` when the query request is invalid
 - opt-in background reindexing uses the same catalog and indexer path, records
   `trigger = retrieval-background-scheduler`, `scheduler`, `schedulerIterationId`, collection
   scope, startup-run, delay, and interval metadata, and never introduces a separate scheduler route
@@ -1744,10 +1750,11 @@ Current payload highlights:
 
 Current note:
 
-- the read contract and manual reindex command seam live in `Cephalon.Abstractions.Retrieval` so
-  `Cephalon.Engine` and host adapters can expose and remediate index posture without taking a direct
-  dependency on `Cephalon.Retrieval` implementation types
-- the indexer implementation and query write path remain owned by the selected retrieval pack
+- the read contract, manual reindex command seam, and bounded query command seam live in
+  `Cephalon.Abstractions.Retrieval` so `Cephalon.Engine` and host adapters can expose, query, and
+  remediate index posture without taking a direct dependency on `Cephalon.Retrieval`
+  implementation types
+- the indexer implementation and query execution path remain owned by the selected retrieval pack
   through `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and registered
   `IKnowledgeDocumentProvider` services
 - `RetrievalOptions.EnableBackgroundReindexing` registers an opt-in generic-host scheduler only
@@ -1849,6 +1856,10 @@ Current `Cephalon.Retrieval` highlights:
 - operators can now request a bounded manual reindex through
   `POST /engine/knowledge-indexes/{collectionId}/reindex`; the route records the supplied or
   generated run id, actor, correlation id, and safe trigger metadata on the same index-state answer
+- operators can now request one bounded lexical query through
+  `POST /engine/knowledge-indexes/{collectionId}/queries`; the route returns a
+  `KnowledgeQueryResult` to the caller and records actor, correlation id, safe metadata, trigger,
+  route, query fingerprint, query length, and match count on the same index-state answer
 - `lastQueryFingerprint` and `lastQueryLength` are reported instead of raw query text so operator introspection can correlate activity without leaking user prompts or private search terms
 - this is a Cephalon-managed lexical in-process baseline with opt-in in-process freshness scheduling; vector search, embeddings, durable search storage, distributed indexes, rerankers, provider-specific search engines, distributed scheduler coordination, and leader-election semantics stay outside the current compatibility promise until a package owns them explicitly
 

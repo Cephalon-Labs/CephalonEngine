@@ -2657,6 +2657,47 @@ public static class EngineWebApplicationExtensions
             })
             .WithName("GetCephalonKnowledgeIndex");
         engineGroup.MapPost(
+                "/knowledge-indexes/{collectionId}/queries",
+                async (
+                    string collectionId,
+                    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] KnowledgeQueryHttpRequest? request,
+                    HttpContext httpContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    var queryEngine = httpContext.RequestServices.GetService<IKnowledgeQueryEngine>();
+                    if (queryEngine is null)
+                    {
+                        return Results.NotFound(new
+                        {
+                            error = "Knowledge querying is not available in the active runtime."
+                        });
+                    }
+
+                    try
+                    {
+                        var queryRequest = CreateKnowledgeQueryRequest(collectionId, request, httpContext);
+                        var result = await queryEngine.QueryAsync(queryRequest, cancellationToken).ConfigureAwait(false);
+                        return Results.Ok(result);
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        return Results.BadRequest(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                        when (IsUnregisteredKnowledgeCollection(exception))
+                    {
+                        return Results.NotFound(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                    {
+                        return Results.Problem(
+                            title: "Knowledge query failed.",
+                            detail: exception.Message,
+                            statusCode: StatusCodes.Status500InternalServerError);
+                    }
+                })
+            .WithName("QueryCephalonKnowledgeIndex");
+        engineGroup.MapPost(
                 "/knowledge-indexes/{collectionId}/reindex",
                 async (
                     string collectionId,
@@ -2680,7 +2721,7 @@ public static class EngineWebApplicationExtensions
                         var request = new KnowledgeIndexingRequest(
                             collectionId,
                             string.IsNullOrWhiteSpace(runId) ? CreateKnowledgeReindexRunId() : runId,
-                            ResolveKnowledgeReindexActorId(httpContext, actorId),
+                            ResolveKnowledgeOperatorActorId(httpContext, actorId),
                             string.IsNullOrWhiteSpace(correlationId) ? httpContext.TraceIdentifier : correlationId,
                             metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                             {
@@ -3542,7 +3583,40 @@ public static class EngineWebApplicationExtensions
             $"aspnetcore-reindex-{DateTimeOffset.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid():N}");
     }
 
-    private static string? ResolveKnowledgeReindexActorId(HttpContext httpContext, string? actorId)
+    private static KnowledgeQueryRequest CreateKnowledgeQueryRequest(
+        string collectionId,
+        KnowledgeQueryHttpRequest? request,
+        HttpContext httpContext)
+    {
+        var metadata = CopyKnowledgeQueryMetadata(request?.Metadata);
+        metadata["trigger"] = "aspnetcore-operator-route";
+        metadata["route"] = "/engine/knowledge-indexes/{collectionId}/queries";
+
+        return new KnowledgeQueryRequest(
+            collectionId,
+            request?.QueryText ?? string.Empty,
+            request?.MaxResults,
+            ResolveKnowledgeOperatorActorId(httpContext, request?.ActorId),
+            string.IsNullOrWhiteSpace(request?.CorrelationId) ? httpContext.TraceIdentifier : request.CorrelationId,
+            metadata);
+    }
+
+    private static Dictionary<string, string> CopyKnowledgeQueryMetadata(IReadOnlyDictionary<string, string>? metadata)
+    {
+        if (metadata is null)
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        return metadata
+            .Where(static pair => !string.IsNullOrWhiteSpace(pair.Key))
+            .ToDictionary(
+                static pair => pair.Key.Trim(),
+                static pair => pair.Value,
+                StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string? ResolveKnowledgeOperatorActorId(HttpContext httpContext, string? actorId)
     {
         if (!string.IsNullOrWhiteSpace(actorId))
         {
@@ -3596,6 +3670,19 @@ public static class EngineWebApplicationExtensions
         public string? CorrelationId { get; init; }
 
         public int? Attempt { get; init; }
+
+        public IReadOnlyDictionary<string, string>? Metadata { get; init; }
+    }
+
+    private sealed class KnowledgeQueryHttpRequest
+    {
+        public string? QueryText { get; init; }
+
+        public int? MaxResults { get; init; }
+
+        public string? ActorId { get; init; }
+
+        public string? CorrelationId { get; init; }
 
         public IReadOnlyDictionary<string, string>? Metadata { get; init; }
     }

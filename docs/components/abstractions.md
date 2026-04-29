@@ -7,7 +7,7 @@
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - agentics read and operator-action contracts such as `AgentToolExecutionOutcomes`, `AgentToolExecutionRequest`, `AgentToolExecutionResult`, `AgentToolRunState`, `IAgentToolDispatcher`, and `IAgentToolRunCatalog`
-- retrieval read and operator-action contracts such as `KnowledgeIndexState`, `KnowledgeIndexFreshnessStates`, `KnowledgeIndexingOutcomes`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, `KnowledgeIndexingRequest`, and `KnowledgeIndexingResult`
+- retrieval read and operator-action contracts such as `KnowledgeIndexState`, `KnowledgeIndexFreshnessStates`, `KnowledgeIndexingOutcomes`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, `KnowledgeIndexingRequest`, `KnowledgeIndexingResult`, `IKnowledgeQueryEngine`, `KnowledgeQueryRequest`, `KnowledgeQueryResult`, and `KnowledgeQueryMatch`
 - eventing read and operator-action contracts such as `EventPublicationOutcomes`, `EventPublicationRequest`, `EventPublicationResult`, `IEventPublicationDispatcher`, `EventSubscriptionExecutionReadinessDescriptor`, `EventSubscriptionExecutionReadinessStates`, and `IEventSubscriptionExecutionReadinessCatalog`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
@@ -37,11 +37,15 @@
 - `Agentics/IAgentToolRunCatalog.cs`
 - `Retrieval/IKnowledgeIndexCatalog.cs`
 - `Retrieval/IKnowledgeIndexer.cs`
+- `Retrieval/IKnowledgeQueryEngine.cs`
 - `Retrieval/KnowledgeIndexFreshnessStates.cs`
 - `Retrieval/KnowledgeIndexingOutcomes.cs`
 - `Retrieval/KnowledgeIndexingRequest.cs`
 - `Retrieval/KnowledgeIndexingResult.cs`
 - `Retrieval/KnowledgeIndexState.cs`
+- `Retrieval/KnowledgeQueryMatch.cs`
+- `Retrieval/KnowledgeQueryRequest.cs`
+- `Retrieval/KnowledgeQueryResult.cs`
 - `Capabilities/Capability.cs`
 - `Capabilities/ICapabilityRegistry.cs`
 - `Features/FeatureFlagDescriptor.cs`
@@ -207,14 +211,16 @@ operator tooling can read latest agent-tool run posture through `/engine/snapsho
 without referencing `Cephalon.Agentics` directly. The implementation and write path still belong to
 the selected agentics pack through its dispatcher, executors, policies, observers, and reporter.
 
-The same host-agnostic rule now covers retrieval index-state reads and manual reindex command
-requests. `KnowledgeIndexState`, `KnowledgeIndexFreshnessStates`, `KnowledgeIndexingOutcomes`,
-`IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, `KnowledgeIndexingRequest`, and
-`KnowledgeIndexingResult` live here so `Cephalon.Engine`, host adapters, and operator tooling can
-read managed knowledge-index posture and request a bounded reindex action through `/engine/snapshot`
-and host routes without referencing `Cephalon.Retrieval` directly. The indexer implementation, query
-execution, document-provider integration, and provider-specific write path still belong to the
-selected retrieval pack.
+The same host-agnostic rule now covers retrieval index-state reads, manual reindex command requests,
+and bounded query command requests. `KnowledgeIndexState`, `KnowledgeIndexFreshnessStates`,
+`KnowledgeIndexingOutcomes`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`,
+`KnowledgeIndexingRequest`, `KnowledgeIndexingResult`, `IKnowledgeQueryEngine`,
+`KnowledgeQueryRequest`, `KnowledgeQueryResult`, and `KnowledgeQueryMatch` live here so
+`Cephalon.Engine`, host adapters, and operator tooling can read managed knowledge-index posture,
+request a bounded reindex action, and execute a bounded collection query through `/engine/snapshot`
+and host routes without referencing `Cephalon.Retrieval` directly. The indexer/query implementation,
+document-provider integration, and provider-specific write path still belong to the selected
+retrieval pack.
 
 The phase-8 families stay runtime-neutral on purpose:
 

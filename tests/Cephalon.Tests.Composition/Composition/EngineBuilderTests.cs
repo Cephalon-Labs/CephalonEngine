@@ -2129,6 +2129,9 @@ public sealed class EngineBuilderTests
         Assert.Equal(2, knowledgeState.DocumentCount);
         Assert.Equal(1, knowledgeState.QueryCount);
         Assert.Equal(1, knowledgeState.LastQueryMatchedCount);
+        Assert.Equal("composition-test", knowledgeState.LastActorId);
+        Assert.Equal("corr-composition-retrieval-query-001", knowledgeState.LastCorrelationId);
+        Assert.Equal("1", knowledgeState.Metadata["queryLimit"]);
         Assert.False(string.IsNullOrWhiteSpace(knowledgeState.LastQueryFingerprint));
         Assert.Equal(2, eventChannelCatalog.Channels.Count);
         Assert.Contains(eventChannelCatalog.Channels, channel => channel.Id == "orders");
