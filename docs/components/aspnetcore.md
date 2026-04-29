@@ -494,9 +494,10 @@ one publication body with `id`, `channelId`, `eventType`, JSON or string `payloa
 id. The route returns `EventPublicationResult`, records safe route-trigger metadata, returns `404`
 when no publication dispatcher is active or the target channel is unknown, and returns `400` for
 invalid publication bodies. The action stays bounded to the active publication path: it can trigger
-the core in-process direct publisher or stage through an outbox-backed publisher, but it does not
-claim durable broker dispatch, inbox/idempotency ownership, retry queues, distributed scheduling, or
-provider-specific inbound consumption.
+the core in-process direct publisher or stage through an outbox-backed publisher, and the direct
+publisher can optionally suppress duplicate completed executions process-locally, but it does not
+claim durable broker dispatch, durable inbox ownership, cross-node idempotency, retry queues,
+distributed scheduling, or provider-specific inbound consumption.
 
 The host now also exposes additive agent-tool run-state answers and a bounded operator action
 directly. When a selected agentics pack registers `IAgentToolRunCatalog` and `IAgentToolDispatcher`,

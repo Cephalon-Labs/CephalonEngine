@@ -7974,6 +7974,9 @@ Browse the published API surface by public member.
 - [EnableInProcessSubscriptionExecution](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enableinprocesssubscriptionexecution): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnableInProcessSubscriptionExecution&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets a value indicating whether the core eventing pack should execute matching subscription executors directly inside the current process when a publication is accepted.
   - `bool EnableInProcessSubscriptionExecution { get; set; }`
+- [EnableInProcessSubscriptionIdempotency](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enableinprocesssubscriptionidempotency): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnableInProcessSubscriptionIdempotency&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets a value indicating whether the direct in-process publisher should suppress duplicate completed subscription executions for the same publication identifier.
+  - `bool EnableInProcessSubscriptionIdempotency { get; set; }`
 - [EnableInvitationDeliveryDispatch](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverydispatch): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationDeliveryDispatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active.
   - `bool EnableInvitationDeliveryDispatch { get; set; }`
@@ -12663,6 +12666,9 @@ Browse the published API surface by public member.
 - [InnerFaults](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfault-innerfaults): `Properties` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=InnerFaults&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets or sets nested faults.
   - `IReadOnlyList<BehaviorFault> InnerFaults { get; set; }`
+- [InProcessSubscriptionIdempotencyRetentionMinutes](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionidempotencyretentionminutes): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionIdempotencyRetentionMinutes&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the number of minutes that successful direct in-process subscription executions remain eligible for duplicate suppression.
+  - `int InProcessSubscriptionIdempotencyRetentionMinutes { get; set; }`
 - [InProcessSubscriptionMaxAttempts](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionmaxattempts): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionMaxAttempts&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets the maximum number of direct in-process execution attempts per matching subscription.
   - `int InProcessSubscriptionMaxAttempts { get; set; }`

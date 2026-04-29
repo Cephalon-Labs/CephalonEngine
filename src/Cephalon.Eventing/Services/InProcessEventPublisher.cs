@@ -9,6 +9,7 @@ internal sealed class InProcessEventPublisher(
     EventingOptions options,
     IEventChannelCatalog channels,
     InProcessEventSubscriptionExecutorCatalog executors,
+    InProcessEventSubscriptionIdempotencyTracker idempotencyTracker,
     IEventSubscriptionRuntimeReporter runtimeReporter,
     ILoggerFactory? loggerFactory = null) : IEventPublisher
 {
@@ -49,12 +50,48 @@ internal sealed class InProcessEventPublisher(
         var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
         var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
         var retryDelay = TimeSpan.FromMilliseconds(retryDelayMilliseconds);
+        var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
+        var idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
         foreach (var entry in entries)
         {
+            if (idempotencyTracker.TryGetCompleted(
+                entry.Subscription.Id,
+                publication.Id,
+                DateTimeOffset.UtcNow,
+                out var completedAtUtc))
+            {
+                await runtimeReporter.ReportAsync(
+                    new EventSubscriptionExecutionReport(
+                        subscriptionId: entry.Subscription.Id,
+                        outcome: EventSubscriptionExecutionOutcomes.Skipped,
+                        observedAtUtc: DateTimeOffset.UtcNow,
+                        messageId: publication.Id,
+                        attempt: 1,
+                        metadata: CreateDuplicateSkippedMetadata(
+                            CreateExecutionMetadata(
+                                publication,
+                                entry.Subscription,
+                                attempt: 1,
+                                maxAttempts,
+                                retryDelayMilliseconds,
+                                idempotencyPolicy,
+                                idempotencyRetentionMinutes),
+                            completedAtUtc)),
+                    cancellationToken).ConfigureAwait(false);
+                continue;
+            }
+
             Exception? finalFailure = null;
             for (var attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                var metadata = CreateExecutionMetadata(publication, entry.Subscription, attempt, maxAttempts, retryDelayMilliseconds);
+                var metadata = CreateExecutionMetadata(
+                    publication,
+                    entry.Subscription,
+                    attempt,
+                    maxAttempts,
+                    retryDelayMilliseconds,
+                    idempotencyPolicy,
+                    idempotencyRetentionMinutes);
                 await runtimeReporter.ReportAsync(
                     new EventSubscriptionExecutionReport(
                         subscriptionId: entry.Subscription.Id,
@@ -85,6 +122,7 @@ internal sealed class InProcessEventPublisher(
                             metadata: metadata),
                         cancellationToken).ConfigureAwait(false);
 
+                    idempotencyTracker.MarkCompleted(entry.Subscription.Id, publication.Id, DateTimeOffset.UtcNow);
                     finalFailure = null;
                     break;
                 }
@@ -167,7 +205,9 @@ internal sealed class InProcessEventPublisher(
         EventSubscriptionDescriptor subscription,
         int attempt,
         int maxAttempts,
-        int retryDelayMilliseconds)
+        int retryDelayMilliseconds,
+        string idempotencyPolicy,
+        int idempotencyRetentionMinutes)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -182,6 +222,15 @@ internal sealed class InProcessEventPublisher(
             ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
             ["retryDurability"] = "none",
             ["retryScope"] = "process-local",
+            ["idempotencyPolicy"] = idempotencyPolicy,
+            ["idempotencyKey"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
+                ? InProcessEventingIdempotencyPolicy.None
+                : InProcessEventingIdempotencyPolicy.KeyShape,
+            ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
+            ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+            ["idempotencyScope"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
+                ? InProcessEventingIdempotencyPolicy.None
+                : InProcessEventingIdempotencyPolicy.Scope,
             ["channelId"] = publication.ChannelId,
             ["eventType"] = publication.EventType,
             ["subscriptionId"] = subscription.Id,
@@ -227,5 +276,18 @@ internal sealed class InProcessEventPublisher(
         };
 
         return retryMetadata;
+    }
+
+    private static Dictionary<string, string> CreateDuplicateSkippedMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        DateTimeOffset completedAtUtc)
+    {
+        var skippedMetadata = new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase)
+        {
+            ["idempotencyOutcome"] = "duplicate-skipped",
+            ["idempotencyCompletedAtUtc"] = completedAtUtc.ToString("O", CultureInfo.InvariantCulture)
+        };
+
+        return skippedMetadata;
     }
 }

@@ -74,6 +74,18 @@ Gets or sets a value indicating whether the core eventing pack should execute ma
 
 Remarks: This is an opt-in managed execution baseline for lightweight hosts and tests. It is not a durable broker, inbox, or retry runtime; companion packs should still own those richer delivery guarantees when they are selected.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-enableinprocesssubscriptionidempotency"></a>
+
+##### `EnableInProcessSubscriptionIdempotency`
+
+```csharp
+bool EnableInProcessSubscriptionIdempotency { get; set; }
+```
+
+Gets or sets a value indicating whether the direct in-process publisher should suppress duplicate completed subscription executions for the same publication identifier.
+
+Remarks: This is a bounded process-local guard for lightweight hosts. It records only successful direct executions in memory and skips later duplicate `subscriptionId + publicationId` pairs while the entry remains in the retention window. It is not a durable inbox, cross-node idempotency store, or broker-owned exactly-once guarantee.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-enablepublishing"></a>
 
 ##### `EnablePublishing`
@@ -93,6 +105,18 @@ bool EnableSubscriptions { get; set; }
 ```
 
 Gets or sets a value indicating whether subscription features are enabled.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionidempotencyretentionminutes"></a>
+
+##### `InProcessSubscriptionIdempotencyRetentionMinutes`
+
+```csharp
+int InProcessSubscriptionIdempotencyRetentionMinutes { get; set; }
+```
+
+Gets or sets the number of minutes that successful direct in-process subscription executions remain eligible for duplicate suppression.
+
+Remarks: The default value is `60` minutes. The value is used only when `EnableInProcessSubscriptionIdempotency` is enabled.
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionmaxattempts"></a>
 

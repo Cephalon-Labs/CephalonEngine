@@ -52,6 +52,7 @@ public sealed class EventingOptions
 
     private int inProcessSubscriptionMaxAttempts = 1;
     private int inProcessSubscriptionRetryDelayMilliseconds;
+    private int inProcessSubscriptionIdempotencyRetentionMinutes = 60;
 
     /// <summary>
     /// Gets or sets the maximum number of direct in-process execution attempts per matching subscription.
@@ -100,6 +101,43 @@ public sealed class EventingOptions
             }
 
             inProcessSubscriptionRetryDelayMilliseconds = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the direct in-process publisher should suppress
+    /// duplicate completed subscription executions for the same publication identifier.
+    /// </summary>
+    /// <remarks>
+    /// This is a bounded process-local guard for lightweight hosts. It records only successful
+    /// direct executions in memory and skips later duplicate <c>subscriptionId + publicationId</c>
+    /// pairs while the entry remains in the retention window. It is not a durable inbox,
+    /// cross-node idempotency store, or broker-owned exactly-once guarantee.
+    /// </remarks>
+    public bool EnableInProcessSubscriptionIdempotency { get; set; }
+
+    /// <summary>
+    /// Gets or sets the number of minutes that successful direct in-process subscription
+    /// executions remain eligible for duplicate suppression.
+    /// </summary>
+    /// <remarks>
+    /// The default value is <c>60</c> minutes. The value is used only when
+    /// <see cref="EnableInProcessSubscriptionIdempotency" /> is enabled.
+    /// </remarks>
+    public int InProcessSubscriptionIdempotencyRetentionMinutes
+    {
+        get => inProcessSubscriptionIdempotencyRetentionMinutes;
+        set
+        {
+            if (value < 1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "In-process subscription idempotency retention must be greater than or equal to 1 minute.");
+            }
+
+            inProcessSubscriptionIdempotencyRetentionMinutes = value;
         }
     }
 

@@ -14,6 +14,10 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
         var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
         var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
         var retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
+        var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
+        var idempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
+        var idempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
+        var idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
         var channelIds = channels.Channels
             .Select(static channel => channel.Id)
             .OrderBy(static channelId => channelId, StringComparer.OrdinalIgnoreCase)
@@ -33,7 +37,7 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                 new TechnologyRuntimeEntry(
                     id: InProcessEventingRuntimeIds.PublisherId,
                     displayName: "In-process Event Publisher",
-                    description: "Accepts integration events and directly invokes matching in-process subscription executors without durable broker, inbox, or retry ownership.",
+                    description: "Accepts integration events and directly invokes matching in-process subscription executors without durable broker or inbox ownership.",
                     metadata: new Dictionary<string, string>
                     {
                         ["handoff"] = "in-process",
@@ -49,6 +53,11 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
                         ["retryDurability"] = "none",
                         ["retryScope"] = "process-local",
+                        ["idempotencyPolicy"] = idempotencyPolicy,
+                        ["idempotencyKey"] = idempotencyKey,
+                        ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
+                        ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+                        ["idempotencyScope"] = idempotencyScope,
                         ["channelCount"] = channelIds.Length.ToString(CultureInfo.InvariantCulture),
                         ["channelIds"] = string.Join(",", channelIds),
                         ["subscriptionExecutorCount"] = subscriptionIds.Length.ToString(CultureInfo.InvariantCulture),

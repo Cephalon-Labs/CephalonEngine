@@ -10,6 +10,10 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
     private readonly int maxAttempts;
     private readonly string retryPolicy;
     private readonly int retryDelayMilliseconds;
+    private readonly string idempotencyPolicy;
+    private readonly string idempotencyKey;
+    private readonly string idempotencyScope;
+    private readonly int idempotencyRetentionMinutes;
 
     public InProcessEventSubscriptionExecutorCatalog(
         EventingOptions options,
@@ -23,6 +27,10 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
         maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
         retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
         retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
+        idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
+        idempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
+        idempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
+        idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
         index = new Dictionary<string, ManagedSubscriptionEntry>(StringComparer.OrdinalIgnoreCase);
         foreach (var executor in executors)
         {
@@ -72,6 +80,11 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
                     ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
                     ["retryDurability"] = "none",
                     ["retryScope"] = "process-local",
+                    ["idempotencyPolicy"] = idempotencyPolicy,
+                    ["idempotencyKey"] = idempotencyKey,
+                    ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
+                    ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+                    ["idempotencyScope"] = idempotencyScope,
                     ["channelId"] = entry.Subscription.ChannelId,
                     ["handlerId"] = entry.Subscription.HandlerId,
                     ["subscriptionTagCount"] = entry.Subscription.Tags.Count.ToString(CultureInfo.InvariantCulture)

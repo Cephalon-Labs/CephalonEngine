@@ -1583,9 +1583,10 @@ Current payload highlights:
 
 Current note:
 
-- this is a bounded operator action over the active eventing publication path, not a durable broker,
-  inbox/idempotency, retry-queue, distributed scheduler, or provider-specific inbound-consumption
-  claim
+- this is a bounded operator action over the active eventing publication path; the in-process lane
+  can optionally suppress duplicate completed executions process-locally, but the route is not a
+  durable broker, durable inbox, cross-node idempotency, retry-queue, distributed scheduler, or
+  provider-specific inbound-consumption claim
 - the action contract lives in `Cephalon.Abstractions.Data` so `Cephalon.AspNetCore` can expose it
   without referencing `Cephalon.Eventing`; the selected eventing pack still owns the implementation
   and runtime truth
@@ -1722,6 +1723,12 @@ Current `Cephalon.Eventing` highlights:
   `retryDurability = none`, and `retryScope = process-local`, emits `retry-scheduled`
   observations between attempts, and updates `event-subscriptions` counters such as
   `retryScheduledCount`, `lastAttempt`, and `reported.retryPolicy`
+- when `EnableInProcessSubscriptionIdempotency` is enabled, the direct lane suppresses duplicate
+  completed `subscriptionId + publicationId` executions inside the configured process-local
+  retention window, reports `skipped`, and projects `idempotencyPolicy = completed-publication`,
+  `idempotencyKey = subscription-publication`, `idempotencyRetentionMinutes`,
+  `idempotencyDurability = none`, and `idempotencyScope = process-local` through capabilities,
+  bindings, `event-publishers`, `event-subscriptions`, and `reported.*` metadata
 - Wolverine or another companion adapter can still move one subscription to provider-managed
   `runtime-bound` ownership for brokered or staged dispatch scenarios, while hosted execution links
   and application-managed reports remain truthful non-provider-owned states

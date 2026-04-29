@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T07:43:59.2041817+00:00",
+  "GeneratedAtUtc": "2026-04-29T07:56:00.7543219+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -7884,7 +7884,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 10,
         "Methods": 0
       }
     },
@@ -46836,6 +46836,17 @@
       "Summary": "Gets or sets a value indicating whether the core eventing pack should execute matching subscription executors directly inside the current process when a publication is accepted."
     },
     {
+      "DisplayName": "EnableInProcessSubscriptionIdempotency",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-enableinprocesssubscriptionidempotency",
+      "Signature": "bool EnableInProcessSubscriptionIdempotency { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the direct in-process publisher should suppress duplicate completed subscription executions for the same publication identifier."
+    },
+    {
       "DisplayName": "EnableInvitationDeliveryDispatch",
       "Category": "Properties",
       "DeclaringTypeName": "MultiTenancyGovernanceOptions",
@@ -63983,6 +63994,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfault-innerfaults",
       "Signature": "IReadOnlyList\u003CBehaviorFault\u003E InnerFaults { get; set; }",
       "Summary": "Gets or sets nested faults."
+    },
+    {
+      "DisplayName": "InProcessSubscriptionIdempotencyRetentionMinutes",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionidempotencyretentionminutes",
+      "Signature": "int InProcessSubscriptionIdempotencyRetentionMinutes { get; set; }",
+      "Summary": "Gets or sets the number of minutes that successful direct in-process subscription executions remain eligible for duplicate suppression."
     },
     {
       "DisplayName": "InProcessSubscriptionMaxAttempts",

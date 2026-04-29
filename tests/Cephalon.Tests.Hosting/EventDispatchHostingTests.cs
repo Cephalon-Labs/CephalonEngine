@@ -430,6 +430,107 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonSkipsDuplicateCoreInProcessEventSubscriptionExecutionsWithinProcess()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+                options.EnableInProcessSubscriptionIdempotency = true;
+                options.InProcessSubscriptionIdempotencyRetentionMinutes = 30;
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            var publication = new EventPublication(
+                id: "audit-idempotency-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-idempotency-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 04, 29, 11, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-idempotency-001",
+                tenantId: "tenant-idempotency-001");
+
+            await publisher.PublishAsync(publication);
+            await publisher.PublishAsync(publication);
+        }
+
+        var client = app.GetTestClient();
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+        Assert.Equal("audit-idempotency-001", probe.LastMessageId);
+
+        var runtimeState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Skipped, runtimeState.LastOutcome);
+        Assert.Equal("audit-idempotency-001", runtimeState.LastMessageId);
+        Assert.Equal(1, runtimeState.LastAttempt);
+        Assert.Equal(1, runtimeState.StartedCount);
+        Assert.Equal(1, runtimeState.SucceededCount);
+        Assert.Equal(1, runtimeState.SkippedCount);
+        Assert.Equal(3, runtimeState.TotalReports);
+        Assert.Equal("completed-publication", runtimeState.Metadata["idempotencyPolicy"]);
+        Assert.Equal("subscription-publication", runtimeState.Metadata["idempotencyKey"]);
+        Assert.Equal("30", runtimeState.Metadata["idempotencyRetentionMinutes"]);
+        Assert.Equal("none", runtimeState.Metadata["idempotencyDurability"]);
+        Assert.Equal("process-local", runtimeState.Metadata["idempotencyScope"]);
+        Assert.Equal("duplicate-skipped", runtimeState.Metadata["idempotencyOutcome"]);
+        Assert.True(runtimeState.Metadata.ContainsKey("idempotencyCompletedAtUtc"));
+
+        var binding = Assert.Single(bindingCatalog.Bindings);
+        Assert.Equal("completed-publication", binding.Metadata["idempotencyPolicy"]);
+        Assert.Equal("subscription-publication", binding.Metadata["idempotencyKey"]);
+        Assert.Equal("30", binding.Metadata["idempotencyRetentionMinutes"]);
+        Assert.Equal("none", binding.Metadata["idempotencyDurability"]);
+        Assert.Equal("process-local", binding.Metadata["idempotencyScope"]);
+
+        Assert.NotNull(capabilities);
+        var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Equal("completed-publication", publishCapability.Metadata["idempotencyPolicy"]);
+        Assert.Equal("subscription-publication", publishCapability.Metadata["idempotencyKey"]);
+        var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("completed-publication", subscribeCapability.Metadata["idempotencyPolicy"]);
+        Assert.Equal("process-local", subscribeCapability.Metadata["idempotencyScope"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
+        var publisherEntry = Assert.Single(publisherSurface.Entries);
+        Assert.Equal("completed-publication", publisherEntry.Metadata["idempotencyPolicy"]);
+        Assert.Equal("30", publisherEntry.Metadata["idempotencyRetentionMinutes"]);
+
+        var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var subscriptionEntry = Assert.Single(subscriptionSurface.Entries, entry => entry.Id == "audit-projector");
+        Assert.Equal("completed-publication", subscriptionEntry.Metadata["binding.idempotencyPolicy"]);
+        Assert.Equal("subscription-publication", subscriptionEntry.Metadata["binding.idempotencyKey"]);
+        Assert.Equal("skipped", subscriptionEntry.Metadata["lastOutcome"]);
+        Assert.Equal("1", subscriptionEntry.Metadata["skippedCount"]);
+        Assert.Equal("completed-publication", subscriptionEntry.Metadata["reported.idempotencyPolicy"]);
+        Assert.Equal("duplicate-skipped", subscriptionEntry.Metadata["reported.idempotencyOutcome"]);
+    }
+
+    [Fact]
     public async Task MapCephalonExecutesCoreInProcessEventSubscriptionsWithoutWolverine()
     {
         var builder = WebApplication.CreateSlimBuilder();

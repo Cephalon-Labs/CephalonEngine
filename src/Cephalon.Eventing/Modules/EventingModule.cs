@@ -90,6 +90,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             if (hasInProcessSubscriptionExecutionPath)
             {
                 services.TryAddSingleton<InProcessEventSubscriptionExecutorCatalog>();
+                services.TryAddSingleton<InProcessEventSubscriptionIdempotencyTracker>();
                 services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventSubscriptionExecutionBindingContributor, InProcessEventSubscriptionExecutorCatalog>());
             }
 
@@ -177,6 +178,10 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             var inProcessRetryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
             var inProcessRetryMaxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture);
             var inProcessRetryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture);
+            var inProcessIdempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
+            var inProcessIdempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
+            var inProcessIdempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
+            var inProcessIdempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options).ToString(CultureInfo.InvariantCulture);
             var publishMetadata = hasInProcessSubscriptionExecutionPath
                 ? new Dictionary<string, string>
                 {
@@ -193,6 +198,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["retryDelayMilliseconds"] = inProcessRetryDelayMilliseconds,
                     ["retryDurability"] = "none",
                     ["retryScope"] = "process-local",
+                    ["idempotencyPolicy"] = inProcessIdempotencyPolicy,
+                    ["idempotencyKey"] = inProcessIdempotencyKey,
+                    ["idempotencyRetentionMinutes"] = inProcessIdempotencyRetentionMinutes,
+                    ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+                    ["idempotencyScope"] = inProcessIdempotencyScope,
                     ["runtimeState"] = "available"
                 }
                 : new Dictionary<string, string>
@@ -235,7 +245,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             capabilities.Add(new Capability(
                 key: "eventing.subscribe",
                 displayName: "Managed Event Subscription Execution",
-                description: "Executes declared event subscriptions through the built-in in-process direct publisher with optional bounded process-local retries and without durable broker or inbox ownership.",
+                description: "Executes declared event subscriptions through the built-in in-process direct publisher with optional bounded process-local retries and duplicate suppression while staying non-durable.",
                 metadata: new Dictionary<string, string>
                 {
                     ["technology"] = "event-driven-integration",
@@ -248,7 +258,12 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["retryMaxAttempts"] = InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture),
                     ["retryDelayMilliseconds"] = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture),
                     ["retryDurability"] = "none",
-                    ["retryScope"] = "process-local"
+                    ["retryScope"] = "process-local",
+                    ["idempotencyPolicy"] = InProcessEventingIdempotencyPolicy.GetPolicyId(options),
+                    ["idempotencyKey"] = InProcessEventingIdempotencyPolicy.GetKeyShape(options),
+                    ["idempotencyRetentionMinutes"] = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options).ToString(CultureInfo.InvariantCulture),
+                    ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+                    ["idempotencyScope"] = InProcessEventingIdempotencyPolicy.GetScope(options)
                 }));
         }
 
