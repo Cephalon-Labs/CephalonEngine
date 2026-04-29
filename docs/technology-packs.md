@@ -49,9 +49,10 @@ Current baseline packages:
   - lets modules add `IAgentToolExecutor`, `IAgentToolExecutionPolicy`, and `IAgentToolExecutionObserver` services without making the host own the tool loop
 - `Cephalon.Eventing`
   - runtime services and capability activation for `EventDrivenIntegration`
-  - registers `IEventChannelCatalog`, `IEventSubscriptionCatalog`, `IEventSubscriptionExecutionBindingCatalog`, the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`, and stable `EventSubscriptionRuntimeMetadataKeys` when the profile and options enable those paths
+  - registers `IEventChannelCatalog`, `IEventSubscriptionCatalog`, `IEventSubscriptionExecutionBindingCatalog`, the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`, the abstraction-level `IEventPublicationRuntimeCatalog`, and stable `EventSubscriptionRuntimeMetadataKeys` when the profile and options enable those paths
   - lets `Cephalon.Engine`, host adapters, and operator tooling read subscription execution readiness through `/engine/event-subscription-readiness` and `snapshot.EventSubscriptionExecutionReadiness` without taking a direct dependency on the eventing pack
   - registers the abstraction-level `IEventPublicationDispatcher` when a real publishing path exists, allowing host adapters to expose bounded publication actions such as `POST /engine/event-publications` without depending on eventing implementation types
+  - lets `Cephalon.Engine`, host adapters, and operator tooling read publication runtime state through `/engine/event-publications/runtime*` and `snapshot.EventPublicationStates`, with in-process outcomes separated from outbox `accepted` handoff truth
   - can opt into a Cephalon-managed direct in-process subscription execution lane through `EnableInProcessSubscriptionExecution`, registered `IEventSubscriptionExecutor` services, and `IEventPublisher`, including bounded process-local retries through `InProcessSubscriptionMaxAttempts` / `InProcessSubscriptionRetryDelayMilliseconds` and duplicate-completed execution suppression through `EnableInProcessSubscriptionIdempotency` / `InProcessSubscriptionIdempotencyRetentionMinutes` when explicitly configured, without claiming durable broker, durable inbox, cross-node exactly-once, durable retry-queue, or distributed retry ownership
 - `Cephalon.Eventing.Wolverine`
   - optional companion adapter proof for managed dispatch over `EventDrivenIntegration`
@@ -273,7 +274,7 @@ Shipped pack-specific extension points:
     - `ITenantDomainOwnershipProofVerificationRunner` for the current Cephalon-managed proof-verification orchestration path over challenge issuance, publication planning, reported-proof evaluation, optional HTTP file collection, and configured DNS TXT collection
 - `MultiTenancyGovernanceOptions` for host-defined memberships, invitations, domain ownerships, governance actions, store paths, tenant-administration workflow enablement, invitation delivery dispatch/run-history enablement, invitation delivery status reconciliation enablement, proof challenge defaults, proof publication planning, HTTP proof collection, DNS TXT proof collection resolver/timeout/size limits, proof verification runner orchestration, bounded proof polling enablement/batch limits, proof evaluation, and validation/evaluation/decision/workflow enablement
 - `Cephalon.Eventing`
-  - `IEventChannelContributor`, `IEventChannelRegistry`, `IEventSubscriptionExecutionBindingContributor`, `IEventSubscriptionExecutionBindingCatalog`, and the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`
+  - `IEventChannelContributor`, `IEventChannelRegistry`, `IEventSubscriptionExecutionBindingContributor`, `IEventSubscriptionExecutionBindingCatalog`, the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`, and the abstraction-level `IEventPublicationRuntimeCatalog`
 - `Cephalon.Edge`
   - `IEdgeNodeContributor` and `IEdgeNodeRegistry`
 

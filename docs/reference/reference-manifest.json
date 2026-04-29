@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T07:56:00.7543219+00:00",
+  "GeneratedAtUtc": "2026-04-29T08:24:38.5055053+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 542
+      "TypeCount": 545
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -602,7 +602,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 248
+      "TypeCount": 251
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -7846,6 +7846,36 @@
       }
     },
     {
+      "DisplayName": "EventPublicationRuntimeOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventpublicationruntimeoutcomes",
+      "Declaration": "public static class EventPublicationRuntimeOutcomes",
+      "Summary": "Defines stable outcome identifiers reported by event-publication runtime-state catalogs.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventpublicationruntimestate",
+      "Declaration": "public sealed class EventPublicationRuntimeState",
+      "Summary": "Describes the latest operator-facing runtime state reported for one event publication.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 20,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventSourcingEngineBuilderExtensions",
       "NamespaceName": "Cephalon.EventSourcing.Registration",
       "AssemblyName": "Cephalon.EventSourcing",
@@ -10348,6 +10378,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventPublicationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-ieventpublicationruntimecatalog",
+      "Declaration": "public interface IEventPublicationRuntimeCatalog",
+      "Summary": "Exposes operator-facing runtime state reported by event-publication paths.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 3
       }
     },
     {
@@ -15221,7 +15266,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 48,
+        "Properties": 49,
         "Methods": 0
       }
     },
@@ -17620,6 +17665,17 @@
     },
     {
       "DisplayName": "Accepted",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventPublicationRuntimeOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-accepted",
+      "Signature": "const string Accepted",
+      "Summary": "The publication was accepted or staged by the active runtime, but downstream delivery may still be pending."
+    },
+    {
+      "DisplayName": "Accepted",
       "Category": "Methods",
       "DeclaringTypeName": "Result",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
@@ -17672,6 +17728,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-acceptedatutc",
       "Signature": "DateTimeOffset AcceptedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the active runtime accepted the publication."
+    },
+    {
+      "DisplayName": "AcceptedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-acceptedcount",
+      "Signature": "int AcceptedCount { get; set; }",
+      "Summary": "The number of \u0060accepted\u0060 publication observations reported so far."
     },
     {
       "DisplayName": "AcceptedCount",
@@ -48097,6 +48164,28 @@
       "Summary": "Describes the operator-facing result of one managed event-publication request."
     },
     {
+      "DisplayName": "EventPublicationRuntimeState",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventpublicationruntimestate-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventPublicationRuntimeState(string PublicationId, string LastChannelId, string LastEventType, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int AcceptedCount, int SucceededCount, int FailedCount, int SkippedCount, int MatchedSubscriptionCount, int StartedSubscriptionCount, int SucceededSubscriptionCount, int FailedSubscriptionCount, int RetryScheduledSubscriptionCount, int SkippedSubscriptionCount, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the latest operator-facing runtime state reported for one event publication."
+    },
+    {
+      "DisplayName": "EventPublicationStates",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventpublicationstates",
+      "Signature": "IReadOnlyList\u003CEventPublicationRuntimeState\u003E EventPublicationStates { get; set; }",
+      "Summary": "Gets the latest reported event-publication runtime state entries visible to the runtime at the time the snapshot was created."
+    },
+    {
       "DisplayName": "Events",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsConvention",
@@ -51377,6 +51466,17 @@
     {
       "DisplayName": "Failed",
       "Category": "Fields",
+      "DeclaringTypeName": "EventPublicationRuntimeOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-failed",
+      "Signature": "const string Failed",
+      "Summary": "The publication failed while the active runtime processed it."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -51531,6 +51631,17 @@
     {
       "DisplayName": "FailedCount",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-failedcount",
+      "Signature": "int FailedCount { get; set; }",
+      "Summary": "The number of \u0060failed\u0060 publication observations reported so far."
+    },
+    {
+      "DisplayName": "FailedCount",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -51604,6 +51715,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-failedruncount",
       "Signature": "long FailedRunCount { get; }",
       "Summary": "Gets the number of background polling passes that failed before producing a polling result."
+    },
+    {
+      "DisplayName": "FailedSubscriptionCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-failedsubscriptioncount",
+      "Signature": "int FailedSubscriptionCount { get; set; }",
+      "Summary": "The number of subscription-failure observations produced by the latest publication observation."
     },
     {
       "DisplayName": "FailFast",
@@ -53529,6 +53651,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbycellid-system-string",
       "Signature": "IReadOnlyList\u003CCellHealthIsolationDescriptor\u003E GetByCellId(string cellId)",
       "Summary": "Gets all cell health-isolation answers that govern the requested cell."
+    },
+    {
+      "DisplayName": "GetByChannelId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventPublicationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-getbychannelid-system-string",
+      "Signature": "IReadOnlyList\u003CEventPublicationRuntimeState\u003E GetByChannelId(string channelId)",
+      "Summary": "Gets the reported publication states for one channel identifier."
     },
     {
       "DisplayName": "GetByChannelId",
@@ -55718,6 +55851,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-ioutboxcatalog-getbyprovider-system-string",
       "Signature": "IReadOnlyList\u003COutboxDescriptor\u003E GetByProvider(string provider)",
       "Summary": "Gets all outboxes backed by the requested provider identifier."
+    },
+    {
+      "DisplayName": "GetByPublicationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventPublicationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-getbypublicationid-system-string",
+      "Signature": "EventPublicationRuntimeState GetByPublicationId(string publicationId)",
+      "Summary": "Gets the latest reported publication state for one publication id."
     },
     {
       "DisplayName": "GetByRemediationCategory",
@@ -59293,6 +59437,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasstrategyvalues",
       "Signature": "bool HasStrategyValues { get; }",
       "Summary": "Gets a value indicating whether any strategy-level override settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasSubscriptionFailures",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-hassubscriptionfailures",
+      "Signature": "bool HasSubscriptionFailures { get; }",
+      "Summary": "Gets a value indicating whether the latest observation reported any subscription failures."
+    },
+    {
+      "DisplayName": "HasSubscriptionSkips",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-hassubscriptionskips",
+      "Signature": "bool HasSubscriptionSkips { get; }",
+      "Summary": "Gets a value indicating whether the latest observation reported any skipped subscriptions."
     },
     {
       "DisplayName": "HasTargetOperation",
@@ -68645,6 +68811,17 @@
       "Summary": "Gets the latest reported channel identifier when one exists."
     },
     {
+      "DisplayName": "LastChannelId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastchannelid",
+      "Signature": "string LastChannelId { get; set; }",
+      "Summary": "The last stable channel identifier reported for this publication."
+    },
+    {
       "DisplayName": "LastCheckpoint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -69153,6 +69330,17 @@
     {
       "DisplayName": "LastError",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-lasterror",
+      "Signature": "string LastError { get; set; }",
+      "Summary": "The last operator-facing error summary when a publication failure was reported."
+    },
+    {
+      "DisplayName": "LastError",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -69193,6 +69381,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lasterror",
       "Signature": "string LastError { get; }",
       "Summary": "Gets the latest unhandled background polling error message."
+    },
+    {
+      "DisplayName": "LastEventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-lasteventtype",
+      "Signature": "string LastEventType { get; set; }",
+      "Summary": "The last stable event-type identifier reported for this publication."
     },
     {
       "DisplayName": "LastFailedCount",
@@ -69593,6 +69792,17 @@
     {
       "DisplayName": "LastObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the last publication observation was reported."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -69765,6 +69975,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutcome",
       "Signature": "string LastOutcome { get; }",
       "Summary": "Gets the latest reported dispatch outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastoutcome",
+      "Signature": "string LastOutcome { get; set; }",
+      "Summary": "The last reported publication outcome identifier when one exists."
     },
     {
       "DisplayName": "LastOutcome",
@@ -73870,6 +74091,17 @@
       "Summary": "Gets the tenant-local roles found on active memberships."
     },
     {
+      "DisplayName": "MatchedSubscriptionCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-matchedsubscriptioncount",
+      "Signature": "int MatchedSubscriptionCount { get; set; }",
+      "Summary": "The number of subscriptions matched by the latest publication observation."
+    },
+    {
       "DisplayName": "MatchedSuppressionIds",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointCandidateRuntimeDescriptor",
@@ -75969,6 +76201,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
       "Summary": "Optional operator-facing metadata captured with the result."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "The operator-facing metadata captured by the latest publication observation."
     },
     {
       "DisplayName": "Metadata",
@@ -91587,6 +91830,17 @@
     {
       "DisplayName": "PublicationId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-publicationid",
+      "Signature": "string PublicationId { get; set; }",
+      "Summary": "The stable publication identifier."
+    },
+    {
+      "DisplayName": "PublicationId",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -100154,6 +100408,17 @@
       "Summary": "The number of \u0060retry-scheduled\u0060 observations reported so far."
     },
     {
+      "DisplayName": "RetryScheduledSubscriptionCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-retryscheduledsubscriptioncount",
+      "Signature": "int RetryScheduledSubscriptionCount { get; set; }",
+      "Summary": "The number of subscription-retry observations produced by the latest publication observation."
+    },
+    {
       "DisplayName": "RetrySelection",
       "Category": "Constructors",
       "DeclaringTypeName": "RetrySelection",
@@ -103918,6 +104183,17 @@
     {
       "DisplayName": "Skipped",
       "Category": "Fields",
+      "DeclaringTypeName": "EventPublicationRuntimeOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-skipped",
+      "Signature": "const string Skipped",
+      "Summary": "The publication was accepted but no runtime-owned work was executed."
+    },
+    {
+      "DisplayName": "Skipped",
+      "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -104002,6 +104278,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-skippedcount",
       "Signature": "int SkippedCount { get; }",
       "Summary": "Gets the total number of \u0060skipped\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "SkippedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-skippedcount",
+      "Signature": "int SkippedCount { get; set; }",
+      "Summary": "The number of \u0060skipped\u0060 publication observations reported so far."
     },
     {
       "DisplayName": "SkippedCount",
@@ -104156,6 +104443,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-skippedoverridesummaries",
       "Signature": "IReadOnlyList\u003CRestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor\u003E SkippedOverrideSummaries { get; }",
       "Summary": "Gets the grouped host-governance-skipped override-rule outcomes summarized by rule."
+    },
+    {
+      "DisplayName": "SkippedSubscriptionCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-skippedsubscriptioncount",
+      "Signature": "int SkippedSubscriptionCount { get; set; }",
+      "Summary": "The number of subscription-skip observations produced by the latest publication observation."
     },
     {
       "DisplayName": "SkippedSuppressionIds",
@@ -106576,6 +106874,17 @@
       "Summary": "The number of indexing runs that have started."
     },
     {
+      "DisplayName": "StartedSubscriptionCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-startedsubscriptioncount",
+      "Signature": "int StartedSubscriptionCount { get; set; }",
+      "Summary": "The number of subscription-start observations produced by the latest publication observation."
+    },
+    {
       "DisplayName": "Starting",
       "Category": "Fields",
       "DeclaringTypeName": "RuntimeStatus",
@@ -107168,6 +107477,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-ieventdispatchruntimecatalog-states",
       "Signature": "IReadOnlyList\u003CEventDispatchRuntimeState\u003E States { get; }",
       "Summary": "Gets the reported dispatch state entries visible to the current runtime."
+    },
+    {
+      "DisplayName": "States",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventPublicationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-ieventpublicationruntimecatalog-states",
+      "Signature": "IReadOnlyList\u003CEventPublicationRuntimeState\u003E States { get; }",
+      "Summary": "Gets the reported publication-state entries visible to the current runtime."
     },
     {
       "DisplayName": "States",
@@ -108536,6 +108856,17 @@
     {
       "DisplayName": "Succeeded",
       "Category": "Fields",
+      "DeclaringTypeName": "EventPublicationRuntimeOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-succeeded",
+      "Signature": "const string Succeeded",
+      "Summary": "The publication completed its runtime-owned execution path successfully."
+    },
+    {
+      "DisplayName": "Succeeded",
+      "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -108613,6 +108944,17 @@
     {
       "DisplayName": "SucceededCount",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-succeededcount",
+      "Signature": "int SucceededCount { get; set; }",
+      "Summary": "The number of \u0060succeeded\u0060 publication observations reported so far."
+    },
+    {
+      "DisplayName": "SucceededCount",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -108642,6 +108984,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-succeededmigrationtargetcount",
       "Signature": "int SucceededMigrationTargetCount { get; }",
       "Summary": "Gets the number of migration targets currently reporting \u0060Succeeded\u0060."
+    },
+    {
+      "DisplayName": "SucceededSubscriptionCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-succeededsubscriptioncount",
+      "Signature": "int SucceededSubscriptionCount { get; set; }",
+      "Summary": "The number of subscription-success observations produced by the latest publication observation."
     },
     {
       "DisplayName": "Success",
@@ -112485,6 +112838,17 @@
     {
       "DisplayName": "TotalReports",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-totalreports",
+      "Signature": "int TotalReports { get; }",
+      "Summary": "Gets the total number of publication observations reported for this publication id."
+    },
+    {
+      "DisplayName": "TotalReports",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -113273,6 +113637,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-tryget-system-string-cephalon-abstractions-data-eventdispatchruntimestate",
       "Signature": "bool TryGet(string outboxId, out EventDispatchRuntimeState state)",
       "Summary": "Tries to get the latest reported dispatch state for one outbox-backed publication path."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventPublicationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-tryget-system-string-cephalon-abstractions-data-eventpublicationruntimestate",
+      "Signature": "bool TryGet(string publicationId, out EventPublicationRuntimeState state)",
+      "Summary": "Tries to get the latest reported publication state for one publication id."
     },
     {
       "DisplayName": "TryGet",

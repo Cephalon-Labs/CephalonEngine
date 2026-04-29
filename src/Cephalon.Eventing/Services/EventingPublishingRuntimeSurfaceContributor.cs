@@ -7,7 +7,8 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventingPublishingRuntimeSurfaceContributor(
     IEventChannelCatalog channels,
     IOutboxCatalog outboxes,
-    IEventDispatchRuntimeDescriptorCatalog dispatchRuntimes) : ITechnologyRuntimeContributor
+    IEventDispatchRuntimeDescriptorCatalog dispatchRuntimes,
+    IEventPublicationRuntimeCatalog publicationRuntimeCatalog) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -33,6 +34,11 @@ internal sealed class EventingPublishingRuntimeSurfaceContributor(
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static policyId => policyId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var publicationStates = publicationRuntimeCatalog.States;
+        var lastPublicationState = publicationStates
+            .Where(static state => state.LastObservedAtUtc is not null)
+            .OrderByDescending(static state => state.LastObservedAtUtc)
+            .FirstOrDefault();
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -51,6 +57,14 @@ internal sealed class EventingPublishingRuntimeSurfaceContributor(
                         ["dispatchRuntime"] = runtimeIds.Length > 0 ? "configured" : "not-configured",
                         ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
                         ["publicationDispatcher"] = "available",
+                        ["publicationRuntimeState"] = publicationStates.Count > 0 ? "reported" : "not-reported",
+                        ["publicationStateCount"] = publicationStates.Count.ToString(CultureInfo.InvariantCulture),
+                        ["publicationAcceptedCount"] = publicationStates.Sum(static state => state.AcceptedCount).ToString(CultureInfo.InvariantCulture),
+                        ["publicationSucceededCount"] = publicationStates.Sum(static state => state.SucceededCount).ToString(CultureInfo.InvariantCulture),
+                        ["publicationFailedCount"] = publicationStates.Sum(static state => state.FailedCount).ToString(CultureInfo.InvariantCulture),
+                        ["publicationSkippedCount"] = publicationStates.Sum(static state => state.SkippedCount).ToString(CultureInfo.InvariantCulture),
+                        ["lastPublicationId"] = lastPublicationState?.PublicationId ?? string.Empty,
+                        ["lastPublicationOutcome"] = lastPublicationState?.LastOutcome ?? "unknown",
                         ["channelCount"] = channelIds.Length.ToString(CultureInfo.InvariantCulture),
                         ["channelIds"] = string.Join(",", channelIds),
                         ["outboxCount"] = outboxEntries.Length.ToString(CultureInfo.InvariantCulture),

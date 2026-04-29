@@ -289,8 +289,14 @@ public sealed class EventDispatchHostingTests
 
         var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
         var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var publicationRuntimeCatalog = app.Services.GetRequiredService<IEventPublicationRuntimeCatalog>();
         var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
         var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        var publicationStates = await client.GetFromJsonAsync<EventPublicationRuntimeState[]>("/engine/event-publications/runtime");
+        var publicationState = await client.GetFromJsonAsync<EventPublicationRuntimeState>("/engine/event-publications/runtime/audit-route-001");
+        var channelPublicationStates = await client.GetFromJsonAsync<EventPublicationRuntimeState[]>("/engine/event-publications/runtime/channels/audit");
+        var missingPublicationStateResponse = await client.GetAsync("/engine/event-publications/runtime/missing-publication");
+        var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(result);
@@ -303,6 +309,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("hosting-operator", result.Metadata["actorId"]);
         Assert.Equal("hosting-test", result.Metadata["requestedBy"]);
         Assert.Equal("cephalon-eventing", result.Metadata["publicationDispatcher"]);
+        Assert.Equal("available", result.Metadata["publicationRuntimeState"]);
         Assert.Equal(HttpStatusCode.NotFound, missingChannelResponse.StatusCode);
 
         Assert.Equal(1, probe.TotalAttempts);
@@ -319,15 +326,54 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-publications", runtimeState.Metadata["publicationMetadata.route"]);
         Assert.Equal("hosting-operator", runtimeState.Metadata["publicationMetadata.actorId"]);
 
+        var reportedPublicationState = Assert.Single(publicationRuntimeCatalog.States);
+        Assert.Equal("audit-route-001", reportedPublicationState.PublicationId);
+        Assert.Equal("audit", reportedPublicationState.LastChannelId);
+        Assert.Equal("audit.created", reportedPublicationState.LastEventType);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Succeeded, reportedPublicationState.LastOutcome);
+        Assert.Equal(1, reportedPublicationState.SucceededCount);
+        Assert.Equal(0, reportedPublicationState.FailedCount);
+        Assert.Equal(0, reportedPublicationState.SkippedCount);
+        Assert.Equal(1, reportedPublicationState.MatchedSubscriptionCount);
+        Assert.Equal(1, reportedPublicationState.StartedSubscriptionCount);
+        Assert.Equal(1, reportedPublicationState.SucceededSubscriptionCount);
+        Assert.Equal(0, reportedPublicationState.FailedSubscriptionCount);
+        Assert.Equal(0, reportedPublicationState.RetryScheduledSubscriptionCount);
+        Assert.Equal(0, reportedPublicationState.SkippedSubscriptionCount);
+        Assert.Equal("reported", reportedPublicationState.Metadata["publicationRuntimeState"]);
+        Assert.Equal("aspnetcore-operator-route", reportedPublicationState.Metadata["publicationMetadata.trigger"]);
+        Assert.Equal("/engine/event-publications", reportedPublicationState.Metadata["publicationMetadata.route"]);
+        Assert.Equal("hosting-operator", reportedPublicationState.Metadata["publicationMetadata.actorId"]);
+        Assert.Equal("audit-projector", reportedPublicationState.Metadata["subscriptionIds"]);
+
+        Assert.NotNull(publicationStates);
+        var routePublicationState = Assert.Single(publicationStates);
+        Assert.Equal("audit-route-001", routePublicationState.PublicationId);
+        Assert.NotNull(publicationState);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Succeeded, publicationState.LastOutcome);
+        Assert.NotNull(channelPublicationStates);
+        Assert.Single(channelPublicationStates);
+        Assert.Equal(HttpStatusCode.NotFound, missingPublicationStateResponse.StatusCode);
+
         Assert.NotNull(capabilities);
         var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
         Assert.Equal("available", publishCapability.Metadata["publicationDispatcher"]);
+        Assert.Equal("available", publishCapability.Metadata["publicationRuntimeState"]);
 
         Assert.NotNull(eventingSurfaces);
         var publisherSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
         var publisherEntry = Assert.Single(publisherSurface.Entries);
         Assert.Equal("in-process-event-publisher", publisherEntry.Id);
         Assert.Equal("available", publisherEntry.Metadata["publicationDispatcher"]);
+        Assert.Equal("reported", publisherEntry.Metadata["publicationRuntimeState"]);
+        Assert.Equal("1", publisherEntry.Metadata["publicationStateCount"]);
+        Assert.Equal("1", publisherEntry.Metadata["publicationSucceededCount"]);
+        Assert.Equal("audit-route-001", publisherEntry.Metadata["lastPublicationId"]);
+        Assert.Equal("succeeded", publisherEntry.Metadata["lastPublicationOutcome"]);
+
+        Assert.NotNull(snapshot);
+        var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
+        Assert.Equal("audit-route-001", snapshotPublicationState.PublicationId);
     }
 
     [Fact]
@@ -475,6 +521,7 @@ public sealed class EventDispatchHostingTests
         var client = app.GetTestClient();
         var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
         var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var publicationRuntimeCatalog = app.Services.GetRequiredService<IEventPublicationRuntimeCatalog>();
         var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
         var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
         var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
@@ -498,6 +545,20 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("process-local", runtimeState.Metadata["idempotencyScope"]);
         Assert.Equal("duplicate-skipped", runtimeState.Metadata["idempotencyOutcome"]);
         Assert.True(runtimeState.Metadata.ContainsKey("idempotencyCompletedAtUtc"));
+
+        var publicationState = Assert.Single(publicationRuntimeCatalog.States);
+        Assert.Equal("audit-idempotency-001", publicationState.PublicationId);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Skipped, publicationState.LastOutcome);
+        Assert.Equal(1, publicationState.SucceededCount);
+        Assert.Equal(1, publicationState.SkippedCount);
+        Assert.Equal(2, publicationState.TotalReports);
+        Assert.Equal(1, publicationState.MatchedSubscriptionCount);
+        Assert.Equal(0, publicationState.StartedSubscriptionCount);
+        Assert.Equal(0, publicationState.SucceededSubscriptionCount);
+        Assert.Equal(1, publicationState.SkippedSubscriptionCount);
+        Assert.Equal("duplicate-completed-subscriptions", publicationState.Metadata["skipReason"]);
+        Assert.Equal("completed-publication", publicationState.Metadata["idempotencyPolicy"]);
+        Assert.Equal("subscription-publication", publicationState.Metadata["idempotencyKey"]);
 
         var binding = Assert.Single(bindingCatalog.Bindings);
         Assert.Equal("completed-publication", binding.Metadata["idempotencyPolicy"]);

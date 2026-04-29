@@ -166,6 +166,8 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("EventPublicationRequest", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventPublicationResult", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IEventPublicationDispatcher", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventPublicationRuntimeState", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventPublicationRuntimeCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionExecutionReadinessDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionExecutionReadinessStates", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IEventSubscriptionExecutionReadinessCatalog", abstractionsPage.Contents, StringComparison.Ordinal);

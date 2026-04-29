@@ -2014,6 +2014,33 @@ public static class EngineWebApplicationExtensions
                 return state is null ? Results.NotFound() : Results.Ok(state);
             })
             .WithName("GetCephalonEventDispatch");
+        engineGroup.MapGet("/event-publications/runtime", (HttpContext httpContext) =>
+            {
+                var states = httpContext.RequestServices
+                    .GetService<IEventPublicationRuntimeCatalog>()?
+                    .States ?? [];
+
+                return Results.Ok(states);
+            })
+            .WithName("GetCephalonEventPublicationRuntimeStates");
+        engineGroup.MapGet("/event-publications/runtime/channels/{channelId}", (string channelId, HttpContext httpContext) =>
+            {
+                var states = httpContext.RequestServices
+                    .GetService<IEventPublicationRuntimeCatalog>()?
+                    .GetByChannelId(channelId) ?? [];
+
+                return Results.Ok(states);
+            })
+            .WithName("GetCephalonEventPublicationRuntimeStatesByChannel");
+        engineGroup.MapGet("/event-publications/runtime/{publicationId}", (string publicationId, HttpContext httpContext) =>
+            {
+                var state = httpContext.RequestServices
+                    .GetService<IEventPublicationRuntimeCatalog>()?
+                    .GetByPublicationId(publicationId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            })
+            .WithName("GetCephalonEventPublicationRuntimeState");
         engineGroup.MapPost(
                 "/event-publications",
                 async (

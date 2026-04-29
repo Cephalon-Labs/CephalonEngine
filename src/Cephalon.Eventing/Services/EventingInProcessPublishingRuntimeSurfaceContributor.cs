@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Eventing.Configuration;
 using System.Globalization;
@@ -7,7 +8,8 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
     EventingOptions options,
     IEventChannelCatalog channels,
-    InProcessEventSubscriptionExecutorCatalog executors) : ITechnologyRuntimeContributor
+    InProcessEventSubscriptionExecutorCatalog executors,
+    IEventPublicationRuntimeCatalog publicationRuntimeCatalog) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -26,6 +28,11 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
             .Select(static entry => entry.Subscription.Id)
             .OrderBy(static subscriptionId => subscriptionId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var publicationStates = publicationRuntimeCatalog.States;
+        var lastPublicationState = publicationStates
+            .Where(static state => state.LastObservedAtUtc is not null)
+            .OrderByDescending(static state => state.LastObservedAtUtc)
+            .FirstOrDefault();
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -46,6 +53,14 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["subscriptionExecution"] = "cephalon-managed",
                         ["subscriptionExecutionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                         ["publicationDispatcher"] = "available",
+                        ["publicationRuntimeState"] = publicationStates.Count > 0 ? "reported" : "not-reported",
+                        ["publicationStateCount"] = publicationStates.Count.ToString(CultureInfo.InvariantCulture),
+                        ["publicationAcceptedCount"] = publicationStates.Sum(static state => state.AcceptedCount).ToString(CultureInfo.InvariantCulture),
+                        ["publicationSucceededCount"] = publicationStates.Sum(static state => state.SucceededCount).ToString(CultureInfo.InvariantCulture),
+                        ["publicationFailedCount"] = publicationStates.Sum(static state => state.FailedCount).ToString(CultureInfo.InvariantCulture),
+                        ["publicationSkippedCount"] = publicationStates.Sum(static state => state.SkippedCount).ToString(CultureInfo.InvariantCulture),
+                        ["lastPublicationId"] = lastPublicationState?.PublicationId ?? string.Empty,
+                        ["lastPublicationOutcome"] = lastPublicationState?.LastOutcome ?? "unknown",
                         ["executionMode"] = "in-process-direct",
                         ["deliveryMode"] = "direct",
                         ["retryPolicy"] = retryPolicy,

@@ -28,6 +28,7 @@ internal sealed class EventPublicationDispatcher(IEventPublisher publisher) : IE
         var metadata = new Dictionary<string, string>(request.Metadata, StringComparer.OrdinalIgnoreCase)
         {
             ["publicationDispatcher"] = "cephalon-eventing",
+            ["publicationRuntimeState"] = "available",
             ["publicationId"] = request.Id,
             ["channelId"] = request.ChannelId,
             ["eventType"] = request.EventType

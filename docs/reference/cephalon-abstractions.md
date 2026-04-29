@@ -46581,6 +46581,303 @@ string PublicationId { get; set; }
 
 The stable publication identifier.
 
+<a id="type-cephalon-abstractions-data-eventpublicationruntimeoutcomes"></a>
+
+### `EventPublicationRuntimeOutcomes`
+
+Defines stable outcome identifiers reported by event-publication runtime-state catalogs.
+
+#### Declaration
+```csharp
+public static class EventPublicationRuntimeOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-accepted"></a>
+
+##### `Accepted`
+
+```csharp
+const string Accepted
+```
+
+The publication was accepted or staged by the active runtime, but downstream delivery may still be pending.
+
+<a id="member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-failed"></a>
+
+##### `Failed`
+
+```csharp
+const string Failed
+```
+
+The publication failed while the active runtime processed it.
+
+<a id="member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-skipped"></a>
+
+##### `Skipped`
+
+```csharp
+const string Skipped
+```
+
+The publication was accepted but no runtime-owned work was executed.
+
+<a id="member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-succeeded"></a>
+
+##### `Succeeded`
+
+```csharp
+const string Succeeded
+```
+
+The publication completed its runtime-owned execution path successfully.
+
+<a id="type-cephalon-abstractions-data-eventpublicationruntimestate"></a>
+
+### `EventPublicationRuntimeState`
+
+Describes the latest operator-facing runtime state reported for one event publication.
+
+#### Declaration
+```csharp
+public sealed class EventPublicationRuntimeState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventpublicationruntimestate-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventPublicationRuntimeState`
+
+```csharp
+EventPublicationRuntimeState(string PublicationId, string LastChannelId, string LastEventType, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int AcceptedCount, int SucceededCount, int FailedCount, int SkippedCount, int MatchedSubscriptionCount, int StartedSubscriptionCount, int SucceededSubscriptionCount, int FailedSubscriptionCount, int RetryScheduledSubscriptionCount, int SkippedSubscriptionCount, string LastError, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the latest operator-facing runtime state reported for one event publication.
+
+Parameters:
+- `PublicationId`: The stable publication identifier.
+- `LastChannelId`: The last stable channel identifier reported for this publication.
+- `LastEventType`: The last stable event-type identifier reported for this publication.
+- `LastOutcome`: The last reported publication outcome identifier when one exists.
+- `LastObservedAtUtc`: The UTC timestamp when the last publication observation was reported.
+- `AcceptedCount`: The number of `accepted` publication observations reported so far.
+- `SucceededCount`: The number of `succeeded` publication observations reported so far.
+- `FailedCount`: The number of `failed` publication observations reported so far.
+- `SkippedCount`: The number of `skipped` publication observations reported so far.
+- `MatchedSubscriptionCount`: The number of subscriptions matched by the latest publication observation.
+- `StartedSubscriptionCount`: The number of subscription-start observations produced by the latest publication observation.
+- `SucceededSubscriptionCount`: The number of subscription-success observations produced by the latest publication observation.
+- `FailedSubscriptionCount`: The number of subscription-failure observations produced by the latest publication observation.
+- `RetryScheduledSubscriptionCount`: The number of subscription-retry observations produced by the latest publication observation.
+- `SkippedSubscriptionCount`: The number of subscription-skip observations produced by the latest publication observation.
+- `LastError`: The last operator-facing error summary when a publication failure was reported.
+- `Metadata`: The operator-facing metadata captured by the latest publication observation.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-acceptedcount"></a>
+
+##### `AcceptedCount`
+
+```csharp
+int AcceptedCount { get; set; }
+```
+
+The number of `accepted` publication observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; set; }
+```
+
+The number of `failed` publication observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-failedsubscriptioncount"></a>
+
+##### `FailedSubscriptionCount`
+
+```csharp
+int FailedSubscriptionCount { get; set; }
+```
+
+The number of subscription-failure observations produced by the latest publication observation.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-hassubscriptionfailures"></a>
+
+##### `HasSubscriptionFailures`
+
+```csharp
+bool HasSubscriptionFailures { get; }
+```
+
+Gets a value indicating whether the latest observation reported any subscription failures.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-hassubscriptionskips"></a>
+
+##### `HasSubscriptionSkips`
+
+```csharp
+bool HasSubscriptionSkips { get; }
+```
+
+Gets a value indicating whether the latest observation reported any skipped subscriptions.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastchannelid"></a>
+
+##### `LastChannelId`
+
+```csharp
+string LastChannelId { get; set; }
+```
+
+The last stable channel identifier reported for this publication.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; set; }
+```
+
+The last operator-facing error summary when a publication failure was reported.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-lasteventtype"></a>
+
+##### `LastEventType`
+
+```csharp
+string LastEventType { get; set; }
+```
+
+The last stable event-type identifier reported for this publication.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the last publication observation was reported.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; set; }
+```
+
+The last reported publication outcome identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-matchedsubscriptioncount"></a>
+
+##### `MatchedSubscriptionCount`
+
+```csharp
+int MatchedSubscriptionCount { get; set; }
+```
+
+The number of subscriptions matched by the latest publication observation.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+The operator-facing metadata captured by the latest publication observation.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-publicationid"></a>
+
+##### `PublicationId`
+
+```csharp
+string PublicationId { get; set; }
+```
+
+The stable publication identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-retryscheduledsubscriptioncount"></a>
+
+##### `RetryScheduledSubscriptionCount`
+
+```csharp
+int RetryScheduledSubscriptionCount { get; set; }
+```
+
+The number of subscription-retry observations produced by the latest publication observation.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-skippedcount"></a>
+
+##### `SkippedCount`
+
+```csharp
+int SkippedCount { get; set; }
+```
+
+The number of `skipped` publication observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-skippedsubscriptioncount"></a>
+
+##### `SkippedSubscriptionCount`
+
+```csharp
+int SkippedSubscriptionCount { get; set; }
+```
+
+The number of subscription-skip observations produced by the latest publication observation.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-startedsubscriptioncount"></a>
+
+##### `StartedSubscriptionCount`
+
+```csharp
+int StartedSubscriptionCount { get; set; }
+```
+
+The number of subscription-start observations produced by the latest publication observation.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-succeededcount"></a>
+
+##### `SucceededCount`
+
+```csharp
+int SucceededCount { get; set; }
+```
+
+The number of `succeeded` publication observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-succeededsubscriptioncount"></a>
+
+##### `SucceededSubscriptionCount`
+
+```csharp
+int SucceededSubscriptionCount { get; set; }
+```
+
+The number of subscription-success observations produced by the latest publication observation.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationruntimestate-totalreports"></a>
+
+##### `TotalReports`
+
+```csharp
+int TotalReports { get; }
+```
+
+Gets the total number of publication observations reported for this publication id.
+
 <a id="type-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor"></a>
 
 ### `EventSubscriptionExecutionReadinessDescriptor`
@@ -49817,6 +50114,77 @@ Returns: The operator-facing publication result when the active runtime accepts 
 Parameters:
 - `request`: The publication request to dispatch.
 - `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-ieventpublicationruntimecatalog"></a>
+
+### `IEventPublicationRuntimeCatalog`
+
+Exposes operator-facing runtime state reported by event-publication paths.
+
+#### Declaration
+```csharp
+public interface IEventPublicationRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ieventpublicationruntimecatalog-states"></a>
+
+##### `States`
+
+```csharp
+IReadOnlyList<EventPublicationRuntimeState> States { get; }
+```
+
+Gets the reported publication-state entries visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-getbychannelid-system-string"></a>
+
+##### `GetByChannelId`
+
+```csharp
+IReadOnlyList<EventPublicationRuntimeState> GetByChannelId(string channelId)
+```
+
+Gets the reported publication states for one channel identifier.
+
+Returns: The reported states for the channel, ordered by publication identifier.
+
+Parameters:
+- `channelId`: The stable channel identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-getbypublicationid-system-string"></a>
+
+##### `GetByPublicationId`
+
+```csharp
+EventPublicationRuntimeState GetByPublicationId(string publicationId)
+```
+
+Gets the latest reported publication state for one publication id.
+
+Returns: The latest reported state, or `null` when that publication has not reported runtime state.
+
+Parameters:
+- `publicationId`: The stable publication identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-tryget-system-string-cephalon-abstractions-data-eventpublicationruntimestate"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string publicationId, out EventPublicationRuntimeState state)
+```
+
+Tries to get the latest reported publication state for one publication id.
+
+Returns: `true` when a reported state exists; otherwise, `false`.
+
+Parameters:
+- `publicationId`: The stable publication identifier to resolve.
+- `state`: Receives the latest reported state when one exists.
 
 <a id="type-cephalon-abstractions-data-ieventsubscriptionexecutionreadinesscatalog"></a>
 

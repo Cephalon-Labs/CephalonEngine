@@ -159,6 +159,9 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
         if (hasPublishingPath)
         {
+            services.TryAddSingleton<EventPublicationRuntimeCatalog>();
+            services.TryAddSingleton<IEventPublicationRuntimeCatalog>(static provider => provider.GetRequiredService<EventPublicationRuntimeCatalog>());
+            services.TryAddSingleton<IEventPublicationRuntimeReporter>(static provider => provider.GetRequiredService<EventPublicationRuntimeCatalog>());
             services.TryAddScoped<IEventPublicationDispatcher, EventPublicationDispatcher>();
         }
     }
@@ -193,6 +196,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
                     ["publicationDispatcher"] = "available",
+                    ["publicationRuntimeState"] = "available",
                     ["retryPolicy"] = inProcessRetryPolicy,
                     ["retryMaxAttempts"] = inProcessRetryMaxAttempts,
                     ["retryDelayMilliseconds"] = inProcessRetryDelayMilliseconds,
@@ -212,6 +216,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["dispatchRuntime"] = hasDispatchRuntimeContributors ? "configured" : "not-configured",
                     ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
                     ["publicationDispatcher"] = "available",
+                    ["publicationRuntimeState"] = "available",
                     ["runtimeState"] = "available"
                 };
 

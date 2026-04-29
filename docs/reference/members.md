@@ -24,6 +24,9 @@ Browse the published API surface by public member.
 - [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationoutcomes-accepted): `Fields` on `EventPublicationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The publication was accepted by the active eventing runtime.
   - `const string Accepted`
+- [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-accepted): `Fields` on `EventPublicationRuntimeOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The publication was accepted or staged by the active runtime, but downstream delivery may still be pending.
+  - `const string Accepted`
 - [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an accepted result with a payload value.
   - `Result<T> Accepted<T>(T value, string message, string code)`
@@ -39,6 +42,9 @@ Browse the published API surface by public member.
 - [AcceptedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-acceptedatutc): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcceptedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The UTC timestamp when the active runtime accepted the publication.
   - `DateTimeOffset AcceptedAtUtc { get; set; }`
+- [AcceptedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-acceptedcount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcceptedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of `accepted` publication observations reported so far.
+  - `int AcceptedCount { get; set; }`
 - [AcceptedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-acceptedcount): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcceptedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `accepted` observations reported so far.
   - `int AcceptedCount { get; set; }`
@@ -8346,6 +8352,12 @@ Browse the published API surface by public member.
 - [EventPublicationResult](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventpublicationresult-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventPublicationResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Describes the operator-facing result of one managed event-publication request.
   - `EventPublicationResult(string PublicationId, string ChannelId, string EventType, string Outcome, DateTimeOffset AcceptedAtUtc, string Error, IReadOnlyDictionary<string, string> Metadata)`
+- [EventPublicationRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventpublicationruntimestate-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventPublicationRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Describes the latest operator-facing runtime state reported for one event publication.
+  - `EventPublicationRuntimeState(string PublicationId, string LastChannelId, string LastEventType, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int AcceptedCount, int SucceededCount, int FailedCount, int SkippedCount, int MatchedSubscriptionCount, int StartedSubscriptionCount, int SucceededSubscriptionCount, int FailedSubscriptionCount, int RetryScheduledSubscriptionCount, int SkippedSubscriptionCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+- [EventPublicationStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventpublicationstates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EventPublicationStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the latest reported event-publication runtime state entries visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<EventPublicationRuntimeState> EventPublicationStates { get; set; }`
 - [Events](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-events): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Events&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The published event definitions that belong to the convention.
   - `IReadOnlyList<DiagnosticEventDefinition> Events { get; set; }`
@@ -9243,6 +9255,9 @@ Browse the published API surface by public member.
 - [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationoutcomes-failed): `Fields` on `EventPublicationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The publication was rejected or failed before it could be accepted by the active eventing runtime.
   - `const string Failed`
+- [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-failed): `Fields` on `EventPublicationRuntimeOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The publication failed while the active runtime processed it.
+  - `const string Failed`
 - [Failed](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-failed): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Failed&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling fails for one message.
   - `const string Failed`
@@ -9285,6 +9300,9 @@ Browse the published API surface by public member.
 - [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-failedcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of `failed` observations reported so far.
   - `int FailedCount { get; }`
+- [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-failedcount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of `failed` publication observations reported so far.
+  - `int FailedCount { get; set; }`
 - [FailedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-failedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `failed` observations reported so far.
   - `int FailedCount { get; set; }`
@@ -9306,6 +9324,9 @@ Browse the published API surface by public member.
 - [FailedRunCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-failedruncount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=FailedRunCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of background polling passes that failed before producing a polling result.
   - `long FailedRunCount { get; }`
+- [FailedSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-failedsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of subscription-failure observations produced by the latest publication observation.
+  - `int FailedSubscriptionCount { get; set; }`
 - [FailFast](cephalon-engine.md#member-f-cephalon-engine-configuration-startupfailurebehavior-failfast): `Fields` on `StartupFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailFast&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Stop startup immediately and rethrow the failure.
   - `const StartupFailureBehavior FailFast`
@@ -9834,6 +9855,9 @@ Browse the published API surface by public member.
 - [GetByCellId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbycellid-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell health-isolation answers that govern the requested cell.
   - `IReadOnlyList<CellHealthIsolationDescriptor> GetByCellId(string cellId)`
+- [GetByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-getbychannelid-system-string): `Methods` on `IEventPublicationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the reported publication states for one channel identifier.
+  - `IReadOnlyList<EventPublicationRuntimeState> GetByChannelId(string channelId)`
 - [GetByChannelId](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptioncatalog-getbychannelid-system-string): `Methods` on `IEventSubscriptionCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the subscriptions currently bound to one event channel identifier.
   - `IReadOnlyList<EventSubscriptionDescriptor> GetByChannelId(string channelId)`
@@ -10431,6 +10455,9 @@ Browse the published API surface by public member.
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ioutboxcatalog-getbyprovider-system-string): `Methods` on `IOutboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all outboxes backed by the requested provider identifier.
   - `IReadOnlyList<OutboxDescriptor> GetByProvider(string provider)`
+- [GetByPublicationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-getbypublicationid-system-string): `Methods` on `IEventPublicationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByPublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest reported publication state for one publication id.
+  - `EventPublicationRuntimeState GetByPublicationId(string publicationId)`
 - [GetByRemediationCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyremediationcategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByRemediationCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current remediation posture includes the requested category.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationCategory(string remediationCategory)`
@@ -11409,6 +11436,12 @@ Browse the published API surface by public member.
 - [HasStrategyValues](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasstrategyvalues): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasStrategyValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any strategy-level override settings were explicitly supplied.
   - `bool HasStrategyValues { get; }`
+- [HasSubscriptionFailures](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-hassubscriptionfailures): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasSubscriptionFailures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the latest observation reported any subscription failures.
+  - `bool HasSubscriptionFailures { get; }`
+- [HasSubscriptionSkips](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-hassubscriptionskips): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasSubscriptionSkips&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the latest observation reported any skipped subscriptions.
+  - `bool HasSubscriptionSkips { get; }`
 - [HasTargetOperation](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutionstatus-hastargetoperation): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasTargetOperation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current answer exposes one concrete target operation.
   - `bool HasTargetOperation { get; set; }`
@@ -13971,6 +14004,9 @@ Browse the published API surface by public member.
 - [LastChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastchannelid): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported channel identifier when one exists.
   - `string LastChannelId { get; }`
+- [LastChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastchannelid): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The last stable channel identifier reported for this publication.
+  - `string LastChannelId { get; set; }`
 - [LastCheckpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastcheckpoint): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastCheckpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider-facing checkpoint visible for the execution runtime.
   - `string LastCheckpoint { get; set; }`
@@ -14109,6 +14145,9 @@ Browse the published API surface by public member.
 - [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lasterror): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest operator-facing error summary when one was reported.
   - `string LastError { get; }`
+- [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-lasterror): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The last operator-facing error summary when a publication failure was reported.
+  - `string LastError { get; set; }`
 - [LastError](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lasterror): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastError&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last operator-facing error summary when a failure was reported.
   - `string LastError { get; set; }`
@@ -14121,6 +14160,9 @@ Browse the published API surface by public member.
 - [LastError](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lasterror): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastError&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest unhandled background polling error message.
   - `string LastError { get; }`
+- [LastEventType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-lasteventtype): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastEventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The last stable event-type identifier reported for this publication.
+  - `string LastEventType { get; set; }`
 - [LastFailedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastfailedcount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastFailedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest failed-attempt count.
   - `int LastFailedCount { get; }`
@@ -14229,6 +14271,9 @@ Browse the published API surface by public member.
 - [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastobservedatutc): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the latest observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; }`
+- [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastobservedatutc): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The UTC timestamp when the last publication observation was reported.
+  - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastobservedatutc): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The UTC timestamp when the last observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
@@ -14277,6 +14322,9 @@ Browse the published API surface by public member.
 - [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutcome): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported dispatch outcome identifier when one exists.
   - `string LastOutcome { get; }`
+- [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-lastoutcome): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The last reported publication outcome identifier when one exists.
+  - `string LastOutcome { get; set; }`
 - [LastOutcome](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-lastoutcome): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the latest reported subscription execution outcome.
   - `const string LastOutcome`
@@ -15399,6 +15447,9 @@ Browse the published API surface by public member.
 - [MatchedRoles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-matchedroles): `Properties` on `TenantMembershipEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MatchedRoles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant-local roles found on active memberships.
   - `IReadOnlyList<string> MatchedRoles { get; }`
+- [MatchedSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-matchedsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of subscriptions matched by the latest publication observation.
+  - `int MatchedSubscriptionCount { get; set; }`
 - [MatchedSuppressionIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-matchedsuppressionids): `Properties` on `RestEndpointCandidateRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedSuppressionIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered suppression-rule identifiers that matched this candidate before one winner was selected.
   - `IReadOnlyList<string> MatchedSuppressionIds { get; }`
@@ -15971,6 +16022,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-metadata): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Optional operator-facing metadata captured with the result.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-metadata): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The operator-facing metadata captured by the latest publication observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-metadata): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized provider-specific metadata associated with the stream.
@@ -20235,6 +20289,9 @@ Browse the published API surface by public member.
 - [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-publicationid): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The stable publication identifier.
   - `string PublicationId { get; set; }`
+- [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-publicationid): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The stable publication identifier.
+  - `string PublicationId { get; set; }`
 - [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The stable publication identifier declared by the choreography step.
   - `string PublicationId { get; set; }`
@@ -22578,6 +22635,9 @@ Browse the published API surface by public member.
 - [RetryScheduledCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-retryscheduledcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `retry-scheduled` observations reported so far.
   - `int RetryScheduledCount { get; set; }`
+- [RetryScheduledSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-retryscheduledsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryScheduledSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of subscription-retry observations produced by the latest publication observation.
+  - `int RetryScheduledSubscriptionCount { get; set; }`
 - [RetrySelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-retryselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean): `Constructors` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetrySelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `RetrySelection` class.
   - `RetrySelection(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)`
@@ -23607,6 +23667,9 @@ Browse the published API surface by public member.
 - [Skipped](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-skipped): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch intentionally skips one staged message.
   - `const string Skipped`
+- [Skipped](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-skipped): `Fields` on `EventPublicationRuntimeOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The publication was accepted but no runtime-owned work was executed.
+  - `const string Skipped`
 - [Skipped](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-skipped): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling intentionally skips one message.
   - `const string Skipped`
@@ -23631,6 +23694,9 @@ Browse the published API surface by public member.
 - [SkippedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-skippedcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of `skipped` observations reported so far.
   - `int SkippedCount { get; }`
+- [SkippedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-skippedcount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of `skipped` publication observations reported so far.
+  - `int SkippedCount { get; set; }`
 - [SkippedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-skippedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `skipped` observations reported so far.
   - `int SkippedCount { get; set; }`
@@ -23673,6 +23739,9 @@ Browse the published API surface by public member.
 - [SkippedOverrideSummaries](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-skippedoverridesummaries): `Properties` on `RestEndpointPublicationGroupDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedOverrideSummaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the grouped host-governance-skipped override-rule outcomes summarized by rule.
   - `IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }`
+- [SkippedSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-skippedsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of subscription-skip observations produced by the latest publication observation.
+  - `int SkippedSubscriptionCount { get; set; }`
 - [SkippedSuppressionIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-skippedsuppressionids): `Properties` on `RestEndpointAuthoringPolicyAuthoringStyleDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedSuppressionIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered suppression-rule identifiers that targeted host-governance-ineligible candidates for this authoring style.
   - `IReadOnlyList<string> SkippedSuppressionIds { get; }`
@@ -24331,6 +24400,9 @@ Browse the published API surface by public member.
 - [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-startedcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of indexing runs that have started.
   - `int StartedCount { get; set; }`
+- [StartedSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-startedsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of subscription-start observations produced by the latest publication observation.
+  - `int StartedSubscriptionCount { get; set; }`
 - [Starting](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-starting): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Starting&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is starting modules.
   - `const RuntimeStatus Starting`
@@ -24493,6 +24565,9 @@ Browse the published API surface by public member.
 - [States](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ieventdispatchruntimecatalog-states): `Properties` on `IEventDispatchRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the reported dispatch state entries visible to the current runtime.
   - `IReadOnlyList<EventDispatchRuntimeState> States { get; }`
+- [States](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ieventpublicationruntimecatalog-states): `Properties` on `IEventPublicationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the reported publication-state entries visible to the current runtime.
+  - `IReadOnlyList<EventPublicationRuntimeState> States { get; }`
 - [States](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventsubscriptionruntimecatalog-states): `Properties` on `IEventSubscriptionRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=States&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the currently known runtime-state entries ordered by subscription identifier.
   - `IReadOnlyList<EventSubscriptionRuntimeState> States { get; }`
@@ -24865,6 +24940,9 @@ Browse the published API surface by public member.
 - [Succeeded](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-succeeded): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch completes successfully for one staged message.
   - `const string Succeeded`
+- [Succeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-succeeded): `Fields` on `EventPublicationRuntimeOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The publication completed its runtime-owned execution path successfully.
+  - `const string Succeeded`
 - [Succeeded](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-succeeded): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling completes successfully for one message.
   - `const string Succeeded`
@@ -24886,6 +24964,9 @@ Browse the published API surface by public member.
 - [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-succeededcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of `succeeded` observations reported so far.
   - `int SucceededCount { get; }`
+- [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-succeededcount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of `succeeded` publication observations reported so far.
+  - `int SucceededCount { get; set; }`
 - [SucceededCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-succeededcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `succeeded` observations reported so far.
   - `int SucceededCount { get; set; }`
@@ -24895,6 +24976,9 @@ Browse the published API surface by public member.
 - [SucceededMigrationTargetCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-succeededmigrationtargetcount): `Properties` on `DatabaseTopologyOperationalSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededMigrationTargetCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of migration targets currently reporting `Succeeded`.
   - `int SucceededMigrationTargetCount { get; }`
+- [SucceededSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-succeededsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of subscription-success observations produced by the latest publication observation.
+  - `int SucceededSubscriptionCount { get; set; }`
 - [Success](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-success): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Success&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets a value indicating whether the response is successful.
   - `bool Success { get; set; }`
@@ -25945,6 +26029,9 @@ Browse the published API surface by public member.
 - [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-totalreports): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of reported observations across all owned outboxes.
   - `int TotalReports { get; }`
+- [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-totalreports): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of publication observations reported for this publication id.
+  - `int TotalReports { get; }`
 - [TotalReports](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-totalreports): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the total number of observations reported for this subscription.
   - `int TotalReports { get; }`
@@ -26161,6 +26248,9 @@ Browse the published API surface by public member.
 - [TryGet](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-tryget-system-string-cephalon-abstractions-data-eventdispatchruntimestate): `Methods` on `IEventDispatchRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Tries to get the latest reported dispatch state for one outbox-backed publication path.
   - `bool TryGet(string outboxId, out EventDispatchRuntimeState state)`
+- [TryGet](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-tryget-system-string-cephalon-abstractions-data-eventpublicationruntimestate): `Methods` on `IEventPublicationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Tries to get the latest reported publication state for one publication id.
+  - `bool TryGet(string publicationId, out EventPublicationRuntimeState state)`
 - [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptioncatalog-tryget-system-string-cephalon-eventing-services-eventsubscriptiondescriptor): `Methods` on `IEventSubscriptionCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Attempts to resolve a subscription descriptor by identifier.
   - `bool TryGet(string subscriptionId, out EventSubscriptionDescriptor subscription)`

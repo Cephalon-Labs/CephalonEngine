@@ -36,6 +36,7 @@
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
 - `/engine/event-dispatch-runtimes` and `/engine/event-dispatches` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
 - `POST /engine/event-publications` when eventing packs register the abstraction-level publication dispatcher action seam
+- `/engine/event-publications/runtime` when eventing packs register the abstraction-level publication runtime-state catalog
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
 - `/engine/agent-tool-runs` and `POST /engine/agent-tools/{toolId}/runs` when agentics packs register the abstraction-level agent-tool run-state catalog and dispatcher action seam
 - `/engine/knowledge-indexes` and `POST /engine/knowledge-indexes/{collectionId}/reindex` when retrieval packs register the abstraction-level knowledge-index catalog and indexer command seam
@@ -487,8 +488,9 @@ including reported outcome, retry intent, timestamps, and totals from
 host route surface and the broader runtime snapshot without forcing adapter packs to re-aggregate
 state by hand.
 
-The host now also exposes a bounded event-publication operator action directly. When a selected
-eventing pack registers `IEventPublicationDispatcher`, `POST /engine/event-publications` accepts
+The host now also exposes bounded event-publication operator action and publication runtime-state
+surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,
+`POST /engine/event-publications` accepts
 one publication body with `id`, `channelId`, `eventType`, JSON or string `payload`,
 `occurredAtUtc`, `contentType`, `correlationId`, `tenantId`, optional headers, metadata, and actor
 id. The route returns `EventPublicationResult`, records safe route-trigger metadata, returns `404`
@@ -497,7 +499,14 @@ invalid publication bodies. The action stays bounded to the active publication p
 the core in-process direct publisher or stage through an outbox-backed publisher, and the direct
 publisher can optionally suppress duplicate completed executions process-locally, but it does not
 claim durable broker dispatch, durable inbox ownership, cross-node idempotency, retry queues,
-distributed scheduling, or provider-specific inbound consumption.
+distributed scheduling, or provider-specific inbound consumption. When the selected runtime also
+registers `IEventPublicationRuntimeCatalog`, `/engine/event-publications/runtime`,
+`/engine/event-publications/runtime/{publicationId}`, and
+`/engine/event-publications/runtime/channels/{channelId}` expose the latest reported publication
+state from abstraction-level contracts, while `/engine/snapshot` carries the same entries through
+`EventPublicationStates`. In-process entries report local succeeded, failed, or skipped execution
+posture plus subscription counters; outbox-backed entries report `accepted` staged handoff and leave
+downstream dispatch completion to the dispatch-runtime surfaces.
 
 The host now also exposes additive agent-tool run-state answers and a bounded operator action
 directly. When a selected agentics pack registers `IAgentToolRunCatalog` and `IAgentToolDispatcher`,

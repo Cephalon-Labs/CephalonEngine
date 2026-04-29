@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Data;
 using Cephalon.Eventing.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -11,6 +12,7 @@ internal sealed class InProcessEventPublisher(
     InProcessEventSubscriptionExecutorCatalog executors,
     InProcessEventSubscriptionIdempotencyTracker idempotencyTracker,
     IEventSubscriptionRuntimeReporter runtimeReporter,
+    IEventPublicationRuntimeReporter publicationRuntimeReporter,
     ILoggerFactory? loggerFactory = null) : IEventPublisher
 {
     private readonly ILogger logger = (loggerFactory ?? NullLoggerFactory.Instance)
@@ -30,6 +32,22 @@ internal sealed class InProcessEventPublisher(
         }
 
         var entries = executors.GetByChannelId(publication.ChannelId);
+        var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
+        var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
+        var retryDelay = TimeSpan.FromMilliseconds(retryDelayMilliseconds);
+        var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
+        var idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
+        var matchedSubscriptionCount = entries.Count;
+        var startedSubscriptionCount = 0;
+        var succeededSubscriptionCount = 0;
+        var failedSubscriptionCount = 0;
+        var retryScheduledSubscriptionCount = 0;
+        var skippedSubscriptionCount = 0;
+        var subscriptionIds = entries
+            .Select(static entry => entry.Subscription.Id)
+            .OrderBy(static subscriptionId => subscriptionId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
         if (entries.Count == 0)
         {
             EventingLoggerMessages.LogPublicationDispatchSkipped(
@@ -37,21 +55,41 @@ internal sealed class InProcessEventPublisher(
                 InProcessEventingRuntimeIds.PublisherId,
                 publication.Id,
                 attempt: 1);
+            await publicationRuntimeReporter.ReportAsync(
+                new EventPublicationRuntimeReport(
+                    publicationId: publication.Id,
+                    channelId: publication.ChannelId,
+                    eventType: publication.EventType,
+                    outcome: EventPublicationRuntimeOutcomes.Skipped,
+                    observedAtUtc: DateTimeOffset.UtcNow,
+                    matchedSubscriptionCount: 0,
+                    metadata: CreatePublicationRuntimeMetadata(
+                        publication,
+                        EventPublicationRuntimeOutcomes.Skipped,
+                        matchedSubscriptionCount: 0,
+                        startedSubscriptionCount: 0,
+                        succeededSubscriptionCount: 0,
+                        failedSubscriptionCount: 0,
+                        retryScheduledSubscriptionCount: 0,
+                        skippedSubscriptionCount: 0,
+                        maxAttempts,
+                        retryDelayMilliseconds,
+                        idempotencyPolicy,
+                        idempotencyRetentionMinutes,
+                        subscriptionIds,
+                        skipReason: "no-matching-subscriptions")),
+                cancellationToken).ConfigureAwait(false);
             return;
         }
 
         var failures = new List<Exception>();
+        Exception? failureToRethrow = null;
         EventingLoggerMessages.LogPublicationDispatchStarted(
             logger,
             InProcessEventingRuntimeIds.PublisherId,
             publication.Id,
             attempt: 1);
 
-        var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
-        var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
-        var retryDelay = TimeSpan.FromMilliseconds(retryDelayMilliseconds);
-        var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
-        var idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
         foreach (var entry in entries)
         {
             if (idempotencyTracker.TryGetCompleted(
@@ -60,6 +98,7 @@ internal sealed class InProcessEventPublisher(
                 DateTimeOffset.UtcNow,
                 out var completedAtUtc))
             {
+                skippedSubscriptionCount++;
                 await runtimeReporter.ReportAsync(
                     new EventSubscriptionExecutionReport(
                         subscriptionId: entry.Subscription.Id,
@@ -92,6 +131,7 @@ internal sealed class InProcessEventPublisher(
                     retryDelayMilliseconds,
                     idempotencyPolicy,
                     idempotencyRetentionMinutes);
+                startedSubscriptionCount++;
                 await runtimeReporter.ReportAsync(
                     new EventSubscriptionExecutionReport(
                         subscriptionId: entry.Subscription.Id,
@@ -122,6 +162,7 @@ internal sealed class InProcessEventPublisher(
                             metadata: metadata),
                         cancellationToken).ConfigureAwait(false);
 
+                    succeededSubscriptionCount++;
                     idempotencyTracker.MarkCompleted(entry.Subscription.Id, publication.Id, DateTimeOffset.UtcNow);
                     finalFailure = null;
                     break;
@@ -135,6 +176,7 @@ internal sealed class InProcessEventPublisher(
                     finalFailure = exception;
                     if (attempt < maxAttempts)
                     {
+                        retryScheduledSubscriptionCount++;
                         await runtimeReporter.ReportAsync(
                             new EventSubscriptionExecutionReport(
                                 subscriptionId: entry.Subscription.Id,
@@ -154,6 +196,7 @@ internal sealed class InProcessEventPublisher(
                         continue;
                     }
 
+                    failedSubscriptionCount++;
                     await runtimeReporter.ReportAsync(
                         new EventSubscriptionExecutionReport(
                             subscriptionId: entry.Subscription.Id,
@@ -172,7 +215,8 @@ internal sealed class InProcessEventPublisher(
                 failures.Add(finalFailure);
                 if (!options.ContinueInProcessSubscriptionExecutionAfterFailure)
                 {
-                    System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(finalFailure).Throw();
+                    failureToRethrow = finalFailure;
+                    break;
                 }
             }
         }
@@ -190,6 +234,42 @@ internal sealed class InProcessEventPublisher(
                 attempt: 1,
                 message);
 
+            await publicationRuntimeReporter.ReportAsync(
+                new EventPublicationRuntimeReport(
+                    publicationId: publication.Id,
+                    channelId: publication.ChannelId,
+                    eventType: publication.EventType,
+                    outcome: EventPublicationRuntimeOutcomes.Failed,
+                    observedAtUtc: DateTimeOffset.UtcNow,
+                    matchedSubscriptionCount: matchedSubscriptionCount,
+                    startedSubscriptionCount: startedSubscriptionCount,
+                    succeededSubscriptionCount: succeededSubscriptionCount,
+                    failedSubscriptionCount: failedSubscriptionCount,
+                    retryScheduledSubscriptionCount: retryScheduledSubscriptionCount,
+                    skippedSubscriptionCount: skippedSubscriptionCount,
+                    error: message,
+                    metadata: CreatePublicationRuntimeMetadata(
+                        publication,
+                        EventPublicationRuntimeOutcomes.Failed,
+                        matchedSubscriptionCount,
+                        startedSubscriptionCount,
+                        succeededSubscriptionCount,
+                        failedSubscriptionCount,
+                        retryScheduledSubscriptionCount,
+                        skippedSubscriptionCount,
+                        maxAttempts,
+                        retryDelayMilliseconds,
+                        idempotencyPolicy,
+                        idempotencyRetentionMinutes,
+                        subscriptionIds,
+                        error: message)),
+                cancellationToken).ConfigureAwait(false);
+
+            if (failureToRethrow is not null)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failureToRethrow).Throw();
+            }
+
             throw new InvalidOperationException(message, failures[0]);
         }
 
@@ -198,6 +278,42 @@ internal sealed class InProcessEventPublisher(
             InProcessEventingRuntimeIds.PublisherId,
             publication.Id,
             attempt: 1);
+
+        var publicationOutcome = startedSubscriptionCount == 0 && skippedSubscriptionCount > 0
+            ? EventPublicationRuntimeOutcomes.Skipped
+            : EventPublicationRuntimeOutcomes.Succeeded;
+
+        await publicationRuntimeReporter.ReportAsync(
+            new EventPublicationRuntimeReport(
+                publicationId: publication.Id,
+                channelId: publication.ChannelId,
+                eventType: publication.EventType,
+                outcome: publicationOutcome,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                matchedSubscriptionCount: matchedSubscriptionCount,
+                startedSubscriptionCount: startedSubscriptionCount,
+                succeededSubscriptionCount: succeededSubscriptionCount,
+                failedSubscriptionCount: failedSubscriptionCount,
+                retryScheduledSubscriptionCount: retryScheduledSubscriptionCount,
+                skippedSubscriptionCount: skippedSubscriptionCount,
+                metadata: CreatePublicationRuntimeMetadata(
+                    publication,
+                    publicationOutcome,
+                    matchedSubscriptionCount,
+                    startedSubscriptionCount,
+                    succeededSubscriptionCount,
+                    failedSubscriptionCount,
+                    retryScheduledSubscriptionCount,
+                    skippedSubscriptionCount,
+                    maxAttempts,
+                    retryDelayMilliseconds,
+                    idempotencyPolicy,
+                    idempotencyRetentionMinutes,
+                    subscriptionIds,
+                    skipReason: publicationOutcome == EventPublicationRuntimeOutcomes.Skipped
+                        ? "duplicate-completed-subscriptions"
+                        : null)),
+            cancellationToken).ConfigureAwait(false);
     }
 
     private static Dictionary<string, string> CreateExecutionMetadata(
@@ -289,5 +405,99 @@ internal sealed class InProcessEventPublisher(
         };
 
         return skippedMetadata;
+    }
+
+    private static Dictionary<string, string> CreatePublicationRuntimeMetadata(
+        EventPublication publication,
+        string outcome,
+        int matchedSubscriptionCount,
+        int startedSubscriptionCount,
+        int succeededSubscriptionCount,
+        int failedSubscriptionCount,
+        int retryScheduledSubscriptionCount,
+        int skippedSubscriptionCount,
+        int maxAttempts,
+        int retryDelayMilliseconds,
+        string idempotencyPolicy,
+        int idempotencyRetentionMinutes,
+        IReadOnlyList<string> subscriptionIds,
+        string? skipReason = null,
+        string? error = null)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["publisherId"] = InProcessEventingRuntimeIds.PublisherId,
+            ["trigger"] = InProcessEventingRuntimeIds.PublisherId,
+            ["publicationRuntimeState"] = "reported",
+            ["publicationOutcome"] = outcome,
+            ["publicationId"] = publication.Id,
+            ["channelId"] = publication.ChannelId,
+            ["eventType"] = publication.EventType,
+            ["handoff"] = "in-process",
+            ["dispatchRuntime"] = "cephalon-managed",
+            ["dispatchStore"] = "not-configured",
+            ["subscriptionExecution"] = "cephalon-managed",
+            ["subscriptionExecutionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
+            ["executionMode"] = "in-process-direct",
+            ["deliveryMode"] = "direct",
+            ["retryPolicy"] = maxAttempts > 1 ? InProcessEventingRetryPolicy.BoundedInProcess : InProcessEventingRetryPolicy.None,
+            ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
+            ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+            ["retryDurability"] = "none",
+            ["retryScope"] = "process-local",
+            ["idempotencyPolicy"] = idempotencyPolicy,
+            ["idempotencyKey"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
+                ? InProcessEventingIdempotencyPolicy.None
+                : InProcessEventingIdempotencyPolicy.KeyShape,
+            ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
+            ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+            ["idempotencyScope"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
+                ? InProcessEventingIdempotencyPolicy.None
+                : InProcessEventingIdempotencyPolicy.Scope,
+            ["matchedSubscriptionCount"] = matchedSubscriptionCount.ToString(CultureInfo.InvariantCulture),
+            ["startedSubscriptionCount"] = startedSubscriptionCount.ToString(CultureInfo.InvariantCulture),
+            ["succeededSubscriptionCount"] = succeededSubscriptionCount.ToString(CultureInfo.InvariantCulture),
+            ["failedSubscriptionCount"] = failedSubscriptionCount.ToString(CultureInfo.InvariantCulture),
+            ["retryScheduledSubscriptionCount"] = retryScheduledSubscriptionCount.ToString(CultureInfo.InvariantCulture),
+            ["skippedSubscriptionCount"] = skippedSubscriptionCount.ToString(CultureInfo.InvariantCulture),
+            ["subscriptionIds"] = string.Join(",", subscriptionIds),
+            ["headerCount"] = publication.Headers.Count.ToString(CultureInfo.InvariantCulture),
+            ["publicationMetadataCount"] = publication.Metadata.Count.ToString(CultureInfo.InvariantCulture)
+        };
+
+        if (!string.IsNullOrWhiteSpace(skipReason))
+        {
+            metadata["skipReason"] = skipReason;
+        }
+
+        if (!string.IsNullOrWhiteSpace(error))
+        {
+            metadata["error"] = error;
+        }
+
+        if (!string.IsNullOrWhiteSpace(publication.ContentType))
+        {
+            metadata["contentType"] = publication.ContentType!;
+        }
+
+        if (!string.IsNullOrWhiteSpace(publication.CorrelationId))
+        {
+            metadata["correlationId"] = publication.CorrelationId!;
+        }
+
+        if (!string.IsNullOrWhiteSpace(publication.TenantId))
+        {
+            metadata["tenantId"] = publication.TenantId!;
+        }
+
+        foreach (var pair in publication.Metadata)
+        {
+            if (!string.IsNullOrWhiteSpace(pair.Key))
+            {
+                metadata[$"publicationMetadata.{pair.Key.Trim()}"] = pair.Value;
+            }
+        }
+
+        return metadata;
     }
 }

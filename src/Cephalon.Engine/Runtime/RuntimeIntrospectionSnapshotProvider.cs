@@ -44,6 +44,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     {
         var eventDispatchRuntimeDescriptorCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeDescriptorCatalog)) as IEventDispatchRuntimeDescriptorCatalog;
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
+        var eventPublicationRuntimeCatalog = serviceProvider.GetService(typeof(IEventPublicationRuntimeCatalog)) as IEventPublicationRuntimeCatalog;
         var eventSubscriptionExecutionReadinessCatalog = serviceProvider.GetService(typeof(IEventSubscriptionExecutionReadinessCatalog)) as IEventSubscriptionExecutionReadinessCatalog;
         var agentToolRunCatalog = serviceProvider.GetService(typeof(IAgentToolRunCatalog)) as IAgentToolRunCatalog;
         var knowledgeIndexCatalog = serviceProvider.GetService(typeof(IKnowledgeIndexCatalog)) as IKnowledgeIndexCatalog;
@@ -91,6 +92,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             DatabaseTopology = databaseTopologyOperationalSnapshotProvider.CreateSnapshot(),
             AgentToolRuns = agentToolRunCatalog?.Runs ?? [],
             KnowledgeIndexes = knowledgeIndexCatalog?.States ?? [],
+            EventPublicationStates = eventPublicationRuntimeCatalog?.States ?? [],
             EventDispatchRuntimes = eventDispatchRuntimeDescriptorCatalog?.Runtimes ?? [],
             EventDispatchStates = eventDispatchRuntimeCatalog?.States ?? [],
             EventSubscriptionExecutionReadiness = eventSubscriptionExecutionReadinessCatalog?.Readiness ?? [],

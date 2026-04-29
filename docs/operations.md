@@ -1562,10 +1562,12 @@ Current note:
 - this is a descriptive runtime answer for processed-message or idempotency-store surfaces, not a claim that Cephalon already ships a full subscription-dispatch runtime
 - invalid inbox source-module ownership fails at build time instead of leaking broken operator metadata
 
-## Event publication action surface
+## Event publication action and runtime-state surfaces
 
 `POST /engine/event-publications` requests one bounded event publication when an eventing pack
 registers the abstraction-level `IEventPublicationDispatcher`.
+`GET /engine/event-publications/runtime` exposes the latest publication runtime states when the
+selected runtime registers the abstraction-level `IEventPublicationRuntimeCatalog`.
 
 Current payload highlights:
 
@@ -1580,16 +1582,28 @@ Current payload highlights:
 - when the core in-process lane is selected, the route triggers the active `IEventPublisher`,
   invokes matching `IEventSubscriptionExecutor` services, and flows publication metadata back into
   the existing subscription runtime catalog as `publicationMetadata.*`
+- each runtime-state entry carries the publication id, latest channel id, event type, latest
+  outcome, observation timestamp, accepted/succeeded/failed/skipped counters, latest subscription
+  counts, optional error summary, and safe metadata
+- `GET /engine/event-publications/runtime/{publicationId}` narrows the same catalog to one
+  publication and returns `404` when no state has been reported for that publication
+- `GET /engine/event-publications/runtime/channels/{channelId}` narrows the same catalog to one
+  channel and returns the reported publication states for that channel
+- the same publication-state catalog is also available through `/engine/snapshot` in
+  `EventPublicationStates` when operators want one merged runtime answer
 
 Current note:
 
 - this is a bounded operator action over the active eventing publication path; the in-process lane
-  can optionally suppress duplicate completed executions process-locally, but the route is not a
-  durable broker, durable inbox, cross-node idempotency, retry-queue, distributed scheduler, or
-  provider-specific inbound-consumption claim
-- the action contract lives in `Cephalon.Abstractions.Data` so `Cephalon.AspNetCore` can expose it
-  without referencing `Cephalon.Eventing`; the selected eventing pack still owns the implementation
-  and runtime truth
+  can optionally suppress duplicate completed executions process-locally, and the runtime-state
+  catalog reports that local publication outcome, but the route is not a durable broker, durable
+  inbox, cross-node idempotency, retry-queue, distributed scheduler, or provider-specific
+  inbound-consumption claim
+- outbox-backed publication states use `accepted` to mean "staged for later dispatch"; downstream
+  dispatch completion remains the job of the dispatch-runtime and dispatch-state surfaces
+- the action and read contracts live in `Cephalon.Abstractions.Data` so `Cephalon.Engine` and
+  `Cephalon.AspNetCore` can expose them without referencing `Cephalon.Eventing`; the selected
+  eventing pack still owns the implementation and runtime truth
 
 ## Event subscription readiness surface
 
@@ -1714,10 +1728,14 @@ Current `Cephalon.Eventing` highlights:
 - the typed readiness answer is also available through `/engine/event-subscription-readiness` and
   `snapshot.EventSubscriptionExecutionReadiness`, so operators do not need to parse metadata when
   they only need the readiness posture
+- the typed publication-state answer is also available through `/engine/event-publications/runtime*`
+  and `snapshot.EventPublicationStates`, so operators can inspect the latest accepted/succeeded,
+  failed, or skipped publication posture without parsing `event-publishers` metadata
 - `Cephalon.Eventing` can move a subscription to `runtime-bound` itself when
   `EnableInProcessSubscriptionExecution` is selected and a matching `IEventSubscriptionExecutor`
   exists; that path is `cephalon-managed`, direct, process-local, and reports
-  `eventing.publish` / `eventing.subscribe` metadata with `retryPolicy = none` by default
+  `eventing.publish` / `eventing.subscribe` metadata with `retryPolicy = none` and
+  `publicationRuntimeState = available` by default
 - when `InProcessSubscriptionMaxAttempts` is greater than `1`, that same core path reports
   `retryPolicy = bounded-in-process`, `retryMaxAttempts`, `retryDelayMilliseconds`,
   `retryDurability = none`, and `retryScope = process-local`, emits `retry-scheduled`
@@ -1729,6 +1747,9 @@ Current `Cephalon.Eventing` highlights:
   `idempotencyKey = subscription-publication`, `idempotencyRetentionMinutes`,
   `idempotencyDurability = none`, and `idempotencyScope = process-local` through capabilities,
   bindings, `event-publishers`, `event-subscriptions`, and `reported.*` metadata
+- outbox-backed event publication reports `accepted` publication state with
+  `handoff = outbox` and `deliveryCompletion = pending-dispatch`, keeping publication acceptance
+  separate from later dispatch completion
 - Wolverine or another companion adapter can still move one subscription to provider-managed
   `runtime-bound` ownership for brokered or staged dispatch scenarios, while hosted execution links
   and application-managed reports remain truthful non-provider-owned states
