@@ -8,6 +8,7 @@
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - agentics read and operator-action contracts such as `AgentToolExecutionOutcomes`, `AgentToolExecutionRequest`, `AgentToolExecutionResult`, `AgentToolRunState`, `IAgentToolDispatcher`, and `IAgentToolRunCatalog`
 - retrieval read and operator-action contracts such as `KnowledgeIndexState`, `KnowledgeIndexFreshnessStates`, `KnowledgeIndexingOutcomes`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, `KnowledgeIndexingRequest`, and `KnowledgeIndexingResult`
+- eventing read and operator-action contracts such as `EventPublicationOutcomes`, `EventPublicationRequest`, `EventPublicationResult`, `IEventPublicationDispatcher`, `EventSubscriptionExecutionReadinessDescriptor`, `EventSubscriptionExecutionReadinessStates`, and `IEventSubscriptionExecutionReadinessCatalog`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
 - execution/runtime-catalog contracts such as `DurableExecutionRuntimeDescriptor`, `IDurableExecutionRuntimeCatalog`, `DurableExecutionRuntimeState`, `IDurableExecutionRuntimeStateCatalog`, `SagaChoreographyRuntimeDescriptor`, `ISagaChoreographyRuntimeCatalog`, `SagaChoreographyPublicationRuntimeState`, and `ISagaChoreographyPublicationRuntimeStateCatalog`
@@ -107,6 +108,10 @@
 - `Data/OutboxDescriptor.cs`
 - `Data/IOutbox.cs`
 - `Data/IOutboxCatalog.cs`
+- `Data/EventPublicationOutcomes.cs`
+- `Data/EventPublicationRequest.cs`
+- `Data/EventPublicationResult.cs`
+- `Data/IEventPublicationDispatcher.cs`
 - `Data/EventSubscriptionExecutionReadinessDescriptor.cs`
 - `Data/EventSubscriptionExecutionReadinessStates.cs`
 - `Data/IEventSubscriptionExecutionReadinessCatalog.cs`
@@ -263,6 +268,13 @@ referencing `Cephalon.Eventing` directly. The implementation still belongs to th
 an optional companion; the abstraction only defines the host-agnostic answer for whether a declared
 subscription is `runtime-bound`, `hosted-execution-linked`, `application-managed-state`, or
 `declared-only`.
+
+The same eventing contract family now also carries a bounded publication action seam.
+`EventPublicationOutcomes`, `EventPublicationRequest`, `EventPublicationResult`, and
+`IEventPublicationDispatcher` live here so host adapters can request one publication through the
+active eventing runtime without referencing `Cephalon.Eventing` implementation types. The selected
+eventing pack still owns the actual publish path, whether that path is the opt-in direct
+in-process publisher or an outbox-backed staged handoff.
 
 That same reporting seam now also keeps retry, reporter identity, edge topology, ordering, and
 freshness-expiry policy host-agnostic. `CdcCaptureRuntimeObservation.ReportId` gives external

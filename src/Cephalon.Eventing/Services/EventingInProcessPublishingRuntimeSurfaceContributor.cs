@@ -38,6 +38,7 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["dispatchStore"] = "not-configured",
                         ["subscriptionExecution"] = "cephalon-managed",
                         ["subscriptionExecutionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
+                        ["publicationDispatcher"] = "available",
                         ["executionMode"] = "in-process-direct",
                         ["deliveryMode"] = "direct",
                         ["retryPolicy"] = "none",

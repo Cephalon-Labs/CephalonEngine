@@ -2014,6 +2014,46 @@ public static class EngineWebApplicationExtensions
                 return state is null ? Results.NotFound() : Results.Ok(state);
             })
             .WithName("GetCephalonEventDispatch");
+        engineGroup.MapPost(
+                "/event-publications",
+                async (
+                    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] EventPublicationHttpRequest? request,
+                    HttpContext httpContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    var dispatcher = httpContext.RequestServices.GetService<IEventPublicationDispatcher>();
+                    if (dispatcher is null)
+                    {
+                        return Results.NotFound(new
+                        {
+                            error = "Event publication is not available in the active runtime."
+                        });
+                    }
+
+                    try
+                    {
+                        var publicationRequest = CreateEventPublicationRequest(request, httpContext);
+                        var result = await dispatcher.PublishAsync(publicationRequest, cancellationToken).ConfigureAwait(false);
+                        return Results.Ok(result);
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        return Results.BadRequest(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                        when (IsUnregisteredEventChannel(exception))
+                    {
+                        return Results.NotFound(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                    {
+                        return Results.Problem(
+                            title: "Event publication failed.",
+                            detail: exception.Message,
+                            statusCode: StatusCodes.Status500InternalServerError);
+                    }
+                })
+            .WithName("PublishCephalonEventPublication");
         engineGroup.MapGet("/agent-tool-runs", (HttpContext httpContext) =>
             {
                 var runs = httpContext.RequestServices
@@ -3270,6 +3310,83 @@ public static class EngineWebApplicationExtensions
         };
     }
 
+    private static EventPublicationRequest CreateEventPublicationRequest(
+        EventPublicationHttpRequest? request,
+        HttpContext httpContext)
+    {
+        if (request is null)
+        {
+            throw new ArgumentException("Event publication request body is required.", nameof(request));
+        }
+
+        var metadata = CopyEventPublicationValues(request.Metadata);
+        metadata["trigger"] = "aspnetcore-operator-route";
+        metadata["route"] = "/engine/event-publications";
+
+        var actorId = ResolveEventPublicationActorId(httpContext, request.ActorId);
+        if (!string.IsNullOrWhiteSpace(actorId))
+        {
+            metadata["actorId"] = actorId;
+        }
+
+        return new EventPublicationRequest(
+            request.ChannelId ?? string.Empty,
+            request.EventType ?? string.Empty,
+            SerializeEventPublicationPayload(request.Payload),
+            request.Id,
+            request.OccurredAtUtc,
+            request.ContentType,
+            string.IsNullOrWhiteSpace(request.CorrelationId) ? httpContext.TraceIdentifier : request.CorrelationId,
+            request.TenantId,
+            request.Headers,
+            metadata);
+    }
+
+    private static string SerializeEventPublicationPayload(JsonElement? payload)
+    {
+        if (payload is null || payload.Value.ValueKind is JsonValueKind.Undefined or JsonValueKind.Null)
+        {
+            throw new ArgumentException("Event publication payload is required.", nameof(payload));
+        }
+
+        return payload.Value.ValueKind == JsonValueKind.String
+            ? payload.Value.GetString() ?? string.Empty
+            : payload.Value.GetRawText();
+    }
+
+    private static string? ResolveEventPublicationActorId(HttpContext httpContext, string? actorId)
+    {
+        if (!string.IsNullOrWhiteSpace(actorId))
+        {
+            return actorId.Trim();
+        }
+
+        var userName = httpContext.User.Identity?.Name;
+        return string.IsNullOrWhiteSpace(userName) ? null : userName.Trim();
+    }
+
+    private static bool IsUnregisteredEventChannel(InvalidOperationException exception)
+    {
+        return exception.Message.Contains(
+            "is not registered in the active eventing runtime",
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static Dictionary<string, string> CopyEventPublicationValues(IReadOnlyDictionary<string, string>? values)
+    {
+        if (values is null)
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        return values
+            .Where(static pair => !string.IsNullOrWhiteSpace(pair.Key))
+            .ToDictionary(
+                static pair => pair.Key.Trim(),
+                static pair => pair.Value,
+                StringComparer.OrdinalIgnoreCase);
+    }
+
     private static AgentToolExecutionRequest CreateAgentToolExecutionRequest(
         string toolId,
         AgentToolExecutionHttpRequest? request,
@@ -3359,6 +3476,31 @@ public static class EngineWebApplicationExtensions
         return exception.Message.Contains(
             "is not registered in the active retrieval runtime",
             StringComparison.OrdinalIgnoreCase);
+    }
+
+    private sealed class EventPublicationHttpRequest
+    {
+        public string? Id { get; init; }
+
+        public string? ChannelId { get; init; }
+
+        public string? EventType { get; init; }
+
+        public JsonElement? Payload { get; init; }
+
+        public DateTimeOffset? OccurredAtUtc { get; init; }
+
+        public string? ContentType { get; init; }
+
+        public string? CorrelationId { get; init; }
+
+        public string? TenantId { get; init; }
+
+        public IReadOnlyDictionary<string, string>? Headers { get; init; }
+
+        public IReadOnlyDictionary<string, string>? Metadata { get; init; }
+
+        public string? ActorId { get; init; }
     }
 
     private sealed class AgentToolExecutionHttpRequest

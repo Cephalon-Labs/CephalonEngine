@@ -35,6 +35,7 @@
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
 - `/engine/event-dispatch-runtimes` and `/engine/event-dispatches` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
+- `POST /engine/event-publications` when eventing packs register the abstraction-level publication dispatcher action seam
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
 - `/engine/agent-tool-runs` and `POST /engine/agent-tools/{toolId}/runs` when agentics packs register the abstraction-level agent-tool run-state catalog and dispatcher action seam
 - `/engine/knowledge-indexes` and `POST /engine/knowledge-indexes/{collectionId}/reindex` when retrieval packs register the abstraction-level knowledge-index catalog and indexer command seam
@@ -485,6 +486,17 @@ including reported outcome, retry intent, timestamps, and totals from
 `EventDispatchRuntimes` and `EventDispatchStates`, which keeps operator tooling aligned across the
 host route surface and the broader runtime snapshot without forcing adapter packs to re-aggregate
 state by hand.
+
+The host now also exposes a bounded event-publication operator action directly. When a selected
+eventing pack registers `IEventPublicationDispatcher`, `POST /engine/event-publications` accepts
+one publication body with `id`, `channelId`, `eventType`, JSON or string `payload`,
+`occurredAtUtc`, `contentType`, `correlationId`, `tenantId`, optional headers, metadata, and actor
+id. The route returns `EventPublicationResult`, records safe route-trigger metadata, returns `404`
+when no publication dispatcher is active or the target channel is unknown, and returns `400` for
+invalid publication bodies. The action stays bounded to the active publication path: it can trigger
+the core in-process direct publisher or stage through an outbox-backed publisher, but it does not
+claim durable broker dispatch, inbox/idempotency ownership, retry queues, distributed scheduling, or
+provider-specific inbound consumption.
 
 The host now also exposes additive agent-tool run-state answers and a bounded operator action
 directly. When a selected agentics pack registers `IAgentToolRunCatalog` and `IAgentToolDispatcher`,

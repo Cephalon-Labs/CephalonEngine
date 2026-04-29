@@ -50,6 +50,7 @@ internal sealed class EventingPublishingRuntimeSurfaceContributor(
                         ["handoff"] = "outbox",
                         ["dispatchRuntime"] = runtimeIds.Length > 0 ? "configured" : "not-configured",
                         ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
+                        ["publicationDispatcher"] = "available",
                         ["channelCount"] = channelIds.Length.ToString(CultureInfo.InvariantCulture),
                         ["channelIds"] = string.Join(",", channelIds),
                         ["outboxCount"] = outboxEntries.Length.ToString(CultureInfo.InvariantCulture),

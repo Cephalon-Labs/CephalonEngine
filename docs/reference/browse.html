@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T05:56:31.8595746+00:00",
+  "GeneratedAtUtc": "2026-04-29T06:40:23.1799055+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 538
+      "TypeCount": 542
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -705,7 +705,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 244
+      "TypeCount": 248
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -7904,6 +7904,51 @@
       }
     },
     {
+      "DisplayName": "EventPublicationOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventpublicationoutcomes",
+      "Declaration": "public static class EventPublicationOutcomes",
+      "Summary": "Defines stable outcome identifiers returned by managed event-publication dispatchers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 2,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventpublicationrequest",
+      "Declaration": "public sealed class EventPublicationRequest",
+      "Summary": "Describes one host-agnostic request to publish an integration event through the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventpublicationresult",
+      "Declaration": "public sealed class EventPublicationResult",
+      "Summary": "Describes the operator-facing result of one managed event-publication request.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventSourcingEngineBuilderExtensions",
       "NamespaceName": "Cephalon.EventSourcing.Registration",
       "AssemblyName": "Cephalon.EventSourcing",
@@ -10391,6 +10436,21 @@
         "Fields": 0,
         "Properties": 1,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "IEventPublicationDispatcher",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-ieventpublicationdispatcher",
+      "Declaration": "public interface IEventPublicationDispatcher",
+      "Summary": "Publishes integration events through the active eventing runtime without exposing package-specific implementation types to host adapters.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
       }
     },
     {
@@ -17652,6 +17712,17 @@
     },
     {
       "DisplayName": "Accepted",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventPublicationOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventpublicationoutcomes-accepted",
+      "Signature": "const string Accepted",
+      "Summary": "The publication was accepted by the active eventing runtime."
+    },
+    {
+      "DisplayName": "Accepted",
       "Category": "Methods",
       "DeclaringTypeName": "Result",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
@@ -17693,6 +17764,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-accepted",
       "Signature": "const string Accepted",
       "Summary": "The invitation has already been accepted."
+    },
+    {
+      "DisplayName": "AcceptedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-acceptedatutc",
+      "Signature": "DateTimeOffset AcceptedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the active runtime accepted the publication."
     },
     {
       "DisplayName": "AcceptedCount",
@@ -31117,6 +31199,28 @@
     {
       "DisplayName": "ChannelId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-channelid",
+      "Signature": "string ChannelId { get; }",
+      "Summary": "Gets the logical channel or destination identifier."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "The logical channel or destination identifier."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -35528,6 +35632,17 @@
     {
       "DisplayName": "ContentType",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-contenttype",
+      "Signature": "string ContentType { get; }",
+      "Summary": "Gets the payload content type when one is known."
+    },
+    {
+      "DisplayName": "ContentType",
+      "Category": "Properties",
       "DeclaringTypeName": "InboxMessage",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36512,6 +36627,17 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the correlation identifier associated with the event."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the correlation identifier associated with the event."
     },
@@ -47592,6 +47718,17 @@
     {
       "DisplayName": "Error",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-error",
+      "Signature": "string Error { get; set; }",
+      "Summary": "The operator-facing error summary when publication failed."
+    },
+    {
+      "DisplayName": "Error",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -48030,6 +48167,28 @@
       "Summary": "Creates a new event publication request."
     },
     {
+      "DisplayName": "EventPublicationRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventpublicationrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventPublicationRequest(string channelId, string eventType, string payload, string id, DateTimeOffset? occurredAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary\u003Cstring, string\u003E headers, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates an event-publication request."
+    },
+    {
+      "DisplayName": "EventPublicationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventpublicationresult-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventPublicationResult(string PublicationId, string ChannelId, string EventType, string Outcome, DateTimeOffset AcceptedAtUtc, string Error, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the operator-facing result of one managed event-publication request."
+    },
+    {
       "DisplayName": "Events",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsConvention",
@@ -48270,6 +48429,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-eventtype",
       "Signature": "string EventType { get; }",
       "Summary": "Gets the logical event type identifier."
+    },
+    {
+      "DisplayName": "EventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-eventtype",
+      "Signature": "string EventType { get; }",
+      "Summary": "Gets the logical event type identifier."
+    },
+    {
+      "DisplayName": "EventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-eventtype",
+      "Signature": "string EventType { get; set; }",
+      "Summary": "The logical event type identifier."
     },
     {
       "DisplayName": "EventType",
@@ -51273,6 +51454,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-failed",
       "Signature": "const string Failed",
       "Summary": "Gets the outcome identifier used when dispatch fails for one staged message."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventPublicationOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventpublicationoutcomes-failed",
+      "Signature": "const string Failed",
+      "Summary": "The publication was rejected or failed before it could be accepted by the active eventing runtime."
     },
     {
       "DisplayName": "Failed",
@@ -60198,6 +60390,17 @@
     {
       "DisplayName": "Headers",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; }",
+      "Summary": "Gets event headers associated with the publication."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
       "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
       "AssemblyName": "Cephalon.Observability.GrafanaCloud",
@@ -62029,6 +62232,17 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable publication identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable publication identifier."
     },
@@ -75796,6 +76010,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing event metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Optional operator-facing metadata captured with the result."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamDescriptor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -81437,6 +81673,17 @@
     {
       "DisplayName": "OccurredAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-occurredatutc",
+      "Signature": "DateTimeOffset OccurredAtUtc { get; }",
+      "Summary": "Gets the time at which the event occurred."
+    },
+    {
+      "DisplayName": "OccurredAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "IDomainEvent",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -83459,6 +83706,17 @@
     {
       "DisplayName": "Outcome",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-outcome",
+      "Signature": "string Outcome { get; set; }",
+      "Summary": "The stable publication outcome identifier."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -85290,6 +85548,17 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-payload",
+      "Signature": "string Payload { get; }",
+      "Summary": "Gets the serialized event payload."
+    },
+    {
+      "DisplayName": "Payload",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-payload",
       "Signature": "string Payload { get; }",
       "Summary": "Gets the serialized event payload."
     },
@@ -91366,6 +91635,17 @@
     {
       "DisplayName": "PublicationId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-publicationid",
+      "Signature": "string PublicationId { get; set; }",
+      "Summary": "The stable publication identifier."
+    },
+    {
+      "DisplayName": "PublicationId",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -91461,6 +91741,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-publicationplanunavailable",
       "Signature": "const string PublicationPlanUnavailable",
       "Summary": "The proof publication planner did not produce a usable plan."
+    },
+    {
+      "DisplayName": "PublishAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventPublicationDispatcher",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventpublicationdispatcher-publishasync-cephalon-abstractions-data-eventpublicationrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CEventPublicationResult\u003E PublishAsync(EventPublicationRequest request, CancellationToken cancellationToken)",
+      "Summary": "Publishes one integration event through the active eventing runtime."
     },
     {
       "DisplayName": "PublishAsync",
@@ -110762,6 +111053,17 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier associated with the event."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-tenantid",
       "Signature": "string TenantId { get; }",
       "Summary": "Gets the tenant identifier associated with the event."
     },

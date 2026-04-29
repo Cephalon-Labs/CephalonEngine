@@ -51,6 +51,7 @@ Current baseline packages:
   - runtime services and capability activation for `EventDrivenIntegration`
   - registers `IEventChannelCatalog`, `IEventSubscriptionCatalog`, `IEventSubscriptionExecutionBindingCatalog`, the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`, and stable `EventSubscriptionRuntimeMetadataKeys` when the profile and options enable those paths
   - lets `Cephalon.Engine`, host adapters, and operator tooling read subscription execution readiness through `/engine/event-subscription-readiness` and `snapshot.EventSubscriptionExecutionReadiness` without taking a direct dependency on the eventing pack
+  - registers the abstraction-level `IEventPublicationDispatcher` when a real publishing path exists, allowing host adapters to expose bounded publication actions such as `POST /engine/event-publications` without depending on eventing implementation types
   - can opt into a Cephalon-managed direct in-process subscription execution lane through `EnableInProcessSubscriptionExecution`, registered `IEventSubscriptionExecutor` services, and `IEventPublisher` without claiming durable broker, inbox, or retry ownership
 - `Cephalon.Eventing.Wolverine`
   - optional companion adapter proof for managed dispatch over `EventDrivenIntegration`

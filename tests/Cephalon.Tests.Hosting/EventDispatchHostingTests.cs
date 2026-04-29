@@ -224,6 +224,113 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonPublishesCoreInProcessEventPublicationThroughOperatorRoute()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/event-publications",
+            new
+            {
+                id = "audit-route-001",
+                channelId = "audit",
+                eventType = "audit.created",
+                payload = new
+                {
+                    id = "audit-route-001"
+                },
+                occurredAtUtc = new DateTimeOffset(2026, 04, 29, 9, 0, 0, TimeSpan.Zero),
+                contentType = "application/json",
+                correlationId = "corr-audit-route-001",
+                tenantId = "tenant-operator-001",
+                actorId = "hosting-operator",
+                headers = new Dictionary<string, string>
+                {
+                    ["x-test"] = "operator-route"
+                },
+                metadata = new Dictionary<string, string>
+                {
+                    ["requestedBy"] = "hosting-test"
+                }
+            });
+        var result = await response.Content.ReadFromJsonAsync<EventPublicationResult>();
+        var missingChannelResponse = await client.PostAsJsonAsync(
+            "/engine/event-publications",
+            new
+            {
+                id = "audit-route-missing",
+                channelId = "missing",
+                eventType = "audit.created",
+                payload = new
+                {
+                    id = "audit-route-missing"
+                }
+            });
+
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.Equal("audit-route-001", result.PublicationId);
+        Assert.Equal("audit", result.ChannelId);
+        Assert.Equal("audit.created", result.EventType);
+        Assert.Equal(EventPublicationOutcomes.Accepted, result.Outcome);
+        Assert.Equal("aspnetcore-operator-route", result.Metadata["trigger"]);
+        Assert.Equal("/engine/event-publications", result.Metadata["route"]);
+        Assert.Equal("hosting-operator", result.Metadata["actorId"]);
+        Assert.Equal("hosting-test", result.Metadata["requestedBy"]);
+        Assert.Equal("cephalon-eventing", result.Metadata["publicationDispatcher"]);
+        Assert.Equal(HttpStatusCode.NotFound, missingChannelResponse.StatusCode);
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+        Assert.Equal("audit-route-001", probe.LastMessageId);
+
+        var runtimeState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal("audit-projector", runtimeState.SubscriptionId);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, runtimeState.LastOutcome);
+        Assert.Equal("audit-route-001", runtimeState.LastMessageId);
+        Assert.Equal("in-process-direct", runtimeState.Metadata["executionMode"]);
+        Assert.Equal("cephalon-managed", runtimeState.Metadata["executionOwnership"]);
+        Assert.Equal("aspnetcore-operator-route", runtimeState.Metadata["publicationMetadata.trigger"]);
+        Assert.Equal("/engine/event-publications", runtimeState.Metadata["publicationMetadata.route"]);
+        Assert.Equal("hosting-operator", runtimeState.Metadata["publicationMetadata.actorId"]);
+
+        Assert.NotNull(capabilities);
+        var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Equal("available", publishCapability.Metadata["publicationDispatcher"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
+        var publisherEntry = Assert.Single(publisherSurface.Entries);
+        Assert.Equal("in-process-event-publisher", publisherEntry.Id);
+        Assert.Equal("available", publisherEntry.Metadata["publicationDispatcher"]);
+    }
+
+    [Fact]
     public async Task MapCephalonExecutesCoreInProcessEventSubscriptionsWithoutWolverine()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -298,6 +405,7 @@ public sealed class EventDispatchHostingTests
         var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
         Assert.Equal("in-process", publishCapability.Metadata["handoff"]);
         Assert.Equal("cephalon-managed", publishCapability.Metadata["subscriptionExecution"]);
+        Assert.Equal("available", publishCapability.Metadata["publicationDispatcher"]);
         Assert.Equal("none", publishCapability.Metadata["retryPolicy"]);
         var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
         Assert.Equal("cephalon-managed", subscribeCapability.Metadata["executionOwnership"]);
@@ -311,6 +419,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("in-process-event-publisher", publisherEntry.Id);
         Assert.Equal("in-process", publisherEntry.Metadata["handoff"]);
         Assert.Equal("cephalon-managed", publisherEntry.Metadata["subscriptionExecution"]);
+        Assert.Equal("available", publisherEntry.Metadata["publicationDispatcher"]);
         Assert.Equal("1", publisherEntry.Metadata["subscriptionExecutorCount"]);
 
         var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");

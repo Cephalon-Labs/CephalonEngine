@@ -21,6 +21,9 @@ Browse the published API surface by public member.
 - [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestates-accepted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cephalon can accept the command onto a future shared issuance lane, but approval still gates later execution handoff.
   - `const string Accepted`
+- [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationoutcomes-accepted): `Fields` on `EventPublicationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The publication was accepted by the active eventing runtime.
+  - `const string Accepted`
 - [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an accepted result with a payload value.
   - `Result<T> Accepted<T>(T value, string message, string code)`
@@ -33,6 +36,9 @@ Browse the published API surface by public member.
 - [Accepted](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationvalidationoutcomes-accepted): `Fields` on `TenantInvitationValidationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Accepted&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The invitation has already been accepted.
   - `const string Accepted`
+- [AcceptedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-acceptedatutc): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcceptedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The UTC timestamp when the active runtime accepted the publication.
+  - `DateTimeOffset AcceptedAtUtc { get; set; }`
 - [AcceptedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-acceptedcount): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcceptedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `accepted` observations reported so far.
   - `int AcceptedCount { get; set; }`
@@ -3699,6 +3705,12 @@ Browse the published API surface by public member.
 - [ChannelId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-channelid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical channel or destination identifier.
   - `string ChannelId { get; }`
+- [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-channelid): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical channel or destination identifier.
+  - `string ChannelId { get; }`
+- [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-channelid): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The logical channel or destination identifier.
+  - `string ChannelId { get; set; }`
 - [ChannelId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-channelid): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical event channel that the subscription consumes.
   - `string ChannelId { get; }`
@@ -4902,6 +4914,9 @@ Browse the published API surface by public member.
 - [ContentType](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-contenttype): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ContentType&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the payload content type when one is known.
   - `string ContentType { get; }`
+- [ContentType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-contenttype): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContentType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the payload content type when one is known.
+  - `string ContentType { get; }`
 - [ContentType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxmessage-contenttype): `Properties` on `InboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContentType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the payload content type when one is known.
   - `string ContentType { get; }`
@@ -5170,6 +5185,9 @@ Browse the published API surface by public member.
   - Gets the correlation identifier associated with the message.
   - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-correlationid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the correlation identifier associated with the event.
+  - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-correlationid): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the correlation identifier associated with the event.
   - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-correlationid): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
@@ -8196,6 +8214,9 @@ Browse the published API surface by public member.
 - [Error](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-error): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Error&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing error summary when the observation represents a failure.
   - `string Error { get; }`
+- [Error](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-error): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The operator-facing error summary when publication failed.
+  - `string Error { get; set; }`
 - [Error](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-error): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Error&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing error summary when the observation represents a failure.
   - `string Error { get; }`
@@ -8316,6 +8337,12 @@ Browse the published API surface by public member.
 - [EventPublication](cephalon-eventing.md#member-m-cephalon-eventing-services-eventpublication-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventPublication&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event publication request.
   - `EventPublication(string id, string channelId, string eventType, string payload, DateTimeOffset occurredAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)`
+- [EventPublicationRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventpublicationrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventPublicationRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates an event-publication request.
+  - `EventPublicationRequest(string channelId, string eventType, string payload, string id, DateTimeOffset? occurredAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)`
+- [EventPublicationResult](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventpublicationresult-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventPublicationResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Describes the operator-facing result of one managed event-publication request.
+  - `EventPublicationResult(string PublicationId, string ChannelId, string EventType, string Outcome, DateTimeOffset AcceptedAtUtc, string Error, IReadOnlyDictionary<string, string> Metadata)`
 - [Events](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-events): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Events&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The published event definitions that belong to the convention.
   - `IReadOnlyList<DiagnosticEventDefinition> Events { get; set; }`
@@ -8382,6 +8409,12 @@ Browse the published API surface by public member.
 - [EventType](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-eventtype): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventType&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical event type identifier.
   - `string EventType { get; }`
+- [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-eventtype): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical event type identifier.
+  - `string EventType { get; }`
+- [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-eventtype): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The logical event type identifier.
+  - `string EventType { get; set; }`
 - [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-eventtype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The logical event type identifier used by the publication.
   - `string EventType { get; set; }`
@@ -9203,6 +9236,9 @@ Browse the published API surface by public member.
   - `const DatabaseMigrationStatus Failed`
 - [Failed](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-failed): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Failed&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch fails for one staged message.
+  - `const string Failed`
+- [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationoutcomes-failed): `Fields` on `EventPublicationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The publication was rejected or failed before it could be accepted by the active eventing runtime.
   - `const string Failed`
 - [Failed](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-failed): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Failed&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling fails for one message.
@@ -11643,6 +11679,9 @@ Browse the published API surface by public member.
 - [Headers](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-headers): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Headers&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the event headers associated with the publication.
   - `IReadOnlyDictionary<string, string> Headers { get; }`
+- [Headers](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-headers): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Headers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets event headers associated with the publication.
+  - `IReadOnlyDictionary<string, string> Headers { get; }`
 - [Headers](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-headers): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string used for direct Grafana Cloud ingestion.
   - `string Headers { get; set; }`
@@ -12145,6 +12184,9 @@ Browse the published API surface by public member.
   - Gets the stable dispatch-runtime identifier.
   - `string Id { get; }`
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-id): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable publication identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-id): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable publication identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-id): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
@@ -15912,6 +15954,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-metadata): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the event metadata associated with the publication.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-metadata): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets optional operator-facing event metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-metadata): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Optional operator-facing metadata captured with the result.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-metadata): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized provider-specific metadata associated with the stream.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -17455,6 +17503,9 @@ Browse the published API surface by public member.
 - [OccurredAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-occurredatutc): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the time at which the event occurred.
   - `DateTimeOffset OccurredAtUtc { get; }`
+- [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-occurredatutc): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the time at which the event occurred.
+  - `DateTimeOffset OccurredAtUtc { get; }`
 - [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-occurredatutc): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the time at which the event occurred in UTC.
   - `DateTime OccurredAtUtc { get; }`
@@ -18005,6 +18056,9 @@ Browse the published API surface by public member.
 - [Outcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-outcome): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outcome identifier for the observed dispatch activity.
   - `string Outcome { get; }`
+- [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-outcome): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The stable publication outcome identifier.
+  - `string Outcome { get; set; }`
 - [Outcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-outcome): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outcome identifier for the observed subscription activity.
   - `string Outcome { get; }`
@@ -18507,6 +18561,9 @@ Browse the published API surface by public member.
   - Gets the serialized payload that should be dispatched.
   - `string Payload { get; }`
 - [Payload](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-payload): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Payload&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the serialized event payload.
+  - `string Payload { get; }`
+- [Payload](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-payload): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Payload&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the serialized event payload.
   - `string Payload { get; }`
 - [Payload](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxmessage-payload): `Properties` on `InboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Payload&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -20163,6 +20220,9 @@ Browse the published API surface by public member.
 - [Publication](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-publication): `Properties` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=Publication&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
   - Gets the staged publication that should be delivered to the managed subscription.
   - `EventPublication Publication { get; }`
+- [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-publicationid): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The stable publication identifier.
+  - `string PublicationId { get; set; }`
 - [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The stable publication identifier declared by the choreography step.
   - `string PublicationId { get; set; }`
@@ -20190,6 +20250,9 @@ Browse the published API surface by public member.
 - [PublicationPlanUnavailable](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-publicationplanunavailable): `Fields` on `TenantDomainOwnershipHttpProofPublicationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanUnavailable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The proof publication planner did not produce a usable plan.
   - `const string PublicationPlanUnavailable`
+- [PublishAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventpublicationdispatcher-publishasync-cephalon-abstractions-data-eventpublicationrequest-system-threading-cancellationtoken): `Methods` on `IEventPublicationDispatcher` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublishAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Publishes one integration event through the active eventing runtime.
+  - `ValueTask<EventPublicationResult> PublishAsync(EventPublicationRequest request, CancellationToken cancellationToken)`
 - [PublishAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventpublisher-publishasync-cephalon-eventing-services-eventpublication-system-threading-cancellationtoken): `Methods` on `IEventPublisher` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublishAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Publishes one integration event through the active eventing runtime.
   - `ValueTask PublishAsync(EventPublication publication, CancellationToken cancellationToken)`
@@ -25463,6 +25526,9 @@ Browse the published API surface by public member.
   - Gets the tenant identifier associated with the message.
   - `string TenantId { get; }`
 - [TenantId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-tenantid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the tenant identifier associated with the event.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-tenantid): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the tenant identifier associated with the event.
   - `string TenantId { get; }`
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-tenantid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)

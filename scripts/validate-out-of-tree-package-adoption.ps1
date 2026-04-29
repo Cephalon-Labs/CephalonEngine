@@ -402,6 +402,7 @@ try {
     Write-Host ""
     Write-Host "Staging the reference module package into the generated app..." -ForegroundColor Cyan
     New-Item -ItemType Directory -Path $pluginsRootPath -Force | Out-Null
+    # Keep this flow visibly aligned with the documented `cephalon package stage` command.
     Invoke-Cephalon -WorkingDirectory $workspaceRoot -Arguments @(
         "package",
         "stage",

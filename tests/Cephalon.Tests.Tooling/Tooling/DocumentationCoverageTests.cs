@@ -30,6 +30,9 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.EventSourcing.Redis"] = "event-sourcing-redis.md",
             // "MultiTenancy" → "multi-tenancy"
             ["Cephalon.MultiTenancy"] = "multi-tenancy.md",
+            ["Cephalon.MultiTenancy.Governance"] = "multi-tenancy-governance.md",
+            ["Cephalon.MultiTenancy.Governance.AspNetCore"] = "multi-tenancy-governance-aspnetcore.md",
+            ["Cephalon.MultiTenancy.Governance.HttpDelivery"] = "multi-tenancy-governance-httpdelivery.md",
             // "ReferenceDocs" → "reference-docs"
             ["Cephalon.ReferenceDocs"] = "reference-docs.md",
             // "KubernetesGateway" → "kubernetes-gateway"

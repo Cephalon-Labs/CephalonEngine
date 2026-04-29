@@ -46307,6 +46307,280 @@ int TotalReports { get; }
 
 Gets the total number of reported observations across all owned outboxes.
 
+<a id="type-cephalon-abstractions-data-eventpublicationoutcomes"></a>
+
+### `EventPublicationOutcomes`
+
+Defines stable outcome identifiers returned by managed event-publication dispatchers.
+
+#### Declaration
+```csharp
+public static class EventPublicationOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-eventpublicationoutcomes-accepted"></a>
+
+##### `Accepted`
+
+```csharp
+const string Accepted
+```
+
+The publication was accepted by the active eventing runtime.
+
+<a id="member-f-cephalon-abstractions-data-eventpublicationoutcomes-failed"></a>
+
+##### `Failed`
+
+```csharp
+const string Failed
+```
+
+The publication was rejected or failed before it could be accepted by the active eventing runtime.
+
+<a id="type-cephalon-abstractions-data-eventpublicationrequest"></a>
+
+### `EventPublicationRequest`
+
+Describes one host-agnostic request to publish an integration event through the active eventing runtime.
+
+#### Declaration
+```csharp
+public sealed class EventPublicationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventpublicationrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventPublicationRequest`
+
+```csharp
+EventPublicationRequest(string channelId, string eventType, string payload, string id, DateTimeOffset? occurredAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates an event-publication request.
+
+Parameters:
+- `channelId`: The logical channel or destination identifier.
+- `eventType`: The logical event type identifier.
+- `payload`: The serialized event payload.
+- `id`: The stable publication identifier. A generated identifier is used when omitted.
+- `occurredAtUtc`: The time at which the event occurred. The current UTC time is used when omitted.
+- `contentType`: The payload content type when one is known.
+- `correlationId`: The correlation identifier associated with the event.
+- `tenantId`: The tenant identifier associated with the event.
+- `headers`: Optional event headers.
+- `metadata`: Optional operator-facing event metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; }
+```
+
+Gets the logical channel or destination identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-contenttype"></a>
+
+##### `ContentType`
+
+```csharp
+string ContentType { get; }
+```
+
+Gets the payload content type when one is known.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier associated with the event.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-eventtype"></a>
+
+##### `EventType`
+
+```csharp
+string EventType { get; }
+```
+
+Gets the logical event type identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-headers"></a>
+
+##### `Headers`
+
+```csharp
+IReadOnlyDictionary<string, string> Headers { get; }
+```
+
+Gets event headers associated with the publication.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable publication identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing event metadata.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; }
+```
+
+Gets the time at which the event occurred.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-payload"></a>
+
+##### `Payload`
+
+```csharp
+string Payload { get; }
+```
+
+Gets the serialized event payload.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier associated with the event.
+
+<a id="type-cephalon-abstractions-data-eventpublicationresult"></a>
+
+### `EventPublicationResult`
+
+Describes the operator-facing result of one managed event-publication request.
+
+#### Declaration
+```csharp
+public sealed class EventPublicationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventpublicationresult-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventPublicationResult`
+
+```csharp
+EventPublicationResult(string PublicationId, string ChannelId, string EventType, string Outcome, DateTimeOffset AcceptedAtUtc, string Error, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the operator-facing result of one managed event-publication request.
+
+Parameters:
+- `PublicationId`: The stable publication identifier.
+- `ChannelId`: The logical channel or destination identifier.
+- `EventType`: The logical event type identifier.
+- `Outcome`: The stable publication outcome identifier.
+- `AcceptedAtUtc`: The UTC timestamp when the active runtime accepted the publication.
+- `Error`: The operator-facing error summary when publication failed.
+- `Metadata`: Optional operator-facing metadata captured with the result.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationresult-acceptedatutc"></a>
+
+##### `AcceptedAtUtc`
+
+```csharp
+DateTimeOffset AcceptedAtUtc { get; set; }
+```
+
+The UTC timestamp when the active runtime accepted the publication.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationresult-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; set; }
+```
+
+The logical channel or destination identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationresult-error"></a>
+
+##### `Error`
+
+```csharp
+string Error { get; set; }
+```
+
+The operator-facing error summary when publication failed.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationresult-eventtype"></a>
+
+##### `EventType`
+
+```csharp
+string EventType { get; set; }
+```
+
+The logical event type identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Optional operator-facing metadata captured with the result.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; set; }
+```
+
+The stable publication outcome identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventpublicationresult-publicationid"></a>
+
+##### `PublicationId`
+
+```csharp
+string PublicationId { get; set; }
+```
+
+The stable publication identifier.
+
 <a id="type-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor"></a>
 
 ### `EventSubscriptionExecutionReadinessDescriptor`
@@ -49514,6 +49788,35 @@ Returns: The matching dispatch-runtime descriptor, or `null` when none exists.
 
 Parameters:
 - `dispatchRuntimeId`: The stable dispatch-runtime identifier to resolve.
+
+<a id="type-cephalon-abstractions-data-ieventpublicationdispatcher"></a>
+
+### `IEventPublicationDispatcher`
+
+Publishes integration events through the active eventing runtime without exposing package-specific implementation types to host adapters.
+
+#### Declaration
+```csharp
+public interface IEventPublicationDispatcher
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventpublicationdispatcher-publishasync-cephalon-abstractions-data-eventpublicationrequest-system-threading-cancellationtoken"></a>
+
+##### `PublishAsync`
+
+```csharp
+ValueTask<EventPublicationResult> PublishAsync(EventPublicationRequest request, CancellationToken cancellationToken)
+```
+
+Publishes one integration event through the active eventing runtime.
+
+Returns: The operator-facing publication result when the active runtime accepts the event.
+
+Parameters:
+- `request`: The publication request to dispatch.
+- `cancellationToken`: The token that cancels the operation.
 
 <a id="type-cephalon-abstractions-data-ieventsubscriptionexecutionreadinesscatalog"></a>
 

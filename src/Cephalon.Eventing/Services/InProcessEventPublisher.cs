@@ -164,6 +164,14 @@ internal sealed class InProcessEventPublisher(
             metadata["tenantId"] = publication.TenantId!;
         }
 
+        foreach (var pair in publication.Metadata)
+        {
+            if (!string.IsNullOrWhiteSpace(pair.Key))
+            {
+                metadata[$"publicationMetadata.{pair.Key.Trim()}"] = pair.Value;
+            }
+        }
+
         return metadata;
     }
 }

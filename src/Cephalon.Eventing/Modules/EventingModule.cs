@@ -155,6 +155,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                 services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRuntimeCatalogSurfaceContributor>());
             }
         }
+
+        if (hasPublishingPath)
+        {
+            services.TryAddScoped<IEventPublicationDispatcher, EventPublicationDispatcher>();
+        }
     }
 
     public void RegisterTechnologyCapabilities(ICapabilityRegistry capabilities, TechnologySelection technologies)
@@ -179,6 +184,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["subscriptionExecution"] = "cephalon-managed",
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
+                    ["publicationDispatcher"] = "available",
                     ["retryPolicy"] = "none",
                     ["runtimeState"] = "available"
                 }
@@ -188,6 +194,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["handoff"] = "outbox",
                     ["dispatchRuntime"] = hasDispatchRuntimeContributors ? "configured" : "not-configured",
                     ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
+                    ["publicationDispatcher"] = "available",
                     ["runtimeState"] = "available"
                 };
 

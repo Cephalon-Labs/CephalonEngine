@@ -1562,6 +1562,34 @@ Current note:
 - this is a descriptive runtime answer for processed-message or idempotency-store surfaces, not a claim that Cephalon already ships a full subscription-dispatch runtime
 - invalid inbox source-module ownership fails at build time instead of leaking broken operator metadata
 
+## Event publication action surface
+
+`POST /engine/event-publications` requests one bounded event publication when an eventing pack
+registers the abstraction-level `IEventPublicationDispatcher`.
+
+Current payload highlights:
+
+- the request body carries `id`, `channelId`, `eventType`, JSON or string `payload`,
+  `occurredAtUtc`, `contentType`, `correlationId`, `tenantId`, optional headers, safe metadata,
+  and optional actor id
+- the response is `EventPublicationResult` with the publication id, channel id, event type,
+  `accepted` outcome, accepted timestamp, and safe route-trigger metadata such as
+  `trigger = aspnetcore-operator-route` and `route = /engine/event-publications`
+- the route returns `404` when event publication is not active in the selected runtime or when the
+  requested channel is not registered, and `400` when the publication body is invalid
+- when the core in-process lane is selected, the route triggers the active `IEventPublisher`,
+  invokes matching `IEventSubscriptionExecutor` services, and flows publication metadata back into
+  the existing subscription runtime catalog as `publicationMetadata.*`
+
+Current note:
+
+- this is a bounded operator action over the active eventing publication path, not a durable broker,
+  inbox/idempotency, retry-queue, distributed scheduler, or provider-specific inbound-consumption
+  claim
+- the action contract lives in `Cephalon.Abstractions.Data` so `Cephalon.AspNetCore` can expose it
+  without referencing `Cephalon.Eventing`; the selected eventing pack still owns the implementation
+  and runtime truth
+
 ## Event subscription readiness surface
 
 `GET /engine/event-subscription-readiness` exposes the operator-facing readiness catalog for
