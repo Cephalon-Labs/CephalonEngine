@@ -93,7 +93,12 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
                 {
                     ["technology"] = "agentic-workloads",
                     ["executionOwnership"] = "cephalon-managed",
-                    ["runtime"] = "agent-tool-dispatcher"
+                    ["runtime"] = "agent-tool-dispatcher",
+                    ["retryPolicy"] = options.ExecutionMaxAttempts > 1 ? "bounded-in-process" : "none",
+                    ["retryMaxAttempts"] = Math.Max(1, options.ExecutionMaxAttempts).ToString(CultureInfo.InvariantCulture),
+                    ["retryDelayMilliseconds"] = Math.Max(0, options.ExecutionRetryDelayMilliseconds).ToString(CultureInfo.InvariantCulture),
+                    ["retryDurability"] = "none",
+                    ["retryScope"] = options.ExecutionMaxAttempts > 1 ? "process-local" : "none"
                 }));
         }
 

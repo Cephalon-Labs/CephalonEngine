@@ -74,6 +74,16 @@ const string Failed
 
 Gets the outcome identifier used when a tool run fails.
 
+<a id="member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-retryscheduled"></a>
+
+##### `RetryScheduled`
+
+```csharp
+const string RetryScheduled
+```
+
+Gets the outcome identifier used when a failed tool attempt is scheduled for another process-local attempt.
+
 <a id="member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-skipped"></a>
 
 ##### `Skipped`
@@ -374,12 +384,12 @@ public sealed class AgentToolRunState
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-agentics-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-agentics-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `AgentToolRunState`
 
 ```csharp
-AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary<string, string> Metadata)
+AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary<string, string> Metadata)
 ```
 
 Describes the latest operator-facing runtime state reported for one agent-tool run.
@@ -395,6 +405,7 @@ Parameters:
 - `StartedCount`: The number of `started` observations reported so far.
 - `SucceededCount`: The number of `succeeded` observations reported so far.
 - `FailedCount`: The number of `failed` observations reported so far.
+- `RetryScheduledCount`: The number of `retry-scheduled` observations reported so far.
 - `SkippedCount`: The number of `skipped` observations reported so far.
 - `ApprovalRequiredCount`: The number of `approval-required` observations reported so far.
 - `DeniedCount`: The number of `denied` observations reported so far.
@@ -533,6 +544,26 @@ bool RequiresApproval { get; }
 ```
 
 Gets a value indicating whether the latest report says explicit approval is required before execution can continue.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-retrypending"></a>
+
+##### `RetryPending`
+
+```csharp
+bool RetryPending { get; }
+```
+
+Gets a value indicating whether the latest report says another process-local attempt is pending.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-retryscheduledcount"></a>
+
+##### `RetryScheduledCount`
+
+```csharp
+int RetryScheduledCount { get; set; }
+```
+
+The number of `retry-scheduled` observations reported so far.
 
 <a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-runid"></a>
 

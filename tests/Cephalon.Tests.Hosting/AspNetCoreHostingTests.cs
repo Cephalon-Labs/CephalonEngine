@@ -1425,6 +1425,32 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal(HttpStatusCode.NotFound, missingRun.StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, missingToolExecution.StatusCode);
         Assert.Equal(listedRun.RunId, Assert.Single(snapshot!.AgentToolRuns).RunId);
+
+        var reporter = app.Services.GetRequiredService<IAgentToolRunReporter>();
+        await reporter.ReportAsync(new AgentToolExecutionReport(
+            toolId: "host-operator",
+            runId: "host-run-retry-001",
+            outcome: AgentToolExecutionOutcomes.RetryScheduled,
+            observedAtUtc: new DateTimeOffset(2026, 04, 29, 10, 15, 00, TimeSpan.Zero),
+            actorId: "operator",
+            correlationId: "corr-host-run-retry-001",
+            attempt: 1,
+            error: "Transient host tool failure.",
+            metadata: new Dictionary<string, string>
+            {
+                ["retryPolicy"] = "bounded-in-process",
+                ["retryMaxAttempts"] = "3",
+                ["retryDurability"] = "none",
+                ["retryScope"] = "process-local",
+                ["retryOutcome"] = "retry-scheduled",
+                ["nextAttempt"] = "2"
+            }));
+        var retryPendingRuns = await client.GetFromJsonAsync<AgentToolRunState[]>("/engine/agent-tool-runs/retry-pending");
+        var retryPendingRun = Assert.Single(retryPendingRuns!);
+        Assert.Equal("host-run-retry-001", retryPendingRun.RunId);
+        Assert.True(retryPendingRun.RetryPending);
+        Assert.Equal(1, retryPendingRun.RetryScheduledCount);
+        Assert.Equal("bounded-in-process", retryPendingRun.Metadata["retryPolicy"]);
     }
 
     [Fact]

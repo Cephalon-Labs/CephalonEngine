@@ -1,9 +1,12 @@
 using Cephalon.Abstractions.Agentics;
+using Cephalon.Agentics.Configuration;
+using System.Globalization;
 
 namespace Cephalon.Agentics.Services;
 
 internal sealed class AgentToolDispatcher(
     IAgentToolCatalog catalog,
+    AgenticRuntimeOptions options,
     IEnumerable<IAgentToolExecutor> executors,
     IEnumerable<IAgentToolExecutionPolicy> policies,
     IAgentToolRunReporter reporter,
@@ -26,55 +29,21 @@ internal sealed class AgentToolDispatcher(
                 $"Agent tool '{request.ToolId}' is not registered in the active agentics runtime.");
         }
 
-        var context = new AgentToolExecutionContext(
-            tool,
-            request.RunId,
-            request.Arguments,
-            request.ActorId,
-            request.CorrelationId,
-            request.Attempt,
-            request.Metadata);
-
-        await RecordAsync(
-            CreateReport(context, AgentToolExecutionOutcomes.Started),
-            cancellationToken).ConfigureAwait(false);
-
-        foreach (var policy in policies)
-        {
-            var decision = await policy.EvaluateAsync(context, cancellationToken).ConfigureAwait(false);
-            switch (decision.Kind)
-            {
-                case AgentToolExecutionDecisionKinds.Allow:
-                    continue;
-
-                case AgentToolExecutionDecisionKinds.ApprovalRequired:
-                    var approvalRequired = WithRequestMetadata(
-                        context,
-                        AgentToolExecutionResult.ApprovalRequired(
-                            decision.Reason ?? "Agent-tool execution requires approval.",
-                            decision.Metadata));
-                    await RecordResultAsync(context, approvalRequired, cancellationToken).ConfigureAwait(false);
-                    return approvalRequired;
-
-                case AgentToolExecutionDecisionKinds.Deny:
-                    var denied = WithRequestMetadata(
-                        context,
-                        AgentToolExecutionResult.Denied(
-                            decision.Reason ?? "Agent-tool execution was denied by policy.",
-                            decision.Metadata));
-                    await RecordResultAsync(context, denied, cancellationToken).ConfigureAwait(false);
-                    return denied;
-
-                default:
-                    throw new InvalidOperationException(
-                        $"Agent-tool execution decision '{decision.Kind}' is not supported by the active agentics runtime.");
-            }
-        }
-
         var executor = ResolveExecutor(tool.Id);
         if (executor is null)
         {
+            var context = new AgentToolExecutionContext(
+                tool,
+                request.RunId,
+                request.Arguments,
+                request.ActorId,
+                request.CorrelationId,
+                request.Attempt,
+                request.Metadata);
             var error = $"No agent tool executor is registered for tool '{tool.Id}'.";
+            await RecordAsync(
+                CreateReport(context, AgentToolExecutionOutcomes.Started),
+                cancellationToken).ConfigureAwait(false);
             await RecordResultAsync(
                 context,
                 AgentToolExecutionResult.Failed(error),
@@ -82,27 +51,122 @@ internal sealed class AgentToolDispatcher(
             throw new InvalidOperationException(error);
         }
 
-        try
+        var maxAttempts = NormalizeMaxAttempts(options.ExecutionMaxAttempts);
+        var retryDelay = NormalizeRetryDelay(options.ExecutionRetryDelayMilliseconds);
+        Exception? lastException = null;
+
+        for (var attemptOffset = 0; attemptOffset < maxAttempts; attemptOffset++)
         {
-            var result = await executor.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
-            if (result is null)
+            var attempt = request.Attempt + attemptOffset;
+            var context = new AgentToolExecutionContext(
+                tool,
+                request.RunId,
+                request.Arguments,
+                request.ActorId,
+                request.CorrelationId,
+                attempt,
+                request.Metadata);
+
+            await RecordAsync(
+                CreateReport(context, AgentToolExecutionOutcomes.Started),
+                cancellationToken).ConfigureAwait(false);
+
+            foreach (var policy in policies)
             {
-                throw new InvalidOperationException(
-                    $"Agent tool executor for tool '{tool.Id}' returned a null execution result.");
+                var decision = await policy.EvaluateAsync(context, cancellationToken).ConfigureAwait(false);
+                switch (decision.Kind)
+                {
+                    case AgentToolExecutionDecisionKinds.Allow:
+                        continue;
+
+                    case AgentToolExecutionDecisionKinds.ApprovalRequired:
+                        var approvalRequired = WithRequestMetadata(
+                            context,
+                            AgentToolExecutionResult.ApprovalRequired(
+                                decision.Reason ?? "Agent-tool execution requires approval.",
+                                decision.Metadata));
+                        await RecordResultAsync(context, approvalRequired, cancellationToken).ConfigureAwait(false);
+                        return approvalRequired;
+
+                    case AgentToolExecutionDecisionKinds.Deny:
+                        var denied = WithRequestMetadata(
+                            context,
+                            AgentToolExecutionResult.Denied(
+                                decision.Reason ?? "Agent-tool execution was denied by policy.",
+                                decision.Metadata));
+                        await RecordResultAsync(context, denied, cancellationToken).ConfigureAwait(false);
+                        return denied;
+
+                    default:
+                        throw new InvalidOperationException(
+                            $"Agent-tool execution decision '{decision.Kind}' is not supported by the active agentics runtime.");
+                }
             }
 
-            var mergedResult = WithRequestMetadata(context, result);
-            await RecordResultAsync(context, mergedResult, cancellationToken).ConfigureAwait(false);
-            return mergedResult;
+            try
+            {
+                var result = await executor.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
+                if (result is null)
+                {
+                    throw new InvalidOperationException(
+                        $"Agent tool executor for tool '{tool.Id}' returned a null execution result.");
+                }
+
+                var mergedResult = WithRequestMetadata(context, result);
+                if (ShouldRetry(mergedResult, attemptOffset, maxAttempts))
+                {
+                    await RecordRetryScheduledAsync(
+                        context,
+                        mergedResult.Metadata,
+                        mergedResult.Error ?? "Agent-tool executor returned a failed result.",
+                        maxAttempts,
+                        retryDelay,
+                        cancellationToken).ConfigureAwait(false);
+                    await DelayBeforeRetryAsync(retryDelay, cancellationToken).ConfigureAwait(false);
+                    continue;
+                }
+
+                await RecordResultAsync(context, mergedResult, cancellationToken).ConfigureAwait(false);
+                return mergedResult;
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                lastException = exception;
+                if (attemptOffset < maxAttempts - 1)
+                {
+                    await RecordRetryScheduledAsync(
+                        context,
+                        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                        {
+                            ["exceptionType"] = exception.GetType().Name
+                        },
+                        exception.Message,
+                        maxAttempts,
+                        retryDelay,
+                        cancellationToken).ConfigureAwait(false);
+                    await DelayBeforeRetryAsync(retryDelay, cancellationToken).ConfigureAwait(false);
+                    continue;
+                }
+
+                await RecordResultAsync(
+                    context,
+                    AgentToolExecutionResult.Failed(
+                        exception.Message,
+                        CreateRetryMetadata(
+                            context,
+                            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                ["exceptionType"] = exception.GetType().Name
+                            },
+                            maxAttempts,
+                            retryDelay,
+                            "max-attempts-exhausted")),
+                    cancellationToken).ConfigureAwait(false);
+            }
         }
-        catch (Exception exception) when (exception is not OperationCanceledException)
-        {
-            await RecordResultAsync(
-                context,
-                AgentToolExecutionResult.Failed(exception.Message),
-                cancellationToken).ConfigureAwait(false);
-            throw;
-        }
+
+        throw lastException ?? new InvalidOperationException(
+            $"Agent tool '{tool.Id}' did not return an execution result.");
     }
 
     private IAgentToolExecutor? ResolveExecutor(string toolId)
@@ -141,6 +205,29 @@ internal sealed class AgentToolDispatcher(
         }
     }
 
+    private async ValueTask RecordRetryScheduledAsync(
+        AgentToolExecutionContext context,
+        IReadOnlyDictionary<string, string> metadata,
+        string error,
+        int maxAttempts,
+        TimeSpan retryDelay,
+        CancellationToken cancellationToken)
+    {
+        var retryMetadata = CreateRetryMetadata(
+            context,
+            metadata,
+            maxAttempts,
+            retryDelay,
+            "retry-scheduled");
+        await RecordAsync(
+            CreateReport(
+                context,
+                AgentToolExecutionOutcomes.RetryScheduled,
+                error: error,
+                metadata: retryMetadata),
+            cancellationToken).ConfigureAwait(false);
+    }
+
     private static AgentToolExecutionReport CreateReport(
         AgentToolExecutionContext context,
         string outcome,
@@ -159,6 +246,60 @@ internal sealed class AgentToolDispatcher(
             outputSummary: outputSummary,
             error: error,
             metadata: metadata);
+    }
+
+    private static bool ShouldRetry(
+        AgentToolExecutionResult result,
+        int attemptOffset,
+        int maxAttempts)
+    {
+        return attemptOffset < maxAttempts - 1 &&
+            string.Equals(result.Outcome, AgentToolExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static int NormalizeMaxAttempts(int maxAttempts) => Math.Max(1, maxAttempts);
+
+    private static TimeSpan NormalizeRetryDelay(int retryDelayMilliseconds) =>
+        TimeSpan.FromMilliseconds(Math.Max(0, retryDelayMilliseconds));
+
+    private static ValueTask DelayBeforeRetryAsync(TimeSpan retryDelay, CancellationToken cancellationToken)
+    {
+        if (retryDelay <= TimeSpan.Zero)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        return new ValueTask(Task.Delay(retryDelay, cancellationToken));
+    }
+
+    private static Dictionary<string, string> CreateRetryMetadata(
+        AgentToolExecutionContext context,
+        IReadOnlyDictionary<string, string> metadata,
+        int maxAttempts,
+        TimeSpan retryDelay,
+        string retryOutcome)
+    {
+        var values = MergeMetadata(context.Metadata, metadata);
+        var retryMetadata = new Dictionary<string, string>(values, StringComparer.OrdinalIgnoreCase)
+        {
+            ["retryPolicy"] = maxAttempts > 1 ? "bounded-in-process" : "none",
+            ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
+            ["retryDelayMilliseconds"] = retryDelay.TotalMilliseconds.ToString("0", CultureInfo.InvariantCulture),
+            ["retryDurability"] = "none",
+            ["retryScope"] = maxAttempts > 1 ? "process-local" : "none",
+            ["retryOutcome"] = retryOutcome
+        };
+
+        if (string.Equals(retryOutcome, "retry-scheduled", StringComparison.OrdinalIgnoreCase))
+        {
+            retryMetadata["nextAttempt"] = (context.Attempt + 1).ToString(CultureInfo.InvariantCulture);
+            if (retryDelay > TimeSpan.Zero)
+            {
+                retryMetadata["nextRetryAtUtc"] = DateTimeOffset.UtcNow.Add(retryDelay).ToString("O", CultureInfo.InvariantCulture);
+            }
+        }
+
+        return retryMetadata;
     }
 
     private static AgentToolExecutionResult WithRequestMetadata(

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T09:53:07.896485+00:00",
+  "GeneratedAtUtc": "2026-04-29T10:16:06.0187093+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -1974,7 +1974,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -2048,7 +2048,7 @@
       "Summary": "Defines stable outcome identifiers for agent-tool execution observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 6,
+        "Fields": 7,
         "Properties": 0,
         "Methods": 0
       }
@@ -2109,7 +2109,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 19,
+        "Properties": 21,
         "Methods": 0
       }
     },
@@ -21858,8 +21858,8 @@
       "NamespaceName": "Cephalon.Abstractions.Agentics",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-agentics-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-agentics-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the latest operator-facing runtime state reported for one agent-tool run."
     },
     {
@@ -49844,6 +49844,17 @@
       "Summary": "Gets the current managed-connector execution-intent state that informed retry-execution policy."
     },
     {
+      "DisplayName": "ExecutionMaxAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgenticRuntimeOptions",
+      "NamespaceName": "Cephalon.Agentics.Configuration",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionmaxattempts",
+      "Signature": "int ExecutionMaxAttempts { get; set; }",
+      "Summary": "Gets or sets the maximum number of process-local attempts for one managed tool execution."
+    },
+    {
       "DisplayName": "ExecutionMode",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
@@ -50249,6 +50260,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionreadinessreasons",
       "Signature": "const string ExecutionReadinessReasons",
       "Summary": "Identifies the comma-separated reasons that explain the execution-readiness state."
+    },
+    {
+      "DisplayName": "ExecutionRetryDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgenticRuntimeOptions",
+      "NamespaceName": "Cephalon.Agentics.Configuration",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionretrydelaymilliseconds",
+      "Signature": "int ExecutionRetryDelayMilliseconds { get; set; }",
+      "Summary": "Gets or sets the optional delay, in milliseconds, before a process-local retry attempt."
     },
     {
       "DisplayName": "ExecutionRisk",
@@ -100506,6 +100528,17 @@
     {
       "DisplayName": "RetryPending",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Abstractions.Agentics",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-agentics-agenttoolrunstate-retrypending",
+      "Signature": "bool RetryPending { get; }",
+      "Summary": "Gets a value indicating whether the latest report says another process-local attempt is pending."
+    },
+    {
+      "DisplayName": "RetryPending",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -100594,6 +100627,17 @@
     {
       "DisplayName": "RetryScheduled",
       "Category": "Fields",
+      "DeclaringTypeName": "AgentToolExecutionOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Agentics",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-retryscheduled",
+      "Signature": "const string RetryScheduled",
+      "Summary": "Gets the outcome identifier used when a failed tool attempt is scheduled for another process-local attempt."
+    },
+    {
+      "DisplayName": "RetryScheduled",
+      "Category": "Fields",
       "DeclaringTypeName": "EventDispatchExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -100612,6 +100656,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-retryscheduled",
       "Signature": "const string RetryScheduled",
       "Summary": "Gets the outcome identifier used when subscription handling schedules or expects another retry attempt."
+    },
+    {
+      "DisplayName": "RetryScheduledCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Abstractions.Agentics",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-agentics-agenttoolrunstate-retryscheduledcount",
+      "Signature": "int RetryScheduledCount { get; set; }",
+      "Summary": "The number of \u0060retry-scheduled\u0060 observations reported so far."
     },
     {
       "DisplayName": "RetryScheduledCount",

@@ -122,6 +122,7 @@ public sealed class AgentToolExecutionResult
             AgentToolExecutionOutcomes.Started => AgentToolExecutionOutcomes.Started,
             AgentToolExecutionOutcomes.Succeeded => AgentToolExecutionOutcomes.Succeeded,
             AgentToolExecutionOutcomes.Failed => AgentToolExecutionOutcomes.Failed,
+            AgentToolExecutionOutcomes.RetryScheduled => AgentToolExecutionOutcomes.RetryScheduled,
             AgentToolExecutionOutcomes.Skipped => AgentToolExecutionOutcomes.Skipped,
             AgentToolExecutionOutcomes.ApprovalRequired => AgentToolExecutionOutcomes.ApprovalRequired,
             AgentToolExecutionOutcomes.Denied => AgentToolExecutionOutcomes.Denied,

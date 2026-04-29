@@ -34,6 +34,21 @@ public sealed class AgenticRuntimeOptions
     public bool EnableExecution { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets the maximum number of process-local attempts for one managed tool execution.
+    /// </summary>
+    /// <remarks>
+    /// The default value preserves single-attempt execution. Values greater than <c>1</c> enable
+    /// bounded in-process retry for executor failures without claiming durable retry queues or
+    /// distributed coordination.
+    /// </remarks>
+    public int ExecutionMaxAttempts { get; set; } = 1;
+
+    /// <summary>
+    /// Gets or sets the optional delay, in milliseconds, before a process-local retry attempt.
+    /// </summary>
+    public int ExecutionRetryDelayMilliseconds { get; set; }
+
+    /// <summary>
     /// Gets arbitrary metadata that can be attached to the agentic runtime configuration.
     /// </summary>
     public IDictionary<string, string> Metadata { get; } =

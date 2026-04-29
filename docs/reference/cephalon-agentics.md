@@ -60,6 +60,28 @@ bool EnableMemory { get; set; }
 
 Gets or sets a value indicating whether agent memory features are enabled.
 
+<a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionmaxattempts"></a>
+
+##### `ExecutionMaxAttempts`
+
+```csharp
+int ExecutionMaxAttempts { get; set; }
+```
+
+Gets or sets the maximum number of process-local attempts for one managed tool execution.
+
+Remarks: The default value preserves single-attempt execution. Values greater than `1` enable bounded in-process retry for executor failures without claiming durable retry queues or distributed coordination.
+
+<a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionretrydelaymilliseconds"></a>
+
+##### `ExecutionRetryDelayMilliseconds`
+
+```csharp
+int ExecutionRetryDelayMilliseconds { get; set; }
+```
+
+Gets or sets the optional delay, in milliseconds, before a process-local retry attempt.
+
 <a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-metadata"></a>
 
 ##### `Metadata`

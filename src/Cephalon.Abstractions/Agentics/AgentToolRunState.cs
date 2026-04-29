@@ -13,6 +13,7 @@ namespace Cephalon.Abstractions.Agentics;
 /// <param name="StartedCount">The number of <c>started</c> observations reported so far.</param>
 /// <param name="SucceededCount">The number of <c>succeeded</c> observations reported so far.</param>
 /// <param name="FailedCount">The number of <c>failed</c> observations reported so far.</param>
+/// <param name="RetryScheduledCount">The number of <c>retry-scheduled</c> observations reported so far.</param>
 /// <param name="SkippedCount">The number of <c>skipped</c> observations reported so far.</param>
 /// <param name="ApprovalRequiredCount">The number of <c>approval-required</c> observations reported so far.</param>
 /// <param name="DeniedCount">The number of <c>denied</c> observations reported so far.</param>
@@ -30,6 +31,7 @@ public sealed record AgentToolRunState(
     int StartedCount,
     int SucceededCount,
     int FailedCount,
+    int RetryScheduledCount,
     int SkippedCount,
     int ApprovalRequiredCount,
     int DeniedCount,
@@ -40,12 +42,17 @@ public sealed record AgentToolRunState(
     /// <summary>
     /// Gets the total number of observations reported for this run.
     /// </summary>
-    public int TotalReports => StartedCount + SucceededCount + FailedCount + SkippedCount + ApprovalRequiredCount + DeniedCount;
+    public int TotalReports => StartedCount + SucceededCount + FailedCount + RetryScheduledCount + SkippedCount + ApprovalRequiredCount + DeniedCount;
 
     /// <summary>
     /// Gets a value indicating whether the latest report says explicit approval is required before execution can continue.
     /// </summary>
     public bool RequiresApproval => string.Equals(LastOutcome, AgentToolExecutionOutcomes.ApprovalRequired, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets a value indicating whether the latest report says another process-local attempt is pending.
+    /// </summary>
+    public bool RetryPending => string.Equals(LastOutcome, AgentToolExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets a value indicating whether the latest report represents a terminal outcome for this run.

@@ -21,6 +21,11 @@ public static class AgentToolExecutionOutcomes
     public const string Failed = "failed";
 
     /// <summary>
+    /// Gets the outcome identifier used when a failed tool attempt is scheduled for another process-local attempt.
+    /// </summary>
+    public const string RetryScheduled = "retry-scheduled";
+
+    /// <summary>
     /// Gets the outcome identifier used when a tool run is intentionally skipped.
     /// </summary>
     public const string Skipped = "skipped";

@@ -2101,6 +2101,17 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runs);
             })
             .WithName("GetCephalonAgentToolRuns");
+        engineGroup.MapGet("/agent-tool-runs/retry-pending", (HttpContext httpContext) =>
+            {
+                var runs = httpContext.RequestServices
+                    .GetService<IAgentToolRunCatalog>()?
+                    .Runs
+                    .Where(static run => run.RetryPending)
+                    .ToArray() ?? [];
+
+                return Results.Ok(runs);
+            })
+            .WithName("GetCephalonRetryPendingAgentToolRuns");
         engineGroup.MapGet("/agent-tool-runs/{runId}", (string runId, HttpContext httpContext) =>
             {
                 var run = httpContext.RequestServices

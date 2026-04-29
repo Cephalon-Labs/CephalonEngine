@@ -31,6 +31,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Cephalon.Tests.Support;
+using System.Globalization;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -2444,6 +2445,75 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task AddTechnologyPacksRetryAgentToolExecutorFailuresWhenConfigured()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<RetryingAgentToolExecutor>();
+        services.AddSingleton<IAgentToolExecutor>(static serviceProvider =>
+            serviceProvider.GetRequiredService<RetryingAgentToolExecutor>());
+        services.AddSingleton<AgentToolExecutionAuditProbe>();
+        services.AddSingleton<IAgentToolExecutionObserver>(static serviceProvider =>
+            serviceProvider.GetRequiredService<AgentToolExecutionAuditProbe>());
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["AgenticWorkloads"]));
+            engine.AddAgentics(options =>
+            {
+                options.ExecutionMaxAttempts = 3;
+                options.Tools.Add(new AgentToolDescriptor(
+                    id: "retrying-analyst",
+                    displayName: "Retrying Analyst",
+                    description: "Exercises bounded process-local retry for the managed agentics lane."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<IAgentToolDispatcher>();
+        var auditProbe = provider.GetRequiredService<AgentToolExecutionAuditProbe>();
+
+        var result = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "retrying-analyst",
+            runId: "agentics-retry-run-001",
+            actorId: "operator",
+            correlationId: "corr-agentics-retry-001"));
+
+        var runCatalog = provider.GetRequiredService<IAgentToolRunCatalog>();
+        var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var runState = Assert.Single(runCatalog.GetByToolId("retrying-analyst"));
+        var agenticsSurface = Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
+        var retryingEntry = Assert.Single(agenticsSurface.Entries, entry => entry.Id == "retrying-analyst");
+        var retryReport = Assert.Single(auditProbe.Reports, report =>
+            report.RunId == "agentics-retry-run-001" &&
+            report.Outcome == AgentToolExecutionOutcomes.RetryScheduled);
+
+        Assert.Equal(AgentToolExecutionOutcomes.Succeeded, result.Outcome);
+        Assert.Equal("Retried agentics attempt 2.", result.OutputSummary);
+        Assert.Equal(2, provider.GetRequiredService<RetryingAgentToolExecutor>().CallCount);
+        Assert.Equal(AgentToolExecutionOutcomes.Succeeded, runState.LastOutcome);
+        Assert.Equal(2, runState.StartedCount);
+        Assert.Equal(1, runState.RetryScheduledCount);
+        Assert.Equal(1, runState.SucceededCount);
+        Assert.Equal(4, runState.TotalReports);
+        Assert.Equal(2, runState.LastAttempt);
+        Assert.False(runState.RetryPending);
+        Assert.True(runState.IsTerminal);
+        Assert.Equal("bounded-in-process", retryReport.Metadata["retryPolicy"]);
+        Assert.Equal("3", retryReport.Metadata["retryMaxAttempts"]);
+        Assert.Equal("none", retryReport.Metadata["retryDurability"]);
+        Assert.Equal("process-local", retryReport.Metadata["retryScope"]);
+        Assert.Equal("retry-scheduled", retryReport.Metadata["retryOutcome"]);
+        Assert.Equal("2", retryReport.Metadata["nextAttempt"]);
+        Assert.Equal("bounded-in-process", retryingEntry.Metadata["retryPolicy"]);
+        Assert.Equal("3", retryingEntry.Metadata["retryMaxAttempts"]);
+        Assert.Equal("1", retryingEntry.Metadata["retryScheduledCount"]);
+        Assert.Equal("false", retryingEntry.Metadata["retryPending"]);
+        Assert.Equal("true", retryingEntry.Metadata["isTerminal"]);
+    }
+
+    [Fact]
     public async Task AddTechnologyPacksReportApprovalRequiredAgentToolRunsWithoutCallingExecutor()
     {
         var services = new ServiceCollection();
@@ -3633,4 +3703,31 @@ public sealed class EngineBuilderTests
         string Fingerprint,
         string PublicKeyPath,
         string SignatureValue);
+
+    private sealed class RetryingAgentToolExecutor : IAgentToolExecutor
+    {
+        public string ToolId => "retrying-analyst";
+
+        public int CallCount { get; private set; }
+
+        public ValueTask<AgentToolExecutionResult> ExecuteAsync(
+            AgentToolExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            CallCount++;
+            if (CallCount == 1)
+            {
+                throw new InvalidOperationException("Transient agentics executor failure.");
+            }
+
+            return ValueTask.FromResult(AgentToolExecutionResult.Succeeded(
+                $"Retried agentics attempt {context.Attempt}.",
+                new Dictionary<string, string>
+                {
+                    ["executor"] = nameof(RetryingAgentToolExecutor),
+                    ["observedAttempt"] = context.Attempt.ToString(CultureInfo.InvariantCulture)
+                }));
+        }
+    }
 }

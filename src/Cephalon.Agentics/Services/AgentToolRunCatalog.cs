@@ -96,6 +96,7 @@ internal sealed class AgentToolRunCatalog(
                     StartedCount: 0,
                     SucceededCount: 0,
                     FailedCount: 0,
+                    RetryScheduledCount: 0,
                     SkippedCount: 0,
                     ApprovalRequiredCount: 0,
                     DeniedCount: 0,
@@ -137,6 +138,18 @@ internal sealed class AgentToolRunCatalog(
                     LastCorrelationId = report.CorrelationId,
                     LastAttempt = report.Attempt,
                     FailedCount = current.FailedCount + 1,
+                    LastOutputSummary = report.OutputSummary,
+                    LastError = report.Error,
+                    Metadata = metadata
+                },
+                AgentToolExecutionOutcomes.RetryScheduled => current with
+                {
+                    LastOutcome = normalizedOutcome,
+                    LastObservedAtUtc = observedAtUtc,
+                    LastActorId = report.ActorId,
+                    LastCorrelationId = report.CorrelationId,
+                    LastAttempt = report.Attempt,
+                    RetryScheduledCount = current.RetryScheduledCount + 1,
                     LastOutputSummary = report.OutputSummary,
                     LastError = report.Error,
                     Metadata = metadata
@@ -195,6 +208,7 @@ internal sealed class AgentToolRunCatalog(
             AgentToolExecutionOutcomes.Started => AgentToolExecutionOutcomes.Started,
             AgentToolExecutionOutcomes.Succeeded => AgentToolExecutionOutcomes.Succeeded,
             AgentToolExecutionOutcomes.Failed => AgentToolExecutionOutcomes.Failed,
+            AgentToolExecutionOutcomes.RetryScheduled => AgentToolExecutionOutcomes.RetryScheduled,
             AgentToolExecutionOutcomes.Skipped => AgentToolExecutionOutcomes.Skipped,
             AgentToolExecutionOutcomes.ApprovalRequired => AgentToolExecutionOutcomes.ApprovalRequired,
             AgentToolExecutionOutcomes.Denied => AgentToolExecutionOutcomes.Denied,

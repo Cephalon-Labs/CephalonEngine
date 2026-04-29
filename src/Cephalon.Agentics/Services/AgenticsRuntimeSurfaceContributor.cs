@@ -86,6 +86,11 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
                 : "not-configured";
         metadata["executorConfigured"] = (executorCount > 0).ToString().ToLowerInvariant();
         metadata["executorCount"] = executorCount.ToString(CultureInfo.InvariantCulture);
+        metadata["retryPolicy"] = options.ExecutionMaxAttempts > 1 ? "bounded-in-process" : "none";
+        metadata["retryMaxAttempts"] = Math.Max(1, options.ExecutionMaxAttempts).ToString(CultureInfo.InvariantCulture);
+        metadata["retryDelayMilliseconds"] = Math.Max(0, options.ExecutionRetryDelayMilliseconds).ToString(CultureInfo.InvariantCulture);
+        metadata["retryDurability"] = "none";
+        metadata["retryScope"] = options.ExecutionMaxAttempts > 1 ? "process-local" : "none";
         metadata["runtimeState"] = latestRun is null ? "not-reported" : "reported";
         metadata["runCount"] = runs.Count.ToString(CultureInfo.InvariantCulture);
 
@@ -143,11 +148,13 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
             metadata["startedCount"] = latestRun.StartedCount.ToString(CultureInfo.InvariantCulture);
             metadata["succeededCount"] = latestRun.SucceededCount.ToString(CultureInfo.InvariantCulture);
             metadata["failedCount"] = latestRun.FailedCount.ToString(CultureInfo.InvariantCulture);
+            metadata["retryScheduledCount"] = latestRun.RetryScheduledCount.ToString(CultureInfo.InvariantCulture);
             metadata["skippedCount"] = latestRun.SkippedCount.ToString(CultureInfo.InvariantCulture);
             metadata["approvalRequiredCount"] = latestRun.ApprovalRequiredCount.ToString(CultureInfo.InvariantCulture);
             metadata["deniedCount"] = latestRun.DeniedCount.ToString(CultureInfo.InvariantCulture);
             metadata["totalReports"] = latestRun.TotalReports.ToString(CultureInfo.InvariantCulture);
             metadata["requiresApproval"] = latestRun.RequiresApproval.ToString().ToLowerInvariant();
+            metadata["retryPending"] = latestRun.RetryPending.ToString().ToLowerInvariant();
             metadata["isTerminal"] = latestRun.IsTerminal.ToString().ToLowerInvariant();
 
             if (!string.IsNullOrWhiteSpace(latestRun.LastActorId))

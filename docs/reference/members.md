@@ -1134,9 +1134,9 @@ Browse the published API surface by public member.
 - [AgentToolRuns](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-agenttoolruns): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=AgentToolRuns&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the latest reported agent-tool run states visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<AgentToolRunState> AgentToolRuns { get; set; }`
-- [AgentToolRunState](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=AgentToolRunState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
+- [AgentToolRunState](cephalon-abstractions.md#member-m-cephalon-abstractions-agentics-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=AgentToolRunState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Describes the latest operator-facing runtime state reported for one agent-tool run.
-  - `AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+  - `AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary<string, string> Metadata)`
 - [AgeSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleprobedescriptor-ageseconds): `Properties` on `DatabaseRoleProbeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AgeSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the age in seconds of the current answer, when known.
   - `int? AgeSeconds { get; }`
@@ -8778,6 +8778,9 @@ Browse the published API surface by public member.
 - [ExecutionIntentState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-executionintentstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionIntentState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector execution-intent state that informed retry-execution policy.
   - `string ExecutionIntentState { get; set; }`
+- [ExecutionMaxAttempts](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionmaxattempts): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecutionMaxAttempts&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
+  - Gets or sets the maximum number of process-local attempts for one managed tool execution.
+  - `int ExecutionMaxAttempts { get; set; }`
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-executionmode): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The enforcement mode used by the active runtime, such as `behavior-dispatch-middleware` or `contract-only`.
   - `string ExecutionMode { get; set; }`
@@ -8889,6 +8892,9 @@ Browse the published API surface by public member.
 - [ExecutionReadinessReasons](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executionreadinessreasons): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExecutionReadinessReasons&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the comma-separated reasons that explain the execution-readiness state.
   - `const string ExecutionReadinessReasons`
+- [ExecutionRetryDelayMilliseconds](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionretrydelaymilliseconds): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecutionRetryDelayMilliseconds&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
+  - Gets or sets the optional delay, in milliseconds, before a process-local retry attempt.
+  - `int ExecutionRetryDelayMilliseconds { get; set; }`
 - [ExecutionRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-executionrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Scheduler execution truth currently remains risky.
   - `const string ExecutionRisk`
@@ -22629,6 +22635,9 @@ Browse the published API surface by public member.
 - [RetryOutcome](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryoutcome): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the retry decision represented by the latest observation.
   - `const string RetryOutcome`
+- [RetryPending](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-retrypending): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
+  - Gets a value indicating whether the latest report says another process-local attempt is pending.
+  - `bool RetryPending { get; }`
 - [RetryPending](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-retrypending): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest report says another retry attempt is pending.
   - `bool RetryPending { get; }`
@@ -22653,12 +22662,18 @@ Browse the published API surface by public member.
 - [RetryReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-retryready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current retry-execution policy allows Cephalon to execute one safe retry automatically.
   - `const string RetryReady`
+- [RetryScheduled](cephalon-abstractions.md#member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-retryscheduled): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryScheduled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
+  - Gets the outcome identifier used when a failed tool attempt is scheduled for another process-local attempt.
+  - `const string RetryScheduled`
 - [RetryScheduled](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-retryscheduled): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduled&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch schedules or expects another retry attempt.
   - `const string RetryScheduled`
 - [RetryScheduled](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-retryscheduled): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduled&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling schedules or expects another retry attempt.
   - `const string RetryScheduled`
+- [RetryScheduledCount](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-retryscheduledcount): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
+  - The number of `retry-scheduled` observations reported so far.
+  - `int RetryScheduledCount { get; set; }`
 - [RetryScheduledCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-retryscheduledcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `retry-scheduled` observations reported so far.
   - `int RetryScheduledCount { get; set; }`

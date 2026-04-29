@@ -1673,10 +1673,12 @@ runtime also registers the abstraction-level `IAgentToolDispatcher`.
 Current payload highlights:
 
 - each run entry carries a stable `toolId`, `runId`, latest outcome, latest observation timestamp,
-  actor/correlation details, attempt number, outcome counters, output/error summaries, and safe
-  metadata
-- `requiresApproval` and `isTerminal` keep policy waits separate from final success, failure,
-  skipped, or denied outcomes
+  actor/correlation details, attempt number, outcome counters, retry-scheduled count,
+  output/error summaries, and safe metadata
+- `requiresApproval`, `retryPending`, and `isTerminal` keep policy waits, process-local retry waits,
+  and final success, failure, skipped, or denied outcomes separate
+- `GET /engine/agent-tool-runs/retry-pending` filters the same catalog to runs whose latest report
+  is `retry-scheduled`
 - `GET /engine/agent-tool-runs/{runId}` narrows the same catalog to one reported run and returns
   `404` when that run does not exist
 - `GET /engine/agent-tool-runs/by-tool/{toolId}` narrows the same catalog to all runs reported for
@@ -1695,6 +1697,10 @@ Current note:
   host adapters can expose them without referencing `Cephalon.Agentics`; the agentics pack still owns
   the dispatcher implementation, executor, policy, observer, reporter, and in-memory catalog
   implementation
+- retry posture is bounded and process-local through `AgenticRuntimeOptions.ExecutionMaxAttempts`
+  and `ExecutionRetryDelayMilliseconds`; durable retry queues, autonomous planning, memory
+  persistence, distributed scheduling, and provider-specific AI orchestration remain outside this
+  proof until a package truly owns those paths
 
 ## Knowledge index surface
 
@@ -1797,12 +1803,13 @@ Current `Cephalon.Agentics` highlights:
 - linked execution-graph and hosted-execution entries also surface the current runtime-story phase and active/inactive state
 - invalid linked capability, execution-graph, or hosted-execution references fail when the agentic tool catalog is resolved instead of leaking broken operator metadata
 - managed tool execution now flows through `IAgentToolDispatcher` when `AgenticRuntimeOptions.EnableExecution` is enabled
+- bounded process-local retry is opt-in through `ExecutionMaxAttempts` and `ExecutionRetryDelayMilliseconds`, with `retryPolicy`, `retryMaxAttempts`, `retryDelayMilliseconds`, `retryDurability`, and `retryScope` metadata on the execution capability and tool surface
 - each tool entry reports execution readiness through `executionEnabled`, `executionOwnership`, `executorConfigured`, and `executorCount`; tools without an executor are reported as `awaiting-executor` instead of being described as fully managed
-- reported runs flow into `IAgentToolRunCatalog` and surface `runtimeState`, `runCount`, `lastRunId`, `lastOutcome`, `totalReports`, approval/denial counters, actor/correlation details, and `reported.*` metadata on the same technology surface, while `/engine/agent-tool-runs*` and `snapshot.AgentToolRuns` expose the direct run-state read seam
+- reported runs flow into `IAgentToolRunCatalog` and surface `runtimeState`, `runCount`, `lastRunId`, `lastOutcome`, retry-scheduled count, retry-pending posture, `totalReports`, approval/denial counters, actor/correlation details, and `reported.*` metadata on the same technology surface, while `/engine/agent-tool-runs*` and `snapshot.AgentToolRuns` expose the direct run-state read seam
 - operators can now request one bounded managed tool run through
   `POST /engine/agent-tools/{toolId}/runs`; the route records supplied or generated run id, actor,
   correlation id, attempt, arguments, and safe trigger metadata on the same run-state answer
-- approval-required and denied outcomes are policy decisions, not executor failures, so operators can distinguish "waiting for approval" from broken execution
+- `GET /engine/agent-tool-runs/retry-pending` filters runs whose latest report is waiting for another process-local attempt; approval-required and denied outcomes are policy decisions, not executor failures, so operators can distinguish "waiting for approval" from broken execution
 - the phase 13 `cell-based-architecture` baseline now also projects `cell-boundaries`, `cell-routes`, `cell-health-isolations`, and `cell-traffic-automations` surfaces whose entries stay aligned with `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, `snapshot.CellHealthIsolations`, and `snapshot.CellTrafficAutomations`, so operators can read module ownership, blast-radius posture, source-cell to target-cell routing posture, health-isolation posture, effective automation/trigger/action/materialization modes, policy source, dependency linkage, and transport hints from one shared runtime truth
 - the same traffic-automation surface now also carries first-class `providerId` plus `edgeNodeIds` targeting and ASP.NET Core drill-down routes on `/engine/cell-traffic-automations/providers/{providerId}` plus `/engine/cell-traffic-automations/edge-nodes/{edgeNodeId}`, so operators can correlate shared cell posture with provider control planes and edge-node topology without inventing a second traffic registry
 - provider-managed automation entries now also expose `providerMaterializerId`, `providerMaterializationState`, `providerMaterializationObservedAtUtc`, and `providerMaterializationError`, so the same technology surface can answer whether startup reconciliation is still `pending`, already `applied`, currently `unavailable`, or last `failed` for the selected provider materializer
