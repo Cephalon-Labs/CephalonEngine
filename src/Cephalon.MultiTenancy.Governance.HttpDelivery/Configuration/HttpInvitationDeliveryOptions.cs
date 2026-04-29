@@ -66,6 +66,34 @@ public sealed class HttpInvitationDeliveryOptions
     public IReadOnlyDictionary<string, string> Headers { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
+    /// Gets or sets the shared secret used to sign webhook payloads with HMAC-SHA256.
+    /// </summary>
+    /// <remarks>
+    /// When empty, the sender does not add Cephalon webhook signature headers.
+    /// </remarks>
+    public string? SigningSecret { get; set; }
+
+    /// <summary>
+    /// Gets or sets an optional key identifier sent with signed webhook requests.
+    /// </summary>
+    public string? SigningKeyId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the request header that carries the webhook signature.
+    /// </summary>
+    public string SignatureHeaderName { get; set; } = "X-Cephalon-Webhook-Signature";
+
+    /// <summary>
+    /// Gets or sets the request header that carries the Unix timestamp included in the webhook signature.
+    /// </summary>
+    public string SignatureTimestampHeaderName { get; set; } = "X-Cephalon-Webhook-Signature-Timestamp";
+
+    /// <summary>
+    /// Gets or sets the request header that carries the optional signing key identifier.
+    /// </summary>
+    public string SignatureKeyIdHeaderName { get; set; } = "X-Cephalon-Webhook-Key-Id";
+
+    /// <summary>
     /// Gets or sets the response header that contains the provider message identifier.
     /// </summary>
     public string? ProviderMessageIdHeaderName { get; set; } = "X-Cephalon-Provider-Message-Id";
@@ -120,6 +148,11 @@ public sealed class HttpInvitationDeliveryOptions
             ExpectedStatusCodes = ParseInt32List(section.GetSection("ExpectedStatusCodes")),
             SupportedChannels = ParseStringList(section.GetSection("SupportedChannels")),
             Headers = ParseDictionary(section.GetSection("Headers")),
+            SigningSecret = section["SigningSecret"]?.Trim(),
+            SigningKeyId = section["SigningKeyId"]?.Trim(),
+            SignatureHeaderName = section["SignatureHeaderName"]?.Trim() ?? "X-Cephalon-Webhook-Signature",
+            SignatureTimestampHeaderName = section["SignatureTimestampHeaderName"]?.Trim() ?? "X-Cephalon-Webhook-Signature-Timestamp",
+            SignatureKeyIdHeaderName = section["SignatureKeyIdHeaderName"]?.Trim() ?? "X-Cephalon-Webhook-Key-Id",
             ProviderMessageIdHeaderName = section["ProviderMessageIdHeaderName"]?.Trim() ?? "X-Cephalon-Provider-Message-Id",
             IncludeInvitationMetadata = GetBoolean(section["IncludeInvitationMetadata"], defaultValue: true),
             IncludeRequestMetadata = GetBoolean(section["IncludeRequestMetadata"], defaultValue: true),
@@ -143,6 +176,8 @@ public sealed class HttpInvitationDeliveryOptions
         var method = string.IsNullOrWhiteSpace(Method) ? "POST" : Method.Trim().ToUpperInvariant();
         return new HttpMethod(method);
     }
+
+    internal bool IsSigningEnabled => !string.IsNullOrWhiteSpace(SigningSecret);
 
     internal TimeSpan GetTimeout() => TimeSpan.FromSeconds(Math.Max(1, TimeoutSeconds));
 

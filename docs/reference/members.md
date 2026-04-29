@@ -23103,12 +23103,18 @@ Browse the published API surface by public member.
 - [SignatureFingerprint](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-signaturefingerprint): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureFingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The primary signature fingerprint, when available.
   - `string SignatureFingerprint { get; set; }`
+- [SignatureHeaderName](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signatureheadername): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SignatureHeaderName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the request header that carries the webhook signature.
+  - `string SignatureHeaderName { get; set; }`
 - [SignatureKeyId](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signaturekeyid): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureKeyId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the trusted-key identifier declared by the package manifest, when available.
   - `string SignatureKeyId { get; }`
 - [SignatureKeyId](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-signaturekeyid): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureKeyId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The primary signature key identifier, when available.
   - `string SignatureKeyId { get; set; }`
+- [SignatureKeyIdHeaderName](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signaturekeyidheadername): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SignatureKeyIdHeaderName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the request header that carries the optional signing key identifier.
+  - `string SignatureKeyIdHeaderName { get; set; }`
 - [Signatures](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signatures): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Signatures&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared package signatures and their individual verification outcomes.
   - `IReadOnlyList<PackageSignatureManifest> Signatures { get; }`
@@ -23118,6 +23124,9 @@ Browse the published API surface by public member.
 - [SignatureSigner](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signaturesigner): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureSigner&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the signer identity declared by the package manifest, when available.
   - `string SignatureSigner { get; }`
+- [SignatureTimestampHeaderName](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signaturetimestampheadername): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SignatureTimestampHeaderName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the request header that carries the Unix timestamp included in the webhook signature.
+  - `string SignatureTimestampHeaderName { get; set; }`
 - [SignatureType](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signaturetype): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureType&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the signature metadata type declared by the package manifest, when available.
   - `string SignatureType { get; }`
@@ -23133,6 +23142,12 @@ Browse the published API surface by public member.
 - [Signer](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-signer): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Signer&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The declared signer identity, when available.
   - `string Signer { get; set; }`
+- [SigningKeyId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signingkeyid): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SigningKeyId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets an optional key identifier sent with signed webhook requests.
+  - `string SigningKeyId { get; set; }`
+- [SigningSecret](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signingsecret): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SigningSecret&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the shared secret used to sign webhook payloads with HMAC-SHA256.
+  - `string SigningSecret { get; set; }`
 - [SingleHostTopology](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-singlehosttopology): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=SingleHostTopology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the single-host deployment topology pattern.
   - `PatternDescriptor SingleHostTopology { get; }`

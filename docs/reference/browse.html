@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T00:46:53.7254337+00:00",
+  "GeneratedAtUtc": "2026-04-29T01:03:23.1078691+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8530,7 +8530,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 13,
+        "Properties": 18,
         "Methods": 1
       }
     },
@@ -101932,6 +101932,17 @@
       "Summary": "The primary signature fingerprint, when available."
     },
     {
+      "DisplayName": "SignatureHeaderName",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signatureheadername",
+      "Signature": "string SignatureHeaderName { get; set; }",
+      "Summary": "Gets or sets the request header that carries the webhook signature."
+    },
+    {
       "DisplayName": "SignatureKeyId",
       "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
@@ -101952,6 +101963,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-signaturekeyid",
       "Signature": "string SignatureKeyId { get; set; }",
       "Summary": "The primary signature key identifier, when available."
+    },
+    {
+      "DisplayName": "SignatureKeyIdHeaderName",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signaturekeyidheadername",
+      "Signature": "string SignatureKeyIdHeaderName { get; set; }",
+      "Summary": "Gets or sets the request header that carries the optional signing key identifier."
     },
     {
       "DisplayName": "Signatures",
@@ -101985,6 +102007,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-signaturesigner",
       "Signature": "string SignatureSigner { get; }",
       "Summary": "Gets the signer identity declared by the package manifest, when available."
+    },
+    {
+      "DisplayName": "SignatureTimestampHeaderName",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signaturetimestampheadername",
+      "Signature": "string SignatureTimestampHeaderName { get; set; }",
+      "Summary": "Gets or sets the request header that carries the Unix timestamp included in the webhook signature."
     },
     {
       "DisplayName": "SignatureType",
@@ -102040,6 +102073,28 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-signer",
       "Signature": "string Signer { get; set; }",
       "Summary": "The declared signer identity, when available."
+    },
+    {
+      "DisplayName": "SigningKeyId",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signingkeyid",
+      "Signature": "string SigningKeyId { get; set; }",
+      "Summary": "Gets or sets an optional key identifier sent with signed webhook requests."
+    },
+    {
+      "DisplayName": "SigningSecret",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
+      "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signingsecret",
+      "Signature": "string SigningSecret { get; set; }",
+      "Summary": "Gets or sets the shared secret used to sign webhook payloads with HMAC-SHA256."
     },
     {
       "DisplayName": "SingleHostTopology",

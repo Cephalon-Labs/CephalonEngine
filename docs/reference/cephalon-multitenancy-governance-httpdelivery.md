@@ -152,6 +152,58 @@ string SenderId { get; set; }
 
 Gets or sets the sender identifier used by `TenantInvitationDeliveryRequest.SenderId`.
 
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signatureheadername"></a>
+
+##### `SignatureHeaderName`
+
+```csharp
+string SignatureHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the webhook signature.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signaturekeyidheadername"></a>
+
+##### `SignatureKeyIdHeaderName`
+
+```csharp
+string SignatureKeyIdHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the optional signing key identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signaturetimestampheadername"></a>
+
+##### `SignatureTimestampHeaderName`
+
+```csharp
+string SignatureTimestampHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the Unix timestamp included in the webhook signature.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signingkeyid"></a>
+
+##### `SigningKeyId`
+
+```csharp
+string SigningKeyId { get; set; }
+```
+
+Gets or sets an optional key identifier sent with signed webhook requests.
+
+<a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-signingsecret"></a>
+
+##### `SigningSecret`
+
+```csharp
+string SigningSecret { get; set; }
+```
+
+Gets or sets the shared secret used to sign webhook payloads with HMAC-SHA256.
+
+Remarks: When empty, the sender does not add Cephalon webhook signature headers.
+
 <a id="member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-supportedchannels"></a>
 
 ##### `SupportedChannels`

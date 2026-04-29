@@ -625,7 +625,28 @@ Delivered:
 
 Follow-up later:
 
-- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, webhook signing/callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; webhook signing is then covered by `ENG-258`
+
+### ENG-258 Multi-tenancy governance HTTP invitation delivery webhook signing baseline
+
+Status: done
+Estimate: 5
+
+Why:
+
+- after `ENG-257`, `Cephalon.MultiTenancy.Governance.HttpDelivery` could send real webhook payloads, but receivers still needed a trustworthy way to verify that a dispatch request came from the configured Cephalon host and that the body was not altered in transit
+- the smallest honest security proof is package-owned HMAC signing over the exact serialized payload and dispatch timestamp, not a provider-specific email/SMS/chat/identity-provider connector or a callback reconciliation loop
+
+Delivered:
+
+- add `SigningSecret`, `SigningKeyId`, and configurable signature header names to `HttpInvitationDeliveryOptions`
+- sign `{unixTimestamp}.{jsonBody}` with HMAC-SHA256 when `SigningSecret` is configured, emit `v1=<lowercase hex>` signature, timestamp, and optional key-id headers, and record only safe `httpSigned`/`httpSigningKeyId` metadata
+- preserve unsigned behavior when no signing secret is configured and prove signed delivery through focused composition coverage over the existing governance dispatcher and HTTP sender
+- keep provider-specific auth semantics, retry queues, delivery-status callbacks, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
+
+Follow-up later:
+
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, retry queues, delivery-status callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
 
 ## Completed foundation work
 

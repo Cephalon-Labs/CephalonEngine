@@ -4,7 +4,8 @@ using Cephalon.MultiTenancy.Governance.Services;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Net;
-using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Cephalon.MultiTenancy.Governance.HttpDelivery.Services;
@@ -58,11 +59,13 @@ internal sealed class HttpInvitationDeliverySender(
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeout.CancelAfter(options.GetTimeout());
 
+            var requestBody = JsonSerializer.Serialize(BuildPayload(context), SerializerOptions);
             using var request = new HttpRequestMessage(options.GetHttpMethod(), endpoint)
             {
-                Content = JsonContent.Create(BuildPayload(context), options: SerializerOptions)
+                Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
             };
             AddHeaders(request);
+            AddSignatureHeaders(request, context, requestBody);
 
             var client = httpClientFactory.CreateClient(HttpInvitationDeliveryServiceCollectionExtensions.HttpClientName);
             using var response = await client
@@ -152,6 +155,47 @@ internal sealed class HttpInvitationDeliverySender(
         };
     }
 
+    private void AddSignatureHeaders(HttpRequestMessage request, TenantInvitationDeliveryContext context, string requestBody)
+    {
+        if (!options.IsSigningEnabled)
+        {
+            return;
+        }
+
+        var signatureHeaderName = GetHeaderNameOrDefault(options.SignatureHeaderName, "X-Cephalon-Webhook-Signature");
+        var timestampHeaderName = GetHeaderNameOrDefault(options.SignatureTimestampHeaderName, "X-Cephalon-Webhook-Signature-Timestamp");
+        var keyIdHeaderName = GetHeaderNameOrDefault(options.SignatureKeyIdHeaderName, "X-Cephalon-Webhook-Key-Id");
+        var timestamp = context.DispatchedAtUtc.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        var signature = CreateSignature(options.SigningSecret!, timestamp, requestBody);
+
+        SetRequestHeader(request, timestampHeaderName, timestamp);
+        SetRequestHeader(request, signatureHeaderName, signature);
+
+        if (!string.IsNullOrWhiteSpace(options.SigningKeyId))
+        {
+            SetRequestHeader(request, keyIdHeaderName, options.SigningKeyId.Trim());
+        }
+    }
+
+    private static string CreateSignature(string secret, string timestamp, string requestBody)
+    {
+        var signedPayload = $"{timestamp}.{requestBody}";
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
+        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(signedPayload));
+        return "v1=" + Convert.ToHexString(hash).ToLowerInvariant();
+    }
+
+    private static string GetHeaderNameOrDefault(string? headerName, string defaultHeaderName)
+    {
+        return string.IsNullOrWhiteSpace(headerName) ? defaultHeaderName : headerName.Trim();
+    }
+
+    private static void SetRequestHeader(HttpRequestMessage request, string headerName, string value)
+    {
+        request.Headers.Remove(headerName);
+        request.Headers.TryAddWithoutValidation(headerName, value);
+    }
+
     private void AddHeaders(HttpRequestMessage request)
     {
         foreach (var pair in options.Headers)
@@ -204,8 +248,14 @@ internal sealed class HttpInvitationDeliverySender(
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["httpSenderId"] = SenderId,
-            ["httpEndpointHost"] = options.TryGetEndpoint()?.Host ?? string.Empty
+            ["httpEndpointHost"] = options.TryGetEndpoint()?.Host ?? string.Empty,
+            ["httpSigned"] = options.IsSigningEnabled ? "true" : "false"
         };
+
+        if (options.IsSigningEnabled && !string.IsNullOrWhiteSpace(options.SigningKeyId))
+        {
+            metadata["httpSigningKeyId"] = options.SigningKeyId.Trim();
+        }
 
         if (statusCode is not null)
         {

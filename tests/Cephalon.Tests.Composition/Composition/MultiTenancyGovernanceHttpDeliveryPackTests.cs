@@ -5,7 +5,10 @@ using Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting;
 using Cephalon.MultiTenancy.Governance.Services;
 using Cephalon.MultiTenancy.Governance.Registration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Cephalon.Tests.Composition;
@@ -164,6 +167,69 @@ public sealed class MultiTenancyGovernanceHttpDeliveryPackTests
         Assert.Empty(handler.Requests);
     }
 
+    [Fact]
+    public async Task HttpInvitationDeliverySenderSignsWebhookPayloadWhenSecretConfigured()
+    {
+        var capturedRequests = new List<CapturedRequest>();
+        var handler = new CapturingHttpMessageHandler(async request =>
+        {
+            capturedRequests.Add(await CapturedRequest.FromAsync(request));
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        });
+
+        var services = new ServiceCollection();
+        services.AddCephalonHttpInvitationDelivery(options =>
+        {
+            options.Endpoint = "https://delivery.example.test/invitations";
+            options.SigningSecret = "delivery-secret-258";
+            options.SigningKeyId = "key-258";
+        });
+        services.AddHttpClient(HttpInvitationDeliveryServiceCollectionExtensions.HttpClientName)
+            .ConfigurePrimaryHttpMessageHandler(() => handler);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-http-signed",
+                    tenantId: "tenant-http",
+                    inviteeId: "user-http",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+
+        var dispatchedAtUtc = new DateTimeOffset(2026, 04, 29, 6, 0, 0, TimeSpan.Zero);
+        var result = await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-http",
+            invitationId: "invite-http-signed",
+            channel: "webhook",
+            senderId: "http-webhook",
+            atUtc: dispatchedAtUtc));
+
+        var captured = Assert.Single(capturedRequests);
+        var timestamp = dispatchedAtUtc.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        var expectedSignature = CreateExpectedSignature("delivery-secret-258", timestamp, captured.Body);
+
+        Assert.True(result.Dispatched);
+        Assert.Equal("true", result.Metadata["httpSigned"]);
+        Assert.Equal("key-258", result.Metadata["httpSigningKeyId"]);
+        Assert.Equal(timestamp, captured.Headers["X-Cephalon-Webhook-Signature-Timestamp"]);
+        Assert.Equal(expectedSignature, captured.Headers["X-Cephalon-Webhook-Signature"]);
+        Assert.Equal("key-258", captured.Headers["X-Cephalon-Webhook-Key-Id"]);
+        Assert.DoesNotContain("delivery-secret-258", captured.Body, StringComparison.Ordinal);
+        Assert.DoesNotContain("delivery-secret-258", result.Metadata.Values);
+    }
+
     private sealed class CapturingHttpMessageHandler(Func<HttpRequestMessage, Task<HttpResponseMessage>> handler) : HttpMessageHandler
     {
         public List<HttpRequestMessage> Requests { get; } = [];
@@ -200,5 +266,12 @@ public sealed class MultiTenancyGovernanceHttpDeliveryPackTests
                 request.Content is null ? string.Empty : await request.Content.ReadAsStringAsync().ConfigureAwait(false),
                 headers);
         }
+    }
+
+    private static string CreateExpectedSignature(string secret, string timestamp, string requestBody)
+    {
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
+        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes($"{timestamp}.{requestBody}"));
+        return "v1=" + Convert.ToHexString(hash).ToLowerInvariant();
     }
 }

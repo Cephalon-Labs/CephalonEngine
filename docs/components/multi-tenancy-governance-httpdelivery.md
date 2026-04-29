@@ -9,8 +9,9 @@
 - code-first setup through `AddCephalonHttpInvitationDelivery(...)`
 - bounded HTTP dispatch with configurable method, timeout, headers, accepted status codes, and supported channels
 - JSON invitation delivery payload shaping through `HttpInvitationDeliveryPayload`
+- optional HMAC-SHA256 webhook signing over the exact JSON body plus dispatch timestamp
 - provider-message id capture from a configurable response header
-- safe sender metadata such as HTTP endpoint host, status code, reason, optional bounded response body excerpt, and exception type
+- safe sender metadata such as HTTP endpoint host, status code, reason, signing enablement/key id, optional bounded response body excerpt, and exception type
 - stable diagnostics for accepted and failed HTTP invitation dispatch attempts
 
 ## Main surfaces
@@ -57,6 +58,11 @@ Configuration example:
           "TimeoutSeconds": 10,
           "ExpectedStatusCodes": [202],
           "SupportedChannels": ["email", "webhook"],
+          "SigningSecret": "${INVITATION_DELIVERY_SIGNING_SECRET}",
+          "SigningKeyId": "primary-2026-04",
+          "SignatureHeaderName": "X-Cephalon-Webhook-Signature",
+          "SignatureTimestampHeaderName": "X-Cephalon-Webhook-Signature-Timestamp",
+          "SignatureKeyIdHeaderName": "X-Cephalon-Webhook-Key-Id",
           "ProviderMessageIdHeaderName": "X-Cephalon-Provider-Message-Id",
           "Headers": {
             "X-Delivery-Key": "${INVITATION_DELIVERY_KEY}"
@@ -68,9 +74,11 @@ Configuration example:
 }
 ```
 
+When `SigningSecret` is configured, the sender serializes the payload once, computes `HMACSHA256(secret, "{unixTimestamp}.{jsonBody}")`, and sends the signature as `v1=<lowercase hex>` in `SignatureHeaderName`. The timestamp and optional key id are sent in their configured headers. Runtime metadata records only `httpSigned` and the optional `httpSigningKeyId`; it never records the shared secret or generated signature.
+
 The sender returns `dispatched` only when the webhook returns an accepted response according to `ExpectedStatusCodes`, or any successful 2xx response when no explicit status list is configured. Unsupported channels are reported as `suppressed`; transport errors, non-accepted responses, timeouts, and endpoint failures are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
 
-This is intentionally not a provider-specific email, SMS, chat, CRM, or identity-provider connector. Provider-specific authentication models, message templates, user provisioning, retry queues, webhook signing, delivery-status callbacks, human inboxes, and external provider reconciliation remain future companion or application-managed work until a package owns those paths explicitly.
+This is intentionally not a provider-specific email, SMS, chat, CRM, or identity-provider connector. Provider-specific authentication models, message templates, user provisioning, retry queues, delivery-status callbacks, human inboxes, and external provider reconciliation remain future companion or application-managed work until a package owns those paths explicitly.
 
 ## Related docs
 
