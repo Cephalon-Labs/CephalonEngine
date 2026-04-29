@@ -20,8 +20,8 @@ Current focus:
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, opt-in local invitation delivery retry storage plus bounded manual retry execution, host-agnostic invitation delivery status reconciliation over provider or receiver observations, opt-in durable delivery-status observation storage for normalized reconciliation records, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving, the fail-closed tenant-administration command endpoint, the fail-closed invitation delivery dispatch endpoint, the fail-closed normalized invitation delivery-status callback endpoint, opt-in provider-neutral callback signature verification, and bounded process-local signed-callback replay protection; distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, automatic background invitation retry scheduling, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, provider-specific delivery-status callback payload translation, provider-specific callback signature verification, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
-- treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, automatic background retry scheduling, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed replay ledgers, or exactly-once delivery claims
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, opt-in local invitation delivery retry storage plus bounded retry execution and opt-in automatic background retry scheduling, host-agnostic invitation delivery status reconciliation over provider or receiver observations, opt-in durable delivery-status observation storage for normalized reconciliation records, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving, the fail-closed tenant-administration command endpoint, the fail-closed invitation delivery dispatch endpoint, the fail-closed normalized invitation delivery-status callback endpoint, opt-in provider-neutral callback signature verification, and bounded process-local signed-callback replay protection; distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, provider-specific delivery-status callback payload translation, provider-specific callback signature verification, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
+- treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed replay ledgers, or exactly-once delivery claims
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -624,11 +624,11 @@ Delivered:
 - add `Cephalon.MultiTenancy.Governance.HttpDelivery` as an optional companion package with `HttpInvitationDeliveryOptions`, `AddCephalonHttpInvitationDelivery(...)`, and `HttpInvitationDeliveryPayload`
 - implement a provider-managed `http-webhook` sender that posts bounded JSON payloads to configured HTTP or HTTPS endpoints, supports configurable method, timeout, headers, accepted status codes, supported channels, provider-message id header capture, and safe sender metadata
 - publish diagnostics `4550-4551`, add the package to the supported reference-doc/default catalog and package-surface guardrails, and prove dispatched/suppressed outcomes through focused composition tests over the existing governance dispatcher and store metadata
-- keep provider-specific email/SMS/chat/CRM/identity-provider semantics, automatic background or distributed retry queues, callbacks, public onboarding, tenant-admin UI, and identity-provider sync outside this proof
+- keep provider-specific email/SMS/chat/CRM/identity-provider semantics, distributed retry queues, callbacks, public onboarding, tenant-admin UI, and identity-provider sync outside this proof
 
 Follow-up later:
 
-- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, automatic background or distributed retry queues, callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; webhook signing is covered by `ENG-258`, bounded in-process retry is covered by `ENG-259`, and the host-agnostic local retry store/manual runner is covered by `ENG-290`
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; webhook signing is covered by `ENG-258`, bounded in-process retry is covered by `ENG-259`, and the host-agnostic local retry store/runner plus opt-in background scheduler is covered by `ENG-290`
 
 ### ENG-258 Multi-tenancy governance HTTP invitation delivery webhook signing baseline
 
@@ -645,11 +645,11 @@ Delivered:
 - add `SigningSecret`, `SigningKeyId`, and configurable signature header names to `HttpInvitationDeliveryOptions`
 - sign `{unixTimestamp}.{jsonBody}` with HMAC-SHA256 when `SigningSecret` is configured, emit `v1=<lowercase hex>` signature, timestamp, and optional key-id headers, and record only safe `httpSigned`/`httpSigningKeyId` metadata
 - preserve unsigned behavior when no signing secret is configured and prove signed delivery through focused composition coverage over the existing governance dispatcher and HTTP sender
-- keep provider-specific auth semantics, automatic background or distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
+- keep provider-specific auth semantics, distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
 
 Follow-up later:
 
-- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, automatic background or distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; bounded in-process retry is covered by `ENG-259`, host-agnostic delivery status reconciliation is covered by `ENG-261`, and the host-agnostic local retry store/manual runner is covered by `ENG-290`
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; bounded in-process retry is covered by `ENG-259`, host-agnostic delivery status reconciliation is covered by `ENG-261`, and the host-agnostic local retry store/runner plus opt-in background scheduler is covered by `ENG-290`
 
 ### ENG-259 Multi-tenancy governance HTTP invitation delivery retry baseline
 
@@ -667,11 +667,11 @@ Delivered:
 - create a fresh HTTP request per attempt over the same serialized payload, retry configured transient status codes plus transient transport failures when attempts remain, and keep `TimeoutSeconds` as the dispatch budget for the attempt loop
 - record safe attempt/retry metadata such as `httpAttemptCount`, `httpMaxAttempts`, `httpRetried`, `httpRetryReason`, `httpRetryDelayMilliseconds`, and `httpRetryStatusCodes` without copying secrets or signatures
 - prove retry behavior through focused composition coverage over the existing governance dispatcher and HTTP sender
-- keep automatic background or distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, provider-specific email/SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
+- keep distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, provider-specific email/SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
 
 Follow-up later:
 
-- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, automatic background or distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; provider-neutral idempotency headers are covered by `ENG-260`, host-agnostic delivery status reconciliation is covered by `ENG-261`, and the host-agnostic local retry store/manual runner is covered by `ENG-290`
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; provider-neutral idempotency headers are covered by `ENG-260`, host-agnostic delivery status reconciliation is covered by `ENG-261`, the host-agnostic local retry store/runner is covered by `ENG-290`, and opt-in background retry scheduling is covered by `ENG-291`
 
 ### ENG-260 Multi-tenancy governance HTTP invitation delivery idempotency baseline
 
@@ -681,7 +681,7 @@ Estimate: 5
 Why:
 
 - after `ENG-259`, `Cephalon.MultiTenancy.Governance.HttpDelivery` could retry transient webhook outcomes, but receivers still needed a stable provider-neutral key to suppress duplicate side effects across retry attempts
-- the smallest honest safety proof is an idempotency header produced by the HTTP sender, not automatic background retry scheduling, distributed retry ownership, provider callback endpoint, or provider-specific invitation connector
+- the smallest honest safety proof is an idempotency header produced by the HTTP sender, not retry scheduling ownership, distributed retry ownership, provider callback endpoint, or provider-specific invitation connector
 
 Delivered:
 
@@ -689,11 +689,11 @@ Delivered:
 - send the configured idempotency header on every webhook attempt, using caller-supplied header-safe dispatch metadata when present, hashing overlong/header-unsafe metadata values, or deriving a hashed key from tenant id, invitation id, channel, and sender id when absent
 - keep the same idempotency key across retry attempts and record safe `httpIdempotencyHeaderName`, `httpIdempotencyKey`, and `httpIdempotencyKeySource` metadata
 - prove default derived keys and metadata-supplied keys through focused composition coverage over the existing governance dispatcher and HTTP sender
-- keep automatic background or distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, provider-specific email/SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
+- keep distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, provider-specific email/SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
 
 Follow-up later:
 
-- host-agnostic delivery status reconciliation is covered by `ENG-261`; provider-specific email/SMS/chat/CRM/identity-provider invitation senders, automatic background or distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; the host-agnostic local retry store/manual runner is covered by `ENG-290`
+- host-agnostic delivery status reconciliation is covered by `ENG-261`; provider-specific email/SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; the host-agnostic local retry store/runner is covered by `ENG-290`, and opt-in background retry scheduling is covered by `ENG-291`
 
 ### ENG-261 Multi-tenancy governance invitation delivery status reconciliation baseline
 
@@ -711,11 +711,11 @@ Delivered:
 - reconcile status observations through the merged invitation catalog and `ITenantInvitationStore`, including provider message id matching so callbacks cannot be attached to the wrong invitation silently
 - publish `tenancy.invitation.delivery-status-reconciliation`, stable diagnostics `4552-4553`, and `tenant-invitations`/`tenant-administration` runtime metadata for status reconciliation ownership, external status ownership, reported status count, latest status, and latest observed timestamp
 - prove successful reconciliation and provider-message mismatch rejection through focused composition coverage, and keep package/reference-doc surface tests aligned
-- keep provider-specific delivery-status callback endpoints, provider polling, automatic background or distributed retry queues, provider-specific email/SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
+- keep provider-specific delivery-status callback endpoints, provider polling, distributed retry queues, provider-specific email/SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI, identity-provider sync, and provider mutation outside this proof
 
 Follow-up later:
 
-- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, automatic background or distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; the host-agnostic local retry store/manual runner is covered by `ENG-290`
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths; the host-agnostic local retry store/runner is covered by `ENG-290`, and opt-in background retry scheduling is covered by `ENG-291`
 
 ### ENG-262 Behavior REST profile runtime ownership metadata baseline
 
@@ -1658,16 +1658,57 @@ Delivered:
   attempt through `ITenantInvitationDeliveryDispatcher` and clearing successful retries
 - expose `tenancy.invitation.delivery-retry-queue` plus `tenant-invitations` retry queue
   enablement, store kind/durability/scope/counts, latest retry outcome, and retry policy metadata
-- prove queueing, manual retry success/clear, local JSON persistence, package surface, and
+- prove queueing, bounded retry success/clear, local JSON persistence, package surface, and
   reference-doc alignment through focused composition/tooling coverage
 
 Follow-up later:
 
-- automatic background invitation retry scheduling, distributed retry queues, cross-node retry
+- distributed retry queues, cross-node retry
   leases, exactly-once delivery, provider-specific email/SMS/chat/CRM/identity-provider senders,
   provider-specific callback inboxes, provider polling, public onboarding, tenant-admin UI/backoffice,
   identity-provider synchronization, and distributed/provider-backed governance stores remain future
   governance slices until a package truly owns those paths
+
+### ENG-291 Multi-tenancy invitation delivery background retry scheduling baseline
+
+Status: done
+Estimate: 3
+Issue: #806
+
+Why:
+
+- after `ENG-290`, the governance core could persist retryable sender failures and replay them through
+  a bounded runner, but consumer apps still had to schedule recurring retry execution themselves
+- the smallest honest automation proof is an opt-in generic-host background service over the existing
+  bounded runner, not a distributed queue, cross-node lease, exactly-once delivery guarantee,
+  provider-specific invitation sender, public onboarding flow, tenant-admin UI, identity-provider sync,
+  provider polling loop, provider callback inbox, or distributed/provider-backed governance store
+
+Delivered:
+
+- add `EnableInvitationDeliveryRetryBackgroundScheduling`,
+  `InvitationDeliveryRetryBackgroundIntervalSeconds`,
+  `InvitationDeliveryRetryBackgroundRunOnStartup`, and
+  `InvitationDeliveryRetryBackgroundSource` to `MultiTenancyGovernanceOptions`
+- register `TenantInvitationDeliveryRetryHostedService` only when both the retry queue and background
+  scheduling are enabled, then run `ITenantInvitationDeliveryRetryRunner.RetryPendingAsync(...)` on
+  startup and on the configured interval with the existing bounded max-item policy
+- add `ITenantInvitationDeliveryRetryRuntimeCatalog` and
+  `TenantInvitationDeliveryRetryRuntimeSnapshot` so operators can read enabled state, ownership,
+  interval, startup behavior, latest run outcome, counts, timestamps, and errors
+- expose `tenancy.invitation.delivery-retry-background-scheduling`, diagnostics events `4554`-`4557`,
+  and `tenant-invitations` `deliveryRetryBackground*` metadata without claiming distributed retry
+  ownership
+- prove startup scheduling, retry clearing, runtime reporting, capability metadata, package surface,
+  and reference-doc alignment through focused composition/tooling coverage
+
+Follow-up later:
+
+- distributed retry queues, cross-node retry leases, exactly-once delivery,
+  provider-specific email/SMS/chat/CRM/identity-provider senders, provider-specific callback inboxes,
+  provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization,
+  and distributed/provider-backed governance stores remain future governance slices until a package
+  truly owns those paths
 
 ## Completed foundation work
 
@@ -9624,9 +9665,13 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-289 Multi-tenancy invitation delivery dispatch endpoint baseline (shipped, issue #804)
 - ENG-290 Multi-tenancy invitation delivery durable retry queue baseline (shipped, issue #805)
 
+### Sprint 96
+
+- ENG-291 Multi-tenancy invitation delivery background retry scheduling baseline (shipped, issue #806)
+
 ### Later / not scheduled yet
 
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, automatic background invitation retry scheduling, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
 
 ### Foundation Sprint 1
 

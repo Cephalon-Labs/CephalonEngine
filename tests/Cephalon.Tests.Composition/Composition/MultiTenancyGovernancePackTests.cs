@@ -106,6 +106,7 @@ public sealed class MultiTenancyGovernancePackTests
         var invitationDeliveryStatusReconciler = provider.GetRequiredService<ITenantInvitationDeliveryStatusReconciler>();
         var invitationDeliveryRunCatalog = provider.GetRequiredService<ITenantInvitationDeliveryRunCatalog>();
         var invitationDeliveryStatusObservationStore = provider.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>();
+        var invitationDeliveryRetryRuntimeCatalog = provider.GetRequiredService<ITenantInvitationDeliveryRetryRuntimeCatalog>();
         var domainCatalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
         var domainValidator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
         var domainWorkflow = provider.GetRequiredService<ITenantDomainOwnershipVerificationWorkflow>();
@@ -213,6 +214,7 @@ public sealed class MultiTenancyGovernancePackTests
         var proofVerificationRunnerCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.proof-verification-runner");
         var proofPollingRunnerCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.proof-polling-runner");
         var defaultProofPollingRuntime = domainProofPollingRuntimeCatalog.Current;
+        var defaultInvitationDeliveryRetryRuntime = invitationDeliveryRetryRuntimeCatalog.Current;
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.governance-action.decision");
@@ -262,6 +264,13 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(0, defaultProofPollingRuntime.RunCount);
         Assert.DoesNotContain(provider.GetServices<IHostedService>(), static service =>
             string.Equals(service.GetType().Name, "TenantDomainOwnershipProofPollingHostedService", StringComparison.Ordinal));
+        Assert.False(defaultInvitationDeliveryRetryRuntime.Enabled);
+        Assert.Equal("application-managed", defaultInvitationDeliveryRetryRuntime.Ownership);
+        Assert.Equal(300, defaultInvitationDeliveryRetryRuntime.IntervalSeconds);
+        Assert.Equal(25, defaultInvitationDeliveryRetryRuntime.MaxItems);
+        Assert.Equal(0, defaultInvitationDeliveryRetryRuntime.RunCount);
+        Assert.DoesNotContain(provider.GetServices<IHostedService>(), static service =>
+            string.Equals(service.GetType().Name, "TenantInvitationDeliveryRetryHostedService", StringComparison.Ordinal));
         Assert.Equal("cephalon-managed", summaryEntry.Metadata["ownership"]);
         Assert.Equal("Cephalon.MultiTenancy.Governance", summaryEntry.Metadata["package"]);
         Assert.Equal("2", summaryEntry.Metadata["membershipCount"]);
@@ -311,6 +320,15 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("application-managed", invitationSummaryEntry.Metadata["externalDeliveryOwnership"]);
         Assert.Equal("application-managed", invitationSummaryEntry.Metadata["invitationDeliveryOwnership"]);
         Assert.Equal("0", invitationSummaryEntry.Metadata["deliveryRunCount"]);
+        Assert.Equal("false", invitationSummaryEntry.Metadata["deliveryRetryQueueEnabled"]);
+        Assert.Equal("not-configured", invitationSummaryEntry.Metadata["deliveryRetryQueueOwnership"]);
+        Assert.Equal("false", invitationSummaryEntry.Metadata["deliveryRetryBackgroundEnabled"]);
+        Assert.Equal("application-managed", invitationSummaryEntry.Metadata["deliveryRetryBackgroundOwnership"]);
+        Assert.Equal("300", invitationSummaryEntry.Metadata["deliveryRetryBackgroundIntervalSeconds"]);
+        Assert.Equal("25", invitationSummaryEntry.Metadata["deliveryRetryBackgroundMaxItems"]);
+        Assert.Equal("true", invitationSummaryEntry.Metadata["deliveryRetryBackgroundRunOnStartup"]);
+        Assert.Equal("0", invitationSummaryEntry.Metadata["deliveryRetryBackgroundRunCount"]);
+        Assert.Equal("none", invitationSummaryEntry.Metadata["deliveryRetryBackgroundLastOutcome"]);
         Assert.Equal("pending:1,revoked:1", invitationSummaryEntry.Metadata["statusBreakdown"]);
         Assert.Equal("2", tenantInvitationEntry.Metadata["invitationCount"]);
         Assert.Equal("1", tenantInvitationEntry.Metadata["pendingInvitationCount"]);
@@ -476,7 +494,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Empty(invitationDeliveryRunCatalog.Runs);
         Assert.NotNull(governanceActionWorkflow);
         Assert.NotNull(administrationWorkflow);
-        Assert.Equal(4553, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4557, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
@@ -519,6 +537,10 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4549 && entry.Name == "TenantInvitationDeliveryDispatchDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4552 && entry.Name == "TenantInvitationDeliveryStatusReconciled");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4553 && entry.Name == "TenantInvitationDeliveryStatusReconciliationDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4554 && entry.Name == "TenantInvitationDeliveryRetryBackgroundSchedulingStarted");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4555 && entry.Name == "TenantInvitationDeliveryRetryBackgroundSchedulingCompleted");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4556 && entry.Name == "TenantInvitationDeliveryRetryBackgroundSchedulingFailed");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4557 && entry.Name == "TenantInvitationDeliveryRetryBackgroundSchedulingStopped");
     }
 
     [Fact]
@@ -3787,6 +3809,131 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("0", retryResult.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueuePendingCount]);
         Assert.Equal("0", summaryEntry.Metadata["deliveryRetryQueueCount"]);
         Assert.Equal("0", summaryEntry.Metadata["deliveryRetryQueuePendingCount"]);
+    }
+
+    [Fact]
+    public async Task TenantInvitationDeliveryRetryBackgroundSchedulingRunsStartupPassAndReportsRuntimeState()
+    {
+        var services = new ServiceCollection();
+        var sender = new ScriptedTenantInvitationDeliverySender(
+            "test-email",
+            new TenantInvitationDeliverySenderResult(
+                TenantInvitationDeliveryOutcomes.SenderFailed,
+                dispatched: false,
+                reason: "Provider throttled the first scheduled dispatch."),
+            new TenantInvitationDeliverySenderResult(
+                TenantInvitationDeliveryOutcomes.Dispatched,
+                dispatched: true,
+                providerMessageId: "provider-message-background-retry",
+                reason: "Provider accepted the scheduled retry."));
+        services.AddSingleton<ITenantInvitationDeliverySender>(sender);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.EnableInvitationDeliveryRetryQueue = true;
+                options.EnableInvitationDeliveryRetryBackgroundScheduling = true;
+                options.InvitationDeliveryRetryBackgroundIntervalSeconds = 3600;
+                options.InvitationDeliveryRetryBackgroundSource = "background-invitation-delivery-retry-test";
+                options.InvitationDeliveryRetryDelaySeconds = 0;
+                options.InvitationDeliveryRetryMaxAttempts = 3;
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-background-retry",
+                    tenantId: "tenant-background-retry",
+                    inviteeId: "user-background-retry",
+                    displayName: "Background Retry Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var hostedService = Assert.Single(provider.GetServices<IHostedService>(), static service =>
+            string.Equals(service.GetType().Name, "TenantInvitationDeliveryRetryHostedService", StringComparison.Ordinal));
+        var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+        var retryQueue = provider.GetRequiredService<ITenantInvitationDeliveryRetryStore>();
+        var retryRuntimeCatalog = provider.GetRequiredService<ITenantInvitationDeliveryRetryRuntimeCatalog>();
+        var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var dispatchedAtUtc = new DateTimeOffset(2026, 04, 29, 4, 20, 0, TimeSpan.Zero);
+        await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-background-retry",
+            invitationId: "invite-background-retry",
+            channel: "email",
+            senderId: "test-email",
+            source: "composition-test",
+            actor: "operator-001",
+            atUtc: dispatchedAtUtc,
+            correlationId: "corr-background-retry-001"));
+        Assert.Single(retryQueue.Entries);
+
+        try
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+            await WaitUntilAsync(() => retryRuntimeCatalog.Current.RunCount > 0);
+
+            var retryRuntime = retryRuntimeCatalog.Current;
+            var backgroundCapability = Assert.Single(runtime.Manifest.Capabilities, capability =>
+                capability.Key == "tenancy.invitation.delivery-retry-background-scheduling");
+            var invitationsSurface = Assert.Single(
+                technologyCatalog.GetByTechnology("multi-tenancy"),
+                surface => surface.SurfaceId == "tenant-invitations");
+            var summaryEntry = Assert.Single(invitationsSurface.Entries, runtimeEntry => runtimeEntry.Id == "tenant-invitation-runtime");
+            var tenantEntry = Assert.Single(invitationsSurface.Entries, runtimeEntry => runtimeEntry.Id == "tenant-invitations:tenant-background-retry");
+
+            Assert.Empty(retryQueue.Entries);
+            Assert.True(retryRuntime.Enabled);
+            Assert.Equal("cephalon-managed", retryRuntime.Ownership);
+            Assert.Equal(3600, retryRuntime.IntervalSeconds);
+            Assert.Equal(25, retryRuntime.MaxItems);
+            Assert.True(retryRuntime.RunOnStartup);
+            Assert.Equal(1, retryRuntime.RunCount);
+            Assert.Equal(1, retryRuntime.SuccessfulRunCount);
+            Assert.Equal(0, retryRuntime.FailedRunCount);
+            Assert.NotNull(retryRuntime.LastStartedAtUtc);
+            Assert.NotNull(retryRuntime.LastCompletedAtUtc);
+            Assert.Equal(TenantInvitationDeliveryRetryOutcomes.Retried, retryRuntime.LastOutcome);
+            Assert.Equal(1, retryRuntime.LastAttemptedCount);
+            Assert.Equal(1, retryRuntime.LastDispatchedCount);
+            Assert.Equal(0, retryRuntime.LastFailedCount);
+            Assert.Equal(0, retryRuntime.LastExhaustedCount);
+            Assert.Equal(0, retryRuntime.LastTerminalCount);
+            Assert.Equal(0, retryRuntime.LastRemainingPendingCount);
+            Assert.Null(retryRuntime.LastError);
+            Assert.Equal(2, sender.Contexts.Count);
+            Assert.Equal("background-invitation-delivery-retry-test", sender.Contexts[1].Source);
+            Assert.Equal("true", sender.Contexts[1].Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecution]);
+            Assert.Equal("true", sender.Contexts[1].Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryBackgroundScheduling]);
+            Assert.Equal("cephalon-managed", sender.Contexts[1].Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryBackgroundOwnership]);
+            Assert.Equal("true", backgroundCapability.Metadata["backgroundRetryEnabled"]);
+            Assert.Equal("cephalon-managed", backgroundCapability.Metadata["backgroundRetryOwnership"]);
+            Assert.Equal("3600", backgroundCapability.Metadata["backgroundRetryIntervalSeconds"]);
+            Assert.Equal("25", backgroundCapability.Metadata["deliveryRetryMaxItems"]);
+            Assert.Equal("application-managed", backgroundCapability.Metadata["distributedRetryOwnership"]);
+            Assert.Equal("application-managed", backgroundCapability.Metadata["exactlyOnceOwnership"]);
+            Assert.Equal("true", summaryEntry.Metadata["deliveryRetryBackgroundEnabled"]);
+            Assert.Equal("cephalon-managed", summaryEntry.Metadata["deliveryRetryBackgroundOwnership"]);
+            Assert.Equal("3600", summaryEntry.Metadata["deliveryRetryBackgroundIntervalSeconds"]);
+            Assert.Equal("25", summaryEntry.Metadata["deliveryRetryBackgroundMaxItems"]);
+            Assert.Equal("1", summaryEntry.Metadata["deliveryRetryBackgroundRunCount"]);
+            Assert.Equal("1", summaryEntry.Metadata["deliveryRetryBackgroundSuccessfulRunCount"]);
+            Assert.Equal("0", summaryEntry.Metadata["deliveryRetryBackgroundFailedRunCount"]);
+            Assert.Equal(TenantInvitationDeliveryRetryOutcomes.Retried, summaryEntry.Metadata["deliveryRetryBackgroundLastOutcome"]);
+            Assert.Equal("1", summaryEntry.Metadata["deliveryRetryBackgroundLastAttemptedCount"]);
+            Assert.Equal("1", summaryEntry.Metadata["deliveryRetryBackgroundLastDispatchedCount"]);
+            Assert.Equal("0", summaryEntry.Metadata["deliveryRetryQueuePendingCount"]);
+            Assert.Equal("0", tenantEntry.Metadata["deliveryRetryQueuePendingCount"]);
+        }
+        finally
+        {
+            await hostedService.StopAsync(CancellationToken.None);
+        }
     }
 
     [Fact]

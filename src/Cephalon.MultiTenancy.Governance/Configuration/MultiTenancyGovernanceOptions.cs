@@ -81,7 +81,8 @@ public sealed class MultiTenancyGovernanceOptions
     /// </summary>
     /// <remarks>
     /// This queue is enabled deliberately because it can cause later delivery attempts. It stores retry intent and exposes
-    /// a bounded manual runner; it does not start background delivery, provide distributed leases, or guarantee exactly-once delivery.
+    /// a bounded manual runner; it does not start background delivery unless retry background scheduling is explicitly
+    /// enabled, provide distributed leases, or guarantee exactly-once delivery.
     /// </remarks>
     public bool EnableInvitationDeliveryRetryQueue { get; set; }
 
@@ -99,6 +100,34 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets the default maximum number of retry entries attempted by one retry runner pass.
     /// </summary>
     public int InvitationDeliveryRetryMaxItems { get; set; } = 25;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the built-in invitation delivery retry hosted service is active.
+    /// </summary>
+    /// <remarks>
+    /// This option is disabled by default so installing the governance package never starts recurring delivery attempts
+    /// without an explicit host decision. When enabled, the hosted service schedules the bounded retry runner; it still
+    /// does not provide distributed queues, cross-node leases, exactly-once delivery, or provider-specific senders.
+    /// </remarks>
+    public bool EnableInvitationDeliveryRetryBackgroundScheduling { get; set; }
+
+    /// <summary>
+    /// Gets or sets the invitation delivery retry background scheduling interval, in seconds.
+    /// </summary>
+    /// <remarks>
+    /// Values less than one are coerced to the default interval.
+    /// </remarks>
+    public int InvitationDeliveryRetryBackgroundIntervalSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether invitation delivery retry background scheduling should run once during hosted-service startup.
+    /// </summary>
+    public bool InvitationDeliveryRetryBackgroundRunOnStartup { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the source recorded on retry requests created by the background retry hosted service.
+    /// </summary>
+    public string InvitationDeliveryRetryBackgroundSource { get; set; } = "background-invitation-delivery-retry";
 
     /// <summary>
     /// Gets or sets the maximum number of delivery status observations retained by the built-in observation store.

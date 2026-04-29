@@ -304,10 +304,38 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         MessageTemplate: "Denied tenant invitation delivery status reconciliation for tenant '{TenantId}' and invitation '{InvitationId}'. Outcome: {Outcome}. Reason: {Reason}.",
         Description: "Emitted when the governance companion cannot reconcile or record tenant invitation delivery status.");
 
+    public static readonly DiagnosticEventDefinition TenantInvitationDeliveryRetryBackgroundSchedulingStarted = new(
+        Id: 4554,
+        Name: "TenantInvitationDeliveryRetryBackgroundSchedulingStarted",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Started tenant invitation delivery retry background scheduling. Interval: {IntervalSeconds}s. Batch limit: {MaxItems}.",
+        Description: "Emitted when the governance companion starts automatic background tenant invitation delivery retry scheduling.");
+
+    public static readonly DiagnosticEventDefinition TenantInvitationDeliveryRetryBackgroundSchedulingCompleted = new(
+        Id: 4555,
+        Name: "TenantInvitationDeliveryRetryBackgroundSchedulingCompleted",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Completed tenant invitation delivery retry background scheduling. Outcome: {Outcome}. Attempts: {AttemptedCount}. Dispatched: {DispatchedCount}. Failed: {FailedCount}. Exhausted: {ExhaustedCount}. Terminal: {TerminalCount}.",
+        Description: "Emitted when the governance companion completes one automatic background tenant invitation delivery retry pass.");
+
+    public static readonly DiagnosticEventDefinition TenantInvitationDeliveryRetryBackgroundSchedulingFailed = new(
+        Id: 4556,
+        Name: "TenantInvitationDeliveryRetryBackgroundSchedulingFailed",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Failed tenant invitation delivery retry background scheduling before a retry result was produced. Reason: {Reason}.",
+        Description: "Emitted when automatic background tenant invitation delivery retry scheduling fails before producing a retry result.");
+
+    public static readonly DiagnosticEventDefinition TenantInvitationDeliveryRetryBackgroundSchedulingStopped = new(
+        Id: 4557,
+        Name: "TenantInvitationDeliveryRetryBackgroundSchedulingStopped",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Stopped tenant invitation delivery retry background scheduling.",
+        Description: "Emitted when the governance companion stops automatic background tenant invitation delivery retry scheduling.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
-        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation/delivery dispatch/delivery status reconciliation, tenant-administration workflow commands, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP proof publication, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
+        Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation/delivery dispatch/delivery status reconciliation/invitation delivery retry scheduling, tenant-administration workflow commands, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP proof publication, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [
             MembershipEvaluationAllowed,
@@ -351,7 +379,11 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
             TenantInvitationDeliveryDispatched,
             TenantInvitationDeliveryDispatchDenied,
             TenantInvitationDeliveryStatusReconciled,
-            TenantInvitationDeliveryStatusReconciliationDenied
+            TenantInvitationDeliveryStatusReconciliationDenied,
+            TenantInvitationDeliveryRetryBackgroundSchedulingStarted,
+            TenantInvitationDeliveryRetryBackgroundSchedulingCompleted,
+            TenantInvitationDeliveryRetryBackgroundSchedulingFailed,
+            TenantInvitationDeliveryRetryBackgroundSchedulingStopped
         ]);
 }
 
@@ -484,6 +516,38 @@ internal static class MultiTenancyGovernanceLoggerMessages
                 MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryStatusReconciliationDenied.Id,
                 MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryStatusReconciliationDenied.Name),
             MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryStatusReconciliationDenied.MessageTemplate);
+
+    private static readonly Action<ILogger, int, int, Exception?> TenantInvitationDeliveryRetryBackgroundSchedulingStartedMessage =
+        LoggerMessage.Define<int, int>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingStarted.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingStarted.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingStarted.MessageTemplate);
+
+    private static readonly Action<ILogger, string, int, int, int, int, int, Exception?> TenantInvitationDeliveryRetryBackgroundSchedulingCompletedMessage =
+        LoggerMessage.Define<string, int, int, int, int, int>(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingCompleted.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingCompleted.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingCompleted.MessageTemplate);
+
+    private static readonly Action<ILogger, string, Exception?> TenantInvitationDeliveryRetryBackgroundSchedulingFailedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Warning,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingFailed.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingFailed.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingFailed.MessageTemplate);
+
+    private static readonly Action<ILogger, Exception?> TenantInvitationDeliveryRetryBackgroundSchedulingStoppedMessage =
+        LoggerMessage.Define(
+            LogLevel.Information,
+            new EventId(
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingStopped.Id,
+                MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingStopped.Name),
+            MultiTenancyGovernanceDiagnosticsConventions.TenantInvitationDeliveryRetryBackgroundSchedulingStopped.MessageTemplate);
 
     private static readonly Action<ILogger, string, string, string, string, Exception?> GovernanceActionStorePersistedMessage =
         LoggerMessage.Define<string, string, string, string>(
@@ -866,6 +930,51 @@ internal static class MultiTenancyGovernanceLoggerMessages
         Exception? exception)
     {
         TenantInvitationDeliveryStatusReconciliationDeniedMessage(logger, tenantId, invitationId, outcome, reason, exception);
+    }
+
+    public static void TenantInvitationDeliveryRetryBackgroundSchedulingStarted(
+        ILogger logger,
+        int intervalSeconds,
+        int maxItems,
+        Exception? exception)
+    {
+        TenantInvitationDeliveryRetryBackgroundSchedulingStartedMessage(logger, intervalSeconds, maxItems, exception);
+    }
+
+    public static void TenantInvitationDeliveryRetryBackgroundSchedulingCompleted(
+        ILogger logger,
+        string outcome,
+        int attemptedCount,
+        int dispatchedCount,
+        int failedCount,
+        int exhaustedCount,
+        int terminalCount,
+        Exception? exception)
+    {
+        TenantInvitationDeliveryRetryBackgroundSchedulingCompletedMessage(
+            logger,
+            outcome,
+            attemptedCount,
+            dispatchedCount,
+            failedCount,
+            exhaustedCount,
+            terminalCount,
+            exception);
+    }
+
+    public static void TenantInvitationDeliveryRetryBackgroundSchedulingFailed(
+        ILogger logger,
+        string reason,
+        Exception? exception)
+    {
+        TenantInvitationDeliveryRetryBackgroundSchedulingFailedMessage(logger, reason, exception);
+    }
+
+    public static void TenantInvitationDeliveryRetryBackgroundSchedulingStopped(
+        ILogger logger,
+        Exception? exception)
+    {
+        TenantInvitationDeliveryRetryBackgroundSchedulingStoppedMessage(logger, exception);
     }
 
     public static void GovernanceActionStorePersisted(

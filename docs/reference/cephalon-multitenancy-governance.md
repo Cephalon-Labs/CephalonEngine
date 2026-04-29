@@ -332,6 +332,18 @@ Gets or sets a value indicating whether the built-in invitation delivery dispatc
 
 Remarks: The dispatcher owns invitation lookup, pending/expiry checks, runtime reporting, and outcome persistence. It requires a registered `ITenantInvitationDeliverySender` before any external delivery can happen.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliveryretrybackgroundscheduling"></a>
+
+##### `EnableInvitationDeliveryRetryBackgroundScheduling`
+
+```csharp
+bool EnableInvitationDeliveryRetryBackgroundScheduling { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in invitation delivery retry hosted service is active.
+
+Remarks: This option is disabled by default so installing the governance package never starts recurring delivery attempts without an explicit host decision. When enabled, the hosted service schedules the bounded retry runner; it still does not provide distributed queues, cross-node leases, exactly-once delivery, or provider-specific senders.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliveryretryqueue"></a>
 
 ##### `EnableInvitationDeliveryRetryQueue`
@@ -342,7 +354,7 @@ bool EnableInvitationDeliveryRetryQueue { get; set; }
 
 Gets or sets a value indicating whether sender-failed invitation delivery attempts are queued for explicit retry.
 
-Remarks: This queue is enabled deliberately because it can cause later delivery attempts. It stores retry intent and exposes a bounded manual runner; it does not start background delivery, provide distributed leases, or guarantee exactly-once delivery.
+Remarks: This queue is enabled deliberately because it can cause later delivery attempts. It stores retry intent and exposes a bounded manual runner; it does not start background delivery unless retry background scheduling is explicitly enabled, provide distributed leases, or guarantee exactly-once delivery.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverystatusobservationstore"></a>
 
@@ -419,6 +431,38 @@ string GovernanceActionStoreFilePath { get; set; }
 ```
 
 Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrybackgroundintervalseconds"></a>
+
+##### `InvitationDeliveryRetryBackgroundIntervalSeconds`
+
+```csharp
+int InvitationDeliveryRetryBackgroundIntervalSeconds { get; set; }
+```
+
+Gets or sets the invitation delivery retry background scheduling interval, in seconds.
+
+Remarks: Values less than one are coerced to the default interval.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrybackgroundrunonstartup"></a>
+
+##### `InvitationDeliveryRetryBackgroundRunOnStartup`
+
+```csharp
+bool InvitationDeliveryRetryBackgroundRunOnStartup { get; set; }
+```
+
+Gets or sets a value indicating whether invitation delivery retry background scheduling should run once during hosted-service startup.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrybackgroundsource"></a>
+
+##### `InvitationDeliveryRetryBackgroundSource`
+
+```csharp
+string InvitationDeliveryRetryBackgroundSource { get; set; }
+```
+
+Gets or sets the source recorded on retry requests created by the background retry hosted service.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrydelayseconds"></a>
 
@@ -1599,6 +1643,31 @@ Returns: The aggregate retry pass result.
 Parameters:
 - `request`: The retry runner request.
 - `cancellationToken`: A token that cancels the retry pass.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryruntimecatalog"></a>
+
+### `ITenantInvitationDeliveryRetryRuntimeCatalog`
+
+Exposes runtime state for automatic tenant-invitation delivery retry scheduling.
+
+Remarks: The catalog reports the opt-in background retry hosted-service posture. It does not represent distributed retry leases, cross-node exactly-once delivery, or provider-specific sender ownership.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationDeliveryRetryRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryruntimecatalog-current"></a>
+
+##### `Current`
+
+```csharp
+TenantInvitationDeliveryRetryRuntimeSnapshot Current { get; }
+```
+
+Gets the latest tenant-invitation delivery retry scheduling runtime snapshot.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore"></a>
 
@@ -10665,6 +10734,26 @@ const string DeliveryDispatchOwnership
 
 Metadata key describing Cephalon ownership of the host-agnostic dispatch pipeline.
 
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretrybackgroundownership"></a>
+
+##### `DeliveryRetryBackgroundOwnership`
+
+```csharp
+const string DeliveryRetryBackgroundOwnership
+```
+
+Metadata key describing Cephalon ownership of automatic background retry scheduling.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretrybackgroundscheduling"></a>
+
+##### `DeliveryRetryBackgroundScheduling`
+
+```csharp
+const string DeliveryRetryBackgroundScheduling
+```
+
+Metadata key that marks a dispatch request created by automatic background retry scheduling.
+
 <a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecution"></a>
 
 ##### `DeliveryRetryExecution`
@@ -12045,6 +12134,242 @@ int TerminalCount { get; }
 ```
 
 Gets the number of attempted entries that hit a terminal invitation state.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot"></a>
+
+### `TenantInvitationDeliveryRetryRuntimeSnapshot`
+
+Describes the latest runtime state of automatic tenant-invitation delivery retry scheduling.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryRetryRuntimeSnapshot
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-ctor-system-boolean-system-string-system-int32-system-int32-system-boolean-system-int64-system-int64-system-int64-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryRetryRuntimeSnapshot`
+
+```csharp
+TenantInvitationDeliveryRetryRuntimeSnapshot(bool enabled, string ownership, int intervalSeconds, int maxItems, bool runOnStartup, long runCount, long successfulRunCount, long failedRunCount, DateTimeOffset? lastStartedAtUtc, DateTimeOffset? lastCompletedAtUtc, string lastOutcome, int lastAttemptedCount, int lastDispatchedCount, int lastFailedCount, int lastExhaustedCount, int lastTerminalCount, int lastRemainingPendingCount, string lastError, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant-invitation delivery retry scheduling runtime snapshot.
+
+Parameters:
+- `enabled`: A value indicating whether automatic background retry scheduling is effectively enabled.
+- `ownership`: The automatic background retry scheduling ownership mode.
+- `intervalSeconds`: The effective background retry interval in seconds.
+- `maxItems`: The effective retry entry limit for one scheduled pass.
+- `runOnStartup`: A value indicating whether background retry scheduling runs once during hosted-service startup.
+- `runCount`: The number of background retry passes that reached a completed or failed terminal state.
+- `successfulRunCount`: The number of background retry passes that completed without an unhandled failure.
+- `failedRunCount`: The number of background retry passes that failed before producing a retry result.
+- `lastStartedAtUtc`: The UTC timestamp when the latest background retry pass started.
+- `lastCompletedAtUtc`: The UTC timestamp when the latest background retry pass completed or failed.
+- `lastOutcome`: The latest retry runner outcome.
+- `lastAttemptedCount`: The latest attempted retry-entry count.
+- `lastDispatchedCount`: The latest successfully dispatched retry-entry count.
+- `lastFailedCount`: The latest still-retryable failed retry-entry count.
+- `lastExhaustedCount`: The latest exhausted retry-entry count.
+- `lastTerminalCount`: The latest terminal retry-entry count.
+- `lastRemainingPendingCount`: The latest remaining pending retry-entry count.
+- `lastError`: The latest unhandled background retry error message.
+- `metadata`: Optional runtime metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool Enabled { get; }
+```
+
+Gets a value indicating whether automatic background retry scheduling is effectively enabled.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-failedruncount"></a>
+
+##### `FailedRunCount`
+
+```csharp
+long FailedRunCount { get; }
+```
+
+Gets the number of background retry passes that failed before producing a retry result.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-intervalseconds"></a>
+
+##### `IntervalSeconds`
+
+```csharp
+int IntervalSeconds { get; }
+```
+
+Gets the effective background retry interval in seconds.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastattemptedcount"></a>
+
+##### `LastAttemptedCount`
+
+```csharp
+int LastAttemptedCount { get; }
+```
+
+Gets the latest attempted retry-entry count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastcompletedatutc"></a>
+
+##### `LastCompletedAtUtc`
+
+```csharp
+DateTimeOffset? LastCompletedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the latest background retry pass completed or failed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastdispatchedcount"></a>
+
+##### `LastDispatchedCount`
+
+```csharp
+int LastDispatchedCount { get; }
+```
+
+Gets the latest successfully dispatched retry-entry count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; }
+```
+
+Gets the latest unhandled background retry error message.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastexhaustedcount"></a>
+
+##### `LastExhaustedCount`
+
+```csharp
+int LastExhaustedCount { get; }
+```
+
+Gets the latest exhausted retry-entry count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastfailedcount"></a>
+
+##### `LastFailedCount`
+
+```csharp
+int LastFailedCount { get; }
+```
+
+Gets the latest still-retryable failed retry-entry count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; }
+```
+
+Gets the latest retry runner outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastremainingpendingcount"></a>
+
+##### `LastRemainingPendingCount`
+
+```csharp
+int LastRemainingPendingCount { get; }
+```
+
+Gets the latest remaining pending retry-entry count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-laststartedatutc"></a>
+
+##### `LastStartedAtUtc`
+
+```csharp
+DateTimeOffset? LastStartedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the latest background retry pass started.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastterminalcount"></a>
+
+##### `LastTerminalCount`
+
+```csharp
+int LastTerminalCount { get; }
+```
+
+Gets the latest terminal retry-entry count.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-maxitems"></a>
+
+##### `MaxItems`
+
+```csharp
+int MaxItems { get; }
+```
+
+Gets the effective retry entry limit for one scheduled pass.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional runtime metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; }
+```
+
+Gets the automatic background retry scheduling ownership mode.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-runcount"></a>
+
+##### `RunCount`
+
+```csharp
+long RunCount { get; }
+```
+
+Gets the number of background retry passes that reached a completed or failed terminal state.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-runonstartup"></a>
+
+##### `RunOnStartup`
+
+```csharp
+bool RunOnStartup { get; }
+```
+
+Gets a value indicating whether background retry scheduling runs once during hosted-service startup.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-successfulruncount"></a>
+
+##### `SuccessfulRunCount`
+
+```csharp
+long SuccessfulRunCount { get; }
+```
+
+Gets the number of background retry passes that completed without an unhandled failure.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses"></a>
 

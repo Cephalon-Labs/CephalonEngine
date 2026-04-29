@@ -224,4 +224,14 @@ public static class TenantInvitationDeliveryMetadataKeys
     /// Metadata key that marks a dispatch request created by the retry runner.
     /// </summary>
     public const string DeliveryRetryExecution = "deliveryRetryExecution";
+
+    /// <summary>
+    /// Metadata key that marks a dispatch request created by automatic background retry scheduling.
+    /// </summary>
+    public const string DeliveryRetryBackgroundScheduling = "deliveryRetryBackgroundScheduling";
+
+    /// <summary>
+    /// Metadata key describing Cephalon ownership of automatic background retry scheduling.
+    /// </summary>
+    public const string DeliveryRetryBackgroundOwnership = "deliveryRetryBackgroundOwnership";
 }

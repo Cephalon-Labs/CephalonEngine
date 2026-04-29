@@ -5472,6 +5472,9 @@ Browse the published API surface by public member.
 - [Current](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantdomainownershipproofpollingruntimecatalog-current): `Properties` on `ITenantDomainOwnershipProofPollingRuntimeCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Current&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest tenant-domain ownership proof polling runtime snapshot.
   - `TenantDomainOwnershipProofPollingRuntimeSnapshot Current { get; }`
+- [Current](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryruntimecatalog-current): `Properties` on `ITenantInvitationDeliveryRetryRuntimeCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Current&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest tenant-invitation delivery retry scheduling runtime snapshot.
+  - `TenantInvitationDeliveryRetryRuntimeSnapshot Current { get; }`
 - [CurrentNodeBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-currentnodeblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CurrentNodeBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current node cannot yet keep the runtime scheduled.
   - `const string CurrentNodeBlocked`
@@ -6087,6 +6090,12 @@ Browse the published API surface by public member.
 - [DeliveryResults](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-deliveryresults): `Properties` on `TenantInvitationDeliveryRetryResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryResults&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the delivery dispatch results produced by this pass.
   - `IReadOnlyList<TenantInvitationDeliveryResult> DeliveryResults { get; }`
+- [DeliveryRetryBackgroundOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretrybackgroundownership): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryRetryBackgroundOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key describing Cephalon ownership of automatic background retry scheduling.
+  - `const string DeliveryRetryBackgroundOwnership`
+- [DeliveryRetryBackgroundScheduling](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretrybackgroundscheduling): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryRetryBackgroundScheduling&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key that marks a dispatch request created by automatic background retry scheduling.
+  - `const string DeliveryRetryBackgroundScheduling`
 - [DeliveryRetryExecution](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecution): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryRetryExecution&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key that marks a dispatch request created by the retry runner.
   - `const string DeliveryRetryExecution`
@@ -8040,6 +8049,9 @@ Browse the published API surface by public member.
 - [Enabled](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-enabled): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Enabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether automatic background proof polling is effectively enabled.
   - `bool Enabled { get; }`
+- [Enabled](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-enabled): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Enabled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether automatic background retry scheduling is effectively enabled.
+  - `bool Enabled { get; }`
 - [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-enabled): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether timeout support was explicitly enabled.
   - `bool? Enabled { get; }`
@@ -8133,6 +8145,9 @@ Browse the published API surface by public member.
 - [EnableInvitationDeliveryDispatch](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverydispatch): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationDeliveryDispatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active.
   - `bool EnableInvitationDeliveryDispatch { get; set; }`
+- [EnableInvitationDeliveryRetryBackgroundScheduling](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliveryretrybackgroundscheduling): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationDeliveryRetryBackgroundScheduling&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets a value indicating whether the built-in invitation delivery retry hosted service is active.
+  - `bool EnableInvitationDeliveryRetryBackgroundScheduling { get; set; }`
 - [EnableInvitationDeliveryRetryQueue](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliveryretryqueue): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationDeliveryRetryQueue&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether sender-failed invitation delivery attempts are queued for explicit retry.
   - `bool EnableInvitationDeliveryRetryQueue { get; set; }`
@@ -9521,6 +9536,9 @@ Browse the published API surface by public member.
   - `int FailedMigrationTargetCount { get; }`
 - [FailedRunCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-failedruncount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=FailedRunCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of background polling passes that failed before producing a polling result.
+  - `long FailedRunCount { get; }`
+- [FailedRunCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-failedruncount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=FailedRunCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the number of background retry passes that failed before producing a retry result.
   - `long FailedRunCount { get; }`
 - [FailedSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-failedsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of subscription-failure observations produced by the latest publication observation.
@@ -12942,6 +12960,9 @@ Browse the published API surface by public member.
 - [IntervalSeconds](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-intervalseconds): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IntervalSeconds&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the effective background polling interval in seconds.
   - `int IntervalSeconds { get; }`
+- [IntervalSeconds](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-intervalseconds): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IntervalSeconds&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the effective background retry interval in seconds.
+  - `int IntervalSeconds { get; }`
 - [Invalid](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-invalid-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an invalid-request result.
   - `BehaviorResultDescriptor Invalid(string code, string message, BehaviorFault fault)`
@@ -12996,6 +13017,15 @@ Browse the published API surface by public member.
 - [Invitation](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-invitation): `Properties` on `TenantInvitationDeliveryStatusReconciliationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Invitation&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the resulting invitation descriptor when one exists.
   - `TenantInvitationDescriptor Invitation { get; }`
+- [InvitationDeliveryRetryBackgroundIntervalSeconds](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrybackgroundintervalseconds): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDeliveryRetryBackgroundIntervalSeconds&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets the invitation delivery retry background scheduling interval, in seconds.
+  - `int InvitationDeliveryRetryBackgroundIntervalSeconds { get; set; }`
+- [InvitationDeliveryRetryBackgroundRunOnStartup](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrybackgroundrunonstartup): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDeliveryRetryBackgroundRunOnStartup&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets a value indicating whether invitation delivery retry background scheduling should run once during hosted-service startup.
+  - `bool InvitationDeliveryRetryBackgroundRunOnStartup { get; set; }`
+- [InvitationDeliveryRetryBackgroundSource](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrybackgroundsource): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDeliveryRetryBackgroundSource&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets the source recorded on retry requests created by the background retry hosted service.
+  - `string InvitationDeliveryRetryBackgroundSource { get; set; }`
 - [InvitationDeliveryRetryDelaySeconds](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrydelayseconds): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDeliveryRetryDelaySeconds&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets the delay, in seconds, before a failed retry entry is due again.
   - `int InvitationDeliveryRetryDelaySeconds { get; set; }`
@@ -14232,6 +14262,9 @@ Browse the published API surface by public member.
 - [LastAttemptAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-lastattemptatutc): `Properties` on `TenantInvitationDeliveryRetryDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastAttemptAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp of the latest dispatch attempt.
   - `DateTimeOffset? LastAttemptAtUtc { get; }`
+- [LastAttemptedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastattemptedcount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastAttemptedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest attempted retry-entry count.
+  - `int LastAttemptedCount { get; }`
 - [LastCandidateCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastcandidatecount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastCandidateCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest candidate count.
   - `int LastCandidateCount { get; }`
@@ -14267,6 +14300,9 @@ Browse the published API surface by public member.
   - `string LastCheckpoint { get; set; }`
 - [LastCompletedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastcompletedatutc): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastCompletedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when the latest background polling pass completed or failed.
+  - `DateTimeOffset? LastCompletedAtUtc { get; }`
+- [LastCompletedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastcompletedatutc): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastCompletedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when the latest background retry pass completed or failed.
   - `DateTimeOffset? LastCompletedAtUtc { get; }`
 - [LastConflictedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-lastconflictedatutc): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastConflictedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the last conflicting reporter was observed or rejected when one is known.
@@ -14334,6 +14370,9 @@ Browse the published API surface by public member.
 - [LastDeliveryStatusSource](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatussource): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastDeliveryStatusSource&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key containing the source that reported the last delivery status observation.
   - `const string LastDeliveryStatusSource`
+- [LastDispatchedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastdispatchedcount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastDispatchedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest successfully dispatched retry-entry count.
+  - `int LastDispatchedCount { get; }`
 - [LastDnsTxtProofCollectedAtUtc](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionmetadatakeys-lastdnstxtproofcollectedatutc): `Fields` on `TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastDnsTxtProofCollectedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key for the UTC timestamp when DNS TXT proof collection executed.
   - `const string LastDnsTxtProofCollectedAtUtc`
@@ -14412,11 +14451,20 @@ Browse the published API surface by public member.
 - [LastError](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lasterror): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastError&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest unhandled background polling error message.
   - `string LastError { get; }`
+- [LastError](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lasterror): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastError&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest unhandled background retry error message.
+  - `string LastError { get; }`
 - [LastEventType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-lasteventtype): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastEventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last stable event-type identifier reported for this publication.
   - `string LastEventType { get; set; }`
+- [LastExhaustedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastexhaustedcount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastExhaustedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest exhausted retry-entry count.
+  - `int LastExhaustedCount { get; }`
 - [LastFailedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastfailedcount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastFailedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest failed-attempt count.
+  - `int LastFailedCount { get; }`
+- [LastFailedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastfailedcount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastFailedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest still-retryable failed retry-entry count.
   - `int LastFailedCount { get; }`
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-lastfailure): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the last captured lifecycle failure when one is available.
@@ -14595,6 +14643,9 @@ Browse the published API surface by public member.
 - [LastOutcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-lastoutcome): `Properties` on `TenantInvitationDeliveryRetryDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest delivery dispatch outcome.
   - `string LastOutcome { get; }`
+- [LastOutcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastoutcome): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest retry runner outcome.
+  - `string LastOutcome { get; }`
 - [LastOutputSummary](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastoutputsummary): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutputSummary&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - The latest operator-facing output summary when one was reported.
   - `string LastOutputSummary { get; set; }`
@@ -14739,6 +14790,9 @@ Browse the published API surface by public member.
 - [LastRejectedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastrejectedcount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastRejectedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest rejected count.
   - `int LastRejectedCount { get; }`
+- [LastRemainingPendingCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastremainingpendingcount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastRemainingPendingCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest remaining pending retry-entry count.
+  - `int LastRemainingPendingCount { get; }`
 - [LastReplayedVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastreplayedversion): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastReplayedVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The latest stream version that was fully replayed before the durable step executed.
   - `long? LastReplayedVersion { get; set; }`
@@ -14763,6 +14817,9 @@ Browse the published API surface by public member.
 - [LastStartedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-laststartedatutc): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastStartedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when the latest background polling pass started.
   - `DateTimeOffset? LastStartedAtUtc { get; }`
+- [LastStartedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-laststartedatutc): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastStartedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when the latest background retry pass started.
+  - `DateTimeOffset? LastStartedAtUtc { get; }`
 - [LastStepCompleted](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststepcompleted): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastStepCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Indicates whether the latest reported durable step declared the workflow completed.
   - `bool LastStepCompleted { get; set; }`
@@ -14772,6 +14829,9 @@ Browse the published API surface by public member.
 - [LastTakeoverObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-lasttakeoverobservedatutc): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastTakeoverObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the current reporter most recently took over after the previous lease expired.
   - `DateTimeOffset? LastTakeoverObservedAtUtc { get; set; }`
+- [LastTerminalCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastterminalcount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastTerminalCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the latest terminal retry-entry count.
+  - `int LastTerminalCount { get; }`
 - [LastVerificationCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastverificationcount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LastVerificationCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest verification-attempt count.
   - `int LastVerificationCount { get; }`
@@ -15957,6 +16017,9 @@ Browse the published API surface by public member.
 - [MaxItems](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-maxitems): `Properties` on `TenantInvitationDeliveryRetryRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MaxItems&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the maximum number of retry entries to attempt.
   - `int? MaxItems { get; }`
+- [MaxItems](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-maxitems): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MaxItems&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the effective retry entry limit for one scheduled pass.
+  - `int MaxItems { get; }`
 - [MaxLimit](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-audithistoryquery-maxlimit): `Fields` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the maximum number of entries returned by one query.
   - `const int MaxLimit`
@@ -16589,6 +16652,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-metadata): `Properties` on `TenantInvitationDeliveryRetryResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets optional retry result metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-metadata): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional runtime metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-metadata): `Properties` on `TenantInvitationDeliveryRunDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets optional run metadata.
@@ -18622,6 +18688,9 @@ Browse the published API surface by public member.
   - `string Ownership { get; }`
 - [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-ownership): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the automatic background proof polling ownership mode.
+  - `string Ownership { get; }`
+- [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-ownership): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the automatic background retry scheduling ownership mode.
   - `string Ownership { get; }`
 - [Ownership](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-ownership): `Properties` on `TenantInvitationDeliveryStatusObservationQueryResult` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the ownership mode reported by the underlying observation store.
@@ -23319,6 +23388,9 @@ Browse the published API surface by public member.
 - [RunCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-runcount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RunCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of background polling passes that reached a completed or failed terminal state.
   - `long RunCount { get; }`
+- [RunCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-runcount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RunCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the number of background retry passes that reached a completed or failed terminal state.
+  - `long RunCount { get; }`
 - [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-runid): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the stable run identifier for this execution.
   - `string RunId { get; }`
@@ -23351,6 +23423,9 @@ Browse the published API surface by public member.
   - `const DatabaseMigrationStatus Running`
 - [RunOnStartup](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-runonstartup): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RunOnStartup&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether background proof polling runs once during hosted-service startup.
+  - `bool RunOnStartup { get; }`
+- [RunOnStartup](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-runonstartup): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RunOnStartup&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether background retry scheduling runs once during hosted-service startup.
   - `bool RunOnStartup { get; }`
 - [Runs](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-iagenttoolruncatalog-runs): `Properties` on `IAgentToolRunCatalog` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Runs&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the currently known agent-tool run states ordered by tool identifier and run identifier.
@@ -25459,6 +25534,9 @@ Browse the published API surface by public member.
 - [SuccessfulRunCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-successfulruncount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SuccessfulRunCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of background polling passes that completed without an unhandled failure.
   - `long SuccessfulRunCount { get; }`
+- [SuccessfulRunCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-successfulruncount): `Properties` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SuccessfulRunCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the number of background retry passes that completed without an unhandled failure.
+  - `long SuccessfulRunCount { get; }`
 - [SuccessStatusCodes](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-successstatuscodes): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SuccessStatusCodes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the HTTP success status codes the shared durable strategy can return.
   - `IReadOnlyList<int> SuccessStatusCodes { get; }`
@@ -26278,6 +26356,9 @@ Browse the published API surface by public member.
 - [TenantInvitationDeliveryRetryResult](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantInvitationDeliveryRetryResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantInvitationDeliveryRetryResult&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a tenant invitation delivery retry result.
   - `TenantInvitationDeliveryRetryResult(string outcome, int attemptedCount, int dispatchedCount, int failedCount, int exhaustedCount, int terminalCount, int remainingPendingCount, DateTimeOffset atUtc, IReadOnlyList<TenantInvitationDeliveryResult> deliveryResults, IReadOnlyDictionary<string, string> metadata)`
+- [TenantInvitationDeliveryRetryRuntimeSnapshot](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-ctor-system-boolean-system-string-system-int32-system-int32-system-boolean-system-int64-system-int64-system-int64-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantInvitationDeliveryRetryRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantInvitationDeliveryRetryRuntimeSnapshot&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a tenant-invitation delivery retry scheduling runtime snapshot.
+  - `TenantInvitationDeliveryRetryRuntimeSnapshot(bool enabled, string ownership, int intervalSeconds, int maxItems, bool runOnStartup, long runCount, long successfulRunCount, long failedRunCount, DateTimeOffset? lastStartedAtUtc, DateTimeOffset? lastCompletedAtUtc, string lastOutcome, int lastAttemptedCount, int lastDispatchedCount, int lastFailedCount, int lastExhaustedCount, int lastTerminalCount, int lastRemainingPendingCount, string lastError, IReadOnlyDictionary<string, string> metadata)`
 - [TenantInvitationDeliveryRunDescriptor](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-ctor-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantInvitationDeliveryRunDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantInvitationDeliveryRunDescriptor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a tenant invitation delivery dispatch run descriptor.
   - `TenantInvitationDeliveryRunDescriptor(string tenantId, string invitationId, string outcome, bool dispatched, bool recorded, DateTimeOffset dispatchedAtUtc, string channel, string senderId, string providerMessageId, string reason, IReadOnlyDictionary<string, string> metadata)`

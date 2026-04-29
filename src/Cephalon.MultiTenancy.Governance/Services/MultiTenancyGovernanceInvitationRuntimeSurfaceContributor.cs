@@ -12,7 +12,8 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
     ITenantInvitationDeliveryRetryStore retryQueue,
     IEnumerable<ITenantInvitationContributor> contributors,
     IEnumerable<ITenantInvitationDeliverySender> deliverySenders,
-    ITenantInvitationDeliveryRunCatalog deliveryRunCatalog) : ITechnologyRuntimeContributor
+    ITenantInvitationDeliveryRunCatalog deliveryRunCatalog,
+    ITenantInvitationDeliveryRetryRuntimeCatalog deliveryRetryRuntimeCatalog) : ITechnologyRuntimeContributor
 {
     private readonly ITenantInvitationContributor[] contributors = contributors.ToArray();
     private readonly ITenantInvitationDeliverySender[] deliverySenders = deliverySenders
@@ -51,6 +52,7 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
         var latestDeliveryStatusInvitation = FindLatestDeliveryStatusInvitation(invitations);
         var latestObservation = FindLatestDeliveryStatusObservation(observations);
         var latestRetryEntry = FindLatestDeliveryRetryEntry(deliveryRetryEntries);
+        var deliveryRetryRuntime = deliveryRetryRuntimeCatalog.Current;
         var deliveryRetryPendingCount = CountDeliveryRetryEntries(deliveryRetryEntries, TenantInvitationDeliveryRetryStatuses.Pending);
         var deliveryRetryExhaustedCount = CountDeliveryRetryEntries(deliveryRetryEntries, TenantInvitationDeliveryRetryStatuses.Exhausted);
         var deliveryRetryTerminalCount = CountDeliveryRetryEntries(deliveryRetryEntries, TenantInvitationDeliveryRetryStatuses.Terminal);
@@ -131,6 +133,24 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             ["deliveryRetryMaxAttempts"] = TenantInvitationDeliveryRetryQueueStores.ResolveMaxAttempts(options).ToString(CultureInfo.InvariantCulture),
             ["deliveryRetryDelaySeconds"] = TenantInvitationDeliveryRetryQueueStores.ResolveRetryDelaySeconds(options).ToString(CultureInfo.InvariantCulture),
             ["deliveryRetryMaxItems"] = TenantInvitationDeliveryRetryQueueStores.ResolveMaxItems(options).ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundEnabled"] = deliveryRetryRuntime.Enabled.ToString().ToLowerInvariant(),
+            ["deliveryRetryBackgroundOwnership"] = deliveryRetryRuntime.Ownership,
+            ["deliveryRetryBackgroundIntervalSeconds"] = deliveryRetryRuntime.IntervalSeconds.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundMaxItems"] = deliveryRetryRuntime.MaxItems.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundRunOnStartup"] = deliveryRetryRuntime.RunOnStartup.ToString().ToLowerInvariant(),
+            ["deliveryRetryBackgroundRunCount"] = deliveryRetryRuntime.RunCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundSuccessfulRunCount"] = deliveryRetryRuntime.SuccessfulRunCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundFailedRunCount"] = deliveryRetryRuntime.FailedRunCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundLastOutcome"] = deliveryRetryRuntime.LastOutcome ?? "none",
+            ["deliveryRetryBackgroundLastAttemptedCount"] = deliveryRetryRuntime.LastAttemptedCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundLastDispatchedCount"] = deliveryRetryRuntime.LastDispatchedCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundLastFailedCount"] = deliveryRetryRuntime.LastFailedCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundLastExhaustedCount"] = deliveryRetryRuntime.LastExhaustedCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundLastTerminalCount"] = deliveryRetryRuntime.LastTerminalCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundLastRemainingPendingCount"] = deliveryRetryRuntime.LastRemainingPendingCount.ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryBackgroundLastStartedAtUtc"] = deliveryRetryRuntime.LastStartedAtUtc?.ToString("O", CultureInfo.InvariantCulture) ?? "none",
+            ["deliveryRetryBackgroundLastCompletedAtUtc"] = deliveryRetryRuntime.LastCompletedAtUtc?.ToString("O", CultureInfo.InvariantCulture) ?? "none",
+            ["deliveryRetryBackgroundLastError"] = deliveryRetryRuntime.LastError ?? "none",
             ["latestDeliveryRetryOutcome"] = latestRetryEntry?.LastOutcome ?? "none",
             ["latestDeliveryRetryStatus"] = latestRetryEntry?.Status ?? "none",
             ["latestDeliveryRetryNextAttemptAtUtc"] = latestRetryEntry?.NextAttemptAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none",
