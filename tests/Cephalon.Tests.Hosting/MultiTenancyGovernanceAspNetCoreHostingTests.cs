@@ -113,6 +113,144 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryStatusCallbacksReconcilesStatusAndReportsMappedRuntimeSurface()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-callback",
+                    tenantId: "tenant-callback",
+                    inviteeId: "user-callback",
+                    displayName: "Callback Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "provider-message-callback"
+                    }));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore(options =>
+        {
+            options.RequireTenantInvitationDeliveryStatusCallbackAuthorization = false;
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var observedAtUtc = new DateTimeOffset(2026, 04, 29, 13, 0, 0, TimeSpan.Zero);
+        var request = new TenantInvitationDeliveryStatusCallbackRequest
+        {
+            TenantId = "tenant-callback",
+            InvitationId = "invite-callback",
+            Status = TenantInvitationDeliveryStatuses.Delivered,
+            ProviderMessageId = "provider-message-callback",
+            SenderId = "http-webhook",
+            Channel = "email",
+            Reason = "Receiver accepted the invitation.",
+            ObservedAtUtc = observedAtUtc,
+            Actor = "notification-provider",
+            CorrelationId = "delivery-callback-001",
+            Metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["providerStatusCode"] = "250"
+            }
+        };
+
+        var response = await client.PostAsJsonAsync("/engine/tenant-invitations/delivery-status", request);
+        var result = await response.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusReconciliationResult>();
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.True(result.Reconciled);
+        Assert.True(result.Recorded);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, result.Outcome);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, result.Status);
+        Assert.Equal("provider-message-callback", result.ProviderMessageId);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
+        Assert.Equal(observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture), invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusObservedAtUtc]);
+        Assert.Equal("aspnetcore-delivery-status-callback", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusSource]);
+        Assert.Equal("notification-provider", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusActor]);
+        Assert.Equal("delivery-callback-001", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusCorrelationId]);
+        Assert.Equal("250", invitation.Metadata["providerStatusCode"]);
+        Assert.Equal("true", invitation.Metadata["aspNetCoreDeliveryStatusCallback"]);
+        Assert.Equal("/engine/tenant-invitations/delivery-status", invitation.Metadata["aspNetCoreDeliveryStatusCallbackRoute"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["deliveryStatusCallbackIngressOwnership"]);
+        Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
+        Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
+        Assert.Equal("false", endpointEntry.Metadata["requireAuthorization"]);
+        Assert.Equal("true", endpointEntry.Metadata["requireProviderMessageMatch"]);
+        Assert.Equal("/engine/tenant-invitations/delivery-status", endpointEntry.Metadata["routePattern"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantInvitationDeliveryStatusCallbackEndpointOwnership"]);
+        Assert.Equal("application-managed", endpointEntry.Metadata["providerSpecificCallbackTranslationOwnership"]);
+        Assert.Equal("application-managed", endpointEntry.Metadata["providerPollingOwnership"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonTenantInvitationDeliveryStatusCallbacksDeniesAnonymousByDefault()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-callback",
+                    tenantId: "tenant-callback",
+                    inviteeId: "user-callback",
+                    displayName: "Callback Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+        builder.AddCephalonMultiTenancyGovernanceAspNetCore();
+
+        await using var app = builder.Build();
+        app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/tenant-invitations/delivery-status",
+            new TenantInvitationDeliveryStatusCallbackRequest
+            {
+                TenantId = "tenant-callback",
+                InvitationId = "invite-callback",
+                Status = TenantInvitationDeliveryStatuses.Delivered
+            });
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
+        Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
+        Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
+        Assert.Equal("true", endpointEntry.Metadata["requireAuthorization"]);
+        Assert.Equal("none", endpointEntry.Metadata["authorizationPolicy"]);
+    }
+
+    [Fact]
     public async Task MapCephalonTenantDomainOwnershipHttpProofsServesPublishedProofsByHostAndPath()
     {
         var builder = WebApplication.CreateSlimBuilder();

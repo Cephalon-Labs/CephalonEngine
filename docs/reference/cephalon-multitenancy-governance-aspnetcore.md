@@ -67,6 +67,16 @@ bool EnableTenantAdministrationCommandEndpoint { get; set; }
 
 Gets or sets a value indicating whether the tenant-administration command endpoint should be mapped.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantinvitationdeliverystatuscallbackendpoint"></a>
+
+##### `EnableTenantInvitationDeliveryStatusCallbackEndpoint`
+
+```csharp
+bool EnableTenantInvitationDeliveryStatusCallbackEndpoint { get; set; }
+```
+
+Gets or sets a value indicating whether the tenant-invitation delivery status callback endpoint should be mapped.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludefromdescription"></a>
 
 ##### `ExcludeFromDescription`
@@ -87,6 +97,16 @@ bool ExcludeTenantAdministrationEndpointFromDescription { get; set; }
 
 Gets or sets a value indicating whether the tenant-administration command endpoint should be excluded from OpenAPI descriptions.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludetenantinvitationdeliverystatuscallbackendpointfromdescription"></a>
+
+##### `ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription`
+
+```csharp
+bool ExcludeTenantInvitationDeliveryStatusCallbackEndpointFromDescription { get; set; }
+```
+
+Gets or sets a value indicating whether the delivery status callback endpoint should be excluded from OpenAPI descriptions.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantadministrationauthorization"></a>
 
 ##### `RequireTenantAdministrationAuthorization`
@@ -98,6 +118,30 @@ bool RequireTenantAdministrationAuthorization { get; set; }
 Gets or sets a value indicating whether the tenant-administration command endpoint should require authorization.
 
 Remarks: The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core authorization middleware do not execute tenant-administration commands anonymously.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantinvitationdeliverystatuscallbackauthorization"></a>
+
+##### `RequireTenantInvitationDeliveryStatusCallbackAuthorization`
+
+```csharp
+bool RequireTenantInvitationDeliveryStatusCallbackAuthorization { get; set; }
+```
+
+Gets or sets a value indicating whether the delivery status callback endpoint should require authorization.
+
+Remarks: The endpoint also performs a fail-closed in-handler authorization check so accidental hosts without ASP.NET Core authorization middleware do not accept provider or adapter status callbacks anonymously.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-requiretenantinvitationdeliverystatuscallbackprovidermessagematch"></a>
+
+##### `RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch`
+
+```csharp
+bool RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch { get; set; }
+```
+
+Gets or sets a value indicating whether callback requests must keep provider message matching enabled.
+
+Remarks: Provider message matching is enforced by default so a generic callback cannot opt out of the host-agnostic reconciliation safety check unless the host deliberately relaxes this setting.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-routepattern"></a>
 
@@ -132,6 +176,28 @@ string TenantAdministrationCommandRoutePattern { get; set; }
 Gets or sets the endpoint route pattern used for tenant-administration workflow commands.
 
 Remarks: The default route stays under `/engine` because the endpoint is an operator/admin surface, not an application-owned public onboarding API.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbackauthorizationpolicy"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackAuthorizationPolicy`
+
+```csharp
+string TenantInvitationDeliveryStatusCallbackAuthorizationPolicy { get; set; }
+```
+
+Gets or sets the optional ASP.NET Core authorization policy required by the delivery status callback endpoint.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbackroutepattern"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackRoutePattern`
+
+```csharp
+string TenantInvitationDeliveryStatusCallbackRoutePattern { get; set; }
+```
+
+Gets or sets the endpoint route pattern used for normalized tenant-invitation delivery status callbacks.
+
+Remarks: The default route stays under `/engine` because the endpoint is an operator/provider-adapter ingress surface, not an application-owned public onboarding API.
 
 #### Methods
 
@@ -273,3 +339,202 @@ Returns: The same endpoint route builder for fluent routing composition.
 
 Parameters:
 - `endpoints`: The endpoint route builder to extend.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackendpointroutebuilderextensions"></a>
+
+### `TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderExtensions`
+
+Maps ASP.NET Core endpoints for normalized tenant-invitation delivery status callbacks.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackendpointroutebuilderextensions-mapcephalontenantinvitationdeliverystatuscallbacks-microsoft-aspnetcore-routing-iendpointroutebuilder"></a>
+
+##### `MapCephalonTenantInvitationDeliveryStatusCallbacks`
+
+```csharp
+IEndpointRouteBuilder MapCephalonTenantInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)
+```
+
+Maps the optional tenant-invitation delivery status callback endpoint.
+
+Remarks: The endpoint is opt-in, executes the host-agnostic `ITenantInvitationDeliveryStatusReconciler`, and performs a fail-closed authorization check by default. It accepts normalized status observations only; provider webhook payload translation, provider signature verification, provider polling, and provider-specific status vocabularies remain application-managed or future provider-pack responsibilities.
+
+Returns: The same endpoint route builder for fluent routing composition.
+
+Parameters:
+- `endpoints`: The endpoint route builder to extend.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest"></a>
+
+### `TenantInvitationDeliveryStatusCallbackRequest`
+
+Describes a normalized ASP.NET Core tenant-invitation delivery status callback request.
+
+Remarks: Provider-specific webhook payloads should be translated into this provider-neutral shape by the host or a future provider companion before the request is reconciled by Cephalon governance.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryStatusCallbackRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-ctor"></a>
+
+##### `TenantInvitationDeliveryStatusCallbackRequest`
+
+```csharp
+TenantInvitationDeliveryStatusCallbackRequest()
+```
+
+Initializes a new instance of the `TenantInvitationDeliveryStatusCallbackRequest` class.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; set; }
+```
+
+Gets or sets the actor that reported the status observation when known.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; set; }
+```
+
+Gets or sets the delivery channel associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; set; }
+```
+
+Gets or sets the optional correlation identifier for the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; set; }
+```
+
+Gets or sets the invitation identifier to reconcile.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IDictionary<string, string> Metadata { get; set; }
+```
+
+Gets or sets optional delivery status metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset? ObservedAtUtc { get; set; }
+```
+
+Gets or sets the UTC timestamp when the status was observed. The runtime clock is used when omitted.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-providermessageid"></a>
+
+##### `ProviderMessageId`
+
+```csharp
+string ProviderMessageId { get; set; }
+```
+
+Gets or sets the provider message identifier associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; set; }
+```
+
+Gets or sets the provider or receiver status reason.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-recordstatus"></a>
+
+##### `RecordStatus`
+
+```csharp
+bool RecordStatus { get; set; }
+```
+
+Gets or sets a value indicating whether reconciled status metadata should be recorded on the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-requireprovidermessagematch"></a>
+
+##### `RequireProviderMessageMatch`
+
+```csharp
+bool RequireProviderMessageMatch { get; set; }
+```
+
+Gets or sets a value indicating whether an existing dispatch provider message identifier must match the request.
+
+Remarks: Hosts can also enforce matching through `RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch`.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-senderid"></a>
+
+##### `SenderId`
+
+```csharp
+string SenderId { get; set; }
+```
+
+Gets or sets the delivery sender identifier associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; set; }
+```
+
+Gets or sets the source that reported the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; set; }
+```
+
+Gets or sets the provider or receiver delivery status.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; set; }
+```
+
+Gets or sets the tenant identifier that owns the invitation.

@@ -516,6 +516,8 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("MultiTenancyGovernanceAspNetCoreOptions", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
         Assert.Contains("MapCephalonTenantAdministrationCommands", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
         Assert.Contains("MapCephalonTenantDomainOwnershipHttpProofs", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapCephalonTenantInvitationDeliveryStatusCallbacks", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantInvitationDeliveryStatusCallbackRequest", governanceAspNetCorePage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]

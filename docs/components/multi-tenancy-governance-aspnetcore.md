@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.AspNetCore
 
-`Cephalon.MultiTenancy.Governance.AspNetCore` is the optional ASP.NET Core host adapter for tenant-domain ownership HTTP proof publication and tenant-administration workflow commands.
+`Cephalon.MultiTenancy.Governance.AspNetCore` is the optional ASP.NET Core host adapter for tenant-domain ownership HTTP proof publication, tenant-administration workflow commands, and normalized tenant-invitation delivery status callbacks.
 
 ## What it owns
 
@@ -9,7 +9,12 @@
 - opt-in ASP.NET Core routing for tenant-administration workflow commands over the host-agnostic governance workflow
 - default `POST /engine/tenant-administration/commands` command endpoint mapping
 - fail-closed tenant-administration authorization by default, with an optional ASP.NET Core policy override
+- opt-in ASP.NET Core routing for normalized tenant-invitation delivery status callbacks over the host-agnostic invitation delivery status reconciler
+- default `POST /engine/tenant-invitations/delivery-status` callback endpoint mapping
+- fail-closed delivery-status callback authorization by default, with an optional ASP.NET Core policy override
+- provider-message-match enforcement for callback requests by default so the adapter cannot attach a status observation to the wrong invitation silently
 - adapter runtime truth through the `tenant-administration-http-endpoints` technology surface
+- adapter runtime truth through the `tenant-invitation-delivery-status-http-endpoints` technology surface
 - host configuration for enabling/disabling endpoints, route patterns, cache-control header, authorization posture, and endpoint-description visibility
 - serving only proof files that the host-agnostic governance catalog reports as published for the current request host and path
 - keeping the HTTP serving layer outside `Cephalon.MultiTenancy.Governance` so the governance core remains host-agnostic
@@ -21,6 +26,8 @@
 - `Hosting/MultiTenancyGovernanceAspNetCoreWebApplicationBuilderExtensions.cs`
 - `Hosting/TenantAdministrationEndpointRouteBuilderExtensions.cs`
 - `Hosting/TenantDomainOwnershipHttpProofEndpointRouteBuilderExtensions.cs`
+- `Hosting/TenantInvitationDeliveryStatusCallbackEndpointRouteBuilderExtensions.cs`
+- `Hosting/TenantInvitationDeliveryStatusCallbackRequest.cs`
 
 ## Source structure
 
@@ -29,7 +36,7 @@
 
 ## How it fits
 
-The core `Cephalon.MultiTenancy.Governance` package owns HTTP proof publication state through `ITenantDomainOwnershipHttpProofPublisher` and `ITenantDomainOwnershipHttpProofPublicationCatalog`, and it owns host-driven tenant-administration workflow commands through `ITenantAdministrationWorkflow`. It intentionally does not reference ASP.NET Core. This adapter is the thin host layer that turns those host-agnostic states into real HTTP responses for ASP.NET Core apps.
+The core `Cephalon.MultiTenancy.Governance` package owns HTTP proof publication state through `ITenantDomainOwnershipHttpProofPublisher` and `ITenantDomainOwnershipHttpProofPublicationCatalog`, host-driven tenant-administration workflow commands through `ITenantAdministrationWorkflow`, and delivery status reconciliation through `ITenantInvitationDeliveryStatusReconciler`. It intentionally does not reference ASP.NET Core. This adapter is the thin host layer that turns those host-agnostic states into real HTTP responses and normalized HTTP ingress for ASP.NET Core apps.
 
 Register the adapter options beside the normal governance package, then explicitly map the endpoints the host wants:
 
@@ -39,15 +46,18 @@ builder.AddCephalonMultiTenancyGovernanceAspNetCore();
 var app = builder.Build();
 app.MapCephalonTenantDomainOwnershipHttpProofs();
 app.MapCephalonTenantAdministrationCommands();
+app.MapCephalonTenantInvitationDeliveryStatusCallbacks();
 ```
 
 By default, published proof files are served from `/.well-known/cephalon/{**proofPath}` with `Cache-Control: no-store` and are excluded from OpenAPI/endpoint descriptions. Hosts can override those defaults through `Engine:MultiTenancy:Governance:AspNetCore`.
 
 By default, tenant-administration commands are mapped at `POST /engine/tenant-administration/commands`, are excluded from endpoint descriptions, and require authorization. The handler also performs a fail-closed authorization check so a host that accidentally omits authorization middleware does not execute membership or invitation mutations anonymously. Hosts can deliberately disable the command endpoint, change the route, disable the authorization requirement for an internal/test host, or require a named ASP.NET Core policy with `TenantAdministrationAuthorizationPolicy`.
 
-The adapter reports its command endpoint posture through the `tenant-administration-http-endpoints` runtime surface. A mapped endpoint reports `cephalon-managed`; an enabled but unmapped endpoint reports `host-mapping-required`; a disabled endpoint reports `not-configured`. The same surface keeps public onboarding, tenant-admin UI, provider-specific invitation senders, external invitation delivery, and identity-provider synchronization marked as application-managed.
+By default, delivery-status callbacks are mapped at `POST /engine/tenant-invitations/delivery-status`, are excluded from endpoint descriptions, require authorization, and enforce provider-message matching even if the callback body attempts to disable that safety check. The request body is `TenantInvitationDeliveryStatusCallbackRequest`, a provider-neutral normalized shape with tenant id, invitation id, status, provider message id, sender id, channel, reason, observed timestamp, source, actor, correlation id, and safe metadata. Provider-specific webhook bodies should be translated into that shape by the host or a later provider companion before reaching this endpoint.
 
-This package does not issue challenges, plan proof instructions, mutate DNS records, call domain providers, verify collected evidence, run background polling, dispatch invitation delivery, implement provider-specific invitation senders, create identity-provider users, or provide a backoffice UI. Those responsibilities stay in `Cephalon.MultiTenancy.Governance`, future provider-specific packs, or consumer applications. The adapter only serves the HTTP file content that the host-agnostic publication catalog has already accepted as published and exposes the workflow command endpoint that the host explicitly maps.
+The adapter reports its command endpoint posture through the `tenant-administration-http-endpoints` runtime surface and its callback endpoint posture through `tenant-invitation-delivery-status-http-endpoints`. A mapped endpoint reports `cephalon-managed`; an enabled but unmapped endpoint reports `host-mapping-required`; a disabled endpoint reports `not-configured`. The callback surface also reports route, method, authorization posture, endpoint-description posture, provider-message-match enforcement, and explicit `application-managed` boundaries for provider-specific payload translation, provider signature verification, and provider polling.
+
+This package does not issue challenges, plan proof instructions, mutate DNS records, call domain providers, verify collected evidence, run background polling, dispatch invitation delivery, implement provider-specific invitation senders, translate provider-specific callback payloads, verify provider-specific callback signatures, poll delivery providers, create identity-provider users, or provide a backoffice UI. Those responsibilities stay in `Cephalon.MultiTenancy.Governance`, future provider-specific packs, or consumer applications. The adapter only serves the HTTP file content that the host-agnostic publication catalog has already accepted as published, exposes the workflow command endpoint that the host explicitly maps, and accepts normalized status callback requests for the reconciler the governance core already owns.
 
 ## Related docs
 
