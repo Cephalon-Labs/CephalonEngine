@@ -23,6 +23,11 @@ internal sealed class MailgunInvitationDeliveryStatusRuntimeSurfaceContributor(
         var maxEventsPerRequest = endpoint?.MaxEventsPerRequest ?? options.GetMaxEventsPerRequest();
         var mapEngagementEventsAsDelivered = endpoint?.MapEngagementEventsAsDelivered ?? options.MapEngagementEventsAsDelivered;
         var normalizeProviderMessageId = endpoint?.NormalizeProviderMessageIdWithAngleBrackets ?? options.NormalizeProviderMessageIdWithAngleBrackets;
+        var requireSignedWebhook = endpoint?.RequireSignedWebhook ?? options.RequireSignedWebhook;
+        var signedWebhookSigningKeyConfigured = endpoint?.SignedWebhookSigningKeyConfigured ?? options.GetWebhookSigningKey() is not null;
+        var signedWebhookSignatureToleranceSeconds = endpoint?.SignedWebhookSignatureToleranceSeconds ?? options.GetSignedWebhookSignatureToleranceSeconds();
+        var acceptParentSignature = endpoint?.AcceptParentSignature ?? options.AcceptParentSignature;
+        var signatureVerificationOwnership = requireSignedWebhook ? "cephalon-managed" : "not-configured";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -42,10 +47,15 @@ internal sealed class MailgunInvitationDeliveryStatusRuntimeSurfaceContributor(
             ["tenantInvitationDeliveryStatusCallbackEndpointOwnership"] = endpointOwnership,
             ["mailgunWebhookTranslationOwnership"] = endpointOwnership,
             ["mailgunWebhookInboxOwnership"] = "application-managed",
-            ["mailgunWebhookSignatureVerificationOwnership"] = "not-configured",
-            ["mailgunWebhookSignatureVerificationRequired"] = "false",
+            ["mailgunWebhookSignatureVerificationOwnership"] = signatureVerificationOwnership,
+            ["mailgunWebhookSignatureVerificationRequired"] = requireSignedWebhook.ToString().ToLowerInvariant(),
+            ["mailgunWebhookSigningKeyConfigured"] = signedWebhookSigningKeyConfigured.ToString().ToLowerInvariant(),
             ["mailgunWebhookSignatureAlgorithm"] = "hmac-sha256",
             ["mailgunWebhookSignaturePayload"] = "timestamp+token",
+            ["mailgunWebhookSignatureField"] = "signature.signature",
+            ["mailgunWebhookParentSignatureField"] = "signature.parent-signature",
+            ["mailgunWebhookParentSignatureAccepted"] = acceptParentSignature.ToString().ToLowerInvariant(),
+            ["mailgunWebhookSignatureToleranceSeconds"] = signedWebhookSignatureToleranceSeconds.ToString(CultureInfo.InvariantCulture),
             ["mailgunWebhookReplayProtectionOwnership"] = "not-configured",
             ["mailgunWebhookReplayProtectionPolicy"] = "none",
             ["mailgunWebhookReplayProtectionScope"] = "none",
@@ -120,7 +130,11 @@ internal sealed class MailgunInvitationDeliveryStatusCallbackRuntimeCatalog
         int maxRequestBodyBytes,
         int maxEventsPerRequest,
         bool mapEngagementEventsAsDelivered,
-        bool normalizeProviderMessageIdWithAngleBrackets)
+        bool normalizeProviderMessageIdWithAngleBrackets,
+        bool requireSignedWebhook,
+        bool signedWebhookSigningKeyConfigured,
+        int signedWebhookSignatureToleranceSeconds,
+        bool acceptParentSignature)
     {
         lock (syncRoot)
         {
@@ -134,7 +148,11 @@ internal sealed class MailgunInvitationDeliveryStatusCallbackRuntimeCatalog
                 maxRequestBodyBytes,
                 maxEventsPerRequest,
                 mapEngagementEventsAsDelivered,
-                normalizeProviderMessageIdWithAngleBrackets);
+                normalizeProviderMessageIdWithAngleBrackets,
+                requireSignedWebhook,
+                signedWebhookSigningKeyConfigured,
+                signedWebhookSignatureToleranceSeconds,
+                acceptParentSignature);
         }
     }
 }
@@ -149,4 +167,8 @@ internal sealed record MailgunInvitationDeliveryStatusCallbackEndpointRuntimeSna
     int MaxRequestBodyBytes,
     int MaxEventsPerRequest,
     bool MapEngagementEventsAsDelivered,
-    bool NormalizeProviderMessageIdWithAngleBrackets);
+    bool NormalizeProviderMessageIdWithAngleBrackets,
+    bool RequireSignedWebhook,
+    bool SignedWebhookSigningKeyConfigured,
+    int SignedWebhookSignatureToleranceSeconds,
+    bool AcceptParentSignature);

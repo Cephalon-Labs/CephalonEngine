@@ -14,8 +14,11 @@
 - safe status metadata such as Mailgun event id, message id, event type, severity, reason, delivery-status details, timestamp, and test-mode posture
 - observation-id seeding from Mailgun event ids through the normalized delivery-status observation path
 - optional engagement-event mapping when a host deliberately sets `MapEngagementEventsAsDelivered`
+- optional Mailgun HMAC-SHA256 webhook signature verification over `timestamp + token` when `RequireSignedWebhook` and `WebhookSigningKey` are configured
+- Mailgun `parent-signature` verification for subaccount events when `AcceptParentSignature` remains enabled
+- safe signed-webhook metadata such as verification outcome, algorithm, timestamp, age, signature field, signature fingerprint, and parent-signature posture without storing the signing key, raw signature, raw payload, or recipient email
 - runtime truth through the `tenant-invitation-delivery-mailgun-status-callbacks` technology surface
-- stable diagnostics for accepted Mailgun callback payloads
+- stable diagnostics for accepted Mailgun callback payloads and rejected signed-webhook verification attempts
 
 ## Main surfaces
 
@@ -70,7 +73,11 @@ Configuration example:
             "MaxRequestBodyBytes": 262144,
             "MaxEventsPerRequest": 1000,
             "MapEngagementEventsAsDelivered": false,
-            "NormalizeProviderMessageIdWithAngleBrackets": true
+            "NormalizeProviderMessageIdWithAngleBrackets": true,
+            "RequireSignedWebhook": true,
+            "WebhookSigningKey": "${MAILGUN_WEBHOOK_SIGNING_KEY}",
+            "SignedWebhookSignatureToleranceSeconds": 300,
+            "AcceptParentSignature": true
           }
         }
       }
@@ -83,7 +90,9 @@ Mapped statuses are intentionally narrow. `accepted` becomes `accepted`, `delive
 
 The endpoint returns `MailgunInvitationDeliveryStatusCallbackResult` with aggregate counts and per-event translation results. Events without Cephalon tenant and invitation user variables are skipped without leaking recipient email addresses in the response. Translated events still go through the host-agnostic reconciler, so invitation existence, provider-message matching, status recording, and observation storage keep using the same governance rules as normalized callbacks.
 
-ASP.NET Core authorization is enabled by default and can be combined with gateway policy, Mailgun webhook signing at the edge, or other host controls. This baseline does not verify Mailgun's HMAC-SHA256 webhook signature, does not protect Mailgun replay tokens, and does not own durable callback inboxes or provider polling. Runtime metadata reports signature verification and replay protection as `not-configured` so operators do not confuse payload translation with a complete provider-authenticity boundary.
+When `RequireSignedWebhook` is enabled, the endpoint verifies Mailgun's HMAC-SHA256 signature before translation or reconciliation. Verification uses the `signature.token`, `signature.timestamp`, and `signature.signature` values from Mailgun's signed JSON envelope, computes the lowercase hex digest over `timestamp + token` with `WebhookSigningKey`, enforces `SignedWebhookSignatureToleranceSeconds`, and fails closed with `401` for missing, malformed, stale, or invalid signatures. Mailgun subaccount events can also include `signature.parent-signature`; Cephalon accepts that field by default so hosts can validate subaccount events with the parent account signing key. Runtime metadata reports signature verification as `cephalon-managed` only when this option is enabled and keeps the signing key and raw signature out of runtime output.
+
+ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, Mailgun TLS client-certificate checks, or other host controls. This baseline does not protect Mailgun replay tokens, does not own durable callback inboxes, does not create distributed event-id ledgers, and does not poll providers. Runtime metadata reports replay protection as `not-configured` so operators do not confuse signed webhook authentication with durable replay or exactly-once delivery.
 
 ## Provider references
 

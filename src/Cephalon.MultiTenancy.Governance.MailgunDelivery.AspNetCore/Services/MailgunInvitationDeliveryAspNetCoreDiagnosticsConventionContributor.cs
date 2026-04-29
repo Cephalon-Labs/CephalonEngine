@@ -17,13 +17,21 @@ internal static class MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions
         MessageTemplate: "Mailgun invitation delivery status callback accepted {EventCount} events, translated {TranslatedCount}, reconciled {ReconciledCount}, and skipped {SkippedCount}.",
         Description: "Emitted when the ASP.NET Core Mailgun webhook callback endpoint accepts and evaluates a callback payload.");
 
+    public static readonly DiagnosticEventDefinition MailgunInvitationDeliveryStatusCallbackSignatureRejected = new(
+        Id: 4569,
+        Name: "MailgunInvitationDeliveryStatusCallbackSignatureRejected",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Mailgun invitation delivery status callback signature rejected with outcome {Outcome}.",
+        Description: "Emitted when the ASP.NET Core Mailgun webhook callback endpoint rejects a required Mailgun signature before reconciliation.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
-        Description: "Structured diagnostics for ASP.NET Core Mailgun webhook tenant-invitation delivery status callback translation.",
+        Description: "Structured diagnostics for ASP.NET Core Mailgun webhook tenant-invitation delivery status callback translation and signature verification.",
         Events:
         [
-            MailgunInvitationDeliveryStatusCallbackAccepted
+            MailgunInvitationDeliveryStatusCallbackAccepted,
+            MailgunInvitationDeliveryStatusCallbackSignatureRejected
         ]);
 }
 
@@ -37,6 +45,14 @@ internal static class MailgunInvitationDeliveryAspNetCoreLogs
                 MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions.MailgunInvitationDeliveryStatusCallbackAccepted.Name),
             "Mailgun invitation delivery status callback accepted {EventCount} events, translated {TranslatedCount}, reconciled {ReconciledCount}, and skipped {SkippedCount}.");
 
+    private static readonly Action<ILogger, string, Exception?> CallbackSignatureRejectedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Warning,
+            new EventId(
+                MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions.MailgunInvitationDeliveryStatusCallbackSignatureRejected.Id,
+                MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions.MailgunInvitationDeliveryStatusCallbackSignatureRejected.Name),
+            "Mailgun invitation delivery status callback signature rejected with outcome {Outcome}.");
+
     public static void CallbackAccepted(
         ILogger logger,
         int eventCount,
@@ -44,4 +60,7 @@ internal static class MailgunInvitationDeliveryAspNetCoreLogs
         int reconciledCount,
         int skippedCount) =>
         CallbackAcceptedMessage(logger, eventCount, translatedCount, reconciledCount, skippedCount, null);
+
+    public static void CallbackSignatureRejected(ILogger logger, string outcome) =>
+        CallbackSignatureRejectedMessage(logger, outcome, null);
 }

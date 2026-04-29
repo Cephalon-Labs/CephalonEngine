@@ -14,6 +14,10 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
     /// <param name="reconciledEvents">The number of events reconciled by Cephalon governance.</param>
     /// <param name="skippedEvents">The number of events skipped before reconciliation.</param>
     /// <param name="deniedEvents">The number of translated events denied by the reconciler.</param>
+    /// <param name="signedWebhookVerificationRequired">A value indicating whether Mailgun webhook signature verification was required.</param>
+    /// <param name="signedWebhookVerified">A value indicating whether the Mailgun webhook signature verified.</param>
+    /// <param name="signedWebhookVerificationOutcome">The Mailgun webhook signature verification outcome.</param>
+    /// <param name="signedWebhookSignatureField">The Mailgun signature field that verified the callback, when configured.</param>
     /// <param name="events">Per-event translation and reconciliation results.</param>
     public MailgunInvitationDeliveryStatusCallbackResult(
         string routePattern,
@@ -22,11 +26,20 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
         int reconciledEvents,
         int skippedEvents,
         int deniedEvents,
+        bool signedWebhookVerificationRequired,
+        bool signedWebhookVerified,
+        string signedWebhookVerificationOutcome,
+        string? signedWebhookSignatureField,
         IReadOnlyList<MailgunInvitationDeliveryStatusCallbackEventResult> events)
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
             throw new ArgumentException("Route pattern is required.", nameof(routePattern));
+        }
+
+        if (string.IsNullOrWhiteSpace(signedWebhookVerificationOutcome))
+        {
+            throw new ArgumentException("Signed webhook verification outcome is required.", nameof(signedWebhookVerificationOutcome));
         }
 
         RoutePattern = routePattern.Trim();
@@ -35,6 +48,12 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
         ReconciledEvents = reconciledEvents;
         SkippedEvents = skippedEvents;
         DeniedEvents = deniedEvents;
+        SignedWebhookVerificationRequired = signedWebhookVerificationRequired;
+        SignedWebhookVerified = signedWebhookVerified;
+        SignedWebhookVerificationOutcome = signedWebhookVerificationOutcome.Trim();
+        SignedWebhookSignatureField = string.IsNullOrWhiteSpace(signedWebhookSignatureField)
+            ? null
+            : signedWebhookSignatureField.Trim();
         Events = events ?? throw new ArgumentNullException(nameof(events));
     }
 
@@ -67,6 +86,26 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
     /// Gets the number of translated events denied by the reconciler.
     /// </summary>
     public int DeniedEvents { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether Mailgun webhook signature verification was required.
+    /// </summary>
+    public bool SignedWebhookVerificationRequired { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the Mailgun webhook signature verified.
+    /// </summary>
+    public bool SignedWebhookVerified { get; }
+
+    /// <summary>
+    /// Gets the Mailgun webhook signature verification outcome.
+    /// </summary>
+    public string SignedWebhookVerificationOutcome { get; }
+
+    /// <summary>
+    /// Gets the Mailgun signature field that verified the callback, when configured.
+    /// </summary>
+    public string? SignedWebhookSignatureField { get; }
 
     /// <summary>
     /// Gets per-event translation and reconciliation results.

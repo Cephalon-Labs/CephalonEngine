@@ -7,14 +7,16 @@ namespace Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configurat
 /// Configures ASP.NET Core Mailgun webhook callback translation for tenant-invitation delivery status updates.
 /// </summary>
 /// <remarks>
-/// This baseline translates Mailgun webhook payloads. Mailgun signature verification, replay-token protection,
-/// durable callback inboxes, and provider polling are intentionally separate future slices.
+/// This adapter translates Mailgun webhook payloads and can require Mailgun HMAC-SHA256 webhook signature
+/// verification before reconciliation. Replay-token protection, durable callback inboxes, and provider polling are
+/// intentionally separate slices.
 /// </remarks>
 public sealed class MailgunInvitationDeliveryAspNetCoreOptions
 {
     internal const string DefaultRoutePattern = "/engine/tenant-invitations/delivery-status/mailgun";
     internal const int DefaultMaxRequestBodyBytes = 256 * 1024;
     internal const int DefaultMaxEventsPerRequest = 1000;
+    internal const int DefaultSignedWebhookSignatureToleranceSeconds = 300;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MailgunInvitationDeliveryAspNetCoreOptions" /> class.
@@ -114,6 +116,43 @@ public sealed class MailgunInvitationDeliveryAspNetCoreOptions
     public bool NormalizeProviderMessageIdWithAngleBrackets { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether Mailgun webhook requests must carry a valid Mailgun signature before
+    /// payload translation and reconciliation can run.
+    /// </summary>
+    /// <remarks>
+    /// When enabled, the endpoint verifies the Mailgun HMAC-SHA256 hex digest over <c>timestamp + token</c> using the
+    /// configured webhook signing key. Signature verification is separate from replay-token caching so hosts can adopt
+    /// authentication first without claiming durable inbox or distributed replay ownership.
+    /// </remarks>
+    public bool RequireSignedWebhook { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Mailgun webhook signing key used for HMAC-SHA256 verification.
+    /// </summary>
+    /// <remarks>
+    /// This is the Mailgun Send webhook signing key, not the Mailgun API key or an Alerts webhook signing key.
+    /// </remarks>
+    public string? WebhookSigningKey { get; set; }
+
+    /// <summary>
+    /// Gets or sets the allowed clock skew, in seconds, for signed Mailgun webhook timestamps.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint clamps the effective tolerance to at least one second. The default is five minutes.
+    /// </remarks>
+    public int SignedWebhookSignatureToleranceSeconds { get; set; } = DefaultSignedWebhookSignatureToleranceSeconds;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether Mailgun <c>parent-signature</c> should be accepted for subaccount
+    /// webhook events.
+    /// </summary>
+    /// <remarks>
+    /// Mailgun includes <c>parent-signature</c> for subaccount events so receivers can validate with the parent account
+    /// signing key. Disable this only when a host deliberately requires the child account signature field.
+    /// </remarks>
+    public bool AcceptParentSignature { get; set; } = true;
+
+    /// <summary>
     /// Reads Mailgun ASP.NET Core callback options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -149,6 +188,10 @@ public sealed class MailgunInvitationDeliveryAspNetCoreOptions
         options.MaxEventsPerRequest = ParseInt32(section["MaxEventsPerRequest"], options.MaxEventsPerRequest);
         options.MapEngagementEventsAsDelivered = ParseBoolean(section["MapEngagementEventsAsDelivered"], options.MapEngagementEventsAsDelivered);
         options.NormalizeProviderMessageIdWithAngleBrackets = ParseBoolean(section["NormalizeProviderMessageIdWithAngleBrackets"], options.NormalizeProviderMessageIdWithAngleBrackets);
+        options.RequireSignedWebhook = ParseBoolean(section["RequireSignedWebhook"], options.RequireSignedWebhook);
+        options.WebhookSigningKey = Normalize(section["WebhookSigningKey"]);
+        options.SignedWebhookSignatureToleranceSeconds = ParseInt32(section["SignedWebhookSignatureToleranceSeconds"], options.SignedWebhookSignatureToleranceSeconds);
+        options.AcceptParentSignature = ParseBoolean(section["AcceptParentSignature"], options.AcceptParentSignature);
         return options;
     }
 
@@ -161,6 +204,11 @@ public sealed class MailgunInvitationDeliveryAspNetCoreOptions
     internal string GetSource() => Normalize(Source) ?? "mailgun-webhook";
 
     internal string GetActor() => Normalize(Actor) ?? "mailgun";
+
+    internal string? GetWebhookSigningKey() => Normalize(WebhookSigningKey);
+
+    internal int GetSignedWebhookSignatureToleranceSeconds() =>
+        Math.Clamp(SignedWebhookSignatureToleranceSeconds, 1, 86_400);
 
     private static int ParseInt32(string? value, int defaultValue)
     {

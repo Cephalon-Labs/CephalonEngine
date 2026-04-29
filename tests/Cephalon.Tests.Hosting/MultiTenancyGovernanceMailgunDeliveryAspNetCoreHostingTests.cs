@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
@@ -118,6 +119,10 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal(1, result.ReconciledEvents);
         Assert.Equal(0, result.SkippedEvents);
         Assert.Equal(0, result.DeniedEvents);
+        Assert.False(result.SignedWebhookVerificationRequired);
+        Assert.False(result.SignedWebhookVerified);
+        Assert.Equal("not-configured", result.SignedWebhookVerificationOutcome);
+        Assert.Null(result.SignedWebhookSignatureField);
         var eventResult = Assert.Single(result.Events);
         Assert.True(eventResult.Translated);
         Assert.True(eventResult.Reconciled);
@@ -154,11 +159,170 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("not-configured", endpointEntry.Metadata["mailgunWebhookSignatureVerificationOwnership"]);
         Assert.Equal("not-configured", endpointEntry.Metadata["mailgunWebhookReplayProtectionOwnership"]);
         Assert.Equal("false", endpointEntry.Metadata["mailgunWebhookSignatureVerificationRequired"]);
+        Assert.Equal("false", endpointEntry.Metadata["mailgunWebhookSigningKeyConfigured"]);
         Assert.Equal("timestamp+token", endpointEntry.Metadata["mailgunWebhookSignaturePayload"]);
+        Assert.Equal("signature.signature", endpointEntry.Metadata["mailgunWebhookSignatureField"]);
+        Assert.Equal("signature.parent-signature", endpointEntry.Metadata["mailgunWebhookParentSignatureField"]);
+        Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookParentSignatureAccepted"]);
+        Assert.Equal("300", endpointEntry.Metadata["mailgunWebhookSignatureToleranceSeconds"]);
         Assert.Equal("true", endpointEntry.Metadata["normalizeProviderMessageIdWithAngleBrackets"]);
         Assert.Contains(
             diagnosticsConvention.Events,
             definition => definition.Name == "MailgunInvitationDeliveryStatusCallbackAccepted");
+        Assert.Contains(
+            diagnosticsConvention.Events,
+            definition => definition.Name == "MailgunInvitationDeliveryStatusCallbackSignatureRejected");
+    }
+
+    [Fact]
+    public async Task MapCephalonMailgunInvitationDeliveryStatusCallbacksVerifiesSignedWebhookBeforeReconciliation()
+    {
+        const string signingKey = "mailgun-signing-key-301";
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.Services.AddCephalonMailgunInvitationDeliveryAspNetCore(configure: options =>
+        {
+            options.RequireStatusCallbackAuthorization = false;
+            options.RequireSignedWebhook = true;
+            options.WebhookSigningKey = signingKey;
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-mailgun-signed",
+                    tenantId: "tenant-mailgun-signed",
+                    inviteeId: "signed@example.test",
+                    inviteeKind: "email",
+                    displayName: "Mailgun Signed Callback Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "<mailgun-message-signed@example.test>"
+                    }));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonMailgunInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        var token = "mailgun-token-301-abcdefghijklmnopqrstuvwxyz012345";
+        var signature = CreateMailgunSignature(signingKey, timestamp, token);
+        var payload = CreateSignedMailgunEnvelopePayload(
+            CreateMailgunDeliveredEvent(
+                "mailgun-event-signed-301",
+                "mailgun-message-signed@example.test",
+                "tenant-mailgun-signed",
+                "invite-mailgun-signed",
+                "corr-mailgun-signed-301"),
+            timestamp,
+            token,
+            signature: "0000000000000000000000000000000000000000000000000000000000000000",
+            parentSignature: signature);
+        using var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("/engine/tenant-invitations/delivery-status/mailgun", content);
+        var result = await response.Content.ReadFromJsonAsync<MailgunInvitationDeliveryStatusCallbackResult>(SerializerOptions);
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var observation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-mailgun-status-callbacks");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.True(result.SignedWebhookVerificationRequired);
+        Assert.True(result.SignedWebhookVerified);
+        Assert.Equal("verified", result.SignedWebhookVerificationOutcome);
+        Assert.Equal("parent-signature", result.SignedWebhookSignatureField);
+        Assert.Equal(1, result.ReconciledEvents);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
+        Assert.Equal("verified", invitation.Metadata["mailgunWebhookSignatureVerification"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["mailgunWebhookSignatureVerificationOwnership"]);
+        Assert.Equal("hmac-sha256", invitation.Metadata["mailgunWebhookSignatureAlgorithm"]);
+        Assert.Equal("timestamp+token", invitation.Metadata["mailgunWebhookSignaturePayload"]);
+        Assert.Equal(timestamp, invitation.Metadata["mailgunWebhookSignatureTimestamp"]);
+        Assert.Equal("parent-signature", invitation.Metadata["mailgunWebhookSignatureField"]);
+        Assert.Equal("true", invitation.Metadata["mailgunWebhookParentSignatureAccepted"]);
+        Assert.Equal(
+            "sha256:" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(signature))).ToLowerInvariant(),
+            invitation.Metadata["mailgunWebhookSignatureFingerprint"]);
+        Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookSignatureVerificationOwnership"]);
+        Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookSignatureVerificationRequired"]);
+        Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookSigningKeyConfigured"]);
+        Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookParentSignatureAccepted"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonMailgunInvitationDeliveryStatusCallbacksRejectsInvalidSignedWebhookBeforeReconciliation()
+    {
+        const string signingKey = "mailgun-signing-key-invalid-301";
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.Services.AddCephalonMailgunInvitationDeliveryAspNetCore(configure: options =>
+        {
+            options.RequireStatusCallbackAuthorization = false;
+            options.RequireSignedWebhook = true;
+            options.WebhookSigningKey = signingKey;
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-mailgun-invalid-signature",
+                    tenantId: "tenant-mailgun-invalid-signature",
+                    inviteeId: "invalid@example.test",
+                    inviteeKind: "email",
+                    displayName: "Mailgun Invalid Signature Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "<mailgun-message-invalid-signature@example.test>"
+                    }));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonMailgunInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        var token = "mailgun-token-invalid-301-abcdefghijklmnopqrstuv";
+        var payload = CreateSignedMailgunEnvelopePayload(
+            CreateMailgunDeliveredEvent(
+                "mailgun-event-invalid-signature-301",
+                "mailgun-message-invalid-signature@example.test",
+                "tenant-mailgun-invalid-signature",
+                "invite-mailgun-invalid-signature",
+                "corr-mailgun-invalid-signature-301"),
+            timestamp,
+            token,
+            signature: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        using var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("/engine/tenant-invitations/delivery-status/mailgun", content);
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var observations = app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations;
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Empty(observations);
+        Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
     }
 
     [Fact]
@@ -221,5 +385,73 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("unsupported-event-type", eventResult.Outcome);
         Assert.Equal("opened", eventResult.MailgunEventType);
         Assert.Empty(observations);
+    }
+
+    private static Dictionary<string, object?> CreateMailgunDeliveredEvent(
+        string eventId,
+        string messageId,
+        string tenantId,
+        string invitationId,
+        string correlationId)
+    {
+        return new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["event"] = "delivered",
+            ["id"] = eventId,
+            ["timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ["message"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["headers"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["message-id"] = messageId
+                }
+            },
+            ["delivery-status"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["code"] = 250,
+                ["message"] = "OK"
+            },
+            ["user-variables"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["cephalonTenantId"] = tenantId,
+                ["cephalonInvitationId"] = invitationId,
+                ["cephalonDeliveryChannel"] = "email",
+                ["cephalonSenderId"] = "mailgun-email",
+                ["cephalonCorrelationId"] = correlationId
+            }
+        };
+    }
+
+    private static string CreateSignedMailgunEnvelopePayload(
+        Dictionary<string, object?> eventData,
+        string timestamp,
+        string token,
+        string signature,
+        string? parentSignature = null)
+    {
+        var signaturePayload = new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["token"] = token,
+            ["timestamp"] = timestamp,
+            ["signature"] = signature
+        };
+        if (!string.IsNullOrWhiteSpace(parentSignature))
+        {
+            signaturePayload["parent-signature"] = parentSignature;
+        }
+
+        return JsonSerializer.Serialize(
+            new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["signature"] = signaturePayload,
+                ["event-data"] = eventData
+            },
+            SerializerOptions);
+    }
+
+    private static string CreateMailgunSignature(string signingKey, string timestamp, string token)
+    {
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(signingKey));
+        return Convert.ToHexString(hmac.ComputeHash(Encoding.UTF8.GetBytes(timestamp + token))).ToLowerInvariant();
     }
 }
