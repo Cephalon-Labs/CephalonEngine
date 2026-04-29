@@ -326,9 +326,10 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `data.outbox.nats` — NATS Outbox
 - `data.inbox.nats` — NATS Inbox
 
-### Eventing capabilities (6)
+### Eventing capabilities (7)
 
 - `eventing.publish` — Event Publishing
+- `eventing.subscribe` — Managed Event Subscription Execution
 - `eventing.subscriptions` — Event Subscription Descriptors
 - `eventing.channels` — Event Channels
 - `eventing.behaviors.saga-choreography` — Saga Choreography Eventing Bridge

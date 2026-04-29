@@ -50,6 +50,30 @@ IList<EventChannelDescriptor> Channels { get; }
 
 Gets the host-defined event channels that should be available to the eventing runtime.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-continueinprocesssubscriptionexecutionafterfailure"></a>
+
+##### `ContinueInProcessSubscriptionExecutionAfterFailure`
+
+```csharp
+bool ContinueInProcessSubscriptionExecutionAfterFailure { get; set; }
+```
+
+Gets or sets a value indicating whether the in-process publisher should continue executing later subscriptions on the same channel after one subscription fails.
+
+Remarks: The publisher still reports failed subscriptions and throws after the publication attempt finishes. This setting only controls whether independent subscriptions on the same channel get a chance to run before the failure is returned to the caller.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-enableinprocesssubscriptionexecution"></a>
+
+##### `EnableInProcessSubscriptionExecution`
+
+```csharp
+bool EnableInProcessSubscriptionExecution { get; set; }
+```
+
+Gets or sets a value indicating whether the core eventing pack should execute matching subscription executors directly inside the current process when a publication is accepted.
+
+Remarks: This is an opt-in managed execution baseline for lightweight hosts and tests. It is not a durable broker, inbox, or retry runtime; companion packs should still own those richer delivery guarantees when they are selected.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-enablepublishing"></a>
 
 ##### `EnablePublishing`

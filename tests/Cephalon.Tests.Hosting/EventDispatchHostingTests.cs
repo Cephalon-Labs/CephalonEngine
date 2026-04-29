@@ -222,4 +222,125 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("wolverine-managed", snapshotAdapter.Metadata["subscriptionExecution"]);
         Assert.Equal("1", snapshotAdapter.Metadata["managedSubscriptionCount"]);
     }
+
+    [Fact]
+    public async Task MapCephalonExecutesCoreInProcessEventSubscriptionsWithoutWolverine()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "audit-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 04, 29, 8, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-001",
+                tenantId: "tenant-001",
+                headers: new Dictionary<string, string>
+                {
+                    ["x-test"] = "core-in-process"
+                }));
+        }
+
+        var client = app.GetTestClient();
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        var readiness = await client.GetFromJsonAsync<EventSubscriptionExecutionReadinessDescriptor[]>("/engine/event-subscription-readiness");
+        var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+        Assert.Equal("audit-001", probe.LastMessageId);
+
+        var runtimeState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal("audit-projector", runtimeState.SubscriptionId);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, runtimeState.LastOutcome);
+        Assert.Equal("audit-001", runtimeState.LastMessageId);
+        Assert.Equal(1, runtimeState.StartedCount);
+        Assert.Equal(1, runtimeState.SucceededCount);
+        Assert.Equal("in-process-direct", runtimeState.Metadata["executionMode"]);
+        Assert.Equal("cephalon-managed", runtimeState.Metadata["executionOwnership"]);
+
+        var binding = Assert.Single(bindingCatalog.Bindings);
+        Assert.Equal("audit-projector", binding.SubscriptionId);
+        Assert.Equal("cephalon-eventing-in-process-subscriptions", binding.ExecutionRuntimeId);
+        Assert.Equal("cephalon-managed", binding.ExecutionOwnership);
+        Assert.Equal("in-process-direct", binding.ExecutionMode);
+        Assert.Equal("in-process-event-publisher", binding.Metadata["trigger"]);
+        Assert.Equal("none", binding.Metadata["retryPolicy"]);
+
+        Assert.NotNull(capabilities);
+        var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Equal("in-process", publishCapability.Metadata["handoff"]);
+        Assert.Equal("cephalon-managed", publishCapability.Metadata["subscriptionExecution"]);
+        Assert.Equal("none", publishCapability.Metadata["retryPolicy"]);
+        var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("cephalon-managed", subscribeCapability.Metadata["executionOwnership"]);
+        Assert.Equal("in-process-direct", subscribeCapability.Metadata["executionMode"]);
+        Assert.Equal("cephalon-eventing-in-process-subscriptions", subscribeCapability.Metadata["executionRuntimeId"]);
+        Assert.Equal("in-process-event-publisher", subscribeCapability.Metadata["triggerRuntimeId"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
+        var publisherEntry = Assert.Single(publisherSurface.Entries);
+        Assert.Equal("in-process-event-publisher", publisherEntry.Id);
+        Assert.Equal("in-process", publisherEntry.Metadata["handoff"]);
+        Assert.Equal("cephalon-managed", publisherEntry.Metadata["subscriptionExecution"]);
+        Assert.Equal("1", publisherEntry.Metadata["subscriptionExecutorCount"]);
+
+        var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var subscriptionEntry = Assert.Single(subscriptionSurface.Entries, entry => entry.Id == "audit-projector");
+        Assert.Equal("cephalon-managed", subscriptionEntry.Metadata["dispatchRuntime"]);
+        Assert.Equal("runtime-bound", subscriptionEntry.Metadata["subscriptionRuntime"]);
+        Assert.Equal("cephalon-eventing-in-process-subscriptions", subscriptionEntry.Metadata["executionRuntimeId"]);
+        Assert.Equal("cephalon-managed", subscriptionEntry.Metadata["executionOwnership"]);
+        Assert.Equal("in-process-direct", subscriptionEntry.Metadata["executionMode"]);
+        Assert.Equal("reported", subscriptionEntry.Metadata["runtimeState"]);
+        Assert.Equal("succeeded", subscriptionEntry.Metadata["lastOutcome"]);
+        Assert.Equal("audit-001", subscriptionEntry.Metadata["lastMessageId"]);
+        Assert.Equal("in-process-event-publisher", subscriptionEntry.Metadata["binding.trigger"]);
+        Assert.Equal("none", subscriptionEntry.Metadata["binding.retryPolicy"]);
+        Assert.Equal("in-process-direct", subscriptionEntry.Metadata["reported.executionMode"]);
+
+        Assert.NotNull(readiness);
+        var subscriptionReadiness = Assert.Single(readiness);
+        Assert.Equal("audit-projector", subscriptionReadiness.SubscriptionId);
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.RuntimeBound, subscriptionReadiness.ReadinessState);
+        Assert.Equal("cephalon-managed", subscriptionReadiness.ExecutionOwnership);
+        Assert.Equal("in-process-direct", subscriptionReadiness.ExecutionMode);
+        Assert.Equal("cephalon-eventing-in-process-subscriptions", subscriptionReadiness.ExecutionRuntimeId);
+
+        Assert.NotNull(snapshot);
+        Assert.Single(snapshot.EventSubscriptionExecutionReadiness);
+        var snapshotSubscription = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "audit-projector");
+        Assert.Equal("cephalon-managed", snapshotSubscription.Metadata["dispatchRuntime"]);
+        Assert.Equal("succeeded", snapshotSubscription.Metadata["lastOutcome"]);
+    }
 }

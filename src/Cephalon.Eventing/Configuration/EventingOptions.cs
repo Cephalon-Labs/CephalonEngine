@@ -38,4 +38,26 @@ public sealed class EventingOptions
     /// Gets or sets a value indicating whether subscription features are enabled.
     /// </summary>
     public bool EnableSubscriptions { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the core eventing pack should execute matching
+    /// subscription executors directly inside the current process when a publication is accepted.
+    /// </summary>
+    /// <remarks>
+    /// This is an opt-in managed execution baseline for lightweight hosts and tests. It is not a
+    /// durable broker, inbox, or retry runtime; companion packs should still own those richer
+    /// delivery guarantees when they are selected.
+    /// </remarks>
+    public bool EnableInProcessSubscriptionExecution { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the in-process publisher should continue executing
+    /// later subscriptions on the same channel after one subscription fails.
+    /// </summary>
+    /// <remarks>
+    /// The publisher still reports failed subscriptions and throws after the publication attempt
+    /// finishes. This setting only controls whether independent subscriptions on the same channel
+    /// get a chance to run before the failure is returned to the caller.
+    /// </remarks>
+    public bool ContinueInProcessSubscriptionExecutionAfterFailure { get; set; } = true;
 }

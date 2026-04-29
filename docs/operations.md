@@ -1685,8 +1685,13 @@ Current `Cephalon.Eventing` highlights:
 - the typed readiness answer is also available through `/engine/event-subscription-readiness` and
   `snapshot.EventSubscriptionExecutionReadiness`, so operators do not need to parse metadata when
   they only need the readiness posture
-- Wolverine or another companion adapter can move one subscription to `runtime-bound`, while
-  hosted execution links and application-managed reports remain truthful non-provider-owned states
+- `Cephalon.Eventing` can move a subscription to `runtime-bound` itself when
+  `EnableInProcessSubscriptionExecution` is selected and a matching `IEventSubscriptionExecutor`
+  exists; that path is `cephalon-managed`, direct, process-local, and reports
+  `eventing.publish` / `eventing.subscribe` metadata with `retryPolicy = none`
+- Wolverine or another companion adapter can still move one subscription to provider-managed
+  `runtime-bound` ownership for brokered or staged dispatch scenarios, while hosted execution links
+  and application-managed reports remain truthful non-provider-owned states
 
 Current `Cephalon.Agentics` highlights:
 

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T05:36:37.5500197+00:00",
+  "GeneratedAtUtc": "2026-04-29T05:56:31.8595746+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -7781,7 +7781,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -35489,6 +35489,17 @@
       "Summary": "Gets a value indicating whether the latest report says the workflow still has continuation work pending."
     },
     {
+      "DisplayName": "ContinueInProcessSubscriptionExecutionAfterFailure",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-continueinprocesssubscriptionexecutionafterfailure",
+      "Signature": "bool ContinueInProcessSubscriptionExecutionAfterFailure { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the in-process publisher should continue executing later subscriptions on the same channel after one subscription fails."
+    },
+    {
       "DisplayName": "ContractId",
       "Category": "Properties",
       "DeclaringTypeName": "DataProductDescriptor",
@@ -46583,6 +46594,17 @@
       "AnchorId": "member-p-cephalon-audit-configuration-auditruntimeoptions-enableinmemorywriter",
       "Signature": "bool EnableInMemoryWriter { get; set; }",
       "Summary": "Gets or sets a value indicating whether the built-in in-memory audit writer should remain active."
+    },
+    {
+      "DisplayName": "EnableInProcessSubscriptionExecution",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-enableinprocesssubscriptionexecution",
+      "Signature": "bool EnableInProcessSubscriptionExecution { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the core eventing pack should execute matching subscription executors directly inside the current process when a publication is accepted."
     },
     {
       "DisplayName": "EnableInvitationDeliveryDispatch",

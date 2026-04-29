@@ -4920,6 +4920,9 @@ Browse the published API surface by public member.
 - [ContinuationPending](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationpending): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContinuationPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets a value indicating whether the latest report says the workflow still has continuation work pending.
   - `bool ContinuationPending { get; }`
+- [ContinueInProcessSubscriptionExecutionAfterFailure](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-continueinprocesssubscriptionexecutionafterfailure): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=ContinueInProcessSubscriptionExecutionAfterFailure&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets a value indicating whether the in-process publisher should continue executing later subscriptions on the same channel after one subscription fails.
+  - `bool ContinueInProcessSubscriptionExecutionAfterFailure { get; set; }`
 - [ContractId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-contractid): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContractId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable query or contract identifier exposed by the data product.
   - `string ContractId { get; }`
@@ -7950,6 +7953,9 @@ Browse the published API surface by public member.
 - [EnableInMemoryWriter](cephalon-audit.md#member-p-cephalon-audit-configuration-auditruntimeoptions-enableinmemorywriter): `Properties` on `AuditRuntimeOptions` in `Cephalon.Audit.Configuration` (`Cephalon.Audit`) [Browse](browse.html?q=EnableInMemoryWriter&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in in-memory audit writer should remain active.
   - `bool EnableInMemoryWriter { get; set; }`
+- [EnableInProcessSubscriptionExecution](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enableinprocesssubscriptionexecution): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnableInProcessSubscriptionExecution&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets a value indicating whether the core eventing pack should execute matching subscription executors directly inside the current process when a publication is accepted.
+  - `bool EnableInProcessSubscriptionExecution { get; set; }`
 - [EnableInvitationDeliveryDispatch](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverydispatch): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationDeliveryDispatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active.
   - `bool EnableInvitationDeliveryDispatch { get; set; }`

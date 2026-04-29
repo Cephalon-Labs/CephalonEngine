@@ -29,9 +29,12 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasChannelContributors;
     private bool hasDispatchStore;
     private bool hasDispatchRuntimeContributors;
+    private bool hasExternalManagedSubscriptionExecutionBindings;
     private bool hasInboxPath;
+    private bool hasInProcessSubscriptionExecutionPath;
     private bool hasManagedSubscriptionExecutionBindings;
     private bool hasSubscriptionContributors;
+    private bool hasSubscriptionExecutors;
     private bool hasPublishingPath;
 
     public EventingModule(EventingOptions options)
@@ -62,9 +65,12 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         hasChannelContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventChannelContributor));
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
+        hasExternalManagedSubscriptionExecutionBindings = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutionBindingContributor));
         hasInboxPath = services.Any(static descriptor => descriptor.ServiceType == typeof(IInbox));
-        hasManagedSubscriptionExecutionBindings = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutionBindingContributor));
         hasSubscriptionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionContributor));
+        hasSubscriptionExecutors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutor));
+        hasInProcessSubscriptionExecutionPath = options.EnableInProcessSubscriptionExecution && hasSubscriptionExecutors;
+        hasManagedSubscriptionExecutionBindings = hasExternalManagedSubscriptionExecutionBindings || hasInProcessSubscriptionExecutionPath;
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, EventingDiagnosticsConventionContributor>());
         services.TryAddSingleton<IEventChannelCatalog, EventChannelCatalog>();
@@ -81,12 +87,59 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             services.TryAddSingleton<EventSubscriptionRuntimeCatalog>();
             services.TryAddSingleton<IEventSubscriptionRuntimeCatalog>(static provider => provider.GetRequiredService<EventSubscriptionRuntimeCatalog>());
             services.TryAddSingleton<IEventSubscriptionRuntimeReporter>(static provider => provider.GetRequiredService<EventSubscriptionRuntimeCatalog>());
+            if (hasInProcessSubscriptionExecutionPath)
+            {
+                services.TryAddSingleton<InProcessEventSubscriptionExecutorCatalog>();
+                services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventSubscriptionExecutionBindingContributor, InProcessEventSubscriptionExecutorCatalog>());
+            }
+
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingSubscriptionRuntimeSurfaceContributor>());
         }
 
-        hasPublishingPath = options.EnablePublishing &&
+        if (options.EnableInProcessSubscriptionExecution)
+        {
+            if (!options.EnablePublishing)
+            {
+                throw new InvalidOperationException(
+                    "In-process event subscription execution requires publishing to be enabled because the built-in direct publisher is the execution trigger.");
+            }
+
+            if (!options.EnableSubscriptions)
+            {
+                throw new InvalidOperationException(
+                    "In-process event subscription execution requires subscriptions to be enabled.");
+            }
+
+            if (!hasSubscriptionExecutors)
+            {
+                throw new InvalidOperationException(
+                    "In-process event subscription execution requires at least one IEventSubscriptionExecutor. Register a managed executor before enabling EnableInProcessSubscriptionExecution.");
+            }
+
+            if (hasExternalManagedSubscriptionExecutionBindings)
+            {
+                throw new InvalidOperationException(
+                    "In-process event subscription execution cannot be combined with another managed subscription-execution binding contributor. Select one execution owner for each eventing flow.");
+            }
+
+            if (hasDispatchRuntimeContributors)
+            {
+                throw new InvalidOperationException(
+                    "In-process event subscription execution cannot be combined with an event dispatch runtime contributor. Select either the built-in direct in-process path or a dispatch-runtime-backed companion path for this host.");
+            }
+        }
+
+        var hasOutboxPublishingPath = options.EnablePublishing &&
+            !hasInProcessSubscriptionExecutionPath &&
             services.Any(static descriptor => descriptor.ServiceType == typeof(IOutbox));
-        if (hasPublishingPath)
+        hasPublishingPath = hasInProcessSubscriptionExecutionPath || hasOutboxPublishingPath;
+        if (hasInProcessSubscriptionExecutionPath)
+        {
+            services.TryAddScoped<IEventPublisher, InProcessEventPublisher>();
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingInProcessPublishingRuntimeSurfaceContributor>());
+        }
+
+        if (hasOutboxPublishingPath)
         {
             services.TryAddSingleton<EventDispatchRuntimeDescriptorCatalog>();
             services.TryAddSingleton<EventDispatchRuntimeCatalog>();
@@ -116,18 +169,35 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
         if (options.EnablePublishing && hasPublishingPath)
         {
-            capabilities.Add(new Capability(
-                key: "eventing.publish",
-                displayName: "Event Publishing",
-                description: "Accepts integration events for configured event channels and stages them through the active outbox path.",
-                metadata: new Dictionary<string, string>
+            var publishMetadata = hasInProcessSubscriptionExecutionPath
+                ? new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["handoff"] = "in-process",
+                    ["dispatchRuntime"] = "cephalon-managed",
+                    ["dispatchStore"] = "not-configured",
+                    ["subscriptionExecution"] = "cephalon-managed",
+                    ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
+                    ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
+                    ["retryPolicy"] = "none",
+                    ["runtimeState"] = "available"
+                }
+                : new Dictionary<string, string>
                 {
                     ["technology"] = "event-driven-integration",
                     ["handoff"] = "outbox",
                     ["dispatchRuntime"] = hasDispatchRuntimeContributors ? "configured" : "not-configured",
                     ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
                     ["runtimeState"] = "available"
-                }));
+                };
+
+            capabilities.Add(new Capability(
+                key: "eventing.publish",
+                displayName: "Event Publishing",
+                description: hasInProcessSubscriptionExecutionPath
+                    ? "Accepts integration events for configured event channels and directly invokes matching in-process subscription executors."
+                    : "Accepts integration events for configured event channels and stages them through the active outbox path.",
+                metadata: publishMetadata));
         }
 
         if (options.EnableSubscriptions && (options.Subscriptions.Count > 0 || hasSubscriptionContributors))
@@ -142,6 +212,24 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["dispatchRuntime"] = hasManagedSubscriptionExecutionBindings ? "configured" : "not-configured",
                     ["inbox"] = hasInboxPath ? "available" : "not-configured",
                     ["runtimeState"] = "available"
+                }));
+        }
+
+        if (options.EnableSubscriptions && hasInProcessSubscriptionExecutionPath)
+        {
+            capabilities.Add(new Capability(
+                key: "eventing.subscribe",
+                displayName: "Managed Event Subscription Execution",
+                description: "Executes declared event subscriptions through the built-in in-process direct publisher without durable broker, inbox, or retry ownership.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["adapter"] = "none",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["executionMode"] = "in-process-direct",
+                    ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
+                    ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
+                    ["retryPolicy"] = "none"
                 }));
         }
 

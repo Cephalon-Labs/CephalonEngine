@@ -11,12 +11,12 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
-- treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, `/engine/event-subscription-readiness`, and `snapshot.EventSubscriptionExecutionReadiness` as adapter-neutral read seams, and the Wolverine-managed event-subscription lane as the first optional eventing-family managed proof instead of widening descriptor breadth there again
+- treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, `/engine/event-subscription-readiness`, `snapshot.EventSubscriptionExecutionReadiness`, and the opt-in direct in-process execution lane as adapter-neutral engine-owned proof, while the Wolverine-managed event-subscription lane remains an optional provider-managed proof instead of an engine requirement
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus the abstraction-level `/engine/agent-tool-runs`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
@@ -923,6 +923,41 @@ Follow-up later:
 - durable or distributed indexes, vector or semantic search, embeddings, rerankers,
   provider-specific search adapters, distributed scheduler coordination, leader election, and
   multi-node freshness orchestration remain later package-owned work
+
+### ENG-271 Eventing in-process subscription execution baseline
+
+Status: done
+Estimate: 5
+Issue: #780
+
+Why:
+
+- after the adapter-neutral binding/readiness surfaces shipped, the core eventing pack still needed
+  one useful managed execution lane that did not require consumer apps to install Wolverine for
+  lightweight in-process flows
+- the smallest honest proof is a direct process-local publisher over registered
+  `IEventSubscriptionExecutor` services, not a durable broker, inbox, distributed dispatcher, or
+  retry queue
+
+Delivered:
+
+- add `EventingOptions.EnableInProcessSubscriptionExecution` and
+  `ContinueInProcessSubscriptionExecutionAfterFailure`
+- register a Cephalon-managed direct in-process binding contributor when the option is enabled and
+  subscription executors exist
+- expose `eventing.publish`, `eventing.subscribe`, `event-publishers`, `event-subscriptions`,
+  `/engine/event-subscription-readiness`, and `snapshot.EventSubscriptionExecutionReadiness` with
+  `cephalon-managed`, `in-process-direct`, and `retryPolicy = none` metadata
+- execute matching subscriptions through `IEventPublisher` and record started/succeeded/failed
+  runtime observations through the existing subscription runtime catalog
+- prove the host path with focused ASP.NET Core hosting coverage that publishes an event, executes a
+  real executor, and verifies capabilities, runtime surfaces, readiness, and snapshot truth
+
+Follow-up later:
+
+- durable broker dispatch, inbox/idempotency ownership, retry queues, distributed subscription
+  scheduling, and provider-specific inbound consumption remain future package-owned work until a
+  package truly owns those paths
 
 ### ENG-269 Agentics tool execution operator-action baseline
 
@@ -8848,6 +8883,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 82
 
 - ENG-270 Retrieval background reindex scheduler baseline (shipped, issue #779)
+
+### Sprint 83
+
+- ENG-271 Eventing in-process subscription execution baseline (shipped, issue #780)
 
 ### Later / not scheduled yet
 
