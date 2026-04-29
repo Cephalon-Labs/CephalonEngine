@@ -63,6 +63,11 @@ public sealed record AgentToolRunState(
         string.Equals(outcome, "duplicate-skipped", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
+    /// Gets a value indicating whether the latest report represents a terminal failed outcome for this run.
+    /// </summary>
+    public bool TerminalFailure => string.Equals(LastOutcome, AgentToolExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Gets a value indicating whether the latest report represents a terminal outcome for this run.
     /// </summary>
     public bool IsTerminal =>

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T10:34:11.3663617+00:00",
+  "GeneratedAtUtc": "2026-04-29T10:52:02.5673619+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -2006,7 +2006,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 22,
+        "Properties": 23,
         "Methods": 0
       }
     },
@@ -112453,6 +112453,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-configuration-multitenancyruntimeoptions-tenants",
       "Signature": "List\u003CTenantContext\u003E Tenants { get; }",
       "Summary": "Gets the configured tenants that the built-in resolver can match by id, key, or domain."
+    },
+    {
+      "DisplayName": "TerminalFailure",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Abstractions.Agentics",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-agentics-agenttoolrunstate-terminalfailure",
+      "Signature": "bool TerminalFailure { get; }",
+      "Summary": "Gets a value indicating whether the latest report represents a terminal failed outcome for this run."
     },
     {
       "DisplayName": "TerminalFailure",

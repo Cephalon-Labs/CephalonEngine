@@ -2123,6 +2123,28 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runs);
             })
             .WithName("GetCephalonDuplicateCompletedAgentToolRuns");
+        engineGroup.MapGet("/agent-tool-runs/approval-required", (HttpContext httpContext) =>
+            {
+                var runs = httpContext.RequestServices
+                    .GetService<IAgentToolRunCatalog>()?
+                    .Runs
+                    .Where(static run => run.RequiresApproval)
+                    .ToArray() ?? [];
+
+                return Results.Ok(runs);
+            })
+            .WithName("GetCephalonApprovalRequiredAgentToolRuns");
+        engineGroup.MapGet("/agent-tool-runs/terminal-failures", (HttpContext httpContext) =>
+            {
+                var runs = httpContext.RequestServices
+                    .GetService<IAgentToolRunCatalog>()?
+                    .Runs
+                    .Where(static run => run.TerminalFailure)
+                    .ToArray() ?? [];
+
+                return Results.Ok(runs);
+            })
+            .WithName("GetCephalonTerminalFailureAgentToolRuns");
         engineGroup.MapGet("/agent-tool-runs/{runId}", (string runId, HttpContext httpContext) =>
             {
                 var run = httpContext.RequestServices

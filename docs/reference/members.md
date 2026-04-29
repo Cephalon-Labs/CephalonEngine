@@ -25921,6 +25921,9 @@ Browse the published API surface by public member.
 - [Tenants](cephalon-multitenancy.md#member-p-cephalon-multitenancy-configuration-multitenancyruntimeoptions-tenants): `Properties` on `MultiTenancyRuntimeOptions` in `Cephalon.MultiTenancy.Configuration` (`Cephalon.MultiTenancy`) [Browse](browse.html?q=Tenants&assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Configuration&scope=members)
   - Gets the configured tenants that the built-in resolver can match by id, key, or domain.
   - `List<TenantContext> Tenants { get; }`
+- [TerminalFailure](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-terminalfailure): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=TerminalFailure&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
+  - Gets a value indicating whether the latest report represents a terminal failed outcome for this run.
+  - `bool TerminalFailure { get; }`
 - [TerminalFailure](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-terminalfailure): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TerminalFailure&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether the latest failure should stop re-entering pending-dispatch reads.
   - `const string TerminalFailure`

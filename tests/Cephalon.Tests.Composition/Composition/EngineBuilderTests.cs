@@ -2437,6 +2437,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("1", analystEntry.Metadata["succeededCount"]);
         Assert.Equal("2", analystEntry.Metadata["totalReports"]);
         Assert.Equal("false", analystEntry.Metadata["requiresApproval"]);
+        Assert.Equal("false", analystEntry.Metadata["terminalFailure"]);
         Assert.Equal("true", analystEntry.Metadata["isTerminal"]);
         Assert.Equal("operator", analystEntry.Metadata["lastActorId"]);
         Assert.Equal("corr-agentics-001", analystEntry.Metadata["lastCorrelationId"]);
@@ -2632,7 +2633,10 @@ public sealed class EngineBuilderTests
             }));
 
         var runCatalog = provider.GetRequiredService<IAgentToolRunCatalog>();
+        var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
         var runState = Assert.Single(runCatalog.GetByToolId("analyst"));
+        var agenticsSurface = Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
+        var analystEntry = Assert.Single(agenticsSurface.Entries, entry => entry.Id == "analyst");
 
         Assert.Equal(AgentToolExecutionOutcomes.ApprovalRequired, result.Outcome);
         Assert.Equal("The analyst tool requires approval for this request.", result.OutputSummary);
@@ -2642,6 +2646,67 @@ public sealed class EngineBuilderTests
         Assert.Equal(0, runState.SucceededCount);
         Assert.True(runState.RequiresApproval);
         Assert.False(runState.IsTerminal);
+        Assert.False(runState.TerminalFailure);
+        Assert.Equal("true", analystEntry.Metadata["requiresApproval"]);
+        Assert.Equal("false", analystEntry.Metadata["terminalFailure"]);
+        Assert.Equal("false", analystEntry.Metadata["isTerminal"]);
+    }
+
+    [Fact]
+    public async Task AddTechnologyPacksProjectTerminalFailedAgentToolRuns()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<FailingAgentToolExecutor>();
+        services.AddSingleton<IAgentToolExecutor>(static serviceProvider =>
+            serviceProvider.GetRequiredService<FailingAgentToolExecutor>());
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["AgenticWorkloads"]));
+            engine.AddAgentics(options =>
+            {
+                options.Tools.Add(new AgentToolDescriptor(
+                    id: "failing-analyst",
+                    displayName: "Failing Analyst",
+                    description: "Exercises terminal failed run posture for the managed agentics lane."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<IAgentToolDispatcher>();
+
+        var result = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "failing-analyst",
+            runId: "analysis-run-terminal-failure-001",
+            actorId: "operator",
+            correlationId: "corr-agentics-terminal-failure-001"));
+
+        var runCatalog = provider.GetRequiredService<IAgentToolRunCatalog>();
+        var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var runState = Assert.Single(runCatalog.GetByToolId("failing-analyst"));
+        var agenticsSurface = Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
+        var failedEntry = Assert.Single(agenticsSurface.Entries, entry => entry.Id == "failing-analyst");
+
+        Assert.Equal(AgentToolExecutionOutcomes.Failed, result.Outcome);
+        Assert.Equal("Failing analyst tool failed.", result.Error);
+        Assert.Equal(AgentToolExecutionOutcomes.Failed, runState.LastOutcome);
+        Assert.Equal(1, runState.StartedCount);
+        Assert.Equal(1, runState.FailedCount);
+        Assert.Equal(2, runState.TotalReports);
+        Assert.True(runState.TerminalFailure);
+        Assert.True(runState.IsTerminal);
+        Assert.False(runState.RetryPending);
+        Assert.False(runState.RequiresApproval);
+        Assert.Equal("failing-analyst", runState.ToolId);
+        Assert.Equal("analysis-run-terminal-failure-001", runState.RunId);
+        Assert.Equal("Failing analyst tool failed.", runState.LastError);
+        Assert.Equal("failed", failedEntry.Metadata["lastOutcome"]);
+        Assert.Equal("1", failedEntry.Metadata["failedCount"]);
+        Assert.Equal("true", failedEntry.Metadata["terminalFailure"]);
+        Assert.Equal("true", failedEntry.Metadata["isTerminal"]);
+        Assert.Equal(nameof(FailingAgentToolExecutor), failedEntry.Metadata["reported.executor"]);
     }
 
     [Fact]
@@ -3819,6 +3884,25 @@ public sealed class EngineBuilderTests
                 new Dictionary<string, string>
                 {
                     ["executor"] = nameof(RetryingAgentToolExecutor),
+                    ["observedAttempt"] = context.Attempt.ToString(CultureInfo.InvariantCulture)
+                }));
+        }
+    }
+
+    private sealed class FailingAgentToolExecutor : IAgentToolExecutor
+    {
+        public string ToolId => "failing-analyst";
+
+        public ValueTask<AgentToolExecutionResult> ExecuteAsync(
+            AgentToolExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(AgentToolExecutionResult.Failed(
+                "Failing analyst tool failed.",
+                new Dictionary<string, string>
+                {
+                    ["executor"] = nameof(FailingAgentToolExecutor),
                     ["observedAttempt"] = context.Attempt.ToString(CultureInfo.InvariantCulture)
                 }));
         }

@@ -161,6 +161,7 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
             metadata["requiresApproval"] = latestRun.RequiresApproval.ToString().ToLowerInvariant();
             metadata["retryPending"] = latestRun.RetryPending.ToString().ToLowerInvariant();
             metadata["duplicateCompleted"] = latestRun.DuplicateCompleted.ToString().ToLowerInvariant();
+            metadata["terminalFailure"] = latestRun.TerminalFailure.ToString().ToLowerInvariant();
             metadata["isTerminal"] = latestRun.IsTerminal.ToString().ToLowerInvariant();
 
             if (!string.IsNullOrWhiteSpace(latestRun.LastActorId))

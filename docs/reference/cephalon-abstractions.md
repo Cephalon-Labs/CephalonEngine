@@ -615,6 +615,16 @@ int SucceededCount { get; set; }
 
 The number of `succeeded` observations reported so far.
 
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-terminalfailure"></a>
+
+##### `TerminalFailure`
+
+```csharp
+bool TerminalFailure { get; }
+```
+
+Gets a value indicating whether the latest report represents a terminal failed outcome for this run.
+
 <a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-toolid"></a>
 
 ##### `ToolId`

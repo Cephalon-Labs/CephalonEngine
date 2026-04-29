@@ -11,7 +11,7 @@
 - Cephalon-managed agent-tool dispatch through registered executors
 - bounded process-local retry for executor failures when explicitly configured
 - process-local duplicate-completed run suppression when explicitly configured
-- run-state reporting for tool executions, including retry-scheduled posture
+- run-state reporting for tool executions, including retry-scheduled, approval-required, duplicate-completed, and terminal-failure posture
 - policy and observer hooks for approval, denial, audit, and operational projection
 - runtime-surface contribution for introspection
 
@@ -59,20 +59,22 @@ When `AgenticRuntimeOptions.EnableExecution` is enabled, the pack also owns a na
 - the abstraction-level `IAgentToolDispatcher` contract resolves the selected `AgentToolDescriptor`, reports a `started` observation, evaluates `IAgentToolExecutionPolicy` hooks, invokes the matching `IAgentToolExecutor`, and reports the final outcome through the `Cephalon.Agentics` implementation.
 - when `AgenticRuntimeOptions.ExecutionMaxAttempts` is greater than `1`, the dispatcher retries failed executor attempts inside the same process, reports `retry-scheduled` observations, and publishes `retryPolicy = bounded-in-process`, max-attempt, delay, durability, scope, and next-attempt metadata without claiming durable retry queues.
 - when `AgenticRuntimeOptions.EnableExecutionIdempotency` is enabled, the dispatcher suppresses duplicate `toolId + runId` executions that already completed successfully inside the current process, reports the duplicate as `skipped`, and publishes `idempotencyPolicy = completed-run`, `idempotencyKey = tool-run`, retention, durability, scope, and `idempotencyOutcome = duplicate-skipped` metadata without claiming a durable inbox, broker deduplication, cross-node exactly-once delivery, or provider AI orchestration.
-- `IAgentToolRunCatalog` exposes the latest run-state truth for each tool run through `Cephalon.Abstractions.Agentics`, including outcome counts, retry-scheduled counts, skipped counts, actor/correlation details, approval-required posture, retry-pending posture, duplicate-completed posture, terminal-state posture, and the latest operator metadata.
+- `IAgentToolRunCatalog` exposes the latest run-state truth for each tool run through `Cephalon.Abstractions.Agentics`, including outcome counts, retry-scheduled counts, skipped counts, actor/correlation details, approval-required posture, retry-pending posture, duplicate-completed posture, terminal-failure posture, terminal-state posture, and the latest operator metadata.
 - `IAgentToolExecutionObserver` receives every report after it is recorded so modules can attach audit, telemetry, or projection behavior without replacing the dispatcher.
 
 The resulting operator-facing answer flows through `/engine/technology-surfaces`,
 `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`,
-`/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/{runId}`,
-`/engine/agent-tool-runs/by-tool/{toolId}`, `POST /engine/agent-tools/{toolId}/runs`, and
+`/engine/agent-tool-runs/idempotency-duplicates`,
+`/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`,
+`/engine/agent-tool-runs/{runId}`, `/engine/agent-tool-runs/by-tool/{toolId}`,
+`POST /engine/agent-tools/{toolId}/runs`, and
 `snapshot.AgentToolRuns`. Tool entries now include
 execution readiness (`executionEnabled`, `executionOwnership`, `executorConfigured`,
 `executorCount`) and run-state metadata (`runtimeState`, `runCount`, `lastOutcome`,
 `retryPolicy`, `retryMaxAttempts`, `retryDelayMilliseconds`, `retryScheduledCount`,
 `retryPending`, `idempotencyPolicy`, `idempotencyKey`, `idempotencyRetentionMinutes`,
-`idempotencyDurability`, `idempotencyScope`, `duplicateCompleted`, `totalReports`,
-approval/denial counters, and `reported.*` metadata). A tool without a registered executor remains
+`idempotencyDurability`, `idempotencyScope`, `duplicateCompleted`, `terminalFailure`,
+`totalReports`, approval/denial counters, and `reported.*` metadata). A tool without a registered executor remains
 truthful as `awaiting-executor` rather than being described as fully managed.
 
 ASP.NET Core hosts can trigger one bounded managed run through
@@ -81,9 +83,10 @@ types. The route accepts optional run id, actor id, correlation id, attempt, str
 metadata, adds safe `trigger` and `route` metadata, and returns `404` when the active runtime does
 not expose the dispatcher or the selected tool does not exist.
 
-This is still intentionally not an autonomous agent planner, durable retry queue, durable inbox,
-memory store, distributed scheduler, cross-node exactly-once layer, or provider-specific AI
-orchestration layer. Those should land only when a package owns those runtime paths explicitly.
+This is still intentionally not an autonomous agent planner, durable approval workflow, durable
+retry queue, durable inbox, memory store, distributed scheduler, cross-node exactly-once layer,
+dead-letter system, or provider-specific AI orchestration layer. Those should land only when a
+package owns those runtime paths explicitly.
 
 The showcase sample now includes `ShowcaseAgenticsModule`, which contributes a catalog-inspection tool, a matching executor, an approval policy, and an observer hook so the dispatcher/run-state loop is proven end to end in an adoption-quality host.
 

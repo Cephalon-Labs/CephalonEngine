@@ -1356,6 +1356,8 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "AgenticWorkloads";
         builder.Services.AddSingleton<IAgentToolExecutor, HostingAgentToolExecutor>();
+        builder.Services.AddSingleton<IAgentToolExecutor, FailingHostingAgentToolExecutor>();
+        builder.Services.AddSingleton<IAgentToolExecutionPolicy, HostingAgentToolApprovalPolicy>();
         builder.AddCephalon(cephalon =>
         {
             cephalon.AddAgentics(options =>
@@ -1366,6 +1368,10 @@ public sealed class AspNetCoreHostingTests
                     id: "host-operator",
                     displayName: "Host Operator",
                     description: "Exercises agent-tool run routes in the ASP.NET Core host."));
+                options.Tools.Add(new AgentToolDescriptor(
+                    id: "host-failure",
+                    displayName: "Host Failure",
+                    description: "Exercises terminal-failure run routes in the ASP.NET Core host."));
             });
         });
 
@@ -1418,6 +1424,7 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal(2, listedRun.TotalReports);
         Assert.True(listedRun.IsTerminal);
         Assert.False(listedRun.RequiresApproval);
+        Assert.False(listedRun.TerminalFailure);
         Assert.Equal("aspnetcore-operator-route", listedRun.Metadata["trigger"]);
         Assert.Equal("/engine/agent-tools/{toolId}/runs", listedRun.Metadata["route"]);
         Assert.Equal("hosting-test", listedRun.Metadata["requestedBy"]);
@@ -1453,6 +1460,63 @@ public sealed class AspNetCoreHostingTests
         Assert.True(retryPendingRun.RetryPending);
         Assert.Equal(1, retryPendingRun.RetryScheduledCount);
         Assert.Equal("bounded-in-process", retryPendingRun.Metadata["retryPolicy"]);
+
+        var approvalExecutionResponse = await client.PostAsJsonAsync(
+            "/engine/agent-tools/host-operator/runs",
+            new
+            {
+                runId = "host-run-approval-001",
+                actorId = "operator",
+                correlationId = "corr-host-run-approval-001",
+                metadata = new Dictionary<string, string>
+                {
+                    ["approval"] = "required"
+                }
+            });
+        var approvalResult = await approvalExecutionResponse.Content.ReadFromJsonAsync<AgentToolExecutionResult>();
+        var approvalRuns = await client.GetFromJsonAsync<AgentToolRunState[]>("/engine/agent-tool-runs/approval-required");
+        var approvalRun = Assert.Single(approvalRuns!);
+
+        Assert.Equal(HttpStatusCode.OK, approvalExecutionResponse.StatusCode);
+        Assert.NotNull(approvalResult);
+        Assert.Equal(AgentToolExecutionOutcomes.ApprovalRequired, approvalResult.Outcome);
+        Assert.Equal("Host operator approval is required.", approvalResult.OutputSummary);
+        Assert.Equal(nameof(HostingAgentToolApprovalPolicy), approvalResult.Metadata["policy"]);
+        Assert.Equal("host-run-approval-001", approvalRun.RunId);
+        Assert.True(approvalRun.RequiresApproval);
+        Assert.False(approvalRun.IsTerminal);
+        Assert.False(approvalRun.TerminalFailure);
+        Assert.Equal(1, approvalRun.StartedCount);
+        Assert.Equal(1, approvalRun.ApprovalRequiredCount);
+        Assert.Equal(0, approvalRun.SucceededCount);
+        Assert.Equal(nameof(HostingAgentToolApprovalPolicy), approvalRun.Metadata["policy"]);
+
+        var failureExecutionResponse = await client.PostAsJsonAsync(
+            "/engine/agent-tools/host-failure/runs",
+            new
+            {
+                runId = "host-run-failure-001",
+                actorId = "operator",
+                correlationId = "corr-host-run-failure-001"
+            });
+        var failureResult = await failureExecutionResponse.Content.ReadFromJsonAsync<AgentToolExecutionResult>();
+        var terminalFailureRuns = await client.GetFromJsonAsync<AgentToolRunState[]>("/engine/agent-tool-runs/terminal-failures");
+        var terminalFailureRun = Assert.Single(terminalFailureRuns!);
+
+        Assert.Equal(HttpStatusCode.OK, failureExecutionResponse.StatusCode);
+        Assert.NotNull(failureResult);
+        Assert.Equal(AgentToolExecutionOutcomes.Failed, failureResult.Outcome);
+        Assert.Equal("Host failure tool failed.", failureResult.Error);
+        Assert.Equal(nameof(FailingHostingAgentToolExecutor), failureResult.Metadata["executor"]);
+        Assert.Equal("host-run-failure-001", terminalFailureRun.RunId);
+        Assert.True(terminalFailureRun.TerminalFailure);
+        Assert.True(terminalFailureRun.IsTerminal);
+        Assert.False(terminalFailureRun.RetryPending);
+        Assert.False(terminalFailureRun.RequiresApproval);
+        Assert.Equal(1, terminalFailureRun.StartedCount);
+        Assert.Equal(1, terminalFailureRun.FailedCount);
+        Assert.Equal("Host failure tool failed.", terminalFailureRun.LastError);
+        Assert.Equal(nameof(FailingHostingAgentToolExecutor), terminalFailureRun.Metadata["executor"]);
 
         var duplicateExecutionResponse = await client.PostAsJsonAsync(
             "/engine/agent-tools/host-operator/runs",
@@ -6044,6 +6108,46 @@ note: visible
                 {
                     ["executor"] = nameof(HostingAgentToolExecutor)
                 }));
+        }
+    }
+
+    private sealed class FailingHostingAgentToolExecutor : IAgentToolExecutor
+    {
+        public string ToolId => "host-failure";
+
+        public ValueTask<AgentToolExecutionResult> ExecuteAsync(
+            AgentToolExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(AgentToolExecutionResult.Failed(
+                "Host failure tool failed.",
+                new Dictionary<string, string>
+                {
+                    ["executor"] = nameof(FailingHostingAgentToolExecutor)
+                }));
+        }
+    }
+
+    private sealed class HostingAgentToolApprovalPolicy : IAgentToolExecutionPolicy
+    {
+        public ValueTask<AgentToolExecutionDecision> EvaluateAsync(
+            AgentToolExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (context.Metadata.TryGetValue("approval", out var approval) &&
+                string.Equals(approval, "required", StringComparison.OrdinalIgnoreCase))
+            {
+                return ValueTask.FromResult(AgentToolExecutionDecision.RequireApproval(
+                    "Host operator approval is required.",
+                    new Dictionary<string, string>
+                    {
+                        ["policy"] = nameof(HostingAgentToolApprovalPolicy)
+                    }));
+            }
+
+            return ValueTask.FromResult(AgentToolExecutionDecision.Allow());
         }
     }
 
