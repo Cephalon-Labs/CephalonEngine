@@ -10,11 +10,13 @@
 - translation from SendGrid deliverability events into `TenantInvitationDeliveryStatusReconciliationRequest`
 - Cephalon context extraction from SendGrid custom arguments such as `cephalonTenantId`, `cephalonInvitationId`, `cephalonDeliveryChannel`, `cephalonSenderId`, and `cephalonCorrelationId`
 - `sg_message_id` correlation back to the stored SendGrid `X-Message-ID` provider message id by using the prefix before the first dot by default
+- optional SendGrid signed Event Webhook verification with ECDSA-SHA256 over `X-Twilio-Email-Event-Webhook-Timestamp` plus the exact raw request body bytes
 - safe status metadata such as SendGrid event id, message id, event type, status, bounce type, reason, event timestamp, and translation ownership
+- safe signed-webhook metadata such as verification outcome, algorithm, timestamp, age, and signature fingerprint without storing the public key or raw signature
 - observation-id seeding from `sg_event_id` through the normalized delivery-status observation store
 - optional engagement-event mapping when a host deliberately sets `MapEngagementEventsAsDelivered`
 - runtime truth through the `tenant-invitation-delivery-sendgrid-status-callbacks` technology surface
-- stable diagnostics for accepted SendGrid callback payloads
+- stable diagnostics for accepted SendGrid callback payloads and rejected signed-webhook verification attempts
 
 ## Main surfaces
 
@@ -69,7 +71,12 @@ Configuration example:
             "MaxRequestBodyBytes": 262144,
             "MaxEventsPerRequest": 1000,
             "MapEngagementEventsAsDelivered": false,
-            "NormalizeProviderMessageIdFromSgMessageId": true
+            "NormalizeProviderMessageIdFromSgMessageId": true,
+            "RequireSignedEventWebhook": true,
+            "SignedEventWebhookPublicKey": "${SENDGRID_EVENT_WEBHOOK_PUBLIC_KEY}",
+            "SignedEventWebhookSignatureHeaderName": "X-Twilio-Email-Event-Webhook-Signature",
+            "SignedEventWebhookTimestampHeaderName": "X-Twilio-Email-Event-Webhook-Timestamp",
+            "SignedEventWebhookSignatureToleranceSeconds": 300
           }
         }
       }
@@ -82,7 +89,9 @@ Mapped statuses are intentionally narrow. `processed` becomes `accepted`, `deliv
 
 The endpoint returns `SendGridInvitationDeliveryStatusCallbackResult` with aggregate counts and per-event translation results. Events without Cephalon custom arguments are skipped without leaking recipient email addresses in the response. Translated events still go through the host-agnostic reconciler, so invitation existence, provider-message matching, status recording, and observation storage keep using the same governance rules as normalized callbacks.
 
-This package does not verify SendGrid's signed Event Webhook signature yet. SendGrid-specific cryptographic verification depends on raw request bytes plus `X-Twilio-Email-Event-Webhook-Signature` and `X-Twilio-Email-Event-Webhook-Timestamp`, so it remains an explicit follow-up surface instead of being implied by this translator. Hosts can protect the endpoint today with ASP.NET Core authorization, gateway verification, or SendGrid OAuth token validation. Durable callback inboxes, distributed replay protection, provider polling, bounce orchestration beyond status translation, dynamic-template lifecycle management, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, public onboarding, tenant-admin UI, and distributed/provider-backed governance stores remain later provider-pack or application-owned work.
+When `RequireSignedEventWebhook` is enabled, the endpoint verifies the SendGrid ECDSA-SHA256 signature before JSON parsing or reconciliation. Verification uses `X-Twilio-Email-Event-Webhook-Signature`, `X-Twilio-Email-Event-Webhook-Timestamp`, and the exact raw request body bytes because re-serialized JSON can change the signed bytes. Missing public keys are treated as host misconfiguration, while missing, malformed, stale, or invalid request signatures fail closed with `401`. Runtime metadata reports signature verification as `cephalon-managed` only when this option is enabled and keeps the public key out of runtime output.
+
+ASP.NET Core authorization is still enabled by default and can be combined with SendGrid OAuth, gateway policy, or other host controls. Durable callback inboxes, distributed replay protection, provider polling, bounce orchestration beyond status translation, dynamic-template lifecycle management, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, public onboarding, tenant-admin UI, and distributed/provider-backed governance stores remain later provider-pack or application-owned work.
 
 ## Provider references
 

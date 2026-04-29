@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T18:08:17.3133402+00:00",
+  "GeneratedAtUtc": "2026-04-29T18:55:40.2796955+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -15721,7 +15721,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 13,
+        "Properties": 18,
         "Methods": 1
       }
     },
@@ -15826,7 +15826,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 10,
         "Methods": 0
       }
     },
@@ -101141,6 +101141,17 @@
       "Summary": "Gets a value indicating whether package signatures must verify against a trusted public key."
     },
     {
+      "DisplayName": "RequireSignedEventWebhook",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-requiresignedeventwebhook",
+      "Signature": "bool RequireSignedEventWebhook { get; set; }",
+      "Summary": "Gets or sets a value indicating whether SendGrid signed Event Webhook requests must verify before translation."
+    },
+    {
       "DisplayName": "RequiresManualApproval",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
@@ -107307,8 +107318,8 @@
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
-      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult",
-      "Signature": "SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList\u003CSendGridInvitationDeliveryStatusCallbackEventResult\u003E events)",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-system-boolean-system-boolean-system-string",
+      "Signature": "SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList\u003CSendGridInvitationDeliveryStatusCallbackEventResult\u003E events, bool signedEventWebhookVerificationRequired, bool signedEventWebhookVerified, string signedEventWebhookVerificationOutcome)",
       "Summary": "Creates a SendGrid callback translation response."
     },
     {
@@ -107750,6 +107761,83 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-signatureverificationreason",
       "Signature": "string SignatureVerificationReason { get; set; }",
       "Summary": "The aggregate signature verification outcome summary."
+    },
+    {
+      "DisplayName": "SignedEventWebhookPublicKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhookpublickey",
+      "Signature": "string SignedEventWebhookPublicKey { get; set; }",
+      "Summary": "Gets or sets the SendGrid public verification key used for signed Event Webhook verification."
+    },
+    {
+      "DisplayName": "SignedEventWebhookSignatureHeaderName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhooksignatureheadername",
+      "Signature": "string SignedEventWebhookSignatureHeaderName { get; set; }",
+      "Summary": "Gets or sets the request header that carries the SendGrid Event Webhook signature."
+    },
+    {
+      "DisplayName": "SignedEventWebhookSignatureToleranceSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhooksignaturetoleranceseconds",
+      "Signature": "int SignedEventWebhookSignatureToleranceSeconds { get; set; }",
+      "Summary": "Gets or sets the allowed clock skew, in seconds, for SendGrid signed Event Webhook timestamps."
+    },
+    {
+      "DisplayName": "SignedEventWebhookTimestampHeaderName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhooktimestampheadername",
+      "Signature": "string SignedEventWebhookTimestampHeaderName { get; set; }",
+      "Summary": "Gets or sets the request header that carries the Unix timestamp included in the SendGrid Event Webhook signature."
+    },
+    {
+      "DisplayName": "SignedEventWebhookVerificationOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookverificationoutcome",
+      "Signature": "string SignedEventWebhookVerificationOutcome { get; }",
+      "Summary": "Gets the signed Event Webhook verification outcome for this callback."
+    },
+    {
+      "DisplayName": "SignedEventWebhookVerificationRequired",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookverificationrequired",
+      "Signature": "bool SignedEventWebhookVerificationRequired { get; }",
+      "Summary": "Gets a value indicating whether SendGrid signed Event Webhook verification was required for this callback."
+    },
+    {
+      "DisplayName": "SignedEventWebhookVerified",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookverified",
+      "Signature": "bool SignedEventWebhookVerified { get; }",
+      "Summary": "Gets a value indicating whether the required SendGrid signed Event Webhook signature verified."
     },
     {
       "DisplayName": "Signer",

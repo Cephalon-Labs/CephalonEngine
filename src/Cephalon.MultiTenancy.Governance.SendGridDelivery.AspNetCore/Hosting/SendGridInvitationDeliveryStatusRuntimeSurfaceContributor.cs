@@ -23,6 +23,12 @@ internal sealed class SendGridInvitationDeliveryStatusRuntimeSurfaceContributor(
         var maxEventsPerRequest = endpoint?.MaxEventsPerRequest ?? options.GetMaxEventsPerRequest();
         var mapEngagementEventsAsDelivered = endpoint?.MapEngagementEventsAsDelivered ?? options.MapEngagementEventsAsDelivered;
         var normalizeProviderMessageId = endpoint?.NormalizeProviderMessageIdFromSgMessageId ?? options.NormalizeProviderMessageIdFromSgMessageId;
+        var requireSignedEventWebhook = endpoint?.RequireSignedEventWebhook ?? options.RequireSignedEventWebhook;
+        var signedEventWebhookPublicKeyConfigured = endpoint?.SignedEventWebhookPublicKeyConfigured ?? options.GetSignedEventWebhookPublicKey() is not null;
+        var signedEventWebhookSignatureHeaderName = endpoint?.SignedEventWebhookSignatureHeaderName ?? options.GetSignedEventWebhookSignatureHeaderName();
+        var signedEventWebhookTimestampHeaderName = endpoint?.SignedEventWebhookTimestampHeaderName ?? options.GetSignedEventWebhookTimestampHeaderName();
+        var signedEventWebhookSignatureToleranceSeconds = endpoint?.SignedEventWebhookSignatureToleranceSeconds ?? options.GetSignedEventWebhookSignatureToleranceSeconds();
+        var signatureVerificationOwnership = requireSignedEventWebhook ? "cephalon-managed" : "not-configured";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -42,7 +48,14 @@ internal sealed class SendGridInvitationDeliveryStatusRuntimeSurfaceContributor(
             ["tenantInvitationDeliveryStatusCallbackEndpointOwnership"] = endpointOwnership,
             ["sendGridEventWebhookTranslationOwnership"] = endpointOwnership,
             ["sendGridEventWebhookInboxOwnership"] = "application-managed",
-            ["sendGridEventWebhookSignatureVerificationOwnership"] = "application-managed",
+            ["sendGridEventWebhookSignatureVerificationOwnership"] = signatureVerificationOwnership,
+            ["sendGridEventWebhookSignatureVerificationRequired"] = requireSignedEventWebhook.ToString().ToLowerInvariant(),
+            ["sendGridEventWebhookSignaturePublicKeyConfigured"] = signedEventWebhookPublicKeyConfigured.ToString().ToLowerInvariant(),
+            ["sendGridEventWebhookSignatureAlgorithm"] = "ecdsa-sha256",
+            ["sendGridEventWebhookSignaturePayload"] = "timestamp+raw-body",
+            ["sendGridEventWebhookSignatureHeaderName"] = signedEventWebhookSignatureHeaderName,
+            ["sendGridEventWebhookSignatureTimestampHeaderName"] = signedEventWebhookTimestampHeaderName,
+            ["sendGridEventWebhookSignatureToleranceSeconds"] = signedEventWebhookSignatureToleranceSeconds.ToString(CultureInfo.InvariantCulture),
             ["sendGridEventWebhookOAuthVerificationOwnership"] = requireAuthorization ? "host-managed-authorization" : "not-configured",
             ["sendGridEventWebhookReplayProtectionOwnership"] = "application-managed",
             ["tenantInvitationDeliveryStatusReconcilerDependency"] = "ITenantInvitationDeliveryStatusReconciler",
@@ -115,7 +128,12 @@ internal sealed class SendGridInvitationDeliveryStatusCallbackRuntimeCatalog
         int maxRequestBodyBytes,
         int maxEventsPerRequest,
         bool mapEngagementEventsAsDelivered,
-        bool normalizeProviderMessageIdFromSgMessageId)
+        bool normalizeProviderMessageIdFromSgMessageId,
+        bool requireSignedEventWebhook,
+        bool signedEventWebhookPublicKeyConfigured,
+        string signedEventWebhookSignatureHeaderName,
+        string signedEventWebhookTimestampHeaderName,
+        int signedEventWebhookSignatureToleranceSeconds)
     {
         lock (syncRoot)
         {
@@ -129,7 +147,12 @@ internal sealed class SendGridInvitationDeliveryStatusCallbackRuntimeCatalog
                 maxRequestBodyBytes,
                 maxEventsPerRequest,
                 mapEngagementEventsAsDelivered,
-                normalizeProviderMessageIdFromSgMessageId);
+                normalizeProviderMessageIdFromSgMessageId,
+                requireSignedEventWebhook,
+                signedEventWebhookPublicKeyConfigured,
+                signedEventWebhookSignatureHeaderName,
+                signedEventWebhookTimestampHeaderName,
+                signedEventWebhookSignatureToleranceSeconds);
         }
     }
 }
@@ -144,4 +167,9 @@ internal sealed record SendGridInvitationDeliveryStatusCallbackEndpointRuntimeSn
     int MaxRequestBodyBytes,
     int MaxEventsPerRequest,
     bool MapEngagementEventsAsDelivered,
-    bool NormalizeProviderMessageIdFromSgMessageId);
+    bool NormalizeProviderMessageIdFromSgMessageId,
+    bool RequireSignedEventWebhook,
+    bool SignedEventWebhookPublicKeyConfigured,
+    string SignedEventWebhookSignatureHeaderName,
+    string SignedEventWebhookTimestampHeaderName,
+    int SignedEventWebhookSignatureToleranceSeconds);

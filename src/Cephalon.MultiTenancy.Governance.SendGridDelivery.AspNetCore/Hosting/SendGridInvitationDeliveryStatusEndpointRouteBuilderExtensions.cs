@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting;
@@ -26,8 +29,8 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
     /// <returns>The same endpoint route builder for fluent routing composition.</returns>
     /// <remarks>
     /// The endpoint translates SendGrid Event Webhook JSON arrays into the host-agnostic
-    /// <see cref="ITenantInvitationDeliveryStatusReconciler" />. It owns provider payload translation only. SendGrid
-    /// signed-webhook verification, OAuth token validation, durable inboxing, and distributed replay protection remain
+    /// <see cref="ITenantInvitationDeliveryStatusReconciler" />. It can also verify SendGrid signed Event Webhook
+    /// signatures when configured. OAuth token validation, durable inboxing, and distributed replay protection remain
     /// host-managed or future provider-pack responsibilities.
     /// </remarks>
     public static IEndpointRouteBuilder MapCephalonSendGridInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)
@@ -80,7 +83,12 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                 options.GetMaxRequestBodyBytes(),
                 options.GetMaxEventsPerRequest(),
                 options.MapEngagementEventsAsDelivered,
-                options.NormalizeProviderMessageIdFromSgMessageId);
+                options.NormalizeProviderMessageIdFromSgMessageId,
+                options.RequireSignedEventWebhook,
+                options.GetSignedEventWebhookPublicKey() is not null,
+                options.GetSignedEventWebhookSignatureHeaderName(),
+                options.GetSignedEventWebhookTimestampHeaderName(),
+                options.GetSignedEventWebhookSignatureToleranceSeconds());
 
         return endpoints;
     }
@@ -104,6 +112,14 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
         if (requestBody.Failure is not null)
         {
             return requestBody.Failure;
+        }
+
+        var logger = loggerFactory.CreateLogger("Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore");
+        var signatureVerification = VerifySignedEventWebhook(context, options, requestBody.Body);
+        if (signatureVerification.Failure is not null)
+        {
+            SendGridInvitationDeliveryAspNetCoreLogs.CallbackSignatureRejected(logger, signatureVerification.Outcome);
+            return signatureVerification.Failure;
         }
 
         JsonDocument document;
@@ -138,7 +154,6 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                     statusCode: StatusCodes.Status413PayloadTooLarge);
             }
 
-            var logger = loggerFactory.CreateLogger("Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore");
             var eventResults = new List<SendGridInvitationDeliveryStatusCallbackEventResult>(eventCount);
             var translatedEvents = 0;
             var reconciledEvents = 0;
@@ -160,8 +175,9 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                 }
 
                 translatedEvents++;
+                var reconciliationRequest = ApplySignatureMetadata(mapping.Request!, signatureVerification);
                 var reconciliation = await reconciler
-                    .ReconcileAsync(mapping.Request!, cancellationToken)
+                    .ReconcileAsync(reconciliationRequest, cancellationToken)
                     .ConfigureAwait(false);
 
                 if (reconciliation.Reconciled)
@@ -191,7 +207,10 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                 reconciledEvents,
                 skippedEvents,
                 deniedEvents,
-                eventResults);
+                eventResults,
+                signatureVerification.Configured,
+                signatureVerification.Verified,
+                signatureVerification.Outcome);
 
             return Results.Json(result, SerializerOptions);
         }
@@ -235,6 +254,263 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
         }
 
         return CallbackRequestBodyReadResult.Success(buffer.ToArray());
+    }
+
+    private static SignedEventWebhookVerificationResult VerifySignedEventWebhook(
+        HttpContext context,
+        SendGridInvitationDeliveryAspNetCoreOptions options,
+        byte[] requestBody)
+    {
+        if (!options.RequireSignedEventWebhook)
+        {
+            return SignedEventWebhookVerificationResult.NotConfigured();
+        }
+
+        var publicKey = options.GetSignedEventWebhookPublicKey();
+        if (publicKey is null)
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "public-key-missing",
+                Results.Problem(
+                    title: "SendGrid signed Event Webhook public key is required.",
+                    detail: "Configure SignedEventWebhookPublicKey before requiring SendGrid signed Event Webhook verification.",
+                    statusCode: StatusCodes.Status500InternalServerError));
+        }
+
+        if (!TryImportPublicKey(publicKey, out var importedKey))
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "public-key-invalid",
+                Results.Problem(
+                    title: "SendGrid signed Event Webhook public key is invalid.",
+                    detail: "Configure SignedEventWebhookPublicKey as a PEM public key or Base64-encoded SubjectPublicKeyInfo value.",
+                    statusCode: StatusCodes.Status500InternalServerError));
+        }
+
+        using var ecdsa = importedKey;
+        var signatureHeaderName = options.GetSignedEventWebhookSignatureHeaderName();
+        if (!TryGetSingleHeader(context, signatureHeaderName, out var signature))
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "signature-missing",
+                SignatureProblem(
+                    "SendGrid signed Event Webhook signature is required.",
+                    $"Set the {signatureHeaderName} header to the SendGrid Event Webhook signature."));
+        }
+
+        var timestampHeaderName = options.GetSignedEventWebhookTimestampHeaderName();
+        if (!TryGetSingleHeader(context, timestampHeaderName, out var timestamp))
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "timestamp-missing",
+                SignatureProblem(
+                    "SendGrid signed Event Webhook timestamp is required.",
+                    $"Set the {timestampHeaderName} header to the Unix timestamp included in the SendGrid signature."));
+        }
+
+        if (!long.TryParse(timestamp, NumberStyles.None, CultureInfo.InvariantCulture, out var timestampSeconds))
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "timestamp-invalid",
+                SignatureProblem(
+                    "SendGrid signed Event Webhook timestamp is invalid.",
+                    "The SendGrid Event Webhook timestamp must be a Unix timestamp in seconds."));
+        }
+
+        DateTimeOffset signedAtUtc;
+        try
+        {
+            signedAtUtc = DateTimeOffset.FromUnixTimeSeconds(timestampSeconds);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "timestamp-invalid",
+                SignatureProblem(
+                    "SendGrid signed Event Webhook timestamp is invalid.",
+                    "The SendGrid Event Webhook timestamp is outside the supported Unix timestamp range."));
+        }
+
+        var ageSeconds = (int)Math.Abs(Math.Round((DateTimeOffset.UtcNow - signedAtUtc).TotalSeconds));
+        var toleranceSeconds = options.GetSignedEventWebhookSignatureToleranceSeconds();
+        if (ageSeconds > toleranceSeconds)
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "timestamp-out-of-tolerance",
+                SignatureProblem(
+                    "SendGrid signed Event Webhook timestamp is outside the allowed tolerance.",
+                    $"The SendGrid Event Webhook timestamp must be within {toleranceSeconds} seconds of the current UTC time."));
+        }
+
+        byte[] signatureBytes;
+        try
+        {
+            signatureBytes = Convert.FromBase64String(signature!);
+        }
+        catch (FormatException)
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "signature-invalid",
+                SignatureProblem(
+                    "SendGrid signed Event Webhook signature is invalid.",
+                    "The SendGrid Event Webhook signature must be Base64 encoded."));
+        }
+
+        if (!VerifyEcdsaSha256Signature(ecdsa!, timestamp!, requestBody, signatureBytes))
+        {
+            return SignedEventWebhookVerificationResult.Fail(
+                "signature-invalid",
+                SignatureProblem(
+                    "SendGrid signed Event Webhook signature is invalid.",
+                    "The callback request body does not match the supplied SendGrid Event Webhook signature."));
+        }
+
+        return SignedEventWebhookVerificationResult.CreateVerified(
+            timestampSeconds,
+            ageSeconds,
+            CreateSha256Fingerprint(signature!));
+    }
+
+    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureMetadata(
+        TenantInvitationDeliveryStatusReconciliationRequest request,
+        SignedEventWebhookVerificationResult signatureVerification)
+    {
+        if (!signatureVerification.Configured)
+        {
+            return request;
+        }
+
+        var metadata = CopyMetadata(request.Metadata);
+        metadata["sendGridEventWebhookSignatureVerification"] = "verified";
+        metadata["sendGridEventWebhookSignatureVerificationOwnership"] = "cephalon-managed";
+        metadata["sendGridEventWebhookSignatureAlgorithm"] = "ecdsa-sha256";
+        metadata["sendGridEventWebhookSignaturePayload"] = "timestamp+raw-body";
+        metadata["sendGridEventWebhookSignatureTimestamp"] =
+            signatureVerification.Timestamp!.Value.ToString(CultureInfo.InvariantCulture);
+        metadata["sendGridEventWebhookSignatureAgeSeconds"] =
+            signatureVerification.AgeSeconds!.Value.ToString(CultureInfo.InvariantCulture);
+        metadata["sendGridEventWebhookSignatureFingerprint"] = signatureVerification.SignatureFingerprint!;
+
+        return new TenantInvitationDeliveryStatusReconciliationRequest(
+            tenantId: request.TenantId,
+            invitationId: request.InvitationId,
+            status: request.Status,
+            providerMessageId: request.ProviderMessageId,
+            senderId: request.SenderId,
+            channel: request.Channel,
+            reason: request.Reason,
+            observedAtUtc: request.ObservedAtUtc,
+            source: request.Source,
+            actor: request.Actor,
+            correlationId: request.CorrelationId,
+            recordStatus: request.RecordStatus,
+            requireProviderMessageMatch: request.RequireProviderMessageMatch,
+            metadata: metadata);
+    }
+
+    private static bool TryImportPublicKey(string publicKey, out ECDsa? ecdsa)
+    {
+        ecdsa = ECDsa.Create();
+        try
+        {
+            ecdsa.ImportFromPem(publicKey.AsSpan());
+            return true;
+        }
+        catch (Exception ex) when (ex is ArgumentException or CryptographicException)
+        {
+        }
+
+        try
+        {
+            var der = Convert.FromBase64String(RemoveWhitespace(publicKey));
+            ecdsa.ImportSubjectPublicKeyInfo(der, out _);
+            return true;
+        }
+        catch (Exception ex) when (ex is ArgumentException or CryptographicException or FormatException)
+        {
+            ecdsa.Dispose();
+            ecdsa = null;
+            return false;
+        }
+    }
+
+    private static bool VerifyEcdsaSha256Signature(
+        ECDsa ecdsa,
+        string timestamp,
+        byte[] requestBody,
+        byte[] signature)
+    {
+        var signedPayload = CreateSignedWebhookPayload(timestamp, requestBody);
+        var hash = SHA256.HashData(signedPayload);
+        try
+        {
+            if (ecdsa.VerifyHash(hash, signature, DSASignatureFormat.Rfc3279DerSequence))
+            {
+                return true;
+            }
+        }
+        catch (CryptographicException)
+        {
+        }
+
+        try
+        {
+            return signature.Length == 64 &&
+                ecdsa.VerifyHash(hash, signature, DSASignatureFormat.IeeeP1363FixedFieldConcatenation);
+        }
+        catch (CryptographicException)
+        {
+            return false;
+        }
+    }
+
+    private static byte[] CreateSignedWebhookPayload(string timestamp, byte[] requestBody)
+    {
+        var timestampBytes = Encoding.UTF8.GetBytes(timestamp);
+        var signedPayload = new byte[timestampBytes.Length + requestBody.Length];
+        Buffer.BlockCopy(timestampBytes, 0, signedPayload, 0, timestampBytes.Length);
+        Buffer.BlockCopy(requestBody, 0, signedPayload, timestampBytes.Length, requestBody.Length);
+        return signedPayload;
+    }
+
+    private static string CreateSha256Fingerprint(string value)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(value.Trim()));
+        return "sha256:" + Convert.ToHexString(hash).ToLowerInvariant();
+    }
+
+    private static string RemoveWhitespace(string value)
+    {
+        var builder = new StringBuilder(value.Length);
+        foreach (var character in value)
+        {
+            if (!char.IsWhiteSpace(character))
+            {
+                builder.Append(character);
+            }
+        }
+
+        return builder.ToString();
+    }
+
+    private static Dictionary<string, string> CopyMetadata(IReadOnlyDictionary<string, string>? metadata)
+    {
+        if (metadata is null)
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        return metadata
+            .Where(static pair => !string.IsNullOrWhiteSpace(pair.Key))
+            .ToDictionary(
+                static pair => pair.Key.Trim(),
+                static pair => pair.Value,
+                StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static IResult SignatureProblem(string title, string detail)
+    {
+        return Results.Problem(title: title, detail: detail, statusCode: StatusCodes.Status401Unauthorized);
     }
 
     private static async ValueTask<IResult?> AuthorizeAsync(
@@ -313,10 +589,46 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
             : value.Trim();
     }
 
+    private static bool TryGetSingleHeader(HttpContext context, string headerName, out string? value)
+    {
+        value = null;
+        if (!context.Request.Headers.TryGetValue(headerName, out var values) ||
+            values.Count != 1 ||
+            string.IsNullOrWhiteSpace(values[0]))
+        {
+            return false;
+        }
+
+        value = values[0]!.Trim();
+        return true;
+    }
+
     private sealed record CallbackRequestBodyReadResult(byte[] Body, IResult? Failure)
     {
         public static CallbackRequestBodyReadResult Success(byte[] body) => new(body, null);
 
         public static CallbackRequestBodyReadResult Fail(IResult failure) => new([], failure);
+    }
+
+    private sealed record SignedEventWebhookVerificationResult(
+        bool Configured,
+        bool Verified,
+        long? Timestamp,
+        int? AgeSeconds,
+        string? SignatureFingerprint,
+        string Outcome,
+        IResult? Failure)
+    {
+        public static SignedEventWebhookVerificationResult NotConfigured() =>
+            new(false, false, null, null, null, "not-configured", null);
+
+        public static SignedEventWebhookVerificationResult CreateVerified(
+            long timestamp,
+            int ageSeconds,
+            string signatureFingerprint) =>
+            new(true, true, timestamp, ageSeconds, signatureFingerprint, "verified", null);
+
+        public static SignedEventWebhookVerificationResult Fail(string outcome, IResult failure) =>
+            new(true, false, null, null, null, outcome, failure);
     }
 }

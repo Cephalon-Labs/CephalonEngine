@@ -11,6 +11,8 @@ public sealed class SendGridInvitationDeliveryAspNetCoreOptions
     internal const string DefaultRoutePattern = "/engine/tenant-invitations/delivery-status/sendgrid";
     internal const int DefaultMaxRequestBodyBytes = 256 * 1024;
     internal const int DefaultMaxEventsPerRequest = 1000;
+    internal const string DefaultSignedEventWebhookSignatureHeaderName = "X-Twilio-Email-Event-Webhook-Signature";
+    internal const string DefaultSignedEventWebhookTimestampHeaderName = "X-Twilio-Email-Event-Webhook-Timestamp";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SendGridInvitationDeliveryAspNetCoreOptions" /> class.
@@ -102,6 +104,42 @@ public sealed class SendGridInvitationDeliveryAspNetCoreOptions
     public bool NormalizeProviderMessageIdFromSgMessageId { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether SendGrid signed Event Webhook requests must verify before translation.
+    /// </summary>
+    /// <remarks>
+    /// When enabled, the endpoint verifies the SendGrid ECDSA-SHA256 signature over the exact raw request body plus the
+    /// timestamp header before parsing JSON or reconciling any event. The public verification key must be configured.
+    /// </remarks>
+    public bool RequireSignedEventWebhook { get; set; }
+
+    /// <summary>
+    /// Gets or sets the SendGrid public verification key used for signed Event Webhook verification.
+    /// </summary>
+    /// <remarks>
+    /// The value may be a PEM public key or a Base64-encoded SubjectPublicKeyInfo payload. Environment-variable friendly
+    /// escaped newlines (<c>\n</c>) are normalized before import.
+    /// </remarks>
+    public string? SignedEventWebhookPublicKey { get; set; }
+
+    /// <summary>
+    /// Gets or sets the request header that carries the SendGrid Event Webhook signature.
+    /// </summary>
+    public string SignedEventWebhookSignatureHeaderName { get; set; } = DefaultSignedEventWebhookSignatureHeaderName;
+
+    /// <summary>
+    /// Gets or sets the request header that carries the Unix timestamp included in the SendGrid Event Webhook signature.
+    /// </summary>
+    public string SignedEventWebhookTimestampHeaderName { get; set; } = DefaultSignedEventWebhookTimestampHeaderName;
+
+    /// <summary>
+    /// Gets or sets the allowed clock skew, in seconds, for SendGrid signed Event Webhook timestamps.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint clamps the effective tolerance to at least one second. The default is five minutes.
+    /// </remarks>
+    public int SignedEventWebhookSignatureToleranceSeconds { get; set; } = 300;
+
+    /// <summary>
     /// Reads SendGrid ASP.NET Core callback options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -137,6 +175,11 @@ public sealed class SendGridInvitationDeliveryAspNetCoreOptions
         options.MaxEventsPerRequest = ParseInt32(section["MaxEventsPerRequest"], options.MaxEventsPerRequest);
         options.MapEngagementEventsAsDelivered = ParseBoolean(section["MapEngagementEventsAsDelivered"], options.MapEngagementEventsAsDelivered);
         options.NormalizeProviderMessageIdFromSgMessageId = ParseBoolean(section["NormalizeProviderMessageIdFromSgMessageId"], options.NormalizeProviderMessageIdFromSgMessageId);
+        options.RequireSignedEventWebhook = ParseBoolean(section["RequireSignedEventWebhook"], options.RequireSignedEventWebhook);
+        options.SignedEventWebhookPublicKey = Normalize(section["SignedEventWebhookPublicKey"]);
+        options.SignedEventWebhookSignatureHeaderName = Normalize(section["SignedEventWebhookSignatureHeaderName"]) ?? options.SignedEventWebhookSignatureHeaderName;
+        options.SignedEventWebhookTimestampHeaderName = Normalize(section["SignedEventWebhookTimestampHeaderName"]) ?? options.SignedEventWebhookTimestampHeaderName;
+        options.SignedEventWebhookSignatureToleranceSeconds = ParseInt32(section["SignedEventWebhookSignatureToleranceSeconds"], options.SignedEventWebhookSignatureToleranceSeconds);
         return options;
     }
 
@@ -149,6 +192,18 @@ public sealed class SendGridInvitationDeliveryAspNetCoreOptions
     internal string GetSource() => Normalize(Source) ?? "sendgrid-event-webhook";
 
     internal string GetActor() => Normalize(Actor) ?? "sendgrid";
+
+    internal string? GetSignedEventWebhookPublicKey() =>
+        Normalize(SignedEventWebhookPublicKey)?.Replace("\\n", "\n", StringComparison.Ordinal);
+
+    internal string GetSignedEventWebhookSignatureHeaderName() =>
+        Normalize(SignedEventWebhookSignatureHeaderName) ?? DefaultSignedEventWebhookSignatureHeaderName;
+
+    internal string GetSignedEventWebhookTimestampHeaderName() =>
+        Normalize(SignedEventWebhookTimestampHeaderName) ?? DefaultSignedEventWebhookTimestampHeaderName;
+
+    internal int GetSignedEventWebhookSignatureToleranceSeconds() =>
+        Math.Clamp(SignedEventWebhookSignatureToleranceSeconds, 1, 86_400);
 
     private static int ParseInt32(string? value, int defaultValue)
     {

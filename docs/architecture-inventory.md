@@ -499,7 +499,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-administration-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-administration command endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
 - `tenant-invitation-delivery-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-invitation delivery dispatch endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
 - `tenant-invitation-delivery-status-http-endpoints` technology surface — ASP.NET Core adapter posture for optional normalized delivery-status callback and observation read endpoints from `Cephalon.MultiTenancy.Governance.AspNetCore`
-- `tenant-invitation-delivery-sendgrid-status-callbacks` technology surface — ASP.NET Core SendGrid Event Webhook translator posture from `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`
+- `tenant-invitation-delivery-sendgrid-status-callbacks` technology surface — ASP.NET Core SendGrid Event Webhook translator and optional signed-webhook verification posture from `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, HTTP proof publication, proof-evaluation, HTTP proof collection, configured DNS TXT proof collection, proof-verification runner, bounded proof-polling runner, and opt-in background proof-polling posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 
@@ -527,7 +527,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4549 and 4552–4557
 - Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`) — event IDs 4550–4551
 - Multi-Tenancy Governance SendGrid Delivery (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) — event IDs 4560–4561
-- Multi-Tenancy Governance SendGrid Delivery ASP.NET Core (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) — event ID 4562
+- Multi-Tenancy Governance SendGrid Delivery ASP.NET Core (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) — event IDs 4562–4563
 - Multi-Tenancy Governance SMTP Delivery (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) — event IDs 4558–4559
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
@@ -582,7 +582,7 @@ Each exporter is a standalone companion package on top of the cloud-neutral OTLP
 - `Cephalon.AspNetCore.Grpc` — gRPC transport adapter with unary and streaming contracts
 - `Cephalon.Identity.AspNetCore` — ASP.NET Core identity/authorization host adapter
 - `Cephalon.MultiTenancy.Governance.AspNetCore` — ASP.NET Core tenant-domain ownership HTTP proof, tenant-administration command, invitation delivery dispatch, and delivery-status callback/observation adapter
-- `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` — ASP.NET Core SendGrid Event Webhook translator for tenant-invitation delivery-status reconciliation
+- `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` — ASP.NET Core SendGrid Event Webhook translator and optional signed-webhook verifier for tenant-invitation delivery-status reconciliation
 - `Cephalon.Worker` — non-HTTP generic-host adapter for worker processes
 
 ## Tooling and adoption

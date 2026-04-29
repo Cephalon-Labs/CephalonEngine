@@ -15,6 +15,9 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
     /// <param name="skippedEvents">The number of events skipped before reconciliation.</param>
     /// <param name="deniedEvents">The number of translated events denied by the reconciler.</param>
     /// <param name="events">Per-event translation and reconciliation results.</param>
+    /// <param name="signedEventWebhookVerificationRequired">A value indicating whether SendGrid signed Event Webhook verification was required for this callback.</param>
+    /// <param name="signedEventWebhookVerified">A value indicating whether the required SendGrid signed Event Webhook signature verified.</param>
+    /// <param name="signedEventWebhookVerificationOutcome">The signed Event Webhook verification outcome for this callback.</param>
     public SendGridInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -22,7 +25,10 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
         int reconciledEvents,
         int skippedEvents,
         int deniedEvents,
-        IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> events)
+        IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> events,
+        bool signedEventWebhookVerificationRequired = false,
+        bool signedEventWebhookVerified = false,
+        string signedEventWebhookVerificationOutcome = "not-configured")
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -36,6 +42,11 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
         SkippedEvents = skippedEvents;
         DeniedEvents = deniedEvents;
         Events = events ?? throw new ArgumentNullException(nameof(events));
+        SignedEventWebhookVerificationRequired = signedEventWebhookVerificationRequired;
+        SignedEventWebhookVerified = signedEventWebhookVerified;
+        SignedEventWebhookVerificationOutcome = string.IsNullOrWhiteSpace(signedEventWebhookVerificationOutcome)
+            ? "unknown"
+            : signedEventWebhookVerificationOutcome.Trim();
     }
 
     /// <summary>
@@ -72,4 +83,19 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
     /// Gets per-event translation and reconciliation results.
     /// </summary>
     public IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> Events { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether SendGrid signed Event Webhook verification was required for this callback.
+    /// </summary>
+    public bool SignedEventWebhookVerificationRequired { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the required SendGrid signed Event Webhook signature verified.
+    /// </summary>
+    public bool SignedEventWebhookVerified { get; }
+
+    /// <summary>
+    /// Gets the signed Event Webhook verification outcome for this callback.
+    /// </summary>
+    public string SignedEventWebhookVerificationOutcome { get; }
 }

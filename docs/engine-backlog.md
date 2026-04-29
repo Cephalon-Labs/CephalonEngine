@@ -20,7 +20,7 @@ Current focus:
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, opt-in local invitation delivery retry storage plus bounded retry execution, process-local retry execution coordination, and opt-in automatic background retry scheduling, host-agnostic invitation delivery status reconciliation over provider or receiver observations, opt-in durable delivery-status observation storage for normalized reconciliation records, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving, the fail-closed tenant-administration command endpoint, the fail-closed invitation delivery dispatch endpoint, the fail-closed normalized invitation delivery-status callback endpoint, opt-in provider-neutral callback signature verification, and bounded process-local signed-callback replay protection; `Cephalon.MultiTenancy.Governance.HttpDelivery` owns generic HTTP webhook invitation sending; `Cephalon.MultiTenancy.Governance.SmtpDelivery` owns SMTP relay invitation sending; `Cephalon.MultiTenancy.Governance.SendGridDelivery` owns SendGrid Mail Send API invitation sending; and `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` owns ASP.NET Core SendGrid Event Webhook callback translation into the existing delivery-status reconciler. Distributed or provider-backed membership/invitation/domain/action-store backends, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, cross-node retry leases, provider-specific or distributed callback inboxes, cross-node callback replay protection, non-SendGrid provider-specific delivery-status callback payload translation, SendGrid and other provider-specific callback signature verification, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, opt-in local invitation delivery retry storage plus bounded retry execution, process-local retry execution coordination, and opt-in automatic background retry scheduling, host-agnostic invitation delivery status reconciliation over provider or receiver observations, opt-in durable delivery-status observation storage for normalized reconciliation records, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving, the fail-closed tenant-administration command endpoint, the fail-closed invitation delivery dispatch endpoint, the fail-closed normalized invitation delivery-status callback endpoint, opt-in provider-neutral callback signature verification, and bounded process-local signed-callback replay protection; `Cephalon.MultiTenancy.Governance.HttpDelivery` owns generic HTTP webhook invitation sending; `Cephalon.MultiTenancy.Governance.SmtpDelivery` owns SMTP relay invitation sending; `Cephalon.MultiTenancy.Governance.SendGridDelivery` owns SendGrid Mail Send API invitation sending; and `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` owns ASP.NET Core SendGrid Event Webhook callback translation plus optional SendGrid signed-webhook verification into the existing delivery-status reconciler. Distributed or provider-backed membership/invitation/domain/action-store backends, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, cross-node retry leases, provider-specific or distributed callback inboxes, cross-node callback replay protection, non-SendGrid provider-specific delivery-status callback payload translation/signature verification, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed replay ledgers, or exactly-once delivery claims
 
 ### ENG-230 Engine surface maturity model and audit baseline
@@ -1874,14 +1874,54 @@ Delivered:
 
 Follow-up later:
 
-- SendGrid signed Event Webhook verification, durable callback inboxes, distributed replay
-  protection, cross-node exactly-once claims, provider polling, dynamic-template lifecycle
-  management, non-SendGrid provider-specific callback translation, provider-specific callback
-  signature verification, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific email
-  API senders, SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI/backoffice,
-  identity-provider synchronization, distributed retry queues, cross-node retry leases, and
+- durable callback inboxes, distributed replay protection, cross-node exactly-once claims, provider
+  polling, dynamic-template lifecycle management, non-SendGrid provider-specific callback translation
+  and signature verification, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific
+  email API senders, SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin
+  UI/backoffice, identity-provider synchronization, distributed retry queues, cross-node retry
+  leases, and
   distributed/provider-backed governance stores remain future governance slices until a package truly
   owns those paths
+
+### ENG-296 Multi-tenancy invitation delivery SendGrid signed Event Webhook verification
+
+Status: done
+Estimate: 5
+Issue: #811
+
+Why:
+
+- after `ENG-295`, Cephalon could translate SendGrid Event Webhook arrays, but production hosts still
+  needed custom glue or gateway policy to verify SendGrid's signed Event Webhook before reconciliation
+- the narrow owned proof is ECDSA-SHA256 verification over SendGrid's timestamp plus raw request body
+  bytes, not a durable callback inbox, cross-node replay ledger, OAuth authority, or provider poller
+
+Delivered:
+
+- add `RequireSignedEventWebhook`, `SignedEventWebhookPublicKey`, configurable SendGrid signature and
+  timestamp headers, and timestamp tolerance options to `SendGridInvitationDeliveryAspNetCoreOptions`
+- verify `X-Twilio-Email-Event-Webhook-Signature` and
+  `X-Twilio-Email-Event-Webhook-Timestamp` with ECDSA-SHA256 over `timestamp + rawBody` before JSON
+  parsing or reconciliation
+- fail closed for missing, malformed, stale, or invalid signatures before touching invitation state or
+  delivery-status observations; public-key misconfiguration returns an operator-facing server error
+- add safe callback result fields and reconciliation metadata for signature verification outcome,
+  algorithm, payload shape, timestamp, age, and signature fingerprint without storing the public key,
+  raw signature, recipient email, or raw payload
+- project signed-webhook posture through `tenant-invitation-delivery-sendgrid-status-callbacks` and
+  add diagnostics `4563` for rejected signed-webhook verification attempts
+- update component docs, operations guidance, compatibility, maturity-audit ownership, planning truth,
+  generated reference docs, and focused hosting coverage
+
+Follow-up later:
+
+- durable callback inboxes, distributed replay protection, cross-node exactly-once claims, provider
+  polling, dynamic-template lifecycle management, non-SendGrid provider-specific callback translation
+  and signature verification, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific
+  email API senders, SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin
+  UI/backoffice, identity-provider synchronization, distributed retry queues, cross-node retry
+  leases, and distributed/provider-backed governance stores remain future governance slices until a
+  package truly owns those paths
 
 ## Completed foundation work
 
@@ -9858,9 +9898,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-295 Multi-tenancy invitation delivery SendGrid Event Webhook callback translation baseline (shipped, issue #810)
 
+### Sprint 101
+
+- ENG-296 Multi-tenancy invitation delivery SendGrid signed Event Webhook verification (shipped, issue #811)
+
 ### Later / not scheduled yet
 
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, non-SendGrid provider-specific callback translation, SendGrid and other provider-specific callback signature verification, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, non-SendGrid provider-specific callback translation and signature verification, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
 
 ### Foundation Sprint 1
 

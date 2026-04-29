@@ -1271,7 +1271,7 @@ Current note:
 - hosts can enable `EnableInvitationDeliveryRetryQueue` when `sender-failed` dispatch outcomes should be retained for an explicit `ITenantInvitationDeliveryRetryRunner.RetryPendingAsync(...)` pass; configure `InvitationDeliveryRetryQueueFilePath` only when the local retry queue should survive process restarts
 - the tenant-administration command endpoint is fail-closed by default; keep `RequireTenantAdministrationAuthorization = true` for real hosts, set `TenantAdministrationAuthorizationPolicy` when a named ASP.NET Core policy should guard the command surface, and disable authorization only for deliberate internal/test hosts
 - the delivery status callback and observation read endpoints are fail-closed by default; keep `RequireTenantInvitationDeliveryStatusCallbackAuthorization = true` and `RequireTenantInvitationDeliveryStatusObservationAuthorization = true` for real hosts, set the related authorization policy when a named ASP.NET Core policy should guard callback ingress or observation reads, keep `RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch = true` unless the host deliberately owns another correlation boundary, and keep signed callback replay protection enabled when `TenantInvitationDeliveryStatusCallbackSigningSecret` is configured
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, non-SendGrid provider-specific delivery-status callback payload translation, SendGrid and other provider-specific callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, Mailgun/SES/Microsoft Graph or other non-SendGrid provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, non-SendGrid provider-specific delivery-status callback payload translation and callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
 
 Tenant-administration command endpoint configuration:
 
@@ -1528,7 +1528,7 @@ Operational notes:
 - the sender carries deterministic Cephalon message ids through SendGrid `custom_args` and safe `X-Cephalon-*` headers, and captures SendGrid's `X-Message-ID` response header as the provider message id by default
 - `EnableSandboxMode` adds `mail_settings.sandbox_mode.enable = true` and treats SendGrid's sandbox `200 OK` validation response as accepted alongside the normal `202 Accepted` response
 - sender metadata records endpoint host, SendGrid status code, sandbox posture, Cephalon message id, sender id, recipient email, recipient metadata key, category count, custom-argument count, and safe client metadata, but it does not record the API key, authorization header, raw request body, or message bodies
-- this package owns SendGrid Mail Send API handoff only; SendGrid Event Webhook callback translation lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`, while SendGrid webhook signature verification, durable callback inboxes, distributed replay protection, provider polling, dynamic-template lifecycle management, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns SendGrid Mail Send API handoff only; SendGrid Event Webhook callback translation and optional signed-webhook verification live in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`, while durable callback inboxes, distributed replay protection, provider polling, dynamic-template lifecycle management, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
 
 ### SendGrid invitation delivery status callbacks
 
@@ -1555,7 +1555,12 @@ Configuration:
             "MaxRequestBodyBytes": 262144,
             "MaxEventsPerRequest": 1000,
             "MapEngagementEventsAsDelivered": false,
-            "NormalizeProviderMessageIdFromSgMessageId": true
+            "NormalizeProviderMessageIdFromSgMessageId": true,
+            "RequireSignedEventWebhook": true,
+            "SignedEventWebhookPublicKey": "${SENDGRID_EVENT_WEBHOOK_PUBLIC_KEY}",
+            "SignedEventWebhookSignatureHeaderName": "X-Twilio-Email-Event-Webhook-Signature",
+            "SignedEventWebhookTimestampHeaderName": "X-Twilio-Email-Event-Webhook-Timestamp",
+            "SignedEventWebhookSignatureToleranceSeconds": 300
           }
         }
       }
@@ -1585,9 +1590,10 @@ Operational notes:
 - the outbound sender stores Cephalon context in SendGrid `custom_args`; callback events without `cephalonTenantId` and `cephalonInvitationId` are skipped instead of being attached to the wrong invitation
 - `sg_message_id` is normalized to the prefix before the first dot by default so it can match the `X-Message-ID` provider message id captured during Mail Send dispatch
 - delivery events map narrowly: `processed` to `accepted`, `delivered` to `delivered`, `deferred` to `deferred`, `bounce` to `bounced`, and `dropped`/`spamreport`/`unsubscribe`/`group_unsubscribe` to `suppressed`; `open` and `click` are skipped unless a host deliberately enables engagement-event mapping
-- the endpoint is authorization-required by default and should stay protected by ASP.NET Core policy, a gateway, or SendGrid OAuth token validation until SendGrid signed Event Webhook verification is implemented
+- set `RequireSignedEventWebhook` plus `SignedEventWebhookPublicKey` when the endpoint should verify SendGrid's ECDSA-SHA256 signature before JSON parsing or reconciliation; the signature input is the timestamp header plus the exact raw request body bytes, not re-serialized JSON
+- the endpoint is authorization-required by default and should stay protected by ASP.NET Core policy, a gateway, or SendGrid OAuth token validation even when signed Event Webhook verification is enabled
 - responses include aggregate and per-event translation outcomes but do not echo recipient email addresses or raw SendGrid payloads
-- the package projects `tenant-invitation-delivery-sendgrid-status-callbacks`; it does not claim SendGrid signed-webhook verification, durable callback inboxes, distributed replay protection, provider polling, or exactly-once delivery
+- the package projects `tenant-invitation-delivery-sendgrid-status-callbacks` with signature verification posture; it still does not claim durable callback inboxes, distributed replay protection, provider polling, or exactly-once delivery
 
 ## Data product surface
 

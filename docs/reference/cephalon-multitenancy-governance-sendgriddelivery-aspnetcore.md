@@ -131,6 +131,18 @@ bool RequireProviderMessageMatch { get; set; }
 
 Gets or sets a value indicating whether translated SendGrid events must match an existing provider message id.
 
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-requiresignedeventwebhook"></a>
+
+##### `RequireSignedEventWebhook`
+
+```csharp
+bool RequireSignedEventWebhook { get; set; }
+```
+
+Gets or sets a value indicating whether SendGrid signed Event Webhook requests must verify before translation.
+
+Remarks: When enabled, the endpoint verifies the SendGrid ECDSA-SHA256 signature over the exact raw request body plus the timestamp header before parsing JSON or reconciling any event. The public verification key must be configured.
+
 <a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-requirestatuscallbackauthorization"></a>
 
 ##### `RequireStatusCallbackAuthorization`
@@ -142,6 +154,50 @@ bool RequireStatusCallbackAuthorization { get; set; }
 Gets or sets a value indicating whether the SendGrid callback endpoint should require authorization.
 
 Remarks: The endpoint performs an in-handler authorization check by default. Hosts can satisfy it with ASP.NET Core authentication, a SendGrid OAuth policy, a gateway, or deliberately disable it for trusted test hosts.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhookpublickey"></a>
+
+##### `SignedEventWebhookPublicKey`
+
+```csharp
+string SignedEventWebhookPublicKey { get; set; }
+```
+
+Gets or sets the SendGrid public verification key used for signed Event Webhook verification.
+
+Remarks: The value may be a PEM public key or a Base64-encoded SubjectPublicKeyInfo payload. Environment-variable friendly escaped newlines (`\n`) are normalized before import.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhooksignatureheadername"></a>
+
+##### `SignedEventWebhookSignatureHeaderName`
+
+```csharp
+string SignedEventWebhookSignatureHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the SendGrid Event Webhook signature.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhooksignaturetoleranceseconds"></a>
+
+##### `SignedEventWebhookSignatureToleranceSeconds`
+
+```csharp
+int SignedEventWebhookSignatureToleranceSeconds { get; set; }
+```
+
+Gets or sets the allowed clock skew, in seconds, for SendGrid signed Event Webhook timestamps.
+
+Remarks: The endpoint clamps the effective tolerance to at least one second. The default is five minutes.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhooktimestampheadername"></a>
+
+##### `SignedEventWebhookTimestampHeaderName`
+
+```csharp
+string SignedEventWebhookTimestampHeaderName { get; set; }
+```
+
+Gets or sets the request header that carries the Unix timestamp included in the SendGrid Event Webhook signature.
 
 <a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-source"></a>
 
@@ -388,12 +444,12 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult"></a>
+<a id="member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-system-boolean-system-boolean-system-string"></a>
 
 ##### `SendGridInvitationDeliveryStatusCallbackResult`
 
 ```csharp
-SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> events)
+SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> events, bool signedEventWebhookVerificationRequired, bool signedEventWebhookVerified, string signedEventWebhookVerificationOutcome)
 ```
 
 Creates a SendGrid callback translation response.
@@ -406,6 +462,9 @@ Parameters:
 - `skippedEvents`: The number of events skipped before reconciliation.
 - `deniedEvents`: The number of translated events denied by the reconciler.
 - `events`: Per-event translation and reconciliation results.
+- `signedEventWebhookVerificationRequired`: A value indicating whether SendGrid signed Event Webhook verification was required for this callback.
+- `signedEventWebhookVerified`: A value indicating whether the required SendGrid signed Event Webhook signature verified.
+- `signedEventWebhookVerificationOutcome`: The signed Event Webhook verification outcome for this callback.
 
 #### Properties
 
@@ -448,6 +507,36 @@ string RoutePattern { get; }
 ```
 
 Gets the endpoint route pattern that accepted the callback.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookverificationoutcome"></a>
+
+##### `SignedEventWebhookVerificationOutcome`
+
+```csharp
+string SignedEventWebhookVerificationOutcome { get; }
+```
+
+Gets the signed Event Webhook verification outcome for this callback.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookverificationrequired"></a>
+
+##### `SignedEventWebhookVerificationRequired`
+
+```csharp
+bool SignedEventWebhookVerificationRequired { get; }
+```
+
+Gets a value indicating whether SendGrid signed Event Webhook verification was required for this callback.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookverified"></a>
+
+##### `SignedEventWebhookVerified`
+
+```csharp
+bool SignedEventWebhookVerified { get; }
+```
+
+Gets a value indicating whether the required SendGrid signed Event Webhook signature verified.
 
 <a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-skippedevents"></a>
 
@@ -502,7 +591,7 @@ IEndpointRouteBuilder MapCephalonSendGridInvitationDeliveryStatusCallbacks(this 
 
 Maps the optional SendGrid Event Webhook tenant-invitation delivery status callback endpoint.
 
-Remarks: The endpoint translates SendGrid Event Webhook JSON arrays into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. It owns provider payload translation only. SendGrid signed-webhook verification, OAuth token validation, durable inboxing, and distributed replay protection remain host-managed or future provider-pack responsibilities.
+Remarks: The endpoint translates SendGrid Event Webhook JSON arrays into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. It can also verify SendGrid signed Event Webhook signatures when configured. OAuth token validation, durable inboxing, and distributed replay protection remain host-managed or future provider-pack responsibilities.
 
 Returns: The same endpoint route builder for fluent routing composition.
 

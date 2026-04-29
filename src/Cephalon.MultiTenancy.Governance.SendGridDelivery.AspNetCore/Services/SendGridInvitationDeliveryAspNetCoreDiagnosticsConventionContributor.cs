@@ -17,13 +17,21 @@ internal static class SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions
         MessageTemplate: "SendGrid invitation delivery status callback accepted {EventCount} events, translated {TranslatedCount}, reconciled {ReconciledCount}, and skipped {SkippedCount}.",
         Description: "Emitted when the ASP.NET Core SendGrid Event Webhook callback endpoint accepts and evaluates a callback payload.");
 
+    public static readonly DiagnosticEventDefinition SendGridInvitationDeliveryStatusCallbackSignatureRejected = new(
+        Id: 4563,
+        Name: "SendGridInvitationDeliveryStatusCallbackSignatureRejected",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "SendGrid invitation delivery status callback signature rejected with outcome {Outcome}.",
+        Description: "Emitted when the ASP.NET Core SendGrid Event Webhook callback endpoint rejects a required signed webhook signature before translation.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
         Description: "Structured diagnostics for ASP.NET Core SendGrid Event Webhook tenant-invitation delivery status callback translation.",
         Events:
         [
-            SendGridInvitationDeliveryStatusCallbackAccepted
+            SendGridInvitationDeliveryStatusCallbackAccepted,
+            SendGridInvitationDeliveryStatusCallbackSignatureRejected
         ]);
 }
 
@@ -37,6 +45,14 @@ internal static class SendGridInvitationDeliveryAspNetCoreLogs
                 SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions.SendGridInvitationDeliveryStatusCallbackAccepted.Name),
             "SendGrid invitation delivery status callback accepted {EventCount} events, translated {TranslatedCount}, reconciled {ReconciledCount}, and skipped {SkippedCount}.");
 
+    private static readonly Action<ILogger, string, Exception?> CallbackSignatureRejectedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Warning,
+            new EventId(
+                SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions.SendGridInvitationDeliveryStatusCallbackSignatureRejected.Id,
+                SendGridInvitationDeliveryAspNetCoreDiagnosticsConventions.SendGridInvitationDeliveryStatusCallbackSignatureRejected.Name),
+            "SendGrid invitation delivery status callback signature rejected with outcome {Outcome}.");
+
     public static void CallbackAccepted(
         ILogger logger,
         int eventCount,
@@ -44,4 +60,7 @@ internal static class SendGridInvitationDeliveryAspNetCoreLogs
         int reconciledCount,
         int skippedCount) =>
         CallbackAcceptedMessage(logger, eventCount, translatedCount, reconciledCount, skippedCount, null);
+
+    public static void CallbackSignatureRejected(ILogger logger, string outcome) =>
+        CallbackSignatureRejectedMessage(logger, outcome, null);
 }

@@ -127,7 +127,7 @@ internal sealed class SendGridEventWebhookDeliveryStatusMapper(SendGridInvitatio
             ["sendGridEventWebhook"] = "true",
             ["sendGridEventWebhookTranslationOwnership"] = "cephalon-managed",
             ["sendGridEventWebhookSignatureVerification"] = "not-configured",
-            ["sendGridEventWebhookSignatureVerificationOwnership"] = "application-managed",
+            ["sendGridEventWebhookSignatureVerificationOwnership"] = "not-configured",
             ["sendGridEventWebhookReplayProtectionOwnership"] = "application-managed",
             ["sendGridEventIndex"] = index.ToString(CultureInfo.InvariantCulture),
             ["sendGridProviderMessageIdSource"] = options.NormalizeProviderMessageIdFromSgMessageId
