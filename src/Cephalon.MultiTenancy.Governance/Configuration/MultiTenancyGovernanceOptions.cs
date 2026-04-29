@@ -59,6 +59,15 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableInvitationDeliveryDispatch { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in invitation delivery status reconciler is active.
+    /// </summary>
+    /// <remarks>
+    /// The reconciler owns host-agnostic status matching, metadata normalization, and persistence after a provider or
+    /// receiver reports delivery status. It does not map webhooks or poll provider APIs by itself.
+    /// </remarks>
+    public bool EnableInvitationDeliveryStatusReconciliation { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the maximum number of invitation delivery dispatch attempts retained in the runtime catalog.
     /// </summary>
     public int InvitationDeliveryRunHistoryLimit { get; set; } = 100;

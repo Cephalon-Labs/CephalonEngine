@@ -35,12 +35,13 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             technologyId: "multi-tenancy",
             surfaceId: "tenant-invitations",
             displayName: "Tenant Invitations",
-            description: "Projects tenant invitation catalog, validation, delivery dispatch, and delivery outcome truth from the governance companion pack.",
+            description: "Projects tenant invitation catalog, validation, delivery dispatch, delivery status reconciliation, and delivery outcome truth from the governance companion pack.",
             entries: entries);
     }
 
     private TechnologyRuntimeEntry CreateSummaryEntry(IReadOnlyList<TenantInvitationDescriptor> invitations)
     {
+        var latestDeliveryStatusInvitation = FindLatestDeliveryStatusInvitation(invitations);
         var statusBreakdown = invitations
             .GroupBy(static invitation => invitation.Status, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
@@ -67,6 +68,12 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             ["validationOwnership"] = options.EnableInvitationValidation ? "cephalon-managed" : "not-configured",
             ["deliveryDispatchEnabled"] = options.EnableInvitationDeliveryDispatch.ToString().ToLowerInvariant(),
             ["deliveryDispatchOwnership"] = options.EnableInvitationDeliveryDispatch ? "cephalon-managed" : "not-configured",
+            ["deliveryStatusReconciliationEnabled"] = options.EnableInvitationDeliveryStatusReconciliation.ToString().ToLowerInvariant(),
+            ["deliveryStatusReconciliationOwnership"] = options.EnableInvitationDeliveryStatusReconciliation ? "cephalon-managed" : "not-configured",
+            ["externalDeliveryStatusOwnership"] = options.EnableInvitationDeliveryStatusReconciliation ? "provider-managed" : "application-managed",
+            ["deliveryStatusReportedCount"] = CountDeliveryStatusReports(invitations).ToString(CultureInfo.InvariantCulture),
+            ["latestDeliveryStatus"] = GetDeliveryStatus(latestDeliveryStatusInvitation),
+            ["latestDeliveryStatusObservedAtUtc"] = GetDeliveryStatusObservedAtUtc(latestDeliveryStatusInvitation),
             ["deliverySenderCount"] = deliverySenders.Length.ToString(CultureInfo.InvariantCulture),
             ["deliverySenderIds"] = deliverySenders.Length == 0 ? "none" : string.Join(",", deliverySenders.Select(static sender => sender.SenderId)),
             ["deliverySenderOwnership"] = deliverySenders.Length == 0 ? "not-configured" : "provider-managed",
@@ -84,7 +91,7 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-invitation-runtime",
             displayName: "Tenant Invitation Runtime",
-            description: "Summarizes tenant invitation catalog size, contributor count, runtime store posture, status posture, and managed validation ownership.",
+            description: "Summarizes tenant invitation catalog size, contributor count, runtime store posture, invitation status posture, delivery dispatch, delivery status reconciliation, and managed validation ownership.",
             metadata: metadata);
     }
 
@@ -95,6 +102,7 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
         var latestDeliveryRun = deliveryRuns
             .OrderByDescending(static run => run.DispatchedAtUtc)
             .FirstOrDefault();
+        var latestDeliveryStatusInvitation = FindLatestDeliveryStatusInvitation(invitations);
         var pendingCount = invitations.Count(static invitation =>
             string.Equals(invitation.Status, TenantInvitationStatuses.Pending, StringComparison.OrdinalIgnoreCase));
         var acceptedCount = invitations.Count(static invitation =>
@@ -136,7 +144,10 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             ["sourceModuleIds"] = sourceModuleIds.Length == 0 ? "none" : string.Join(",", sourceModuleIds),
             ["deliveryRunCount"] = deliveryRuns.Count.ToString(CultureInfo.InvariantCulture),
             ["latestDeliveryOutcome"] = latestDeliveryRun?.Outcome ?? "none",
-            ["latestDeliveryAtUtc"] = latestDeliveryRun?.DispatchedAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none"
+            ["latestDeliveryAtUtc"] = latestDeliveryRun?.DispatchedAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none",
+            ["deliveryStatusReportedCount"] = CountDeliveryStatusReports(invitations).ToString(CultureInfo.InvariantCulture),
+            ["latestDeliveryStatus"] = GetDeliveryStatus(latestDeliveryStatusInvitation),
+            ["latestDeliveryStatusObservedAtUtc"] = GetDeliveryStatusObservedAtUtc(latestDeliveryStatusInvitation)
         };
 
         return new TechnologyRuntimeEntry(
@@ -144,5 +155,54 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             displayName: $"Tenant Invitations: {group.Key}",
             description: "Summarizes invitation posture for one tenant without exposing individual invitee identifiers.",
             metadata: metadata);
+    }
+
+    private static int CountDeliveryStatusReports(IEnumerable<TenantInvitationDescriptor> invitations)
+    {
+        return invitations.Count(static invitation =>
+            invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
+    }
+
+    private static TenantInvitationDescriptor? FindLatestDeliveryStatusInvitation(IEnumerable<TenantInvitationDescriptor> invitations)
+    {
+        return invitations
+            .Where(static invitation => invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus))
+            .OrderByDescending(GetDeliveryStatusSortValue)
+            .FirstOrDefault();
+    }
+
+    private static string GetDeliveryStatus(TenantInvitationDescriptor? invitation)
+    {
+        if (invitation is null ||
+            !invitation.Metadata.TryGetValue(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus, out var status) ||
+            string.IsNullOrWhiteSpace(status))
+        {
+            return "none";
+        }
+
+        return status;
+    }
+
+    private static string GetDeliveryStatusObservedAtUtc(TenantInvitationDescriptor? invitation)
+    {
+        if (invitation is null ||
+            !invitation.Metadata.TryGetValue(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusObservedAtUtc, out var observedAtUtc) ||
+            string.IsNullOrWhiteSpace(observedAtUtc))
+        {
+            return "none";
+        }
+
+        return observedAtUtc;
+    }
+
+    private static DateTimeOffset GetDeliveryStatusSortValue(TenantInvitationDescriptor invitation)
+    {
+        if (invitation.Metadata.TryGetValue(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusObservedAtUtc, out var observedAtUtc) &&
+            DateTimeOffset.TryParse(observedAtUtc, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var parsed))
+        {
+            return parsed;
+        }
+
+        return DateTimeOffset.MinValue;
     }
 }

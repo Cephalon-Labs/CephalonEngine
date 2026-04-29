@@ -68,6 +68,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantMembershipEvaluator>>(NullLogger<TenantMembershipEvaluator>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationValidator>>(NullLogger<TenantInvitationValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationDeliveryDispatcher>>(NullLogger<TenantInvitationDeliveryDispatcher>.Instance);
+        services.TryAddSingleton<ILogger<TenantInvitationDeliveryStatusReconciler>>(NullLogger<TenantInvitationDeliveryStatusReconciler>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipVerificationWorkflow>>(NullLogger<TenantDomainOwnershipVerificationWorkflow>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipProofEvaluator>>(NullLogger<TenantDomainOwnershipProofEvaluator>.Instance);
@@ -123,6 +124,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         if (options.EnableInvitationDeliveryDispatch)
         {
             services.TryAddSingleton<ITenantInvitationDeliveryDispatcher, TenantInvitationDeliveryDispatcher>();
+        }
+
+        if (options.EnableInvitationDeliveryStatusReconciliation)
+        {
+            services.TryAddSingleton<ITenantInvitationDeliveryStatusReconciler, TenantInvitationDeliveryStatusReconciler>();
         }
 
         if (options.EnableDomainOwnershipValidation)
@@ -259,8 +265,10 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         var proofPublicationOwnership = httpProofPublicationEnabled ? "mixed" : "application-managed";
         var administrationWorkflowOwnership = options.EnableTenantAdministrationWorkflow ? "cephalon-managed" : "not-configured";
         var invitationDeliveryDispatchOwnership = options.EnableInvitationDeliveryDispatch ? "cephalon-managed" : "not-configured";
+        var invitationDeliveryStatusReconciliationOwnership = options.EnableInvitationDeliveryStatusReconciliation ? "cephalon-managed" : "not-configured";
         var invitationDeliverySenderOwnership = hasInvitationDeliverySenders ? "provider-managed" : "not-configured";
         var invitationExternalDeliveryOwnership = hasInvitationDeliverySenders ? "provider-managed" : "application-managed";
+        var invitationExternalDeliveryStatusOwnership = options.EnableInvitationDeliveryStatusReconciliation ? "provider-managed" : "application-managed";
         var invitationDeliveryOwnership = options.EnableInvitationDeliveryDispatch && hasInvitationDeliverySenders
             ? "mixed"
             : "application-managed";
@@ -323,6 +331,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["configuredInvitationCount"] = options.Invitations.Count.ToString(CultureInfo.InvariantCulture),
                 ["hasInvitationContributors"] = hasInvitationContributors.ToString().ToLowerInvariant(),
                 ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
+                ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
                 ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
@@ -341,6 +350,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "application-managed" : "cephalon-managed",
                 ["administrationWorkflowOwnership"] = administrationWorkflowOwnership,
                 ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
+                ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
                 ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
@@ -379,6 +389,24 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 }));
         }
 
+        if (options.EnableInvitationDeliveryStatusReconciliation)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.invitation.delivery-status-reconciliation",
+                displayName: "Tenant Invitation Delivery Status Reconciliation",
+                description: "Reconciles provider or receiver tenant invitation delivery status observations into Cephalon-managed invitation metadata without owning provider webhook mapping or provider APIs.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
+                    ["externalDeliveryStatusOwnership"] = invitationExternalDeliveryStatusOwnership,
+                    ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "application-managed" : "cephalon-managed",
+                    ["runtimeSurface"] = "tenant-invitations"
+                }));
+        }
+
         if (options.EnableTenantAdministrationWorkflow)
         {
             capabilities.Add(new Capability(
@@ -400,8 +428,10 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["tenantAdminEndpointOwnership"] = "application-managed",
                     ["invitationDeliveryOwnership"] = invitationDeliveryOwnership,
                     ["invitationDeliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
+                    ["invitationDeliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
                     ["invitationDeliverySenderOwnership"] = invitationDeliverySenderOwnership,
                     ["externalInvitationDeliveryOwnership"] = invitationExternalDeliveryOwnership,
+                    ["externalInvitationDeliveryStatusOwnership"] = invitationExternalDeliveryStatusOwnership,
                     ["identityProviderSyncOwnership"] = "application-managed",
                     ["runtimeSurface"] = "tenant-administration"
                 }));

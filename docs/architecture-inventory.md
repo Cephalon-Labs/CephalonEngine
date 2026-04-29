@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-driven tenant-administration workflow commands over membership and invitation stores, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-agnostic invitation delivery status reconciliation over provider or receiver observations, host-driven tenant-administration workflow commands over membership and invitation stores, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 - `multi-tenancy-governance-http-delivery` — Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`): optional provider-managed HTTP webhook sender for tenant-invitation delivery dispatch, including provider-neutral idempotency headers, optional HMAC-SHA256 request signing, and bounded in-process retry/backoff.
 
 ### Data provider modules (14)
@@ -349,6 +349,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `tenancy.invitation.store` — Tenant Invitation Store
 - `tenancy.invitation.validation` — Tenant Invitation Validation
 - `tenancy.invitation.delivery-dispatch` — Tenant Invitation Delivery Dispatch
+- `tenancy.invitation.delivery-status-reconciliation` — Tenant Invitation Delivery Status Reconciliation
 - `tenancy.administration.workflow` — Tenant Administration Workflow
 - `tenancy.domain-ownership.catalog` — Tenant Domain Ownership Catalog
 - `tenancy.domain-ownership.store` — Tenant Domain Ownership Store
@@ -461,6 +462,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantInvitationStore` — runtime tenant-invitation storage, with in-memory and opt-in file-backed baselines
 - `ITenantInvitationValidator` — pending tenant-invitation validation
 - `ITenantInvitationDeliveryDispatcher` / `ITenantInvitationDeliverySender` / `ITenantInvitationDeliveryRunCatalog` — host-agnostic invitation delivery dispatch, sender extension, and run-state tracking
+- `ITenantInvitationDeliveryStatusReconciler` — host-agnostic invitation delivery status observation reconciliation
 - `HttpInvitationDeliveryPayload` — JSON payload contract for the optional idempotent and signed HTTP webhook invitation sender in `Cephalon.MultiTenancy.Governance.HttpDelivery`
 - `ITenantAdministrationWorkflow` — host-driven membership and invitation administration workflow commands
 - `ITenantDomainOwnershipCatalog` — merged declared tenant-domain ownership read model
@@ -480,7 +482,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog, store, and evaluation posture from `Cephalon.MultiTenancy.Governance`
-- `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, validation, delivery dispatch, sender readiness, and delivery-run posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, validation, delivery dispatch, sender readiness, delivery-run, and delivery-status reconciliation posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-administration` technology surface — Cephalon-managed host-driven tenant-administration workflow posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-administration-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-administration command endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, HTTP proof publication, proof-evaluation, HTTP proof collection, configured DNS TXT proof collection, proof-verification runner, bounded proof-polling runner, and opt-in background proof-polling posture from `Cephalon.MultiTenancy.Governance`
@@ -507,7 +509,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Wolverine Eventing (`Cephalon.Eventing.Wolverine`) — event IDs 4300–4305
 - Identity (`Cephalon.Identity`) — event IDs 4400–4401
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
-- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4549
+- Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4549 and 4552–4553
 - Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`) — event IDs 4550–4551
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109

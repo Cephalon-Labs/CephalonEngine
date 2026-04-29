@@ -103,6 +103,7 @@ public sealed class MultiTenancyGovernancePackTests
         var invitationCatalog = provider.GetRequiredService<ITenantInvitationCatalog>();
         var invitationValidator = provider.GetRequiredService<ITenantInvitationValidator>();
         var invitationDeliveryDispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+        var invitationDeliveryStatusReconciler = provider.GetRequiredService<ITenantInvitationDeliveryStatusReconciler>();
         var invitationDeliveryRunCatalog = provider.GetRequiredService<ITenantInvitationDeliveryRunCatalog>();
         var domainCatalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
         var domainValidator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
@@ -195,6 +196,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.store");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.validation");
         var invitationDeliveryDispatchCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.delivery-dispatch");
+        var invitationDeliveryStatusCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.delivery-status-reconciliation");
         var administrationWorkflowCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.administration.workflow");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.store");
@@ -284,6 +286,12 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("cephalon-managed", invitationSummaryEntry.Metadata["validationOwnership"]);
         Assert.Equal("true", invitationSummaryEntry.Metadata["deliveryDispatchEnabled"]);
         Assert.Equal("cephalon-managed", invitationSummaryEntry.Metadata["deliveryDispatchOwnership"]);
+        Assert.Equal("true", invitationSummaryEntry.Metadata["deliveryStatusReconciliationEnabled"]);
+        Assert.Equal("cephalon-managed", invitationSummaryEntry.Metadata["deliveryStatusReconciliationOwnership"]);
+        Assert.Equal("provider-managed", invitationSummaryEntry.Metadata["externalDeliveryStatusOwnership"]);
+        Assert.Equal("0", invitationSummaryEntry.Metadata["deliveryStatusReportedCount"]);
+        Assert.Equal("none", invitationSummaryEntry.Metadata["latestDeliveryStatus"]);
+        Assert.Equal("none", invitationSummaryEntry.Metadata["latestDeliveryStatusObservedAtUtc"]);
         Assert.Equal("0", invitationSummaryEntry.Metadata["deliverySenderCount"]);
         Assert.Equal("none", invitationSummaryEntry.Metadata["deliverySenderIds"]);
         Assert.Equal("not-configured", invitationSummaryEntry.Metadata["deliverySenderOwnership"]);
@@ -300,6 +308,11 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("not-configured", invitationDeliveryDispatchCapability.Metadata["deliverySenderOwnership"]);
         Assert.Equal("application-managed", invitationDeliveryDispatchCapability.Metadata["externalDeliveryOwnership"]);
         Assert.Equal("false", invitationDeliveryDispatchCapability.Metadata["senderConfigured"]);
+        Assert.Equal("cephalon-managed", invitationDeliveryStatusCapability.Metadata["executionOwnership"]);
+        Assert.Equal("cephalon-managed", invitationDeliveryStatusCapability.Metadata["deliveryStatusReconciliationOwnership"]);
+        Assert.Equal("provider-managed", invitationDeliveryStatusCapability.Metadata["externalDeliveryStatusOwnership"]);
+        Assert.Equal("application-managed", invitationDeliveryStatusCapability.Metadata["durableStoreOwnership"]);
+        Assert.Equal("tenant-invitations", invitationDeliveryStatusCapability.Metadata["runtimeSurface"]);
         Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["executionOwnership"]);
         Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["membershipAdministrationOwnership"]);
         Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["invitationAdministrationOwnership"]);
@@ -307,8 +320,10 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("application-managed", administrationWorkflowCapability.Metadata["tenantAdminEndpointOwnership"]);
         Assert.Equal("application-managed", administrationWorkflowCapability.Metadata["invitationDeliveryOwnership"]);
         Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["invitationDeliveryDispatchOwnership"]);
+        Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["invitationDeliveryStatusReconciliationOwnership"]);
         Assert.Equal("not-configured", administrationWorkflowCapability.Metadata["invitationDeliverySenderOwnership"]);
         Assert.Equal("application-managed", administrationWorkflowCapability.Metadata["externalInvitationDeliveryOwnership"]);
+        Assert.Equal("provider-managed", administrationWorkflowCapability.Metadata["externalInvitationDeliveryStatusOwnership"]);
         Assert.Equal("application-managed", administrationWorkflowCapability.Metadata["identityProviderSyncOwnership"]);
         Assert.Equal("tenant-administration", administrationWorkflowCapability.Metadata["runtimeSurface"]);
         Assert.Equal("cephalon-managed", administrationSummaryEntry.Metadata["ownership"]);
@@ -325,8 +340,10 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("application-managed", administrationSummaryEntry.Metadata["tenantAdminEndpointOwnership"]);
         Assert.Equal("application-managed", administrationSummaryEntry.Metadata["invitationDeliveryOwnership"]);
         Assert.Equal("cephalon-managed", administrationSummaryEntry.Metadata["invitationDeliveryDispatchOwnership"]);
+        Assert.Equal("cephalon-managed", administrationSummaryEntry.Metadata["invitationDeliveryStatusReconciliationOwnership"]);
         Assert.Equal("not-configured", administrationSummaryEntry.Metadata["invitationDeliverySenderOwnership"]);
         Assert.Equal("application-managed", administrationSummaryEntry.Metadata["externalInvitationDeliveryOwnership"]);
+        Assert.Equal("provider-managed", administrationSummaryEntry.Metadata["externalInvitationDeliveryStatusOwnership"]);
         Assert.Equal("0", administrationSummaryEntry.Metadata["invitationDeliverySenderCount"]);
         Assert.Equal("application-managed", administrationSummaryEntry.Metadata["identityProviderSyncOwnership"]);
         Assert.Contains(TenantAdministrationWorkflowCommands.GrantMembership, administrationSummaryEntry.Metadata["supportedCommands"], StringComparison.Ordinal);
@@ -430,10 +447,11 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.NotNull(domainProofVerificationRunner);
         Assert.NotNull(domainProofPollingRunner);
         Assert.NotNull(invitationDeliveryDispatcher);
+        Assert.NotNull(invitationDeliveryStatusReconciler);
         Assert.Empty(invitationDeliveryRunCatalog.Runs);
         Assert.NotNull(governanceActionWorkflow);
         Assert.NotNull(administrationWorkflow);
-        Assert.Equal(4549, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4553, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4510 && entry.Name == "TenantMembershipEvaluationAllowed");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4511 && entry.Name == "TenantMembershipEvaluationDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4512 && entry.Name == "TenantInvitationValidationAllowed");
@@ -474,6 +492,8 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4547 && entry.Name == "TenantAdministrationWorkflowDenied");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4548 && entry.Name == "TenantInvitationDeliveryDispatched");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4549 && entry.Name == "TenantInvitationDeliveryDispatchDenied");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4552 && entry.Name == "TenantInvitationDeliveryStatusReconciled");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4553 && entry.Name == "TenantInvitationDeliveryStatusReconciliationDenied");
     }
 
     [Fact]
@@ -3558,6 +3578,161 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal(TenantInvitationDeliveryOutcomes.Dispatched, summaryEntry.Metadata["latestDeliveryOutcome"]);
         Assert.Equal("1", tenantEntry.Metadata["deliveryRunCount"]);
         Assert.Equal(TenantInvitationDeliveryOutcomes.Dispatched, tenantEntry.Metadata["latestDeliveryOutcome"]);
+    }
+
+    [Fact]
+    public async Task TenantInvitationDeliveryStatusReconcilerRecordsProviderStatusTruth()
+    {
+        var services = new ServiceCollection();
+        var sender = new RecordingTenantInvitationDeliverySender("test-email");
+        services.AddSingleton<ITenantInvitationDeliverySender>(sender);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-delivery",
+                    tenantId: "tenant-delivery",
+                    inviteeId: "user-delivery",
+                    displayName: "Delivery Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+        var reconciler = provider.GetRequiredService<ITenantInvitationDeliveryStatusReconciler>();
+        var catalog = provider.GetRequiredService<ITenantInvitationCatalog>();
+        var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var dispatchedAtUtc = new DateTimeOffset(2026, 04, 29, 3, 15, 0, TimeSpan.Zero);
+        var observedAtUtc = new DateTimeOffset(2026, 04, 29, 3, 20, 0, TimeSpan.Zero);
+
+        await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-delivery",
+            invitationId: "invite-delivery",
+            channel: "email",
+            senderId: "test-email",
+            source: "composition-test",
+            actor: "operator-001",
+            atUtc: dispatchedAtUtc,
+            correlationId: "corr-delivery-002"));
+
+        var statusResult = await reconciler.ReconcileAsync(new TenantInvitationDeliveryStatusReconciliationRequest(
+            tenantId: "tenant-delivery",
+            invitationId: "invite-delivery",
+            status: TenantInvitationDeliveryStatuses.Delivered,
+            providerMessageId: "provider-message-001",
+            senderId: "test-email",
+            channel: "email",
+            reason: "Provider reported delivery.",
+            observedAtUtc: observedAtUtc,
+            source: "provider-callback",
+            actor: "mail-provider",
+            correlationId: "delivery-status-001",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["providerStatusCode"] = "250"
+            }));
+
+        var invitation = Assert.Single(catalog.Invitations);
+        var statusCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.delivery-status-reconciliation");
+        var invitationsSurface = Assert.Single(
+            technologyCatalog.GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitations");
+        var summaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
+        var tenantEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitations:tenant-delivery");
+
+        Assert.True(statusResult.Reconciled);
+        Assert.True(statusResult.Recorded);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, statusResult.Outcome);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, statusResult.Status);
+        Assert.Equal("provider-message-001", statusResult.ProviderMessageId);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
+        Assert.Equal(observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture), invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusObservedAtUtc]);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusReconciliationOutcome]);
+        Assert.Equal("provider-message-001", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusProviderMessageId]);
+        Assert.Equal("test-email", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusSenderId]);
+        Assert.Equal("email", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusChannel]);
+        Assert.Equal("provider-callback", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusSource]);
+        Assert.Equal("mail-provider", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusActor]);
+        Assert.Equal("delivery-status-001", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusCorrelationId]);
+        Assert.Equal("Provider reported delivery.", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatusReason]);
+        Assert.Equal("cephalon-managed", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusReconciliationOwnership]);
+        Assert.Equal("provider-managed", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.ExternalDeliveryStatusOwnership]);
+        Assert.Equal("250", invitation.Metadata["providerStatusCode"]);
+        Assert.Equal("cephalon-managed", statusCapability.Metadata["deliveryStatusReconciliationOwnership"]);
+        Assert.Equal("provider-managed", statusCapability.Metadata["externalDeliveryStatusOwnership"]);
+        Assert.Equal("1", summaryEntry.Metadata["deliveryStatusReportedCount"]);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, summaryEntry.Metadata["latestDeliveryStatus"]);
+        Assert.Equal(observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture), summaryEntry.Metadata["latestDeliveryStatusObservedAtUtc"]);
+        Assert.Equal("1", tenantEntry.Metadata["deliveryStatusReportedCount"]);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, tenantEntry.Metadata["latestDeliveryStatus"]);
+        Assert.Equal(observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture), tenantEntry.Metadata["latestDeliveryStatusObservedAtUtc"]);
+    }
+
+    [Fact]
+    public async Task TenantInvitationDeliveryStatusReconcilerRejectsProviderMessageMismatch()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-delivery",
+                    tenantId: "tenant-delivery",
+                    inviteeId: "user-delivery",
+                    displayName: "Delivery Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "provider-message-expected"
+                    }));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var reconciler = provider.GetRequiredService<ITenantInvitationDeliveryStatusReconciler>();
+        var catalog = provider.GetRequiredService<ITenantInvitationCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var result = await reconciler.ReconcileAsync(new TenantInvitationDeliveryStatusReconciliationRequest(
+            tenantId: "tenant-delivery",
+            invitationId: "invite-delivery",
+            status: TenantInvitationDeliveryStatuses.Delivered,
+            providerMessageId: "provider-message-other",
+            observedAtUtc: new DateTimeOffset(2026, 04, 29, 3, 20, 0, TimeSpan.Zero),
+            source: "provider-callback"));
+
+        var invitation = Assert.Single(catalog.Invitations);
+        var invitationsSurface = Assert.Single(
+            technologyCatalog.GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitations");
+        var summaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
+
+        Assert.False(result.Reconciled);
+        Assert.False(result.Recorded);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.ProviderMessageMismatch, result.Outcome);
+        Assert.Equal("provider-message-expected", result.Metadata["expectedDeliveryProviderMessageId"]);
+        Assert.Equal("provider-message-expected", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId]);
+        Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
+        Assert.Equal("0", summaryEntry.Metadata["deliveryStatusReportedCount"]);
+        Assert.Equal("none", summaryEntry.Metadata["latestDeliveryStatus"]);
     }
 
     [Fact]

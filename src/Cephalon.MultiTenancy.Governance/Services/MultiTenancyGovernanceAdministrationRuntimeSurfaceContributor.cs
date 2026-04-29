@@ -51,8 +51,10 @@ internal sealed class MultiTenancyGovernanceAdministrationRuntimeSurfaceContribu
             ["tenantAdminEndpointOwnership"] = "application-managed",
             ["invitationDeliveryOwnership"] = invitationDeliveryOwnership,
             ["invitationDeliveryDispatchOwnership"] = options.EnableInvitationDeliveryDispatch ? "cephalon-managed" : "not-configured",
+            ["invitationDeliveryStatusReconciliationOwnership"] = options.EnableInvitationDeliveryStatusReconciliation ? "cephalon-managed" : "not-configured",
             ["invitationDeliverySenderOwnership"] = deliverySenderConfigured ? "provider-managed" : "not-configured",
             ["externalInvitationDeliveryOwnership"] = deliverySenderConfigured ? "provider-managed" : "application-managed",
+            ["externalInvitationDeliveryStatusOwnership"] = options.EnableInvitationDeliveryStatusReconciliation ? "provider-managed" : "application-managed",
             ["invitationDeliverySenderCount"] = deliverySenders.Length.ToString(CultureInfo.InvariantCulture),
             ["identityProviderSyncOwnership"] = "application-managed"
         };
@@ -67,7 +69,7 @@ internal sealed class MultiTenancyGovernanceAdministrationRuntimeSurfaceContribu
             technologyId: "multi-tenancy",
             surfaceId: "tenant-administration",
             displayName: "Tenant Administration",
-            description: "Projects Cephalon-managed tenant-administration workflow ownership without claiming public onboarding, provider-specific notification delivery, or identity-provider synchronization.",
+            description: "Projects Cephalon-managed tenant-administration workflow ownership without claiming public onboarding, provider-specific notification delivery/status callbacks, or identity-provider synchronization.",
             entries: [entry]);
     }
 }

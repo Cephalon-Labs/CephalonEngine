@@ -332,6 +332,18 @@ Gets or sets a value indicating whether the built-in invitation delivery dispatc
 
 Remarks: The dispatcher owns invitation lookup, pending/expiry checks, runtime reporting, and outcome persistence. It requires a registered `ITenantInvitationDeliverySender` before any external delivery can happen.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverystatusreconciliation"></a>
+
+##### `EnableInvitationDeliveryStatusReconciliation`
+
+```csharp
+bool EnableInvitationDeliveryStatusReconciliation { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in invitation delivery status reconciler is active.
+
+Remarks: The reconciler owns host-agnostic status matching, metadata normalization, and persistence after a provider or receiver reports delivery status. It does not map webhooks or poll provider APIs by itself.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationvalidation"></a>
 
 ##### `EnableInvitationValidation`
@@ -1592,6 +1604,35 @@ Returns: The provider-specific sender outcome normalized for Cephalon runtime re
 Parameters:
 - `context`: The delivery context resolved by the governance companion pack.
 - `cancellationToken`: A token that cancels sender execution.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusreconciler"></a>
+
+### `ITenantInvitationDeliveryStatusReconciler`
+
+Reconciles provider or receiver delivery status observations into tenant invitation runtime metadata.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationDeliveryStatusReconciler
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusreconciler-reconcileasync-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-system-threading-cancellationtoken"></a>
+
+##### `ReconcileAsync`
+
+```csharp
+ValueTask<TenantInvitationDeliveryStatusReconciliationResult> ReconcileAsync(TenantInvitationDeliveryStatusReconciliationRequest request, CancellationToken cancellationToken)
+```
+
+Reconciles one delivery status observation for a tenant invitation.
+
+Returns: The reconciliation result.
+
+Parameters:
+- `request`: The delivery status reconciliation request.
+- `cancellationToken`: The token used to cancel reconciliation.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationregistry"></a>
 
@@ -10277,7 +10318,7 @@ Gets the tenant identifier.
 
 ### `TenantInvitationDeliveryMetadataKeys`
 
-Defines stable metadata keys written by tenant invitation delivery dispatch.
+Defines stable metadata keys written by tenant invitation delivery dispatch and status reconciliation.
 
 #### Declaration
 ```csharp
@@ -10296,6 +10337,16 @@ const string DeliveryDispatchOwnership
 
 Metadata key describing Cephalon ownership of the host-agnostic dispatch pipeline.
 
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusreconciliationownership"></a>
+
+##### `DeliveryStatusReconciliationOwnership`
+
+```csharp
+const string DeliveryStatusReconciliationOwnership
+```
+
+Metadata key describing Cephalon ownership of host-agnostic status reconciliation.
+
 <a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-externaldeliveryownership"></a>
 
 ##### `ExternalDeliveryOwnership`
@@ -10305,6 +10356,16 @@ const string ExternalDeliveryOwnership
 ```
 
 Metadata key describing who owns provider-specific external delivery.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-externaldeliverystatusownership"></a>
+
+##### `ExternalDeliveryStatusOwnership`
+
+```csharp
+const string ExternalDeliveryStatusOwnership
+```
+
+Metadata key describing who owns provider-specific external delivery status truth.
 
 <a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliveryactor"></a>
 
@@ -10385,6 +10446,106 @@ const string LastDeliverySource
 ```
 
 Metadata key containing the source that requested the last delivery dispatch.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatus"></a>
+
+##### `LastDeliveryStatus`
+
+```csharp
+const string LastDeliveryStatus
+```
+
+Metadata key containing the last reconciled delivery status.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusactor"></a>
+
+##### `LastDeliveryStatusActor`
+
+```csharp
+const string LastDeliveryStatusActor
+```
+
+Metadata key containing the actor that reported the last delivery status observation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatuschannel"></a>
+
+##### `LastDeliveryStatusChannel`
+
+```csharp
+const string LastDeliveryStatusChannel
+```
+
+Metadata key containing the delivery channel associated with the last delivery status observation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatuscorrelationid"></a>
+
+##### `LastDeliveryStatusCorrelationId`
+
+```csharp
+const string LastDeliveryStatusCorrelationId
+```
+
+Metadata key containing the correlation identifier for the last delivery status observation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusobservedatutc"></a>
+
+##### `LastDeliveryStatusObservedAtUtc`
+
+```csharp
+const string LastDeliveryStatusObservedAtUtc
+```
+
+Metadata key containing the UTC timestamp when delivery status was observed.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusprovidermessageid"></a>
+
+##### `LastDeliveryStatusProviderMessageId`
+
+```csharp
+const string LastDeliveryStatusProviderMessageId
+```
+
+Metadata key containing the provider message identifier associated with the last delivery status observation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusreason"></a>
+
+##### `LastDeliveryStatusReason`
+
+```csharp
+const string LastDeliveryStatusReason
+```
+
+Metadata key containing the provider or receiver reason for the last delivery status observation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusreconciliationoutcome"></a>
+
+##### `LastDeliveryStatusReconciliationOutcome`
+
+```csharp
+const string LastDeliveryStatusReconciliationOutcome
+```
+
+Metadata key containing the last delivery status reconciliation outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatussenderid"></a>
+
+##### `LastDeliveryStatusSenderId`
+
+```csharp
+const string LastDeliveryStatusSenderId
+```
+
+Metadata key containing the sender identifier associated with the last delivery status observation.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatussource"></a>
+
+##### `LastDeliveryStatusSource`
+
+```csharp
+const string LastDeliveryStatusSource
+```
+
+Metadata key containing the source that reported the last delivery status observation.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes"></a>
 
@@ -11025,6 +11186,513 @@ string Reason { get; }
 ```
 
 Gets the provider-facing outcome reason.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses"></a>
+
+### `TenantInvitationDeliveryStatuses`
+
+Defines stable status values reported by tenant invitation delivery providers or receivers.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryStatuses
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-accepted"></a>
+
+##### `Accepted`
+
+```csharp
+const string Accepted
+```
+
+The delivery provider accepted the message for processing.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-bounced"></a>
+
+##### `Bounced`
+
+```csharp
+const string Bounced
+```
+
+The invitation bounced at the provider or receiver boundary.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-deferred"></a>
+
+##### `Deferred`
+
+```csharp
+const string Deferred
+```
+
+The invitation delivery was deferred by the provider or receiver boundary.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-delivered"></a>
+
+##### `Delivered`
+
+```csharp
+const string Delivered
+```
+
+The invitation was delivered to the provider-recognized recipient endpoint.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-failed"></a>
+
+##### `Failed`
+
+```csharp
+const string Failed
+```
+
+The invitation delivery failed.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-suppressed"></a>
+
+##### `Suppressed`
+
+```csharp
+const string Suppressed
+```
+
+The invitation delivery was suppressed by provider or policy rules.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The delivery provider reported a status that could not be classified.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes"></a>
+
+### `TenantInvitationDeliveryStatusReconciliationOutcomes`
+
+Defines stable outcomes for tenant invitation delivery status reconciliation.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryStatusReconciliationOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Delivery status reconciliation is disabled.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-invitationnotfound"></a>
+
+##### `InvitationNotFound`
+
+```csharp
+const string InvitationNotFound
+```
+
+The requested invitation was not found.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-providermessagemismatch"></a>
+
+##### `ProviderMessageMismatch`
+
+```csharp
+const string ProviderMessageMismatch
+```
+
+The supplied provider message identifier does not match the identifier recorded during dispatch.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-providermessagemissing"></a>
+
+##### `ProviderMessageMissing`
+
+```csharp
+const string ProviderMessageMissing
+```
+
+The invitation has a recorded provider message identifier, but the reconciliation request did not provide one.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-reconciled"></a>
+
+##### `Reconciled`
+
+```csharp
+const string Reconciled
+```
+
+The delivery status observation was reconciled into invitation metadata.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-storefailed"></a>
+
+##### `StoreFailed`
+
+```csharp
+const string StoreFailed
+```
+
+The delivery status observation could not be persisted.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest"></a>
+
+### `TenantInvitationDeliveryStatusReconciliationRequest`
+
+Describes a tenant invitation delivery status reconciliation request.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryStatusReconciliationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryStatusReconciliationRequest`
+
+```csharp
+TenantInvitationDeliveryStatusReconciliationRequest(string tenantId, string invitationId, string status, string providerMessageId, string senderId, string channel, string reason, DateTimeOffset? observedAtUtc, string source, string actor, string correlationId, bool recordStatus, bool requireProviderMessageMatch, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery status reconciliation request.
+
+Parameters:
+- `tenantId`: The tenant identifier that owns the invitation.
+- `invitationId`: The invitation identifier to reconcile.
+- `status`: The provider or receiver delivery status.
+- `providerMessageId`: The provider message identifier associated with the status observation.
+- `senderId`: The delivery sender identifier associated with the status observation.
+- `channel`: The delivery channel associated with the status observation.
+- `reason`: The provider or receiver status reason.
+- `observedAtUtc`: The UTC timestamp when the status was observed. The runtime clock is used when omitted.
+- `source`: The source that reported the status observation.
+- `actor`: The actor that reported the status observation when known.
+- `correlationId`: The optional correlation identifier for the status observation.
+- `recordStatus`: A value indicating whether reconciled status metadata should be recorded on the invitation.
+- `requireProviderMessageMatch`: A value indicating whether an existing dispatch provider message identifier must match the request.
+- `metadata`: Optional delivery status metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor that reported the status observation when known.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; }
+```
+
+Gets the delivery channel associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier for the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier to reconcile.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional delivery status metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset? ObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the status was observed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-providermessageid"></a>
+
+##### `ProviderMessageId`
+
+```csharp
+string ProviderMessageId { get; }
+```
+
+Gets the provider message identifier associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the provider or receiver status reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-recordstatus"></a>
+
+##### `RecordStatus`
+
+```csharp
+bool RecordStatus { get; }
+```
+
+Gets a value indicating whether reconciled status metadata should be recorded on the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-requireprovidermessagematch"></a>
+
+##### `RequireProviderMessageMatch`
+
+```csharp
+bool RequireProviderMessageMatch { get; }
+```
+
+Gets a value indicating whether an existing dispatch provider message identifier must match the request.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-senderid"></a>
+
+##### `SenderId`
+
+```csharp
+string SenderId { get; }
+```
+
+Gets the delivery sender identifier associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source that reported the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the provider or receiver delivery status.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that owns the invitation.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult"></a>
+
+### `TenantInvitationDeliveryStatusReconciliationResult`
+
+Describes the result of tenant invitation delivery status reconciliation.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryStatusReconciliationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryStatusReconciliationResult`
+
+```csharp
+TenantInvitationDeliveryStatusReconciliationResult(string tenantId, string invitationId, string status, string outcome, bool reconciled, bool recorded, DateTimeOffset observedAtUtc, string providerMessageId, string senderId, string channel, TenantInvitationDescriptor invitation, string reason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery status reconciliation result.
+
+Parameters:
+- `tenantId`: The tenant identifier that was evaluated.
+- `invitationId`: The invitation identifier that was evaluated.
+- `status`: The provider or receiver delivery status.
+- `outcome`: The stable delivery status reconciliation outcome.
+- `reconciled`: A value indicating whether the status observation was accepted for the invitation.
+- `recorded`: A value indicating whether delivery status metadata was recorded.
+- `observedAtUtc`: The UTC timestamp when the status was observed.
+- `providerMessageId`: The provider message identifier associated with the status observation.
+- `senderId`: The delivery sender identifier associated with the status observation.
+- `channel`: The delivery channel associated with the status observation.
+- `invitation`: The resulting invitation descriptor when one exists.
+- `reason`: The operator-facing delivery status reconciliation reason.
+- `metadata`: Optional result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; }
+```
+
+Gets the delivery channel associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-invitation"></a>
+
+##### `Invitation`
+
+```csharp
+TenantInvitationDescriptor Invitation { get; }
+```
+
+Gets the resulting invitation descriptor when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier that was evaluated.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset ObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the status was observed.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable delivery status reconciliation outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-providermessageid"></a>
+
+##### `ProviderMessageId`
+
+```csharp
+string ProviderMessageId { get; }
+```
+
+Gets the provider message identifier associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing delivery status reconciliation reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-reconciled"></a>
+
+##### `Reconciled`
+
+```csharp
+bool Reconciled { get; }
+```
+
+Gets a value indicating whether the status observation was accepted for the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-recorded"></a>
+
+##### `Recorded`
+
+```csharp
+bool Recorded { get; }
+```
+
+Gets a value indicating whether delivery status metadata was recorded.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-senderid"></a>
+
+##### `SenderId`
+
+```csharp
+string SenderId { get; }
+```
+
+Gets the delivery sender identifier associated with the status observation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the provider or receiver delivery status.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that was evaluated.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdescriptor"></a>
 

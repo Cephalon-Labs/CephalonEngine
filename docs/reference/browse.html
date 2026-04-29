@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T01:42:10.9750353+00:00",
+  "GeneratedAtUtc": "2026-04-29T02:10:47.6777905+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -335,7 +335,7 @@
       "Description": "Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 114
+      "TypeCount": 119
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -1412,7 +1412,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 112
+      "TypeCount": 117
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -12075,6 +12075,21 @@
       }
     },
     {
+      "DisplayName": "ITenantInvitationDeliveryStatusReconciler",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusreconciler",
+      "Declaration": "public interface ITenantInvitationDeliveryStatusReconciler",
+      "Summary": "Reconciles provider or receiver delivery status observations into tenant invitation runtime metadata.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantInvitationRegistry",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -13000,7 +13015,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 38,
+        "Properties": 39,
         "Methods": 0
       }
     },
@@ -16851,10 +16866,10 @@
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys",
       "Declaration": "public static class TenantInvitationDeliveryMetadataKeys",
-      "Summary": "Defines stable metadata keys written by tenant invitation delivery dispatch.",
+      "Summary": "Defines stable metadata keys written by tenant invitation delivery dispatch and status reconciliation.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 10,
+        "Fields": 22,
         "Properties": 0,
         "Methods": 0
       }
@@ -16931,6 +16946,66 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses",
+      "Declaration": "public static class TenantInvitationDeliveryStatuses",
+      "Summary": "Defines stable status values reported by tenant invitation delivery providers or receivers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusReconciliationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes",
+      "Declaration": "public static class TenantInvitationDeliveryStatusReconciliationOutcomes",
+      "Summary": "Defines stable outcomes for tenant invitation delivery status reconciliation.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest",
+      "Declaration": "public sealed class TenantInvitationDeliveryStatusReconciliationRequest",
+      "Summary": "Describes a tenant invitation delivery status reconciliation request.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 14,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult",
+      "Declaration": "public sealed class TenantInvitationDeliveryStatusReconciliationResult",
+      "Summary": "Describes the result of tenant invitation delivery status reconciliation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
         "Methods": 0
       }
     },
@@ -17481,6 +17556,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string",
       "Signature": "Result\u003CT\u003E Accepted\u003CT\u003E(T value, string message, string code)",
       "Summary": "Creates an accepted result with a payload value."
+    },
+    {
+      "DisplayName": "Accepted",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-accepted",
+      "Signature": "const string Accepted",
+      "Summary": "The delivery provider accepted the message for processing."
     },
     {
       "DisplayName": "Accepted",
@@ -19054,6 +19140,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-actor",
       "Signature": "string Actor { get; }",
       "Summary": "Gets the actor that requested delivery dispatch when known."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-actor",
+      "Signature": "string Actor { get; }",
+      "Summary": "Gets the actor that reported the status observation when known."
     },
     {
       "DisplayName": "ActorId",
@@ -26899,6 +26996,17 @@
       "Summary": "Gets or sets the Kafka bootstrap server list, such as \u0060broker-1:9092,broker-2:9092\u0060."
     },
     {
+      "DisplayName": "Bounced",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-bounced",
+      "Signature": "const string Bounced",
+      "Summary": "The invitation bounced at the provider or receiver boundary."
+    },
+    {
       "DisplayName": "Bounded",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates",
@@ -30703,6 +30811,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-channel",
       "Signature": "string Channel { get; }",
       "Summary": "Gets the delivery channel used by the dispatch attempt."
+    },
+    {
+      "DisplayName": "Channel",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-channel",
+      "Signature": "string Channel { get; }",
+      "Summary": "Gets the delivery channel associated with the status observation."
+    },
+    {
+      "DisplayName": "Channel",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-channel",
+      "Signature": "string Channel { get; }",
+      "Summary": "Gets the delivery channel associated with the status observation."
     },
     {
       "DisplayName": "ChannelId",
@@ -36394,6 +36524,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for the status observation."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationValidationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -38875,6 +39016,17 @@
       "Summary": "The managed connector currently stays in observe-only mode, so write-path readiness is deferred."
     },
     {
+      "DisplayName": "Deferred",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-deferred",
+      "Signature": "const string Deferred",
+      "Summary": "The invitation delivery was deferred by the provider or receiver boundary."
+    },
+    {
       "DisplayName": "Degraded",
       "Category": "Fields",
       "DeclaringTypeName": "HealthState",
@@ -39106,6 +39258,17 @@
       "Summary": "Gets the maximum number of rows deleted per retention batch."
     },
     {
+      "DisplayName": "Delivered",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-delivered",
+      "Signature": "const string Delivered",
+      "Summary": "The invitation was delivered to the provider-recognized recipient endpoint."
+    },
+    {
       "DisplayName": "DeliveryDispatchOwnership",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
@@ -39126,6 +39289,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptiondescriptor-deliverymode",
       "Signature": "string DeliveryMode { get; }",
       "Summary": "Gets the declared delivery mode for the subscription."
+    },
+    {
+      "DisplayName": "DeliveryStatusReconciliationOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusreconciliationownership",
+      "Signature": "const string DeliveryStatusReconciliationOwnership",
+      "Summary": "Metadata key describing Cephalon ownership of host-agnostic status reconciliation."
     },
     {
       "DisplayName": "Denied",
@@ -41546,6 +41720,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-disabled",
       "Signature": "const string Disabled",
       "Summary": "Invitation delivery dispatch is disabled."
+    },
+    {
+      "DisplayName": "Disabled",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-disabled",
+      "Signature": "const string Disabled",
+      "Summary": "Delivery status reconciliation is disabled."
     },
     {
       "DisplayName": "Disabled",
@@ -46234,6 +46419,17 @@
       "Summary": "Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active."
     },
     {
+      "DisplayName": "EnableInvitationDeliveryStatusReconciliation",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverystatusreconciliation",
+      "Signature": "bool EnableInvitationDeliveryStatusReconciliation { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the built-in invitation delivery status reconciler is active."
+    },
+    {
       "DisplayName": "EnableInvitationValidation",
       "Category": "Properties",
       "DeclaringTypeName": "MultiTenancyGovernanceOptions",
@@ -50480,6 +50676,17 @@
       "Summary": "Metadata key describing who owns provider-specific external delivery."
     },
     {
+      "DisplayName": "ExternalDeliveryStatusOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-externaldeliverystatusownership",
+      "Signature": "const string ExternalDeliveryStatusOwnership",
+      "Summary": "Metadata key describing who owns provider-specific external delivery status truth."
+    },
+    {
       "DisplayName": "ExternalProofPollingOwnership",
       "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipDnsTxtProofCollectionMetadataKeys",
@@ -50687,6 +50894,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimestatus-failed",
       "Signature": "const RuntimeStatus Failed",
       "Summary": "The runtime captured a lifecycle failure."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-failed",
+      "Signature": "const string Failed",
+      "Summary": "The invitation delivery failed."
     },
     {
       "DisplayName": "FailedCdcCaptureIds",
@@ -63284,6 +63502,17 @@
       "Summary": "Gets the resulting invitation descriptor when one exists."
     },
     {
+      "DisplayName": "Invitation",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-invitation",
+      "Signature": "TenantInvitationDescriptor Invitation { get; }",
+      "Summary": "Gets the resulting invitation descriptor when one exists."
+    },
+    {
       "DisplayName": "InvitationDeliveryRunHistoryLimit",
       "Category": "Properties",
       "DeclaringTypeName": "MultiTenancyGovernanceOptions",
@@ -63374,6 +63603,28 @@
     {
       "DisplayName": "InvitationId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the invitation identifier to reconcile."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the invitation identifier that was evaluated."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -63445,6 +63696,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-invitationnotfound",
+      "Signature": "const string InvitationNotFound",
+      "Summary": "The requested invitation was not found."
+    },
+    {
+      "DisplayName": "InvitationNotFound",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-invitationnotfound",
       "Signature": "const string InvitationNotFound",
       "Summary": "The requested invitation was not found."
     },
@@ -67836,6 +68098,116 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverysource",
       "Signature": "const string LastDeliverySource",
       "Summary": "Metadata key containing the source that requested the last delivery dispatch."
+    },
+    {
+      "DisplayName": "LastDeliveryStatus",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatus",
+      "Signature": "const string LastDeliveryStatus",
+      "Summary": "Metadata key containing the last reconciled delivery status."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusActor",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusactor",
+      "Signature": "const string LastDeliveryStatusActor",
+      "Summary": "Metadata key containing the actor that reported the last delivery status observation."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusChannel",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatuschannel",
+      "Signature": "const string LastDeliveryStatusChannel",
+      "Summary": "Metadata key containing the delivery channel associated with the last delivery status observation."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusCorrelationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatuscorrelationid",
+      "Signature": "const string LastDeliveryStatusCorrelationId",
+      "Summary": "Metadata key containing the correlation identifier for the last delivery status observation."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusObservedAtUtc",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusobservedatutc",
+      "Signature": "const string LastDeliveryStatusObservedAtUtc",
+      "Summary": "Metadata key containing the UTC timestamp when delivery status was observed."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusProviderMessageId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusprovidermessageid",
+      "Signature": "const string LastDeliveryStatusProviderMessageId",
+      "Summary": "Metadata key containing the provider message identifier associated with the last delivery status observation."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusReason",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusreason",
+      "Signature": "const string LastDeliveryStatusReason",
+      "Summary": "Metadata key containing the provider or receiver reason for the last delivery status observation."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusReconciliationOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatusreconciliationoutcome",
+      "Signature": "const string LastDeliveryStatusReconciliationOutcome",
+      "Summary": "Metadata key containing the last delivery status reconciliation outcome."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusSenderId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatussenderid",
+      "Signature": "const string LastDeliveryStatusSenderId",
+      "Summary": "Metadata key containing the sender identifier associated with the last delivery status observation."
+    },
+    {
+      "DisplayName": "LastDeliveryStatusSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-lastdeliverystatussource",
+      "Signature": "const string LastDeliveryStatusSource",
+      "Summary": "Metadata key containing the source that reported the last delivery status observation."
     },
     {
       "DisplayName": "LastDnsTxtProofCollectedAtUtc",
@@ -75870,6 +76242,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional delivery status metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional result metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -80068,6 +80462,28 @@
       "Summary": "The UTC timestamp when the outcome was observed."
     },
     {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-observedatutc",
+      "Signature": "DateTimeOffset? ObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the status was observed."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the status was observed."
+    },
+    {
       "DisplayName": "ObservedEdgeNodeIds",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus",
@@ -82660,6 +83076,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-outcome",
       "Signature": "string Outcome { get; }",
       "Summary": "Gets the sender outcome."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable delivery status reconciliation outcome."
     },
     {
       "DisplayName": "Outcome",
@@ -88710,6 +89137,28 @@
       "Summary": "Gets the provider message identifier returned by the sender."
     },
     {
+      "DisplayName": "ProviderMessageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-providermessageid",
+      "Signature": "string ProviderMessageId { get; }",
+      "Summary": "Gets the provider message identifier associated with the status observation."
+    },
+    {
+      "DisplayName": "ProviderMessageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-providermessageid",
+      "Signature": "string ProviderMessageId { get; }",
+      "Summary": "Gets the provider message identifier associated with the status observation."
+    },
+    {
       "DisplayName": "ProviderMessageIdHeaderName",
       "Category": "Properties",
       "DeclaringTypeName": "HttpInvitationDeliveryOptions",
@@ -88719,6 +89168,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-providermessageidheadername",
       "Signature": "string ProviderMessageIdHeaderName { get; set; }",
       "Summary": "Gets or sets the response header that contains the provider message identifier."
+    },
+    {
+      "DisplayName": "ProviderMessageMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-providermessagemismatch",
+      "Signature": "const string ProviderMessageMismatch",
+      "Summary": "The supplied provider message identifier does not match the identifier recorded during dispatch."
+    },
+    {
+      "DisplayName": "ProviderMessageMissing",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-providermessagemissing",
+      "Signature": "const string ProviderMessageMissing",
+      "Summary": "The invitation has a recorded provider message identifier, but the reconciliation request did not provide one."
     },
     {
       "DisplayName": "ProviderOwnedCompleted",
@@ -91440,6 +91911,28 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the provider or receiver status reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing delivery status reconciliation reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationValidationResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -91669,6 +92162,17 @@
       "Summary": "The selected materializer is reconciling the desired and actual control-plane posture."
     },
     {
+      "DisplayName": "ReconcileAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationDeliveryStatusReconciler",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusreconciler-reconcileasync-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CTenantInvitationDeliveryStatusReconciliationResult\u003E ReconcileAsync(TenantInvitationDeliveryStatusReconciliationRequest request, CancellationToken cancellationToken)",
+      "Summary": "Reconciles one delivery status observation for a tenant invitation."
+    },
+    {
       "DisplayName": "ReconcileBlocked",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategories",
@@ -91711,6 +92215,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileblocked",
       "Signature": "const string ReconcileBlocked",
       "Summary": "Broader provider-owned control-plane reconcile remains blocked."
+    },
+    {
+      "DisplayName": "Reconciled",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-reconciled",
+      "Signature": "const string Reconciled",
+      "Summary": "The delivery status observation was reconciled into invitation metadata."
+    },
+    {
+      "DisplayName": "Reconciled",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-reconciled",
+      "Signature": "bool Reconciled { get; }",
+      "Summary": "Gets a value indicating whether the status observation was accepted for the invitation."
     },
     {
       "DisplayName": "ReconcileIntent",
@@ -92120,6 +92646,17 @@
       "Summary": "Gets a value indicating whether delivery outcome metadata was recorded."
     },
     {
+      "DisplayName": "Recorded",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-recorded",
+      "Signature": "bool Recorded { get; }",
+      "Summary": "Gets a value indicating whether delivery status metadata was recorded."
+    },
+    {
       "DisplayName": "RecordedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
@@ -92206,6 +92743,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-recordpublicationplan",
       "Signature": "bool RecordPublicationPlan { get; }",
       "Summary": "Gets a value indicating whether publication planning metadata should be recorded."
+    },
+    {
+      "DisplayName": "RecordStatus",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-recordstatus",
+      "Signature": "bool RecordStatus { get; }",
+      "Summary": "Gets a value indicating whether reconciled status metadata should be recorded on the invitation."
     },
     {
       "DisplayName": "Recovered",
@@ -95638,6 +96186,17 @@
       "AnchorId": "member-f-cephalon-identity-policies-identitypolicymetadatakeys-requireowner",
       "Signature": "const string RequireOwner",
       "Summary": "The metadata key that requires the current subject to match the resource owner when set to \u0060true\u0060."
+    },
+    {
+      "DisplayName": "RequireProviderMessageMatch",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-requireprovidermessagematch",
+      "Signature": "bool RequireProviderMessageMatch { get; }",
+      "Summary": "Gets a value indicating whether an existing dispatch provider message identifier must match the request."
     },
     {
       "DisplayName": "RequirePublisherId",
@@ -101690,6 +102249,28 @@
       "Summary": "Gets the delivery sender identifier used by the dispatch attempt."
     },
     {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-senderid",
+      "Signature": "string SenderId { get; }",
+      "Summary": "Gets the delivery sender identifier associated with the status observation."
+    },
+    {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-senderid",
+      "Signature": "string SenderId { get; }",
+      "Summary": "Gets the delivery sender identifier associated with the status observation."
+    },
+    {
       "DisplayName": "SenderNotConfigured",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryOutcomes",
@@ -102898,6 +103479,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-source",
       "Signature": "string Source { get; }",
       "Summary": "Gets the source that requested delivery dispatch."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-source",
+      "Signature": "string Source { get; }",
+      "Summary": "Gets the source that reported the status observation."
     },
     {
       "DisplayName": "Source",
@@ -105782,6 +106374,28 @@
     {
       "DisplayName": "Status",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the provider or receiver delivery status."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the provider or receiver delivery status."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -106119,6 +106733,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-storefailed",
       "Signature": "const string StoreFailed",
       "Summary": "The dispatch outcome could not be persisted."
+    },
+    {
+      "DisplayName": "StoreFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-storefailed",
+      "Signature": "const string StoreFailed",
+      "Summary": "The delivery status observation could not be persisted."
     },
     {
       "DisplayName": "StoreKind",
@@ -107285,6 +107910,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-suppressed",
       "Signature": "const string Suppressed",
       "Summary": "The sender deliberately suppressed delivery."
+    },
+    {
+      "DisplayName": "Suppressed",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-suppressed",
+      "Signature": "const string Suppressed",
+      "Summary": "The invitation delivery was suppressed by provider or policy rules."
     },
     {
       "DisplayName": "SuppressedByAuthoringPolicyKind",
@@ -109753,6 +110389,28 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that owns the invitation."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that was evaluated."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -109892,6 +110550,28 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-ctor-system-string-system-boolean-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "TenantInvitationDeliverySenderResult(string outcome, bool dispatched, string providerMessageId, string reason, DateTimeOffset? dispatchedAtUtc, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a tenant invitation delivery sender result."
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationDeliveryStatusReconciliationRequest(string tenantId, string invitationId, string status, string providerMessageId, string senderId, string channel, string reason, DateTimeOffset? observedAtUtc, string source, string actor, string correlationId, bool recordStatus, bool requireProviderMessageMatch, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant invitation delivery status reconciliation request."
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationDeliveryStatusReconciliationResult(string tenantId, string invitationId, string status, string outcome, bool reconciled, bool recorded, DateTimeOffset observedAtUtc, string providerMessageId, string senderId, string channel, TenantInvitationDescriptor invitation, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant invitation delivery status reconciliation result."
     },
     {
       "DisplayName": "TenantInvitationDescriptor",
@@ -112521,6 +113201,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-unknown",
       "Signature": "const string Unknown",
       "Summary": "The ownership posture could not be determined from the current runtime truth."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The delivery provider reported a status that could not be classified."
     },
     {
       "DisplayName": "Unmet",
