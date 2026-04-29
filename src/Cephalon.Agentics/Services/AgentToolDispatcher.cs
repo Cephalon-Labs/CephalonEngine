@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Agentics;
+
 namespace Cephalon.Agentics.Services;
 
 internal sealed class AgentToolDispatcher(

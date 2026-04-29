@@ -5,6 +5,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 [Back to reference index](README.md) | [Namespace index](namespaces.md) | [Type index](types.md) | [Member index](members.md) | [Browser view](browse.html?assembly=Cephalon.Abstractions)
 ## Namespaces
 
+- `Cephalon.Abstractions.Agentics`
 - `Cephalon.Abstractions.AppModel`
 - `Cephalon.Abstractions.AppModel.Scaffolding`
 - `Cephalon.Abstractions.Audit`
@@ -24,6 +25,387 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Abstractions.Technologies`
 - `Cephalon.Abstractions.Tenancy`
 - `Cephalon.Abstractions.Transports`
+
+<a id="namespace-cephalon-abstractions-agentics"></a>
+
+## Namespace Cephalon.Abstractions.Agentics
+
+<a id="type-cephalon-abstractions-agentics-agenttoolexecutionoutcomes"></a>
+
+### `AgentToolExecutionOutcomes`
+
+Defines stable outcome identifiers for agent-tool execution observations.
+
+#### Declaration
+```csharp
+public static class AgentToolExecutionOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+Gets the outcome identifier used when a tool run needs an approval step before execution.
+
+<a id="member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-denied"></a>
+
+##### `Denied`
+
+```csharp
+const string Denied
+```
+
+Gets the outcome identifier used when a policy denies a tool run.
+
+<a id="member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-failed"></a>
+
+##### `Failed`
+
+```csharp
+const string Failed
+```
+
+Gets the outcome identifier used when a tool run fails.
+
+<a id="member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-skipped"></a>
+
+##### `Skipped`
+
+```csharp
+const string Skipped
+```
+
+Gets the outcome identifier used when a tool run is intentionally skipped.
+
+<a id="member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-started"></a>
+
+##### `Started`
+
+```csharp
+const string Started
+```
+
+Gets the outcome identifier used when a tool run begins.
+
+<a id="member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-succeeded"></a>
+
+##### `Succeeded`
+
+```csharp
+const string Succeeded
+```
+
+Gets the outcome identifier used when a tool run completes successfully.
+
+<a id="type-cephalon-abstractions-agentics-agenttoolrunstate"></a>
+
+### `AgentToolRunState`
+
+Describes the latest operator-facing runtime state reported for one agent-tool run.
+
+#### Declaration
+```csharp
+public sealed class AgentToolRunState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-agentics-agenttoolrunstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AgentToolRunState`
+
+```csharp
+AgentToolRunState(string ToolId, string RunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastActorId, string LastCorrelationId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int ApprovalRequiredCount, int DeniedCount, string LastOutputSummary, string LastError, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the latest operator-facing runtime state reported for one agent-tool run.
+
+Parameters:
+- `ToolId`: The stable tool identifier.
+- `RunId`: The stable run identifier.
+- `LastOutcome`: The last reported outcome identifier when one exists.
+- `LastObservedAtUtc`: The UTC timestamp when the last observation was reported.
+- `LastActorId`: The actor identifier from the latest observation when one was reported.
+- `LastCorrelationId`: The correlation identifier from the latest observation when one was reported.
+- `LastAttempt`: The last reported execution attempt number.
+- `StartedCount`: The number of `started` observations reported so far.
+- `SucceededCount`: The number of `succeeded` observations reported so far.
+- `FailedCount`: The number of `failed` observations reported so far.
+- `SkippedCount`: The number of `skipped` observations reported so far.
+- `ApprovalRequiredCount`: The number of `approval-required` observations reported so far.
+- `DeniedCount`: The number of `denied` observations reported so far.
+- `LastOutputSummary`: The latest operator-facing output summary when one was reported.
+- `LastError`: The latest operator-facing error summary when one was reported.
+- `Metadata`: The operator-facing metadata captured by the latest report.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-approvalrequiredcount"></a>
+
+##### `ApprovalRequiredCount`
+
+```csharp
+int ApprovalRequiredCount { get; set; }
+```
+
+The number of `approval-required` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-deniedcount"></a>
+
+##### `DeniedCount`
+
+```csharp
+int DeniedCount { get; set; }
+```
+
+The number of `denied` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; set; }
+```
+
+The number of `failed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-isterminal"></a>
+
+##### `IsTerminal`
+
+```csharp
+bool IsTerminal { get; }
+```
+
+Gets a value indicating whether the latest report represents a terminal outcome for this run.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastactorid"></a>
+
+##### `LastActorId`
+
+```csharp
+string LastActorId { get; set; }
+```
+
+The actor identifier from the latest observation when one was reported.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastattempt"></a>
+
+##### `LastAttempt`
+
+```csharp
+int LastAttempt { get; set; }
+```
+
+The last reported execution attempt number.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastcorrelationid"></a>
+
+##### `LastCorrelationId`
+
+```csharp
+string LastCorrelationId { get; set; }
+```
+
+The correlation identifier from the latest observation when one was reported.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; set; }
+```
+
+The latest operator-facing error summary when one was reported.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the last observation was reported.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; set; }
+```
+
+The last reported outcome identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-lastoutputsummary"></a>
+
+##### `LastOutputSummary`
+
+```csharp
+string LastOutputSummary { get; set; }
+```
+
+The latest operator-facing output summary when one was reported.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+The operator-facing metadata captured by the latest report.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-requiresapproval"></a>
+
+##### `RequiresApproval`
+
+```csharp
+bool RequiresApproval { get; }
+```
+
+Gets a value indicating whether the latest report says explicit approval is required before execution can continue.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-runid"></a>
+
+##### `RunId`
+
+```csharp
+string RunId { get; set; }
+```
+
+The stable run identifier.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-skippedcount"></a>
+
+##### `SkippedCount`
+
+```csharp
+int SkippedCount { get; set; }
+```
+
+The number of `skipped` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-startedcount"></a>
+
+##### `StartedCount`
+
+```csharp
+int StartedCount { get; set; }
+```
+
+The number of `started` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-succeededcount"></a>
+
+##### `SucceededCount`
+
+```csharp
+int SucceededCount { get; set; }
+```
+
+The number of `succeeded` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-toolid"></a>
+
+##### `ToolId`
+
+```csharp
+string ToolId { get; set; }
+```
+
+The stable tool identifier.
+
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-totalreports"></a>
+
+##### `TotalReports`
+
+```csharp
+int TotalReports { get; }
+```
+
+Gets the total number of observations reported for this run.
+
+<a id="type-cephalon-abstractions-agentics-iagenttoolruncatalog"></a>
+
+### `IAgentToolRunCatalog`
+
+Exposes the latest reported runtime state for agent-tool runs.
+
+#### Declaration
+```csharp
+public interface IAgentToolRunCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-agentics-iagenttoolruncatalog-runs"></a>
+
+##### `Runs`
+
+```csharp
+IReadOnlyList<AgentToolRunState> Runs { get; }
+```
+
+Gets the currently known agent-tool run states ordered by tool identifier and run identifier.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-agentics-iagenttoolruncatalog-getbyrunid-system-string"></a>
+
+##### `GetByRunId`
+
+```csharp
+AgentToolRunState GetByRunId(string runId)
+```
+
+Looks up one reported run-state entry by run identifier.
+
+Returns: The current run state when one has been reported; otherwise, `null`.
+
+Parameters:
+- `runId`: The stable run identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-agentics-iagenttoolruncatalog-getbytoolid-system-string"></a>
+
+##### `GetByToolId`
+
+```csharp
+IReadOnlyList<AgentToolRunState> GetByToolId(string toolId)
+```
+
+Gets all reported run-state entries for one tool.
+
+Returns: The run states reported for the tool.
+
+Parameters:
+- `toolId`: The stable tool identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-agentics-iagenttoolruncatalog-tryget-system-string-cephalon-abstractions-agentics-agenttoolrunstate"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string runId, out AgentToolRunState state)
+```
+
+Attempts to look up one reported run-state entry by run identifier.
+
+Returns: `true` when one run-state entry is available; otherwise, `false`.
+
+Parameters:
+- `runId`: The stable run identifier to resolve.
+- `state`: The current run state when one has been reported.
 
 <a id="namespace-cephalon-abstractions-appmodel"></a>
 

@@ -4,6 +4,10 @@ Browse the published API surface by namespace.
 
 [Back to reference index](README.md)
 
+## `Cephalon.Abstractions.Agentics`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-agentics): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics)
+
 ## `Cephalon.Abstractions.AppModel`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 23 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
@@ -90,7 +94,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Agentics.Services`
 
-- [Cephalon.Agentics](cephalon-agentics.md#namespace-cephalon-agentics-services): 18 public types [Browse](browse.html?assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
+- [Cephalon.Agentics](cephalon-agentics.md#namespace-cephalon-agentics-services): 15 public types [Browse](browse.html?assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
 
 ## `Cephalon.AspNetCore.Diagnostics`
 

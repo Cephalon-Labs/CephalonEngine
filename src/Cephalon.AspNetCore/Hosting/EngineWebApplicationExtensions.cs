@@ -4,6 +4,7 @@ using Cephalon.AspNetCore.Health;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Features;
@@ -2011,6 +2012,33 @@ public static class EngineWebApplicationExtensions
                 return state is null ? Results.NotFound() : Results.Ok(state);
             })
             .WithName("GetCephalonEventDispatch");
+        engineGroup.MapGet("/agent-tool-runs", (HttpContext httpContext) =>
+            {
+                var runs = httpContext.RequestServices
+                    .GetService<IAgentToolRunCatalog>()?
+                    .Runs ?? [];
+
+                return Results.Ok(runs);
+            })
+            .WithName("GetCephalonAgentToolRuns");
+        engineGroup.MapGet("/agent-tool-runs/{runId}", (string runId, HttpContext httpContext) =>
+            {
+                var run = httpContext.RequestServices
+                    .GetService<IAgentToolRunCatalog>()?
+                    .GetByRunId(runId);
+
+                return run is null ? Results.NotFound() : Results.Ok(run);
+            })
+            .WithName("GetCephalonAgentToolRun");
+        engineGroup.MapGet("/agent-tool-runs/by-tool/{toolId}", (string toolId, HttpContext httpContext) =>
+            {
+                var runs = httpContext.RequestServices
+                    .GetService<IAgentToolRunCatalog>()?
+                    .GetByToolId(toolId) ?? [];
+
+                return Results.Ok(runs);
+            })
+            .WithName("GetCephalonAgentToolRunsByTool");
         engineGroup.MapGet("/event-subscription-readiness", (HttpContext httpContext) =>
             {
                 var readiness = httpContext.RequestServices

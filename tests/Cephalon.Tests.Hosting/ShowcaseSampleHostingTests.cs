@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Modules;

@@ -6,6 +6,7 @@
 
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
+- agentics read contracts such as `AgentToolExecutionOutcomes`, `AgentToolRunState`, and `IAgentToolRunCatalog`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
 - execution/runtime-catalog contracts such as `DurableExecutionRuntimeDescriptor`, `IDurableExecutionRuntimeCatalog`, `DurableExecutionRuntimeState`, `IDurableExecutionRuntimeStateCatalog`, `SagaChoreographyRuntimeDescriptor`, `ISagaChoreographyRuntimeCatalog`, `SagaChoreographyPublicationRuntimeState`, and `ISagaChoreographyPublicationRuntimeStateCatalog`
@@ -26,6 +27,9 @@
 - `Behaviors/IBehaviorOwnerModule.cs`
 - `Behaviors/IBehaviorModuleBuilder.cs`
 - `Behaviors/OwnedBehaviorRegistration.cs`
+- `Agentics/AgentToolExecutionOutcomes.cs`
+- `Agentics/AgentToolRunState.cs`
+- `Agentics/IAgentToolRunCatalog.cs`
 - `Capabilities/Capability.cs`
 - `Capabilities/ICapabilityRegistry.cs`
 - `Features/FeatureFlagDescriptor.cs`
@@ -153,6 +157,7 @@
 
 - `AppModel`
 - `AppModel/Scaffolding`
+- `Agentics`
 - `Audit`
 - `Authorization`
 - `Behaviors`
@@ -178,6 +183,12 @@ The behavior ownership contracts now follow that rule directly:
 - `IBehaviorOwnerModule` and `IBehaviorModuleBuilder` let one module declare the behaviors it owns without leaking ASP.NET Core or other host APIs into `Cephalon.Abstractions`
 - `OwnedBehaviorRegistration` is the normalized ownership record the engine composes at build time
 - public REST exposure still belongs in adapter packages such as `Cephalon.Behaviors.Http`, so module ownership and HTTP route mapping stay separate concerns
+
+The same host-agnostic rule now covers agent-tool run-state reads. `AgentToolExecutionOutcomes`,
+`AgentToolRunState`, and `IAgentToolRunCatalog` live here so `Cephalon.Engine`, host adapters, and
+operator tooling can read latest agent-tool run posture through `/engine/snapshot` and host routes
+without referencing `Cephalon.Agentics` directly. The implementation and write path still belong to
+the selected agentics pack through its dispatcher, executors, policies, observers, and reporter.
 
 The phase-8 families stay runtime-neutral on purpose:
 

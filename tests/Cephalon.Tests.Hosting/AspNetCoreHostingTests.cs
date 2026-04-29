@@ -10,6 +10,7 @@ using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.AppModel.Scaffolding;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Health;
@@ -1344,6 +1345,61 @@ public sealed class AspNetCoreHostingTests
 
         Assert.Equal(RuntimeStatus.Stopped, runtime.Status);
         Assert.NotNull(runtime.StatusSnapshot.StoppedAtUtc);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesAgentToolRunRoutes()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "AgenticWorkloads";
+        builder.Services.AddSingleton<IAgentToolExecutor, HostingAgentToolExecutor>();
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddAgentics(options =>
+            {
+                options.Tools.Add(new AgentToolDescriptor(
+                    id: "host-operator",
+                    displayName: "Host Operator",
+                    description: "Exercises agent-tool run routes in the ASP.NET Core host."));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var dispatcher = app.Services.GetRequiredService<IAgentToolDispatcher>();
+        var result = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "host-operator",
+            runId: "host-run-001",
+            actorId: "operator",
+            correlationId: "corr-host-run-001"));
+        var client = app.GetTestClient();
+
+        var runs = await client.GetFromJsonAsync<AgentToolRunState[]>("/engine/agent-tool-runs");
+        var run = await client.GetFromJsonAsync<AgentToolRunState>("/engine/agent-tool-runs/host-run-001");
+        var toolRuns = await client.GetFromJsonAsync<AgentToolRunState[]>("/engine/agent-tool-runs/by-tool/host-operator");
+        var missingRun = await client.GetAsync("/engine/agent-tool-runs/missing-run");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.Equal(AgentToolExecutionOutcomes.Succeeded, result.Outcome);
+        var listedRun = Assert.Single(runs!);
+        Assert.Equal("host-operator", listedRun.ToolId);
+        Assert.Equal("host-run-001", listedRun.RunId);
+        Assert.Equal(AgentToolExecutionOutcomes.Succeeded, listedRun.LastOutcome);
+        Assert.Equal("operator", listedRun.LastActorId);
+        Assert.Equal("corr-host-run-001", listedRun.LastCorrelationId);
+        Assert.Equal(1, listedRun.StartedCount);
+        Assert.Equal(1, listedRun.SucceededCount);
+        Assert.Equal(2, listedRun.TotalReports);
+        Assert.True(listedRun.IsTerminal);
+        Assert.False(listedRun.RequiresApproval);
+        Assert.Equal(listedRun.RunId, run!.RunId);
+        Assert.Equal(listedRun.RunId, Assert.Single(toolRuns!).RunId);
+        Assert.Equal(HttpStatusCode.NotFound, missingRun.StatusCode);
+        Assert.Equal(listedRun.RunId, Assert.Single(snapshot!.AgentToolRuns).RunId);
     }
 
     [Fact]
@@ -5832,6 +5888,24 @@ note: visible
         string WorkspacePath,
         string PluginsRootPath,
         string PackageDirectoryPath);
+
+    private sealed class HostingAgentToolExecutor : IAgentToolExecutor
+    {
+        public string ToolId => "host-operator";
+
+        public ValueTask<AgentToolExecutionResult> ExecuteAsync(
+            AgentToolExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(AgentToolExecutionResult.Succeeded(
+                "Host operator tool completed.",
+                new Dictionary<string, string>
+                {
+                    ["executor"] = nameof(HostingAgentToolExecutor)
+                }));
+        }
+    }
 
     private sealed class GrpcSubdirectoryHandler : DelegatingHandler
     {

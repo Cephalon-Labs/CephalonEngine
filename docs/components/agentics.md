@@ -9,7 +9,7 @@
 - tool descriptors, registries, and catalogs
 - orchestration-link validation for tool descriptors that point back to capabilities, execution graphs, or hosted executions
 - Cephalon-managed agent-tool dispatch through registered executors
-- run-state reporting and catalogs for tool executions
+- run-state reporting for tool executions
 - policy and observer hooks for approval, denial, audit, and operational projection
 - runtime-surface contribution for introspection
 
@@ -27,14 +27,18 @@
 - `Services/IAgentToolExecutor.cs`
 - `Services/IAgentToolExecutionPolicy.cs`
 - `Services/IAgentToolExecutionObserver.cs`
-- `Services/IAgentToolRunCatalog.cs`
 - `Services/IAgentToolRunReporter.cs`
 - `Services/AgentToolExecutionRequest.cs`
 - `Services/AgentToolExecutionContext.cs`
 - `Services/AgentToolExecutionResult.cs`
 - `Services/AgentToolExecutionReport.cs`
-- `Services/AgentToolRunState.cs`
 - `Services/AgenticsRuntimeSurfaceContributor.cs`
+
+Shared read contracts:
+
+- `Cephalon.Abstractions.Agentics/AgentToolExecutionOutcomes.cs`
+- `Cephalon.Abstractions.Agentics/AgentToolRunState.cs`
+- `Cephalon.Abstractions.Agentics/IAgentToolRunCatalog.cs`
 
 ## Source structure
 
@@ -50,10 +54,16 @@ This pack is the reference pattern for future AI or agent runtime behavior in Ce
 When `AgenticRuntimeOptions.EnableExecution` is enabled, the pack also owns a narrow managed execution lane:
 
 - `IAgentToolDispatcher` resolves the selected `AgentToolDescriptor`, reports a `started` observation, evaluates `IAgentToolExecutionPolicy` hooks, invokes the matching `IAgentToolExecutor`, and reports the final outcome.
-- `IAgentToolRunCatalog` exposes the latest run-state truth for each tool run, including outcome counts, actor/correlation details, approval-required posture, terminal-state posture, and the latest operator metadata.
+- `IAgentToolRunCatalog` exposes the latest run-state truth for each tool run through `Cephalon.Abstractions.Agentics`, including outcome counts, actor/correlation details, approval-required posture, terminal-state posture, and the latest operator metadata.
 - `IAgentToolExecutionObserver` receives every report after it is recorded so modules can attach audit, telemetry, or projection behavior without replacing the dispatcher.
 
-The resulting operator-facing answer flows through `/engine/technology-surfaces` and `/engine/snapshot` instead of a separate agent-specific endpoint. Tool entries now include execution readiness (`executionEnabled`, `executionOwnership`, `executorConfigured`, `executorCount`) and run-state metadata (`runtimeState`, `runCount`, `lastOutcome`, `totalReports`, approval/denial counters, and `reported.*` metadata). A tool without a registered executor remains truthful as `awaiting-executor` rather than being described as fully managed.
+The resulting operator-facing answer flows through `/engine/technology-surfaces`,
+`/engine/agent-tool-runs`, `/engine/agent-tool-runs/{runId}`,
+`/engine/agent-tool-runs/by-tool/{toolId}`, and `snapshot.AgentToolRuns`. Tool entries now include
+execution readiness (`executionEnabled`, `executionOwnership`, `executorConfigured`,
+`executorCount`) and run-state metadata (`runtimeState`, `runCount`, `lastOutcome`,
+`totalReports`, approval/denial counters, and `reported.*` metadata). A tool without a registered
+executor remains truthful as `awaiting-executor` rather than being described as fully managed.
 
 The showcase sample now includes `ShowcaseAgenticsModule`, which contributes a catalog-inspection tool, a matching executor, an approval policy, and an observer hook so the dispatcher/run-state loop is proven end to end in an adoption-quality host.
 

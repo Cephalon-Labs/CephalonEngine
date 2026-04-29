@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Features;
@@ -43,6 +44,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
         var eventDispatchRuntimeDescriptorCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeDescriptorCatalog)) as IEventDispatchRuntimeDescriptorCatalog;
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
         var eventSubscriptionExecutionReadinessCatalog = serviceProvider.GetService(typeof(IEventSubscriptionExecutionReadinessCatalog)) as IEventSubscriptionExecutionReadinessCatalog;
+        var agentToolRunCatalog = serviceProvider.GetService(typeof(IAgentToolRunCatalog)) as IAgentToolRunCatalog;
         var cdcCaptureRuntimeStateCatalog = serviceProvider.GetService(typeof(ICdcCaptureRuntimeStateCatalog)) as ICdcCaptureRuntimeStateCatalog;
         var cdcCaptureExecutionRuntimeCatalog = serviceProvider.GetService(typeof(ICdcCaptureExecutionRuntimeCatalog)) as ICdcCaptureExecutionRuntimeCatalog;
         var featureFlagRuntimeCatalog = serviceProvider.GetService(typeof(IFeatureFlagRuntimeCatalog)) as IFeatureFlagRuntimeCatalog;
@@ -85,6 +87,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             DatabaseMigrations = databaseMigrationCatalog.DatabaseMigrations,
             DatabaseMigrationPlaybook = databaseMigrationOperationalPlaybookProvider.CreatePlaybook(),
             DatabaseTopology = databaseTopologyOperationalSnapshotProvider.CreateSnapshot(),
+            AgentToolRuns = agentToolRunCatalog?.Runs ?? [],
             EventDispatchRuntimes = eventDispatchRuntimeDescriptorCatalog?.Runtimes ?? [],
             EventDispatchStates = eventDispatchRuntimeCatalog?.States ?? [],
             EventSubscriptionExecutionReadiness = eventSubscriptionExecutionReadinessCatalog?.Readiness ?? [],

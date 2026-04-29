@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Data;
@@ -33,7 +34,7 @@ namespace Cephalon.Engine.Runtime;
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
 /// without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details,
 /// diagnostics conventions, data product details, CDC capture details, data projection details, outbox details, inbox details,
-/// event-dispatch runtime details, event-subscription execution-readiness details,
+/// agent-tool run-state details, event-dispatch runtime details, event-subscription execution-readiness details,
 /// durable-execution runtime details, authorization-policy details, database-migration playbook details,
 /// database-topology posture details, and lifecycle story data.
 /// </remarks>
@@ -129,6 +130,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the authorization policies contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<AuthorizationPolicyDescriptor> AuthorizationPolicies { get; init; } = [];
+
+    /// <summary>
+    /// Gets the latest reported agent-tool run states visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<AgentToolRunState> AgentToolRuns { get; init; } = [];
 
     /// <summary>
     /// Gets the configured event-dispatch runtimes visible to the runtime at the time the snapshot was created.

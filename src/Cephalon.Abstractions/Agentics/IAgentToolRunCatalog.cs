@@ -1,4 +1,4 @@
-namespace Cephalon.Agentics.Services;
+namespace Cephalon.Abstractions.Agentics;
 
 /// <summary>
 /// Exposes the latest reported runtime state for agent-tool runs.

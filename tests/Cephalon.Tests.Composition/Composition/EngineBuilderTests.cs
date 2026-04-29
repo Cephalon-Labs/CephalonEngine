@@ -7,6 +7,7 @@ using Cephalon.Engine.Runtime;
 using Cephalon.Engine.Technologies;
 using Cephalon.Engine.Trust;
 using Cephalon.Engine.Transports;
+using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;

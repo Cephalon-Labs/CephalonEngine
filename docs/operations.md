@@ -1587,6 +1587,31 @@ Current note:
   expose it without referencing `Cephalon.Eventing`; the eventing pack or an optional companion
   still owns the implementation and runtime truth
 
+## Agent tool run surface
+
+`GET /engine/agent-tool-runs` exposes the operator-facing run-state catalog for agent-tool runs
+when an agentics pack registers the abstraction-level `IAgentToolRunCatalog`.
+
+Current payload highlights:
+
+- each run entry carries a stable `toolId`, `runId`, latest outcome, latest observation timestamp,
+  actor/correlation details, attempt number, outcome counters, output/error summaries, and safe
+  metadata
+- `requiresApproval` and `isTerminal` keep policy waits separate from final success, failure,
+  skipped, or denied outcomes
+- `GET /engine/agent-tool-runs/{runId}` narrows the same catalog to one reported run and returns
+  `404` when that run does not exist
+- `GET /engine/agent-tool-runs/by-tool/{toolId}` narrows the same catalog to all runs reported for
+  one tool id
+- the same run-state catalog is also available through `/engine/snapshot` in `AgentToolRuns` when
+  operators want one merged runtime answer
+
+Current note:
+
+- the read contract lives in `Cephalon.Abstractions.Agentics` so `Cephalon.Engine` and host
+  adapters can expose it without referencing `Cephalon.Agentics`; the agentics pack still owns the
+  dispatcher, executor, policy, observer, reporter, and in-memory catalog implementation
+
 ## Authorization policy surface
 
 `GET /engine/authorization-policies` exposes the operator-facing authorization-policy catalog contributed by active modules.
@@ -1626,7 +1651,7 @@ Current `Cephalon.Agentics` highlights:
 - invalid linked capability, execution-graph, or hosted-execution references fail when the agentic tool catalog is resolved instead of leaking broken operator metadata
 - managed tool execution now flows through `IAgentToolDispatcher` when `AgenticRuntimeOptions.EnableExecution` is enabled
 - each tool entry reports execution readiness through `executionEnabled`, `executionOwnership`, `executorConfigured`, and `executorCount`; tools without an executor are reported as `awaiting-executor` instead of being described as fully managed
-- reported runs flow into `IAgentToolRunCatalog` and surface `runtimeState`, `runCount`, `lastRunId`, `lastOutcome`, `totalReports`, approval/denial counters, actor/correlation details, and `reported.*` metadata on the same technology surface
+- reported runs flow into `IAgentToolRunCatalog` and surface `runtimeState`, `runCount`, `lastRunId`, `lastOutcome`, `totalReports`, approval/denial counters, actor/correlation details, and `reported.*` metadata on the same technology surface, while `/engine/agent-tool-runs*` and `snapshot.AgentToolRuns` expose the direct run-state read seam
 - approval-required and denied outcomes are policy decisions, not executor failures, so operators can distinguish "waiting for approval" from broken execution
 - the phase 13 `cell-based-architecture` baseline now also projects `cell-boundaries`, `cell-routes`, `cell-health-isolations`, and `cell-traffic-automations` surfaces whose entries stay aligned with `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, `snapshot.CellHealthIsolations`, and `snapshot.CellTrafficAutomations`, so operators can read module ownership, blast-radius posture, source-cell to target-cell routing posture, health-isolation posture, effective automation/trigger/action/materialization modes, policy source, dependency linkage, and transport hints from one shared runtime truth
 - the same traffic-automation surface now also carries first-class `providerId` plus `edgeNodeIds` targeting and ASP.NET Core drill-down routes on `/engine/cell-traffic-automations/providers/{providerId}` plus `/engine/cell-traffic-automations/edge-nodes/{edgeNodeId}`, so operators can correlate shared cell posture with provider control planes and edge-node topology without inventing a second traffic registry

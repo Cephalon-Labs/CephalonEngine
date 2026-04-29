@@ -36,6 +36,7 @@
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
 - `/engine/event-dispatch-runtimes` and `/engine/event-dispatches` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
+- `/engine/agent-tool-runs` when agentics packs register the abstraction-level agent-tool run-state catalog
 - `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
 - `/health`, `/health/live`, and `/health/ready` surfaces
 - opt-in HTTP request/response logging with bounded request and response body capture plus default sensitive-value redaction under `Engine:Observability:HttpLogging`
@@ -483,6 +484,13 @@ including reported outcome, retry intent, timestamps, and totals from
 `EventDispatchRuntimes` and `EventDispatchStates`, which keeps operator tooling aligned across the
 host route surface and the broader runtime snapshot without forcing adapter packs to re-aggregate
 state by hand.
+
+The host now also exposes additive agent-tool run-state answers directly. When a selected agentics
+pack registers `IAgentToolRunCatalog`, `/engine/agent-tool-runs`,
+`/engine/agent-tool-runs/{runId}`, and `/engine/agent-tool-runs/by-tool/{toolId}` publish the
+latest reported run posture from the abstraction-level catalog, while `/engine/snapshot` carries the
+same entries through `AgentToolRuns`. That keeps host adapters able to publish agent-tool runtime
+truth without depending on `Cephalon.Agentics` implementation types.
 
 ## Related docs
 

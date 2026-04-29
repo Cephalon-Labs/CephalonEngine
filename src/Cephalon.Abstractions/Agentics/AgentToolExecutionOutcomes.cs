@@ -1,4 +1,4 @@
-namespace Cephalon.Agentics.Services;
+namespace Cephalon.Abstractions.Agentics;
 
 /// <summary>
 /// Defines stable outcome identifiers for agent-tool execution observations.

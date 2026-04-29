@@ -140,6 +140,10 @@ public sealed class ReferenceDocsGeneratorTests
         var rendered = ReferenceDocsGenerator.Generate(request);
         var abstractionsPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-abstractions.md");
 
+        Assert.Contains("Cephalon.Abstractions.Agentics", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AgentToolExecutionOutcomes", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AgentToolRunState", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IAgentToolRunCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Abstractions.Authorization", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("AuthorizationPolicyDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Abstractions.Tenancy", abstractionsPage.Contents, StringComparison.Ordinal);
@@ -181,6 +185,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("EventDispatchRuntimes", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventDispatchStates", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionExecutionReadiness", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AgentToolRuns", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("AuthorizationPolicies", enginePage.Contents, StringComparison.Ordinal);
     }
 

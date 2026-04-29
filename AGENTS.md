@@ -173,6 +173,7 @@ Current source layout:
 
 - `src/Cephalon.Abstractions/AppModel` -> `Cephalon.Abstractions.AppModel`
 - `src/Cephalon.Abstractions/AppModel/Scaffolding` -> `Cephalon.Abstractions.AppModel.Scaffolding`
+- `src/Cephalon.Abstractions/Agentics` -> `Cephalon.Abstractions.Agentics`
 - `src/Cephalon.Abstractions/Capabilities` -> `Cephalon.Abstractions.Capabilities`
 - `src/Cephalon.Abstractions/Health` -> `Cephalon.Abstractions.Health`
 - `src/Cephalon.Abstractions/Localization` -> `Cephalon.Abstractions.Localization`

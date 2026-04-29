@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Agentics;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Agentics.Configuration;
