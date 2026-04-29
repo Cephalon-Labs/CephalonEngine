@@ -18,6 +18,8 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
     /// <param name="signedEventWebhookVerificationRequired">A value indicating whether SendGrid signed Event Webhook verification was required for this callback.</param>
     /// <param name="signedEventWebhookVerified">A value indicating whether the required SendGrid signed Event Webhook signature verified.</param>
     /// <param name="signedEventWebhookVerificationOutcome">The signed Event Webhook verification outcome for this callback.</param>
+    /// <param name="signedEventWebhookReplayProtectionEnabled">A value indicating whether process-local replay protection was enabled for this verified signed callback.</param>
+    /// <param name="signedEventWebhookReplayProtectionOutcome">The replay-protection outcome for this callback.</param>
     public SendGridInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -28,7 +30,9 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
         IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> events,
         bool signedEventWebhookVerificationRequired = false,
         bool signedEventWebhookVerified = false,
-        string signedEventWebhookVerificationOutcome = "not-configured")
+        string signedEventWebhookVerificationOutcome = "not-configured",
+        bool signedEventWebhookReplayProtectionEnabled = false,
+        string signedEventWebhookReplayProtectionOutcome = "not-configured")
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -47,6 +51,10 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
         SignedEventWebhookVerificationOutcome = string.IsNullOrWhiteSpace(signedEventWebhookVerificationOutcome)
             ? "unknown"
             : signedEventWebhookVerificationOutcome.Trim();
+        SignedEventWebhookReplayProtectionEnabled = signedEventWebhookReplayProtectionEnabled;
+        SignedEventWebhookReplayProtectionOutcome = string.IsNullOrWhiteSpace(signedEventWebhookReplayProtectionOutcome)
+            ? "unknown"
+            : signedEventWebhookReplayProtectionOutcome.Trim();
     }
 
     /// <summary>
@@ -98,4 +106,14 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
     /// Gets the signed Event Webhook verification outcome for this callback.
     /// </summary>
     public string SignedEventWebhookVerificationOutcome { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether process-local replay protection was enabled for this verified signed callback.
+    /// </summary>
+    public bool SignedEventWebhookReplayProtectionEnabled { get; }
+
+    /// <summary>
+    /// Gets the replay-protection outcome for this callback.
+    /// </summary>
+    public string SignedEventWebhookReplayProtectionOutcome { get; }
 }

@@ -47,6 +47,18 @@ string Actor { get; set; }
 
 Gets or sets the actor value recorded on translated SendGrid delivery status observations.
 
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-enablesignedeventwebhookreplayprotection"></a>
+
+##### `EnableSignedEventWebhookReplayProtection`
+
+```csharp
+bool EnableSignedEventWebhookReplayProtection { get; set; }
+```
+
+Gets or sets a value indicating whether verified SendGrid signed Event Webhook requests should be protected against replay inside the current process.
+
+Remarks: Replay protection is active only when `RequireSignedEventWebhook` is enabled and the request signature verifies successfully. The built-in guard stores bounded signature fingerprints in memory and does not claim distributed replay protection or durable provider callback inbox ownership.
+
 <a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-enablestatuscallbackendpoint"></a>
 
 ##### `EnableStatusCallbackEndpoint`
@@ -166,6 +178,30 @@ string SignedEventWebhookPublicKey { get; set; }
 Gets or sets the SendGrid public verification key used for signed Event Webhook verification.
 
 Remarks: The value may be a PEM public key or a Base64-encoded SubjectPublicKeyInfo payload. Environment-variable friendly escaped newlines (`\n`) are normalized before import.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhookreplaycachelimit"></a>
+
+##### `SignedEventWebhookReplayCacheLimit`
+
+```csharp
+int SignedEventWebhookReplayCacheLimit { get; set; }
+```
+
+Gets or sets the maximum number of verified SendGrid signed Event Webhook fingerprints retained in the current process.
+
+Remarks: When the bounded cache is full, the oldest fingerprint is evicted before recording a new accepted signed callback.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhookreplayretentionseconds"></a>
+
+##### `SignedEventWebhookReplayRetentionSeconds`
+
+```csharp
+int SignedEventWebhookReplayRetentionSeconds { get; set; }
+```
+
+Gets or sets the process-local retention window, in seconds, for verified SendGrid signed Event Webhook fingerprints.
+
+Remarks: The endpoint clamps the effective retention to at least one second. The default matches the signature timestamp tolerance.
 
 <a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhooksignatureheadername"></a>
 
@@ -444,12 +480,12 @@ public sealed class SendGridInvitationDeliveryStatusCallbackResult
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-system-boolean-system-boolean-system-string"></a>
+<a id="member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-system-boolean-system-boolean-system-string-system-boolean-system-string"></a>
 
 ##### `SendGridInvitationDeliveryStatusCallbackResult`
 
 ```csharp
-SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> events, bool signedEventWebhookVerificationRequired, bool signedEventWebhookVerified, string signedEventWebhookVerificationOutcome)
+SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> events, bool signedEventWebhookVerificationRequired, bool signedEventWebhookVerified, string signedEventWebhookVerificationOutcome, bool signedEventWebhookReplayProtectionEnabled, string signedEventWebhookReplayProtectionOutcome)
 ```
 
 Creates a SendGrid callback translation response.
@@ -465,6 +501,8 @@ Parameters:
 - `signedEventWebhookVerificationRequired`: A value indicating whether SendGrid signed Event Webhook verification was required for this callback.
 - `signedEventWebhookVerified`: A value indicating whether the required SendGrid signed Event Webhook signature verified.
 - `signedEventWebhookVerificationOutcome`: The signed Event Webhook verification outcome for this callback.
+- `signedEventWebhookReplayProtectionEnabled`: A value indicating whether process-local replay protection was enabled for this verified signed callback.
+- `signedEventWebhookReplayProtectionOutcome`: The replay-protection outcome for this callback.
 
 #### Properties
 
@@ -507,6 +545,26 @@ string RoutePattern { get; }
 ```
 
 Gets the endpoint route pattern that accepted the callback.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookreplayprotectionenabled"></a>
+
+##### `SignedEventWebhookReplayProtectionEnabled`
+
+```csharp
+bool SignedEventWebhookReplayProtectionEnabled { get; }
+```
+
+Gets a value indicating whether process-local replay protection was enabled for this verified signed callback.
+
+<a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookreplayprotectionoutcome"></a>
+
+##### `SignedEventWebhookReplayProtectionOutcome`
+
+```csharp
+string SignedEventWebhookReplayProtectionOutcome { get; }
+```
+
+Gets the replay-protection outcome for this callback.
 
 <a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookverificationoutcome"></a>
 
@@ -591,7 +649,7 @@ IEndpointRouteBuilder MapCephalonSendGridInvitationDeliveryStatusCallbacks(this 
 
 Maps the optional SendGrid Event Webhook tenant-invitation delivery status callback endpoint.
 
-Remarks: The endpoint translates SendGrid Event Webhook JSON arrays into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. It can also verify SendGrid signed Event Webhook signatures when configured. OAuth token validation, durable inboxing, and distributed replay protection remain host-managed or future provider-pack responsibilities.
+Remarks: The endpoint translates SendGrid Event Webhook JSON arrays into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. It can also verify SendGrid signed Event Webhook signatures and reject bounded process-local signed-callback replays when configured. OAuth token validation, durable inboxing, and distributed replay protection remain host-managed or future provider-pack responsibilities.
 
 Returns: The same endpoint route builder for fluent routing composition.
 

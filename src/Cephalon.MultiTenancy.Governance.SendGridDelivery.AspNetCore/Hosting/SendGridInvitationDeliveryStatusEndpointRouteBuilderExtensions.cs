@@ -30,8 +30,8 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
     /// <remarks>
     /// The endpoint translates SendGrid Event Webhook JSON arrays into the host-agnostic
     /// <see cref="ITenantInvitationDeliveryStatusReconciler" />. It can also verify SendGrid signed Event Webhook
-    /// signatures when configured. OAuth token validation, durable inboxing, and distributed replay protection remain
-    /// host-managed or future provider-pack responsibilities.
+    /// signatures and reject bounded process-local signed-callback replays when configured. OAuth token validation,
+    /// durable inboxing, and distributed replay protection remain host-managed or future provider-pack responsibilities.
     /// </remarks>
     public static IEndpointRouteBuilder MapCephalonSendGridInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)
     {
@@ -52,9 +52,10 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                     HttpContext context,
                     SendGridEventWebhookDeliveryStatusMapper mapper,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
+                    SendGridInvitationDeliveryStatusCallbackReplayGuard replayGuard,
                     ILoggerFactory loggerFactory,
                     CancellationToken cancellationToken) =>
-                    TranslateCallbackAsync(context, mapper, reconciler, loggerFactory, options, routePattern, cancellationToken))
+                    TranslateCallbackAsync(context, mapper, reconciler, replayGuard, loggerFactory, options, routePattern, cancellationToken))
             .WithName("CephalonSendGridInvitationDeliveryStatusCallback")
             .Accepts<JsonElement>("application/json")
             .Produces<SendGridInvitationDeliveryStatusCallbackResult>(StatusCodes.Status200OK)
@@ -88,7 +89,10 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                 options.GetSignedEventWebhookPublicKey() is not null,
                 options.GetSignedEventWebhookSignatureHeaderName(),
                 options.GetSignedEventWebhookTimestampHeaderName(),
-                options.GetSignedEventWebhookSignatureToleranceSeconds());
+                options.GetSignedEventWebhookSignatureToleranceSeconds(),
+                options.IsSignedEventWebhookReplayProtectionConfigured(),
+                options.GetSignedEventWebhookReplayRetentionSeconds(),
+                options.GetSignedEventWebhookReplayCacheLimit());
 
         return endpoints;
     }
@@ -97,6 +101,7 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
         HttpContext context,
         SendGridEventWebhookDeliveryStatusMapper mapper,
         ITenantInvitationDeliveryStatusReconciler reconciler,
+        SendGridInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         ILoggerFactory loggerFactory,
         SendGridInvitationDeliveryAspNetCoreOptions options,
         string routePattern,
@@ -154,6 +159,13 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                     statusCode: StatusCodes.Status413PayloadTooLarge);
             }
 
+            var replayProtection = RecordSignedEventWebhookReplayProtection(options, replayGuard, signatureVerification);
+            if (replayProtection.Failure is not null)
+            {
+                SendGridInvitationDeliveryAspNetCoreLogs.CallbackReplayRejected(logger, replayProtection.Outcome);
+                return replayProtection.Failure;
+            }
+
             var eventResults = new List<SendGridInvitationDeliveryStatusCallbackEventResult>(eventCount);
             var translatedEvents = 0;
             var reconciledEvents = 0;
@@ -161,36 +173,49 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
             var deniedEvents = 0;
             var index = 0;
 
-            foreach (var item in document.RootElement.EnumerateArray())
+            try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var mapping = mapper.Map(item, index);
-                if (!mapping.Translated)
+                foreach (var item in document.RootElement.EnumerateArray())
                 {
-                    skippedEvents++;
-                    eventResults.Add(mapping.ToSkippedEventResult());
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var mapping = mapper.Map(item, index);
+                    if (!mapping.Translated)
+                    {
+                        skippedEvents++;
+                        eventResults.Add(mapping.ToSkippedEventResult());
+                        index++;
+                        continue;
+                    }
+
+                    translatedEvents++;
+                    var reconciliationRequest = ApplySignatureAndReplayMetadata(mapping.Request!, signatureVerification, replayProtection, options);
+                    var reconciliation = await reconciler
+                        .ReconcileAsync(reconciliationRequest, cancellationToken)
+                        .ConfigureAwait(false);
+
+                    if (reconciliation.Reconciled)
+                    {
+                        reconciledEvents++;
+                    }
+                    else
+                    {
+                        deniedEvents++;
+                    }
+
+                    eventResults.Add(mapping.ToReconciledEventResult(reconciliation));
                     index++;
-                    continue;
                 }
+            }
+            catch
+            {
+                ForgetSignedEventWebhookReplayProtection(replayGuard, replayProtection);
+                throw;
+            }
 
-                translatedEvents++;
-                var reconciliationRequest = ApplySignatureMetadata(mapping.Request!, signatureVerification);
-                var reconciliation = await reconciler
-                    .ReconcileAsync(reconciliationRequest, cancellationToken)
-                    .ConfigureAwait(false);
-
-                if (reconciliation.Reconciled)
-                {
-                    reconciledEvents++;
-                }
-                else
-                {
-                    deniedEvents++;
-                }
-
-                eventResults.Add(mapping.ToReconciledEventResult(reconciliation));
-                index++;
+            if (translatedEvents > 0 && reconciledEvents == 0)
+            {
+                ForgetSignedEventWebhookReplayProtection(replayGuard, replayProtection);
             }
 
             SendGridInvitationDeliveryAspNetCoreLogs.CallbackAccepted(
@@ -210,7 +235,9 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
                 eventResults,
                 signatureVerification.Configured,
                 signatureVerification.Verified,
-                signatureVerification.Outcome);
+                signatureVerification.Outcome,
+                replayProtection.Configured,
+                replayProtection.Outcome);
 
             return Results.Json(result, SerializerOptions);
         }
@@ -371,9 +398,53 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
             CreateSha256Fingerprint(signature!));
     }
 
-    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureMetadata(
-        TenantInvitationDeliveryStatusReconciliationRequest request,
+    private static SignedEventWebhookReplayProtectionResult RecordSignedEventWebhookReplayProtection(
+        SendGridInvitationDeliveryAspNetCoreOptions options,
+        SendGridInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         SignedEventWebhookVerificationResult signatureVerification)
+    {
+        if (!options.IsSignedEventWebhookReplayProtectionConfigured() ||
+            !signatureVerification.Verified ||
+            string.IsNullOrWhiteSpace(signatureVerification.SignatureFingerprint))
+        {
+            return SignedEventWebhookReplayProtectionResult.NotConfigured();
+        }
+
+        var decision = replayGuard.TryRecord(
+            signatureVerification.SignatureFingerprint!,
+            DateTimeOffset.UtcNow,
+            TimeSpan.FromSeconds(options.GetSignedEventWebhookReplayRetentionSeconds()),
+            options.GetSignedEventWebhookReplayCacheLimit());
+        if (decision.Accepted)
+        {
+            return SignedEventWebhookReplayProtectionResult.Recorded(signatureVerification.SignatureFingerprint);
+        }
+
+        return SignedEventWebhookReplayProtectionResult.Fail(
+            decision.Outcome,
+            signatureVerification.SignatureFingerprint,
+            Results.Problem(
+                title: "SendGrid signed Event Webhook replay was rejected.",
+                detail: "The verified SendGrid Event Webhook request has already been accepted inside the configured process-local replay window.",
+                statusCode: StatusCodes.Status409Conflict));
+    }
+
+    private static void ForgetSignedEventWebhookReplayProtection(
+        SendGridInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        SignedEventWebhookReplayProtectionResult replayProtection)
+    {
+        if (replayProtection.Configured &&
+            !string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
+        {
+            replayGuard.Forget(replayProtection.ReplayFingerprint!);
+        }
+    }
+
+    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureAndReplayMetadata(
+        TenantInvitationDeliveryStatusReconciliationRequest request,
+        SignedEventWebhookVerificationResult signatureVerification,
+        SignedEventWebhookReplayProtectionResult replayProtection,
+        SendGridInvitationDeliveryAspNetCoreOptions options)
     {
         if (!signatureVerification.Configured)
         {
@@ -390,6 +461,25 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
         metadata["sendGridEventWebhookSignatureAgeSeconds"] =
             signatureVerification.AgeSeconds!.Value.ToString(CultureInfo.InvariantCulture);
         metadata["sendGridEventWebhookSignatureFingerprint"] = signatureVerification.SignatureFingerprint!;
+
+        if (replayProtection.Configured)
+        {
+            metadata["sendGridEventWebhookReplayProtection"] = replayProtection.Outcome;
+            metadata["sendGridEventWebhookReplayProtectionOwnership"] = "cephalon-managed";
+            metadata["sendGridEventWebhookReplayProtectionPolicy"] = "signed-event-webhook";
+            metadata["sendGridEventWebhookReplayProtectionKey"] = "signature-fingerprint";
+            metadata["sendGridEventWebhookReplayProtectionScope"] = "process-local";
+            metadata["sendGridEventWebhookReplayProtectionDurability"] = "none";
+            metadata["sendGridEventWebhookReplayProtectionRetentionSeconds"] =
+                options.GetSignedEventWebhookReplayRetentionSeconds().ToString(CultureInfo.InvariantCulture);
+            metadata["sendGridEventWebhookReplayProtectionCacheLimit"] =
+                options.GetSignedEventWebhookReplayCacheLimit().ToString(CultureInfo.InvariantCulture);
+
+            if (!string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
+            {
+                metadata["sendGridEventWebhookReplayProtectionFingerprint"] = replayProtection.ReplayFingerprint!;
+            }
+        }
 
         return new TenantInvitationDeliveryStatusReconciliationRequest(
             tenantId: request.TenantId,
@@ -630,5 +720,24 @@ public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensio
 
         public static SignedEventWebhookVerificationResult Fail(string outcome, IResult failure) =>
             new(true, false, null, null, null, outcome, failure);
+    }
+
+    private sealed record SignedEventWebhookReplayProtectionResult(
+        bool Configured,
+        string Outcome,
+        string? ReplayFingerprint,
+        IResult? Failure)
+    {
+        public static SignedEventWebhookReplayProtectionResult NotConfigured() =>
+            new(false, "not-configured", null, null);
+
+        public static SignedEventWebhookReplayProtectionResult Recorded(string replayFingerprint) =>
+            new(true, "recorded", replayFingerprint, null);
+
+        public static SignedEventWebhookReplayProtectionResult Fail(
+            string outcome,
+            string replayFingerprint,
+            IResult failure) =>
+            new(true, outcome, replayFingerprint, failure);
     }
 }

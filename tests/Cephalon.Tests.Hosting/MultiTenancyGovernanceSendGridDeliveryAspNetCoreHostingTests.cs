@@ -102,6 +102,8 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.False(result.SignedEventWebhookVerificationRequired);
         Assert.False(result.SignedEventWebhookVerified);
         Assert.Equal("not-configured", result.SignedEventWebhookVerificationOutcome);
+        Assert.False(result.SignedEventWebhookReplayProtectionEnabled);
+        Assert.Equal("not-configured", result.SignedEventWebhookReplayProtectionOutcome);
         var eventResult = Assert.Single(result.Events);
         Assert.True(eventResult.Translated);
         Assert.True(eventResult.Reconciled);
@@ -123,6 +125,8 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal("2.0.0", invitation.Metadata["sendGridStatus"]);
         Assert.Equal("sg-event-295", invitation.Metadata["sendGridEventId"]);
         Assert.Equal("sendgrid-message-295.filter-001", invitation.Metadata["sendGridMessageId"]);
+        Assert.Equal("not-configured", invitation.Metadata["sendGridEventWebhookReplayProtection"]);
+        Assert.Equal("not-configured", invitation.Metadata["sendGridEventWebhookReplayProtectionOwnership"]);
         Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
         Assert.Equal("sendgrid-event-webhook", observation.Source);
         Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
@@ -133,6 +137,10 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal("not-configured", endpointEntry.Metadata["sendGridEventWebhookSignatureVerificationOwnership"]);
         Assert.Equal("false", endpointEntry.Metadata["sendGridEventWebhookSignatureVerificationRequired"]);
         Assert.Equal("application-managed", endpointEntry.Metadata["sendGridEventWebhookInboxOwnership"]);
+        Assert.Equal("false", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionConfigured"]);
+        Assert.Equal("not-configured", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionOwnership"]);
+        Assert.Equal("none", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionPolicy"]);
+        Assert.Equal("none", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionScope"]);
         Assert.Equal("true", endpointEntry.Metadata["normalizeProviderMessageIdFromSgMessageId"]);
         Assert.Contains(
             diagnosticsConvention.Events,
@@ -214,6 +222,8 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.True(result.SignedEventWebhookVerificationRequired);
         Assert.True(result.SignedEventWebhookVerified);
         Assert.Equal("verified", result.SignedEventWebhookVerificationOutcome);
+        Assert.True(result.SignedEventWebhookReplayProtectionEnabled);
+        Assert.Equal("recorded", result.SignedEventWebhookReplayProtectionOutcome);
         Assert.Equal(1, result.ReconciledEvents);
         Assert.Equal("verified", invitation.Metadata["sendGridEventWebhookSignatureVerification"]);
         Assert.Equal("cephalon-managed", invitation.Metadata["sendGridEventWebhookSignatureVerificationOwnership"]);
@@ -221,6 +231,13 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal("timestamp+raw-body", invitation.Metadata["sendGridEventWebhookSignaturePayload"]);
         Assert.Equal(timestamp, invitation.Metadata["sendGridEventWebhookSignatureTimestamp"]);
         Assert.StartsWith("sha256:", invitation.Metadata["sendGridEventWebhookSignatureFingerprint"], StringComparison.Ordinal);
+        Assert.Equal("recorded", invitation.Metadata["sendGridEventWebhookReplayProtection"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["sendGridEventWebhookReplayProtectionOwnership"]);
+        Assert.Equal("signed-event-webhook", invitation.Metadata["sendGridEventWebhookReplayProtectionPolicy"]);
+        Assert.Equal("signature-fingerprint", invitation.Metadata["sendGridEventWebhookReplayProtectionKey"]);
+        Assert.Equal("process-local", invitation.Metadata["sendGridEventWebhookReplayProtectionScope"]);
+        Assert.Equal("none", invitation.Metadata["sendGridEventWebhookReplayProtectionDurability"]);
+        Assert.StartsWith("sha256:", invitation.Metadata["sendGridEventWebhookReplayProtectionFingerprint"], StringComparison.Ordinal);
         Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["sendGridEventWebhookSignatureVerificationOwnership"]);
         Assert.Equal("true", endpointEntry.Metadata["sendGridEventWebhookSignatureVerificationRequired"]);
@@ -229,9 +246,18 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Equal("timestamp+raw-body", endpointEntry.Metadata["sendGridEventWebhookSignaturePayload"]);
         Assert.Equal("X-Twilio-Email-Event-Webhook-Signature", endpointEntry.Metadata["sendGridEventWebhookSignatureHeaderName"]);
         Assert.Equal("X-Twilio-Email-Event-Webhook-Timestamp", endpointEntry.Metadata["sendGridEventWebhookSignatureTimestampHeaderName"]);
+        Assert.Equal("true", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionOwnership"]);
+        Assert.Equal("signed-event-webhook", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionPolicy"]);
+        Assert.Equal("signature-fingerprint", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionKey"]);
+        Assert.Equal("process-local", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionScope"]);
+        Assert.Equal("none", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionDurability"]);
         Assert.Contains(
             diagnosticsConvention.Events,
             definition => definition.Name == "SendGridInvitationDeliveryStatusCallbackSignatureRejected");
+        Assert.Contains(
+            diagnosticsConvention.Events,
+            definition => definition.Name == "SendGridInvitationDeliveryStatusCallbackReplayRejected");
     }
 
     [Fact]
@@ -277,6 +303,96 @@ public sealed class MultiTenancyGovernanceSendGridDeliveryAspNetCoreHostingTests
         Assert.Empty(observations);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["sendGridEventWebhookSignatureVerificationOwnership"]);
         Assert.Equal("true", endpointEntry.Metadata["sendGridEventWebhookSignatureVerificationRequired"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonSendGridInvitationDeliveryStatusCallbacksRejectsDuplicateSignedWebhookBeforeReconciliation()
+    {
+        using var signingKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.Services.AddCephalonSendGridInvitationDeliveryAspNetCore(configure: options =>
+        {
+            options.RequireStatusCallbackAuthorization = false;
+            options.RequireSignedEventWebhook = true;
+            options.SignedEventWebhookPublicKey = signingKey.ExportSubjectPublicKeyInfoPem();
+            options.SignedEventWebhookReplayRetentionSeconds = 300;
+            options.SignedEventWebhookReplayCacheLimit = 16;
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-sendgrid-replay",
+                    tenantId: "tenant-sendgrid-replay",
+                    inviteeId: "replay@example.test",
+                    inviteeKind: "email",
+                    displayName: "SendGrid Replay Callback Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "sendgrid-message-297"
+                    }));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonSendGridInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var payload = JsonSerializer.Serialize(
+            new object[]
+            {
+                new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["event"] = "delivered",
+                    ["timestamp"] = 1777478400,
+                    ["sg_event_id"] = "sg-event-297",
+                    ["sg_message_id"] = "sendgrid-message-297.filter-001",
+                    ["status"] = "2.0.0",
+                    ["reason"] = "250 OK",
+                    ["cephalonTenantId"] = "tenant-sendgrid-replay",
+                    ["cephalonInvitationId"] = "invite-sendgrid-replay"
+                }
+            },
+            SerializerOptions);
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        var signature = CreateSendGridSignature(signingKey, timestamp, payload);
+        using var firstRequest = CreateSignedSendGridRequest(payload, timestamp, signature);
+        using var secondRequest = CreateSignedSendGridRequest(payload, timestamp, signature);
+
+        var firstResponse = await client.SendAsync(firstRequest);
+        var secondResponse = await client.SendAsync(secondRequest);
+
+        var result = await firstResponse.Content.ReadFromJsonAsync<SendGridInvitationDeliveryStatusCallbackResult>(SerializerOptions);
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var observations = app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations;
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-sendgrid-status-callbacks");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.NotNull(result);
+        Assert.True(result.SignedEventWebhookReplayProtectionEnabled);
+        Assert.Equal("recorded", result.SignedEventWebhookReplayProtectionOutcome);
+        Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
+        Assert.Single(observations);
+        Assert.Equal("recorded", invitation.Metadata["sendGridEventWebhookReplayProtection"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["sendGridEventWebhookReplayProtectionOwnership"]);
+        Assert.Equal(
+            "sha256:" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(signature))).ToLowerInvariant(),
+            invitation.Metadata["sendGridEventWebhookReplayProtectionFingerprint"]);
+        Assert.Equal("true", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionOwnership"]);
+        Assert.Equal("process-local", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionScope"]);
+        Assert.Equal("none", endpointEntry.Metadata["sendGridEventWebhookReplayProtectionDurability"]);
     }
 
     [Fact]

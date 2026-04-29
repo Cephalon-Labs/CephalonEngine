@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T18:55:40.2796955+00:00",
+  "GeneratedAtUtc": "2026-04-29T19:49:14.3015933+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -15824,7 +15824,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 21,
         "Methods": 1
       }
     },
@@ -15929,7 +15929,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 10,
+        "Properties": 12,
         "Methods": 0
       }
     },
@@ -48712,6 +48712,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-enablesfididentifiers",
       "Signature": "bool EnableSfidIdentifiers { get; set; }",
       "Summary": "Gets or sets a value indicating whether the pack should enable official \u0060Sfid.EntityFramework\u0060 conventions and key generation."
+    },
+    {
+      "DisplayName": "EnableSignedEventWebhookReplayProtection",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-enablesignedeventwebhookreplayprotection",
+      "Signature": "bool EnableSignedEventWebhookReplayProtection { get; set; }",
+      "Summary": "Gets or sets a value indicating whether verified SendGrid signed Event Webhook requests should be protected against replay inside the current process."
     },
     {
       "DisplayName": "EnableSnapshots",
@@ -107421,8 +107432,8 @@
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
-      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-system-boolean-system-boolean-system-string",
-      "Signature": "SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList\u003CSendGridInvitationDeliveryStatusCallbackEventResult\u003E events, bool signedEventWebhookVerificationRequired, bool signedEventWebhookVerified, string signedEventWebhookVerificationOutcome)",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-system-boolean-system-boolean-system-string-system-boolean-system-string",
+      "Signature": "SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList\u003CSendGridInvitationDeliveryStatusCallbackEventResult\u003E events, bool signedEventWebhookVerificationRequired, bool signedEventWebhookVerified, string signedEventWebhookVerificationOutcome, bool signedEventWebhookReplayProtectionEnabled, string signedEventWebhookReplayProtectionOutcome)",
       "Summary": "Creates a SendGrid callback translation response."
     },
     {
@@ -107875,6 +107886,50 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhookpublickey",
       "Signature": "string SignedEventWebhookPublicKey { get; set; }",
       "Summary": "Gets or sets the SendGrid public verification key used for signed Event Webhook verification."
+    },
+    {
+      "DisplayName": "SignedEventWebhookReplayCacheLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhookreplaycachelimit",
+      "Signature": "int SignedEventWebhookReplayCacheLimit { get; set; }",
+      "Summary": "Gets or sets the maximum number of verified SendGrid signed Event Webhook fingerprints retained in the current process."
+    },
+    {
+      "DisplayName": "SignedEventWebhookReplayProtectionEnabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookreplayprotectionenabled",
+      "Signature": "bool SignedEventWebhookReplayProtectionEnabled { get; }",
+      "Summary": "Gets a value indicating whether process-local replay protection was enabled for this verified signed callback."
+    },
+    {
+      "DisplayName": "SignedEventWebhookReplayProtectionOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-signedeventwebhookreplayprotectionoutcome",
+      "Signature": "string SignedEventWebhookReplayProtectionOutcome { get; }",
+      "Summary": "Gets the replay-protection outcome for this callback."
+    },
+    {
+      "DisplayName": "SignedEventWebhookReplayRetentionSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-signedeventwebhookreplayretentionseconds",
+      "Signature": "int SignedEventWebhookReplayRetentionSeconds { get; set; }",
+      "Summary": "Gets or sets the process-local retention window, in seconds, for verified SendGrid signed Event Webhook fingerprints."
     },
     {
       "DisplayName": "SignedEventWebhookSignatureHeaderName",

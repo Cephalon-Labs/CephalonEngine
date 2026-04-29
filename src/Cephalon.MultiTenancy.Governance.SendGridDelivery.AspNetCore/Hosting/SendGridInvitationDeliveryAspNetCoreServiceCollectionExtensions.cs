@@ -33,6 +33,7 @@ public static class SendGridInvitationDeliveryAspNetCoreServiceCollectionExtensi
         services.RemoveAll<SendGridInvitationDeliveryAspNetCoreOptions>();
         services.AddSingleton(options);
         services.TryAddSingleton<SendGridInvitationDeliveryStatusCallbackRuntimeCatalog>();
+        services.TryAddSingleton<SendGridInvitationDeliveryStatusCallbackReplayGuard>();
         services.TryAddSingleton<SendGridEventWebhookDeliveryStatusMapper>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, SendGridInvitationDeliveryStatusRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, SendGridInvitationDeliveryAspNetCoreDiagnosticsConventionContributor>());

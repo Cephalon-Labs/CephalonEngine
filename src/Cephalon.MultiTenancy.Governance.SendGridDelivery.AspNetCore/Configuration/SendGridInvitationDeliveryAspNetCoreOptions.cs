@@ -140,6 +140,35 @@ public sealed class SendGridInvitationDeliveryAspNetCoreOptions
     public int SignedEventWebhookSignatureToleranceSeconds { get; set; } = 300;
 
     /// <summary>
+    /// Gets or sets a value indicating whether verified SendGrid signed Event Webhook requests should be protected against
+    /// replay inside the current process.
+    /// </summary>
+    /// <remarks>
+    /// Replay protection is active only when <see cref="RequireSignedEventWebhook" /> is enabled and the request signature
+    /// verifies successfully. The built-in guard stores bounded signature fingerprints in memory and does not claim
+    /// distributed replay protection or durable provider callback inbox ownership.
+    /// </remarks>
+    public bool EnableSignedEventWebhookReplayProtection { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the process-local retention window, in seconds, for verified SendGrid signed Event Webhook fingerprints.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint clamps the effective retention to at least one second. The default matches the signature timestamp
+    /// tolerance.
+    /// </remarks>
+    public int SignedEventWebhookReplayRetentionSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Gets or sets the maximum number of verified SendGrid signed Event Webhook fingerprints retained in the current
+    /// process.
+    /// </summary>
+    /// <remarks>
+    /// When the bounded cache is full, the oldest fingerprint is evicted before recording a new accepted signed callback.
+    /// </remarks>
+    public int SignedEventWebhookReplayCacheLimit { get; set; } = 4096;
+
+    /// <summary>
     /// Reads SendGrid ASP.NET Core callback options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -180,6 +209,9 @@ public sealed class SendGridInvitationDeliveryAspNetCoreOptions
         options.SignedEventWebhookSignatureHeaderName = Normalize(section["SignedEventWebhookSignatureHeaderName"]) ?? options.SignedEventWebhookSignatureHeaderName;
         options.SignedEventWebhookTimestampHeaderName = Normalize(section["SignedEventWebhookTimestampHeaderName"]) ?? options.SignedEventWebhookTimestampHeaderName;
         options.SignedEventWebhookSignatureToleranceSeconds = ParseInt32(section["SignedEventWebhookSignatureToleranceSeconds"], options.SignedEventWebhookSignatureToleranceSeconds);
+        options.EnableSignedEventWebhookReplayProtection = ParseBoolean(section["EnableSignedEventWebhookReplayProtection"], options.EnableSignedEventWebhookReplayProtection);
+        options.SignedEventWebhookReplayRetentionSeconds = ParseInt32(section["SignedEventWebhookReplayRetentionSeconds"], options.SignedEventWebhookReplayRetentionSeconds);
+        options.SignedEventWebhookReplayCacheLimit = ParseInt32(section["SignedEventWebhookReplayCacheLimit"], options.SignedEventWebhookReplayCacheLimit);
         return options;
     }
 
@@ -204,6 +236,15 @@ public sealed class SendGridInvitationDeliveryAspNetCoreOptions
 
     internal int GetSignedEventWebhookSignatureToleranceSeconds() =>
         Math.Clamp(SignedEventWebhookSignatureToleranceSeconds, 1, 86_400);
+
+    internal bool IsSignedEventWebhookReplayProtectionConfigured() =>
+        RequireSignedEventWebhook && EnableSignedEventWebhookReplayProtection;
+
+    internal int GetSignedEventWebhookReplayRetentionSeconds() =>
+        Math.Clamp(SignedEventWebhookReplayRetentionSeconds, 1, 86_400);
+
+    internal int GetSignedEventWebhookReplayCacheLimit() =>
+        Math.Clamp(SignedEventWebhookReplayCacheLimit, 1, 1_000_000);
 
     private static int ParseInt32(string? value, int defaultValue)
     {

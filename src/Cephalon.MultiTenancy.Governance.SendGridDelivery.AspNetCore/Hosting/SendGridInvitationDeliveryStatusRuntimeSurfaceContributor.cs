@@ -28,7 +28,11 @@ internal sealed class SendGridInvitationDeliveryStatusRuntimeSurfaceContributor(
         var signedEventWebhookSignatureHeaderName = endpoint?.SignedEventWebhookSignatureHeaderName ?? options.GetSignedEventWebhookSignatureHeaderName();
         var signedEventWebhookTimestampHeaderName = endpoint?.SignedEventWebhookTimestampHeaderName ?? options.GetSignedEventWebhookTimestampHeaderName();
         var signedEventWebhookSignatureToleranceSeconds = endpoint?.SignedEventWebhookSignatureToleranceSeconds ?? options.GetSignedEventWebhookSignatureToleranceSeconds();
+        var signedEventWebhookReplayProtectionConfigured = endpoint?.SignedEventWebhookReplayProtectionConfigured ?? options.IsSignedEventWebhookReplayProtectionConfigured();
+        var signedEventWebhookReplayRetentionSeconds = endpoint?.SignedEventWebhookReplayRetentionSeconds ?? options.GetSignedEventWebhookReplayRetentionSeconds();
+        var signedEventWebhookReplayCacheLimit = endpoint?.SignedEventWebhookReplayCacheLimit ?? options.GetSignedEventWebhookReplayCacheLimit();
         var signatureVerificationOwnership = requireSignedEventWebhook ? "cephalon-managed" : "not-configured";
+        var replayProtectionOwnership = signedEventWebhookReplayProtectionConfigured ? "cephalon-managed" : "not-configured";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -57,7 +61,15 @@ internal sealed class SendGridInvitationDeliveryStatusRuntimeSurfaceContributor(
             ["sendGridEventWebhookSignatureTimestampHeaderName"] = signedEventWebhookTimestampHeaderName,
             ["sendGridEventWebhookSignatureToleranceSeconds"] = signedEventWebhookSignatureToleranceSeconds.ToString(CultureInfo.InvariantCulture),
             ["sendGridEventWebhookOAuthVerificationOwnership"] = requireAuthorization ? "host-managed-authorization" : "not-configured",
-            ["sendGridEventWebhookReplayProtectionOwnership"] = "application-managed",
+            ["sendGridEventWebhookReplayProtectionConfigured"] = signedEventWebhookReplayProtectionConfigured.ToString().ToLowerInvariant(),
+            ["sendGridEventWebhookReplayProtectionOwnership"] = replayProtectionOwnership,
+            ["sendGridEventWebhookReplayProtectionPolicy"] = signedEventWebhookReplayProtectionConfigured ? "signed-event-webhook" : "none",
+            ["sendGridEventWebhookReplayProtectionKey"] = signedEventWebhookReplayProtectionConfigured ? "signature-fingerprint" : "none",
+            ["sendGridEventWebhookReplayProtectionScope"] = signedEventWebhookReplayProtectionConfigured ? "process-local" : "none",
+            ["sendGridEventWebhookReplayProtectionDurability"] = "none",
+            ["sendGridEventWebhookReplayProtectionRetentionSeconds"] = signedEventWebhookReplayRetentionSeconds.ToString(CultureInfo.InvariantCulture),
+            ["sendGridEventWebhookReplayProtectionCacheLimit"] = signedEventWebhookReplayCacheLimit.ToString(CultureInfo.InvariantCulture),
+            ["sendGridEventWebhookReplayProtectionRequiresSignature"] = "true",
             ["tenantInvitationDeliveryStatusReconcilerDependency"] = "ITenantInvitationDeliveryStatusReconciler",
             ["routePattern"] = routePattern,
             ["httpMethod"] = "POST",
@@ -133,7 +145,10 @@ internal sealed class SendGridInvitationDeliveryStatusCallbackRuntimeCatalog
         bool signedEventWebhookPublicKeyConfigured,
         string signedEventWebhookSignatureHeaderName,
         string signedEventWebhookTimestampHeaderName,
-        int signedEventWebhookSignatureToleranceSeconds)
+        int signedEventWebhookSignatureToleranceSeconds,
+        bool signedEventWebhookReplayProtectionConfigured,
+        int signedEventWebhookReplayRetentionSeconds,
+        int signedEventWebhookReplayCacheLimit)
     {
         lock (syncRoot)
         {
@@ -152,7 +167,10 @@ internal sealed class SendGridInvitationDeliveryStatusCallbackRuntimeCatalog
                 signedEventWebhookPublicKeyConfigured,
                 signedEventWebhookSignatureHeaderName,
                 signedEventWebhookTimestampHeaderName,
-                signedEventWebhookSignatureToleranceSeconds);
+                signedEventWebhookSignatureToleranceSeconds,
+                signedEventWebhookReplayProtectionConfigured,
+                signedEventWebhookReplayRetentionSeconds,
+                signedEventWebhookReplayCacheLimit);
         }
     }
 }
@@ -172,4 +190,7 @@ internal sealed record SendGridInvitationDeliveryStatusCallbackEndpointRuntimeSn
     bool SignedEventWebhookPublicKeyConfigured,
     string SignedEventWebhookSignatureHeaderName,
     string SignedEventWebhookTimestampHeaderName,
-    int SignedEventWebhookSignatureToleranceSeconds);
+    int SignedEventWebhookSignatureToleranceSeconds,
+    bool SignedEventWebhookReplayProtectionConfigured,
+    int SignedEventWebhookReplayRetentionSeconds,
+    int SignedEventWebhookReplayCacheLimit);
