@@ -2514,6 +2514,99 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task AddTechnologyPacksSkipDuplicateCompletedAgentToolRunsWhenIdempotencyIsEnabled()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<CountingAgentToolExecutor>();
+        services.AddSingleton<IAgentToolExecutor>(static serviceProvider =>
+            serviceProvider.GetRequiredService<CountingAgentToolExecutor>());
+        services.AddSingleton<AgentToolExecutionAuditProbe>();
+        services.AddSingleton<IAgentToolExecutionObserver>(static serviceProvider =>
+            serviceProvider.GetRequiredService<AgentToolExecutionAuditProbe>());
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["AgenticWorkloads"]));
+            engine.AddAgentics(options =>
+            {
+                options.EnableExecutionIdempotency = true;
+                options.ExecutionIdempotencyRetentionMinutes = 30;
+                options.Tools.Add(new AgentToolDescriptor(
+                    id: "idempotent-analyst",
+                    displayName: "Idempotent Analyst",
+                    description: "Exercises process-local duplicate completed run suppression for the managed agentics lane."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<IAgentToolDispatcher>();
+        var executor = provider.GetRequiredService<CountingAgentToolExecutor>();
+        var auditProbe = provider.GetRequiredService<AgentToolExecutionAuditProbe>();
+
+        var firstResult = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "idempotent-analyst",
+            runId: "agentics-idempotent-run-001",
+            actorId: "operator",
+            correlationId: "corr-agentics-idempotent-001",
+            metadata: new Dictionary<string, string>
+            {
+                ["requestSource"] = "composition-test"
+            }));
+        var duplicateResult = await dispatcher.ExecuteAsync(new AgentToolExecutionRequest(
+            toolId: "idempotent-analyst",
+            runId: "agentics-idempotent-run-001",
+            actorId: "operator",
+            correlationId: "corr-agentics-idempotent-001",
+            metadata: new Dictionary<string, string>
+            {
+                ["requestSource"] = "composition-test"
+            }));
+
+        var runCatalog = provider.GetRequiredService<IAgentToolRunCatalog>();
+        var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var runState = Assert.Single(runCatalog.GetByToolId("idempotent-analyst"));
+        var agenticsSurface = Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
+        var idempotentEntry = Assert.Single(agenticsSurface.Entries, entry => entry.Id == "idempotent-analyst");
+        var duplicateReport = Assert.Single(auditProbe.Reports, report =>
+            report.RunId == "agentics-idempotent-run-001" &&
+            report.Outcome == AgentToolExecutionOutcomes.Skipped);
+
+        Assert.Equal(AgentToolExecutionOutcomes.Succeeded, firstResult.Outcome);
+        Assert.Equal(AgentToolExecutionOutcomes.Skipped, duplicateResult.Outcome);
+        Assert.Equal("Agent-tool run already completed in this process.", duplicateResult.OutputSummary);
+        Assert.Equal(1, executor.CallCount);
+        Assert.Equal(AgentToolExecutionOutcomes.Skipped, runState.LastOutcome);
+        Assert.Equal(1, runState.StartedCount);
+        Assert.Equal(1, runState.SucceededCount);
+        Assert.Equal(1, runState.SkippedCount);
+        Assert.Equal(3, runState.TotalReports);
+        Assert.True(runState.DuplicateCompleted);
+        Assert.True(runState.IsTerminal);
+        Assert.False(runState.RetryPending);
+        Assert.Equal("completed-run", duplicateResult.Metadata["idempotencyPolicy"]);
+        Assert.Equal("tool-run", duplicateResult.Metadata["idempotencyKey"]);
+        Assert.Equal("30", duplicateResult.Metadata["idempotencyRetentionMinutes"]);
+        Assert.Equal("none", duplicateResult.Metadata["idempotencyDurability"]);
+        Assert.Equal("process-local", duplicateResult.Metadata["idempotencyScope"]);
+        Assert.Equal("duplicate-skipped", duplicateResult.Metadata["idempotencyOutcome"]);
+        Assert.Equal("agentics-idempotent-run-001", duplicateResult.Metadata["completedRunId"]);
+        Assert.Equal("succeeded", duplicateResult.Metadata["completedOutcome"]);
+        Assert.Equal("composition-test", duplicateResult.Metadata["requestSource"]);
+        Assert.Equal("duplicate-skipped", duplicateReport.Metadata["idempotencyOutcome"]);
+        Assert.Equal("completed-run", idempotentEntry.Metadata["idempotencyPolicy"]);
+        Assert.Equal("tool-run", idempotentEntry.Metadata["idempotencyKey"]);
+        Assert.Equal("30", idempotentEntry.Metadata["idempotencyRetentionMinutes"]);
+        Assert.Equal("none", idempotentEntry.Metadata["idempotencyDurability"]);
+        Assert.Equal("process-local", idempotentEntry.Metadata["idempotencyScope"]);
+        Assert.Equal("1", idempotentEntry.Metadata["succeededCount"]);
+        Assert.Equal("1", idempotentEntry.Metadata["skippedCount"]);
+        Assert.Equal("true", idempotentEntry.Metadata["duplicateCompleted"]);
+        Assert.Equal("duplicate-skipped", idempotentEntry.Metadata["reported.idempotencyOutcome"]);
+    }
+
+    [Fact]
     public async Task AddTechnologyPacksReportApprovalRequiredAgentToolRunsWithoutCallingExecutor()
     {
         var services = new ServiceCollection();
@@ -3726,6 +3819,29 @@ public sealed class EngineBuilderTests
                 new Dictionary<string, string>
                 {
                     ["executor"] = nameof(RetryingAgentToolExecutor),
+                    ["observedAttempt"] = context.Attempt.ToString(CultureInfo.InvariantCulture)
+                }));
+        }
+    }
+
+    private sealed class CountingAgentToolExecutor : IAgentToolExecutor
+    {
+        public string ToolId => "idempotent-analyst";
+
+        public int CallCount { get; private set; }
+
+        public ValueTask<AgentToolExecutionResult> ExecuteAsync(
+            AgentToolExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            CallCount++;
+
+            return ValueTask.FromResult(AgentToolExecutionResult.Succeeded(
+                $"Idempotent agentics attempt {context.Attempt}.",
+                new Dictionary<string, string>
+                {
+                    ["executor"] = nameof(CountingAgentToolExecutor),
                     ["observedAttempt"] = context.Attempt.ToString(CultureInfo.InvariantCulture)
                 }));
         }

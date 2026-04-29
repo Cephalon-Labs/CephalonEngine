@@ -50,6 +50,18 @@ bool EnableExecution { get; set; }
 
 Gets or sets a value indicating whether Cephalon-managed tool dispatch and run-state features are enabled.
 
+<a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecutionidempotency"></a>
+
+##### `EnableExecutionIdempotency`
+
+```csharp
+bool EnableExecutionIdempotency { get; set; }
+```
+
+Gets or sets a value indicating whether duplicate completed run ids should be skipped inside the current process.
+
+Remarks: This is a bounded, process-local idempotency posture. It suppresses duplicate completed tool runs observed by the in-memory run catalog without claiming durable inbox storage, cross-node deduplication, or distributed exactly-once execution.
+
 <a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-enablememory"></a>
 
 ##### `EnableMemory`
@@ -59,6 +71,18 @@ bool EnableMemory { get; set; }
 ```
 
 Gets or sets a value indicating whether agent memory features are enabled.
+
+<a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionidempotencyretentionminutes"></a>
+
+##### `ExecutionIdempotencyRetentionMinutes`
+
+```csharp
+int ExecutionIdempotencyRetentionMinutes { get; set; }
+```
+
+Gets or sets the process-local retention window, in minutes, for completed run-id suppression.
+
+Remarks: Values less than `1` are normalized to one minute by the dispatcher.
 
 <a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionmaxattempts"></a>
 

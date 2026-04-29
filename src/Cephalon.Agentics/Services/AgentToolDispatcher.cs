@@ -7,6 +7,7 @@ namespace Cephalon.Agentics.Services;
 internal sealed class AgentToolDispatcher(
     IAgentToolCatalog catalog,
     AgenticRuntimeOptions options,
+    IAgentToolRunCatalog runCatalog,
     IEnumerable<IAgentToolExecutor> executors,
     IEnumerable<IAgentToolExecutionPolicy> policies,
     IAgentToolRunReporter reporter,
@@ -27,6 +28,37 @@ internal sealed class AgentToolDispatcher(
         {
             throw new InvalidOperationException(
                 $"Agent tool '{request.ToolId}' is not registered in the active agentics runtime.");
+        }
+
+        if (TryResolveDuplicateCompletedRun(
+            tool.Id,
+            request.RunId,
+            out var completedRun,
+            out var completedObservedAtUtc,
+            out var idempotencyRetention))
+        {
+            var duplicateContext = new AgentToolExecutionContext(
+                tool,
+                request.RunId,
+                request.Arguments,
+                request.ActorId,
+                request.CorrelationId,
+                request.Attempt,
+                request.Metadata);
+            var duplicateResult = WithRequestMetadata(
+                duplicateContext,
+                AgentToolExecutionResult.Skipped(
+                    "Agent-tool run already completed in this process.",
+                    CreateIdempotencyMetadata(
+                        completedRun!,
+                        completedObservedAtUtc,
+                        idempotencyRetention)));
+
+            await RecordResultAsync(
+                duplicateContext,
+                duplicateResult,
+                cancellationToken).ConfigureAwait(false);
+            return duplicateResult;
         }
 
         var executor = ResolveExecutor(tool.Id);
@@ -262,6 +294,9 @@ internal sealed class AgentToolDispatcher(
     private static TimeSpan NormalizeRetryDelay(int retryDelayMilliseconds) =>
         TimeSpan.FromMilliseconds(Math.Max(0, retryDelayMilliseconds));
 
+    private static TimeSpan NormalizeIdempotencyRetention(int retentionMinutes) =>
+        TimeSpan.FromMinutes(Math.Max(1, retentionMinutes));
+
     private static ValueTask DelayBeforeRetryAsync(TimeSpan retryDelay, CancellationToken cancellationToken)
     {
         if (retryDelay <= TimeSpan.Zero)
@@ -270,6 +305,79 @@ internal sealed class AgentToolDispatcher(
         }
 
         return new ValueTask(Task.Delay(retryDelay, cancellationToken));
+    }
+
+    private bool TryResolveDuplicateCompletedRun(
+        string toolId,
+        string runId,
+        out AgentToolRunState? completedRun,
+        out DateTimeOffset completedObservedAtUtc,
+        out TimeSpan retention)
+    {
+        completedRun = null;
+        completedObservedAtUtc = default;
+        retention = NormalizeIdempotencyRetention(options.ExecutionIdempotencyRetentionMinutes);
+
+        if (!options.EnableExecutionIdempotency ||
+            !runCatalog.TryGet(runId, out var state) ||
+            state is null ||
+            state.SucceededCount <= 0 ||
+            !string.Equals(state.ToolId, toolId, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        var completedAt = ResolveCompletedObservedAtUtc(state);
+        if (completedAt is null)
+        {
+            return false;
+        }
+
+        if (DateTimeOffset.UtcNow - completedAt.Value > retention)
+        {
+            return false;
+        }
+
+        completedRun = state;
+        completedObservedAtUtc = completedAt.Value;
+        return true;
+    }
+
+    private static DateTimeOffset? ResolveCompletedObservedAtUtc(AgentToolRunState state)
+    {
+        if (state.Metadata.TryGetValue("completedObservedAtUtc", out var completedObservedAtUtc) &&
+            DateTimeOffset.TryParse(
+                completedObservedAtUtc,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                out var parsedCompletedObservedAtUtc))
+        {
+            return parsedCompletedObservedAtUtc;
+        }
+
+        return string.Equals(state.LastOutcome, AgentToolExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase)
+            ? state.LastObservedAtUtc
+            : null;
+    }
+
+    private static Dictionary<string, string> CreateIdempotencyMetadata(
+        AgentToolRunState completedRun,
+        DateTimeOffset completedObservedAtUtc,
+        TimeSpan retention)
+    {
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["idempotencyPolicy"] = "completed-run",
+            ["idempotencyKey"] = "tool-run",
+            ["idempotencyRetentionMinutes"] = retention.TotalMinutes.ToString("0", CultureInfo.InvariantCulture),
+            ["idempotencyDurability"] = "none",
+            ["idempotencyScope"] = "process-local",
+            ["idempotencyOutcome"] = "duplicate-skipped",
+            ["completedToolId"] = completedRun.ToolId,
+            ["completedRunId"] = completedRun.RunId,
+            ["completedOutcome"] = AgentToolExecutionOutcomes.Succeeded,
+            ["completedObservedAtUtc"] = completedObservedAtUtc.ToString("O", CultureInfo.InvariantCulture)
+        };
     }
 
     private static Dictionary<string, string> CreateRetryMetadata(

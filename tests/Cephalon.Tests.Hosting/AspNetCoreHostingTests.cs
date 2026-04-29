@@ -1360,6 +1360,8 @@ public sealed class AspNetCoreHostingTests
         {
             cephalon.AddAgentics(options =>
             {
+                options.EnableExecutionIdempotency = true;
+                options.ExecutionIdempotencyRetentionMinutes = 45;
                 options.Tools.Add(new AgentToolDescriptor(
                     id: "host-operator",
                     displayName: "Host Operator",
@@ -1451,6 +1453,35 @@ public sealed class AspNetCoreHostingTests
         Assert.True(retryPendingRun.RetryPending);
         Assert.Equal(1, retryPendingRun.RetryScheduledCount);
         Assert.Equal("bounded-in-process", retryPendingRun.Metadata["retryPolicy"]);
+
+        var duplicateExecutionResponse = await client.PostAsJsonAsync(
+            "/engine/agent-tools/host-operator/runs",
+            new
+            {
+                runId = "host-run-001",
+                actorId = "operator",
+                correlationId = "corr-host-run-001",
+                metadata = new Dictionary<string, string>
+                {
+                    ["requestedBy"] = "hosting-test"
+                }
+            });
+        var duplicateResult = await duplicateExecutionResponse.Content.ReadFromJsonAsync<AgentToolExecutionResult>();
+        var duplicateRuns = await client.GetFromJsonAsync<AgentToolRunState[]>("/engine/agent-tool-runs/idempotency-duplicates");
+        var duplicateRun = Assert.Single(duplicateRuns!);
+
+        Assert.Equal(HttpStatusCode.OK, duplicateExecutionResponse.StatusCode);
+        Assert.NotNull(duplicateResult);
+        Assert.Equal(AgentToolExecutionOutcomes.Skipped, duplicateResult.Outcome);
+        Assert.Equal("completed-run", duplicateResult.Metadata["idempotencyPolicy"]);
+        Assert.Equal("tool-run", duplicateResult.Metadata["idempotencyKey"]);
+        Assert.Equal("45", duplicateResult.Metadata["idempotencyRetentionMinutes"]);
+        Assert.Equal("duplicate-skipped", duplicateResult.Metadata["idempotencyOutcome"]);
+        Assert.Equal("host-run-001", duplicateRun.RunId);
+        Assert.True(duplicateRun.DuplicateCompleted);
+        Assert.Equal(1, duplicateRun.SucceededCount);
+        Assert.Equal(1, duplicateRun.SkippedCount);
+        Assert.Equal("duplicate-skipped", duplicateRun.Metadata["idempotencyOutcome"]);
     }
 
     [Fact]

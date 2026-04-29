@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T10:16:06.0187093+00:00",
+  "GeneratedAtUtc": "2026-04-29T10:34:11.3663617+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -1871,7 +1871,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -2006,7 +2006,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 21,
+        "Properties": 22,
         "Methods": 0
       }
     },
@@ -44813,6 +44813,17 @@
       "Summary": "Retained history currently contains duplicated command lineage for the current retry posture."
     },
     {
+      "DisplayName": "DuplicateCompleted",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolRunState",
+      "NamespaceName": "Cephalon.Abstractions.Agentics",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-agentics-agenttoolrunstate-duplicatecompleted",
+      "Signature": "bool DuplicateCompleted { get; }",
+      "Summary": "Gets a value indicating whether the latest report represents a process-local duplicate-completed suppression."
+    },
+    {
       "DisplayName": "DuplicateEvidencePresent",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates",
@@ -46736,6 +46747,17 @@
       "AnchorId": "member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecution",
       "Signature": "bool EnableExecution { get; set; }",
       "Summary": "Gets or sets a value indicating whether Cephalon-managed tool dispatch and run-state features are enabled."
+    },
+    {
+      "DisplayName": "EnableExecutionIdempotency",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgenticRuntimeOptions",
+      "NamespaceName": "Cephalon.Agentics.Configuration",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecutionidempotency",
+      "Signature": "bool EnableExecutionIdempotency { get; set; }",
+      "Summary": "Gets or sets a value indicating whether duplicate completed run ids should be skipped inside the current process."
     },
     {
       "DisplayName": "EnableExternalCdcRuntimeReporting",
@@ -49563,6 +49585,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-executionhardened",
       "Signature": "const string ExecutionHardened",
       "Summary": "Scheduler execution truth currently looks hardened enough for truthful bounded execution on the shared lane."
+    },
+    {
+      "DisplayName": "ExecutionIdempotencyRetentionMinutes",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgenticRuntimeOptions",
+      "NamespaceName": "Cephalon.Agentics.Configuration",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionidempotencyretentionminutes",
+      "Signature": "int ExecutionIdempotencyRetentionMinutes { get; set; }",
+      "Summary": "Gets or sets the process-local retention window, in minutes, for completed run-id suppression."
     },
     {
       "DisplayName": "ExecutionIntent",

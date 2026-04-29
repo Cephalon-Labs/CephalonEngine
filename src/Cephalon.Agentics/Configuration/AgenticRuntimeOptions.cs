@@ -49,6 +49,24 @@ public sealed class AgenticRuntimeOptions
     public int ExecutionRetryDelayMilliseconds { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether duplicate completed run ids should be skipped inside the current process.
+    /// </summary>
+    /// <remarks>
+    /// This is a bounded, process-local idempotency posture. It suppresses duplicate completed
+    /// tool runs observed by the in-memory run catalog without claiming durable inbox storage,
+    /// cross-node deduplication, or distributed exactly-once execution.
+    /// </remarks>
+    public bool EnableExecutionIdempotency { get; set; }
+
+    /// <summary>
+    /// Gets or sets the process-local retention window, in minutes, for completed run-id suppression.
+    /// </summary>
+    /// <remarks>
+    /// Values less than <c>1</c> are normalized to one minute by the dispatcher.
+    /// </remarks>
+    public int ExecutionIdempotencyRetentionMinutes { get; set; } = 60;
+
+    /// <summary>
     /// Gets arbitrary metadata that can be attached to the agentic runtime configuration.
     /// </summary>
     public IDictionary<string, string> Metadata { get; } =

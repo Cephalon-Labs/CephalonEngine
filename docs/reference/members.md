@@ -7431,6 +7431,9 @@ Browse the published API surface by public member.
 - [DuplicateCommandLineage](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatecommandlineage): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCommandLineage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Retained history currently contains duplicated command lineage for the current retry posture.
   - `const string DuplicateCommandLineage`
+- [DuplicateCompleted](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-duplicatecompleted): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
+  - Gets a value indicating whether the latest report represents a process-local duplicate-completed suppression.
+  - `bool DuplicateCompleted { get; }`
 - [DuplicateEvidencePresent](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-duplicateevidencepresent): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateEvidencePresent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal currently retains matching command evidence showing that replaying the command would be duplicative.
   - `const string DuplicateEvidencePresent`
@@ -7959,6 +7962,9 @@ Browse the published API surface by public member.
 - [EnableExecution](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecution): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=EnableExecution&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets or sets a value indicating whether Cephalon-managed tool dispatch and run-state features are enabled.
   - `bool EnableExecution { get; set; }`
+- [EnableExecutionIdempotency](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecutionidempotency): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=EnableExecutionIdempotency&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
+  - Gets or sets a value indicating whether duplicate completed run ids should be skipped inside the current process.
+  - `bool EnableExecutionIdempotency { get; set; }`
 - [EnableExternalCdcRuntimeReporting](cephalon-data.md#member-p-cephalon-data-configuration-dataruntimeoptions-enableexternalcdcruntimereporting): `Properties` on `DataRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=EnableExternalCdcRuntimeReporting&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should accept external CDC execution-runtime reports through the shared runtime-state catalog.
   - `bool EnableExternalCdcRuntimeReporting { get; set; }`
@@ -8730,6 +8736,9 @@ Browse the published API surface by public member.
 - [ExecutionHardened](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-executionhardened): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionHardened&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Scheduler execution truth currently looks hardened enough for truthful bounded execution on the shared lane.
   - `const string ExecutionHardened`
+- [ExecutionIdempotencyRetentionMinutes](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionidempotencyretentionminutes): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecutionIdempotencyRetentionMinutes&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
+  - Gets or sets the process-local retention window, in minutes, for completed run-id suppression.
+  - `int ExecutionIdempotencyRetentionMinutes { get; set; }`
 - [ExecutionIntent](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopesources-executionintent): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionIntent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command envelope is primarily grounded in shared execution-intent truth.
   - `const string ExecutionIntent`

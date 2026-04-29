@@ -91,6 +91,11 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
         metadata["retryDelayMilliseconds"] = Math.Max(0, options.ExecutionRetryDelayMilliseconds).ToString(CultureInfo.InvariantCulture);
         metadata["retryDurability"] = "none";
         metadata["retryScope"] = options.ExecutionMaxAttempts > 1 ? "process-local" : "none";
+        metadata["idempotencyPolicy"] = options.EnableExecutionIdempotency ? "completed-run" : "none";
+        metadata["idempotencyKey"] = options.EnableExecutionIdempotency ? "tool-run" : "none";
+        metadata["idempotencyRetentionMinutes"] = Math.Max(1, options.ExecutionIdempotencyRetentionMinutes).ToString(CultureInfo.InvariantCulture);
+        metadata["idempotencyDurability"] = "none";
+        metadata["idempotencyScope"] = options.EnableExecutionIdempotency ? "process-local" : "none";
         metadata["runtimeState"] = latestRun is null ? "not-reported" : "reported";
         metadata["runCount"] = runs.Count.ToString(CultureInfo.InvariantCulture);
 
@@ -155,6 +160,7 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
             metadata["totalReports"] = latestRun.TotalReports.ToString(CultureInfo.InvariantCulture);
             metadata["requiresApproval"] = latestRun.RequiresApproval.ToString().ToLowerInvariant();
             metadata["retryPending"] = latestRun.RetryPending.ToString().ToLowerInvariant();
+            metadata["duplicateCompleted"] = latestRun.DuplicateCompleted.ToString().ToLowerInvariant();
             metadata["isTerminal"] = latestRun.IsTerminal.ToString().ToLowerInvariant();
 
             if (!string.IsNullOrWhiteSpace(latestRun.LastActorId))

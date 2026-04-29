@@ -55,6 +55,14 @@ public sealed record AgentToolRunState(
     public bool RetryPending => string.Equals(LastOutcome, AgentToolExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
+    /// Gets a value indicating whether the latest report represents a process-local duplicate-completed suppression.
+    /// </summary>
+    public bool DuplicateCompleted =>
+        string.Equals(LastOutcome, AgentToolExecutionOutcomes.Skipped, StringComparison.OrdinalIgnoreCase) &&
+        Metadata.TryGetValue("idempotencyOutcome", out var outcome) &&
+        string.Equals(outcome, "duplicate-skipped", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Gets a value indicating whether the latest report represents a terminal outcome for this run.
     /// </summary>
     public bool IsTerminal =>

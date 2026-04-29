@@ -98,7 +98,12 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
                     ["retryMaxAttempts"] = Math.Max(1, options.ExecutionMaxAttempts).ToString(CultureInfo.InvariantCulture),
                     ["retryDelayMilliseconds"] = Math.Max(0, options.ExecutionRetryDelayMilliseconds).ToString(CultureInfo.InvariantCulture),
                     ["retryDurability"] = "none",
-                    ["retryScope"] = options.ExecutionMaxAttempts > 1 ? "process-local" : "none"
+                    ["retryScope"] = options.ExecutionMaxAttempts > 1 ? "process-local" : "none",
+                    ["idempotencyPolicy"] = options.EnableExecutionIdempotency ? "completed-run" : "none",
+                    ["idempotencyKey"] = options.EnableExecutionIdempotency ? "tool-run" : "none",
+                    ["idempotencyRetentionMinutes"] = Math.Max(1, options.ExecutionIdempotencyRetentionMinutes).ToString(CultureInfo.InvariantCulture),
+                    ["idempotencyDurability"] = "none",
+                    ["idempotencyScope"] = options.EnableExecutionIdempotency ? "process-local" : "none"
                 }));
         }
 

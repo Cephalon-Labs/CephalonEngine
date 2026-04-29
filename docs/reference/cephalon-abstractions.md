@@ -435,6 +435,16 @@ int DeniedCount { get; set; }
 
 The number of `denied` observations reported so far.
 
+<a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-duplicatecompleted"></a>
+
+##### `DuplicateCompleted`
+
+```csharp
+bool DuplicateCompleted { get; }
+```
+
+Gets a value indicating whether the latest report represents a process-local duplicate-completed suppression.
+
 <a id="member-p-cephalon-abstractions-agentics-agenttoolrunstate-failedcount"></a>
 
 ##### `FailedCount`
