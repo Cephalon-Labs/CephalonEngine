@@ -105,6 +105,7 @@ public sealed class MultiTenancyGovernancePackTests
         var invitationDeliveryDispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
         var invitationDeliveryStatusReconciler = provider.GetRequiredService<ITenantInvitationDeliveryStatusReconciler>();
         var invitationDeliveryRunCatalog = provider.GetRequiredService<ITenantInvitationDeliveryRunCatalog>();
+        var invitationDeliveryStatusObservationStore = provider.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>();
         var domainCatalog = provider.GetRequiredService<ITenantDomainOwnershipCatalog>();
         var domainValidator = provider.GetRequiredService<ITenantDomainOwnershipValidator>();
         var domainWorkflow = provider.GetRequiredService<ITenantDomainOwnershipVerificationWorkflow>();
@@ -197,6 +198,7 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.validation");
         var invitationDeliveryDispatchCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.delivery-dispatch");
         var invitationDeliveryStatusCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.delivery-status-reconciliation");
+        var invitationDeliveryStatusObservationStoreCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.delivery-status-observation-store");
         var administrationWorkflowCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.administration.workflow");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.catalog");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.domain-ownership.store");
@@ -289,6 +291,17 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("true", invitationSummaryEntry.Metadata["deliveryStatusReconciliationEnabled"]);
         Assert.Equal("cephalon-managed", invitationSummaryEntry.Metadata["deliveryStatusReconciliationOwnership"]);
         Assert.Equal("provider-managed", invitationSummaryEntry.Metadata["externalDeliveryStatusOwnership"]);
+        Assert.Equal("true", invitationSummaryEntry.Metadata["deliveryStatusObservationStoreEnabled"]);
+        Assert.Equal("in-memory", invitationSummaryEntry.Metadata["deliveryStatusObservationStoreKind"]);
+        Assert.Equal("false", invitationSummaryEntry.Metadata["deliveryStatusObservationStoreDurable"]);
+        Assert.Equal("cephalon-managed", invitationSummaryEntry.Metadata["deliveryStatusObservationStoreOwnership"]);
+        Assert.Equal("process-local", invitationSummaryEntry.Metadata["deliveryStatusObservationStoreScope"]);
+        Assert.Equal("none", invitationSummaryEntry.Metadata["deliveryStatusObservationStoreDurability"]);
+        Assert.Equal("500", invitationSummaryEntry.Metadata["deliveryStatusObservationHistoryLimit"]);
+        Assert.Equal("0", invitationSummaryEntry.Metadata["deliveryStatusObservationCount"]);
+        Assert.Equal("none", invitationSummaryEntry.Metadata["latestDeliveryStatusObservationId"]);
+        Assert.Equal("none", invitationSummaryEntry.Metadata["latestDeliveryStatusObservationOutcome"]);
+        Assert.Equal("none", invitationSummaryEntry.Metadata["latestDeliveryStatusObservationAtUtc"]);
         Assert.Equal("0", invitationSummaryEntry.Metadata["deliveryStatusReportedCount"]);
         Assert.Equal("none", invitationSummaryEntry.Metadata["latestDeliveryStatus"]);
         Assert.Equal("none", invitationSummaryEntry.Metadata["latestDeliveryStatusObservedAtUtc"]);
@@ -312,7 +325,19 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("cephalon-managed", invitationDeliveryStatusCapability.Metadata["deliveryStatusReconciliationOwnership"]);
         Assert.Equal("provider-managed", invitationDeliveryStatusCapability.Metadata["externalDeliveryStatusOwnership"]);
         Assert.Equal("application-managed", invitationDeliveryStatusCapability.Metadata["durableStoreOwnership"]);
+        Assert.Equal("cephalon-managed", invitationDeliveryStatusCapability.Metadata["deliveryStatusObservationStoreOwnership"]);
+        Assert.Equal("in-memory", invitationDeliveryStatusCapability.Metadata["deliveryStatusObservationStoreKind"]);
+        Assert.Equal("false", invitationDeliveryStatusCapability.Metadata["deliveryStatusObservationStoreDurable"]);
+        Assert.Equal("500", invitationDeliveryStatusCapability.Metadata["deliveryStatusObservationHistoryLimit"]);
         Assert.Equal("tenant-invitations", invitationDeliveryStatusCapability.Metadata["runtimeSurface"]);
+        Assert.Empty(invitationDeliveryStatusObservationStore.Observations);
+        Assert.Equal("cephalon-managed", invitationDeliveryStatusObservationStoreCapability.Metadata["deliveryStatusObservationStoreOwnership"]);
+        Assert.Equal("in-memory", invitationDeliveryStatusObservationStoreCapability.Metadata["deliveryStatusObservationStoreKind"]);
+        Assert.Equal("false", invitationDeliveryStatusObservationStoreCapability.Metadata["deliveryStatusObservationStoreDurable"]);
+        Assert.Equal("500", invitationDeliveryStatusObservationStoreCapability.Metadata["deliveryStatusObservationHistoryLimit"]);
+        Assert.Equal("application-managed", invitationDeliveryStatusObservationStoreCapability.Metadata["providerSpecificCallbackTranslationOwnership"]);
+        Assert.Equal("application-managed", invitationDeliveryStatusObservationStoreCapability.Metadata["providerPollingOwnership"]);
+        Assert.Equal("application-managed", invitationDeliveryStatusObservationStoreCapability.Metadata["crossNodeReplayProtectionOwnership"]);
         Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["executionOwnership"]);
         Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["membershipAdministrationOwnership"]);
         Assert.Equal("cephalon-managed", administrationWorkflowCapability.Metadata["invitationAdministrationOwnership"]);
@@ -3610,6 +3635,7 @@ public sealed class MultiTenancyGovernancePackTests
         var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
         var reconciler = provider.GetRequiredService<ITenantInvitationDeliveryStatusReconciler>();
         var catalog = provider.GetRequiredService<ITenantInvitationCatalog>();
+        var observationStore = provider.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>();
         var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
         var dispatchedAtUtc = new DateTimeOffset(2026, 04, 29, 3, 15, 0, TimeSpan.Zero);
@@ -3649,6 +3675,7 @@ public sealed class MultiTenancyGovernancePackTests
             surface => surface.SurfaceId == "tenant-invitations");
         var summaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
         var tenantEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitations:tenant-delivery");
+        var observation = Assert.Single(observationStore.Observations);
 
         Assert.True(statusResult.Reconciled);
         Assert.True(statusResult.Recorded);
@@ -3668,14 +3695,145 @@ public sealed class MultiTenancyGovernancePackTests
         Assert.Equal("cephalon-managed", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusReconciliationOwnership]);
         Assert.Equal("provider-managed", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.ExternalDeliveryStatusOwnership]);
         Assert.Equal("250", invitation.Metadata["providerStatusCode"]);
+        Assert.StartsWith("sha256:", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], StringComparison.Ordinal);
+        Assert.Equal("recorded", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreOutcome]);
+        Assert.Equal("in-memory", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreKind]);
+        Assert.Equal("false", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreDurable]);
+        Assert.Equal("cephalon-managed", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreOwnership]);
+        Assert.Equal("500", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreHistoryLimit]);
+        Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
+        Assert.Equal("tenant-delivery", observation.TenantId);
+        Assert.Equal("invite-delivery", observation.InvitationId);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, observation.Status);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, observation.Outcome);
+        Assert.True(observation.Reconciled);
+        Assert.True(observation.Recorded);
+        Assert.Equal(observedAtUtc, observation.ObservedAtUtc);
+        Assert.Equal("provider-message-001", observation.ProviderMessageId);
+        Assert.Equal("test-email", observation.SenderId);
+        Assert.Equal("email", observation.Channel);
+        Assert.Equal("provider-callback", observation.Source);
+        Assert.Equal("mail-provider", observation.Actor);
+        Assert.Equal("delivery-status-001", observation.CorrelationId);
+        Assert.Equal("250", observation.Metadata["providerStatusCode"]);
         Assert.Equal("cephalon-managed", statusCapability.Metadata["deliveryStatusReconciliationOwnership"]);
         Assert.Equal("provider-managed", statusCapability.Metadata["externalDeliveryStatusOwnership"]);
+        Assert.Equal("cephalon-managed", statusCapability.Metadata["deliveryStatusObservationStoreOwnership"]);
         Assert.Equal("1", summaryEntry.Metadata["deliveryStatusReportedCount"]);
         Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, summaryEntry.Metadata["latestDeliveryStatus"]);
         Assert.Equal(observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture), summaryEntry.Metadata["latestDeliveryStatusObservedAtUtc"]);
+        Assert.Equal("1", summaryEntry.Metadata["deliveryStatusObservationCount"]);
+        Assert.Equal(observation.ObservationId, summaryEntry.Metadata["latestDeliveryStatusObservationId"]);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, summaryEntry.Metadata["latestDeliveryStatusObservationOutcome"]);
+        Assert.Equal(observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture), summaryEntry.Metadata["latestDeliveryStatusObservationAtUtc"]);
         Assert.Equal("1", tenantEntry.Metadata["deliveryStatusReportedCount"]);
         Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, tenantEntry.Metadata["latestDeliveryStatus"]);
         Assert.Equal(observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture), tenantEntry.Metadata["latestDeliveryStatusObservedAtUtc"]);
+        Assert.Equal("1", tenantEntry.Metadata["deliveryStatusObservationCount"]);
+        Assert.Equal(observation.ObservationId, tenantEntry.Metadata["latestDeliveryStatusObservationId"]);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, tenantEntry.Metadata["latestDeliveryStatusObservationOutcome"]);
+        Assert.Equal(observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture), tenantEntry.Metadata["latestDeliveryStatusObservationAtUtc"]);
+    }
+
+    [Fact]
+    public async Task TenantInvitationDeliveryStatusReconcilerPersistsObservationStoreToJsonFile()
+    {
+        var observationStorePath = Path.Combine(
+            Path.GetTempPath(),
+            "cephalon-tests",
+            $"tenant-invitation-status-observations-{Guid.NewGuid():N}.json");
+        try
+        {
+            var services = new ServiceCollection();
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.InvitationDeliveryStatusObservationStoreFilePath = observationStorePath;
+                    options.InvitationDeliveryStatusObservationHistoryLimit = 10;
+                    options.Invitations.Add(new TenantInvitationDescriptor(
+                        invitationId: "invite-observation-file",
+                        tenantId: "tenant-observation-file",
+                        inviteeId: "user-observation-file",
+                        displayName: "Observation Store Target",
+                        roles: ["member"],
+                        expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+                });
+            });
+
+            await using (var provider = services.BuildServiceProvider())
+            {
+                var reconciler = provider.GetRequiredService<ITenantInvitationDeliveryStatusReconciler>();
+                var result = await reconciler.ReconcileAsync(new TenantInvitationDeliveryStatusReconciliationRequest(
+                    tenantId: "tenant-observation-file",
+                    invitationId: "invite-observation-file",
+                    status: TenantInvitationDeliveryStatuses.Delivered,
+                    observedAtUtc: new DateTimeOffset(2026, 04, 29, 4, 20, 0, TimeSpan.Zero),
+                    source: "provider-callback",
+                    correlationId: "delivery-status-file-001",
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["providerStatusCode"] = "250"
+                    }));
+
+                Assert.True(result.Reconciled);
+                Assert.Equal("file", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreKind]);
+                Assert.Equal("true", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreDurable]);
+                Assert.Equal("10", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreHistoryLimit]);
+            }
+
+            var verificationServices = new ServiceCollection();
+            verificationServices.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.InvitationDeliveryStatusObservationStoreFilePath = observationStorePath;
+                    options.InvitationDeliveryStatusObservationHistoryLimit = 10;
+                });
+            });
+
+            await using var verificationProvider = verificationServices.BuildServiceProvider();
+            var observationStore = verificationProvider.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>();
+            var technologyCatalog = verificationProvider.GetRequiredService<ITechnologyRuntimeCatalog>();
+            var observation = Assert.Single(observationStore.Observations);
+            var invitationsSurface = Assert.Single(
+                technologyCatalog.GetByTechnology("multi-tenancy"),
+                surface => surface.SurfaceId == "tenant-invitations");
+            var summaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
+
+            Assert.Equal("file", observationStore.StoreKind);
+            Assert.True(observationStore.IsDurable);
+            Assert.Equal("tenant-observation-file", observation.TenantId);
+            Assert.Equal("invite-observation-file", observation.InvitationId);
+            Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, observation.Status);
+            Assert.Equal("provider-callback", observation.Source);
+            Assert.Equal("delivery-status-file-001", observation.CorrelationId);
+            Assert.Equal("250", observation.Metadata["providerStatusCode"]);
+            Assert.Equal("file", summaryEntry.Metadata["deliveryStatusObservationStoreKind"]);
+            Assert.Equal("true", summaryEntry.Metadata["deliveryStatusObservationStoreDurable"]);
+            Assert.Equal("local-file", summaryEntry.Metadata["deliveryStatusObservationStoreScope"]);
+            Assert.Equal("local-file", summaryEntry.Metadata["deliveryStatusObservationStoreDurability"]);
+            Assert.Equal("1", summaryEntry.Metadata["deliveryStatusObservationCount"]);
+        }
+        finally
+        {
+            if (File.Exists(observationStorePath))
+            {
+                File.Delete(observationStorePath);
+            }
+        }
     }
 
     [Fact]
@@ -3709,6 +3867,7 @@ public sealed class MultiTenancyGovernancePackTests
         await using var provider = services.BuildServiceProvider();
         var reconciler = provider.GetRequiredService<ITenantInvitationDeliveryStatusReconciler>();
         var catalog = provider.GetRequiredService<ITenantInvitationCatalog>();
+        var observationStore = provider.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
 
         var result = await reconciler.ReconcileAsync(new TenantInvitationDeliveryStatusReconciliationRequest(
@@ -3724,15 +3883,24 @@ public sealed class MultiTenancyGovernancePackTests
             technologyCatalog.GetByTechnology("multi-tenancy"),
             surface => surface.SurfaceId == "tenant-invitations");
         var summaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
+        var observation = Assert.Single(observationStore.Observations);
 
         Assert.False(result.Reconciled);
         Assert.False(result.Recorded);
         Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.ProviderMessageMismatch, result.Outcome);
         Assert.Equal("provider-message-expected", result.Metadata["expectedDeliveryProviderMessageId"]);
+        Assert.Equal("recorded", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreOutcome]);
+        Assert.Equal(result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.ProviderMessageMismatch, observation.Outcome);
+        Assert.False(observation.Reconciled);
+        Assert.False(observation.Recorded);
         Assert.Equal("provider-message-expected", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId]);
         Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
         Assert.Equal("0", summaryEntry.Metadata["deliveryStatusReportedCount"]);
         Assert.Equal("none", summaryEntry.Metadata["latestDeliveryStatus"]);
+        Assert.Equal("1", summaryEntry.Metadata["deliveryStatusObservationCount"]);
+        Assert.Equal(observation.ObservationId, summaryEntry.Metadata["latestDeliveryStatusObservationId"]);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.ProviderMessageMismatch, summaryEntry.Metadata["latestDeliveryStatusObservationOutcome"]);
     }
 
     [Fact]

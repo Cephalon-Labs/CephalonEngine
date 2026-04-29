@@ -68,6 +68,20 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableInvitationDeliveryStatusReconciliation { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether delivery status reconciliation observations are recorded.
+    /// </summary>
+    /// <remarks>
+    /// Observation storage records normalized reconciliation outcomes for audit and operator review. It does not provide
+    /// provider-specific callback translation, provider polling, cross-node replay protection, or distributed exactly-once delivery.
+    /// </remarks>
+    public bool EnableInvitationDeliveryStatusObservationStore { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the maximum number of delivery status observations retained by the built-in observation store.
+    /// </summary>
+    public int InvitationDeliveryStatusObservationHistoryLimit { get; set; } = 500;
+
+    /// <summary>
     /// Gets or sets the maximum number of invitation delivery dispatch attempts retained in the runtime catalog.
     /// </summary>
     public int InvitationDeliveryRunHistoryLimit { get; set; } = 100;
@@ -194,6 +208,11 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-invitation state.
     /// </summary>
     public string? InvitationStoreFilePath { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional JSON file path used for Cephalon-managed durable delivery status observations.
+    /// </summary>
+    public string? InvitationDeliveryStatusObservationStoreFilePath { get; set; }
 
     /// <summary>
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.

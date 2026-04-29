@@ -175,6 +175,7 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         var response = await client.PostAsJsonAsync("/engine/tenant-invitations/delivery-status", request);
         var result = await response.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusReconciliationResult>();
         var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var observation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
         var technologySurface = Assert.Single(
             app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
             surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
@@ -196,6 +197,9 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("true", invitation.Metadata["aspNetCoreDeliveryStatusCallback"]);
         Assert.Equal("/engine/tenant-invitations/delivery-status", invitation.Metadata["aspNetCoreDeliveryStatusCallbackRoute"]);
         Assert.Equal("cephalon-managed", invitation.Metadata["deliveryStatusCallbackIngressOwnership"]);
+        Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, observation.Outcome);
+        Assert.Equal("aspnetcore-delivery-status-callback", observation.Source);
         Assert.Equal("mapped", endpointEntry.Metadata["runtimeState"]);
         Assert.Equal("true", endpointEntry.Metadata["endpointMapped"]);
         Assert.Equal("false", endpointEntry.Metadata["requireAuthorization"]);
@@ -378,6 +382,7 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         var firstResponse = await client.SendAsync(firstMessage);
         var replayedResponse = await client.SendAsync(replayedMessage);
         var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var observation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
         var technologySurface = Assert.Single(
             app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
             surface => surface.SurfaceId == "tenant-invitation-delivery-status-http-endpoints");
@@ -395,6 +400,8 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("600", invitation.Metadata["deliveryStatusCallbackReplayRetentionSeconds"]);
         Assert.Equal("16", invitation.Metadata["deliveryStatusCallbackReplayCacheLimit"]);
         Assert.StartsWith("sha256:", invitation.Metadata["deliveryStatusCallbackReplayFingerprint"], StringComparison.Ordinal);
+        Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
+        Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, observation.Outcome);
         Assert.Equal("true", endpointEntry.Metadata["callbackReplayProtectionConfigured"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["callbackReplayProtectionOwnership"]);
         Assert.Equal("signed-callback", endpointEntry.Metadata["callbackReplayProtectionPolicy"]);

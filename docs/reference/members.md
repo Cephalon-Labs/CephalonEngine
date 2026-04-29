@@ -471,6 +471,9 @@ Browse the published API surface by public member.
 - [Actor](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-actor): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the actor that reported the status observation when known.
   - `string Actor { get; set; }`
+- [Actor](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-actor): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the actor that reported the observation when known.
+  - `string Actor { get; }`
 - [Actor](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-actor): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the actor that reported the status observation when known.
   - `string Actor { get; }`
@@ -3699,6 +3702,9 @@ Browse the published API surface by public member.
 - [Channel](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-channel): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Channel&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the delivery channel associated with the status observation.
   - `string Channel { get; set; }`
+- [Channel](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-channel): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Channel&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the delivery channel associated with the observation.
+  - `string Channel { get; }`
 - [Channel](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-channel): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Channel&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the delivery channel associated with the status observation.
   - `string Channel { get; }`
@@ -5277,6 +5283,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-correlationid): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the optional correlation identifier for the status observation.
   - `string CorrelationId { get; set; }`
+- [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-correlationid): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the optional correlation identifier for the observation.
+  - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-correlationid): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional correlation identifier for the status observation.
   - `string CorrelationId { get; }`
@@ -5297,6 +5306,9 @@ Browse the published API surface by public member.
   - `int Count { get; }`
 - [Count](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog-count): `Properties` on `ITenantInvitationDeliveryRunCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of recorded tenant invitation delivery dispatch attempts.
+  - `int Count { get; }`
+- [Count](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-count): `Properties` on `ITenantInvitationDeliveryStatusObservationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the number of recorded delivery status observations.
   - `int Count { get; }`
 - [Count](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-count): `Properties` on `ITenantInvitationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of stored runtime tenant invitations.
@@ -6039,6 +6051,27 @@ Browse the published API surface by public member.
 - [DeliveryMode](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeliveryMode&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the declared delivery mode for the subscription.
   - `const string DeliveryMode`
+- [DeliveryStatusObservationId](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationid): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusObservationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key containing the delivery status observation identifier recorded by the observation store.
+  - `const string DeliveryStatusObservationId`
+- [DeliveryStatusObservationStoreDurable](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstoredurable): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusObservationStoreDurable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key describing whether the delivery status observation store is durable.
+  - `const string DeliveryStatusObservationStoreDurable`
+- [DeliveryStatusObservationStoreExceptionType](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstoreexceptiontype): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusObservationStoreExceptionType&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key containing the exception type observed when delivery status observation storage fails.
+  - `const string DeliveryStatusObservationStoreExceptionType`
+- [DeliveryStatusObservationStoreHistoryLimit](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstorehistorylimit): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusObservationStoreHistoryLimit&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key describing the retention limit used by the delivery status observation store.
+  - `const string DeliveryStatusObservationStoreHistoryLimit`
+- [DeliveryStatusObservationStoreKind](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstorekind): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusObservationStoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key describing the delivery status observation store kind.
+  - `const string DeliveryStatusObservationStoreKind`
+- [DeliveryStatusObservationStoreOutcome](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstoreoutcome): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusObservationStoreOutcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key describing whether the delivery status observation store recorded the observation.
+  - `const string DeliveryStatusObservationStoreOutcome`
+- [DeliveryStatusObservationStoreOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstoreownership): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusObservationStoreOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Metadata key describing Cephalon ownership of delivery status observation storage.
+  - `const string DeliveryStatusObservationStoreOwnership`
 - [DeliveryStatusReconciliationOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusreconciliationownership): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusReconciliationOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key describing Cephalon ownership of host-agnostic status reconciliation.
   - `const string DeliveryStatusReconciliationOwnership`
@@ -8007,6 +8040,9 @@ Browse the published API surface by public member.
 - [EnableInvitationDeliveryDispatch](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverydispatch): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationDeliveryDispatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active.
   - `bool EnableInvitationDeliveryDispatch { get; set; }`
+- [EnableInvitationDeliveryStatusObservationStore](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverystatusobservationstore): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationDeliveryStatusObservationStore&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets a value indicating whether delivery status reconciliation observations are recorded.
+  - `bool EnableInvitationDeliveryStatusObservationStore { get; set; }`
 - [EnableInvitationDeliveryStatusReconciliation](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverystatusreconciliation): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EnableInvitationDeliveryStatusReconciliation&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in invitation delivery status reconciler is active.
   - `bool EnableInvitationDeliveryStatusReconciliation { get; set; }`
@@ -12831,6 +12867,12 @@ Browse the published API surface by public member.
 - [InvitationDeliveryRunHistoryLimit](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryrunhistorylimit): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDeliveryRunHistoryLimit&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets the maximum number of invitation delivery dispatch attempts retained in the runtime catalog.
   - `int InvitationDeliveryRunHistoryLimit { get; set; }`
+- [InvitationDeliveryStatusObservationHistoryLimit](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliverystatusobservationhistorylimit): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDeliveryStatusObservationHistoryLimit&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets the maximum number of delivery status observations retained by the built-in observation store.
+  - `int InvitationDeliveryStatusObservationHistoryLimit { get; set; }`
+- [InvitationDeliveryStatusObservationStoreFilePath](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliverystatusobservationstorefilepath): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDeliveryStatusObservationStoreFilePath&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
+  - Gets or sets the optional JSON file path used for Cephalon-managed durable delivery status observations.
+  - `string InvitationDeliveryStatusObservationStoreFilePath { get; set; }`
 - [InvitationExpired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-invitationexpired): `Fields` on `TenantInvitationDeliveryOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationExpired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested invitation expired before dispatch.
   - `const string InvitationExpired`
@@ -12855,6 +12897,9 @@ Browse the published API surface by public member.
 - [InvitationId](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-invitationid): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the invitation identifier to reconcile.
   - `string InvitationId { get; set; }`
+- [InvitationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-invitationid): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the invitation identifier associated with the observation.
+  - `string InvitationId { get; }`
 - [InvitationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-invitationid): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the invitation identifier to reconcile.
   - `string InvitationId { get; }`
@@ -13238,6 +13283,9 @@ Browse the published API surface by public member.
   - `bool IsDurable { get; }`
 - [IsDurable](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-isdurable): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether action state survives process restarts.
+  - `bool IsDurable { get; }`
+- [IsDurable](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-isdurable): `Properties` on `ITenantInvitationDeliveryStatusObservationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the observation store survives process restarts.
   - `bool IsDurable { get; }`
 - [IsDurable](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-isdurable): `Properties` on `ITenantInvitationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether invitation state survives process restarts.
@@ -16359,6 +16407,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-metadata): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets optional delivery status metadata.
   - `IDictionary<string, string> Metadata { get; set; }`
+- [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-metadata): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets optional safe observation metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-metadata): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets optional delivery status metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -17476,6 +17527,12 @@ Browse the published API surface by public member.
 - [ObservationFreshness](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-observationfreshness): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservationFreshness&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest report-freshness answer visible for the capture observation itself.
   - `CdcCaptureFreshnessStatus ObservationFreshness { get; set; }`
+- [ObservationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-observationid): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable observation identifier.
+  - `string ObservationId { get; }`
+- [Observations](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-observations): `Properties` on `ITenantInvitationDeliveryStatusObservationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Observations&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the recorded delivery status observations.
+  - `IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> Observations { get; }`
 - [ObservationStaleAfterSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-observationstaleafterseconds): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservationStaleAfterSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the report-freshness window, in seconds, used to mark external runtime observations stale when one was declared.
   - `int? ObservationStaleAfterSeconds { get; }`
@@ -17524,6 +17581,9 @@ Browse the published API surface by public member.
 - [ObservedAtUtc](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-observedatutc): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the UTC timestamp when the status was observed. The runtime clock is used when omitted.
   - `DateTimeOffset? ObservedAtUtc { get; set; }`
+- [ObservedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-observedatutc): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when the status was observed.
+  - `DateTimeOffset ObservedAtUtc { get; }`
 - [ObservedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-observedatutc): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when the status was observed.
   - `DateTimeOffset? ObservedAtUtc { get; }`
@@ -18242,6 +18302,9 @@ Browse the published API surface by public member.
 - [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-outcome): `Properties` on `TenantInvitationDeliverySenderResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the sender outcome.
   - `string Outcome { get; }`
+- [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-outcome): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the reconciliation outcome produced for the observation.
+  - `string Outcome { get; }`
 - [Outcome](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-outcome): `Properties` on `TenantInvitationDeliveryStatusReconciliationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable delivery status reconciliation outcome.
   - `string Outcome { get; }`
@@ -18340,6 +18403,9 @@ Browse the published API surface by public member.
   - `string Ownership { get; }`
 - [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-ownership): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the ownership mode for the store implementation.
+  - `string Ownership { get; }`
+- [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-ownership): `Properties` on `ITenantInvitationDeliveryStatusObservationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the ownership mode for the observation store.
   - `string Ownership { get; }`
 - [Ownership](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-ownership): `Properties` on `ITenantInvitationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Ownership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the ownership mode for the store implementation.
@@ -19902,6 +19968,9 @@ Browse the published API surface by public member.
 - [ProviderMessageId](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-providermessageid): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the provider message identifier associated with the status observation.
   - `string ProviderMessageId { get; set; }`
+- [ProviderMessageId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-providermessageid): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the provider message identifier associated with the observation.
+  - `string ProviderMessageId { get; }`
 - [ProviderMessageId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-providermessageid): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the provider message identifier associated with the status observation.
   - `string ProviderMessageId { get; }`
@@ -20682,6 +20751,9 @@ Browse the published API surface by public member.
 - [Reason](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-reason): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the provider or receiver status reason.
   - `string Reason { get; set; }`
+- [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-reason): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the provider or receiver status reason.
+  - `string Reason { get; }`
 - [Reason](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-reason): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the provider or receiver status reason.
   - `string Reason { get; }`
@@ -20769,6 +20841,9 @@ Browse the published API surface by public member.
 - [ReconcileBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneProvisioningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider-owned control-plane reconcile remains blocked.
   - `const string ReconcileBlocked`
+- [Reconciled](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-reconciled): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reconciled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether the observation was accepted for the invitation.
+  - `bool Reconciled { get; }`
 - [Reconciled](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-reconciled): `Fields` on `TenantInvitationDeliveryStatusReconciliationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reconciled&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The delivery status observation was reconciled into invitation metadata.
   - `const string Reconciled`
@@ -20886,12 +20961,18 @@ Browse the published API surface by public member.
 - [Recorded](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor-recorded): `Properties` on `TenantInvitationDeliveryRunDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Recorded&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether delivery outcome metadata was recorded.
   - `bool Recorded { get; }`
+- [Recorded](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-recorded): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Recorded&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets a value indicating whether invitation delivery status metadata was recorded.
+  - `bool Recorded { get; }`
 - [Recorded](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-recorded): `Properties` on `TenantInvitationDeliveryStatusReconciliationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Recorded&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether delivery status metadata was recorded.
   - `bool Recorded { get; }`
 - [RecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-recordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the timestamp when Cephalon recorded this command-execution outcome.
   - `DateTimeOffset? RecordedAtUtc { get; set; }`
+- [RecordedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-recordedatutc): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RecordedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the UTC timestamp when Cephalon recorded the observation.
+  - `DateTimeOffset RecordedAtUtc { get; }`
 - [RecordedCommandHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-recordedcommandhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecordedCommandHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal currently exposes recorded command history for the runtime.
   - `const string RecordedCommandHistory`
@@ -23595,6 +23676,9 @@ Browse the published API surface by public member.
 - [SenderId](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-senderid): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the delivery sender identifier associated with the status observation.
   - `string SenderId { get; set; }`
+- [SenderId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-senderid): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the delivery sender identifier associated with the observation.
+  - `string SenderId { get; }`
 - [SenderId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-senderid): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the delivery sender identifier associated with the status observation.
   - `string SenderId { get; }`
@@ -23943,6 +24027,9 @@ Browse the published API surface by public member.
 - [Source](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-source): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Source&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the source that reported the status observation.
   - `string Source { get; set; }`
+- [Source](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-source): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Source&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the source that reported the observation.
+  - `string Source { get; }`
 - [Source](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-source): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Source&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the source that reported the status observation.
   - `string Source { get; }`
@@ -24742,6 +24829,9 @@ Browse the published API surface by public member.
 - [Status](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-status): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Status&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the provider or receiver delivery status.
   - `string Status { get; set; }`
+- [Status](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-status): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Status&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the normalized provider or receiver delivery status.
+  - `string Status { get; }`
 - [Status](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-status): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Status&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the provider or receiver delivery status.
   - `string Status { get; }`
@@ -24849,6 +24939,9 @@ Browse the published API surface by public member.
   - `string StoreKind { get; }`
 - [StoreKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-storekind): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the operator-facing store kind.
+  - `string StoreKind { get; }`
+- [StoreKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-storekind): `Properties` on `ITenantInvitationDeliveryStatusObservationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the store kind, such as `in-memory` or `file`.
   - `string StoreKind { get; }`
 - [StoreKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationstore-storekind): `Properties` on `ITenantInvitationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=StoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the operator-facing store kind.
@@ -25864,6 +25957,9 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-tenantid): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the tenant identifier that owns the invitation.
   - `string TenantId { get; set; }`
+- [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-tenantid): `Properties` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the tenant identifier that owns the invitation.
+  - `string TenantId { get; }`
 - [TenantId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-tenantid): `Properties` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant identifier that owns the invitation.
   - `string TenantId { get; }`
@@ -25942,6 +26038,9 @@ Browse the published API surface by public member.
 - [TenantInvitationDeliveryStatusCallbackSigningSecret](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbacksigningsecret): `Properties` on `MultiTenancyGovernanceAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=TenantInvitationDeliveryStatusCallbackSigningSecret&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Configuration&scope=members)
   - Gets or sets the shared secret used to verify normalized delivery-status callback request bodies with HMAC-SHA256.
   - `string TenantInvitationDeliveryStatusCallbackSigningSecret { get; set; }`
+- [TenantInvitationDeliveryStatusObservationDescriptor](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-datetimeoffset-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantInvitationDeliveryStatusObservationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantInvitationDeliveryStatusObservationDescriptor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Creates a tenant invitation delivery status observation descriptor.
+  - `TenantInvitationDeliveryStatusObservationDescriptor(string observationId, string tenantId, string invitationId, string status, string outcome, bool reconciled, bool recorded, DateTimeOffset observedAtUtc, DateTimeOffset recordedAtUtc, string providerMessageId, string senderId, string channel, string source, string actor, string correlationId, string reason, IReadOnlyDictionary<string, string> metadata)`
 - [TenantInvitationDeliveryStatusReconciliationRequest](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantInvitationDeliveryStatusReconciliationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantInvitationDeliveryStatusReconciliationRequest&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a tenant invitation delivery status reconciliation request.
   - `TenantInvitationDeliveryStatusReconciliationRequest(string tenantId, string invitationId, string status, string providerMessageId, string senderId, string channel, string reason, DateTimeOffset? observedAtUtc, string source, string actor, string correlationId, bool recordStatus, bool requireProviderMessageMatch, IReadOnlyDictionary<string, string> metadata)`
@@ -26773,6 +26872,9 @@ Browse the published API surface by public member.
 - [Upsert](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-upsert-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor): `Methods` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Upsert&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates or replaces one stored runtime tenant-governance action.
   - `void Upsert(TenantGovernanceActionDescriptor action)`
+- [Upsert](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-upsert-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor): `Methods` on `ITenantInvitationDeliveryStatusObservationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Upsert&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Records or replaces a delivery status observation.
+  - `void Upsert(TenantInvitationDeliveryStatusObservationDescriptor observation)`
 - [Upsert](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationstore-upsert-cephalon-multitenancy-governance-services-tenantinvitationdescriptor): `Methods` on `ITenantInvitationStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Upsert&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates or replaces one stored runtime tenant invitation.
   - `void Upsert(TenantInvitationDescriptor invitation)`

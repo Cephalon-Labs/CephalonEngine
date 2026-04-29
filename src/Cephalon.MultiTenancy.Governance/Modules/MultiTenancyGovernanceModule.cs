@@ -94,6 +94,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             static serviceProvider => TenantMembershipStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantInvitationStore>(
             static serviceProvider => TenantInvitationStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
+        services.TryAddSingleton<ITenantInvitationDeliveryStatusObservationStore>(
+            static serviceProvider => TenantInvitationDeliveryStatusObservationStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantDomainOwnershipStore>(
             static serviceProvider => TenantDomainOwnershipStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantGovernanceActionStore>(
@@ -266,6 +268,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         var administrationWorkflowOwnership = options.EnableTenantAdministrationWorkflow ? "cephalon-managed" : "not-configured";
         var invitationDeliveryDispatchOwnership = options.EnableInvitationDeliveryDispatch ? "cephalon-managed" : "not-configured";
         var invitationDeliveryStatusReconciliationOwnership = options.EnableInvitationDeliveryStatusReconciliation ? "cephalon-managed" : "not-configured";
+        var invitationDeliveryStatusObservationStoreOwnership = options.EnableInvitationDeliveryStatusObservationStore ? "cephalon-managed" : "not-configured";
+        var invitationDeliveryStatusObservationStoreDurable = !string.IsNullOrWhiteSpace(options.InvitationDeliveryStatusObservationStoreFilePath);
+        var invitationDeliveryStatusObservationStoreKind = invitationDeliveryStatusObservationStoreDurable ? "file" : "in-memory";
+        var invitationDeliveryStatusObservationHistoryLimit =
+            TenantInvitationDeliveryStatusObservationStores.ResolveHistoryLimit(options);
         var invitationDeliverySenderOwnership = hasInvitationDeliverySenders ? "provider-managed" : "not-configured";
         var invitationExternalDeliveryOwnership = hasInvitationDeliverySenders ? "provider-managed" : "application-managed";
         var invitationExternalDeliveryStatusOwnership = options.EnableInvitationDeliveryStatusReconciliation ? "provider-managed" : "application-managed";
@@ -332,6 +339,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["hasInvitationContributors"] = hasInvitationContributors.ToString().ToLowerInvariant(),
                 ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
                 ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
+                ["deliveryStatusObservationStoreOwnership"] = invitationDeliveryStatusObservationStoreOwnership,
                 ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
@@ -351,6 +359,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["administrationWorkflowOwnership"] = administrationWorkflowOwnership,
                 ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
                 ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
+                ["deliveryStatusObservationStoreOwnership"] = invitationDeliveryStatusObservationStoreOwnership,
                 ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
@@ -403,6 +412,36 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
                     ["externalDeliveryStatusOwnership"] = invitationExternalDeliveryStatusOwnership,
                     ["durableStoreOwnership"] = string.IsNullOrWhiteSpace(options.InvitationStoreFilePath) ? "application-managed" : "cephalon-managed",
+                    ["deliveryStatusObservationStoreOwnership"] = invitationDeliveryStatusObservationStoreOwnership,
+                    ["deliveryStatusObservationStoreKind"] = invitationDeliveryStatusObservationStoreKind,
+                    ["deliveryStatusObservationStoreDurable"] = invitationDeliveryStatusObservationStoreDurable.ToString().ToLowerInvariant(),
+                    ["deliveryStatusObservationHistoryLimit"] = invitationDeliveryStatusObservationHistoryLimit.ToString(CultureInfo.InvariantCulture),
+                    ["runtimeSurface"] = "tenant-invitations"
+                }));
+        }
+
+        if (options.EnableInvitationDeliveryStatusObservationStore)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.invitation.delivery-status-observation-store",
+                displayName: "Tenant Invitation Delivery Status Observation Store",
+                description: "Records normalized tenant invitation delivery status reconciliation observations for audit and operator review without owning provider-specific callbacks or polling.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["ownership"] = "cephalon-managed",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
+                    ["deliveryStatusObservationStoreOwnership"] = invitationDeliveryStatusObservationStoreOwnership,
+                    ["deliveryStatusObservationStoreKind"] = invitationDeliveryStatusObservationStoreKind,
+                    ["deliveryStatusObservationStoreDurable"] = invitationDeliveryStatusObservationStoreDurable.ToString().ToLowerInvariant(),
+                    ["deliveryStatusObservationHistoryLimit"] = invitationDeliveryStatusObservationHistoryLimit.ToString(CultureInfo.InvariantCulture),
+                    ["externalDeliveryStatusOwnership"] = invitationExternalDeliveryStatusOwnership,
+                    ["providerSpecificCallbackTranslationOwnership"] = "application-managed",
+                    ["providerSpecificSignatureVerificationOwnership"] = "application-managed",
+                    ["providerPollingOwnership"] = "application-managed",
+                    ["crossNodeReplayProtectionOwnership"] = "application-managed",
                     ["runtimeSurface"] = "tenant-invitations"
                 }));
         }

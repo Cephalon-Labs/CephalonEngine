@@ -114,4 +114,39 @@ public static class TenantInvitationDeliveryMetadataKeys
     /// Metadata key describing who owns provider-specific external delivery status truth.
     /// </summary>
     public const string ExternalDeliveryStatusOwnership = "externalDeliveryStatusOwnership";
+
+    /// <summary>
+    /// Metadata key containing the delivery status observation identifier recorded by the observation store.
+    /// </summary>
+    public const string DeliveryStatusObservationId = "deliveryStatusObservationId";
+
+    /// <summary>
+    /// Metadata key describing whether the delivery status observation store recorded the observation.
+    /// </summary>
+    public const string DeliveryStatusObservationStoreOutcome = "deliveryStatusObservationStoreOutcome";
+
+    /// <summary>
+    /// Metadata key describing the delivery status observation store kind.
+    /// </summary>
+    public const string DeliveryStatusObservationStoreKind = "deliveryStatusObservationStoreKind";
+
+    /// <summary>
+    /// Metadata key describing whether the delivery status observation store is durable.
+    /// </summary>
+    public const string DeliveryStatusObservationStoreDurable = "deliveryStatusObservationStoreDurable";
+
+    /// <summary>
+    /// Metadata key describing Cephalon ownership of delivery status observation storage.
+    /// </summary>
+    public const string DeliveryStatusObservationStoreOwnership = "deliveryStatusObservationStoreOwnership";
+
+    /// <summary>
+    /// Metadata key describing the retention limit used by the delivery status observation store.
+    /// </summary>
+    public const string DeliveryStatusObservationStoreHistoryLimit = "deliveryStatusObservationStoreHistoryLimit";
+
+    /// <summary>
+    /// Metadata key containing the exception type observed when delivery status observation storage fails.
+    /// </summary>
+    public const string DeliveryStatusObservationStoreExceptionType = "deliveryStatusObservationStoreExceptionType";
 }

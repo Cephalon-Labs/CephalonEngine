@@ -1,6 +1,8 @@
 using Cephalon.MultiTenancy.Governance.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Cephalon.MultiTenancy.Governance.Services;
 
@@ -8,6 +10,7 @@ internal sealed class TenantInvitationDeliveryStatusReconciler(
     MultiTenancyGovernanceOptions options,
     ITenantInvitationCatalog invitationCatalog,
     ITenantInvitationStore invitationStore,
+    ITenantInvitationDeliveryStatusObservationStore observationStore,
     TimeProvider timeProvider,
     ILogger<TenantInvitationDeliveryStatusReconciler> logger) : ITenantInvitationDeliveryStatusReconciler
 {
@@ -83,6 +86,14 @@ internal sealed class TenantInvitationDeliveryStatusReconciler(
             observedAtUtc,
             includeObservedStatus: true,
             reconciliationOwnership: "cephalon-managed");
+        reconciledMetadata = RecordObservation(
+            request,
+            TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled,
+            reconciled: true,
+            recorded: request.RecordStatus,
+            observedAtUtc,
+            "Tenant invitation delivery status was reconciled.",
+            reconciledMetadata);
         var recordedInvitation = CreateRecordedInvitation(invitation, reconciledMetadata);
 
         if (request.RecordStatus)
@@ -188,6 +199,15 @@ internal sealed class TenantInvitationDeliveryStatusReconciler(
         IReadOnlyDictionary<string, string> metadata,
         Exception? exception = null)
     {
+        var recordedMetadata = RecordObservation(
+            request,
+            outcome,
+            reconciled: false,
+            recorded: false,
+            observedAtUtc,
+            reason,
+            metadata);
+
         MultiTenancyGovernanceLoggerMessages.TenantInvitationDeliveryStatusReconciliationDenied(
             logger,
             request.TenantId,
@@ -209,7 +229,7 @@ internal sealed class TenantInvitationDeliveryStatusReconciler(
             request.Channel,
             invitation,
             reason,
-            metadata);
+            recordedMetadata);
     }
 
     private static TenantInvitationDescriptor CreateRecordedInvitation(
@@ -293,6 +313,93 @@ internal sealed class TenantInvitationDeliveryStatusReconciler(
         }
 
         return metadata;
+    }
+
+    private Dictionary<string, string> RecordObservation(
+        TenantInvitationDeliveryStatusReconciliationRequest request,
+        string outcome,
+        bool reconciled,
+        bool recorded,
+        DateTimeOffset observedAtUtc,
+        string reason,
+        IReadOnlyDictionary<string, string> metadata)
+    {
+        var recordedMetadata = CopyMetadata(metadata);
+        if (!options.EnableInvitationDeliveryStatusObservationStore)
+        {
+            recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreOutcome] = "not-configured";
+            recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreOwnership] = "not-configured";
+            return recordedMetadata;
+        }
+
+        var observationId = CreateObservationId(request, observedAtUtc, recordedMetadata);
+        var historyLimit = TenantInvitationDeliveryStatusObservationStores.ResolveHistoryLimit(options);
+        recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId] = observationId;
+        recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreKind] = observationStore.StoreKind;
+        recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreDurable] =
+            observationStore.IsDurable.ToString().ToLowerInvariant();
+        recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreOwnership] = observationStore.Ownership;
+        recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreHistoryLimit] =
+            historyLimit.ToString(CultureInfo.InvariantCulture);
+        recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreOutcome] = "recorded";
+
+        try
+        {
+            observationStore.Upsert(new TenantInvitationDeliveryStatusObservationDescriptor(
+                observationId,
+                request.TenantId,
+                request.InvitationId,
+                request.Status,
+                outcome,
+                reconciled,
+                recorded,
+                observedAtUtc,
+                timeProvider.GetUtcNow(),
+                request.ProviderMessageId,
+                request.SenderId,
+                request.Channel,
+                request.Source,
+                request.Actor,
+                request.CorrelationId,
+                request.Reason ?? reason,
+                recordedMetadata));
+        }
+        catch (Exception exception)
+        {
+            recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreOutcome] = "store-failed";
+            recordedMetadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationStoreExceptionType] =
+                exception.GetType().Name;
+        }
+
+        return recordedMetadata;
+    }
+
+    private static string CreateObservationId(
+        TenantInvitationDeliveryStatusReconciliationRequest request,
+        DateTimeOffset observedAtUtc,
+        Dictionary<string, string> metadata)
+    {
+        if (metadata.TryGetValue(TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId, out var explicitObservationId) &&
+            !string.IsNullOrWhiteSpace(explicitObservationId))
+        {
+            return explicitObservationId.Trim();
+        }
+
+        var payload = string.Join(
+            "\u001f",
+            request.TenantId,
+            request.InvitationId,
+            request.Status,
+            request.ProviderMessageId ?? string.Empty,
+            request.SenderId ?? string.Empty,
+            request.Channel ?? string.Empty,
+            observedAtUtc.ToString("O", CultureInfo.InvariantCulture),
+            request.Source ?? string.Empty,
+            request.Actor ?? string.Empty,
+            request.CorrelationId ?? string.Empty,
+            request.Reason ?? string.Empty);
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(payload));
+        return "sha256:" + Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     private static Dictionary<string, string> CopyMetadata(IReadOnlyDictionary<string, string>? metadata)

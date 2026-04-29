@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T12:46:11.2733516+00:00",
+  "GeneratedAtUtc": "2026-04-29T13:15:51.543106+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -232,7 +232,7 @@
       "Description": "Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 119
+      "TypeCount": 121
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -1323,7 +1323,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 117
+      "TypeCount": 119
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -12181,6 +12181,21 @@
       }
     },
     {
+      "DisplayName": "ITenantInvitationDeliveryStatusObservationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore",
+      "Declaration": "public interface ITenantInvitationDeliveryStatusObservationStore",
+      "Summary": "Stores tenant invitation delivery status observations recorded by the governance reconciler.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ITenantInvitationDeliveryStatusReconciler",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -13121,7 +13136,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 39,
+        "Properties": 42,
         "Methods": 0
       }
     },
@@ -16990,7 +17005,7 @@
       "Summary": "Defines stable metadata keys written by tenant invitation delivery dispatch and status reconciliation.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 22,
+        "Fields": 29,
         "Properties": 0,
         "Methods": 0
       }
@@ -17112,6 +17127,21 @@
         "Constructors": 0,
         "Fields": 7,
         "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor",
+      "Declaration": "public sealed class TenantInvitationDeliveryStatusObservationDescriptor",
+      "Summary": "Describes one recorded tenant invitation delivery status observation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 17,
         "Methods": 0
       }
     },
@@ -19346,6 +19376,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-actor",
       "Signature": "string Actor { get; set; }",
       "Summary": "Gets or sets the actor that reported the status observation when known."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-actor",
+      "Signature": "string Actor { get; }",
+      "Summary": "Gets the actor that reported the observation when known."
     },
     {
       "DisplayName": "Actor",
@@ -31164,6 +31205,17 @@
     {
       "DisplayName": "Channel",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-channel",
+      "Signature": "string Channel { get; }",
+      "Summary": "Gets the delivery channel associated with the observation."
+    },
+    {
+      "DisplayName": "Channel",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -36950,6 +37002,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the optional correlation identifier for the observation."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -37023,6 +37086,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog-count",
       "Signature": "int Count { get; }",
       "Summary": "Gets the number of recorded tenant invitation delivery dispatch attempts."
+    },
+    {
+      "DisplayName": "Count",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryStatusObservationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-count",
+      "Signature": "int Count { get; }",
+      "Summary": "Gets the number of recorded delivery status observations."
     },
     {
       "DisplayName": "Count",
@@ -39737,6 +39811,83 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode",
       "Signature": "const string DeliveryMode",
       "Summary": "Identifies the declared delivery mode for the subscription."
+    },
+    {
+      "DisplayName": "DeliveryStatusObservationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationid",
+      "Signature": "const string DeliveryStatusObservationId",
+      "Summary": "Metadata key containing the delivery status observation identifier recorded by the observation store."
+    },
+    {
+      "DisplayName": "DeliveryStatusObservationStoreDurable",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstoredurable",
+      "Signature": "const string DeliveryStatusObservationStoreDurable",
+      "Summary": "Metadata key describing whether the delivery status observation store is durable."
+    },
+    {
+      "DisplayName": "DeliveryStatusObservationStoreExceptionType",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstoreexceptiontype",
+      "Signature": "const string DeliveryStatusObservationStoreExceptionType",
+      "Summary": "Metadata key containing the exception type observed when delivery status observation storage fails."
+    },
+    {
+      "DisplayName": "DeliveryStatusObservationStoreHistoryLimit",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstorehistorylimit",
+      "Signature": "const string DeliveryStatusObservationStoreHistoryLimit",
+      "Summary": "Metadata key describing the retention limit used by the delivery status observation store."
+    },
+    {
+      "DisplayName": "DeliveryStatusObservationStoreKind",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstorekind",
+      "Signature": "const string DeliveryStatusObservationStoreKind",
+      "Summary": "Metadata key describing the delivery status observation store kind."
+    },
+    {
+      "DisplayName": "DeliveryStatusObservationStoreOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstoreoutcome",
+      "Signature": "const string DeliveryStatusObservationStoreOutcome",
+      "Summary": "Metadata key describing whether the delivery status observation store recorded the observation."
+    },
+    {
+      "DisplayName": "DeliveryStatusObservationStoreOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationstoreownership",
+      "Signature": "const string DeliveryStatusObservationStoreOwnership",
+      "Summary": "Metadata key describing Cephalon ownership of delivery status observation storage."
     },
     {
       "DisplayName": "DeliveryStatusReconciliationOwnership",
@@ -46942,6 +47093,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverydispatch",
       "Signature": "bool EnableInvitationDeliveryDispatch { get; set; }",
       "Summary": "Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active."
+    },
+    {
+      "DisplayName": "EnableInvitationDeliveryStatusObservationStore",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverystatusobservationstore",
+      "Signature": "bool EnableInvitationDeliveryStatusObservationStore { get; set; }",
+      "Summary": "Gets or sets a value indicating whether delivery status reconciliation observations are recorded."
     },
     {
       "DisplayName": "EnableInvitationDeliveryStatusReconciliation",
@@ -64588,6 +64750,28 @@
       "Summary": "Gets or sets the maximum number of invitation delivery dispatch attempts retained in the runtime catalog."
     },
     {
+      "DisplayName": "InvitationDeliveryStatusObservationHistoryLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliverystatusobservationhistorylimit",
+      "Signature": "int InvitationDeliveryStatusObservationHistoryLimit { get; set; }",
+      "Summary": "Gets or sets the maximum number of delivery status observations retained by the built-in observation store."
+    },
+    {
+      "DisplayName": "InvitationDeliveryStatusObservationStoreFilePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliverystatusobservationstorefilepath",
+      "Signature": "string InvitationDeliveryStatusObservationStoreFilePath { get; set; }",
+      "Summary": "Gets or sets the optional JSON file path used for Cephalon-managed durable delivery status observations."
+    },
+    {
       "DisplayName": "InvitationExpired",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryOutcomes",
@@ -64674,6 +64858,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-invitationid",
       "Signature": "string InvitationId { get; set; }",
       "Summary": "Gets or sets the invitation identifier to reconcile."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the invitation identifier associated with the observation."
     },
     {
       "DisplayName": "InvitationId",
@@ -66082,6 +66277,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-isdurable",
       "Signature": "bool IsDurable { get; }",
       "Summary": "Gets a value indicating whether action state survives process restarts."
+    },
+    {
+      "DisplayName": "IsDurable",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryStatusObservationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-isdurable",
+      "Signature": "bool IsDurable { get; }",
+      "Summary": "Gets a value indicating whether the observation store survives process restarts."
     },
     {
       "DisplayName": "IsDurable",
@@ -77482,6 +77688,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional safe observation metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -81559,6 +81776,28 @@
       "Summary": "The latest report-freshness answer visible for the capture observation itself."
     },
     {
+      "DisplayName": "ObservationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-observationid",
+      "Signature": "string ObservationId { get; }",
+      "Summary": "Gets the stable observation identifier."
+    },
+    {
+      "DisplayName": "Observations",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryStatusObservationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-observations",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDeliveryStatusObservationDescriptor\u003E Observations { get; }",
+      "Summary": "Gets the recorded delivery status observations."
+    },
+    {
       "DisplayName": "ObservationStaleAfterSeconds",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -81733,6 +81972,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-observedatutc",
       "Signature": "DateTimeOffset? ObservedAtUtc { get; set; }",
       "Summary": "Gets or sets the UTC timestamp when the status was observed. The runtime clock is used when omitted."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the status was observed."
     },
     {
       "DisplayName": "ObservedAtUtc",
@@ -84375,6 +84625,17 @@
     {
       "DisplayName": "Outcome",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the reconciliation outcome produced for the observation."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -84734,6 +84995,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-ownership",
       "Signature": "string Ownership { get; }",
       "Summary": "Gets the ownership mode for the store implementation."
+    },
+    {
+      "DisplayName": "Ownership",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryStatusObservationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-ownership",
+      "Signature": "string Ownership { get; }",
+      "Summary": "Gets the ownership mode for the observation store."
     },
     {
       "DisplayName": "Ownership",
@@ -90456,6 +90728,17 @@
     {
       "DisplayName": "ProviderMessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-providermessageid",
+      "Signature": "string ProviderMessageId { get; }",
+      "Summary": "Gets the provider message identifier associated with the observation."
+    },
+    {
+      "DisplayName": "ProviderMessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -93294,6 +93577,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the provider or receiver status reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -93609,6 +93903,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneprovisioningcategories-reconcileblocked",
       "Signature": "const string ReconcileBlocked",
       "Summary": "Broader provider-owned control-plane reconcile remains blocked."
+    },
+    {
+      "DisplayName": "Reconciled",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-reconciled",
+      "Signature": "bool Reconciled { get; }",
+      "Summary": "Gets a value indicating whether the observation was accepted for the invitation."
     },
     {
       "DisplayName": "Reconciled",
@@ -94042,6 +94347,17 @@
     {
       "DisplayName": "Recorded",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-recorded",
+      "Signature": "bool Recorded { get; }",
+      "Summary": "Gets a value indicating whether invitation delivery status metadata was recorded."
+    },
+    {
+      "DisplayName": "Recorded",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -94060,6 +94376,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-recordedatutc",
       "Signature": "DateTimeOffset? RecordedAtUtc { get; set; }",
       "Summary": "Gets the timestamp when Cephalon recorded this command-execution outcome."
+    },
+    {
+      "DisplayName": "RecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-recordedatutc",
+      "Signature": "DateTimeOffset RecordedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when Cephalon recorded the observation."
     },
     {
       "DisplayName": "RecordedCommandHistory",
@@ -103964,6 +104291,17 @@
     {
       "DisplayName": "SenderId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-senderid",
+      "Signature": "string SenderId { get; }",
+      "Summary": "Gets the delivery sender identifier associated with the observation."
+    },
+    {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -105236,6 +105574,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-source",
       "Signature": "string Source { get; set; }",
       "Summary": "Gets or sets the source that reported the status observation."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-source",
+      "Signature": "string Source { get; }",
+      "Summary": "Gets the source that reported the observation."
     },
     {
       "DisplayName": "Source",
@@ -108175,6 +108524,17 @@
     {
       "DisplayName": "Status",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the normalized provider or receiver delivery status."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -108567,6 +108927,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-storekind",
       "Signature": "string StoreKind { get; }",
       "Summary": "Gets the operator-facing store kind."
+    },
+    {
+      "DisplayName": "StoreKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryStatusObservationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-storekind",
+      "Signature": "string StoreKind { get; }",
+      "Summary": "Gets the store kind, such as \u0060in-memory\u0060 or \u0060file\u0060."
     },
     {
       "DisplayName": "StoreKind",
@@ -112278,6 +112649,17 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that owns the invitation."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -112560,6 +112942,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatuscallbacksigningsecret",
       "Signature": "string TenantInvitationDeliveryStatusCallbackSigningSecret { get; set; }",
       "Summary": "Gets or sets the shared secret used to verify normalized delivery-status callback request bodies with HMAC-SHA256."
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-datetimeoffset-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationDeliveryStatusObservationDescriptor(string observationId, string tenantId, string invitationId, string status, string outcome, bool reconciled, bool recorded, DateTimeOffset observedAtUtc, DateTimeOffset recordedAtUtc, string providerMessageId, string senderId, string channel, string source, string actor, string correlationId, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant invitation delivery status observation descriptor."
     },
     {
       "DisplayName": "TenantInvitationDeliveryStatusReconciliationRequest",
@@ -115596,6 +115989,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-upsert-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor",
       "Signature": "void Upsert(TenantGovernanceActionDescriptor action)",
       "Summary": "Creates or replaces one stored runtime tenant-governance action."
+    },
+    {
+      "DisplayName": "Upsert",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationDeliveryStatusObservationStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliverystatusobservationstore-upsert-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusobservationdescriptor",
+      "Signature": "void Upsert(TenantInvitationDeliveryStatusObservationDescriptor observation)",
+      "Summary": "Records or replaces a delivery status observation."
     },
     {
       "DisplayName": "Upsert",
