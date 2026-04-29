@@ -1,3 +1,4 @@
+using Cephalon.MultiTenancy.Governance.Configuration;
 using Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration;
 using Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Services;
 using Cephalon.MultiTenancy.Governance.Services;
@@ -52,10 +53,12 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                     HttpContext context,
                     MailgunWebhookDeliveryStatusMapper mapper,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
+                    ITenantInvitationDeliveryStatusObservationStore observationStore,
+                    MultiTenancyGovernanceOptions governanceOptions,
                     MailgunInvitationDeliveryStatusCallbackReplayGuard replayGuard,
                     ILoggerFactory loggerFactory,
                     CancellationToken cancellationToken) =>
-                    TranslateCallbackAsync(context, mapper, reconciler, replayGuard, loggerFactory, options, routePattern, cancellationToken))
+                    TranslateCallbackAsync(context, mapper, reconciler, observationStore, governanceOptions, replayGuard, loggerFactory, options, routePattern, cancellationToken))
             .WithName("CephalonMailgunInvitationDeliveryStatusCallback")
             .Accepts<JsonElement>("application/json")
             .Produces<MailgunInvitationDeliveryStatusCallbackResult>(StatusCodes.Status200OK)
@@ -92,7 +95,8 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                 options.AcceptParentSignature,
                 options.IsSignedWebhookReplayProtectionConfigured(),
                 options.GetSignedWebhookReplayRetentionSeconds(),
-                options.GetSignedWebhookReplayCacheLimit());
+                options.GetSignedWebhookReplayCacheLimit(),
+                options.IsWebhookEventIdIdempotencyConfigured());
 
         return endpoints;
     }
@@ -101,6 +105,8 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
         HttpContext context,
         MailgunWebhookDeliveryStatusMapper mapper,
         ITenantInvitationDeliveryStatusReconciler reconciler,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
+        MultiTenancyGovernanceOptions governanceOptions,
         MailgunInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         ILoggerFactory loggerFactory,
         MailgunInvitationDeliveryAspNetCoreOptions options,
@@ -172,6 +178,7 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
             var reconciledEvents = 0;
             var skippedEvents = 0;
             var deniedEvents = 0;
+            var duplicateEvents = 0;
             var index = 0;
 
             try
@@ -190,10 +197,28 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                     }
 
                     translatedEvents++;
-                    var reconciliationRequest = ApplySignatureAndReplayProtectionMetadata(
+                    var eventIdIdempotency = EvaluateWebhookEventIdIdempotency(
+                        options,
+                        governanceOptions,
+                        observationStore,
+                        mapping.Request!);
+                    if (eventIdIdempotency.Duplicate)
+                    {
+                        duplicateEvents++;
+                        MailgunInvitationDeliveryAspNetCoreLogs.CallbackDuplicateEventSkipped(
+                            logger,
+                            eventIdIdempotency.ObservationId!);
+                        eventResults.Add(mapping.ToDuplicateEventResult("The Mailgun event id was already recorded in the delivery-status observation store."));
+                        index++;
+                        continue;
+                    }
+
+                    var reconciliationRequest = ApplySignatureReplayAndEventIdIdempotencyMetadata(
                         mapping.Request!,
                         signatureVerification,
                         replayProtection,
+                        eventIdIdempotency,
+                        observationStore,
                         options);
                     var reconciliation = await reconciler
                         .ReconcileAsync(reconciliationRequest, cancellationToken)
@@ -218,7 +243,7 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                 throw;
             }
 
-            if (translatedEvents > 0 && reconciledEvents == 0)
+            if (translatedEvents > 0 && reconciledEvents == 0 && duplicateEvents == 0)
             {
                 ForgetSignedWebhookReplayProtection(replayGuard, replayProtection);
             }
@@ -243,7 +268,8 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
                 signatureVerification.SignatureField,
                 eventResults,
                 replayProtection.Configured,
-                replayProtection.Outcome);
+                replayProtection.Outcome,
+                duplicateEvents);
 
             return Results.Json(result, SerializerOptions);
         }
@@ -494,14 +520,44 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
         }
     }
 
-    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureAndReplayProtectionMetadata(
+    private static WebhookEventIdIdempotencyResult EvaluateWebhookEventIdIdempotency(
+        MailgunInvitationDeliveryAspNetCoreOptions options,
+        MultiTenancyGovernanceOptions governanceOptions,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
+        TenantInvitationDeliveryStatusReconciliationRequest request)
+    {
+        if (!options.IsWebhookEventIdIdempotencyConfigured() ||
+            !governanceOptions.EnableInvitationDeliveryStatusObservationStore)
+        {
+            return WebhookEventIdIdempotencyResult.NotConfigured();
+        }
+
+        if (!request.Metadata.TryGetValue(TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId, out var observationId) ||
+            string.IsNullOrWhiteSpace(observationId) ||
+            !observationId.Trim().StartsWith("mailgun:", StringComparison.OrdinalIgnoreCase))
+        {
+            return WebhookEventIdIdempotencyResult.EventIdMissing();
+        }
+
+        var normalizedObservationId = observationId.Trim();
+        var duplicate = observationStore.Observations.Any(
+            observation => string.Equals(observation.ObservationId, normalizedObservationId, StringComparison.OrdinalIgnoreCase));
+        return duplicate
+            ? WebhookEventIdIdempotencyResult.DuplicateSkipped(normalizedObservationId)
+            : WebhookEventIdIdempotencyResult.PendingRecord(normalizedObservationId);
+    }
+
+    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySignatureReplayAndEventIdIdempotencyMetadata(
         TenantInvitationDeliveryStatusReconciliationRequest request,
         SignedWebhookVerificationResult signatureVerification,
         SignedWebhookReplayProtectionResult replayProtection,
+        WebhookEventIdIdempotencyResult eventIdIdempotency,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
         MailgunInvitationDeliveryAspNetCoreOptions options)
     {
         if (!signatureVerification.Configured &&
-            !replayProtection.Configured)
+            !replayProtection.Configured &&
+            !eventIdIdempotency.Configured)
         {
             return request;
         }
@@ -538,6 +594,22 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
             if (!string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
             {
                 metadata["mailgunWebhookReplayProtectionFingerprint"] = replayProtection.ReplayFingerprint!;
+            }
+        }
+
+        if (eventIdIdempotency.Configured)
+        {
+            metadata["mailgunWebhookEventIdIdempotency"] = eventIdIdempotency.Outcome;
+            metadata["mailgunWebhookEventIdIdempotencyOwnership"] = "cephalon-managed";
+            metadata["mailgunWebhookEventIdIdempotencyPolicy"] = "mailgun-event-id";
+            metadata["mailgunWebhookEventIdIdempotencyKey"] = "event-data.id";
+            metadata["mailgunWebhookEventIdIdempotencyScope"] = "observation-store";
+            metadata["mailgunWebhookEventIdIdempotencyStoreKind"] = observationStore.StoreKind;
+            metadata["mailgunWebhookEventIdIdempotencyDurability"] =
+                observationStore.IsDurable ? "local-file" : "none";
+            if (!string.IsNullOrWhiteSpace(eventIdIdempotency.ObservationId))
+            {
+                metadata["mailgunWebhookEventIdObservationId"] = eventIdIdempotency.ObservationId!;
             }
         }
 
@@ -745,5 +817,24 @@ public static class MailgunInvitationDeliveryStatusEndpointRouteBuilderExtension
             string replayFingerprint,
             IResult failure) =>
             new(true, outcome, replayFingerprint, failure);
+    }
+
+    private sealed record WebhookEventIdIdempotencyResult(
+        bool Configured,
+        bool Duplicate,
+        string Outcome,
+        string? ObservationId)
+    {
+        public static WebhookEventIdIdempotencyResult NotConfigured() =>
+            new(false, false, "not-configured", null);
+
+        public static WebhookEventIdIdempotencyResult EventIdMissing() =>
+            new(true, false, "event-id-missing", null);
+
+        public static WebhookEventIdIdempotencyResult PendingRecord(string observationId) =>
+            new(true, false, "pending-record", observationId);
+
+        public static WebhookEventIdIdempotencyResult DuplicateSkipped(string observationId) =>
+            new(true, true, "duplicate-skipped", observationId);
     }
 }

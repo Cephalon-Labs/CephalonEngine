@@ -119,6 +119,7 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal(1, result.ReconciledEvents);
         Assert.Equal(0, result.SkippedEvents);
         Assert.Equal(0, result.DeniedEvents);
+        Assert.Equal(0, result.DuplicateEvents);
         Assert.False(result.SignedWebhookVerificationRequired);
         Assert.False(result.SignedWebhookVerified);
         Assert.Equal("not-configured", result.SignedWebhookVerificationOutcome);
@@ -143,6 +144,12 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("cephalon-managed", invitation.Metadata["mailgunWebhookTranslationOwnership"]);
         Assert.Equal("not-configured", invitation.Metadata["mailgunWebhookSignatureVerificationOwnership"]);
         Assert.Equal("not-configured", invitation.Metadata["mailgunWebhookReplayProtectionOwnership"]);
+        Assert.Equal("pending-record", invitation.Metadata["mailgunWebhookEventIdIdempotency"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["mailgunWebhookEventIdIdempotencyOwnership"]);
+        Assert.Equal("mailgun-event-id", invitation.Metadata["mailgunWebhookEventIdIdempotencyPolicy"]);
+        Assert.Equal("event-data.id", invitation.Metadata["mailgunWebhookEventIdIdempotencyKey"]);
+        Assert.Equal("observation-store", invitation.Metadata["mailgunWebhookEventIdIdempotencyScope"]);
+        Assert.Equal("mailgun:mailgun-event-300", invitation.Metadata["mailgunWebhookEventIdObservationId"]);
         Assert.Equal("message.headers.message-id", invitation.Metadata["mailgunProviderMessageIdSource"]);
         Assert.Equal("angle-brackets", invitation.Metadata["mailgunProviderMessageIdNormalization"]);
         Assert.Equal("mailgun-event-300", invitation.Metadata["mailgunEventId"]);
@@ -163,6 +170,11 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("false", endpointEntry.Metadata["mailgunWebhookReplayProtectionConfigured"]);
         Assert.Equal("none", endpointEntry.Metadata["mailgunWebhookReplayProtectionPolicy"]);
         Assert.Equal("none", endpointEntry.Metadata["mailgunWebhookReplayProtectionScope"]);
+        Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyConfigured"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyOwnership"]);
+        Assert.Equal("mailgun-event-id", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyPolicy"]);
+        Assert.Equal("event-data.id", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyKey"]);
+        Assert.Equal("observation-store", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyScope"]);
         Assert.Equal("false", endpointEntry.Metadata["mailgunWebhookSignatureVerificationRequired"]);
         Assert.Equal("false", endpointEntry.Metadata["mailgunWebhookSigningKeyConfigured"]);
         Assert.Equal("timestamp+token", endpointEntry.Metadata["mailgunWebhookSignaturePayload"]);
@@ -180,6 +192,9 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Contains(
             diagnosticsConvention.Events,
             definition => definition.Name == "MailgunInvitationDeliveryStatusCallbackReplayRejected");
+        Assert.Contains(
+            diagnosticsConvention.Events,
+            definition => definition.Name == "MailgunInvitationDeliveryStatusCallbackDuplicateEventSkipped");
     }
 
     [Fact]
@@ -254,6 +269,7 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("parent-signature", result.SignedWebhookSignatureField);
         Assert.True(result.SignedWebhookReplayProtectionEnabled);
         Assert.Equal("recorded", result.SignedWebhookReplayProtectionOutcome);
+        Assert.Equal(0, result.DuplicateEvents);
         Assert.Equal(1, result.ReconciledEvents);
         Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
         Assert.Equal("verified", invitation.Metadata["mailgunWebhookSignatureVerification"]);
@@ -275,6 +291,9 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("300", invitation.Metadata["mailgunWebhookReplayProtectionRetentionSeconds"]);
         Assert.Equal("4096", invitation.Metadata["mailgunWebhookReplayProtectionCacheLimit"]);
         Assert.Equal(CreateSha256Fingerprint(token), invitation.Metadata["mailgunWebhookReplayProtectionFingerprint"]);
+        Assert.Equal("pending-record", invitation.Metadata["mailgunWebhookEventIdIdempotency"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["mailgunWebhookEventIdIdempotencyOwnership"]);
+        Assert.Equal("mailgun:mailgun-event-signed-301", invitation.Metadata["mailgunWebhookEventIdObservationId"]);
         Assert.Equal(invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId], observation.ObservationId);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookSignatureVerificationOwnership"]);
         Assert.Equal("true", endpointEntry.Metadata["mailgunWebhookSignatureVerificationRequired"]);
@@ -288,6 +307,8 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("none", endpointEntry.Metadata["mailgunWebhookReplayProtectionDurability"]);
         Assert.Equal("300", endpointEntry.Metadata["mailgunWebhookReplayProtectionRetentionSeconds"]);
         Assert.Equal("4096", endpointEntry.Metadata["mailgunWebhookReplayProtectionCacheLimit"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyOwnership"]);
+        Assert.Equal("observation-store", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyScope"]);
     }
 
     [Fact]
@@ -371,6 +392,102 @@ public sealed class MultiTenancyGovernanceMailgunDeliveryAspNetCoreHostingTests
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookReplayProtectionOwnership"]);
         Assert.Equal("process-local", endpointEntry.Metadata["mailgunWebhookReplayProtectionScope"]);
         Assert.Equal("none", endpointEntry.Metadata["mailgunWebhookReplayProtectionDurability"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonMailgunInvitationDeliveryStatusCallbacksSkipsDuplicateEventIdsBeforeReconciliation()
+    {
+        const string signingKey = "mailgun-signing-key-event-idempotency-303";
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "MultiTenancy";
+        builder.Services.AddCephalonMailgunInvitationDeliveryAspNetCore(configure: options =>
+        {
+            options.RequireStatusCallbackAuthorization = false;
+            options.RequireSignedWebhook = true;
+            options.WebhookSigningKey = signingKey;
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-mailgun-event-idempotency",
+                    tenantId: "tenant-mailgun-event-idempotency",
+                    inviteeId: "event-idempotency@example.test",
+                    inviteeKind: "email",
+                    displayName: "Mailgun Event Idempotency Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero),
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TenantInvitationDeliveryMetadataKeys.LastDeliveryProviderMessageId] = "<mailgun-message-event-idempotency@example.test>"
+                    }));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalonMailgunInvitationDeliveryStatusCallbacks();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        var firstToken = "mailgun-token-event-idempotency-303-first";
+        var secondToken = "mailgun-token-event-idempotency-303-second";
+        var eventData = CreateMailgunDeliveredEvent(
+            "mailgun-event-idempotency-303",
+            "mailgun-message-event-idempotency@example.test",
+            "tenant-mailgun-event-idempotency",
+            "invite-mailgun-event-idempotency",
+            "corr-mailgun-event-idempotency-303");
+        var firstPayload = CreateSignedMailgunEnvelopePayload(
+            eventData,
+            timestamp,
+            firstToken,
+            CreateMailgunSignature(signingKey, timestamp, firstToken));
+        var secondPayload = CreateSignedMailgunEnvelopePayload(
+            eventData,
+            timestamp,
+            secondToken,
+            CreateMailgunSignature(signingKey, timestamp, secondToken));
+
+        var firstResponse = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/mailgun",
+            new StringContent(firstPayload, Encoding.UTF8, "application/json"));
+        var secondResponse = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/mailgun",
+            new StringContent(secondPayload, Encoding.UTF8, "application/json"));
+
+        var firstResult = await firstResponse.Content.ReadFromJsonAsync<MailgunInvitationDeliveryStatusCallbackResult>(SerializerOptions);
+        var secondResult = await secondResponse.Content.ReadFromJsonAsync<MailgunInvitationDeliveryStatusCallbackResult>(SerializerOptions);
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        var observations = app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations;
+        var duplicateEvent = Assert.Single(secondResult!.Events);
+        var technologySurface = Assert.Single(
+            app.Services.GetRequiredService<ITechnologyRuntimeCatalog>().GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitation-delivery-mailgun-status-callbacks");
+        var endpointEntry = Assert.Single(technologySurface.Entries);
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+        Assert.NotNull(firstResult);
+        Assert.NotNull(secondResult);
+        Assert.Equal(1, firstResult.ReconciledEvents);
+        Assert.Equal(0, firstResult.DuplicateEvents);
+        Assert.Equal(0, secondResult.ReconciledEvents);
+        Assert.Equal(1, secondResult.TranslatedEvents);
+        Assert.Equal(1, secondResult.DuplicateEvents);
+        Assert.True(duplicateEvent.Translated);
+        Assert.False(duplicateEvent.Reconciled);
+        Assert.Equal("duplicate-skipped", duplicateEvent.Outcome);
+        Assert.Single(observations);
+        Assert.Equal("mailgun:mailgun-event-idempotency-303", observations[0].ObservationId);
+        Assert.Equal("mailgun:mailgun-event-idempotency-303", invitation.Metadata["mailgunWebhookEventIdObservationId"]);
+        Assert.Equal("pending-record", invitation.Metadata["mailgunWebhookEventIdIdempotency"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyOwnership"]);
+        Assert.Equal("observation-store", endpointEntry.Metadata["mailgunWebhookEventIdIdempotencyScope"]);
     }
 
     [Fact]

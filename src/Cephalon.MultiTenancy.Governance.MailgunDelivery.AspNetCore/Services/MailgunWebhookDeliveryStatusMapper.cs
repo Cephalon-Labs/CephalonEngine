@@ -130,6 +130,8 @@ internal sealed class MailgunWebhookDeliveryStatusMapper(MailgunInvitationDelive
             ["mailgunWebhookSignatureVerificationOwnership"] = "not-configured",
             ["mailgunWebhookReplayProtection"] = "not-configured",
             ["mailgunWebhookReplayProtectionOwnership"] = "not-configured",
+            ["mailgunWebhookEventIdIdempotency"] = "not-configured",
+            ["mailgunWebhookEventIdIdempotencyOwnership"] = "not-configured",
             ["mailgunEventIndex"] = index.ToString(CultureInfo.InvariantCulture),
             ["mailgunProviderMessageIdSource"] = "message.headers.message-id",
             ["mailgunProviderMessageIdNormalization"] = options.NormalizeProviderMessageIdWithAngleBrackets ? "angle-brackets" : "none"
@@ -418,4 +420,18 @@ internal sealed record MailgunWebhookDeliveryStatusMappingResult(
             translated: true,
             reconciled: reconciliation.Reconciled,
             reconciliation.Reason);
+
+    public MailgunInvitationDeliveryStatusCallbackEventResult ToDuplicateEventResult(string reason) =>
+        new(
+            Index,
+            MailgunEventId,
+            MailgunMessageId,
+            MailgunEventType,
+            TenantId,
+            InvitationId,
+            Status,
+            "duplicate-skipped",
+            translated: true,
+            reconciled: false,
+            reason);
 }

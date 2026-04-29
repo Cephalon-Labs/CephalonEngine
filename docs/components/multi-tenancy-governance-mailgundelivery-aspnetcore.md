@@ -19,8 +19,10 @@
 - safe signed-webhook metadata such as verification outcome, algorithm, timestamp, age, signature field, signature fingerprint, and parent-signature posture without storing the signing key, raw signature, raw payload, or recipient email
 - bounded process-local replay protection for verified signed webhook tokens when `EnableSignedWebhookReplayProtection` remains enabled
 - safe replay metadata such as replay outcome, policy, key type, scope, durability, retention, cache limit, and token fingerprint without storing the raw token
+- observation-store-backed Mailgun event-id idempotency when `EnableWebhookEventIdIdempotency` remains enabled and the governance observation store is enabled
+- safe event-id idempotency metadata such as outcome, ownership, policy, key, scope, store kind, durability, and normalized observation id without storing raw webhook payloads or recipient email
 - runtime truth through the `tenant-invitation-delivery-mailgun-status-callbacks` technology surface
-- stable diagnostics for accepted Mailgun callback payloads, rejected signed-webhook verification attempts, and rejected signed-webhook token replays
+- stable diagnostics for accepted Mailgun callback payloads, rejected signed-webhook verification attempts, rejected signed-webhook token replays, and duplicate Mailgun event-id skips
 
 ## Main surfaces
 
@@ -82,7 +84,8 @@ Configuration example:
             "AcceptParentSignature": true,
             "EnableSignedWebhookReplayProtection": true,
             "SignedWebhookReplayRetentionSeconds": 300,
-            "SignedWebhookReplayCacheLimit": 4096
+            "SignedWebhookReplayCacheLimit": 4096,
+            "EnableWebhookEventIdIdempotency": true
           }
         }
       }
@@ -93,13 +96,15 @@ Configuration example:
 
 Mapped statuses are intentionally narrow. `accepted` becomes `accepted`, `delivered` becomes `delivered`, `failed` with temporary severity becomes `deferred`, `failed` with permanent severity becomes `bounced`, other `failed` events become `failed`, and `complained` plus `unsubscribed` become `suppressed`. `opened` and `clicked` are skipped by default because they are engagement events rather than delivery status events; set `MapEngagementEventsAsDelivered` only when that is an explicit product decision.
 
-The endpoint returns `MailgunInvitationDeliveryStatusCallbackResult` with aggregate counts and per-event translation results. Events without Cephalon tenant and invitation user variables are skipped without leaking recipient email addresses in the response. Translated events still go through the host-agnostic reconciler, so invitation existence, provider-message matching, status recording, and observation storage keep using the same governance rules as normalized callbacks.
+The endpoint returns `MailgunInvitationDeliveryStatusCallbackResult` with aggregate counts and per-event translation results. Events without Cephalon tenant and invitation user variables are skipped without leaking recipient email addresses in the response. Duplicate Mailgun event ids increment `DuplicateEvents` and return per-event `duplicate-skipped` outcomes. Translated non-duplicate events still go through the host-agnostic reconciler, so invitation existence, provider-message matching, status recording, and observation storage keep using the same governance rules as normalized callbacks.
 
 When `RequireSignedWebhook` is enabled, the endpoint verifies Mailgun's HMAC-SHA256 signature before translation or reconciliation. Verification uses the `signature.token`, `signature.timestamp`, and `signature.signature` values from Mailgun's signed JSON envelope, computes the lowercase hex digest over `timestamp + token` with `WebhookSigningKey`, enforces `SignedWebhookSignatureToleranceSeconds`, and fails closed with `401` for missing, malformed, stale, or invalid signatures. Mailgun subaccount events can also include `signature.parent-signature`; Cephalon accepts that field by default so hosts can validate subaccount events with the parent account signing key. Runtime metadata reports signature verification as `cephalon-managed` only when this option is enabled and keeps the signing key and raw signature out of runtime output.
 
 When `RequireSignedWebhook` and `EnableSignedWebhookReplayProtection` are both enabled, verified Mailgun tokens are recorded as SHA-256 token fingerprints in a bounded process-local cache. A duplicate token inside `SignedWebhookReplayRetentionSeconds` is rejected with `409` before reconciliation and emits diagnostic `4570`. Runtime and reconciliation metadata report `mailgunWebhookReplayProtectionOwnership = cephalon-managed`, `mailgunWebhookReplayProtectionPolicy = signed-webhook-token`, `mailgunWebhookReplayProtectionKey = token-fingerprint`, `mailgunWebhookReplayProtectionScope = process-local`, and `mailgunWebhookReplayProtectionDurability = none` so operators can distinguish this from a durable or distributed inbox.
 
-ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, Mailgun TLS client-certificate checks, or other host controls. This baseline owns process-local Mailgun replay-token rejection only; durable callback inboxes, distributed replay ledgers, distributed event-id ledgers, provider polling, and exactly-once delivery remain future provider-pack or application-owned work.
+When `EnableWebhookEventIdIdempotency` is enabled and the governance observation store is enabled, the endpoint checks the normalized `mailgun:{event-data.id}` observation id before invoking the reconciler. Already observed ids are skipped with diagnostic `4571`, `DuplicateEvents`, and a per-event `duplicate-skipped` outcome. Runtime and reconciliation metadata report `mailgunWebhookEventIdIdempotencyOwnership = cephalon-managed`, `mailgunWebhookEventIdIdempotencyPolicy = mailgun-event-id`, `mailgunWebhookEventIdIdempotencyKey = event-data.id`, `mailgunWebhookEventIdIdempotencyScope = observation-store`, and store-dependent durability so operators can distinguish this guard from a durable callback inbox or distributed event ledger.
+
+ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, Mailgun TLS client-certificate checks, or other host controls. This baseline owns process-local Mailgun replay-token rejection plus observation-store-backed Mailgun event-id idempotency only; durable callback inboxes, distributed replay ledgers, distributed event-id ledgers, provider polling, and exactly-once delivery remain future provider-pack or application-owned work.
 
 ## Provider references
 

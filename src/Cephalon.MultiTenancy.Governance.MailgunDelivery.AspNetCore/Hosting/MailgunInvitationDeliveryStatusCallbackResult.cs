@@ -21,6 +21,7 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
     /// <param name="events">Per-event translation and reconciliation results.</param>
     /// <param name="signedWebhookReplayProtectionEnabled">A value indicating whether process-local replay protection was enabled for this verified signed callback.</param>
     /// <param name="signedWebhookReplayProtectionOutcome">The replay-protection outcome for this callback.</param>
+    /// <param name="duplicateEvents">The number of translated Mailgun events skipped because their event id was already observed.</param>
     public MailgunInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -34,7 +35,8 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
         string? signedWebhookSignatureField,
         IReadOnlyList<MailgunInvitationDeliveryStatusCallbackEventResult> events,
         bool signedWebhookReplayProtectionEnabled = false,
-        string signedWebhookReplayProtectionOutcome = "not-configured")
+        string signedWebhookReplayProtectionOutcome = "not-configured",
+        int duplicateEvents = 0)
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -63,6 +65,7 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
         SignedWebhookReplayProtectionOutcome = string.IsNullOrWhiteSpace(signedWebhookReplayProtectionOutcome)
             ? "unknown"
             : signedWebhookReplayProtectionOutcome.Trim();
+        DuplicateEvents = duplicateEvents;
     }
 
     /// <summary>
@@ -124,6 +127,11 @@ public sealed class MailgunInvitationDeliveryStatusCallbackResult
     /// Gets the replay-protection outcome for this callback.
     /// </summary>
     public string SignedWebhookReplayProtectionOutcome { get; }
+
+    /// <summary>
+    /// Gets the number of translated Mailgun events skipped because their event id was already observed.
+    /// </summary>
+    public int DuplicateEvents { get; }
 
     /// <summary>
     /// Gets per-event translation and reconciliation results.

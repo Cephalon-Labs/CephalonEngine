@@ -31,6 +31,13 @@ internal static class MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions
         MessageTemplate: "Mailgun invitation delivery status callback replay rejected with outcome {Outcome}.",
         Description: "Emitted when the ASP.NET Core Mailgun webhook callback endpoint rejects a duplicate verified signed webhook token inside the process-local replay window.");
 
+    public static readonly DiagnosticEventDefinition MailgunInvitationDeliveryStatusCallbackDuplicateEventSkipped = new(
+        Id: 4571,
+        Name: "MailgunInvitationDeliveryStatusCallbackDuplicateEventSkipped",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Mailgun invitation delivery status callback duplicate event skipped for observation {ObservationId}.",
+        Description: "Emitted when the ASP.NET Core Mailgun webhook callback endpoint skips a translated event whose Mailgun event id is already recorded in the observation store.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -39,7 +46,8 @@ internal static class MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions
         [
             MailgunInvitationDeliveryStatusCallbackAccepted,
             MailgunInvitationDeliveryStatusCallbackSignatureRejected,
-            MailgunInvitationDeliveryStatusCallbackReplayRejected
+            MailgunInvitationDeliveryStatusCallbackReplayRejected,
+            MailgunInvitationDeliveryStatusCallbackDuplicateEventSkipped
         ]);
 }
 
@@ -69,6 +77,14 @@ internal static class MailgunInvitationDeliveryAspNetCoreLogs
                 MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions.MailgunInvitationDeliveryStatusCallbackReplayRejected.Name),
             "Mailgun invitation delivery status callback replay rejected with outcome {Outcome}.");
 
+    private static readonly Action<ILogger, string, Exception?> CallbackDuplicateEventSkippedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            new EventId(
+                MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions.MailgunInvitationDeliveryStatusCallbackDuplicateEventSkipped.Id,
+                MailgunInvitationDeliveryAspNetCoreDiagnosticsConventions.MailgunInvitationDeliveryStatusCallbackDuplicateEventSkipped.Name),
+            "Mailgun invitation delivery status callback duplicate event skipped for observation {ObservationId}.");
+
     public static void CallbackAccepted(
         ILogger logger,
         int eventCount,
@@ -82,4 +98,7 @@ internal static class MailgunInvitationDeliveryAspNetCoreLogs
 
     public static void CallbackReplayRejected(ILogger logger, string outcome) =>
         CallbackReplayRejectedMessage(logger, outcome, null);
+
+    public static void CallbackDuplicateEventSkipped(ILogger logger, string observationId) =>
+        CallbackDuplicateEventSkippedMessage(logger, observationId, null);
 }
