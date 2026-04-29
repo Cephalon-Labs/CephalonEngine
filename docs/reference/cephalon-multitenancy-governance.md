@@ -332,6 +332,18 @@ Gets or sets a value indicating whether the built-in invitation delivery dispatc
 
 Remarks: The dispatcher owns invitation lookup, pending/expiry checks, runtime reporting, and outcome persistence. It requires a registered `ITenantInvitationDeliverySender` before any external delivery can happen.
 
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliveryretryqueue"></a>
+
+##### `EnableInvitationDeliveryRetryQueue`
+
+```csharp
+bool EnableInvitationDeliveryRetryQueue { get; set; }
+```
+
+Gets or sets a value indicating whether sender-failed invitation delivery attempts are queued for explicit retry.
+
+Remarks: This queue is enabled deliberately because it can cause later delivery attempts. It stores retry intent and exposes a bounded manual runner; it does not start background delivery, provide distributed leases, or guarantee exactly-once delivery.
+
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliverystatusobservationstore"></a>
 
 ##### `EnableInvitationDeliveryStatusObservationStore`
@@ -407,6 +419,46 @@ string GovernanceActionStoreFilePath { get; set; }
 ```
 
 Gets or sets the optional JSON file path used for Cephalon-managed durable governance-action workflow state.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrydelayseconds"></a>
+
+##### `InvitationDeliveryRetryDelaySeconds`
+
+```csharp
+int InvitationDeliveryRetryDelaySeconds { get; set; }
+```
+
+Gets or sets the delay, in seconds, before a failed retry entry is due again.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrymaxattempts"></a>
+
+##### `InvitationDeliveryRetryMaxAttempts`
+
+```csharp
+int InvitationDeliveryRetryMaxAttempts { get; set; }
+```
+
+Gets or sets the maximum dispatch attempts retained for one retry entry, including the original failed attempt.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrymaxitems"></a>
+
+##### `InvitationDeliveryRetryMaxItems`
+
+```csharp
+int InvitationDeliveryRetryMaxItems { get; set; }
+```
+
+Gets or sets the default maximum number of retry entries attempted by one retry runner pass.
+
+<a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretryqueuefilepath"></a>
+
+##### `InvitationDeliveryRetryQueueFilePath`
+
+```csharp
+string InvitationDeliveryRetryQueueFilePath { get; set; }
+```
+
+Gets or sets the optional JSON file path used for Cephalon-managed durable invitation delivery retry entries.
 
 <a id="member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryrunhistorylimit"></a>
 
@@ -1518,6 +1570,170 @@ Returns: The dispatch outcome.
 Parameters:
 - `request`: The tenant invitation delivery request.
 - `cancellationToken`: A token that cancels dispatch before a sender is invoked or state is stored.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryrunner"></a>
+
+### `ITenantInvitationDeliveryRetryRunner`
+
+Runs bounded retries for queued tenant invitation delivery failures.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationDeliveryRetryRunner
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryrunner-retrypendingasync-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-system-threading-cancellationtoken"></a>
+
+##### `RetryPendingAsync`
+
+```csharp
+ValueTask<TenantInvitationDeliveryRetryResult> RetryPendingAsync(TenantInvitationDeliveryRetryRequest request, CancellationToken cancellationToken)
+```
+
+Retries pending tenant invitation delivery queue entries.
+
+Returns: The aggregate retry pass result.
+
+Parameters:
+- `request`: The retry runner request.
+- `cancellationToken`: A token that cancels the retry pass.
+
+<a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore"></a>
+
+### `ITenantInvitationDeliveryRetryStore`
+
+Stores tenant invitation delivery retry entries managed by the governance companion pack.
+
+#### Declaration
+```csharp
+public interface ITenantInvitationDeliveryRetryStore
+```
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of retained retry entries.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-entries"></a>
+
+##### `Entries`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryRetryDescriptor> Entries { get; }
+```
+
+Gets every retained retry entry.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-isdurable"></a>
+
+##### `IsDurable`
+
+```csharp
+bool IsDurable { get; }
+```
+
+Gets a value indicating whether retry entries survive process restarts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-latestentry"></a>
+
+##### `LatestEntry`
+
+```csharp
+TenantInvitationDeliveryRetryDescriptor LatestEntry { get; }
+```
+
+Gets the latest retained retry entry when one exists.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+string Ownership { get; }
+```
+
+Gets the runtime ownership label for the retry queue.
+
+<a id="member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-storekind"></a>
+
+##### `StoreKind`
+
+```csharp
+string StoreKind { get; }
+```
+
+Gets the storage kind used by the retry queue.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+TenantInvitationDeliveryRetryDescriptor GetById(string retryId)
+```
+
+Gets one retry entry by identifier.
+
+Returns: The matching retry entry, or `null` when none exists.
+
+Parameters:
+- `retryId`: The retry entry identifier.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-getpending-system-datetimeoffset-system-int32-system-boolean"></a>
+
+##### `GetPending`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryRetryDescriptor> GetPending(DateTimeOffset atUtc, int limit, bool dueOnly)
+```
+
+Gets retry entries that are pending and optionally due at or before the supplied timestamp.
+
+Returns: The matching pending retry entries.
+
+Parameters:
+- `atUtc`: The timestamp used to decide due entries.
+- `limit`: The maximum number of entries to return.
+- `dueOnly`: A value indicating whether entries scheduled after `atUtc` should be skipped.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-remove-system-string"></a>
+
+##### `Remove`
+
+```csharp
+bool Remove(string retryId)
+```
+
+Removes a retry entry.
+
+Returns: `true` when an entry was removed; otherwise `false`.
+
+Parameters:
+- `retryId`: The retry entry identifier.
+
+<a id="member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-upsert-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor"></a>
+
+##### `Upsert`
+
+```csharp
+void Upsert(TenantInvitationDeliveryRetryDescriptor entry)
+```
+
+Adds or replaces a retry entry.
+
+Parameters:
+- `entry`: The retry entry to store.
 
 <a id="type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog"></a>
 
@@ -10449,6 +10665,156 @@ const string DeliveryDispatchOwnership
 
 Metadata key describing Cephalon ownership of the host-agnostic dispatch pipeline.
 
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecution"></a>
+
+##### `DeliveryRetryExecution`
+
+```csharp
+const string DeliveryRetryExecution
+```
+
+Metadata key that marks a dispatch request created by the retry runner.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueattempt"></a>
+
+##### `DeliveryRetryQueueAttempt`
+
+```csharp
+const string DeliveryRetryQueueAttempt
+```
+
+Metadata key containing the retry queue attempt number.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuedelayseconds"></a>
+
+##### `DeliveryRetryQueueDelaySeconds`
+
+```csharp
+const string DeliveryRetryQueueDelaySeconds
+```
+
+Metadata key containing the retry delay in seconds.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueentrycount"></a>
+
+##### `DeliveryRetryQueueEntryCount`
+
+```csharp
+const string DeliveryRetryQueueEntryCount
+```
+
+Metadata key containing the total number of retained invitation delivery retry entries.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueentryid"></a>
+
+##### `DeliveryRetryQueueEntryId`
+
+```csharp
+const string DeliveryRetryQueueEntryId
+```
+
+Metadata key containing the invitation delivery retry queue entry identifier.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuelastattemptatutc"></a>
+
+##### `DeliveryRetryQueueLastAttemptAtUtc`
+
+```csharp
+const string DeliveryRetryQueueLastAttemptAtUtc
+```
+
+Metadata key containing the UTC timestamp of the latest retry attempt.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuelastoutcome"></a>
+
+##### `DeliveryRetryQueueLastOutcome`
+
+```csharp
+const string DeliveryRetryQueueLastOutcome
+```
+
+Metadata key containing the latest retry dispatch outcome.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuelastreason"></a>
+
+##### `DeliveryRetryQueueLastReason`
+
+```csharp
+const string DeliveryRetryQueueLastReason
+```
+
+Metadata key containing the latest retry dispatch reason.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuemaxattempts"></a>
+
+##### `DeliveryRetryQueueMaxAttempts`
+
+```csharp
+const string DeliveryRetryQueueMaxAttempts
+```
+
+Metadata key containing the maximum attempts configured for retry queue entries.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuenextattemptatutc"></a>
+
+##### `DeliveryRetryQueueNextAttemptAtUtc`
+
+```csharp
+const string DeliveryRetryQueueNextAttemptAtUtc
+```
+
+Metadata key containing the UTC timestamp when the next retry attempt is due.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueoutcome"></a>
+
+##### `DeliveryRetryQueueOutcome`
+
+```csharp
+const string DeliveryRetryQueueOutcome
+```
+
+Metadata key describing whether a sender failure was queued for retry.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueownership"></a>
+
+##### `DeliveryRetryQueueOwnership`
+
+```csharp
+const string DeliveryRetryQueueOwnership
+```
+
+Metadata key describing Cephalon ownership of the invitation delivery retry queue.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuependingcount"></a>
+
+##### `DeliveryRetryQueuePendingCount`
+
+```csharp
+const string DeliveryRetryQueuePendingCount
+```
+
+Metadata key containing the number of pending invitation delivery retry entries.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuestoredurable"></a>
+
+##### `DeliveryRetryQueueStoreDurable`
+
+```csharp
+const string DeliveryRetryQueueStoreDurable
+```
+
+Metadata key describing whether the invitation delivery retry queue is durable.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuestorekind"></a>
+
+##### `DeliveryRetryQueueStoreKind`
+
+```csharp
+const string DeliveryRetryQueueStoreKind
+```
+
+Metadata key describing the invitation delivery retry queue storage kind.
+
 <a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationid"></a>
 
 ##### `DeliveryStatusObservationId`
@@ -11127,6 +11493,611 @@ string TenantId { get; }
 ```
 
 Gets the tenant identifier that was evaluated.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor"></a>
+
+### `TenantInvitationDeliveryRetryDescriptor`
+
+Describes one queued tenant invitation delivery retry entry.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryRetryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string-system-int32-system-int32-system-datetimeoffset-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryRetryDescriptor`
+
+```csharp
+TenantInvitationDeliveryRetryDescriptor(string retryId, string tenantId, string invitationId, string channel, string senderId, string source, string actor, string correlationId, bool recordDelivery, string status, int attemptCount, int maxAttempts, DateTimeOffset createdAtUtc, DateTimeOffset nextAttemptAtUtc, DateTimeOffset? lastAttemptAtUtc, string lastOutcome, string lastReason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery retry descriptor.
+
+Parameters:
+- `retryId`: The stable retry entry identifier.
+- `tenantId`: The tenant identifier that owns the invitation.
+- `invitationId`: The invitation identifier to retry.
+- `channel`: The delivery channel to retry.
+- `senderId`: The sender identifier to retry when specified.
+- `source`: The source recorded on the next retry attempt.
+- `actor`: The actor recorded on the next retry attempt.
+- `correlationId`: The correlation identifier retained for retry attempts.
+- `recordDelivery`: A value indicating whether retry attempts should record delivery metadata.
+- `status`: The retry entry status.
+- `attemptCount`: The number of dispatch attempts represented by this entry, including the original failed attempt.
+- `maxAttempts`: The maximum number of dispatch attempts allowed for this entry.
+- `createdAtUtc`: The UTC timestamp when the retry entry was created.
+- `nextAttemptAtUtc`: The UTC timestamp when the next attempt is due.
+- `lastAttemptAtUtc`: The UTC timestamp of the latest dispatch attempt.
+- `lastOutcome`: The latest delivery dispatch outcome.
+- `lastReason`: The latest delivery dispatch reason.
+- `metadata`: Optional retry metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor recorded on retry attempts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-attemptcount"></a>
+
+##### `AttemptCount`
+
+```csharp
+int AttemptCount { get; }
+```
+
+Gets the number of dispatch attempts represented by this entry.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; }
+```
+
+Gets the delivery channel to retry.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier retained for retry attempts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-createdatutc"></a>
+
+##### `CreatedAtUtc`
+
+```csharp
+DateTimeOffset CreatedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the retry entry was created.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-invitationid"></a>
+
+##### `InvitationId`
+
+```csharp
+string InvitationId { get; }
+```
+
+Gets the invitation identifier to retry.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-lastattemptatutc"></a>
+
+##### `LastAttemptAtUtc`
+
+```csharp
+DateTimeOffset? LastAttemptAtUtc { get; }
+```
+
+Gets the UTC timestamp of the latest dispatch attempt.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; }
+```
+
+Gets the latest delivery dispatch outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-lastreason"></a>
+
+##### `LastReason`
+
+```csharp
+string LastReason { get; }
+```
+
+Gets the latest delivery dispatch reason.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-maxattempts"></a>
+
+##### `MaxAttempts`
+
+```csharp
+int MaxAttempts { get; }
+```
+
+Gets the maximum number of dispatch attempts allowed for this entry.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional retry metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-nextattemptatutc"></a>
+
+##### `NextAttemptAtUtc`
+
+```csharp
+DateTimeOffset NextAttemptAtUtc { get; }
+```
+
+Gets the UTC timestamp when the next attempt is due.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-recorddelivery"></a>
+
+##### `RecordDelivery`
+
+```csharp
+bool RecordDelivery { get; }
+```
+
+Gets a value indicating whether retry attempts should record delivery metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-retryid"></a>
+
+##### `RetryId`
+
+```csharp
+string RetryId { get; }
+```
+
+Gets the stable retry entry identifier.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-senderid"></a>
+
+##### `SenderId`
+
+```csharp
+string SenderId { get; }
+```
+
+Gets the sender identifier to retry when specified.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source recorded on retry attempts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the retry entry status.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier that owns the invitation.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-withretrystate-system-string-system-int32-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `WithRetryState`
+
+```csharp
+TenantInvitationDeliveryRetryDescriptor WithRetryState(string status, int attemptCount, DateTimeOffset nextAttemptAtUtc, DateTimeOffset? lastAttemptAtUtc, string lastOutcome, string lastReason, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a copy of this retry entry with updated retry state.
+
+Returns: The updated retry descriptor.
+
+Parameters:
+- `status`: The updated status.
+- `attemptCount`: The updated attempt count.
+- `nextAttemptAtUtc`: The updated next-attempt timestamp.
+- `lastAttemptAtUtc`: The updated last-attempt timestamp.
+- `lastOutcome`: The updated latest outcome.
+- `lastReason`: The updated latest reason.
+- `metadata`: The updated metadata.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes"></a>
+
+### `TenantInvitationDeliveryRetryOutcomes`
+
+Defines stable outcomes for tenant invitation delivery retry runner passes.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryRetryOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Invitation delivery retry queue processing is disabled.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-failed"></a>
+
+##### `Failed`
+
+```csharp
+const string Failed
+```
+
+No attempted retry entries dispatched successfully.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-nopendingretries"></a>
+
+##### `NoPendingRetries`
+
+```csharp
+const string NoPendingRetries
+```
+
+No pending retry entries matched the request.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-partial"></a>
+
+##### `Partial`
+
+```csharp
+const string Partial
+```
+
+Some attempted retry entries succeeded and some remained pending or terminal.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-retried"></a>
+
+##### `Retried`
+
+```csharp
+const string Retried
+```
+
+Every attempted retry entry dispatched successfully.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest"></a>
+
+### `TenantInvitationDeliveryRetryRequest`
+
+Describes a bounded tenant invitation delivery retry runner request.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryRetryRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-ctor-system-nullable-system-datetimeoffset-system-nullable-system-int32-system-boolean-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryRetryRequest`
+
+```csharp
+TenantInvitationDeliveryRetryRequest(DateTimeOffset? atUtc, int? maxItems, bool dueOnly, string source, string actor, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery retry runner request.
+
+Parameters:
+- `atUtc`: The UTC timestamp used for retry evaluation.
+- `maxItems`: The maximum number of retry entries to attempt.
+- `dueOnly`: A value indicating whether entries scheduled after `atUtc` should be skipped.
+- `source`: The source recorded on retry attempts.
+- `actor`: The actor recorded on retry attempts.
+- `correlationId`: The correlation identifier recorded on retry attempts.
+- `metadata`: Optional retry runner metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-actor"></a>
+
+##### `Actor`
+
+```csharp
+string Actor { get; }
+```
+
+Gets the actor recorded on retry attempts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset? AtUtc { get; }
+```
+
+Gets the UTC timestamp used for retry evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier recorded on retry attempts.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-dueonly"></a>
+
+##### `DueOnly`
+
+```csharp
+bool DueOnly { get; }
+```
+
+Gets a value indicating whether entries scheduled after `AtUtc` should be skipped.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-maxitems"></a>
+
+##### `MaxItems`
+
+```csharp
+int? MaxItems { get; }
+```
+
+Gets the maximum number of retry entries to attempt.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional retry runner metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source recorded on retry attempts.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult"></a>
+
+### `TenantInvitationDeliveryRetryResult`
+
+Describes the aggregate result of one tenant invitation delivery retry runner pass.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryRetryResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantInvitationDeliveryRetryResult`
+
+```csharp
+TenantInvitationDeliveryRetryResult(string outcome, int attemptedCount, int dispatchedCount, int failedCount, int exhaustedCount, int terminalCount, int remainingPendingCount, DateTimeOffset atUtc, IReadOnlyList<TenantInvitationDeliveryResult> deliveryResults, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a tenant invitation delivery retry result.
+
+Parameters:
+- `outcome`: The stable retry runner outcome.
+- `attemptedCount`: The number of retry entries attempted.
+- `dispatchedCount`: The number of retry entries dispatched successfully.
+- `failedCount`: The number of attempted entries that remained pending after failure.
+- `exhaustedCount`: The number of attempted entries that exhausted their retry budget.
+- `terminalCount`: The number of attempted entries that hit a terminal invitation state.
+- `remainingPendingCount`: The number of pending entries retained after the pass.
+- `atUtc`: The UTC timestamp used for retry evaluation.
+- `deliveryResults`: The delivery dispatch results produced by this pass.
+- `metadata`: Optional retry result metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-attemptedcount"></a>
+
+##### `AttemptedCount`
+
+```csharp
+int AttemptedCount { get; }
+```
+
+Gets the number of retry entries attempted.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-atutc"></a>
+
+##### `AtUtc`
+
+```csharp
+DateTimeOffset AtUtc { get; }
+```
+
+Gets the UTC timestamp used for retry evaluation.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-deliveryresults"></a>
+
+##### `DeliveryResults`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryResult> DeliveryResults { get; }
+```
+
+Gets the delivery dispatch results produced by this pass.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-dispatchedcount"></a>
+
+##### `DispatchedCount`
+
+```csharp
+int DispatchedCount { get; }
+```
+
+Gets the number of retry entries dispatched successfully.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-exhaustedcount"></a>
+
+##### `ExhaustedCount`
+
+```csharp
+int ExhaustedCount { get; }
+```
+
+Gets the number of attempted entries that exhausted their retry budget.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; }
+```
+
+Gets the number of attempted entries that remained pending after failure.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional retry result metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable retry runner outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-remainingpendingcount"></a>
+
+##### `RemainingPendingCount`
+
+```csharp
+int RemainingPendingCount { get; }
+```
+
+Gets the number of pending entries retained after the pass.
+
+<a id="member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-terminalcount"></a>
+
+##### `TerminalCount`
+
+```csharp
+int TerminalCount { get; }
+```
+
+Gets the number of attempted entries that hit a terminal invitation state.
+
+<a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses"></a>
+
+### `TenantInvitationDeliveryRetryStatuses`
+
+Defines stable statuses for tenant invitation delivery retry queue entries.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryRetryStatuses
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-dispatched"></a>
+
+##### `Dispatched`
+
+```csharp
+const string Dispatched
+```
+
+The retry entry was dispatched and removed from the active retry queue.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-exhausted"></a>
+
+##### `Exhausted`
+
+```csharp
+const string Exhausted
+```
+
+The retry entry exhausted its configured retry budget.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-pending"></a>
+
+##### `Pending`
+
+```csharp
+const string Pending
+```
+
+The retry entry is waiting for another attempt.
+
+<a id="member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-terminal"></a>
+
+##### `Terminal`
+
+```csharp
+const string Terminal
+```
+
+The retry entry hit a terminal invitation state that should not be retried.
 
 <a id="type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrundescriptor"></a>
 

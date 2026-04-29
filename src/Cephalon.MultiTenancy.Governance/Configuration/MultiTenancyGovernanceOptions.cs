@@ -77,6 +77,30 @@ public sealed class MultiTenancyGovernanceOptions
     public bool EnableInvitationDeliveryStatusObservationStore { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether sender-failed invitation delivery attempts are queued for explicit retry.
+    /// </summary>
+    /// <remarks>
+    /// This queue is enabled deliberately because it can cause later delivery attempts. It stores retry intent and exposes
+    /// a bounded manual runner; it does not start background delivery, provide distributed leases, or guarantee exactly-once delivery.
+    /// </remarks>
+    public bool EnableInvitationDeliveryRetryQueue { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum dispatch attempts retained for one retry entry, including the original failed attempt.
+    /// </summary>
+    public int InvitationDeliveryRetryMaxAttempts { get; set; } = 3;
+
+    /// <summary>
+    /// Gets or sets the delay, in seconds, before a failed retry entry is due again.
+    /// </summary>
+    public int InvitationDeliveryRetryDelaySeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Gets or sets the default maximum number of retry entries attempted by one retry runner pass.
+    /// </summary>
+    public int InvitationDeliveryRetryMaxItems { get; set; } = 25;
+
+    /// <summary>
     /// Gets or sets the maximum number of delivery status observations retained by the built-in observation store.
     /// </summary>
     public int InvitationDeliveryStatusObservationHistoryLimit { get; set; } = 500;
@@ -213,6 +237,11 @@ public sealed class MultiTenancyGovernanceOptions
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable delivery status observations.
     /// </summary>
     public string? InvitationDeliveryStatusObservationStoreFilePath { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional JSON file path used for Cephalon-managed durable invitation delivery retry entries.
+    /// </summary>
+    public string? InvitationDeliveryRetryQueueFilePath { get; set; }
 
     /// <summary>
     /// Gets or sets the optional JSON file path used for Cephalon-managed durable tenant-domain ownership state.

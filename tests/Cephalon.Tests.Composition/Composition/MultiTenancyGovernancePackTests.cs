@@ -3606,6 +3606,295 @@ public sealed class MultiTenancyGovernancePackTests
     }
 
     [Fact]
+    public async Task TenantInvitationDeliveryDispatcherQueuesSenderFailuresForExplicitRetry()
+    {
+        var services = new ServiceCollection();
+        var sender = new ScriptedTenantInvitationDeliverySender(
+            "test-email",
+            new TenantInvitationDeliverySenderResult(
+                TenantInvitationDeliveryOutcomes.SenderFailed,
+                dispatched: false,
+                reason: "Provider temporarily rejected the dispatch."));
+        services.AddSingleton<ITenantInvitationDeliverySender>(sender);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.EnableInvitationDeliveryRetryQueue = true;
+                options.InvitationDeliveryRetryMaxAttempts = 3;
+                options.InvitationDeliveryRetryDelaySeconds = 60;
+                options.InvitationDeliveryRetryMaxItems = 10;
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-retry",
+                    tenantId: "tenant-retry",
+                    inviteeId: "user-retry",
+                    displayName: "Retry Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+        var retryQueue = provider.GetRequiredService<ITenantInvitationDeliveryRetryStore>();
+        var runtime = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntime>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var dispatchedAtUtc = new DateTimeOffset(2026, 04, 29, 4, 0, 0, TimeSpan.Zero);
+
+        var result = await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-retry",
+            invitationId: "invite-retry",
+            channel: "email",
+            senderId: "test-email",
+            source: "composition-test",
+            actor: "operator-001",
+            atUtc: dispatchedAtUtc,
+            correlationId: "corr-retry-001"));
+        var entry = Assert.Single(retryQueue.Entries);
+        var retryCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "tenancy.invitation.delivery-retry-queue");
+        var invitationsSurface = Assert.Single(
+            technologyCatalog.GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitations");
+        var summaryEntry = Assert.Single(invitationsSurface.Entries, runtimeEntry => runtimeEntry.Id == "tenant-invitation-runtime");
+        var tenantEntry = Assert.Single(invitationsSurface.Entries, runtimeEntry => runtimeEntry.Id == "tenant-invitations:tenant-retry");
+
+        Assert.False(result.Dispatched);
+        Assert.True(result.Recorded);
+        Assert.Equal(TenantInvitationDeliveryOutcomes.SenderFailed, result.Outcome);
+        Assert.Equal("queued", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueOutcome]);
+        Assert.Equal("cephalon-managed", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueOwnership]);
+        Assert.Equal("in-memory", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueStoreKind]);
+        Assert.Equal("false", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueStoreDurable]);
+        Assert.Equal("1", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueAttempt]);
+        Assert.Equal("3", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueMaxAttempts]);
+        Assert.Equal("60", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueDelaySeconds]);
+        Assert.Equal(dispatchedAtUtc.AddSeconds(60).ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+            result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueNextAttemptAtUtc]);
+        Assert.Equal(TenantInvitationDeliveryRetryStatuses.Pending, entry.Status);
+        Assert.Equal(1, entry.AttemptCount);
+        Assert.Equal(3, entry.MaxAttempts);
+        Assert.Equal(dispatchedAtUtc.AddSeconds(60), entry.NextAttemptAtUtc);
+        Assert.Equal(TenantInvitationDeliveryOutcomes.SenderFailed, entry.LastOutcome);
+        Assert.Equal("tenant-retry", entry.TenantId);
+        Assert.Equal("invite-retry", entry.InvitationId);
+        Assert.Equal("test-email", entry.SenderId);
+        Assert.Equal("cephalon-managed", retryCapability.Metadata["deliveryRetryQueueOwnership"]);
+        Assert.Equal("in-memory", retryCapability.Metadata["deliveryRetryQueueStoreKind"]);
+        Assert.Equal("false", retryCapability.Metadata["deliveryRetryQueueStoreDurable"]);
+        Assert.Equal("application-managed", retryCapability.Metadata["backgroundRetryOwnership"]);
+        Assert.Equal("application-managed", retryCapability.Metadata["distributedRetryOwnership"]);
+        Assert.Equal("application-managed", retryCapability.Metadata["exactlyOnceOwnership"]);
+        Assert.Equal("true", summaryEntry.Metadata["deliveryRetryQueueEnabled"]);
+        Assert.Equal("1", summaryEntry.Metadata["deliveryRetryQueueCount"]);
+        Assert.Equal("1", summaryEntry.Metadata["deliveryRetryQueuePendingCount"]);
+        Assert.Equal("0", summaryEntry.Metadata["deliveryRetryQueueExhaustedCount"]);
+        Assert.Equal(TenantInvitationDeliveryOutcomes.SenderFailed, summaryEntry.Metadata["latestDeliveryRetryOutcome"]);
+        Assert.Equal(TenantInvitationDeliveryRetryStatuses.Pending, summaryEntry.Metadata["latestDeliveryRetryStatus"]);
+        Assert.Equal("1", tenantEntry.Metadata["deliveryRetryQueueCount"]);
+        Assert.Equal("1", tenantEntry.Metadata["deliveryRetryQueuePendingCount"]);
+    }
+
+    [Fact]
+    public async Task TenantInvitationDeliveryRetryRunnerRetriesPendingQueueEntriesAndClearsOnSuccess()
+    {
+        var services = new ServiceCollection();
+        var sender = new ScriptedTenantInvitationDeliverySender(
+            "test-email",
+            new TenantInvitationDeliverySenderResult(
+                TenantInvitationDeliveryOutcomes.SenderFailed,
+                dispatched: false,
+                reason: "Provider throttled the first dispatch."),
+            new TenantInvitationDeliverySenderResult(
+                TenantInvitationDeliveryOutcomes.Dispatched,
+                dispatched: true,
+                providerMessageId: "provider-message-retry",
+                reason: "Provider accepted the retry."));
+        services.AddSingleton<ITenantInvitationDeliverySender>(sender);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"],
+                tenancy: new TenancySettings(
+                    enabled: true,
+                    mode: "SharedDatabase")));
+            engine.AddMultiTenancyGovernance(options =>
+            {
+                options.EnableInvitationDeliveryRetryQueue = true;
+                options.InvitationDeliveryRetryDelaySeconds = 0;
+                options.InvitationDeliveryRetryMaxAttempts = 3;
+                options.Invitations.Add(new TenantInvitationDescriptor(
+                    invitationId: "invite-retry-runner",
+                    tenantId: "tenant-retry-runner",
+                    inviteeId: "user-retry-runner",
+                    displayName: "Retry Runner Target",
+                    roles: ["member"],
+                    expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+        var runner = provider.GetRequiredService<ITenantInvitationDeliveryRetryRunner>();
+        var retryQueue = provider.GetRequiredService<ITenantInvitationDeliveryRetryStore>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var dispatchedAtUtc = new DateTimeOffset(2026, 04, 29, 4, 10, 0, TimeSpan.Zero);
+        await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+            tenantId: "tenant-retry-runner",
+            invitationId: "invite-retry-runner",
+            channel: "email",
+            senderId: "test-email",
+            source: "composition-test",
+            actor: "operator-001",
+            atUtc: dispatchedAtUtc,
+            correlationId: "corr-retry-runner-001"));
+        Assert.Single(retryQueue.Entries);
+
+        var retryResult = await runner.RetryPendingAsync(new TenantInvitationDeliveryRetryRequest(
+            atUtc: dispatchedAtUtc.AddSeconds(30),
+            source: "manual-retry",
+            actor: "operator-002",
+            correlationId: "corr-retry-runner-002"));
+        var retryDispatch = Assert.Single(retryResult.DeliveryResults);
+        Assert.Equal(2, sender.Contexts.Count);
+        var retryContext = sender.Contexts[1];
+        var invitationsSurface = Assert.Single(
+            technologyCatalog.GetByTechnology("multi-tenancy"),
+            surface => surface.SurfaceId == "tenant-invitations");
+        var summaryEntry = Assert.Single(invitationsSurface.Entries, entry => entry.Id == "tenant-invitation-runtime");
+
+        Assert.Equal(TenantInvitationDeliveryRetryOutcomes.Retried, retryResult.Outcome);
+        Assert.Equal(1, retryResult.AttemptedCount);
+        Assert.Equal(1, retryResult.DispatchedCount);
+        Assert.Equal(0, retryResult.FailedCount);
+        Assert.Equal(0, retryResult.RemainingPendingCount);
+        Assert.Empty(retryQueue.Entries);
+        Assert.True(retryDispatch.Dispatched);
+        Assert.Equal(TenantInvitationDeliveryOutcomes.Dispatched, retryDispatch.Outcome);
+        Assert.Equal("provider-message-retry", retryDispatch.ProviderMessageId);
+        Assert.Equal("manual-retry", retryContext.Source);
+        Assert.Equal("operator-002", retryContext.Actor);
+        Assert.Equal("corr-retry-runner-002", retryContext.CorrelationId);
+        Assert.Equal("true", retryContext.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecution]);
+        Assert.Equal("2", retryContext.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueAttempt]);
+        Assert.Equal("0", retryResult.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueEntryCount]);
+        Assert.Equal("0", retryResult.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueuePendingCount]);
+        Assert.Equal("0", summaryEntry.Metadata["deliveryRetryQueueCount"]);
+        Assert.Equal("0", summaryEntry.Metadata["deliveryRetryQueuePendingCount"]);
+    }
+
+    [Fact]
+    public async Task TenantInvitationDeliveryRetryQueueCanUseDurableLocalJsonStore()
+    {
+        var retryQueuePath = Path.Combine(
+            Path.GetTempPath(),
+            "cephalon-tests",
+            $"tenant-invitation-delivery-retries-{Guid.NewGuid():N}.json");
+        try
+        {
+            var services = new ServiceCollection();
+            var sender = new ScriptedTenantInvitationDeliverySender(
+                "test-email",
+                new TenantInvitationDeliverySenderResult(
+                    TenantInvitationDeliveryOutcomes.SenderFailed,
+                    dispatched: false,
+                    reason: "Provider rejected the durable dispatch."));
+            services.AddSingleton<ITenantInvitationDeliverySender>(sender);
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.EnableInvitationDeliveryRetryQueue = true;
+                    options.InvitationDeliveryRetryQueueFilePath = retryQueuePath;
+                    options.InvitationDeliveryRetryDelaySeconds = 120;
+                    options.Invitations.Add(new TenantInvitationDescriptor(
+                        invitationId: "invite-retry-file",
+                        tenantId: "tenant-retry-file",
+                        inviteeId: "user-retry-file",
+                        displayName: "Durable Retry Target",
+                        roles: ["member"],
+                        expiresAtUtc: new DateTimeOffset(2026, 05, 01, 0, 0, 0, TimeSpan.Zero)));
+                });
+            });
+
+            await using (var provider = services.BuildServiceProvider())
+            {
+                var dispatcher = provider.GetRequiredService<ITenantInvitationDeliveryDispatcher>();
+                var result = await dispatcher.DispatchAsync(new TenantInvitationDeliveryRequest(
+                    tenantId: "tenant-retry-file",
+                    invitationId: "invite-retry-file",
+                    channel: "email",
+                    senderId: "test-email",
+                    source: "composition-test",
+                    atUtc: new DateTimeOffset(2026, 04, 29, 4, 30, 0, TimeSpan.Zero)));
+
+                Assert.Equal(TenantInvitationDeliveryOutcomes.SenderFailed, result.Outcome);
+                Assert.Equal("file", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueStoreKind]);
+                Assert.Equal("true", result.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueStoreDurable]);
+                Assert.True(File.Exists(retryQueuePath));
+            }
+
+            var verificationServices = new ServiceCollection();
+            verificationServices.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "Microservice",
+                    technologies: ["MultiTenancy"],
+                    tenancy: new TenancySettings(
+                        enabled: true,
+                        mode: "SharedDatabase")));
+                engine.AddMultiTenancyGovernance(options =>
+                {
+                    options.EnableInvitationDeliveryRetryQueue = true;
+                    options.InvitationDeliveryRetryQueueFilePath = retryQueuePath;
+                });
+            });
+
+            await using var verificationProvider = verificationServices.BuildServiceProvider();
+            var retryQueue = verificationProvider.GetRequiredService<ITenantInvitationDeliveryRetryStore>();
+            var technologyCatalog = verificationProvider.GetRequiredService<ITechnologyRuntimeCatalog>();
+            var entry = Assert.Single(retryQueue.Entries);
+            var invitationsSurface = Assert.Single(
+                technologyCatalog.GetByTechnology("multi-tenancy"),
+                surface => surface.SurfaceId == "tenant-invitations");
+            var summaryEntry = Assert.Single(invitationsSurface.Entries, runtimeEntry => runtimeEntry.Id == "tenant-invitation-runtime");
+
+            Assert.Equal("file", retryQueue.StoreKind);
+            Assert.True(retryQueue.IsDurable);
+            Assert.Equal("tenant-retry-file", entry.TenantId);
+            Assert.Equal("invite-retry-file", entry.InvitationId);
+            Assert.Equal(TenantInvitationDeliveryRetryStatuses.Pending, entry.Status);
+            Assert.Equal("file", summaryEntry.Metadata["deliveryRetryQueueStoreKind"]);
+            Assert.Equal("true", summaryEntry.Metadata["deliveryRetryQueueStoreDurable"]);
+            Assert.Equal("local-file", summaryEntry.Metadata["deliveryRetryQueueScope"]);
+            Assert.Equal("local-file", summaryEntry.Metadata["deliveryRetryQueueDurability"]);
+            Assert.Equal("1", summaryEntry.Metadata["deliveryRetryQueueCount"]);
+            Assert.Equal("1", summaryEntry.Metadata["deliveryRetryQueuePendingCount"]);
+            Assert.Equal("cephalon-managed", summaryEntry.Metadata["durableRetryQueueOwnership"]);
+        }
+        finally
+        {
+            var directory = Path.GetDirectoryName(retryQueuePath);
+            if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task TenantInvitationDeliveryStatusReconcilerRecordsProviderStatusTruth()
     {
         var services = new ServiceCollection();
@@ -4077,6 +4366,36 @@ public sealed class MultiTenancyGovernancePackTests
                 {
                     ["provider"] = "test-provider"
                 }));
+        }
+    }
+
+    private sealed class ScriptedTenantInvitationDeliverySender(
+        string senderId,
+        params TenantInvitationDeliverySenderResult[] scriptedResults) : ITenantInvitationDeliverySender
+    {
+        private readonly Queue<TenantInvitationDeliverySenderResult> results = new(scriptedResults);
+
+        public string SenderId { get; } = senderId;
+
+        public List<TenantInvitationDeliveryContext> Contexts { get; } = [];
+
+        public ValueTask<TenantInvitationDeliverySenderResult> SendAsync(
+            TenantInvitationDeliveryContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            Contexts.Add(context);
+            if (results.Count == 0)
+            {
+                return ValueTask.FromResult(new TenantInvitationDeliverySenderResult(
+                    TenantInvitationDeliveryOutcomes.Dispatched,
+                    dispatched: true,
+                    providerMessageId: "provider-message-scripted",
+                    reason: "Scripted sender accepted the invitation delivery dispatch."));
+            }
+
+            return ValueTask.FromResult(results.Dequeue());
         }
     }
 

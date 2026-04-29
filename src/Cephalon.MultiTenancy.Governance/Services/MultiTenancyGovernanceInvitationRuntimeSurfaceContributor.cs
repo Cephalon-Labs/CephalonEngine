@@ -9,6 +9,7 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
     ITenantInvitationCatalog catalog,
     ITenantInvitationStore invitationStore,
     ITenantInvitationDeliveryStatusObservationStore observationStore,
+    ITenantInvitationDeliveryRetryStore retryQueue,
     IEnumerable<ITenantInvitationContributor> contributors,
     IEnumerable<ITenantInvitationDeliverySender> deliverySenders,
     ITenantInvitationDeliveryRunCatalog deliveryRunCatalog) : ITechnologyRuntimeContributor
@@ -23,30 +24,36 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
     {
         var invitations = catalog.Invitations;
         var observations = observationStore.Observations;
+        var deliveryRetryEntries = retryQueue.Entries;
         var entries = new List<TechnologyRuntimeEntry>
         {
-            CreateSummaryEntry(invitations, observations)
+            CreateSummaryEntry(invitations, observations, deliveryRetryEntries)
         };
 
         entries.AddRange(invitations
             .GroupBy(static invitation => invitation.TenantId, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
-            .Select(group => CreateTenantEntry(group, observations)));
+            .Select(group => CreateTenantEntry(group, observations, deliveryRetryEntries)));
 
         return new TechnologyRuntimeSurface(
             technologyId: "multi-tenancy",
             surfaceId: "tenant-invitations",
             displayName: "Tenant Invitations",
-            description: "Projects tenant invitation catalog, validation, delivery dispatch, delivery status reconciliation, delivery status observation storage, and delivery outcome truth from the governance companion pack.",
+            description: "Projects tenant invitation catalog, validation, delivery dispatch, retry queue, delivery status reconciliation, delivery status observation storage, and delivery outcome truth from the governance companion pack.",
             entries: entries);
     }
 
     private TechnologyRuntimeEntry CreateSummaryEntry(
         IReadOnlyList<TenantInvitationDescriptor> invitations,
-        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations)
+        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations,
+        IReadOnlyList<TenantInvitationDeliveryRetryDescriptor> deliveryRetryEntries)
     {
         var latestDeliveryStatusInvitation = FindLatestDeliveryStatusInvitation(invitations);
         var latestObservation = FindLatestDeliveryStatusObservation(observations);
+        var latestRetryEntry = FindLatestDeliveryRetryEntry(deliveryRetryEntries);
+        var deliveryRetryPendingCount = CountDeliveryRetryEntries(deliveryRetryEntries, TenantInvitationDeliveryRetryStatuses.Pending);
+        var deliveryRetryExhaustedCount = CountDeliveryRetryEntries(deliveryRetryEntries, TenantInvitationDeliveryRetryStatuses.Exhausted);
+        var deliveryRetryTerminalCount = CountDeliveryRetryEntries(deliveryRetryEntries, TenantInvitationDeliveryRetryStatuses.Terminal);
         var statusBreakdown = invitations
             .GroupBy(static invitation => invitation.Status, StringComparer.OrdinalIgnoreCase)
             .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
@@ -103,6 +110,35 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             ["deliveryRunHistoryLimit"] = Math.Max(1, options.InvitationDeliveryRunHistoryLimit).ToString(CultureInfo.InvariantCulture),
             ["latestDeliveryOutcome"] = deliveryRunCatalog.LatestRun?.Outcome ?? "none",
             ["latestDeliveryAtUtc"] = deliveryRunCatalog.LatestRun?.DispatchedAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none",
+            ["deliveryRetryQueueEnabled"] = options.EnableInvitationDeliveryRetryQueue.ToString().ToLowerInvariant(),
+            ["deliveryRetryQueueOwnership"] = options.EnableInvitationDeliveryRetryQueue ? retryQueue.Ownership : "not-configured",
+            ["deliveryRetryQueueStoreKind"] = retryQueue.StoreKind,
+            ["deliveryRetryQueueStoreDurable"] = retryQueue.IsDurable.ToString().ToLowerInvariant(),
+            ["deliveryRetryQueueScope"] = retryQueue.IsDurable ? "local-file" : "process-local",
+            ["deliveryRetryQueueDurability"] = retryQueue.IsDurable ? "local-file" : "none",
+            ["deliveryRetryQueueCount"] = options.EnableInvitationDeliveryRetryQueue
+                ? deliveryRetryEntries.Count.ToString(CultureInfo.InvariantCulture)
+                : "0",
+            ["deliveryRetryQueuePendingCount"] = options.EnableInvitationDeliveryRetryQueue
+                ? deliveryRetryPendingCount.ToString(CultureInfo.InvariantCulture)
+                : "0",
+            ["deliveryRetryQueueExhaustedCount"] = options.EnableInvitationDeliveryRetryQueue
+                ? deliveryRetryExhaustedCount.ToString(CultureInfo.InvariantCulture)
+                : "0",
+            ["deliveryRetryQueueTerminalCount"] = options.EnableInvitationDeliveryRetryQueue
+                ? deliveryRetryTerminalCount.ToString(CultureInfo.InvariantCulture)
+                : "0",
+            ["deliveryRetryMaxAttempts"] = TenantInvitationDeliveryRetryQueueStores.ResolveMaxAttempts(options).ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryDelaySeconds"] = TenantInvitationDeliveryRetryQueueStores.ResolveRetryDelaySeconds(options).ToString(CultureInfo.InvariantCulture),
+            ["deliveryRetryMaxItems"] = TenantInvitationDeliveryRetryQueueStores.ResolveMaxItems(options).ToString(CultureInfo.InvariantCulture),
+            ["latestDeliveryRetryOutcome"] = latestRetryEntry?.LastOutcome ?? "none",
+            ["latestDeliveryRetryStatus"] = latestRetryEntry?.Status ?? "none",
+            ["latestDeliveryRetryNextAttemptAtUtc"] = latestRetryEntry?.NextAttemptAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none",
+            ["latestDeliveryRetryLastAttemptAtUtc"] =
+                latestRetryEntry?.LastAttemptAtUtc?.ToString("O", CultureInfo.InvariantCulture) ?? "none",
+            ["durableRetryQueueOwnership"] = !options.EnableInvitationDeliveryRetryQueue
+                ? "not-configured"
+                : retryQueue.IsDurable ? retryQueue.Ownership : "application-managed",
             ["durableStoreOwnership"] = invitationStore.IsDurable ? invitationStore.Ownership : "application-managed",
             ["basePackageOwnership"] = "separate-companion",
             ["statusBreakdown"] = statusBreakdown.Length == 0 ? "none" : string.Join(",", statusBreakdown)
@@ -111,17 +147,21 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
         return new TechnologyRuntimeEntry(
             id: "tenant-invitation-runtime",
             displayName: "Tenant Invitation Runtime",
-            description: "Summarizes tenant invitation catalog size, contributor count, runtime store posture, invitation status posture, delivery dispatch, delivery status reconciliation, delivery status observation storage, and managed validation ownership.",
+            description: "Summarizes tenant invitation catalog size, contributor count, runtime store posture, invitation status posture, delivery dispatch, retry queue, delivery status reconciliation, delivery status observation storage, and managed validation ownership.",
             metadata: metadata);
     }
 
     private TechnologyRuntimeEntry CreateTenantEntry(
         IGrouping<string, TenantInvitationDescriptor> group,
-        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations)
+        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations,
+        IReadOnlyList<TenantInvitationDeliveryRetryDescriptor> deliveryRetryEntries)
     {
         var invitations = group.ToArray();
         var tenantObservations = observations
             .Where(observation => string.Equals(observation.TenantId, group.Key, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        var tenantDeliveryRetries = deliveryRetryEntries
+            .Where(entry => string.Equals(entry.TenantId, group.Key, StringComparison.OrdinalIgnoreCase))
             .ToArray();
         var deliveryRuns = deliveryRunCatalog.GetByTenantId(group.Key);
         var latestDeliveryRun = deliveryRuns
@@ -129,6 +169,7 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             .FirstOrDefault();
         var latestDeliveryStatusInvitation = FindLatestDeliveryStatusInvitation(invitations);
         var latestObservation = FindLatestDeliveryStatusObservation(tenantObservations);
+        var latestRetryEntry = FindLatestDeliveryRetryEntry(tenantDeliveryRetries);
         var pendingCount = invitations.Count(static invitation =>
             string.Equals(invitation.Status, TenantInvitationStatuses.Pending, StringComparison.OrdinalIgnoreCase));
         var acceptedCount = invitations.Count(static invitation =>
@@ -180,7 +221,19 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
                 latestObservation?.ObservedAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none",
             ["deliveryStatusReportedCount"] = CountDeliveryStatusReports(invitations).ToString(CultureInfo.InvariantCulture),
             ["latestDeliveryStatus"] = GetDeliveryStatus(latestDeliveryStatusInvitation),
-            ["latestDeliveryStatusObservedAtUtc"] = GetDeliveryStatusObservedAtUtc(latestDeliveryStatusInvitation)
+            ["latestDeliveryStatusObservedAtUtc"] = GetDeliveryStatusObservedAtUtc(latestDeliveryStatusInvitation),
+            ["deliveryRetryQueueCount"] = options.EnableInvitationDeliveryRetryQueue
+                ? tenantDeliveryRetries.Length.ToString(CultureInfo.InvariantCulture)
+                : "0",
+            ["deliveryRetryQueuePendingCount"] = options.EnableInvitationDeliveryRetryQueue
+                ? CountDeliveryRetryEntries(tenantDeliveryRetries, TenantInvitationDeliveryRetryStatuses.Pending).ToString(CultureInfo.InvariantCulture)
+                : "0",
+            ["deliveryRetryQueueExhaustedCount"] = options.EnableInvitationDeliveryRetryQueue
+                ? CountDeliveryRetryEntries(tenantDeliveryRetries, TenantInvitationDeliveryRetryStatuses.Exhausted).ToString(CultureInfo.InvariantCulture)
+                : "0",
+            ["latestDeliveryRetryOutcome"] = latestRetryEntry?.LastOutcome ?? "none",
+            ["latestDeliveryRetryStatus"] = latestRetryEntry?.Status ?? "none",
+            ["latestDeliveryRetryNextAttemptAtUtc"] = latestRetryEntry?.NextAttemptAtUtc.ToString("O", CultureInfo.InvariantCulture) ?? "none"
         };
 
         return new TechnologyRuntimeEntry(
@@ -211,6 +264,22 @@ internal sealed class MultiTenancyGovernanceInvitationRuntimeSurfaceContributor(
             .OrderByDescending(static observation => observation.ObservedAtUtc)
             .ThenByDescending(static observation => observation.RecordedAtUtc)
             .FirstOrDefault();
+    }
+
+    private static TenantInvitationDeliveryRetryDescriptor? FindLatestDeliveryRetryEntry(
+        IEnumerable<TenantInvitationDeliveryRetryDescriptor> entries)
+    {
+        return entries
+            .OrderByDescending(static entry => entry.LastAttemptAtUtc ?? entry.CreatedAtUtc)
+            .ThenByDescending(static entry => entry.NextAttemptAtUtc)
+            .FirstOrDefault();
+    }
+
+    private static int CountDeliveryRetryEntries(
+        IEnumerable<TenantInvitationDeliveryRetryDescriptor> entries,
+        string status)
+    {
+        return entries.Count(entry => string.Equals(entry.Status, status, StringComparison.OrdinalIgnoreCase));
     }
 
     private static string GetDeliveryStatus(TenantInvitationDescriptor? invitation)

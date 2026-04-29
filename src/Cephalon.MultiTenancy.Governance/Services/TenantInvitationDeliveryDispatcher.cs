@@ -1,6 +1,8 @@
 using Cephalon.MultiTenancy.Governance.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Cephalon.MultiTenancy.Governance.Services;
 
@@ -8,6 +10,7 @@ internal sealed class TenantInvitationDeliveryDispatcher(
     MultiTenancyGovernanceOptions options,
     ITenantInvitationCatalog invitationCatalog,
     ITenantInvitationStore invitationStore,
+    ITenantInvitationDeliveryRetryStore retryQueue,
     IEnumerable<ITenantInvitationDeliverySender> senders,
     TenantInvitationDeliveryRunReporter runReporter,
     TimeProvider timeProvider,
@@ -36,7 +39,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 senderId: null,
                 providerMessageId: null,
                 reason: "Tenant invitation delivery dispatch is disabled.",
-                metadata: BuildMetadata(request, null, null, TenantInvitationDeliveryOutcomes.Disabled, dispatchedAtUtc, null, null)));
+                metadata: BuildMetadata(request, null, null, TenantInvitationDeliveryOutcomes.Disabled, dispatchedAtUtc, null, null)),
+                request);
         }
 
         var invitation = FindInvitation(request);
@@ -50,7 +54,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 senderId: null,
                 providerMessageId: null,
                 reason: "The targeted tenant invitation was not found.",
-                metadata: BuildMetadata(request, null, null, TenantInvitationDeliveryOutcomes.InvitationNotFound, dispatchedAtUtc, null, null)));
+                metadata: BuildMetadata(request, null, null, TenantInvitationDeliveryOutcomes.InvitationNotFound, dispatchedAtUtc, null, null)),
+                request);
         }
 
         if (!string.Equals(invitation.Status, TenantInvitationStatuses.Pending, StringComparison.OrdinalIgnoreCase))
@@ -63,7 +68,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 senderId: null,
                 providerMessageId: null,
                 reason: "The targeted tenant invitation is no longer pending.",
-                senderMetadata: null));
+                senderMetadata: null),
+                request);
         }
 
         if (invitation.ExpiresAtUtc is not null && invitation.ExpiresAtUtc <= dispatchedAtUtc)
@@ -76,7 +82,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 senderId: null,
                 providerMessageId: null,
                 reason: "The targeted tenant invitation expired before dispatch.",
-                senderMetadata: null));
+                senderMetadata: null),
+                request);
         }
 
         var sender = ResolveSender(request);
@@ -92,7 +99,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 reason: string.IsNullOrWhiteSpace(request.SenderId)
                     ? "No tenant invitation delivery sender is registered."
                     : $"Tenant invitation delivery sender '{request.SenderId}' is not registered.",
-                senderMetadata: null));
+                senderMetadata: null),
+                request);
         }
 
         TenantInvitationDeliverySenderResult senderResult;
@@ -124,7 +132,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 {
                     ["senderError"] = exception.Message
                 },
-                exception));
+                exception),
+                request);
         }
 
         var outcome = ResolveDispatcherOutcome(senderResult);
@@ -140,7 +149,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 string.IsNullOrWhiteSpace(senderResult.Reason)
                     ? "Tenant invitation delivery sender did not accept dispatch."
                     : senderResult.Reason,
-                senderResult.Metadata));
+                senderResult.Metadata),
+                request);
         }
 
         var metadata = BuildMetadata(
@@ -178,7 +188,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                         sender.SenderId,
                         senderResult.ProviderMessageId),
                     dispatched: true,
-                    exception: exception));
+                    exception: exception),
+                    request);
             }
         }
 
@@ -206,7 +217,7 @@ internal sealed class TenantInvitationDeliveryDispatcher(
             result.Channel ?? "default",
             null);
 
-        return Complete(result);
+        return Complete(result, request);
     }
 
     private TenantInvitationDescriptor? FindInvitation(TenantInvitationDeliveryRequest request)
@@ -326,10 +337,95 @@ internal sealed class TenantInvitationDeliveryDispatcher(
             metadata);
     }
 
-    private TenantInvitationDeliveryResult Complete(TenantInvitationDeliveryResult result)
+    private TenantInvitationDeliveryResult Complete(TenantInvitationDeliveryResult result, TenantInvitationDeliveryRequest request)
     {
-        runReporter.Record(result);
-        return result;
+        var completed = QueueRetryIfNeeded(result, request);
+        runReporter.Record(completed);
+        return completed;
+    }
+
+    private TenantInvitationDeliveryResult QueueRetryIfNeeded(
+        TenantInvitationDeliveryResult result,
+        TenantInvitationDeliveryRequest request)
+    {
+        if (!options.EnableInvitationDeliveryRetryQueue ||
+            !string.Equals(result.Outcome, TenantInvitationDeliveryOutcomes.SenderFailed, StringComparison.OrdinalIgnoreCase) ||
+            request.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.DeliveryRetryExecution))
+        {
+            return result;
+        }
+
+        var metadata = CopyMetadata(result.Metadata);
+        var retryId = CreateRetryId(request);
+        var maxAttempts = TenantInvitationDeliveryRetryQueueStores.ResolveMaxAttempts(options);
+        var existing = retryQueue.GetById(retryId);
+        var attemptCount = Math.Max(1, (existing?.AttemptCount ?? 0) + 1);
+        var status = attemptCount >= maxAttempts
+            ? TenantInvitationDeliveryRetryStatuses.Exhausted
+            : TenantInvitationDeliveryRetryStatuses.Pending;
+        var nextAttemptAtUtc = status == TenantInvitationDeliveryRetryStatuses.Pending
+            ? result.DispatchedAtUtc.AddSeconds(TenantInvitationDeliveryRetryQueueStores.ResolveRetryDelaySeconds(options))
+            : result.DispatchedAtUtc;
+
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueOwnership] = retryQueue.Ownership;
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueStoreKind] = retryQueue.StoreKind;
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueStoreDurable] = retryQueue.IsDurable.ToString().ToLowerInvariant();
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueEntryId] = retryId;
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueAttempt] = attemptCount.ToString(CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueMaxAttempts] = maxAttempts.ToString(CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueDelaySeconds] =
+            TenantInvitationDeliveryRetryQueueStores.ResolveRetryDelaySeconds(options).ToString(CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueNextAttemptAtUtc] =
+            nextAttemptAtUtc.ToString("O", CultureInfo.InvariantCulture);
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueLastOutcome] = result.Outcome;
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueLastReason] = result.Reason;
+        metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueLastAttemptAtUtc] =
+            result.DispatchedAtUtc.ToString("O", CultureInfo.InvariantCulture);
+
+        try
+        {
+            retryQueue.Upsert(new TenantInvitationDeliveryRetryDescriptor(
+                retryId,
+                request.TenantId,
+                request.InvitationId,
+                request.Channel,
+                result.SenderId ?? request.SenderId,
+                request.Source,
+                request.Actor,
+                request.CorrelationId,
+                request.RecordDelivery,
+                status,
+                attemptCount,
+                maxAttempts,
+                existing?.CreatedAtUtc ?? result.DispatchedAtUtc,
+                nextAttemptAtUtc,
+                result.DispatchedAtUtc,
+                result.Outcome,
+                result.Reason,
+                metadata));
+            metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueOutcome] = status == TenantInvitationDeliveryRetryStatuses.Pending
+                ? "queued"
+                : "exhausted";
+        }
+        catch (Exception exception)
+        {
+            metadata[TenantInvitationDeliveryMetadataKeys.DeliveryRetryQueueOutcome] = "store-failed";
+            metadata["deliveryRetryQueueExceptionType"] = exception.GetType().Name;
+        }
+
+        return new TenantInvitationDeliveryResult(
+            result.TenantId,
+            result.InvitationId,
+            result.Outcome,
+            result.Dispatched,
+            result.Recorded,
+            result.DispatchedAtUtc,
+            result.Channel,
+            result.SenderId,
+            result.ProviderMessageId,
+            result.Invitation,
+            result.Reason,
+            metadata);
     }
 
     private static string ResolveDispatcherOutcome(TenantInvitationDeliverySenderResult senderResult)
@@ -435,5 +531,13 @@ internal sealed class TenantInvitationDeliveryDispatcher(
         }
 
         return copy;
+    }
+
+    private static string CreateRetryId(TenantInvitationDeliveryRequest request)
+    {
+        var senderId = string.IsNullOrWhiteSpace(request.SenderId) ? "default" : request.SenderId.Trim();
+        var value = $"{request.TenantId.Trim()}|{request.InvitationId.Trim()}|{request.Channel.Trim()}|{senderId}";
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(value));
+        return $"sha256:{Convert.ToHexString(hash).ToLowerInvariant()}";
     }
 }

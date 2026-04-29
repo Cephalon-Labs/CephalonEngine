@@ -164,7 +164,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `audit` — Audit (`Cephalon.Audit`): host-agnostic audit recording baseline.
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
-- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-agnostic invitation delivery status reconciliation over provider or receiver observations, opt-in durable delivery-status observation storage, host-driven tenant-administration workflow commands over membership and invitation stores, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
+- `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, opt-in local invitation delivery retry storage plus bounded manual retry execution, host-agnostic invitation delivery status reconciliation over provider or receiver observations, opt-in durable delivery-status observation storage, host-driven tenant-administration workflow commands over membership and invitation stores, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 - `multi-tenancy-governance-http-delivery` — Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`): optional provider-managed HTTP webhook sender for tenant-invitation delivery dispatch, including provider-neutral idempotency headers, optional HMAC-SHA256 request signing, and bounded in-process retry/backoff.
 
 ### Data provider modules (14)
@@ -350,6 +350,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `tenancy.invitation.store` — Tenant Invitation Store
 - `tenancy.invitation.validation` — Tenant Invitation Validation
 - `tenancy.invitation.delivery-dispatch` — Tenant Invitation Delivery Dispatch
+- `tenancy.invitation.delivery-retry-queue` — Tenant Invitation Delivery Retry Queue
 - `tenancy.invitation.delivery-status-reconciliation` — Tenant Invitation Delivery Status Reconciliation
 - `tenancy.invitation.delivery-status-observation-store` — Tenant Invitation Delivery Status Observation Store
 - `tenancy.administration.workflow` — Tenant Administration Workflow
@@ -464,6 +465,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantInvitationStore` — runtime tenant-invitation storage, with in-memory and opt-in file-backed baselines
 - `ITenantInvitationValidator` — pending tenant-invitation validation
 - `ITenantInvitationDeliveryDispatcher` / `ITenantInvitationDeliverySender` / `ITenantInvitationDeliveryRunCatalog` — host-agnostic invitation delivery dispatch, sender extension, and run-state tracking
+- `ITenantInvitationDeliveryRetryStore` / `ITenantInvitationDeliveryRetryRunner` — opt-in local retry queue storage and bounded manual retry execution over retryable sender failures
 - `ITenantInvitationDeliveryStatusReconciler` — host-agnostic invitation delivery status observation reconciliation
 - `ITenantInvitationDeliveryStatusObservationStore` — normalized invitation delivery-status observation storage, with in-memory and opt-in file-backed baselines
 - `HttpInvitationDeliveryPayload` — JSON payload contract for the optional idempotent and signed HTTP webhook invitation sender in `Cephalon.MultiTenancy.Governance.HttpDelivery`
@@ -485,7 +487,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-resolution` technology surface — active resolver, configured tenants, default tenant, and ambient-context truth
 - `tenant-governance-boundaries` technology surface — boundary map separating base tenant-resolution ownership from companion-owned or planned governance workflows
 - `tenant-memberships` technology surface — Cephalon-managed membership catalog, store, and evaluation posture from `Cephalon.MultiTenancy.Governance`
-- `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, validation, delivery dispatch, sender readiness, delivery-run, delivery-status reconciliation, and observation-store posture from `Cephalon.MultiTenancy.Governance`
+- `tenant-invitations` technology surface — Cephalon-managed invitation catalog, store, validation, delivery dispatch, sender readiness, delivery-run, opt-in retry queue, delivery-status reconciliation, and observation-store posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-administration` technology surface — Cephalon-managed host-driven tenant-administration workflow posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-administration-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-administration command endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
 - `tenant-invitation-delivery-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-invitation delivery dispatch endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
@@ -568,7 +570,7 @@ Each exporter is a standalone companion package on top of the cloud-neutral OTLP
 - `Cephalon.AspNetCore.GraphQL` — GraphQL transport adapter
 - `Cephalon.AspNetCore.Grpc` — gRPC transport adapter with unary and streaming contracts
 - `Cephalon.Identity.AspNetCore` — ASP.NET Core identity/authorization host adapter
-- `Cephalon.MultiTenancy.Governance.AspNetCore` — ASP.NET Core tenant-domain ownership HTTP proof and tenant-administration command adapter
+- `Cephalon.MultiTenancy.Governance.AspNetCore` — ASP.NET Core tenant-domain ownership HTTP proof, tenant-administration command, invitation delivery dispatch, and delivery-status callback/observation adapter
 - `Cephalon.Worker` — non-HTTP generic-host adapter for worker processes
 
 ## Tooling and adoption

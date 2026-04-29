@@ -149,4 +149,79 @@ public static class TenantInvitationDeliveryMetadataKeys
     /// Metadata key containing the exception type observed when delivery status observation storage fails.
     /// </summary>
     public const string DeliveryStatusObservationStoreExceptionType = "deliveryStatusObservationStoreExceptionType";
+
+    /// <summary>
+    /// Metadata key describing Cephalon ownership of the invitation delivery retry queue.
+    /// </summary>
+    public const string DeliveryRetryQueueOwnership = "deliveryRetryQueueOwnership";
+
+    /// <summary>
+    /// Metadata key describing the invitation delivery retry queue storage kind.
+    /// </summary>
+    public const string DeliveryRetryQueueStoreKind = "deliveryRetryQueueStoreKind";
+
+    /// <summary>
+    /// Metadata key describing whether the invitation delivery retry queue is durable.
+    /// </summary>
+    public const string DeliveryRetryQueueStoreDurable = "deliveryRetryQueueStoreDurable";
+
+    /// <summary>
+    /// Metadata key containing the invitation delivery retry queue entry identifier.
+    /// </summary>
+    public const string DeliveryRetryQueueEntryId = "deliveryRetryQueueEntryId";
+
+    /// <summary>
+    /// Metadata key describing whether a sender failure was queued for retry.
+    /// </summary>
+    public const string DeliveryRetryQueueOutcome = "deliveryRetryQueueOutcome";
+
+    /// <summary>
+    /// Metadata key containing the number of pending invitation delivery retry entries.
+    /// </summary>
+    public const string DeliveryRetryQueuePendingCount = "deliveryRetryQueuePendingCount";
+
+    /// <summary>
+    /// Metadata key containing the total number of retained invitation delivery retry entries.
+    /// </summary>
+    public const string DeliveryRetryQueueEntryCount = "deliveryRetryQueueEntryCount";
+
+    /// <summary>
+    /// Metadata key containing the retry queue attempt number.
+    /// </summary>
+    public const string DeliveryRetryQueueAttempt = "deliveryRetryQueueAttempt";
+
+    /// <summary>
+    /// Metadata key containing the maximum attempts configured for retry queue entries.
+    /// </summary>
+    public const string DeliveryRetryQueueMaxAttempts = "deliveryRetryQueueMaxAttempts";
+
+    /// <summary>
+    /// Metadata key containing the retry delay in seconds.
+    /// </summary>
+    public const string DeliveryRetryQueueDelaySeconds = "deliveryRetryQueueDelaySeconds";
+
+    /// <summary>
+    /// Metadata key containing the UTC timestamp when the next retry attempt is due.
+    /// </summary>
+    public const string DeliveryRetryQueueNextAttemptAtUtc = "deliveryRetryQueueNextAttemptAtUtc";
+
+    /// <summary>
+    /// Metadata key containing the UTC timestamp of the latest retry attempt.
+    /// </summary>
+    public const string DeliveryRetryQueueLastAttemptAtUtc = "deliveryRetryQueueLastAttemptAtUtc";
+
+    /// <summary>
+    /// Metadata key containing the latest retry dispatch outcome.
+    /// </summary>
+    public const string DeliveryRetryQueueLastOutcome = "deliveryRetryQueueLastOutcome";
+
+    /// <summary>
+    /// Metadata key containing the latest retry dispatch reason.
+    /// </summary>
+    public const string DeliveryRetryQueueLastReason = "deliveryRetryQueueLastReason";
+
+    /// <summary>
+    /// Metadata key that marks a dispatch request created by the retry runner.
+    /// </summary>
+    public const string DeliveryRetryExecution = "deliveryRetryExecution";
 }

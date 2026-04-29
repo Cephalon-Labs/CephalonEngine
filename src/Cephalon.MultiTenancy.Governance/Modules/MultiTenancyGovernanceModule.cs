@@ -68,6 +68,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<ILogger<TenantMembershipEvaluator>>(NullLogger<TenantMembershipEvaluator>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationValidator>>(NullLogger<TenantInvitationValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationDeliveryDispatcher>>(NullLogger<TenantInvitationDeliveryDispatcher>.Instance);
+        services.TryAddSingleton<ILogger<TenantInvitationDeliveryRetryRunner>>(NullLogger<TenantInvitationDeliveryRetryRunner>.Instance);
         services.TryAddSingleton<ILogger<TenantInvitationDeliveryStatusReconciler>>(NullLogger<TenantInvitationDeliveryStatusReconciler>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipValidator>>(NullLogger<TenantDomainOwnershipValidator>.Instance);
         services.TryAddSingleton<ILogger<TenantDomainOwnershipVerificationWorkflow>>(NullLogger<TenantDomainOwnershipVerificationWorkflow>.Instance);
@@ -96,6 +97,8 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
             static serviceProvider => TenantInvitationStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantInvitationDeliveryStatusObservationStore>(
             static serviceProvider => TenantInvitationDeliveryStatusObservationStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
+        services.TryAddSingleton<ITenantInvitationDeliveryRetryStore>(
+            static serviceProvider => TenantInvitationDeliveryRetryQueueStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantDomainOwnershipStore>(
             static serviceProvider => TenantDomainOwnershipStores.Create(serviceProvider.GetRequiredService<MultiTenancyGovernanceOptions>()));
         services.TryAddSingleton<ITenantGovernanceActionStore>(
@@ -126,6 +129,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         if (options.EnableInvitationDeliveryDispatch)
         {
             services.TryAddSingleton<ITenantInvitationDeliveryDispatcher, TenantInvitationDeliveryDispatcher>();
+        }
+
+        if (options.EnableInvitationDeliveryRetryQueue && options.EnableInvitationDeliveryDispatch)
+        {
+            services.TryAddSingleton<ITenantInvitationDeliveryRetryRunner, TenantInvitationDeliveryRetryRunner>();
         }
 
         if (options.EnableInvitationDeliveryStatusReconciliation)
@@ -273,6 +281,12 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         var invitationDeliveryStatusObservationStoreKind = invitationDeliveryStatusObservationStoreDurable ? "file" : "in-memory";
         var invitationDeliveryStatusObservationHistoryLimit =
             TenantInvitationDeliveryStatusObservationStores.ResolveHistoryLimit(options);
+        var invitationDeliveryRetryQueueOwnership = options.EnableInvitationDeliveryRetryQueue ? "cephalon-managed" : "not-configured";
+        var invitationDeliveryRetryQueueDurable = !string.IsNullOrWhiteSpace(options.InvitationDeliveryRetryQueueFilePath);
+        var invitationDeliveryRetryQueueKind = invitationDeliveryRetryQueueDurable ? "file" : "in-memory";
+        var invitationDeliveryRetryMaxAttempts = TenantInvitationDeliveryRetryQueueStores.ResolveMaxAttempts(options);
+        var invitationDeliveryRetryDelaySeconds = TenantInvitationDeliveryRetryQueueStores.ResolveRetryDelaySeconds(options);
+        var invitationDeliveryRetryMaxItems = TenantInvitationDeliveryRetryQueueStores.ResolveMaxItems(options);
         var invitationDeliverySenderOwnership = hasInvitationDeliverySenders ? "provider-managed" : "not-configured";
         var invitationExternalDeliveryOwnership = hasInvitationDeliverySenders ? "provider-managed" : "application-managed";
         var invitationExternalDeliveryStatusOwnership = options.EnableInvitationDeliveryStatusReconciliation ? "provider-managed" : "application-managed";
@@ -340,6 +354,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
                 ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
                 ["deliveryStatusObservationStoreOwnership"] = invitationDeliveryStatusObservationStoreOwnership,
+                ["deliveryRetryQueueOwnership"] = invitationDeliveryRetryQueueOwnership,
+                ["deliveryRetryQueueStoreKind"] = invitationDeliveryRetryQueueKind,
+                ["deliveryRetryQueueStoreDurable"] = invitationDeliveryRetryQueueDurable.ToString().ToLowerInvariant(),
+                ["deliveryRetryMaxAttempts"] = invitationDeliveryRetryMaxAttempts.ToString(CultureInfo.InvariantCulture),
+                ["deliveryRetryDelaySeconds"] = invitationDeliveryRetryDelaySeconds.ToString(CultureInfo.InvariantCulture),
                 ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
@@ -360,6 +379,11 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                 ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
                 ["deliveryStatusReconciliationOwnership"] = invitationDeliveryStatusReconciliationOwnership,
                 ["deliveryStatusObservationStoreOwnership"] = invitationDeliveryStatusObservationStoreOwnership,
+                ["deliveryRetryQueueOwnership"] = invitationDeliveryRetryQueueOwnership,
+                ["deliveryRetryQueueStoreKind"] = invitationDeliveryRetryQueueKind,
+                ["deliveryRetryQueueStoreDurable"] = invitationDeliveryRetryQueueDurable.ToString().ToLowerInvariant(),
+                ["deliveryRetryMaxAttempts"] = invitationDeliveryRetryMaxAttempts.ToString(CultureInfo.InvariantCulture),
+                ["deliveryRetryDelaySeconds"] = invitationDeliveryRetryDelaySeconds.ToString(CultureInfo.InvariantCulture),
                 ["deliverySenderOwnership"] = invitationDeliverySenderOwnership
             }));
 
@@ -392,9 +416,43 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
                     ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
                     ["deliverySenderOwnership"] = invitationDeliverySenderOwnership,
                     ["externalDeliveryOwnership"] = invitationExternalDeliveryOwnership,
+                    ["deliveryRetryQueueOwnership"] = invitationDeliveryRetryQueueOwnership,
+                    ["deliveryRetryQueueStoreKind"] = invitationDeliveryRetryQueueKind,
+                    ["deliveryRetryQueueStoreDurable"] = invitationDeliveryRetryQueueDurable.ToString().ToLowerInvariant(),
+                    ["deliveryRetryMaxAttempts"] = invitationDeliveryRetryMaxAttempts.ToString(CultureInfo.InvariantCulture),
+                    ["deliveryRetryDelaySeconds"] = invitationDeliveryRetryDelaySeconds.ToString(CultureInfo.InvariantCulture),
                     ["senderConfigured"] = hasInvitationDeliverySenders.ToString().ToLowerInvariant(),
                     ["runtimeSurface"] = "tenant-invitations",
                     ["runHistoryLimit"] = Math.Max(1, options.InvitationDeliveryRunHistoryLimit).ToString(CultureInfo.InvariantCulture)
+                }));
+        }
+
+        if (options.EnableInvitationDeliveryRetryQueue && options.EnableInvitationDeliveryDispatch)
+        {
+            capabilities.Add(new Capability(
+                key: "tenancy.invitation.delivery-retry-queue",
+                displayName: "Tenant Invitation Delivery Retry Queue",
+                description: "Queues retryable tenant invitation sender failures and exposes a bounded manual retry runner without claiming background scheduling, distributed queues, or provider-specific delivery ownership.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "multi-tenancy",
+                    ["package"] = "Cephalon.MultiTenancy.Governance",
+                    ["ownership"] = "cephalon-managed",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["deliveryRetryQueueOwnership"] = invitationDeliveryRetryQueueOwnership,
+                    ["deliveryRetryQueueStoreKind"] = invitationDeliveryRetryQueueKind,
+                    ["deliveryRetryQueueStoreDurable"] = invitationDeliveryRetryQueueDurable.ToString().ToLowerInvariant(),
+                    ["deliveryRetryMaxAttempts"] = invitationDeliveryRetryMaxAttempts.ToString(CultureInfo.InvariantCulture),
+                    ["deliveryRetryDelaySeconds"] = invitationDeliveryRetryDelaySeconds.ToString(CultureInfo.InvariantCulture),
+                    ["deliveryRetryMaxItems"] = invitationDeliveryRetryMaxItems.ToString(CultureInfo.InvariantCulture),
+                    ["deliveryDispatchOwnership"] = invitationDeliveryDispatchOwnership,
+                    ["deliverySenderOwnership"] = invitationDeliverySenderOwnership,
+                    ["externalDeliveryOwnership"] = invitationExternalDeliveryOwnership,
+                    ["backgroundRetryOwnership"] = "application-managed",
+                    ["distributedRetryOwnership"] = "application-managed",
+                    ["exactlyOnceOwnership"] = "application-managed",
+                    ["providerSpecificSenderOwnership"] = "application-managed",
+                    ["runtimeSurface"] = "tenant-invitations"
                 }));
         }
 

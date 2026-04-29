@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T14:12:25.5944331+00:00",
+  "GeneratedAtUtc": "2026-04-29T14:44:44.3143728+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -335,7 +335,7 @@
       "Description": "Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 121
+      "TypeCount": 128
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -1426,7 +1426,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 119
+      "TypeCount": 126
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Registration",
@@ -12254,6 +12254,36 @@
       }
     },
     {
+      "DisplayName": "ITenantInvitationDeliveryRetryRunner",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryrunner",
+      "Declaration": "public interface ITenantInvitationDeliveryRetryRunner",
+      "Summary": "Runs bounded retries for queued tenant invitation delivery failures.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore",
+      "Declaration": "public interface ITenantInvitationDeliveryRetryStore",
+      "Summary": "Stores tenant invitation delivery retry entries managed by the governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "ITenantInvitationDeliveryRunCatalog",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -13239,7 +13269,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 42,
+        "Properties": 47,
         "Methods": 0
       }
     },
@@ -17123,7 +17153,7 @@
       "Summary": "Defines stable metadata keys written by tenant invitation delivery dispatch and status reconciliation.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 29,
+        "Fields": 44,
         "Properties": 0,
         "Methods": 0
       }
@@ -17170,6 +17200,81 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor",
+      "Declaration": "public sealed class TenantInvitationDeliveryRetryDescriptor",
+      "Summary": "Describes one queued tenant invitation delivery retry entry.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryRetryOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes",
+      "Declaration": "public static class TenantInvitationDeliveryRetryOutcomes",
+      "Summary": "Defines stable outcomes for tenant invitation delivery retry runner passes.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest",
+      "Declaration": "public sealed class TenantInvitationDeliveryRetryRequest",
+      "Summary": "Describes a bounded tenant invitation delivery retry runner request.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult",
+      "Declaration": "public sealed class TenantInvitationDeliveryRetryResult",
+      "Summary": "Describes the aggregate result of one tenant invitation delivery retry runner pass.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryRetryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses",
+      "Declaration": "public static class TenantInvitationDeliveryRetryStatuses",
+      "Summary": "Defines stable statuses for tenant invitation delivery retry queue entries.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
         "Methods": 0
       }
     },
@@ -19513,6 +19618,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-actor",
       "Signature": "string Actor { get; }",
       "Summary": "Gets the actor that requested delivery dispatch when known."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-actor",
+      "Signature": "string Actor { get; }",
+      "Summary": "Gets the actor recorded on retry attempts."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-actor",
+      "Signature": "string Actor { get; }",
+      "Summary": "Gets the actor recorded on retry attempts."
     },
     {
       "DisplayName": "Actor",
@@ -24443,6 +24570,28 @@
       "Summary": "Gets the managed execution attempt represented by this request."
     },
     {
+      "DisplayName": "AttemptCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-attemptcount",
+      "Signature": "int AttemptCount { get; }",
+      "Summary": "Gets the number of dispatch attempts represented by this entry."
+    },
+    {
+      "DisplayName": "AttemptedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-attemptedcount",
+      "Signature": "int AttemptedCount { get; }",
+      "Summary": "Gets the number of retry entries attempted."
+    },
+    {
       "DisplayName": "AttemptId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
@@ -24727,6 +24876,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-atutc",
       "Signature": "DateTimeOffset? AtUtc { get; }",
       "Summary": "Gets the UTC timestamp used for dispatch."
+    },
+    {
+      "DisplayName": "AtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-atutc",
+      "Signature": "DateTimeOffset? AtUtc { get; }",
+      "Summary": "Gets the UTC timestamp used for retry evaluation."
+    },
+    {
+      "DisplayName": "AtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-atutc",
+      "Signature": "DateTimeOffset AtUtc { get; }",
+      "Summary": "Gets the UTC timestamp used for retry evaluation."
     },
     {
       "DisplayName": "AtUtc",
@@ -31331,6 +31502,17 @@
     {
       "DisplayName": "Channel",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-channel",
+      "Signature": "string Channel { get; }",
+      "Summary": "Gets the delivery channel to retry."
+    },
+    {
+      "DisplayName": "Channel",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryRunDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -37139,6 +37321,28 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the correlation identifier retained for retry attempts."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the correlation identifier recorded on retry attempts."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusCallbackRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -37223,6 +37427,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-count",
       "Signature": "int Count { get; }",
       "Summary": "Gets the number of stored runtime tenant-governance actions."
+    },
+    {
+      "DisplayName": "Count",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-count",
+      "Signature": "int Count { get; }",
+      "Summary": "Gets the number of retained retry entries."
     },
     {
       "DisplayName": "Count",
@@ -37410,6 +37625,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-createdatutc",
       "Signature": "DateTimeOffset? CreatedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when the action was created."
+    },
+    {
+      "DisplayName": "CreatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-createdatutc",
+      "Signature": "DateTimeOffset CreatedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the retry entry was created."
     },
     {
       "DisplayName": "CreatedAtUtc",
@@ -39961,6 +40187,182 @@
       "Summary": "Identifies the declared delivery mode for the subscription."
     },
     {
+      "DisplayName": "DeliveryResults",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-deliveryresults",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDeliveryResult\u003E DeliveryResults { get; }",
+      "Summary": "Gets the delivery dispatch results produced by this pass."
+    },
+    {
+      "DisplayName": "DeliveryRetryExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryexecution",
+      "Signature": "const string DeliveryRetryExecution",
+      "Summary": "Metadata key that marks a dispatch request created by the retry runner."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueAttempt",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueattempt",
+      "Signature": "const string DeliveryRetryQueueAttempt",
+      "Summary": "Metadata key containing the retry queue attempt number."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueDelaySeconds",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuedelayseconds",
+      "Signature": "const string DeliveryRetryQueueDelaySeconds",
+      "Summary": "Metadata key containing the retry delay in seconds."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueEntryCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueentrycount",
+      "Signature": "const string DeliveryRetryQueueEntryCount",
+      "Summary": "Metadata key containing the total number of retained invitation delivery retry entries."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueEntryId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueentryid",
+      "Signature": "const string DeliveryRetryQueueEntryId",
+      "Summary": "Metadata key containing the invitation delivery retry queue entry identifier."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueLastAttemptAtUtc",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuelastattemptatutc",
+      "Signature": "const string DeliveryRetryQueueLastAttemptAtUtc",
+      "Summary": "Metadata key containing the UTC timestamp of the latest retry attempt."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueLastOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuelastoutcome",
+      "Signature": "const string DeliveryRetryQueueLastOutcome",
+      "Summary": "Metadata key containing the latest retry dispatch outcome."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueLastReason",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuelastreason",
+      "Signature": "const string DeliveryRetryQueueLastReason",
+      "Summary": "Metadata key containing the latest retry dispatch reason."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueMaxAttempts",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuemaxattempts",
+      "Signature": "const string DeliveryRetryQueueMaxAttempts",
+      "Summary": "Metadata key containing the maximum attempts configured for retry queue entries."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueNextAttemptAtUtc",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuenextattemptatutc",
+      "Signature": "const string DeliveryRetryQueueNextAttemptAtUtc",
+      "Summary": "Metadata key containing the UTC timestamp when the next retry attempt is due."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueoutcome",
+      "Signature": "const string DeliveryRetryQueueOutcome",
+      "Summary": "Metadata key describing whether a sender failure was queued for retry."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueueownership",
+      "Signature": "const string DeliveryRetryQueueOwnership",
+      "Summary": "Metadata key describing Cephalon ownership of the invitation delivery retry queue."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueuePendingCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuependingcount",
+      "Signature": "const string DeliveryRetryQueuePendingCount",
+      "Summary": "Metadata key containing the number of pending invitation delivery retry entries."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueStoreDurable",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuestoredurable",
+      "Signature": "const string DeliveryRetryQueueStoreDurable",
+      "Summary": "Metadata key describing whether the invitation delivery retry queue is durable."
+    },
+    {
+      "DisplayName": "DeliveryRetryQueueStoreKind",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuestorekind",
+      "Signature": "const string DeliveryRetryQueueStoreKind",
+      "Summary": "Metadata key describing the invitation delivery retry queue storage kind."
+    },
+    {
       "DisplayName": "DeliveryStatusObservationId",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryMetadataKeys",
@@ -42471,6 +42873,17 @@
     {
       "DisplayName": "Disabled",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-disabled",
+      "Signature": "const string Disabled",
+      "Summary": "Invitation delivery retry queue processing is disabled."
+    },
+    {
+      "DisplayName": "Disabled",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusReconciliationOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -42635,6 +43048,17 @@
     },
     {
       "DisplayName": "Dispatched",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-dispatched",
+      "Signature": "const string Dispatched",
+      "Summary": "The retry entry was dispatched and removed from the active retry queue."
+    },
+    {
+      "DisplayName": "Dispatched",
       "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryRunDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
@@ -42720,6 +43144,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-dispatchedatutc",
       "Signature": "DateTimeOffset? DispatchedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp reported by the sender."
+    },
+    {
+      "DisplayName": "DispatchedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-dispatchedcount",
+      "Signature": "int DispatchedCount { get; }",
+      "Summary": "Gets the number of retry entries dispatched successfully."
     },
     {
       "DisplayName": "DispatchFailed",
@@ -45087,6 +45522,17 @@
       "Summary": "Gets the UTC timestamp when the timer is next due."
     },
     {
+      "DisplayName": "DueOnly",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-dueonly",
+      "Signature": "bool DueOnly { get; }",
+      "Summary": "Gets a value indicating whether entries scheduled after \u0060AtUtc\u0060 should be skipped."
+    },
+    {
       "DisplayName": "DuplexStreaming",
       "Category": "Fields",
       "DeclaringTypeName": "TransportFeatures",
@@ -47243,6 +47689,17 @@
       "Summary": "Gets or sets a value indicating whether the built-in invitation delivery dispatcher is active."
     },
     {
+      "DisplayName": "EnableInvitationDeliveryRetryQueue",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-enableinvitationdeliveryretryqueue",
+      "Signature": "bool EnableInvitationDeliveryRetryQueue { get; set; }",
+      "Summary": "Gets or sets a value indicating whether sender-failed invitation delivery attempts are queued for explicit retry."
+    },
+    {
       "DisplayName": "EnableInvitationDeliveryStatusObservationStore",
       "Category": "Properties",
       "DeclaringTypeName": "MultiTenancyGovernanceOptions",
@@ -47956,6 +48413,17 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-audithistoryqueryresult-entries",
       "Signature": "IReadOnlyList\u003CAuditHistoryEntry\u003E Entries { get; }",
       "Summary": "Gets the returned audit-history entries."
+    },
+    {
+      "DisplayName": "Entries",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-entries",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDeliveryRetryDescriptor\u003E Entries { get; }",
+      "Summary": "Gets every retained retry entry."
     },
     {
       "DisplayName": "Entries",
@@ -51258,6 +51726,28 @@
       "Summary": "Gets or sets the execution-topology classification published for the connector runtime."
     },
     {
+      "DisplayName": "Exhausted",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-exhausted",
+      "Signature": "const string Exhausted",
+      "Summary": "The retry entry exhausted its configured retry budget."
+    },
+    {
+      "DisplayName": "ExhaustedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-exhaustedcount",
+      "Signature": "int ExhaustedCount { get; }",
+      "Summary": "Gets the number of attempted entries that exhausted their retry budget."
+    },
+    {
       "DisplayName": "ExitAfterApply",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationDescriptor",
@@ -52074,6 +52564,17 @@
     {
       "DisplayName": "Failed",
       "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-failed",
+      "Signature": "const string Failed",
+      "Summary": "No attempted retry entries dispatched successfully."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryStatuses",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -52235,6 +52736,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-failedcount",
       "Signature": "int FailedCount { get; }",
       "Summary": "Gets the number of attempts that did not reach an accepted terminal outcome."
+    },
+    {
+      "DisplayName": "FailedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-failedcount",
+      "Signature": "int FailedCount { get; }",
+      "Summary": "Gets the number of attempted entries that remained pending after failure."
     },
     {
       "DisplayName": "FailedMigrationTargetCount",
@@ -54844,6 +55356,17 @@
       "Summary": "Gets one strangler-fig route by its stable identifier."
     },
     {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-getbyid-system-string",
+      "Signature": "TenantInvitationDeliveryRetryDescriptor GetById(string retryId)",
+      "Summary": "Gets one retry entry by identifier."
+    },
+    {
       "DisplayName": "GetByIdAsync",
       "Category": "Methods",
       "DeclaringTypeName": "IAuditHistoryReader",
@@ -57284,6 +57807,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getmanagedconnectorcommandexecutionhistory-system-string",
       "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult\u003E GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)",
       "Summary": "Gets the bounded managed-connector command-execution history currently recorded for one execution runtime."
+    },
+    {
+      "DisplayName": "GetPending",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-getpending-system-datetimeoffset-system-int32-system-boolean",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDeliveryRetryDescriptor\u003E GetPending(DateTimeOffset atUtc, int limit, bool dueOnly)",
+      "Summary": "Gets retry entries that are pending and optionally due at or before the supplied timestamp."
     },
     {
       "DisplayName": "GetResources",
@@ -64942,6 +65476,50 @@
       "Summary": "Gets the resulting invitation descriptor when one exists."
     },
     {
+      "DisplayName": "InvitationDeliveryRetryDelaySeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrydelayseconds",
+      "Signature": "int InvitationDeliveryRetryDelaySeconds { get; set; }",
+      "Summary": "Gets or sets the delay, in seconds, before a failed retry entry is due again."
+    },
+    {
+      "DisplayName": "InvitationDeliveryRetryMaxAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrymaxattempts",
+      "Signature": "int InvitationDeliveryRetryMaxAttempts { get; set; }",
+      "Summary": "Gets or sets the maximum dispatch attempts retained for one retry entry, including the original failed attempt."
+    },
+    {
+      "DisplayName": "InvitationDeliveryRetryMaxItems",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretrymaxitems",
+      "Signature": "int InvitationDeliveryRetryMaxItems { get; set; }",
+      "Summary": "Gets or sets the default maximum number of retry entries attempted by one retry runner pass."
+    },
+    {
+      "DisplayName": "InvitationDeliveryRetryQueueFilePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "MultiTenancyGovernanceOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliveryretryqueuefilepath",
+      "Signature": "string InvitationDeliveryRetryQueueFilePath { get; set; }",
+      "Summary": "Gets or sets the optional JSON file path used for Cephalon-managed durable invitation delivery retry entries."
+    },
+    {
       "DisplayName": "InvitationDeliveryRunHistoryLimit",
       "Category": "Properties",
       "DeclaringTypeName": "MultiTenancyGovernanceOptions",
@@ -65039,6 +65617,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-invitationid",
       "Signature": "string InvitationId { get; }",
       "Summary": "Gets the invitation identifier that was evaluated."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the invitation identifier to retry."
     },
     {
       "DisplayName": "InvitationId",
@@ -66480,6 +67069,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-isdurable",
       "Signature": "bool IsDurable { get; }",
       "Summary": "Gets a value indicating whether action state survives process restarts."
+    },
+    {
+      "DisplayName": "IsDurable",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-isdurable",
+      "Signature": "bool IsDurable { get; }",
+      "Summary": "Gets a value indicating whether retry entries survive process restarts."
     },
     {
       "DisplayName": "IsDurable",
@@ -69364,6 +69964,17 @@
       "Summary": "The last reported application-managed attempt number."
     },
     {
+      "DisplayName": "LastAttemptAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-lastattemptatutc",
+      "Signature": "DateTimeOffset? LastAttemptAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp of the latest dispatch attempt."
+    },
+    {
       "DisplayName": "LastCandidateCount",
       "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
@@ -70684,6 +71295,17 @@
       "Summary": "Gets the latest proof polling outcome."
     },
     {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-lastoutcome",
+      "Signature": "string LastOutcome { get; }",
+      "Summary": "Gets the latest delivery dispatch outcome."
+    },
+    {
       "DisplayName": "LastOutputSummary",
       "Category": "Properties",
       "DeclaringTypeName": "AgentToolRunState",
@@ -71166,6 +71788,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-lastreason",
       "Signature": "string LastReason { get; }",
       "Summary": "Gets the latest operator-facing proof polling reason."
+    },
+    {
+      "DisplayName": "LastReason",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-lastreason",
+      "Signature": "string LastReason { get; }",
+      "Summary": "Gets the latest delivery dispatch reason."
     },
     {
       "DisplayName": "LastRecoveredAtUtc",
@@ -72024,6 +72657,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-latestcommandexecutionstate",
       "Signature": "string LatestCommandExecutionState { get; set; }",
       "Summary": "Gets the latest recorded managed-connector command-execution state visible to scheduler recovery and execution hardening."
+    },
+    {
+      "DisplayName": "LatestEntry",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-latestentry",
+      "Signature": "TenantInvitationDeliveryRetryDescriptor LatestEntry { get; }",
+      "Summary": "Gets the latest retained retry entry when one exists."
     },
     {
       "DisplayName": "LatestExecutionAdapted",
@@ -75370,6 +76014,17 @@
       "Summary": "Gets the maximum retry attempts requested for the policy."
     },
     {
+      "DisplayName": "MaxAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-maxattempts",
+      "Signature": "int MaxAttempts { get; }",
+      "Summary": "Gets the maximum number of dispatch attempts allowed for this entry."
+    },
+    {
       "DisplayName": "MaxAwaitTimeSeconds",
       "Category": "Properties",
       "DeclaringTypeName": "MySqlBinlogCaptureOptions",
@@ -75621,6 +76276,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-maxitems",
       "Signature": "int? MaxItems { get; }",
       "Summary": "Gets the optional maximum number of declarations to poll in this pass."
+    },
+    {
+      "DisplayName": "MaxItems",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-maxitems",
+      "Signature": "int? MaxItems { get; }",
+      "Summary": "Gets the maximum number of retry entries to attempt."
     },
     {
       "DisplayName": "MaxLimit",
@@ -77909,6 +78575,39 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional result metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional retry metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional retry runner metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional retry result metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -80483,6 +81182,17 @@
       "Summary": "Gets or sets the time at which the outbox row becomes eligible for the next dispatch attempt, when delayed retry is in effect."
     },
     {
+      "DisplayName": "NextAttemptAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-nextattemptatutc",
+      "Signature": "DateTimeOffset NextAttemptAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the next attempt is due."
+    },
+    {
       "DisplayName": "NextRetryAtUtc",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -81130,6 +81840,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-noop",
       "Signature": "const string NoOp",
       "Summary": "The managed connector currently reports no shared write-path changes for the intended management operation."
+    },
+    {
+      "DisplayName": "NoPendingRetries",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-nopendingretries",
+      "Signature": "const string NoPendingRetries",
+      "Summary": "No pending retry entries matched the request."
     },
     {
       "DisplayName": "NoRecordedCommand",
@@ -84872,6 +85593,17 @@
     {
       "DisplayName": "Outcome",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable retry runner outcome."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryRunDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -85264,6 +85996,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-ownership",
       "Signature": "string Ownership { get; }",
       "Summary": "Gets the ownership mode for the store implementation."
+    },
+    {
+      "DisplayName": "Ownership",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-ownership",
+      "Signature": "string Ownership { get; }",
+      "Summary": "Gets the runtime ownership label for the retry queue."
     },
     {
       "DisplayName": "Ownership",
@@ -85891,6 +86634,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationstates-partial",
       "Signature": "const string Partial",
       "Summary": "The automation spans multiple materialization dimensions whose observed postures do not currently agree."
+    },
+    {
+      "DisplayName": "Partial",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-partial",
+      "Signature": "const string Partial",
+      "Summary": "Some attempted retry entries succeeded and some remained pending or terminal."
     },
     {
       "DisplayName": "PartialFailure",
@@ -86650,6 +87404,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipvalidationoutcomes-pending",
       "Signature": "const string Pending",
       "Summary": "The domain ownership descriptor is still pending verification."
+    },
+    {
+      "DisplayName": "Pending",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-pending",
+      "Signature": "const string Pending",
+      "Summary": "The retry entry is waiting for another attempt."
     },
     {
       "DisplayName": "Pending",
@@ -94581,6 +95346,17 @@
       "Summary": "Gets a value indicating whether delivery outcome metadata should be recorded on the invitation."
     },
     {
+      "DisplayName": "RecordDelivery",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-recorddelivery",
+      "Signature": "bool RecordDelivery { get; }",
+      "Summary": "Gets a value indicating whether retry attempts should record delivery metadata."
+    },
+    {
       "DisplayName": "Recorded",
       "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipHttpProofPublicationResult",
@@ -96143,6 +96919,17 @@
       "Summary": "Gets the shorthand relative route patterns targeted by this suppression rule before override actions are applied."
     },
     {
+      "DisplayName": "RemainingPendingCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-remainingpendingcount",
+      "Signature": "int RemainingPendingCount { get; }",
+      "Summary": "Gets the number of pending entries retained after the pass."
+    },
+    {
       "DisplayName": "Remediated",
       "Category": "Fields",
       "DeclaringTypeName": "TenantGovernanceActionStatuses",
@@ -96350,6 +97137,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorwritepathreadinessstatus-remediationstate",
       "Signature": "string RemediationState { get; set; }",
       "Summary": "Gets the current runtime-level remediation state that informed write-path readiness."
+    },
+    {
+      "DisplayName": "Remove",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-remove-system-string",
+      "Signature": "bool Remove(string retryId)",
+      "Summary": "Removes a retry entry."
     },
     {
       "DisplayName": "RemoveBindingProperties",
@@ -100543,6 +101341,17 @@
       "Summary": "Gets the configured retention settings for durable history."
     },
     {
+      "DisplayName": "Retried",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryOutcomes",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-retried",
+      "Signature": "const string Retried",
+      "Summary": "Every attempted retry entry dispatched successfully."
+    },
+    {
       "DisplayName": "RetrievalOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "RetrievalOptions",
@@ -101269,6 +102078,17 @@
       "Summary": "The bounded command journal currently retains matching retry history."
     },
     {
+      "DisplayName": "RetryId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-retryid",
+      "Signature": "string RetryId { get; }",
+      "Summary": "Gets the stable retry entry identifier."
+    },
+    {
       "DisplayName": "RetryMaxAttempts",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -101333,6 +102153,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-retrypending",
       "Signature": "bool RetryPending { get; }",
       "Summary": "Gets a value indicating whether the latest report says another retry attempt is pending."
+    },
+    {
+      "DisplayName": "RetryPendingAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryRunner",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretryrunner-retrypendingasync-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CTenantInvitationDeliveryRetryResult\u003E RetryPendingAsync(TenantInvitationDeliveryRetryRequest request, CancellationToken cancellationToken)",
+      "Summary": "Retries pending tenant invitation delivery queue entries."
     },
     {
       "DisplayName": "RetryPendingCount",
@@ -104582,6 +105413,17 @@
     {
       "DisplayName": "SenderId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-senderid",
+      "Signature": "string SenderId { get; }",
+      "Summary": "Gets the sender identifier to retry when specified."
+    },
+    {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryRunDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -105876,6 +106718,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-source",
       "Signature": "string Source { get; }",
       "Summary": "Gets the source that requested delivery dispatch."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-source",
+      "Signature": "string Source { get; }",
+      "Summary": "Gets the source recorded on retry attempts."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-source",
+      "Signature": "string Source { get; }",
+      "Summary": "Gets the source recorded on retry attempts."
     },
     {
       "DisplayName": "Source",
@@ -108826,6 +109690,17 @@
     {
       "DisplayName": "Status",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the retry entry status."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusCallbackRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -109240,6 +110115,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-storekind",
       "Signature": "string StoreKind { get; }",
       "Summary": "Gets the operator-facing store kind."
+    },
+    {
+      "DisplayName": "StoreKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-storekind",
+      "Signature": "string StoreKind { get; }",
+      "Summary": "Gets the storage kind used by the retry queue."
     },
     {
       "DisplayName": "StoreKind",
@@ -112951,6 +113837,17 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant identifier that owns the invitation."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryRunDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -113145,6 +114042,39 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-ctor-system-string-system-string-system-string-system-boolean-system-boolean-system-datetimeoffset-system-string-system-string-system-string-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "TenantInvitationDeliveryResult(string tenantId, string invitationId, string outcome, bool dispatched, bool recorded, DateTimeOffset dispatchedAtUtc, string channel, string senderId, string providerMessageId, TenantInvitationDescriptor invitation, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a tenant invitation delivery dispatch result."
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryRetryDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string-system-int32-system-int32-system-datetimeoffset-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationDeliveryRetryDescriptor(string retryId, string tenantId, string invitationId, string channel, string senderId, string source, string actor, string correlationId, bool recordDelivery, string status, int attemptCount, int maxAttempts, DateTimeOffset createdAtUtc, DateTimeOffset nextAttemptAtUtc, DateTimeOffset? lastAttemptAtUtc, string lastOutcome, string lastReason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant invitation delivery retry descriptor."
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryRetryRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryrequest-ctor-system-nullable-system-datetimeoffset-system-nullable-system-int32-system-boolean-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationDeliveryRetryRequest(DateTimeOffset? atUtc, int? maxItems, bool dueOnly, string source, string actor, string correlationId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant invitation delivery retry runner request."
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryRetryResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-services-tenantinvitationdeliveryresult-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationDeliveryRetryResult(string outcome, int attemptedCount, int dispatchedCount, int failedCount, int exhaustedCount, int terminalCount, int remainingPendingCount, DateTimeOffset atUtc, IReadOnlyList\u003CTenantInvitationDeliveryResult\u003E deliveryResults, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a tenant invitation delivery retry result."
     },
     {
       "DisplayName": "TenantInvitationDeliveryRunDescriptor",
@@ -113618,6 +114548,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-configuration-multitenancyruntimeoptions-tenants",
       "Signature": "List\u003CTenantContext\u003E Tenants { get; }",
       "Summary": "Gets the configured tenants that the built-in resolver can match by id, key, or domain."
+    },
+    {
+      "DisplayName": "Terminal",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryStatuses",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-terminal",
+      "Signature": "const string Terminal",
+      "Summary": "The retry entry hit a terminal invitation state that should not be retried."
+    },
+    {
+      "DisplayName": "TerminalCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-terminalcount",
+      "Signature": "int TerminalCount { get; }",
+      "Summary": "Gets the number of attempted entries that hit a terminal invitation state."
     },
     {
       "DisplayName": "TerminalFailure",
@@ -116405,6 +117357,17 @@
     {
       "DisplayName": "Upsert",
       "Category": "Methods",
+      "DeclaringTypeName": "ITenantInvitationDeliveryRetryStore",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-upsert-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor",
+      "Signature": "void Upsert(TenantInvitationDeliveryRetryDescriptor entry)",
+      "Summary": "Adds or replaces a retry entry."
+    },
+    {
+      "DisplayName": "Upsert",
+      "Category": "Methods",
       "DeclaringTypeName": "ITenantInvitationDeliveryStatusObservationStore",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -118084,6 +119047,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withoptions-system-action-cephalon-abstractions-behaviors-behaviortopologyoptions",
       "Signature": "IBehaviorTopologyBuilder WithOptions(Action\u003CBehaviorTopologyOptions\u003E configure)",
       "Summary": "Configures optional feature flags for this behavior (outbox, inbox, event sourcing)."
+    },
+    {
+      "DisplayName": "WithRetryState",
+      "Category": "Methods",
+      "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-withretrystate-system-string-system-int32-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TenantInvitationDeliveryRetryDescriptor WithRetryState(string status, int attemptCount, DateTimeOffset nextAttemptAtUtc, DateTimeOffset? lastAttemptAtUtc, string lastOutcome, string lastReason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a copy of this retry entry with updated retry state."
     },
     {
       "DisplayName": "WolverineEventingOptions",
