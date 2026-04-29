@@ -440,6 +440,18 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](cephalon-multitenancy-governance-httpdelivery.md#namespace-cephalon-multitenancy-governance-httpdelivery-services): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services)
 
+## `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.MailgunDelivery](cephalon-multitenancy-governance-mailgundelivery.md#namespace-cephalon-multitenancy-governance-mailgundelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.MailgunDelivery](cephalon-multitenancy-governance-mailgundelivery.md#namespace-cephalon-multitenancy-governance-mailgundelivery-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting)
+
+## `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services`
+
+- [Cephalon.MultiTenancy.Governance.MailgunDelivery](cephalon-multitenancy-governance-mailgundelivery.md#namespace-cephalon-multitenancy-governance-mailgundelivery-services): 3 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services)
+
 ## `Cephalon.MultiTenancy.Governance.Registration`
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Registration)

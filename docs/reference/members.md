@@ -27,6 +27,9 @@ Browse the published API surface by public member.
 - [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationruntimeoutcomes-accepted): `Fields` on `EventPublicationRuntimeOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The publication was accepted or staged by the active runtime, but downstream delivery may still be pending.
   - `const string Accepted`
+- [Accepted](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-accepted): `Properties` on `MailgunInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Accepted&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets a value indicating whether the Mailgun API accepted the request.
+  - `bool Accepted { get; }`
 - [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an accepted result with a payload value.
   - `Result<T> Accepted<T>(T value, string message, string code)`
@@ -57,6 +60,9 @@ Browse the published API surface by public member.
 - [AcceptedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-acceptedcount): `Properties` on `TenantInvitationDeliveryRetryExecutionCoordinationSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AcceptedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of coordinator attempts accepted for execution.
   - `long AcceptedCount { get; }`
+- [AcceptedStatusCodes](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-acceptedstatuscodes): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=AcceptedStatusCodes&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets response status codes that indicate the Mailgun API accepted the request.
+  - `IReadOnlyList<int> AcceptedStatusCodes { get; set; }`
 - [AcceptedStatusCodes](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-acceptedstatuscodes): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=AcceptedStatusCodes&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets response status codes that indicate the SendGrid API accepted the request.
   - `IReadOnlyList<int> AcceptedStatusCodes { get; set; }`
@@ -834,6 +840,12 @@ Browse the published API surface by public member.
 - [AddCephalonKubernetes](cephalon-observability-kubernetes.md#member-m-cephalon-observability-kubernetes-hosting-kuberneteshostapplicationbuilderextensions-addcephalonkubernetes-1-0-system-action-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions): `Methods` on `KubernetesHostApplicationBuilderExtensions` in `Cephalon.Observability.Kubernetes.Hosting` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=AddCephalonKubernetes&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Hosting&scope=members)
   - Adds Kubernetes-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonKubernetes<TBuilder>(this TBuilder builder, Action<KubernetesTelemetryExportOptions> configure)`
+- [AddCephalonMailgunInvitationDelivery](cephalon-multitenancy-governance-mailgundelivery.md#member-m-cephalon-multitenancy-governance-mailgundelivery-hosting-mailguninvitationdeliveryservicecollectionextensions-addcephalonmailguninvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions): `Methods` on `MailgunInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=AddCephalonMailgunInvitationDelivery&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting&scope=members)
+  - Adds Mailgun invitation delivery using code-first configuration.
+  - `IServiceCollection AddCephalonMailgunInvitationDelivery(this IServiceCollection services, Action<MailgunInvitationDeliveryOptions> configure)`
+- [AddCephalonMailgunInvitationDelivery](cephalon-multitenancy-governance-mailgundelivery.md#member-m-cephalon-multitenancy-governance-mailgundelivery-hosting-mailguninvitationdeliveryservicecollectionextensions-addcephalonmailguninvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions): `Methods` on `MailgunInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=AddCephalonMailgunInvitationDelivery&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting&scope=members)
+  - Adds Mailgun invitation delivery using configuration as the primary source of Messages API settings.
+  - `IServiceCollection AddCephalonMailgunInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action<MailgunInvitationDeliveryOptions> configure)`
 - [AddCephalonMemcachedDependencyHealth](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-hosting-memcacheddependencyhealthservicecollectionextensions-addcephalonmemcacheddependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions): `Methods` on `MemcachedDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MemcachedDependencies.Hosting` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=AddCephalonMemcachedDependencyHealth&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Hosting&scope=members)
   - Adds Memcached dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonMemcachedDependencyHealth(this IServiceCollection services, Action<MemcachedDependencyHealthOptions> configure)`
@@ -1313,6 +1325,9 @@ Browse the published API surface by public member.
   - `PatternDescriptor AntiCorruptionLayer { get; }`
 - [ApiKey](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-apikey): `Properties` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=ApiKey&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the optional API key used for Elasticsearch API-key authentication.
+  - `string ApiKey { get; set; }`
+- [ApiKey](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-apikey): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=ApiKey&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the Mailgun private API key used with basic authentication.
   - `string ApiKey { get; set; }`
 - [ApiKey](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-apikey): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=ApiKey&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the SendGrid API key used as the bearer token.
@@ -2337,6 +2352,9 @@ Browse the published API surface by public member.
 - [BaseDelayMilliseconds](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-basedelaymilliseconds): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BaseDelayMilliseconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the base delay in milliseconds used by the retry policy.
   - `int? BaseDelayMilliseconds { get; }`
+- [BaseUrl](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-baseurl): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=BaseUrl&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the Mailgun API base URL.
+  - `string BaseUrl { get; set; }`
 - [BaseUrl](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-baseurl): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=BaseUrl&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the SendGrid v3 API base URL.
   - `string BaseUrl { get; set; }`
@@ -7392,6 +7410,9 @@ Browse the published API surface by public member.
 - [DomainId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-domainid): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DomainId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable domain or bounded-context identifier for the data product.
   - `string DomainId { get; }`
+- [DomainName](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-domainname): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the Mailgun sending domain name used in the Messages API route.
+  - `string DomainName { get; set; }`
 - [DomainName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-domainname): `Properties` on `TenantDomainOwnershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DomainName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the canonical domain name claimed by the tenant.
   - `string DomainName { get; }`
@@ -8115,6 +8136,9 @@ Browse the published API surface by public member.
 - [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-identitysettings-enabled): `Properties` on `IdentitySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether identity and authorization support was explicitly enabled.
   - `bool? Enabled { get; }`
+- [Enabled](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-enabled): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Enabled&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether the Mailgun invitation sender should be registered.
+  - `bool Enabled { get; set; }`
 - [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-enabled): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether rate limiting was explicitly enabled or disabled for the targeted surface.
   - `bool? Enabled { get; }`
@@ -8355,6 +8379,9 @@ Browse the published API surface by public member.
 - [EnableTenantInvitationDeliveryStatusObservationEndpoint](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantinvitationdeliverystatusobservationendpoint): `Properties` on `MultiTenancyGovernanceAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=EnableTenantInvitationDeliveryStatusObservationEndpoint&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether the delivery status observation read endpoint should be mapped.
   - `bool EnableTenantInvitationDeliveryStatusObservationEndpoint { get; set; }`
+- [EnableTestMode](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-enabletestmode): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=EnableTestMode&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether Mailgun test mode should be enabled through `o:testmode=yes`.
+  - `bool EnableTestMode { get; set; }`
 - [Encrypt](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-encrypt): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Encrypt&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional SQL Server encryption mode such as `Optional`, `Mandatory`, or `Strict`.
   - `string Encrypt { get; set; }`
@@ -9864,6 +9891,9 @@ Browse the published API surface by public member.
 - [FreshUntilUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshuntilutc): `Properties` on `DatabaseRoleProbeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshUntilUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp until which the current answer remains fresh, when known.
   - `DateTimeOffset? FreshUntilUtc { get; }`
+- [From](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-from): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=From&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the formatted sender address.
+  - `string From { get; }`
 - [FromAddress](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-fromaddress): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=FromAddress&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
   - Gets the sender email address.
   - `string FromAddress { get; }`
@@ -9963,6 +9993,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads localization settings from configuration.
   - `LocalizationSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-multitenancy-governance-mailgundelivery.md#member-m-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Binds Mailgun invitation delivery options from configuration.
+  - `MailgunInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `MemcachedDependencyHealthOptions` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
   - Binds Memcached dependency-health options from configuration.
   - `MemcachedDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -10068,6 +10101,9 @@ Browse the published API surface by public member.
 - [FromDisplayName](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-fromdisplayname): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=FromDisplayName&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
   - Gets or sets the optional sender display name used in the SMTP message.
   - `string FromDisplayName { get; set; }`
+- [FromEmail](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-fromemail): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=FromEmail&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the sender email address used in the Mailgun message.
+  - `string FromEmail { get; set; }`
 - [FromEmail](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-fromemail): `Properties` on `SendGridInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=FromEmail&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the sender email address.
   - `string FromEmail { get; }`
@@ -10077,6 +10113,9 @@ Browse the published API surface by public member.
 - [FromManifest](cephalon-engine.md#member-m-cephalon-engine-configuration-modulepackagereference-frommanifest-system-string-system-string): `Methods` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates a manifest-backed package reference.
   - `ModulePackageReference FromManifest(string manifestPath, string id)`
+- [FromName](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-fromname): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=FromName&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the optional sender display name used in the Mailgun message.
+  - `string FromName { get; set; }`
 - [FromName](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-fromname): `Properties` on `SendGridInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=FromName&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the optional sender display name.
   - `string FromName { get; }`
@@ -12123,6 +12162,12 @@ Browse the published API surface by public member.
 - [Headers](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-headers): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to Kubernetes collector requests.
   - `string Headers { get; set; }`
+- [Headers](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-headers): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Headers&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets Mailgun custom headers attached to the message.
+  - `IReadOnlyDictionary<string, string> Headers { get; }`
+- [Headers](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-headers): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Headers&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets additional Mailgun custom headers added through `h:*` form fields.
+  - `IReadOnlyDictionary<string, string> Headers { get; set; }`
 - [Headers](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-headers): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string used for direct New Relic ingestion.
   - `string Headers { get; set; }`
@@ -12378,12 +12423,18 @@ Browse the published API surface by public member.
 - [Hostnames](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-hostnames): `Properties` on `KubernetesGatewayTrafficRouteOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=Hostnames&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets the optional hostnames published by the projected HTTPRoute.
   - `IList<string> Hostnames { get; }`
+- [HtmlBody](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-htmlbody): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=HtmlBody&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the optional HTML message body.
+  - `string HtmlBody { get; }`
 - [HtmlBody](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-htmlbody): `Properties` on `SendGridInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=HtmlBody&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the optional HTML message body.
   - `string HtmlBody { get; }`
 - [HtmlBody](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-htmlbody): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=HtmlBody&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
   - Gets the optional HTML message body.
   - `string HtmlBody { get; }`
+- [HtmlBodyTemplate](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-htmlbodytemplate): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=HtmlBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the optional HTML Mailgun message body template.
+  - `string HtmlBodyTemplate { get; set; }`
 - [HtmlBodyTemplate](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-htmlbodytemplate): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=HtmlBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the optional HTML SendGrid message body template.
   - `string HtmlBodyTemplate { get; set; }`
@@ -12392,6 +12443,9 @@ Browse the published API surface by public member.
   - `string HtmlBodyTemplate { get; set; }`
 - [HttpClientName](cephalon-multitenancy-governance-httpdelivery.md#member-f-cephalon-multitenancy-governance-httpdelivery-hosting-httpinvitationdeliveryservicecollectionextensions-httpclientname): `Fields` on `HttpInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=HttpClientName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting&scope=members)
   - The named HTTP client used by the HTTP invitation delivery sender.
+  - `const string HttpClientName`
+- [HttpClientName](cephalon-multitenancy-governance-mailgundelivery.md#member-f-cephalon-multitenancy-governance-mailgundelivery-hosting-mailguninvitationdeliveryservicecollectionextensions-httpclientname): `Fields` on `MailgunInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=HttpClientName&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting&scope=members)
+  - The named HTTP client used by the Mailgun invitation delivery client.
   - `const string HttpClientName`
 - [HttpClientName](cephalon-multitenancy-governance-sendgriddelivery.md#member-f-cephalon-multitenancy-governance-sendgriddelivery-hosting-sendgridinvitationdeliveryservicecollectionextensions-httpclientname): `Fields` on `SendGridInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=HttpClientName&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting&scope=members)
   - The named HTTP client used by the SendGrid invitation delivery client.
@@ -12882,12 +12936,18 @@ Browse the published API surface by public member.
 - [IncludeContextCustomArgs](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-includecontextcustomargs): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=IncludeContextCustomArgs&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets a value indicating whether safe Cephalon custom arguments should be added to the SendGrid request.
   - `bool IncludeContextCustomArgs { get; set; }`
+- [IncludeContextHeaders](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-includecontextheaders): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=IncludeContextHeaders&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether safe Cephalon custom headers should be added to the Mailgun request.
+  - `bool IncludeContextHeaders { get; set; }`
 - [IncludeContextHeaders](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-includecontextheaders): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=IncludeContextHeaders&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets a value indicating whether safe Cephalon context headers should be added to the SendGrid request.
   - `bool IncludeContextHeaders { get; set; }`
 - [IncludeContextHeaders](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-includecontextheaders): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=IncludeContextHeaders&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
   - Gets or sets a value indicating whether safe Cephalon context headers should be added to the SMTP message.
   - `bool IncludeContextHeaders { get; set; }`
+- [IncludeContextVariables](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-includecontextvariables): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=IncludeContextVariables&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether safe Cephalon user variables should be added to the Mailgun request.
+  - `bool IncludeContextVariables { get; set; }`
 - [IncludedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedbehaviorids): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the explicit behavior identifiers that should stay visible to the client.
   - `IReadOnlyList<string> IncludedBehaviorIds { get; }`
@@ -15603,6 +15663,15 @@ Browse the published API surface by public member.
 
 ## M
 
+- [MailgunInvitationDeliveryClientResult](cephalon-multitenancy-governance-mailgundelivery.md#member-m-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-ctor-system-boolean-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `MailgunInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=MailgunInvitationDeliveryClientResult&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Creates a Mailgun invitation delivery client result.
+  - `MailgunInvitationDeliveryClientResult(bool accepted, int? statusCode, string providerMessageId, string reason, IReadOnlyDictionary<string, string> metadata)`
+- [MailgunInvitationDeliveryMessage](cephalon-multitenancy-governance-mailgundelivery.md#member-m-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-boolean): `Constructors` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=MailgunInvitationDeliveryMessage&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Creates a prepared Mailgun invitation delivery message.
+  - `MailgunInvitationDeliveryMessage(string messageId, string from, string to, string toEmail, string subject, string textBody, string htmlBody, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> variables, IReadOnlyDictionary<string, string> headers, bool testMode)`
+- [MailgunInvitationDeliveryOptions](cephalon-multitenancy-governance-mailgundelivery.md#member-m-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-ctor): `Constructors` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=MailgunInvitationDeliveryOptions&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Initializes a new instance of the `MailgunInvitationDeliveryOptions` class.
+  - `MailgunInvitationDeliveryOptions()`
 - [ManagedConnectorActionPlan](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectoractionplan): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ManagedConnectorActionPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing managed-connector action plan derived from remediation, governance, and drift posture.
   - `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus ManagedConnectorActionPlan { get; set; }`
@@ -16383,6 +16452,9 @@ Browse the published API surface by public member.
 - [MessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-messageid): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable inbound message identifier when one was reported.
   - `string MessageId { get; }`
+- [MessageId](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-messageid): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=MessageId&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the deterministic Cephalon message identifier carried in Mailgun user variables.
+  - `string MessageId { get; }`
 - [MessageId](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-messageid): `Properties` on `SendGridInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=MessageId&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the deterministic Cephalon message identifier carried in SendGrid custom arguments.
   - `string MessageId { get; }`
@@ -16704,6 +16776,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-metadata): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Optional operator-facing metadata captured with the query result.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
+- [Metadata](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-metadata): `Properties` on `MailgunInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets optional safe client metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-metadata): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets optional module metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -20517,6 +20592,9 @@ Browse the published API surface by public member.
 - [ProviderMaterializerId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providermaterializerid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderMaterializerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the optional selected provider materializer identifier.
   - `string ProviderMaterializerId { get; }`
+- [ProviderMessageId](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-providermessageid): `Properties` on `MailgunInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the Mailgun message identifier when one is known.
+  - `string ProviderMessageId { get; }`
 - [ProviderMessageId](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-providermessageid): `Properties` on `SendGridInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the SendGrid message identifier when one is known.
   - `string ProviderMessageId { get; }`
@@ -20550,6 +20628,9 @@ Browse the published API surface by public member.
 - [ProviderMessageIdHeaderName](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-providermessageidheadername): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=ProviderMessageIdHeaderName&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the SendGrid response header that contains the provider message identifier.
   - `string ProviderMessageIdHeaderName { get; set; }`
+- [ProviderMessageIdJsonPropertyName](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-providermessageidjsonpropertyname): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=ProviderMessageIdJsonPropertyName&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the JSON property name that contains the Mailgun provider message identifier.
+  - `string ProviderMessageIdJsonPropertyName { get; set; }`
 - [ProviderMessageMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-providermessagemismatch): `Fields` on `TenantInvitationDeliveryStatusReconciliationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProviderMessageMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The supplied provider message identifier does not match the identifier recorded during dispatch.
   - `const string ProviderMessageMismatch`
@@ -21255,6 +21336,9 @@ Browse the published API surface by public member.
 - [Reason](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-reason): `Properties` on `FeatureFlagProviderEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - The operator-facing explanation for the provider evaluation result.
   - `string Reason { get; set; }`
+- [Reason](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-reason): `Properties` on `MailgunInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the provider-facing outcome reason.
+  - `string Reason { get; }`
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-reason): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The verification outcome or failure reason for this signature.
   - `string Reason { get; set; }`
@@ -21360,6 +21444,9 @@ Browse the published API surface by public member.
 - [RecipientAddressMetadataKey](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-recipientaddressmetadatakey): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=RecipientAddressMetadataKey&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
   - Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address.
   - `string RecipientAddressMetadataKey { get; set; }`
+- [RecipientEmailMetadataKey](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-recipientemailmetadatakey): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=RecipientEmailMetadataKey&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address.
+  - `string RecipientEmailMetadataKey { get; set; }`
 - [RecipientEmailMetadataKey](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-recipientemailmetadatakey): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=RecipientEmailMetadataKey&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address.
   - `string RecipientEmailMetadataKey { get; set; }`
@@ -24297,6 +24384,9 @@ Browse the published API surface by public member.
 - [SelectionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-selectionmode): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the runtime selection result, such as `requested-target` or `fallback-target`.
   - `string SelectionMode { get; }`
+- [SendAsync](cephalon-multitenancy-governance-mailgundelivery.md#member-m-cephalon-multitenancy-governance-mailgundelivery-services-imailguninvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-system-threading-cancellationtoken): `Methods` on `IMailgunInvitationDeliveryClient` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=SendAsync&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Sends one Mailgun invitation delivery message.
+  - `ValueTask<MailgunInvitationDeliveryClientResult> SendAsync(MailgunInvitationDeliveryMessage message, CancellationToken cancellationToken)`
 - [SendAsync](cephalon-multitenancy-governance-sendgriddelivery.md#member-m-cephalon-multitenancy-governance-sendgriddelivery-services-isendgridinvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-system-threading-cancellationtoken): `Methods` on `ISendGridInvitationDeliveryClient` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=SendAsync&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Sends one SendGrid invitation delivery message.
   - `ValueTask<SendGridInvitationDeliveryClientResult> SendAsync(SendGridInvitationDeliveryMessage message, CancellationToken cancellationToken)`
@@ -24315,6 +24405,9 @@ Browse the published API surface by public member.
 - [SenderId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-senderid): `Properties` on `ITenantInvitationDeliverySender` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable sender identifier used by configuration, runtime metadata, and diagnostics.
   - `string SenderId { get; }`
+- [SenderId](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-senderid): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the sender identifier used by `TenantInvitationDeliveryRequest.SenderId`.
+  - `string SenderId { get; set; }`
 - [SenderId](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-senderid): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the sender identifier used by `TenantInvitationDeliveryRequest.SenderId`.
   - `string SenderId { get; set; }`
@@ -25602,6 +25695,9 @@ Browse the published API surface by public member.
 - [StatusCallbackRoutePattern](cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-statuscallbackroutepattern): `Properties` on `SendGridInvitationDeliveryAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) [Browse](browse.html?q=StatusCallbackRoutePattern&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration&scope=members)
   - Gets or sets the ASP.NET Core route pattern used for SendGrid Event Webhook callbacks.
   - `string StatusCallbackRoutePattern { get; set; }`
+- [StatusCode](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-statuscode): `Properties` on `MailgunInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=StatusCode&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the HTTP status code returned by Mailgun when one is known.
+  - `int? StatusCode { get; }`
 - [StatusCode](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-statuscode): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=StatusCode&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets the effective HTTP status code associated with the response.
   - `int StatusCode { get; set; }`
@@ -25788,6 +25884,9 @@ Browse the published API surface by public member.
 - [StreamVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-streamversion): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the optimistic stream version assigned to the event.
   - `long StreamVersion { get; }`
+- [Subject](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-subject): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Subject&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the message subject.
+  - `string Subject { get; }`
 - [Subject](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-subject): `Properties` on `SendGridInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=Subject&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the message subject.
   - `string Subject { get; }`
@@ -25851,6 +25950,9 @@ Browse the published API surface by public member.
 - [SubjectMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch): `Fields` on `TenantGovernanceActionWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SubjectMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The matching tenant-governance action has a different subject boundary.
   - `const string SubjectMismatch`
+- [SubjectTemplate](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-subjecttemplate): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=SubjectTemplate&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the Mailgun message subject template.
+  - `string SubjectTemplate { get; set; }`
 - [SubjectTemplate](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-subjecttemplate): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=SubjectTemplate&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the SendGrid message subject template.
   - `string SubjectTemplate { get; set; }`
@@ -26029,6 +26131,9 @@ Browse the published API surface by public member.
   - The aggregate health endpoint path.
   - `string SummaryPath { get; set; }`
 - [SupportedChannels](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-supportedchannels): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SupportedChannels&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets delivery channels accepted by this sender.
+  - `IReadOnlyList<string> SupportedChannels { get; set; }`
+- [SupportedChannels](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-supportedchannels): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=SupportedChannels&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets delivery channels accepted by this sender.
   - `IReadOnlyList<string> SupportedChannels { get; set; }`
 - [SupportedChannels](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-supportedchannels): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=SupportedChannels&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
@@ -26249,6 +26354,12 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-tags): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The normalized tags attached to the matched document.
+  - `IReadOnlyList<string> Tags { get; set; }`
+- [Tags](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-tags): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Tags&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets Mailgun tags attached to the message.
+  - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-tags): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Tags&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets Mailgun message tags added through `o:tag` form fields.
   - `IReadOnlyList<string> Tags { get; set; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-tags): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the tags associated with the module.
@@ -26964,15 +27075,24 @@ Browse the published API surface by public member.
 - [TerminalOutboxCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-terminaloutboxcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TerminalOutboxCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of owned outboxes whose latest report marks the dispatch path as terminally failed.
   - `int TerminalOutboxCount { get; }`
+- [TestMode](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-testmode): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=TestMode&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets a value indicating whether Mailgun test mode should be enabled.
+  - `bool TestMode { get; }`
 - [Tests](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-tests): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tests&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a test project.
   - `const string Tests`
+- [TextBody](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-textbody): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=TextBody&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the plain-text message body.
+  - `string TextBody { get; }`
 - [TextBody](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-textbody): `Properties` on `SendGridInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=TextBody&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the plain-text message body.
   - `string TextBody { get; }`
 - [TextBody](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-textbody): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=TextBody&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
   - Gets the plain-text message body.
   - `string TextBody { get; }`
+- [TextBodyTemplate](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-textbodytemplate): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=TextBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the plain-text Mailgun message body template.
+  - `string TextBodyTemplate { get; set; }`
 - [TextBodyTemplate](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-textbodytemplate): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=TextBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the plain-text SendGrid message body template.
   - `string TextBodyTemplate { get; set; }`
@@ -27011,6 +27131,9 @@ Browse the published API surface by public member.
   - `TimeSpan? Timeout { get; }`
 - [TimeoutSeconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-timeoutseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the maximum time allowed for the HTTP delivery request.
+  - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-timeoutseconds): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets the maximum time allowed for the Mailgun API request.
   - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-timeoutseconds): `Properties` on `SendGridInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration&scope=members)
   - Gets or sets the maximum time allowed for the SendGrid API request.
@@ -27054,12 +27177,18 @@ Browse the published API surface by public member.
 - [TlsServerName](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-tlsservername): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=TlsServerName&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the TLS server name used for certificate validation when `UseTls` is enabled.
   - `string TlsServerName { get; set; }`
+- [To](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-to): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=To&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the formatted recipient address.
+  - `string To { get; }`
 - [ToAddress](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-toaddress): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=ToAddress&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
   - Gets the recipient email address.
   - `string ToAddress { get; }`
 - [ToDisplayName](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-todisplayname): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=ToDisplayName&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
   - Gets the optional recipient display name.
   - `string ToDisplayName { get; }`
+- [ToEmail](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-toemail): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=ToEmail&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets the recipient email address.
+  - `string ToEmail { get; }`
 - [ToEmail](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliverymessage-toemail): `Properties` on `SendGridInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=ToEmail&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the recipient email address.
   - `string ToEmail { get; }`
@@ -27996,6 +28125,12 @@ Browse the published API surface by public member.
 - [Value](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-result-1-value): `Properties` on `Result<T>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Value&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the typed payload value when one was supplied.
   - `T Value { get; }`
+- [Variables](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-variables): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Variables&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
+  - Gets Mailgun user variables attached to the message.
+  - `IReadOnlyDictionary<string, string> Variables { get; }`
+- [Variables](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-variables): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Variables&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
+  - Gets or sets Mailgun user variables added through `v:*` form fields.
+  - `IReadOnlyDictionary<string, string> Variables { get; set; }`
 - [VerificationCount](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-verificationcount): `Fields` on `TenantDomainOwnershipProofPollingMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key containing the number of proof verification attempts run during the polling pass.
   - `const string VerificationCount`

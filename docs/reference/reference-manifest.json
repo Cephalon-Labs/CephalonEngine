@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T20:27:06.3351147+00:00",
+  "GeneratedAtUtc": "2026-04-29T21:22:11.0797859+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -249,6 +249,14 @@
       "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
       "NamespaceCount": 3,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "Category": "Phase 8 Companion Packs",
+      "Description": "Mailgun Messages API invitation delivery sender companion package for Cephalon multi-tenancy governance workloads.",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "NamespaceCount": 3,
+      "TypeCount": 5
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -1334,6 +1342,27 @@
       "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-httpdelivery-services",
       "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-mailgundelivery-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-mailgundelivery-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-mailgundelivery-services",
+      "TypeCount": 3
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Registration",
@@ -11136,6 +11165,21 @@
       }
     },
     {
+      "DisplayName": "IMailgunInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-mailgundelivery-services-imailguninvitationdeliveryclient",
+      "Declaration": "public interface IMailgunInvitationDeliveryClient",
+      "Summary": "Sends Mailgun invitation delivery messages for the Mailgun companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IModule",
       "NamespaceName": "Cephalon.Abstractions.Modules",
       "AssemblyName": "Cephalon.Abstractions",
@@ -12933,6 +12977,66 @@
         "Fields": 0,
         "Properties": 2,
         "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "MailgunInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult",
+      "Declaration": "public sealed class MailgunInvitationDeliveryClientResult",
+      "Summary": "Describes the result returned by a Mailgun invitation delivery client.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage",
+      "Declaration": "public sealed class MailgunInvitationDeliveryMessage",
+      "Summary": "Describes a prepared Mailgun invitation delivery message.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions",
+      "Declaration": "public sealed class MailgunInvitationDeliveryOptions",
+      "Summary": "Configures Mailgun Messages API delivery for tenant invitations dispatched by the governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 21,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MailgunInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-mailgundelivery-hosting-mailguninvitationdeliveryservicecollectionextensions",
+      "Declaration": "public static class MailgunInvitationDeliveryServiceCollectionExtensions",
+      "Summary": "Adds Mailgun Messages API invitation delivery services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 1,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -18266,6 +18370,17 @@
     },
     {
       "DisplayName": "Accepted",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-accepted",
+      "Signature": "bool Accepted { get; }",
+      "Summary": "Gets a value indicating whether the Mailgun API accepted the request."
+    },
+    {
+      "DisplayName": "Accepted",
       "Category": "Methods",
       "DeclaringTypeName": "Result",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
@@ -18373,6 +18488,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-acceptedcount",
       "Signature": "long AcceptedCount { get; }",
       "Summary": "Gets the number of coordinator attempts accepted for execution."
+    },
+    {
+      "DisplayName": "AcceptedStatusCodes",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-acceptedstatuscodes",
+      "Signature": "IReadOnlyList\u003Cint\u003E AcceptedStatusCodes { get; set; }",
+      "Summary": "Gets or sets response status codes that indicate the Mailgun API accepted the request."
     },
     {
       "DisplayName": "AcceptedStatusCodes",
@@ -21224,6 +21350,28 @@
       "Summary": "Adds Kubernetes-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
     },
     {
+      "DisplayName": "AddCephalonMailgunInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "MailgunInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-hosting-mailguninvitationdeliveryservicecollectionextensions-addcephalonmailguninvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonMailgunInvitationDelivery(this IServiceCollection services, Action\u003CMailgunInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds Mailgun invitation delivery using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonMailgunInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "MailgunInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-hosting-mailguninvitationdeliveryservicecollectionextensions-addcephalonmailguninvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonMailgunInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action\u003CMailgunInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds Mailgun invitation delivery using configuration as the primary source of Messages API settings."
+    },
+    {
       "DisplayName": "AddCephalonMemcachedDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "MemcachedDependencyHealthServiceCollectionExtensions",
@@ -22982,6 +23130,17 @@
       "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-apikey",
       "Signature": "string ApiKey { get; set; }",
       "Summary": "Gets or sets the optional API key used for Elasticsearch API-key authentication."
+    },
+    {
+      "DisplayName": "ApiKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-apikey",
+      "Signature": "string ApiKey { get; set; }",
+      "Summary": "Gets or sets the Mailgun private API key used with basic authentication."
     },
     {
       "DisplayName": "ApiKey",
@@ -26722,6 +26881,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-basedelaymilliseconds",
       "Signature": "int? BaseDelayMilliseconds { get; }",
       "Summary": "Gets the base delay in milliseconds used by the retry policy."
+    },
+    {
+      "DisplayName": "BaseUrl",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-baseurl",
+      "Signature": "string BaseUrl { get; set; }",
+      "Summary": "Gets or sets the Mailgun API base URL."
     },
     {
       "DisplayName": "BaseUrl",
@@ -45247,6 +45417,17 @@
     {
       "DisplayName": "DomainName",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-domainname",
+      "Signature": "string DomainName { get; set; }",
+      "Summary": "Gets or sets the Mailgun sending domain name used in the Messages API route."
+    },
+    {
+      "DisplayName": "DomainName",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -47887,6 +48068,17 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-enabled",
+      "Signature": "bool Enabled { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the Mailgun invitation sender should be registered."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "RateLimitingOverrideSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48763,6 +48955,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-enabletenantinvitationdeliverystatusobservationendpoint",
       "Signature": "bool EnableTenantInvitationDeliveryStatusObservationEndpoint { get; set; }",
       "Summary": "Gets or sets a value indicating whether the delivery status observation read endpoint should be mapped."
+    },
+    {
+      "DisplayName": "EnableTestMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-enabletestmode",
+      "Signature": "bool EnableTestMode { get; set; }",
+      "Summary": "Gets or sets a value indicating whether Mailgun test mode should be enabled through \u0060o:testmode=yes\u0060."
     },
     {
       "DisplayName": "Encrypt",
@@ -54287,6 +54490,17 @@
       "Summary": "Gets the UTC timestamp until which the current answer remains fresh, when known."
     },
     {
+      "DisplayName": "From",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-from",
+      "Signature": "string From { get; }",
+      "Summary": "Gets the formatted sender address."
+    },
+    {
       "DisplayName": "FromAddress",
       "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
@@ -54648,6 +54862,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-localizationsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "LocalizationSettings FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Reads localization settings from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "MailgunInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Mailgun invitation delivery options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -55037,6 +55262,17 @@
     {
       "DisplayName": "FromEmail",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-fromemail",
+      "Signature": "string FromEmail { get; set; }",
+      "Summary": "Gets or sets the sender email address used in the Mailgun message."
+    },
+    {
+      "DisplayName": "FromEmail",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -55066,6 +55302,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-modulepackagereference-frommanifest-system-string-system-string",
       "Signature": "ModulePackageReference FromManifest(string manifestPath, string id)",
       "Summary": "Creates a manifest-backed package reference."
+    },
+    {
+      "DisplayName": "FromName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-fromname",
+      "Signature": "string FromName { get; set; }",
+      "Summary": "Gets or sets the optional sender display name used in the Mailgun message."
     },
     {
       "DisplayName": "FromName",
@@ -62550,6 +62797,28 @@
     {
       "DisplayName": "Headers",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; }",
+      "Summary": "Gets Mailgun custom headers attached to the message."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; set; }",
+      "Summary": "Gets or sets additional Mailgun custom headers added through \u0060h:*\u0060 form fields."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
       "DeclaringTypeName": "NewRelicTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
       "AssemblyName": "Cephalon.Observability.NewRelic",
@@ -63485,6 +63754,17 @@
     {
       "DisplayName": "HtmlBody",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-htmlbody",
+      "Signature": "string HtmlBody { get; }",
+      "Summary": "Gets the optional HTML message body."
+    },
+    {
+      "DisplayName": "HtmlBody",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -63503,6 +63783,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-htmlbody",
       "Signature": "string HtmlBody { get; }",
       "Summary": "Gets the optional HTML message body."
+    },
+    {
+      "DisplayName": "HtmlBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-htmlbodytemplate",
+      "Signature": "string HtmlBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the optional HTML Mailgun message body template."
     },
     {
       "DisplayName": "HtmlBodyTemplate",
@@ -63536,6 +63827,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-httpdelivery-hosting-httpinvitationdeliveryservicecollectionextensions-httpclientname",
       "Signature": "const string HttpClientName",
       "Summary": "The named HTTP client used by the HTTP invitation delivery sender."
+    },
+    {
+      "DisplayName": "HttpClientName",
+      "Category": "Fields",
+      "DeclaringTypeName": "MailgunInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-mailgundelivery-hosting-mailguninvitationdeliveryservicecollectionextensions-httpclientname",
+      "Signature": "const string HttpClientName",
+      "Summary": "The named HTTP client used by the Mailgun invitation delivery client."
     },
     {
       "DisplayName": "HttpClientName",
@@ -65322,6 +65624,17 @@
     {
       "DisplayName": "IncludeContextHeaders",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-includecontextheaders",
+      "Signature": "bool IncludeContextHeaders { get; set; }",
+      "Summary": "Gets or sets a value indicating whether safe Cephalon custom headers should be added to the Mailgun request."
+    },
+    {
+      "DisplayName": "IncludeContextHeaders",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -65340,6 +65653,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-includecontextheaders",
       "Signature": "bool IncludeContextHeaders { get; set; }",
       "Summary": "Gets or sets a value indicating whether safe Cephalon context headers should be added to the SMTP message."
+    },
+    {
+      "DisplayName": "IncludeContextVariables",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-includecontextvariables",
+      "Signature": "bool IncludeContextVariables { get; set; }",
+      "Summary": "Gets or sets a value indicating whether safe Cephalon user variables should be added to the Mailgun request."
     },
     {
       "DisplayName": "IncludedBehaviorIds",
@@ -75253,6 +75577,39 @@
       "Summary": "Gets or sets a value indicating whether textual response bodies should be logged."
     },
     {
+      "DisplayName": "MailgunInvitationDeliveryClientResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-ctor-system-boolean-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "MailgunInvitationDeliveryClientResult(bool accepted, int? statusCode, string providerMessageId, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a Mailgun invitation delivery client result."
+    },
+    {
+      "DisplayName": "MailgunInvitationDeliveryMessage",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-boolean",
+      "Signature": "MailgunInvitationDeliveryMessage(string messageId, string from, string to, string toEmail, string subject, string textBody, string htmlBody, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E variables, IReadOnlyDictionary\u003Cstring, string\u003E headers, bool testMode)",
+      "Summary": "Creates a prepared Mailgun invitation delivery message."
+    },
+    {
+      "DisplayName": "MailgunInvitationDeliveryOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-ctor",
+      "Signature": "MailgunInvitationDeliveryOptions()",
+      "Summary": "Initializes a new instance of the \u0060MailgunInvitationDeliveryOptions\u0060 class."
+    },
+    {
       "DisplayName": "ManagedConnectorActionPlan",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -78115,6 +78472,17 @@
     {
       "DisplayName": "MessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-messageid",
+      "Signature": "string MessageId { get; }",
+      "Summary": "Gets the deterministic Cephalon message identifier carried in Mailgun user variables."
+    },
+    {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -79288,6 +79656,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgequeryresult-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
       "Summary": "Optional operator-facing metadata captured with the query result."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional safe client metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -93256,6 +93635,17 @@
     {
       "DisplayName": "ProviderMessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-providermessageid",
+      "Signature": "string ProviderMessageId { get; }",
+      "Summary": "Gets the Mailgun message identifier when one is known."
+    },
+    {
+      "DisplayName": "ProviderMessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -93373,6 +93763,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-providermessageidheadername",
       "Signature": "string ProviderMessageIdHeaderName { get; set; }",
       "Summary": "Gets or sets the SendGrid response header that contains the provider message identifier."
+    },
+    {
+      "DisplayName": "ProviderMessageIdJsonPropertyName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-providermessageidjsonpropertyname",
+      "Signature": "string ProviderMessageIdJsonPropertyName { get; set; }",
+      "Summary": "Gets or sets the JSON property name that contains the Mailgun provider message identifier."
     },
     {
       "DisplayName": "ProviderMessageMismatch",
@@ -95940,6 +96341,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the provider-facing outcome reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "PackageSignatureTrustDecision",
       "NamespaceName": "Cephalon.Engine.Trust",
       "AssemblyName": "Cephalon.Engine",
@@ -96320,6 +96732,17 @@
       "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-recipientaddressmetadatakey",
       "Signature": "string RecipientAddressMetadataKey { get; set; }",
+      "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
+    },
+    {
+      "DisplayName": "RecipientEmailMetadataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-recipientemailmetadatakey",
+      "Signature": "string RecipientEmailMetadataKey { get; set; }",
       "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
     },
     {
@@ -107083,6 +107506,17 @@
     {
       "DisplayName": "SendAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "IMailgunInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-mailgundelivery-services-imailguninvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CMailgunInvitationDeliveryClientResult\u003E SendAsync(MailgunInvitationDeliveryMessage message, CancellationToken cancellationToken)",
+      "Summary": "Sends one Mailgun invitation delivery message."
+    },
+    {
+      "DisplayName": "SendAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "ISendGridInvitationDeliveryClient",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -107145,6 +107579,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-senderid",
       "Signature": "string SenderId { get; }",
       "Summary": "Gets the stable sender identifier used by configuration, runtime metadata, and diagnostics."
+    },
+    {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-senderid",
+      "Signature": "string SenderId { get; set; }",
+      "Summary": "Gets or sets the sender identifier used by \u0060TenantInvitationDeliveryRequest.SenderId\u0060."
     },
     {
       "DisplayName": "SenderId",
@@ -111876,6 +112321,17 @@
     {
       "DisplayName": "StatusCode",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-statuscode",
+      "Signature": "int? StatusCode { get; }",
+      "Summary": "Gets the HTTP status code returned by Mailgun when one is known."
+    },
+    {
+      "DisplayName": "StatusCode",
+      "Category": "Properties",
       "DeclaringTypeName": "ResultModel\u003CTModel\u003E",
       "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -112558,6 +113014,17 @@
     {
       "DisplayName": "Subject",
       "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-subject",
+      "Signature": "string Subject { get; }",
+      "Summary": "Gets the message subject."
+    },
+    {
+      "DisplayName": "Subject",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -112785,6 +113252,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch",
       "Signature": "const string SubjectMismatch",
       "Summary": "The matching tenant-governance action has a different subject boundary."
+    },
+    {
+      "DisplayName": "SubjectTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-subjecttemplate",
+      "Signature": "string SubjectTemplate { get; set; }",
+      "Summary": "Gets or sets the Mailgun message subject template."
     },
     {
       "DisplayName": "SubjectTemplate",
@@ -113443,6 +113921,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
       "FileName": "cephalon-multitenancy-governance-httpdelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-supportedchannels",
+      "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
+      "Summary": "Gets or sets delivery channels accepted by this sender."
+    },
+    {
+      "DisplayName": "SupportedChannels",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-supportedchannels",
       "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
       "Summary": "Gets or sets delivery channels accepted by this sender."
     },
@@ -114237,6 +114726,28 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgequerymatch-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; set; }",
       "Summary": "The normalized tags attached to the matched document."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets Mailgun tags attached to the message."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; set; }",
+      "Summary": "Gets or sets Mailgun message tags added through \u0060o:tag\u0060 form fields."
     },
     {
       "DisplayName": "Tags",
@@ -116857,6 +117368,17 @@
       "Summary": "Gets the number of owned outboxes whose latest report marks the dispatch path as terminally failed."
     },
     {
+      "DisplayName": "TestMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-testmode",
+      "Signature": "bool TestMode { get; }",
+      "Summary": "Gets a value indicating whether Mailgun test mode should be enabled."
+    },
+    {
       "DisplayName": "Tests",
       "Category": "Fields",
       "DeclaringTypeName": "ProjectRoles",
@@ -116866,6 +117388,17 @@
       "AnchorId": "member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-tests",
       "Signature": "const string Tests",
       "Summary": "Identifies a test project."
+    },
+    {
+      "DisplayName": "TextBody",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-textbody",
+      "Signature": "string TextBody { get; }",
+      "Summary": "Gets the plain-text message body."
     },
     {
       "DisplayName": "TextBody",
@@ -116888,6 +117421,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-textbody",
       "Signature": "string TextBody { get; }",
       "Summary": "Gets the plain-text message body."
+    },
+    {
+      "DisplayName": "TextBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-textbodytemplate",
+      "Signature": "string TextBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the plain-text Mailgun message body template."
     },
     {
       "DisplayName": "TextBodyTemplate",
@@ -117031,6 +117575,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-timeoutseconds",
       "Signature": "int TimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the maximum time allowed for the HTTP delivery request."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the maximum time allowed for the Mailgun API request."
     },
     {
       "DisplayName": "TimeoutSeconds",
@@ -117187,6 +117742,17 @@
       "Summary": "Gets or sets the TLS server name used for certificate validation when \u0060UseTls\u0060 is enabled."
     },
     {
+      "DisplayName": "To",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-to",
+      "Signature": "string To { get; }",
+      "Summary": "Gets the formatted recipient address."
+    },
+    {
       "DisplayName": "ToAddress",
       "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryMessage",
@@ -117207,6 +117773,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-todisplayname",
       "Signature": "string ToDisplayName { get; }",
       "Summary": "Gets the optional recipient display name."
+    },
+    {
+      "DisplayName": "ToEmail",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-toemail",
+      "Signature": "string ToEmail { get; }",
+      "Summary": "Gets the recipient email address."
     },
     {
       "DisplayName": "ToEmail",
@@ -120617,6 +121194,28 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-result-1-value",
       "Signature": "T Value { get; }",
       "Summary": "Gets the typed payload value when one was supplied."
+    },
+    {
+      "DisplayName": "Variables",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-variables",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Variables { get; }",
+      "Summary": "Gets Mailgun user variables attached to the message."
+    },
+    {
+      "DisplayName": "Variables",
+      "Category": "Properties",
+      "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+      "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-variables",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Variables { get; set; }",
+      "Summary": "Gets or sets Mailgun user variables added through \u0060v:*\u0060 form fields."
     },
     {
       "DisplayName": "VerificationCount",

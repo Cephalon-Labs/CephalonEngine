@@ -101,7 +101,7 @@ When signed verification is required, `EnableSignedEventWebhookReplayProtection`
 
 When `EnableEventWebhookEventIdIdempotency` is enabled and the governance delivery-status observation store is enabled, each translated event with `sg_event_id` uses its stable `sendgrid:{sg_event_id}` observation id as an idempotency key against `ITenantInvitationDeliveryStatusObservationStore`. A duplicate event id is skipped before the reconciler is invoked, returns `200` with `DuplicateEvents` plus a per-event `duplicate-skipped` outcome, emits diagnostic `4565`, and reports `cephalon-managed` event-id idempotency posture through reconciliation metadata and the runtime surface. Durability follows the configured observation store: in-memory stores are process-local, while the built-in file store can persist observed ids locally. If the observation store is disabled, this idempotency lane reports `not-configured`.
 
-ASP.NET Core authorization is still enabled by default and can be combined with SendGrid OAuth, gateway policy, or other host controls. Durable callback inboxes, distributed replay protection, distributed event-id ledgers, provider polling, bounce orchestration beyond status translation, dynamic-template lifecycle management, Mailgun, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, public onboarding, tenant-admin UI, and distributed/provider-backed governance stores remain later provider-pack or application-owned work.
+ASP.NET Core authorization is still enabled by default and can be combined with SendGrid OAuth, gateway policy, or other host controls. Durable callback inboxes, distributed replay protection, distributed event-id ledgers, provider polling, bounce orchestration beyond status translation, dynamic-template lifecycle management, Mailgun callback translation/signature verification, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, public onboarding, tenant-admin UI, and distributed/provider-backed governance stores remain later provider-pack or application-owned work.
 
 ## Provider references
 
@@ -114,6 +114,7 @@ ASP.NET Core authorization is still enabled by default and can be combined with 
 
 - [Cephalon.MultiTenancy.Governance](multi-tenancy-governance.md)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](multi-tenancy-governance-aspnetcore.md)
+- [Cephalon.MultiTenancy.Governance.MailgunDelivery](multi-tenancy-governance-mailgundelivery.md)
 - [Cephalon.MultiTenancy.Governance.SendGridDelivery](multi-tenancy-governance-sendgriddelivery.md)
 - [Technology packs](../technology-packs.md)
 - [Operations](../operations.md)
