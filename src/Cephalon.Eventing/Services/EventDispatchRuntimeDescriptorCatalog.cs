@@ -90,7 +90,9 @@ internal sealed class EventDispatchRuntimeDescriptorCatalog : IEventDispatchRunt
             retryScheduledCount: matchingStates.Sum(static state => state.RetryScheduledCount),
             skippedCount: matchingStates.Sum(static state => state.SkippedCount),
             retryPendingCount: matchingStates.Count(static state => state.RetryPending),
-            lastError: latestState.LastError);
+            lastError: latestState.LastError,
+            terminalFailureCount: matchingStates.Sum(static state => state.TerminalFailureCount),
+            terminalOutboxCount: matchingStates.Count(static state => state.TerminalFailure));
     }
 
     private static bool RuntimeStateBelongsToRuntime(EventDispatchRuntimeState state, string runtimeId)

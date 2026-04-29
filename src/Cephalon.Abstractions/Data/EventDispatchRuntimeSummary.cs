@@ -27,6 +27,8 @@ public sealed class EventDispatchRuntimeSummary
     /// <param name="skippedCount">The total number of <c>skipped</c> observations reported so far.</param>
     /// <param name="retryPendingCount">The number of owned outboxes whose latest report still says another retry is pending.</param>
     /// <param name="lastError">The latest operator-facing error summary when one was reported.</param>
+    /// <param name="terminalFailureCount">The total number of failed observations reported with terminal-failure posture.</param>
+    /// <param name="terminalOutboxCount">The number of owned outboxes whose latest report marks the dispatch path as terminally failed.</param>
     public EventDispatchRuntimeSummary(
         IReadOnlyList<string>? reportedOutboxIds = null,
         string? lastOutboxId = null,
@@ -41,7 +43,9 @@ public sealed class EventDispatchRuntimeSummary
         int retryScheduledCount = 0,
         int skippedCount = 0,
         int retryPendingCount = 0,
-        string? lastError = null)
+        string? lastError = null,
+        int terminalFailureCount = 0,
+        int terminalOutboxCount = 0)
     {
         if (lastAttempt < 0)
         {
@@ -78,6 +82,16 @@ public sealed class EventDispatchRuntimeSummary
             throw new ArgumentOutOfRangeException(nameof(retryPendingCount), retryPendingCount, "Retry-pending count must be greater than or equal to 0.");
         }
 
+        if (terminalFailureCount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(terminalFailureCount), terminalFailureCount, "Terminal-failure count must be greater than or equal to 0.");
+        }
+
+        if (terminalOutboxCount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(terminalOutboxCount), terminalOutboxCount, "Terminal outbox count must be greater than or equal to 0.");
+        }
+
         ReportedOutboxIds = Normalize(reportedOutboxIds);
         LastOutboxId = string.IsNullOrWhiteSpace(lastOutboxId) ? null : lastOutboxId.Trim();
         LastChannelId = string.IsNullOrWhiteSpace(lastChannelId) ? null : lastChannelId.Trim();
@@ -92,6 +106,8 @@ public sealed class EventDispatchRuntimeSummary
         SkippedCount = skippedCount;
         RetryPendingCount = retryPendingCount;
         LastError = string.IsNullOrWhiteSpace(lastError) ? null : lastError.Trim();
+        TerminalFailureCount = terminalFailureCount;
+        TerminalOutboxCount = terminalOutboxCount;
     }
 
     /// <summary>
@@ -160,6 +176,16 @@ public sealed class EventDispatchRuntimeSummary
     public int RetryPendingCount { get; }
 
     /// <summary>
+    /// Gets the total number of failed observations reported with terminal-failure posture.
+    /// </summary>
+    public int TerminalFailureCount { get; }
+
+    /// <summary>
+    /// Gets the number of owned outboxes whose latest report marks the dispatch path as terminally failed.
+    /// </summary>
+    public int TerminalOutboxCount { get; }
+
+    /// <summary>
     /// Gets the latest operator-facing error summary when one was reported.
     /// </summary>
     public string? LastError { get; }
@@ -178,6 +204,11 @@ public sealed class EventDispatchRuntimeSummary
     /// Gets a value indicating whether the dispatch runtime has reported any observations yet.
     /// </summary>
     public bool HasReports => TotalReports > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether the dispatch runtime has reported any terminal failures.
+    /// </summary>
+    public bool HasTerminalFailures => TerminalFailureCount > 0 || TerminalOutboxCount > 0;
 
     private static string[] Normalize(IReadOnlyList<string>? values)
     {

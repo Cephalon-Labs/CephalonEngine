@@ -2005,6 +2005,17 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(states);
             })
             .WithName("GetCephalonEventDispatches");
+        engineGroup.MapGet("/event-dispatches/terminal-failures", (HttpContext httpContext) =>
+            {
+                var states = httpContext.RequestServices
+                    .GetService<IEventDispatchRuntimeCatalog>()?
+                    .States
+                    .Where(static state => state.TerminalFailure)
+                    .ToArray() ?? [];
+
+                return Results.Ok(states);
+            })
+            .WithName("GetCephalonTerminalEventDispatchFailures");
         engineGroup.MapGet("/event-dispatches/{outboxId}", (string outboxId, HttpContext httpContext) =>
             {
                 var state = httpContext.RequestServices

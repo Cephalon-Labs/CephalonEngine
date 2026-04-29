@@ -16,6 +16,7 @@ namespace Cephalon.Abstractions.Data;
 /// <param name="SkippedCount">The number of <c>skipped</c> observations reported so far.</param>
 /// <param name="LastError">The last operator-facing error summary when a failure was reported.</param>
 /// <param name="Metadata">The operator-facing metadata captured by the latest report.</param>
+/// <param name="TerminalFailureCount">The number of failed observations reported with terminal-failure posture so far.</param>
 public sealed record EventDispatchRuntimeState(
     string OutboxId,
     string? LastChannelId,
@@ -29,7 +30,8 @@ public sealed record EventDispatchRuntimeState(
     int RetryScheduledCount,
     int SkippedCount,
     string? LastError,
-    IReadOnlyDictionary<string, string> Metadata)
+    IReadOnlyDictionary<string, string> Metadata,
+    int TerminalFailureCount = 0)
 {
     /// <summary>
     /// Gets the total number of observations reported for this dispatch path.
@@ -40,4 +42,15 @@ public sealed record EventDispatchRuntimeState(
     /// Gets a value indicating whether the latest report says another retry attempt is pending.
     /// </summary>
     public bool RetryPending => string.Equals(LastOutcome, "retry-scheduled", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets a value indicating whether the latest report marks the dispatch path as terminally failed.
+    /// </summary>
+    public bool TerminalFailure =>
+        string.Equals(LastOutcome, "failed", StringComparison.OrdinalIgnoreCase) &&
+        (IsTrue(Metadata, "terminalFailure") || IsTrue(Metadata, "retryExhausted"));
+
+    private static bool IsTrue(IReadOnlyDictionary<string, string> metadata, string key) =>
+        metadata.TryGetValue(key, out var value) &&
+        string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
 }

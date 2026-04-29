@@ -75,7 +75,9 @@ public sealed class Phase8ContractTests
             retryScheduledCount: 1,
             skippedCount: 0,
             retryPendingCount: 1,
-            lastError: " Retrying staged dispatch. ");
+            lastError: " Retrying staged dispatch. ",
+            terminalFailureCount: 1,
+            terminalOutboxCount: 0);
         var descriptor = new EventDispatchRuntimeDescriptor(
             id: "wolverine-dispatch-loop",
             displayName: "Wolverine Dispatch Loop",
@@ -99,6 +101,35 @@ public sealed class Phase8ContractTests
         Assert.Equal(3, descriptor.Summary.LastAttempt);
         Assert.Equal(5, descriptor.Summary.TotalReports);
         Assert.Equal(1, descriptor.Summary.RetryPendingCount);
+        Assert.Equal(1, descriptor.Summary.TerminalFailureCount);
+        Assert.Equal(0, descriptor.Summary.TerminalOutboxCount);
+        Assert.True(descriptor.Summary.HasTerminalFailures);
+    }
+
+    [Fact]
+    public void EventDispatchRuntimeStateRequiresFailedOutcomeForTerminalFailure()
+    {
+        var state = new EventDispatchRuntimeState(
+            OutboxId: "entity-framework-outbox",
+            LastChannelId: "catalog-events",
+            LastOutcome: "succeeded",
+            LastObservedAtUtc: new DateTimeOffset(2026, 04, 11, 11, 15, 00, TimeSpan.Zero),
+            LastMessageId: "evt-700",
+            LastAttempt: 3,
+            StartedCount: 0,
+            SucceededCount: 1,
+            FailedCount: 0,
+            RetryScheduledCount: 0,
+            SkippedCount: 0,
+            LastError: null,
+            Metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["retryExhausted"] = "true",
+                ["terminalFailure"] = "true"
+            },
+            TerminalFailureCount: 0);
+
+        Assert.False(state.TerminalFailure);
     }
 
     [Fact]

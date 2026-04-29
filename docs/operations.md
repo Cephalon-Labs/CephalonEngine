@@ -1562,6 +1562,39 @@ Current note:
 - this is a descriptive runtime answer for processed-message or idempotency-store surfaces, not a claim that Cephalon already ships a full subscription-dispatch runtime
 - invalid inbox source-module ownership fails at build time instead of leaking broken operator metadata
 
+## Event dispatch runtime surfaces
+
+`GET /engine/event-dispatch-runtimes` exposes named dispatch-runtime descriptors when an eventing
+pack contributes the abstraction-level descriptor catalog. `GET /engine/event-dispatches` exposes
+the latest per-outbox dispatch-state reports when an eventing pack contributes the abstraction-level
+runtime catalog.
+
+Current payload highlights:
+
+- dispatch-runtime descriptors carry the runtime id, display name, description, ownership metadata,
+  owned outbox ids, and an aggregate `Summary` once live dispatch reports exist
+- dispatch-runtime summaries include total report counts, retry-pending outbox count,
+  terminal-failure observation count, terminal outbox count, and `HasTerminalFailures`
+- dispatch states carry the outbox id, latest channel id, latest outcome, observation timestamp,
+  message id, attempt, started/succeeded/failed/retry-scheduled/skipped counters, retry-pending
+  posture, terminal-failure posture, terminal-failure count, optional error, and safe metadata
+- `GET /engine/event-dispatch-runtimes/{dispatchRuntimeId}` narrows the descriptor catalog to one
+  runtime and returns `404` when no matching descriptor exists
+- `GET /engine/event-dispatches/{outboxId}` narrows the state catalog to one outbox path and
+  returns `404` when no state has been reported for that path
+- `GET /engine/event-dispatches/terminal-failures` filters the same state catalog to outbox paths
+  whose latest report marks the dispatch path as terminally failed
+- the same descriptor and state catalogs are also available through `/engine/snapshot` in
+  `EventDispatchRuntimes` and `EventDispatchStates` when operators want one merged runtime answer
+
+Current note:
+
+- terminal-failure posture is an operator/drill-down answer over dispatch reports and supported
+  dispatch-store state; it is not a broker-specific dead-letter queue, durable inbox, generic
+  inbound broker-consumption, downstream delivery-completion, or cross-node exactly-once claim
+- outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
+  completion and terminal dispatch failure remain separate event-dispatch runtime answers
+
 ## Event publication action and runtime-state surfaces
 
 `POST /engine/event-publications` requests one bounded event publication when an eventing pack

@@ -37,6 +37,9 @@ internal sealed class EventingDispatchRuntimeCatalogSurfaceContributor(
             ["reportedSkippedCount"] = runtime.Summary.SkippedCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["reportedTotalCount"] = runtime.Summary.TotalReports.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["reportedRetryPendingCount"] = runtime.Summary.RetryPendingCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedTerminalFailureCount"] = runtime.Summary.TerminalFailureCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedTerminalOutboxCount"] = runtime.Summary.TerminalOutboxCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedHasTerminalFailures"] = runtime.Summary.HasTerminalFailures ? "true" : "false",
             ["runtimeState"] = runtime.Summary.HasReports ? "reported" : "not-reported"
         };
 

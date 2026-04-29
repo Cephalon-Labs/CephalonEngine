@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T09:14:06.1965387+00:00",
+  "GeneratedAtUtc": "2026-04-29T09:53:07.896485+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -7751,7 +7751,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 15,
+        "Properties": 17,
         "Methods": 0
       }
     },
@@ -7766,7 +7766,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 21,
         "Methods": 0
       }
     },
@@ -48042,8 +48042,8 @@
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "EventDispatchRuntimeState(string OutboxId, string LastChannelId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-int32",
+      "Signature": "EventDispatchRuntimeState(string OutboxId, string LastChannelId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata, int TerminalFailureCount)",
       "Summary": "Describes the latest operator-facing runtime state reported for one durable event-dispatch path."
     },
     {
@@ -48053,8 +48053,8 @@
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string",
-      "Signature": "EventDispatchRuntimeSummary(IReadOnlyList\u003Cstring\u003E reportedOutboxIds, string lastOutboxId, string lastChannelId, string lastOutcome, DateTimeOffset? lastObservedAtUtc, string lastMessageId, int lastAttempt, int startedCount, int succeededCount, int failedCount, int retryScheduledCount, int skippedCount, int retryPendingCount, string lastError)",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-int32-system-int32",
+      "Signature": "EventDispatchRuntimeSummary(IReadOnlyList\u003Cstring\u003E reportedOutboxIds, string lastOutboxId, string lastChannelId, string lastOutcome, DateTimeOffset? lastObservedAtUtc, string lastMessageId, int lastAttempt, int startedCount, int succeededCount, int failedCount, int retryScheduledCount, int skippedCount, int retryPendingCount, string lastError, int terminalFailureCount, int terminalOutboxCount)",
       "Summary": "Creates a new aggregate runtime summary."
     },
     {
@@ -59639,6 +59639,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningstatus-hastasktopologymismatch",
       "Signature": "bool HasTaskTopologyMismatch { get; set; }",
       "Summary": "Gets a value indicating whether task topology currently reports one declared-versus-observed mismatch."
+    },
+    {
+      "DisplayName": "HasTerminalFailures",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-hasterminalfailures",
+      "Signature": "bool HasTerminalFailures { get; }",
+      "Summary": "Gets a value indicating whether the dispatch runtime has reported any terminal failures."
     },
     {
       "DisplayName": "HasTransportIdentity",
@@ -112365,6 +112376,50 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-terminalfailure",
       "Signature": "const string TerminalFailure",
       "Summary": "Identifies whether the latest failure should stop re-entering pending-dispatch reads."
+    },
+    {
+      "DisplayName": "TerminalFailure",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-terminalfailure",
+      "Signature": "bool TerminalFailure { get; }",
+      "Summary": "Gets a value indicating whether the latest report marks the dispatch path as terminally failed."
+    },
+    {
+      "DisplayName": "TerminalFailureCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-terminalfailurecount",
+      "Signature": "int TerminalFailureCount { get; set; }",
+      "Summary": "The number of failed observations reported with terminal-failure posture so far."
+    },
+    {
+      "DisplayName": "TerminalFailureCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-terminalfailurecount",
+      "Signature": "int TerminalFailureCount { get; }",
+      "Summary": "Gets the total number of failed observations reported with terminal-failure posture."
+    },
+    {
+      "DisplayName": "TerminalOutboxCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-terminaloutboxcount",
+      "Signature": "int TerminalOutboxCount { get; }",
+      "Summary": "Gets the number of owned outboxes whose latest report marks the dispatch path as terminally failed."
     },
     {
       "DisplayName": "Tests",

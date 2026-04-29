@@ -45909,12 +45909,12 @@ public sealed class EventDispatchRuntimeState
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-int32"></a>
 
 ##### `EventDispatchRuntimeState`
 
 ```csharp
-EventDispatchRuntimeState(string OutboxId, string LastChannelId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)
+EventDispatchRuntimeState(string OutboxId, string LastChannelId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary<string, string> Metadata, int TerminalFailureCount)
 ```
 
 Describes the latest operator-facing runtime state reported for one durable event-dispatch path.
@@ -45933,6 +45933,7 @@ Parameters:
 - `SkippedCount`: The number of `skipped` observations reported so far.
 - `LastError`: The last operator-facing error summary when a failure was reported.
 - `Metadata`: The operator-facing metadata captured by the latest report.
+- `TerminalFailureCount`: The number of failed observations reported with terminal-failure posture so far.
 
 #### Properties
 
@@ -46076,6 +46077,26 @@ int SucceededCount { get; set; }
 
 The number of `succeeded` observations reported so far.
 
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-terminalfailure"></a>
+
+##### `TerminalFailure`
+
+```csharp
+bool TerminalFailure { get; }
+```
+
+Gets a value indicating whether the latest report marks the dispatch path as terminally failed.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-terminalfailurecount"></a>
+
+##### `TerminalFailureCount`
+
+```csharp
+int TerminalFailureCount { get; set; }
+```
+
+The number of failed observations reported with terminal-failure posture so far.
+
 <a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-totalreports"></a>
 
 ##### `TotalReports`
@@ -46099,12 +46120,12 @@ public sealed class EventDispatchRuntimeSummary
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-eventdispatchruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-eventdispatchruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-int32-system-int32"></a>
 
 ##### `EventDispatchRuntimeSummary`
 
 ```csharp
-EventDispatchRuntimeSummary(IReadOnlyList<string> reportedOutboxIds, string lastOutboxId, string lastChannelId, string lastOutcome, DateTimeOffset? lastObservedAtUtc, string lastMessageId, int lastAttempt, int startedCount, int succeededCount, int failedCount, int retryScheduledCount, int skippedCount, int retryPendingCount, string lastError)
+EventDispatchRuntimeSummary(IReadOnlyList<string> reportedOutboxIds, string lastOutboxId, string lastChannelId, string lastOutcome, DateTimeOffset? lastObservedAtUtc, string lastMessageId, int lastAttempt, int startedCount, int succeededCount, int failedCount, int retryScheduledCount, int skippedCount, int retryPendingCount, string lastError, int terminalFailureCount, int terminalOutboxCount)
 ```
 
 Creates a new aggregate runtime summary.
@@ -46124,6 +46145,8 @@ Parameters:
 - `skippedCount`: The total number of `skipped` observations reported so far.
 - `retryPendingCount`: The number of owned outboxes whose latest report still says another retry is pending.
 - `lastError`: The latest operator-facing error summary when one was reported.
+- `terminalFailureCount`: The total number of failed observations reported with terminal-failure posture.
+- `terminalOutboxCount`: The number of owned outboxes whose latest report marks the dispatch path as terminally failed.
 
 #### Properties
 
@@ -46156,6 +46179,16 @@ bool HasReports { get; }
 ```
 
 Gets a value indicating whether the dispatch runtime has reported any observations yet.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-hasterminalfailures"></a>
+
+##### `HasTerminalFailures`
+
+```csharp
+bool HasTerminalFailures { get; }
+```
+
+Gets a value indicating whether the dispatch runtime has reported any terminal failures.
 
 <a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastattempt"></a>
 
@@ -46296,6 +46329,26 @@ int SucceededCount { get; }
 ```
 
 Gets the total number of `succeeded` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-terminalfailurecount"></a>
+
+##### `TerminalFailureCount`
+
+```csharp
+int TerminalFailureCount { get; }
+```
+
+Gets the total number of failed observations reported with terminal-failure posture.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-terminaloutboxcount"></a>
+
+##### `TerminalOutboxCount`
+
+```csharp
+int TerminalOutboxCount { get; }
+```
+
+Gets the number of owned outboxes whose latest report marks the dispatch path as terminally failed.
 
 <a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-totalreports"></a>
 

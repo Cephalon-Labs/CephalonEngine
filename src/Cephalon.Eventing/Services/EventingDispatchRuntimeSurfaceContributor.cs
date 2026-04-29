@@ -126,6 +126,8 @@ internal sealed class EventingDispatchRuntimeSurfaceContributor(
             metadata["skippedCount"] = state.SkippedCount.ToString(CultureInfo.InvariantCulture);
             metadata["totalReports"] = state.TotalReports.ToString(CultureInfo.InvariantCulture);
             metadata["retryPending"] = state.RetryPending ? "true" : "false";
+            metadata["terminalFailure"] = state.TerminalFailure ? "true" : "false";
+            metadata["terminalFailureCount"] = state.TerminalFailureCount.ToString(CultureInfo.InvariantCulture);
             if (!string.IsNullOrWhiteSpace(state.LastError))
             {
                 metadata["lastError"] = state.LastError;

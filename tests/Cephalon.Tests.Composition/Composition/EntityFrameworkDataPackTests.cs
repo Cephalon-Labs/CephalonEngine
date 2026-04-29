@@ -1173,6 +1173,38 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("outbox-backed-publisher", dispatchEntry.Metadata["reported.publisherId"]);
         Assert.Equal("2026-04-04T12:06:00.0000000+00:00", dispatchEntry.Metadata["reported.nextRetryAtUtc"]);
         Assert.Equal("Broker temporarily unavailable", dispatchEntry.Metadata["lastError"]);
+
+        await reporter.ReportAsync(new EventDispatchExecutionReport(
+            outboxId: "entity-framework-outbox",
+            channelId: "catalog-events",
+            outcome: EventDispatchExecutionOutcomes.Failed,
+            observedAtUtc: new DateTimeOffset(2026, 04, 04, 12, 8, 0, TimeSpan.Zero),
+            messageId: "evt-020",
+            attempt: 3,
+            error: "Dispatch retry budget exhausted.",
+            metadata: new Dictionary<string, string>
+            {
+                ["publisherId"] = "outbox-backed-publisher",
+                [EventDispatchRuntimeMetadataKeys.RetryOutcome] = "max-attempts-exhausted",
+                [EventDispatchRuntimeMetadataKeys.RetryExhausted] = "true",
+                [EventDispatchRuntimeMetadataKeys.TerminalFailure] = "true"
+            }));
+
+        var terminalState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal(EventDispatchExecutionOutcomes.Failed, terminalState.LastOutcome);
+        Assert.False(terminalState.RetryPending);
+        Assert.True(terminalState.TerminalFailure);
+        Assert.Equal(1, terminalState.TerminalFailureCount);
+
+        eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal("failed", dispatchEntry.Metadata["lastOutcome"]);
+        Assert.Equal("false", dispatchEntry.Metadata["retryPending"]);
+        Assert.Equal("true", dispatchEntry.Metadata["terminalFailure"]);
+        Assert.Equal("1", dispatchEntry.Metadata["terminalFailureCount"]);
+        Assert.Equal("max-attempts-exhausted", dispatchEntry.Metadata["reported.retryOutcome"]);
+        Assert.Equal("true", dispatchEntry.Metadata["reported.terminalFailure"]);
     }
 
     [Fact]

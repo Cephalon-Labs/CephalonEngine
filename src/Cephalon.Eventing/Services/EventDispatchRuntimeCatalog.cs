@@ -79,6 +79,8 @@ internal sealed class EventDispatchRuntimeCatalog(
         var metadata = report.Metadata.Count == 0
             ? EmptyMetadata
             : new Dictionary<string, string>(report.Metadata, StringComparer.OrdinalIgnoreCase);
+        var terminalFailure = string.Equals(normalizedOutcome, EventDispatchExecutionOutcomes.Failed, StringComparison.Ordinal) &&
+            EventDispatchRuntimeMetadataKeys.IsTerminalFailure(metadata);
 
         lock (gate)
         {
@@ -131,6 +133,9 @@ internal sealed class EventDispatchRuntimeCatalog(
                     LastMessageId = report.MessageId,
                     LastAttempt = report.Attempt,
                     FailedCount = current.FailedCount + 1,
+                    TerminalFailureCount = terminalFailure
+                        ? current.TerminalFailureCount + 1
+                        : current.TerminalFailureCount,
                     LastError = report.Error,
                     Metadata = metadata
                 },

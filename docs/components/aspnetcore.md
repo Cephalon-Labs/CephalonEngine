@@ -34,7 +34,7 @@
 - `/engine/database-roles` when the engine-owned database-role catalog is active
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
-- `/engine/event-dispatch-runtimes` and `/engine/event-dispatches` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
+- `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, and `/engine/event-dispatches/terminal-failures` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
 - `POST /engine/event-publications` when eventing packs register the abstraction-level publication dispatcher action seam
 - `/engine/event-publications/runtime` when eventing packs register the abstraction-level publication runtime-state catalog
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
@@ -482,8 +482,11 @@ for, and a canonical aggregate `Summary` once live reports exist. `/engine/outbo
 the effective `DispatchPolicy` object per outbox so the same ownership answer is visible from the
 engine-owned outbox catalog. `/engine/event-dispatches` and `/engine/event-dispatches/{outboxId}`
 remain the per-outbox detail surface, publishing the latest live dispatch state per outbox path,
-including reported outcome, retry intent, timestamps, and totals from
-`IEventDispatchRuntimeReporter`. Those same answers also flow into `/engine/snapshot` as
+including reported outcome, retry intent, terminal-failure posture, timestamps, and totals from
+`IEventDispatchRuntimeReporter`. `/engine/event-dispatches/terminal-failures` filters that same
+catalog to outbox paths whose latest report is terminally failed, so operators do not have to parse
+`reported.*` metadata to find exhausted dispatch paths. Those same answers also flow into
+`/engine/snapshot` as
 `EventDispatchRuntimes` and `EventDispatchStates`, which keeps operator tooling aligned across the
 host route surface and the broader runtime snapshot without forcing adapter packs to re-aggregate
 state by hand.

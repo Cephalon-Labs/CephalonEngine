@@ -65,6 +65,7 @@ public sealed class EventDispatchHostingTests
         var runtimeDescriptor = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor>("/engine/event-dispatch-runtimes/wolverine-dispatch-loop");
         var outboxes = await client.GetFromJsonAsync<OutboxDescriptor[]>("/engine/outboxes");
         var initialStates = await client.GetFromJsonAsync<EventDispatchRuntimeState[]>("/engine/event-dispatches");
+        var initialTerminalFailures = await client.GetFromJsonAsync<EventDispatchRuntimeState[]>("/engine/event-dispatches/terminal-failures");
         var missingStateResponse = await client.GetAsync("/engine/event-dispatches/entity-framework-outbox");
 
         Assert.NotNull(runtimeDescriptors);
@@ -86,6 +87,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("wolverine-dispatch-loop", outbox.DispatchPolicy.RuntimeId);
         Assert.NotNull(initialStates);
         Assert.Empty(initialStates);
+        Assert.NotNull(initialTerminalFailures);
+        Assert.Empty(initialTerminalFailures);
         Assert.Equal(HttpStatusCode.NotFound, missingStateResponse.StatusCode);
 
         var reporter = app.Services.GetRequiredService<IEventDispatchRuntimeReporter>();
@@ -138,6 +141,62 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("wolverine-dispatch-loop", snapshot.EventDispatchRuntimes[0].Id);
         Assert.Equal(1, snapshot.EventDispatchRuntimes[0].Summary.TotalReports);
         Assert.Equal("entity-framework-outbox", snapshot.EventDispatchStates[0].OutboxId);
+
+        await reporter.ReportAsync(new EventDispatchExecutionReport(
+            outboxId: "entity-framework-outbox",
+            channelId: "catalog-events",
+            outcome: EventDispatchExecutionOutcomes.Failed,
+            observedAtUtc: new DateTimeOffset(2026, 04, 11, 09, 50, 00, TimeSpan.Zero),
+            messageId: "evt-900",
+            attempt: 3,
+            error: "Dispatch retry budget exhausted.",
+            metadata: new Dictionary<string, string>
+            {
+                ["publisherId"] = "wolverine-dispatch-loop",
+                ["dispatchBridge"] = "wolverine-managed",
+                [EventDispatchRuntimeMetadataKeys.RetryPolicy] = "bounded-fixed-delay",
+                [EventDispatchRuntimeMetadataKeys.RetryMaxAttempts] = "3",
+                [EventDispatchRuntimeMetadataKeys.RetryDelaySeconds] = "20",
+                [EventDispatchRuntimeMetadataKeys.RetryOutcome] = "max-attempts-exhausted",
+                [EventDispatchRuntimeMetadataKeys.RetryExhausted] = "true",
+                [EventDispatchRuntimeMetadataKeys.TerminalFailure] = "true"
+            }));
+
+        var terminalFailures = await client.GetFromJsonAsync<EventDispatchRuntimeState[]>("/engine/event-dispatches/terminal-failures");
+        var terminalState = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
+        var terminalRuntimeDescriptor = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor>("/engine/event-dispatch-runtimes/wolverine-dispatch-loop");
+        var terminalEventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        var terminalSnapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(terminalFailures);
+        var terminalFailure = Assert.Single(terminalFailures);
+        Assert.Equal("entity-framework-outbox", terminalFailure.OutboxId);
+        Assert.True(terminalFailure.TerminalFailure);
+        Assert.Equal(1, terminalFailure.TerminalFailureCount);
+        Assert.False(terminalFailure.RetryPending);
+        Assert.NotNull(terminalState);
+        Assert.True(terminalState.TerminalFailure);
+        Assert.Equal("max-attempts-exhausted", terminalState.Metadata["retryOutcome"]);
+        Assert.NotNull(terminalRuntimeDescriptor);
+        Assert.Equal(2, terminalRuntimeDescriptor.Summary.TotalReports);
+        Assert.Equal(1, terminalRuntimeDescriptor.Summary.TerminalFailureCount);
+        Assert.Equal(1, terminalRuntimeDescriptor.Summary.TerminalOutboxCount);
+        Assert.True(terminalRuntimeDescriptor.Summary.HasTerminalFailures);
+        Assert.Equal(0, terminalRuntimeDescriptor.Summary.RetryPendingCount);
+        Assert.NotNull(terminalEventingSurfaces);
+        var terminalDispatchSurface = Assert.Single(terminalEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var terminalDispatchEntry = Assert.Single(terminalDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal("true", terminalDispatchEntry.Metadata["terminalFailure"]);
+        Assert.Equal("1", terminalDispatchEntry.Metadata["terminalFailureCount"]);
+        var terminalRuntimeSurface = Assert.Single(terminalEventingSurfaces, surface => surface.SurfaceId == "event-dispatch-runtimes");
+        var terminalRuntimeEntry = Assert.Single(terminalRuntimeSurface.Entries, entry => entry.Id == "wolverine-dispatch-loop");
+        Assert.Equal("1", terminalRuntimeEntry.Metadata["reportedTerminalFailureCount"]);
+        Assert.Equal("1", terminalRuntimeEntry.Metadata["reportedTerminalOutboxCount"]);
+        Assert.Equal("true", terminalRuntimeEntry.Metadata["reportedHasTerminalFailures"]);
+        Assert.NotNull(terminalSnapshot);
+        Assert.Equal(1, terminalSnapshot.EventDispatchRuntimes[0].Summary.TerminalFailureCount);
+        Assert.Equal(1, terminalSnapshot.EventDispatchRuntimes[0].Summary.TerminalOutboxCount);
+        Assert.True(terminalSnapshot.EventDispatchStates[0].TerminalFailure);
     }
 
     [Fact]
