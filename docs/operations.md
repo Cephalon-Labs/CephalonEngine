@@ -1639,6 +1639,9 @@ Current payload highlights:
   `correlationId` query values, generates safe defaults when they are absent, returns the
   `KnowledgeIndexingResult` for the replacement run, and returns `404` when indexing is not active
   or the collection is not registered
+- opt-in background reindexing uses the same catalog and indexer path, records
+  `trigger = retrieval-background-scheduler`, `scheduler`, `schedulerIterationId`, collection
+  scope, startup-run, delay, and interval metadata, and never introduces a separate scheduler route
 - the same index-state catalog is also available through `/engine/snapshot` in `KnowledgeIndexes`
   when operators want one merged runtime answer
 
@@ -1650,6 +1653,9 @@ Current note:
 - the indexer implementation and query write path remain owned by the selected retrieval pack
   through `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and registered
   `IKnowledgeDocumentProvider` services
+- `RetrievalOptions.EnableBackgroundReindexing` registers an opt-in generic-host scheduler only
+  when ingestion is enabled; empty `BackgroundReindexCollectionIds` means all registered
+  collections, while configured ids narrow the scheduler to matching registered collections
 
 ## Authorization policy surface
 
@@ -1707,6 +1713,9 @@ Current `Cephalon.Retrieval` highlights:
 - `indexingOwnership` reports `cephalon-managed`, `awaiting-provider`, or `not-configured` so missing document providers do not look like a ready index
 - `queryOwnership` reports `cephalon-managed`, `awaiting-index`, `awaiting-provider`, or `not-configured` so query readiness stays separate from collection registration
 - `runtimeState`, `freshnessState`, `documentCount`, `queryCount`, latest index outcome fields, and latest query match counts are projected through `/engine/technology-surfaces` and `/engine/snapshot`
+- `backgroundReindexingEnabled`, `backgroundReindexingScheduled`,
+  `backgroundReindexingOwnership`, `backgroundReindexingCollectionScope`, configured collection
+  count, startup-run, delay, and interval metadata are projected beside the index/query posture
 - the same typed index-state answer is also available through `/engine/knowledge-indexes*` and
   `snapshot.KnowledgeIndexes`, so operators do not need to parse technology-surface metadata when
   they only need collection index posture
@@ -1714,7 +1723,7 @@ Current `Cephalon.Retrieval` highlights:
   `POST /engine/knowledge-indexes/{collectionId}/reindex`; the route records the supplied or
   generated run id, actor, correlation id, and safe trigger metadata on the same index-state answer
 - `lastQueryFingerprint` and `lastQueryLength` are reported instead of raw query text so operator introspection can correlate activity without leaking user prompts or private search terms
-- this is a Cephalon-managed lexical in-process baseline; vector search, embeddings, durable search storage, distributed indexes, rerankers, provider-specific search engines, and background reindex scheduling or automation stay outside the current compatibility promise until a package owns them explicitly
+- this is a Cephalon-managed lexical in-process baseline with opt-in in-process freshness scheduling; vector search, embeddings, durable search storage, distributed indexes, rerankers, provider-specific search engines, distributed scheduler coordination, and leader-election semantics stay outside the current compatibility promise until a package owns them explicitly
 
 ## Trust surface
 

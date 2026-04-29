@@ -40,6 +40,36 @@ Creates retrieval options with the default host-owned features enabled.
 
 #### Properties
 
+<a id="member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexcollectionids"></a>
+
+##### `BackgroundReindexCollectionIds`
+
+```csharp
+IList<string> BackgroundReindexCollectionIds { get; }
+```
+
+Gets the optional collection ids included in background reindexing. When empty, every registered collection is included.
+
+<a id="member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexinitialdelayseconds"></a>
+
+##### `BackgroundReindexInitialDelaySeconds`
+
+```csharp
+int BackgroundReindexInitialDelaySeconds { get; set; }
+```
+
+Gets or sets the startup delay, in seconds, before the first background reindex run.
+
+<a id="member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexintervalseconds"></a>
+
+##### `BackgroundReindexIntervalSeconds`
+
+```csharp
+int BackgroundReindexIntervalSeconds { get; set; }
+```
+
+Gets or sets the interval, in seconds, between background reindex runs. Values less than one disable repeated runs after the optional startup run.
+
 <a id="member-p-cephalon-retrieval-configuration-retrievaloptions-collections"></a>
 
 ##### `Collections`
@@ -59,6 +89,16 @@ int DefaultQueryLimit { get; set; }
 ```
 
 Gets or sets the default maximum number of matches returned when a query request does not choose one explicitly.
+
+<a id="member-p-cephalon-retrieval-configuration-retrievaloptions-enablebackgroundreindexing"></a>
+
+##### `EnableBackgroundReindexing`
+
+```csharp
+bool EnableBackgroundReindexing { get; set; }
+```
+
+Gets or sets a value indicating whether Cephalon should run the opt-in background reindex scheduler.
 
 <a id="member-p-cephalon-retrieval-configuration-retrievaloptions-enableingestion"></a>
 
@@ -99,6 +139,16 @@ int MaximumQueryLimit { get; set; }
 ```
 
 Gets or sets the upper bound applied to query result limits.
+
+<a id="member-p-cephalon-retrieval-configuration-retrievaloptions-runbackgroundreindexonstartup"></a>
+
+##### `RunBackgroundReindexOnStartup`
+
+```csharp
+bool RunBackgroundReindexOnStartup { get; set; }
+```
+
+Gets or sets a value indicating whether the scheduler should run once when the host starts.
 
 <a id="namespace-cephalon-retrieval-registration"></a>
 

@@ -2235,6 +2235,15 @@ Browse the published API surface by public member.
 - [BackgroundProofPollingOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-backgroundproofpollingownership): `Fields` on `TenantDomainOwnershipProofVerificationMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=BackgroundProofPollingOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key for automatic background proof polling ownership.
   - `const string BackgroundProofPollingOwnership`
+- [BackgroundReindexCollectionIds](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexcollectionids): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=BackgroundReindexCollectionIds&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
+  - Gets the optional collection ids included in background reindexing. When empty, every registered collection is included.
+  - `IList<string> BackgroundReindexCollectionIds { get; }`
+- [BackgroundReindexInitialDelaySeconds](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexinitialdelayseconds): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=BackgroundReindexInitialDelaySeconds&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
+  - Gets or sets the startup delay, in seconds, before the first background reindex run.
+  - `int BackgroundReindexInitialDelaySeconds { get; set; }`
+- [BackgroundReindexIntervalSeconds](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexintervalseconds): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=BackgroundReindexIntervalSeconds&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background reindex runs. Values less than one disable repeated runs after the optional startup run.
+  - `int BackgroundReindexIntervalSeconds { get; set; }`
 - [BackgroundRetryDisabled](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystates-backgroundretrydisabled): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=BackgroundRetryDisabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth allows one safe retry, but background retry execution is not enabled yet.
   - `const string BackgroundRetryDisabled`
@@ -7761,6 +7770,9 @@ Browse the published API surface by public member.
 - [EnableAwsSdkInstrumentation](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enableawssdkinstrumentation): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=EnableAwsSdkInstrumentation&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
   - Gets or sets a value indicating whether AWS SDK client instrumentation should be enabled for traces.
   - `bool EnableAwsSdkInstrumentation { get; set; }`
+- [EnableBackgroundReindexing](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-enablebackgroundreindexing): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=EnableBackgroundReindexing&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
+  - Gets or sets a value indicating whether Cephalon should run the opt-in background reindex scheduler.
+  - `bool EnableBackgroundReindexing { get; set; }`
 - [EnableCdcExecution](cephalon-data.md#member-p-cephalon-data-configuration-dataruntimeoptions-enablecdcexecution): `Properties` on `DataRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=EnableCdcExecution&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should register the shared CDC hosted execution pump.
   - `bool EnableCdcExecution { get; set; }`
@@ -22728,6 +22740,9 @@ Browse the published API surface by public member.
 - [RunAsync](cephalon-referencedocs.md#member-m-cephalon-referencedocs-referencedocsapplication-runasync-system-string-system-io-textwriter-system-io-textwriter-system-threading-cancellationtoken): `Methods` on `ReferenceDocsApplication` in `Cephalon.ReferenceDocs` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=RunAsync&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs&scope=members)
   - Runs the reference docs generator for the supplied arguments and writers.
   - `Task<int> RunAsync(string[] args, TextWriter output, TextWriter error, CancellationToken cancellationToken)`
+- [RunBackgroundReindexOnStartup](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-runbackgroundreindexonstartup): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=RunBackgroundReindexOnStartup&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
+  - Gets or sets a value indicating whether the scheduler should run once when the host starts.
+  - `bool RunBackgroundReindexOnStartup { get; set; }`
 - [RunCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-runcount): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RunCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of background polling passes that reached a completed or failed terminal state.
   - `long RunCount { get; }`

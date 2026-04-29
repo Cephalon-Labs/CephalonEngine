@@ -47,4 +47,29 @@ public sealed class RetrievalOptions
     /// Gets or sets the number of seconds after which the latest successful index is considered stale for operator reporting.
     /// </summary>
     public int FreshnessStaleAfterSeconds { get; set; } = 3600;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether Cephalon should run the opt-in background reindex scheduler.
+    /// </summary>
+    public bool EnableBackgroundReindexing { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the scheduler should run once when the host starts.
+    /// </summary>
+    public bool RunBackgroundReindexOnStartup { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the startup delay, in seconds, before the first background reindex run.
+    /// </summary>
+    public int BackgroundReindexInitialDelaySeconds { get; set; } = 5;
+
+    /// <summary>
+    /// Gets or sets the interval, in seconds, between background reindex runs. Values less than one disable repeated runs after the optional startup run.
+    /// </summary>
+    public int BackgroundReindexIntervalSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Gets the optional collection ids included in background reindexing. When empty, every registered collection is included.
+    /// </summary>
+    public IList<string> BackgroundReindexCollectionIds { get; } = [];
 }

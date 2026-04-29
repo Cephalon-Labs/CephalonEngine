@@ -29,6 +29,7 @@ using Cephalon.Retrieval.Registration;
 using Cephalon.Retrieval.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Cephalon.Tests.Support;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -2235,6 +2236,69 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task AddRetrievalRunsOptInBackgroundReindexScheduler()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["KnowledgeRetrieval"]));
+            engine.AddRetrieval(options =>
+            {
+                options.EnableBackgroundReindexing = true;
+                options.BackgroundReindexInitialDelaySeconds = 0;
+                options.BackgroundReindexIntervalSeconds = 0;
+                options.BackgroundReindexCollectionIds.Add("runbooks");
+            });
+            engine.AddModule(new TechnologyPackContributionModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var scheduler = Assert.Single(provider.GetServices<IHostedService>());
+        var indexCatalog = provider.GetRequiredService<IKnowledgeIndexCatalog>();
+
+        await scheduler.StartAsync(CancellationToken.None);
+        try
+        {
+            await WaitUntilAsync(() =>
+                indexCatalog.GetByCollectionId("runbooks")?.LastOutcome == KnowledgeIndexingOutcomes.Succeeded);
+        }
+        finally
+        {
+            await scheduler.StopAsync(CancellationToken.None);
+        }
+
+        var state = Assert.Single(indexCatalog.States);
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var retrievalSurface = Assert.Single(technologySurfaces.GetByTechnology("knowledge-retrieval"));
+        var runbooksEntry = Assert.Single(retrievalSurface.Entries, entry => entry.Id == "runbooks");
+
+        Assert.Equal("runbooks", state.CollectionId);
+        Assert.StartsWith("retrieval-background-reindex-runbooks-", state.LastRunId, StringComparison.Ordinal);
+        Assert.Equal(KnowledgeIndexingOutcomes.Succeeded, state.LastOutcome);
+        Assert.Equal(2, state.DocumentCount);
+        Assert.Equal("cephalon-retrieval-background-scheduler", state.LastActorId);
+        Assert.Equal("retrieval-background-scheduler", state.Metadata["trigger"]);
+        Assert.Equal("cephalon-retrieval-background-reindex", state.Metadata["scheduler"]);
+        Assert.Equal("configured", state.Metadata["collectionScope"]);
+        Assert.Equal("0", state.Metadata["intervalSeconds"]);
+        Assert.Contains(runtime.Manifest.Capabilities, capability =>
+            capability.Key == "retrieval.background-reindexing" &&
+            capability.Metadata["executionOwnership"] == "cephalon-managed" &&
+            capability.Metadata["collectionScope"] == "configured");
+        Assert.Equal("true", runbooksEntry.Metadata["backgroundReindexingEnabled"]);
+        Assert.Equal("true", runbooksEntry.Metadata["backgroundReindexingScheduled"]);
+        Assert.Equal("cephalon-managed", runbooksEntry.Metadata["backgroundReindexingOwnership"]);
+        Assert.Equal("configured", runbooksEntry.Metadata["backgroundReindexingCollectionScope"]);
+        Assert.Equal("1", runbooksEntry.Metadata["backgroundReindexingConfiguredCollectionCount"]);
+        Assert.Equal("0", runbooksEntry.Metadata["backgroundReindexingIntervalSeconds"]);
+        Assert.Equal("retrieval-background-scheduler", runbooksEntry.Metadata["reported.trigger"]);
+    }
+
+    [Fact]
     public void AddTechnologyPacksRejectHostedExecutionsThatReferenceUnknownEventSubscriptions()
     {
         var services = new ServiceCollection();
@@ -3464,6 +3528,15 @@ public sealed class EngineBuilderTests
     {
         using var stream = File.OpenRead(path);
         return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        while (!condition())
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(50), cancellation.Token);
+        }
     }
 
     private static string NormalizeCertificateThumbprint(string? value)

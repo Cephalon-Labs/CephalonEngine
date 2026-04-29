@@ -15,6 +15,10 @@ internal sealed class RetrievalRuntimeSurfaceContributor(
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var configuredBackgroundCollectionIds = BackgroundReindexingOptions.ResolveConfiguredCollectionIds(options);
+        var configuredBackgroundCollectionSet = configuredBackgroundCollectionIds.Length == 0
+            ? null
+            : new HashSet<string>(configuredBackgroundCollectionIds, StringComparer.OrdinalIgnoreCase);
         var providerIndex = providers
             .GroupBy(static provider => provider.CollectionId, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
@@ -28,21 +32,36 @@ internal sealed class RetrievalRuntimeSurfaceContributor(
             displayName: "Knowledge Collections",
             description: "Registered knowledge collections, managed indexing readiness, query execution posture, and freshness state available to the active retrieval runtime.",
             entries: catalog.Collections
-                .Select(collection => CreateEntry(collection, providerIndex))
+                .Select(collection => CreateEntry(
+                    collection,
+                    providerIndex,
+                    configuredBackgroundCollectionIds,
+                    configuredBackgroundCollectionSet))
                 .ToArray());
     }
 
     private TechnologyRuntimeEntry CreateEntry(
         KnowledgeCollectionDescriptor collection,
-        IReadOnlyDictionary<string, int> providerIndex)
+        IReadOnlyDictionary<string, int> providerIndex,
+        string[] configuredBackgroundCollectionIds,
+        IReadOnlySet<string>? configuredBackgroundCollectionSet)
     {
         var providerCount = providerIndex.GetValueOrDefault(collection.Id);
+        var backgroundReindexingScheduled = IsBackgroundReindexingScheduled(collection.Id, configuredBackgroundCollectionSet);
         indexCatalog.TryGet(collection.Id, out var state);
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["tags"] = string.Join(",", collection.Tags),
             ["indexingEnabled"] = options.EnableIngestion.ToString().ToLowerInvariant(),
             ["queryingEnabled"] = options.EnableQuerying.ToString().ToLowerInvariant(),
+            ["backgroundReindexingEnabled"] = (options.EnableIngestion && options.EnableBackgroundReindexing).ToString().ToLowerInvariant(),
+            ["backgroundReindexingScheduled"] = backgroundReindexingScheduled.ToString().ToLowerInvariant(),
+            ["backgroundReindexingOwnership"] = ResolveBackgroundReindexingOwnership(backgroundReindexingScheduled),
+            ["backgroundReindexingCollectionScope"] = BackgroundReindexingOptions.ResolveCollectionScope(configuredBackgroundCollectionIds),
+            ["backgroundReindexingConfiguredCollectionCount"] = configuredBackgroundCollectionIds.Length.ToString(CultureInfo.InvariantCulture),
+            ["backgroundReindexingRunOnStartup"] = options.RunBackgroundReindexOnStartup.ToString().ToLowerInvariant(),
+            ["backgroundReindexingInitialDelaySeconds"] = Math.Max(0, options.BackgroundReindexInitialDelaySeconds).ToString(CultureInfo.InvariantCulture),
+            ["backgroundReindexingIntervalSeconds"] = Math.Max(0, options.BackgroundReindexIntervalSeconds).ToString(CultureInfo.InvariantCulture),
             ["providerConfigured"] = (providerCount > 0).ToString().ToLowerInvariant(),
             ["providerCount"] = providerCount.ToString(CultureInfo.InvariantCulture),
             ["indexingOwnership"] = ResolveIndexingOwnership(providerCount),
@@ -110,6 +129,28 @@ internal sealed class RetrievalRuntimeSurfaceContributor(
             displayName: collection.DisplayName,
             description: collection.Description,
             metadata: metadata);
+    }
+
+    private bool IsBackgroundReindexingScheduled(
+        string collectionId,
+        IReadOnlySet<string>? configuredBackgroundCollectionSet)
+    {
+        if (!options.EnableIngestion || !options.EnableBackgroundReindexing)
+        {
+            return false;
+        }
+
+        return configuredBackgroundCollectionSet is null || configuredBackgroundCollectionSet.Contains(collectionId);
+    }
+
+    private string ResolveBackgroundReindexingOwnership(bool backgroundReindexingScheduled)
+    {
+        if (!options.EnableIngestion || !options.EnableBackgroundReindexing)
+        {
+            return "not-configured";
+        }
+
+        return backgroundReindexingScheduled ? "cephalon-managed" : "not-selected";
     }
 
     private string ResolveIndexingOwnership(int providerCount)

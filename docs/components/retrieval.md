@@ -9,7 +9,7 @@
 - knowledge collection descriptors, registries, and catalogs
 - knowledge document provider contracts for module-owned source material
 - one Cephalon-managed lexical indexing and query execution baseline
-- index state implementation, freshness calculation, manual reindex execution behind the abstraction-level `IKnowledgeIndexer`, query counters, and runtime-surface contribution for introspection
+- index state implementation, freshness calculation, manual reindex execution behind the abstraction-level `IKnowledgeIndexer`, opt-in background reindex scheduling, query counters, and runtime-surface contribution for introspection
 
 ## Main surfaces
 
@@ -24,6 +24,7 @@
 - `Services/IKnowledgeDocumentProvider.cs`
 - `Services/IKnowledgeQueryEngine.cs`
 - `Services/KnowledgeDocument.cs`
+- `Services/KnowledgeBackgroundReindexHostedService.cs`
 - `Services/KnowledgeQueryRequest.cs`
 - `Services/KnowledgeQueryResult.cs`
 - `Services/RetrievalRuntimeSurfaceContributor.cs`
@@ -39,7 +40,7 @@
 
 This pack provides the retrieval-side companion to `Cephalon.Agentics`. It models knowledge collections as a first-class selectable technology surface instead of embedding retrieval assumptions into the engine.
 
-When the `KnowledgeRetrieval` technology is selected, the pack can now index documents from registered `IKnowledgeDocumentProvider` services into an in-process lexical index, manually reindex a collection through the abstraction-level `IKnowledgeIndexer`, and execute bounded lexical queries through `IKnowledgeQueryEngine`. Runtime surfaces report `indexingOwnership`, `queryOwnership`, provider readiness, latest indexing outcome, document count, query count, and freshness state so operators can distinguish an indexed collection from one that is still `awaiting-provider` or `awaiting-index`.
+When the `KnowledgeRetrieval` technology is selected, the pack can now index documents from registered `IKnowledgeDocumentProvider` services into an in-process lexical index, manually reindex a collection through the abstraction-level `IKnowledgeIndexer`, opt into an in-process background reindex scheduler, and execute bounded lexical queries through `IKnowledgeQueryEngine`. Runtime surfaces report `indexingOwnership`, `queryOwnership`, `backgroundReindexingOwnership`, `backgroundReindexingScheduled`, provider readiness, latest indexing outcome, document count, query count, freshness state, and background scheduler scope/timing metadata so operators can distinguish an indexed collection from one that is still `awaiting-provider`, `awaiting-index`, or intentionally not scheduled.
 
 The read-side index-state contract and manual reindex command seam now live in
 `Cephalon.Abstractions.Retrieval` as `IKnowledgeIndexCatalog`, `KnowledgeIndexState`,
@@ -50,7 +51,9 @@ adapters can expose `/engine/knowledge-indexes`, `/engine/knowledge-indexes/{col
 `POST /engine/knowledge-indexes/{collectionId}/reindex`, and `snapshot.KnowledgeIndexes` without
 taking a direct dependency on this implementation package.
 
-This is intentionally a narrow managed proof. It is useful for low-ceremony documentation, runbook, module-owned knowledge search, and manual operator reindexing, but it is not yet a vector database, distributed index, durable search cluster, embedding pipeline, reranker, background reindex scheduler, or provider-specific semantic search adapter. Those should land as companion packs or later retrieval slices when they own those paths explicitly.
+Background scheduling is opt-in through `RetrievalOptions.EnableBackgroundReindexing`. When enabled with ingestion, `Cephalon.Retrieval` registers a generic-host `IHostedService` that can reindex all registered collections or the configured `BackgroundReindexCollectionIds`, optionally run once on startup, and repeat at `BackgroundReindexIntervalSeconds`. Scheduled runs use the same `IKnowledgeIndexer` path as manual reindexing and record safe scheduler metadata such as trigger, scheduler id, iteration id, collection scope, and interval.
+
+This is intentionally a narrow managed proof. It is useful for low-ceremony documentation, runbook, module-owned knowledge search, manual operator reindexing, and opt-in in-process freshness scheduling, but it is not yet a vector database, distributed index, durable search cluster, embedding pipeline, reranker, distributed scheduler coordinator, leader-election mechanism, or provider-specific semantic search adapter. Those should land as companion packs or later retrieval slices when they own those paths explicitly.
 
 ## Related docs
 

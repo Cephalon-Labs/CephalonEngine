@@ -6,6 +6,7 @@ using Cephalon.Retrieval.Configuration;
 using Cephalon.Retrieval.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using System.Globalization;
 
 namespace Cephalon.Retrieval.Modules;
@@ -70,6 +71,12 @@ internal sealed class RetrievalModule : ModuleBase, ITechnologyServiceContributo
             services.TryAddSingleton<IKnowledgeQueryEngine, KnowledgeQueryEngine>();
         }
 
+        if (options.EnableIngestion && options.EnableBackgroundReindexing)
+        {
+            services.TryAddEnumerable(
+                ServiceDescriptor.Singleton<IHostedService, KnowledgeBackgroundReindexHostedService>());
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, RetrievalRuntimeSurfaceContributor>());
     }
 
@@ -108,6 +115,26 @@ internal sealed class RetrievalModule : ModuleBase, ITechnologyServiceContributo
                     ["technology"] = "knowledge-retrieval",
                     ["executionOwnership"] = options.EnableIngestion && hasDocumentProviders ? "cephalon-managed" : "awaiting-provider",
                     ["providerConfigured"] = hasDocumentProviders.ToString().ToLowerInvariant()
+                }));
+        }
+
+        if (options.EnableIngestion && options.EnableBackgroundReindexing)
+        {
+            var configuredCollectionIds = BackgroundReindexingOptions.ResolveConfiguredCollectionIds(options);
+            capabilities.Add(new Capability(
+                key: "retrieval.background-reindexing",
+                displayName: "Retrieval Background Reindexing",
+                description: "Runs an opt-in Cephalon-managed background freshness loop over registered knowledge collections.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "knowledge-retrieval",
+                    ["executionOwnership"] = "cephalon-managed",
+                    ["providerConfigured"] = hasDocumentProviders.ToString().ToLowerInvariant(),
+                    ["collectionScope"] = BackgroundReindexingOptions.ResolveCollectionScope(configuredCollectionIds),
+                    ["configuredCollectionCount"] = configuredCollectionIds.Length.ToString(CultureInfo.InvariantCulture),
+                    ["runOnStartup"] = options.RunBackgroundReindexOnStartup.ToString().ToLowerInvariant(),
+                    ["initialDelaySeconds"] = Math.Max(0, options.BackgroundReindexInitialDelaySeconds).ToString(CultureInfo.InvariantCulture),
+                    ["intervalSeconds"] = Math.Max(0, options.BackgroundReindexIntervalSeconds).ToString(CultureInfo.InvariantCulture)
                 }));
         }
 

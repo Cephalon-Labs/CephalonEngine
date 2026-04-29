@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T05:07:03.766447+00:00",
+  "GeneratedAtUtc": "2026-04-29T05:36:37.5500197+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -15026,7 +15026,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 11,
         "Methods": 0
       }
     },
@@ -25653,6 +25653,39 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationmetadatakeys-backgroundproofpollingownership",
       "Signature": "const string BackgroundProofPollingOwnership",
       "Summary": "Metadata key for automatic background proof polling ownership."
+    },
+    {
+      "DisplayName": "BackgroundReindexCollectionIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrievalOptions",
+      "NamespaceName": "Cephalon.Retrieval.Configuration",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexcollectionids",
+      "Signature": "IList\u003Cstring\u003E BackgroundReindexCollectionIds { get; }",
+      "Summary": "Gets the optional collection ids included in background reindexing. When empty, every registered collection is included."
+    },
+    {
+      "DisplayName": "BackgroundReindexInitialDelaySeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrievalOptions",
+      "NamespaceName": "Cephalon.Retrieval.Configuration",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexinitialdelayseconds",
+      "Signature": "int BackgroundReindexInitialDelaySeconds { get; set; }",
+      "Summary": "Gets or sets the startup delay, in seconds, before the first background reindex run."
+    },
+    {
+      "DisplayName": "BackgroundReindexIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrievalOptions",
+      "NamespaceName": "Cephalon.Retrieval.Configuration",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-backgroundreindexintervalseconds",
+      "Signature": "int BackgroundReindexIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background reindex runs. Values less than one disable repeated runs after the optional startup run."
     },
     {
       "DisplayName": "BackgroundRetryDisabled",
@@ -45890,6 +45923,17 @@
       "AnchorId": "member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enableawssdkinstrumentation",
       "Signature": "bool EnableAwsSdkInstrumentation { get; set; }",
       "Summary": "Gets or sets a value indicating whether AWS SDK client instrumentation should be enabled for traces."
+    },
+    {
+      "DisplayName": "EnableBackgroundReindexing",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrievalOptions",
+      "NamespaceName": "Cephalon.Retrieval.Configuration",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-enablebackgroundreindexing",
+      "Signature": "bool EnableBackgroundReindexing { get; set; }",
+      "Summary": "Gets or sets a value indicating whether Cephalon should run the opt-in background reindex scheduler."
     },
     {
       "DisplayName": "EnableCdcExecution",
@@ -100642,6 +100686,17 @@
       "AnchorId": "member-m-cephalon-referencedocs-referencedocsapplication-runasync-system-string-system-io-textwriter-system-io-textwriter-system-threading-cancellationtoken",
       "Signature": "Task\u003Cint\u003E RunAsync(string[] args, TextWriter output, TextWriter error, CancellationToken cancellationToken)",
       "Summary": "Runs the reference docs generator for the supplied arguments and writers."
+    },
+    {
+      "DisplayName": "RunBackgroundReindexOnStartup",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrievalOptions",
+      "NamespaceName": "Cephalon.Retrieval.Configuration",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-runbackgroundreindexonstartup",
+      "Signature": "bool RunBackgroundReindexOnStartup { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the scheduler should run once when the host starts."
     },
     {
       "DisplayName": "RunCount",
