@@ -16,6 +16,13 @@ public sealed class SendGridInvitationDeliveryOptions
     private static readonly int[] DefaultAcceptedStatusCodes = [202];
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="SendGridInvitationDeliveryOptions" /> class.
+    /// </summary>
+    public SendGridInvitationDeliveryOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets a value indicating whether the SendGrid invitation sender should be registered.
     /// </summary>
     public bool Enabled { get; set; } = true;

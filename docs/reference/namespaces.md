@@ -444,6 +444,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Registration)
 
+## `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore](cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md#namespace-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore](cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md#namespace-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting): 4 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting)
+
 ## `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration`
 
 - [Cephalon.MultiTenancy.Governance.SendGridDelivery](cephalon-multitenancy-governance-sendgriddelivery.md#namespace-cephalon-multitenancy-governance-sendgriddelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration)

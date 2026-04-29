@@ -92,6 +92,7 @@
     <Project Path="src/Cephalon.Ids.Sfid/Cephalon.Ids.Sfid.csproj" />
     <Project Path="src/Cephalon.MultiTenancy.Governance.AspNetCore/Cephalon.MultiTenancy.Governance.AspNetCore.csproj" />
     <Project Path="src/Cephalon.MultiTenancy.Governance.HttpDelivery/Cephalon.MultiTenancy.Governance.HttpDelivery.csproj" />
+    <Project Path="src/Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore/Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.csproj" />
     <Project Path="src/Cephalon.MultiTenancy.Governance.SendGridDelivery/Cephalon.MultiTenancy.Governance.SendGridDelivery.csproj" />
     <Project Path="src/Cephalon.MultiTenancy.Governance.SmtpDelivery/Cephalon.MultiTenancy.Governance.SmtpDelivery.csproj" />
     <Project Path="src/Cephalon.MultiTenancy.Governance/Cephalon.MultiTenancy.Governance.csproj" />

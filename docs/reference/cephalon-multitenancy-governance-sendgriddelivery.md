@@ -36,6 +36,8 @@ public sealed class SendGridInvitationDeliveryOptions
 SendGridInvitationDeliveryOptions()
 ```
 
+Initializes a new instance of the `SendGridInvitationDeliveryOptions` class.
+
 #### Properties
 
 <a id="member-p-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-acceptedstatuscodes"></a>

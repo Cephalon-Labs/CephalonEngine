@@ -108,7 +108,7 @@ Technologies are additive workload profiles that prepare the runtime for specifi
 - `edge-native-delivery` — Edge-Native Delivery (Deployment): prepares the app for browser, device, edge, and intermittently connected deployment scenarios. Aliases: `EdgeNativeDelivery`, `EdgeNative`, `Edge`. Package hint: `Cephalon.Edge`.
 - `serverless-hosting` — Serverless Hosting (Deployment): prepares the app for event-triggered or function-style hosting without changing the host-agnostic core runtime model. Aliases: `ServerlessHosting`, `Serverless`.
 - `identity-access` — Identity Access (Security): prepares the app for configurable authentication and authorization flows such as RBAC, ABAC, and policy evaluation. Aliases: `IdentityAccess`, `Identity`. Package hint: `Cephalon.Identity`.
-- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain/action companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`, `Cephalon.MultiTenancy.Governance.AspNetCore`, `Cephalon.MultiTenancy.Governance.HttpDelivery`, `Cephalon.MultiTenancy.Governance.SendGridDelivery`, `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
+- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain/action companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`, `Cephalon.MultiTenancy.Governance.AspNetCore`, `Cephalon.MultiTenancy.Governance.HttpDelivery`, `Cephalon.MultiTenancy.Governance.SendGridDelivery`, `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`, `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
 - `hybrid-cloud-runtime` — Hybrid Cloud Runtime (Platform): prepares the app for mixed on-premises, edge, and cloud deployment handoffs without changing the engine core. Aliases: `HybridCloudRuntime`, `HybridCloud`.
 - `service-mesh-integration` — Service Mesh Integration (Platform): prepares the app for additive service-mesh coordination, policy handoff, and traffic-governance guidance. Aliases: `ServiceMeshIntegration`, `ServiceMesh`.
 
@@ -167,6 +167,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, opt-in local invitation delivery retry storage plus bounded retry execution, process-local retry execution coordination, and opt-in automatic background retry scheduling, host-agnostic invitation delivery status reconciliation over provider or receiver observations, opt-in durable delivery-status observation storage, host-driven tenant-administration workflow commands over membership and invitation stores, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
 - `multi-tenancy-governance-http-delivery` — Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`): optional provider-managed HTTP webhook sender for tenant-invitation delivery dispatch, including provider-neutral idempotency headers, optional HMAC-SHA256 request signing, and bounded in-process retry/backoff.
 - `multi-tenancy-governance-sendgrid-delivery` — Multi-Tenancy Governance SendGrid Delivery (`Cephalon.MultiTenancy.Governance.SendGridDelivery`): optional provider-managed SendGrid Mail Send API sender for tenant-invitation delivery dispatch, including templated Mail Send payload construction, SendGrid custom arguments, sandbox-mode validation, safe context headers, and provider message id capture.
+- `multi-tenancy-governance-sendgrid-delivery-aspnetcore` — Multi-Tenancy Governance SendGrid Delivery ASP.NET Core (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`): optional ASP.NET Core SendGrid Event Webhook translator for tenant-invitation delivery-status reconciliation, including bounded JSON-array parsing, custom-argument extraction, `sg_message_id` correlation, SendGrid status mapping, safe callback metadata, and route/auth/runtime-surface truth.
 - `multi-tenancy-governance-smtp-delivery` — Multi-Tenancy Governance SMTP Delivery (`Cephalon.MultiTenancy.Governance.SmtpDelivery`): optional provider-managed SMTP relay sender for tenant-invitation delivery dispatch, including templated email message construction, deterministic message ids, safe context headers, and a replaceable SMTP client seam.
 
 ### Data provider modules (14)
@@ -473,6 +474,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantInvitationDeliveryStatusReconciler` — host-agnostic invitation delivery status observation reconciliation
 - `ITenantInvitationDeliveryStatusObservationStore` — normalized invitation delivery-status observation storage, with in-memory and opt-in file-backed baselines
 - `HttpInvitationDeliveryPayload` — JSON payload contract for the optional idempotent and signed HTTP webhook invitation sender in `Cephalon.MultiTenancy.Governance.HttpDelivery`
+- `SendGridInvitationDeliveryStatusCallbackResult` / `SendGridInvitationDeliveryStatusCallbackEventResult` — aggregate and per-event response contracts for the optional SendGrid Event Webhook translator in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`
 - `ISmtpInvitationDeliveryClient` / `SmtpInvitationDeliveryMessage` / `SmtpInvitationDeliveryClientResult` — replaceable SMTP relay client seam and prepared message/result contracts for the optional SMTP invitation sender in `Cephalon.MultiTenancy.Governance.SmtpDelivery`
 - `ITenantAdministrationWorkflow` — host-driven membership and invitation administration workflow commands
 - `ITenantDomainOwnershipCatalog` — merged declared tenant-domain ownership read model
@@ -497,6 +499,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `tenant-administration-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-administration command endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
 - `tenant-invitation-delivery-http-endpoints` technology surface — ASP.NET Core adapter posture for the optional tenant-invitation delivery dispatch endpoint from `Cephalon.MultiTenancy.Governance.AspNetCore`
 - `tenant-invitation-delivery-status-http-endpoints` technology surface — ASP.NET Core adapter posture for optional normalized delivery-status callback and observation read endpoints from `Cephalon.MultiTenancy.Governance.AspNetCore`
+- `tenant-invitation-delivery-sendgrid-status-callbacks` technology surface — ASP.NET Core SendGrid Event Webhook translator posture from `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`
 - `tenant-domain-ownership` technology surface — Cephalon-managed declared domain-ownership catalog, store, validation, workflow, proof-challenge, proof-publication planning, HTTP proof publication, proof-evaluation, HTTP proof collection, configured DNS TXT proof collection, proof-verification runner, bounded proof-polling runner, and opt-in background proof-polling posture from `Cephalon.MultiTenancy.Governance`
 - `tenant-governance-actions` technology surface — Cephalon-managed approval/remediation action catalog, decision, in-process workflow, and action-store posture from `Cephalon.MultiTenancy.Governance`
 
@@ -523,6 +526,8 @@ Structured diagnostics sources with stable event ID ranges.
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
 - Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4549 and 4552–4557
 - Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`) — event IDs 4550–4551
+- Multi-Tenancy Governance SendGrid Delivery (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) — event IDs 4560–4561
+- Multi-Tenancy Governance SendGrid Delivery ASP.NET Core (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) — event ID 4562
 - Multi-Tenancy Governance SMTP Delivery (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) — event IDs 4558–4559
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
@@ -577,6 +582,7 @@ Each exporter is a standalone companion package on top of the cloud-neutral OTLP
 - `Cephalon.AspNetCore.Grpc` — gRPC transport adapter with unary and streaming contracts
 - `Cephalon.Identity.AspNetCore` — ASP.NET Core identity/authorization host adapter
 - `Cephalon.MultiTenancy.Governance.AspNetCore` — ASP.NET Core tenant-domain ownership HTTP proof, tenant-administration command, invitation delivery dispatch, and delivery-status callback/observation adapter
+- `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` — ASP.NET Core SendGrid Event Webhook translator for tenant-invitation delivery-status reconciliation
 - `Cephalon.Worker` — non-HTTP generic-host adapter for worker processes
 
 ## Tooling and adoption
@@ -650,6 +656,6 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Diagnostics sources: **10**
 - Dependency health probes: **18**
 - Cloud/platform exporters: **14**
-- Host adapters: **7**
+- Host adapters: **8**
 - Runtime introspection endpoints: **33+**
 - Sample applications: **5**

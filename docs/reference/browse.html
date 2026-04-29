@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T17:04:24.2112893+00:00",
+  "GeneratedAtUtc": "2026-04-29T18:08:17.3133402+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -359,6 +359,14 @@
       "Description": "SendGrid Mail Send API invitation delivery sender companion package for Cephalon multi-tenancy governance workloads.",
       "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
       "NamespaceCount": 3,
+      "TypeCount": 5
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "ASP.NET Core SendGrid Event Webhook callback translation companion package for Cephalon multi-tenancy governance workloads.",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "NamespaceCount": 2,
       "TypeCount": 5
     },
     {
@@ -1436,6 +1444,20 @@
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-registration",
       "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting",
+      "TypeCount": 4
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
@@ -15792,6 +15814,36 @@
       }
     },
     {
+      "DisplayName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions",
+      "Declaration": "public sealed class SendGridInvitationDeliveryAspNetCoreOptions",
+      "Summary": "Configures ASP.NET Core SendGrid Event Webhook callback translation for tenant-invitation delivery status updates.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryAspNetCoreServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliveryaspnetcoreservicecollectionextensions",
+      "Declaration": "public static class SendGridInvitationDeliveryAspNetCoreServiceCollectionExtensions",
+      "Summary": "Registers ASP.NET Core SendGrid Event Webhook translation services for tenant-invitation delivery status callbacks.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "SendGridInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -15849,6 +15901,51 @@
         "Fields": 1,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult",
+      "Declaration": "public sealed class SendGridInvitationDeliveryStatusCallbackEventResult",
+      "Summary": "Describes how one SendGrid Event Webhook item was translated and reconciled.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult",
+      "Declaration": "public sealed class SendGridInvitationDeliveryStatusCallbackResult",
+      "Summary": "Describes a SendGrid Event Webhook callback translation response.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatusendpointroutebuilderextensions",
+      "Declaration": "public static class SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensions",
+      "Summary": "Maps ASP.NET Core endpoints for SendGrid Event Webhook tenant-invitation delivery status callbacks.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
       }
     },
     {
@@ -19791,6 +19888,17 @@
     {
       "DisplayName": "Actor",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-actor",
+      "Signature": "string Actor { get; set; }",
+      "Summary": "Gets or sets the actor value recorded on translated SendGrid delivery status observations."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -21602,6 +21710,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-hosting-sendgridinvitationdeliveryservicecollectionextensions-addcephalonsendgridinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions",
       "Signature": "IServiceCollection AddCephalonSendGridInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action\u003CSendGridInvitationDeliveryOptions\u003E configure)",
       "Summary": "Adds SendGrid invitation delivery using configuration as the primary source of Mail Send API settings."
+    },
+    {
+      "DisplayName": "AddCephalonSendGridInvitationDeliveryAspNetCore",
+      "Category": "Methods",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliveryaspnetcoreservicecollectionextensions-addcephalonsendgridinvitationdeliveryaspnetcore-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions",
+      "Signature": "IServiceCollection AddCephalonSendGridInvitationDeliveryAspNetCore(this IServiceCollection services, IConfiguration configuration, Action\u003CSendGridInvitationDeliveryAspNetCoreOptions\u003E configure)",
+      "Summary": "Adds SendGrid Event Webhook callback translation services using configuration as the primary setup source."
     },
     {
       "DisplayName": "AddCephalonSerilog",
@@ -41115,6 +41234,17 @@
       "Summary": "The number of \u0060denied\u0060 observations reported so far."
     },
     {
+      "DisplayName": "DeniedEvents",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-deniedevents",
+      "Signature": "int DeniedEvents { get; }",
+      "Summary": "Gets the number of translated events denied by the reconciler."
+    },
+    {
       "DisplayName": "Deny",
       "Category": "Methods",
       "DeclaringTypeName": "AgentToolExecutionDecision",
@@ -48595,6 +48725,17 @@
       "Summary": "Gets or sets a value indicating whether snapshot-aware paths are enabled."
     },
     {
+      "DisplayName": "EnableStatusCallbackEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-enablestatuscallbackendpoint",
+      "Signature": "bool EnableStatusCallbackEndpoint { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the SendGrid Event Webhook callback endpoint should be mapped."
+    },
+    {
       "DisplayName": "EnableSubscriptionExecution",
       "Category": "Properties",
       "DeclaringTypeName": "WolverineEventingOptions",
@@ -49849,6 +49990,17 @@
       "Summary": "Gets the event rows persisted by the active event-store context."
     },
     {
+      "DisplayName": "Events",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-events",
+      "Signature": "IReadOnlyList\u003CSendGridInvitationDeliveryStatusCallbackEventResult\u003E Events { get; }",
+      "Summary": "Gets per-event translation and reconciliation results."
+    },
+    {
       "DisplayName": "EventSourcingEnabled",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorTopologyDescriptor",
@@ -50441,6 +50593,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludefromdescription",
       "Signature": "bool ExcludeFromDescription { get; set; }",
       "Summary": "Gets or sets a value indicating whether the proof endpoint should be excluded from OpenAPI descriptions."
+    },
+    {
+      "DisplayName": "ExcludeStatusCallbackEndpointFromDescription",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-excludestatuscallbackendpointfromdescription",
+      "Signature": "bool ExcludeStatusCallbackEndpointFromDescription { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the SendGrid callback endpoint should be excluded from OpenAPI descriptions."
     },
     {
       "DisplayName": "ExcludeTenantAdministrationEndpointFromDescription",
@@ -54830,6 +54993,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-hosting-restapigovernanceoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "RestApiGovernanceOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Binds and normalizes REST governance settings from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "SendGridInvitationDeliveryAspNetCoreOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Reads SendGrid ASP.NET Core callback options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -65722,6 +65896,17 @@
       "Summary": "Gets or sets the optional index name or comma-delimited index list that should be checked through the cluster-health API."
     },
     {
+      "DisplayName": "Index",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-index",
+      "Signature": "int Index { get; }",
+      "Summary": "Gets the zero-based event index inside the request payload."
+    },
+    {
       "DisplayName": "IndexAsync",
       "Category": "Methods",
       "DeclaringTypeName": "IKnowledgeIndexer",
@@ -66589,6 +66774,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-invitationid",
       "Signature": "string InvitationId { get; set; }",
       "Summary": "Gets or sets the invitation identifier."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the Cephalon invitation identifier when supplied."
     },
     {
       "DisplayName": "InvitationId",
@@ -76216,6 +76412,17 @@
       "Summary": "Maps Cephalon runtime, diagnostics, transport, and documentation endpoints onto the application."
     },
     {
+      "DisplayName": "MapCephalonSendGridInvitationDeliveryStatusCallbacks",
+      "Category": "Methods",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusEndpointRouteBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatusendpointroutebuilderextensions-mapcephalonsendgridinvitationdeliverystatuscallbacks-microsoft-aspnetcore-routing-iendpointroutebuilder",
+      "Signature": "IEndpointRouteBuilder MapCephalonSendGridInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)",
+      "Summary": "Maps the optional SendGrid Event Webhook tenant-invitation delivery status callback endpoint."
+    },
+    {
       "DisplayName": "MapCephalonTenantAdministrationCommands",
       "Category": "Methods",
       "DeclaringTypeName": "TenantAdministrationEndpointRouteBuilderExtensions",
@@ -76280,6 +76487,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-modules-iendpointmodule-mapendpoints-microsoft-aspnetcore-routing-iendpointroutebuilder",
       "Signature": "void MapEndpoints(IEndpointRouteBuilder endpoints)",
       "Summary": "Maps the module\u0027s REST endpoints onto the supplied endpoint route builder."
+    },
+    {
+      "DisplayName": "MapEngagementEventsAsDelivered",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-mapengagementeventsasdelivered",
+      "Signature": "bool MapEngagementEventsAsDelivered { get; set; }",
+      "Summary": "Gets or sets a value indicating whether SendGrid engagement events such as open and click should be recorded as delivered."
     },
     {
       "DisplayName": "MapGrpcEndpoints",
@@ -77393,6 +77611,17 @@
       "Summary": "Gets the configured maximum number of entries that one export may stream."
     },
     {
+      "DisplayName": "MaxEventsPerRequest",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-maxeventsperrequest",
+      "Signature": "int MaxEventsPerRequest { get; set; }",
+      "Summary": "Gets or sets the maximum number of SendGrid events accepted in one callback request."
+    },
+    {
       "DisplayName": "MaximumEngineVersion",
       "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
@@ -77523,6 +77752,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-maxqueuedactions",
       "Signature": "int? MaxQueuedActions { get; }",
       "Summary": "Gets the maximum queued actions allowed before rejection."
+    },
+    {
+      "DisplayName": "MaxRequestBodyBytes",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-maxrequestbodybytes",
+      "Signature": "int MaxRequestBodyBytes { get; set; }",
+      "Summary": "Gets or sets the maximum request body size accepted by the SendGrid callback endpoint, in bytes."
     },
     {
       "DisplayName": "MaxRestartAttempts",
@@ -83221,6 +83461,17 @@
       "Summary": "No command-journal evidence has been recorded yet."
     },
     {
+      "DisplayName": "NormalizeProviderMessageIdFromSgMessageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-normalizeprovidermessageidfromsgmessageid",
+      "Signature": "bool NormalizeProviderMessageIdFromSgMessageId { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the prefix before the first dot in \u0060sg_message_id\u0060 should be used for provider matching."
+    },
+    {
       "DisplayName": "NotAllowedAuthoringStyle",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointAuthoringPolicySuppressionKind",
@@ -86726,6 +86977,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome",
       "Signature": "RuntimeLifecycleEventOutcome Outcome { get; set; }",
       "Summary": "The completion outcome for the event."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the translation or reconciliation outcome."
     },
     {
       "DisplayName": "Outcome",
@@ -95781,6 +96043,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing reason for the event outcome."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "SmtpInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SmtpDelivery",
@@ -96364,6 +96637,17 @@
     {
       "DisplayName": "Reconciled",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-reconciled",
+      "Signature": "bool Reconciled { get; }",
+      "Summary": "Gets a value indicating whether the event reconciled a tenant invitation."
+    },
+    {
+      "DisplayName": "Reconciled",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -96393,6 +96677,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-reconciled",
       "Signature": "bool Reconciled { get; }",
       "Summary": "Gets a value indicating whether the status observation was accepted for the invitation."
+    },
+    {
+      "DisplayName": "ReconciledEvents",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-reconciledevents",
+      "Signature": "int ReconciledEvents { get; }",
+      "Summary": "Gets the number of events reconciled by Cephalon governance."
     },
     {
       "DisplayName": "ReconcileIntent",
@@ -96932,6 +97227,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-recordpublicationplan",
       "Signature": "bool RecordPublicationPlan { get; }",
       "Summary": "Gets a value indicating whether publication planning metadata should be recorded."
+    },
+    {
+      "DisplayName": "RecordStatus",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-recordstatus",
+      "Signature": "bool RecordStatus { get; set; }",
+      "Summary": "Gets or sets a value indicating whether translated delivery status should be recorded on the invitation."
     },
     {
       "DisplayName": "RecordStatus",
@@ -100456,6 +100762,17 @@
     {
       "DisplayName": "RequireProviderMessageMatch",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-requireprovidermessagematch",
+      "Signature": "bool RequireProviderMessageMatch { get; set; }",
+      "Summary": "Gets or sets a value indicating whether translated SendGrid events must match an existing provider message id."
+    },
+    {
+      "DisplayName": "RequireProviderMessageMatch",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusCallbackRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -101002,6 +101319,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-requirestakeover",
       "Signature": "bool RequiresTakeover { get; }",
       "Summary": "Gets a value indicating whether the coordination answer is currently waiting for a replacement reporter to take over."
+    },
+    {
+      "DisplayName": "RequireStatusCallbackAuthorization",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-requirestatuscallbackauthorization",
+      "Signature": "bool RequireStatusCallbackAuthorization { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the SendGrid callback endpoint should require authorization."
     },
     {
       "DisplayName": "RequiresTechnologies",
@@ -104359,6 +104687,17 @@
       "Summary": "Gets the resolved route pattern including the host REST prefix."
     },
     {
+      "DisplayName": "RoutePattern",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-routepattern",
+      "Signature": "string RoutePattern { get; }",
+      "Summary": "Gets the endpoint route pattern that accepted the callback."
+    },
+    {
       "DisplayName": "RoutePrefix",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsHostingOptions",
@@ -106988,6 +107327,39 @@
       "Summary": "No matching delivery sender was registered."
     },
     {
+      "DisplayName": "SendGridEventId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-sendgrideventid",
+      "Signature": "string SendGridEventId { get; }",
+      "Summary": "Gets the SendGrid event identifier when supplied."
+    },
+    {
+      "DisplayName": "SendGridEventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-sendgrideventtype",
+      "Signature": "string SendGridEventType { get; }",
+      "Summary": "Gets the SendGrid event type when supplied."
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-ctor",
+      "Signature": "SendGridInvitationDeliveryAspNetCoreOptions()",
+      "Summary": "Initializes a new instance of the \u0060SendGridInvitationDeliveryAspNetCoreOptions\u0060 class."
+    },
+    {
       "DisplayName": "SendGridInvitationDeliveryClientResult",
       "Category": "Constructors",
       "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
@@ -107017,7 +107389,41 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
       "FileName": "cephalon-multitenancy-governance-sendgriddelivery.md",
       "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-configuration-sendgridinvitationdeliveryoptions-ctor",
-      "Signature": "SendGridInvitationDeliveryOptions()"
+      "Signature": "SendGridInvitationDeliveryOptions()",
+      "Summary": "Initializes a new instance of the \u0060SendGridInvitationDeliveryOptions\u0060 class."
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-ctor-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-string",
+      "Signature": "SendGridInvitationDeliveryStatusCallbackEventResult(int index, string sendGridEventId, string sendGridMessageId, string sendGridEventType, string tenantId, string invitationId, string status, string outcome, bool translated, bool reconciled, string reason)",
+      "Summary": "Creates a SendGrid callback event result."
+    },
+    {
+      "DisplayName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult",
+      "Signature": "SendGridInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, IReadOnlyList\u003CSendGridInvitationDeliveryStatusCallbackEventResult\u003E events)",
+      "Summary": "Creates a SendGrid callback translation response."
+    },
+    {
+      "DisplayName": "SendGridMessageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-sendgridmessageid",
+      "Signature": "string SendGridMessageId { get; }",
+      "Summary": "Gets the SendGrid message identifier when supplied."
     },
     {
       "DisplayName": "ServerId",
@@ -107823,6 +108229,17 @@
       "Summary": "Gets the number of coordinator attempts skipped because another pass was already running."
     },
     {
+      "DisplayName": "SkippedEvents",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-skippedevents",
+      "Signature": "int SkippedEvents { get; }",
+      "Summary": "Gets the number of events skipped before reconciliation."
+    },
+    {
       "DisplayName": "SkippedOverrideIds",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointAuthoringPolicyAuthoringStyleDescriptor",
@@ -108183,6 +108600,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointbindingdescriptor-source",
       "Signature": "RestEndpointBindingSource Source { get; }",
       "Summary": "Gets the HTTP request source that supplies the value."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-source",
+      "Signature": "string Source { get; set; }",
+      "Summary": "Gets or sets the source value recorded on translated SendGrid delivery status observations."
     },
     {
       "DisplayName": "Source",
@@ -111243,6 +111671,17 @@
     {
       "DisplayName": "Status",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the normalized Cephalon delivery status when translated."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -111349,6 +111788,28 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimefailureinfo-statusbeforefailure",
       "Signature": "RuntimeStatus StatusBeforeFailure { get; set; }",
       "Summary": "The runtime status immediately before the failure was captured."
+    },
+    {
+      "DisplayName": "StatusCallbackAuthorizationPolicy",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-statuscallbackauthorizationpolicy",
+      "Signature": "string StatusCallbackAuthorizationPolicy { get; set; }",
+      "Summary": "Gets or sets the optional ASP.NET Core authorization policy required by the SendGrid callback endpoint."
+    },
+    {
+      "DisplayName": "StatusCallbackRoutePattern",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-statuscallbackroutepattern",
+      "Signature": "string StatusCallbackRoutePattern { get; set; }",
+      "Summary": "Gets or sets the ASP.NET Core route pattern used for SendGrid Event Webhook callbacks."
     },
     {
       "DisplayName": "StatusCode",
@@ -115159,6 +115620,17 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the Cephalon tenant identifier when supplied."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantAdministrationWorkflowRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -116928,6 +117400,17 @@
       "Summary": "Gets the number of observations in the store before endpoint filters are applied."
     },
     {
+      "DisplayName": "TotalEvents",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-totalevents",
+      "Signature": "int TotalEvents { get; }",
+      "Summary": "Gets the number of events supplied in the callback payload."
+    },
+    {
       "DisplayName": "TotalIndexedDocuments",
       "Category": "Properties",
       "DeclaringTypeName": "KnowledgeQueryResult",
@@ -117256,6 +117739,28 @@
       "AnchorId": "member-m-cephalon-aspnetcore-transformers-xmlcommentsdocumenttransformer-transformasync-microsoft-openapi-openapidocument-microsoft-aspnetcore-openapi-openapidocumenttransformercontext-system-threading-cancellationtoken",
       "Signature": "Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)",
       "Summary": "Applies XML comment data to the OpenAPI document schemas produced for the current request."
+    },
+    {
+      "DisplayName": "Translated",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-translated",
+      "Signature": "bool Translated { get; }",
+      "Summary": "Gets a value indicating whether the event was translated into a reconciliation request."
+    },
+    {
+      "DisplayName": "TranslatedEvents",
+      "Category": "Properties",
+      "DeclaringTypeName": "SendGridInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-translatedevents",
+      "Signature": "int TranslatedEvents { get; }",
+      "Summary": "Gets the number of events translated into Cephalon reconciliation requests."
     },
     {
       "DisplayName": "TransportDescriptor",

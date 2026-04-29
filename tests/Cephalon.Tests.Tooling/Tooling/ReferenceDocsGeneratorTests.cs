@@ -147,6 +147,25 @@ public sealed class ReferenceDocsGeneratorTests
     }
 
     [Fact]
+    public void GenerateBuildsPageForMultiTenancyGovernanceSendGridDeliveryAspNetCoreAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-multitenancy-sendgriddelivery-aspnetcore-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var page = Assert.Single(rendered.Files, file => file.Path == "cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md");
+
+        Assert.Contains("SendGridInvitationDeliveryAspNetCoreOptions", page.Contents, StringComparison.Ordinal);
+        Assert.Contains("SendGridInvitationDeliveryAspNetCoreServiceCollectionExtensions", page.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapCephalonSendGridInvitationDeliveryStatusCallbacks", page.Contents, StringComparison.Ordinal);
+        Assert.Contains("SendGridInvitationDeliveryStatusCallbackResult", page.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void GenerateBuildsPageForAbstractionsAssemblyWithPhase8Contracts()
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-abstractions-{Guid.NewGuid():N}");

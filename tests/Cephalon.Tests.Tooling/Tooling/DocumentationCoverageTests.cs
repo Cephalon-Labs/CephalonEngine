@@ -33,6 +33,10 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.MultiTenancy.Governance"] = "multi-tenancy-governance.md",
             ["Cephalon.MultiTenancy.Governance.AspNetCore"] = "multi-tenancy-governance-aspnetcore.md",
             ["Cephalon.MultiTenancy.Governance.HttpDelivery"] = "multi-tenancy-governance-httpdelivery.md",
+            ["Cephalon.MultiTenancy.Governance.SendGridDelivery"] = "multi-tenancy-governance-sendgriddelivery.md",
+            ["Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore"] =
+                "multi-tenancy-governance-sendgriddelivery-aspnetcore.md",
+            ["Cephalon.MultiTenancy.Governance.SmtpDelivery"] = "multi-tenancy-governance-smtpdelivery.md",
             // "ReferenceDocs" → "reference-docs"
             ["Cephalon.ReferenceDocs"] = "reference-docs.md",
             // "KubernetesGateway" → "kubernetes-gateway"
