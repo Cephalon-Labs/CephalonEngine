@@ -32,7 +32,8 @@ namespace Cephalon.Engine.Runtime;
 /// <remarks>
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
 /// without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details,
-/// diagnostics conventions, data product details, CDC capture details, data projection details, outbox details, inbox details, event-dispatch runtime details,
+/// diagnostics conventions, data product details, CDC capture details, data projection details, outbox details, inbox details,
+/// event-dispatch runtime details, event-subscription execution-readiness details,
 /// durable-execution runtime details, authorization-policy details, database-migration playbook details,
 /// database-topology posture details, and lifecycle story data.
 /// </remarks>
@@ -138,6 +139,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the latest reported event-dispatch runtime state entries visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<EventDispatchRuntimeState> EventDispatchStates { get; init; } = [];
+
+    /// <summary>
+    /// Gets the event-subscription execution-readiness entries visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<EventSubscriptionExecutionReadinessDescriptor> EventSubscriptionExecutionReadiness { get; init; } = [];
 
     /// <summary>
     /// Gets the audit-store surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.

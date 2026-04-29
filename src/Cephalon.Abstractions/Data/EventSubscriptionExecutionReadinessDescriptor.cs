@@ -1,4 +1,4 @@
-namespace Cephalon.Eventing.Services;
+namespace Cephalon.Abstractions.Data;
 
 /// <summary>
 /// Describes the current execution-readiness posture for one declared event subscription.

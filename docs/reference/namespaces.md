@@ -30,7 +30,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Data`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 241 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 244 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
 
 ## `Cephalon.Abstractions.EventSourcing`
 
@@ -330,7 +330,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Eventing.Services`
 
-- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 31 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 28 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 
 ## `Cephalon.Eventing.Wolverine.Configuration`
 

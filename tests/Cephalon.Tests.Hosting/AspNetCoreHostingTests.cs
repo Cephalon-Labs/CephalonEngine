@@ -952,6 +952,10 @@ public sealed class AspNetCoreHostingTests
         var trustPolicy = await client.GetFromJsonAsync<TrustSnapshot>("/engine/trust-policy");
         var failurePolicy = await client.GetFromJsonAsync<FailurePolicy>("/engine/failure-policy");
         var status = await client.GetFromJsonAsync<RuntimeStatusSnapshot>("/engine/status");
+        var eventSubscriptionReadiness = await client.GetFromJsonAsync<EventSubscriptionExecutionReadinessDescriptor[]>("/engine/event-subscription-readiness");
+        var ordersProjectorReadiness = await client.GetFromJsonAsync<EventSubscriptionExecutionReadinessDescriptor>("/engine/event-subscription-readiness/orders-projector");
+        var missingSubscriptionReadiness = await client.GetAsync("/engine/event-subscription-readiness/missing-subscription");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
         var diagnosticsResponse = await client.GetAsync("/engine/diagnostics");
         var diagnosticsPayload = await diagnosticsResponse.Content.ReadAsStringAsync();
         var healthResponse = await client.GetAsync("/health");
@@ -1241,6 +1245,21 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(status.StartedAtUtc);
         Assert.Equal(0, status.RestartCount);
         Assert.Null(status.LastFailure);
+        Assert.NotNull(eventSubscriptionReadiness);
+        var readiness = Assert.Single(eventSubscriptionReadiness);
+        Assert.Equal("orders-projector", readiness.SubscriptionId);
+        Assert.Equal(EventSubscriptionExecutionReadinessStates.DeclaredOnly, readiness.ReadinessState);
+        Assert.False(readiness.HasExecutionPath);
+        Assert.Equal("not-configured", readiness.ExecutionOwnership);
+        Assert.Equal("not-configured", readiness.ExecutionMode);
+        Assert.Contains("no-execution-path-observed", readiness.Reasons);
+        Assert.NotNull(ordersProjectorReadiness);
+        Assert.Equal(readiness.SubscriptionId, ordersProjectorReadiness.SubscriptionId);
+        Assert.Equal(HttpStatusCode.NotFound, missingSubscriptionReadiness.StatusCode);
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.EventSubscriptionExecutionReadiness, item =>
+            item.SubscriptionId == "orders-projector" &&
+            item.ReadinessState == EventSubscriptionExecutionReadinessStates.DeclaredOnly);
 
         Assert.NotNull(failurePolicy);
         Assert.Equal(StartupFailureBehavior.FailFast, failurePolicy.StartupFailureBehavior);

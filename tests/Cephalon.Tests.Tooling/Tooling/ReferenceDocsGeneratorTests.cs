@@ -152,6 +152,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("IOutboxCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventDispatchRuntimeDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IEventDispatchRuntimeCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventSubscriptionExecutionReadinessDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventSubscriptionExecutionReadinessStates", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventSubscriptionExecutionReadinessCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Abstractions.EventSourcing", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IDomainEvent", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventStreamConcurrencyException", abstractionsPage.Contents, StringComparison.Ordinal);
@@ -177,6 +180,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("Outboxes", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventDispatchRuntimes", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventDispatchStates", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventSubscriptionExecutionReadiness", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("AuthorizationPolicies", enginePage.Contents, StringComparison.Ordinal);
     }
 
@@ -298,9 +302,6 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("EventChannelDescriptor", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionExecutionReport", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IEventSubscriptionExecutionBindingCatalog", eventingPage.Contents, StringComparison.Ordinal);
-        Assert.Contains("IEventSubscriptionExecutionReadinessCatalog", eventingPage.Contents, StringComparison.Ordinal);
-        Assert.Contains("EventSubscriptionExecutionReadinessDescriptor", eventingPage.Contents, StringComparison.Ordinal);
-        Assert.Contains("EventSubscriptionExecutionReadinessStates", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionRuntimeMetadataKeys", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IEventSubscriptionRuntimeReporter", eventingPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventSubscriptionDescriptor", eventingPage.Contents, StringComparison.Ordinal);

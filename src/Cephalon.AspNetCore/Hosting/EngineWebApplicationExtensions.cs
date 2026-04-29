@@ -2011,6 +2011,24 @@ public static class EngineWebApplicationExtensions
                 return state is null ? Results.NotFound() : Results.Ok(state);
             })
             .WithName("GetCephalonEventDispatch");
+        engineGroup.MapGet("/event-subscription-readiness", (HttpContext httpContext) =>
+            {
+                var readiness = httpContext.RequestServices
+                    .GetService<IEventSubscriptionExecutionReadinessCatalog>()?
+                    .Readiness ?? [];
+
+                return Results.Ok(readiness);
+            })
+            .WithName("GetCephalonEventSubscriptionExecutionReadiness");
+        engineGroup.MapGet("/event-subscription-readiness/{subscriptionId}", (string subscriptionId, HttpContext httpContext) =>
+            {
+                var readiness = httpContext.RequestServices
+                    .GetService<IEventSubscriptionExecutionReadinessCatalog>()?
+                    .GetBySubscriptionId(subscriptionId);
+
+                return readiness is null ? Results.NotFound() : Results.Ok(readiness);
+            })
+            .WithName("GetCephalonEventSubscriptionExecutionReadinessBySubscription");
         engineGroup.MapGet("/inboxes", ([FromServices] IInboxCatalog catalog) => TypedResults.Ok(catalog.Inboxes))
             .WithName("GetCephalonInboxes");
         engineGroup.MapGet("/inboxes/{inboxId}", (string inboxId, [FromServices] IInboxCatalog catalog) =>

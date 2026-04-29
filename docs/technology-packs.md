@@ -48,7 +48,8 @@ Current baseline packages:
   - lets modules add `IAgentToolExecutor`, `IAgentToolExecutionPolicy`, and `IAgentToolExecutionObserver` services without making the host own the tool loop
 - `Cephalon.Eventing`
   - runtime services and capability activation for `EventDrivenIntegration`
-  - registers `IEventChannelCatalog`, `IEventSubscriptionCatalog`, `IEventSubscriptionExecutionBindingCatalog`, `IEventSubscriptionExecutionReadinessCatalog`, and stable `EventSubscriptionRuntimeMetadataKeys` when the profile and options enable those paths
+  - registers `IEventChannelCatalog`, `IEventSubscriptionCatalog`, `IEventSubscriptionExecutionBindingCatalog`, the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`, and stable `EventSubscriptionRuntimeMetadataKeys` when the profile and options enable those paths
+  - lets `Cephalon.Engine`, host adapters, and operator tooling read subscription execution readiness through `/engine/event-subscription-readiness` and `snapshot.EventSubscriptionExecutionReadiness` without taking a direct dependency on the eventing pack
 - `Cephalon.Eventing.Wolverine`
   - optional companion adapter proof for managed dispatch over `EventDrivenIntegration`
   - projects runtime truth for the current Wolverine-backed outbox, dispatch loop, managed subscription bindings, and subscription readiness without turning Wolverine into an engine-core dependency
@@ -266,7 +267,7 @@ Shipped pack-specific extension points:
     - `ITenantDomainOwnershipProofVerificationRunner` for the current Cephalon-managed proof-verification orchestration path over challenge issuance, publication planning, reported-proof evaluation, optional HTTP file collection, and configured DNS TXT collection
 - `MultiTenancyGovernanceOptions` for host-defined memberships, invitations, domain ownerships, governance actions, store paths, tenant-administration workflow enablement, invitation delivery dispatch/run-history enablement, invitation delivery status reconciliation enablement, proof challenge defaults, proof publication planning, HTTP proof collection, DNS TXT proof collection resolver/timeout/size limits, proof verification runner orchestration, bounded proof polling enablement/batch limits, proof evaluation, and validation/evaluation/decision/workflow enablement
 - `Cephalon.Eventing`
-  - `IEventChannelContributor`, `IEventChannelRegistry`, `IEventSubscriptionExecutionBindingContributor`, `IEventSubscriptionExecutionBindingCatalog`, and `IEventSubscriptionExecutionReadinessCatalog`
+  - `IEventChannelContributor`, `IEventChannelRegistry`, `IEventSubscriptionExecutionBindingContributor`, `IEventSubscriptionExecutionBindingCatalog`, and the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`
 - `Cephalon.Edge`
   - `IEdgeNodeContributor` and `IEdgeNodeRegistry`
 

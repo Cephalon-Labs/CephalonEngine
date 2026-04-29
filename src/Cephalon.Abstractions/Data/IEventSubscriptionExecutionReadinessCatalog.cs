@@ -1,4 +1,4 @@
-namespace Cephalon.Eventing.Services;
+namespace Cephalon.Abstractions.Data;
 
 /// <summary>
 /// Reads execution-readiness posture for declared event subscriptions.

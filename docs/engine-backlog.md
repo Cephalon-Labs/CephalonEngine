@@ -11,12 +11,12 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
-- treat the core eventing execution-binding and execution-readiness catalogs as adapter-neutral read seams and the Wolverine-managed event-subscription lane as the first optional eventing-family managed proof instead of widening descriptor breadth there again
+- treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, `/engine/event-subscription-readiness`, and `snapshot.EventSubscriptionExecutionReadiness` as adapter-neutral read seams, and the Wolverine-managed event-subscription lane as the first optional eventing-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
@@ -774,6 +774,28 @@ Delivered:
 - derive readiness from the existing declared subscription catalog, managed binding catalog, hosted-execution links, and application-managed runtime reports
 - project `executionReadiness`, `executionPath`, and `executionReadinessReasons` through the existing `event-subscriptions` technology surface
 - prove declared-only, application-managed reported, hosted-execution-linked, and Wolverine runtime-bound paths through focused composition, package-surface, and reference-doc coverage — issue #773
+
+Follow-up later:
+
+- richer retry-policy vocabulary, generic inbound broker consumption, non-Wolverine managed subscription proofs, and operator automation remain future work until a package truly owns those paths
+
+### ENG-265 Eventing subscription readiness operator-surface baseline
+
+Status: done
+Estimate: 5
+Issue: #774
+
+Why:
+
+- after `ENG-264`, readiness existed as a public catalog in the eventing package, but ASP.NET Core hosts and `/engine/snapshot` could not expose it without depending directly on `Cephalon.Eventing`
+- the smallest honest next proof is to promote the read contract to the host-agnostic abstraction layer, then project it through the existing operator surfaces while keeping the implementation in the selected eventing pack
+
+Delivered:
+
+- move `EventSubscriptionExecutionReadinessDescriptor`, `EventSubscriptionExecutionReadinessStates`, and `IEventSubscriptionExecutionReadinessCatalog` to `Cephalon.Abstractions.Data`
+- keep `Cephalon.Eventing` as the implementation owner for the merged readiness answer over declared subscriptions, managed bindings, hosted execution links, and application-managed runtime reports
+- add `/engine/event-subscription-readiness`, `/engine/event-subscription-readiness/{subscriptionId}`, and `snapshot.EventSubscriptionExecutionReadiness`
+- prove the declared-only operator route, missing-subscription `404`, package-surface, generated reference-doc, and docs alignment paths through focused hosting/tooling coverage
 
 Follow-up later:
 

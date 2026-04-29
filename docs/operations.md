@@ -1562,6 +1562,31 @@ Current note:
 - this is a descriptive runtime answer for processed-message or idempotency-store surfaces, not a claim that Cephalon already ships a full subscription-dispatch runtime
 - invalid inbox source-module ownership fails at build time instead of leaking broken operator metadata
 
+## Event subscription readiness surface
+
+`GET /engine/event-subscription-readiness` exposes the operator-facing readiness catalog for
+declared event subscriptions when an eventing pack registers the abstraction-level
+`IEventSubscriptionExecutionReadinessCatalog`.
+
+Current payload highlights:
+
+- each readiness entry carries a stable `subscriptionId`, `readinessState`, `executionOwnership`,
+  `executionMode`, optional `executionRuntimeId`, ordered machine-readable `reasons`, and safe
+  metadata
+- `readinessState` is one of `runtime-bound`, `hosted-execution-linked`,
+  `application-managed-state`, or `declared-only`, so declared subscriptions do not look execution
+  ready until a managed binding, hosted execution link, or runtime report exists
+- `GET /engine/event-subscription-readiness/{subscriptionId}` narrows the same catalog to one
+  declared subscription and returns `404` when that subscription does not exist
+- the same readiness catalog is also available through `/engine/snapshot` in
+  `EventSubscriptionExecutionReadiness` when operators want one merged runtime answer
+
+Current note:
+
+- the contract lives in `Cephalon.Abstractions.Data` so `Cephalon.Engine` and host adapters can
+  expose it without referencing `Cephalon.Eventing`; the eventing pack or an optional companion
+  still owns the implementation and runtime truth
+
 ## Authorization policy surface
 
 `GET /engine/authorization-policies` exposes the operator-facing authorization-policy catalog contributed by active modules.
@@ -1580,6 +1605,18 @@ Current note:
 ## Technology surface
 
 `GET /engine/technology-surfaces` exposes the active runtime surfaces projected by selected technology packs.
+
+Current `Cephalon.Eventing` highlights:
+
+- `event-channels` and `event-subscriptions` keep channel and declared subscription descriptors
+  visible under the selected `EventDrivenIntegration` technology
+- `event-subscriptions` now projects execution readiness through stable metadata keys such as
+  `executionReadiness`, `executionPath`, and `executionReadinessReasons`
+- the typed readiness answer is also available through `/engine/event-subscription-readiness` and
+  `snapshot.EventSubscriptionExecutionReadiness`, so operators do not need to parse metadata when
+  they only need the readiness posture
+- Wolverine or another companion adapter can move one subscription to `runtime-bound`, while
+  hosted execution links and application-managed reports remain truthful non-provider-owned states
 
 Current `Cephalon.Agentics` highlights:
 

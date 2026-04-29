@@ -1,4 +1,4 @@
-namespace Cephalon.Eventing.Services;
+namespace Cephalon.Abstractions.Data;
 
 /// <summary>
 /// Defines stable readiness-state identifiers for declared event-subscription execution paths.

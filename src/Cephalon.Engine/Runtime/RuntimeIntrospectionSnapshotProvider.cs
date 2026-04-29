@@ -42,6 +42,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     {
         var eventDispatchRuntimeDescriptorCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeDescriptorCatalog)) as IEventDispatchRuntimeDescriptorCatalog;
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
+        var eventSubscriptionExecutionReadinessCatalog = serviceProvider.GetService(typeof(IEventSubscriptionExecutionReadinessCatalog)) as IEventSubscriptionExecutionReadinessCatalog;
         var cdcCaptureRuntimeStateCatalog = serviceProvider.GetService(typeof(ICdcCaptureRuntimeStateCatalog)) as ICdcCaptureRuntimeStateCatalog;
         var cdcCaptureExecutionRuntimeCatalog = serviceProvider.GetService(typeof(ICdcCaptureExecutionRuntimeCatalog)) as ICdcCaptureExecutionRuntimeCatalog;
         var featureFlagRuntimeCatalog = serviceProvider.GetService(typeof(IFeatureFlagRuntimeCatalog)) as IFeatureFlagRuntimeCatalog;
@@ -86,6 +87,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             DatabaseTopology = databaseTopologyOperationalSnapshotProvider.CreateSnapshot(),
             EventDispatchRuntimes = eventDispatchRuntimeDescriptorCatalog?.Runtimes ?? [],
             EventDispatchStates = eventDispatchRuntimeCatalog?.States ?? [],
+            EventSubscriptionExecutionReadiness = eventSubscriptionExecutionReadinessCatalog?.Readiness ?? [],
             AuditStores = auditStoreCatalog.AuditStores,
             AuthorizationPolicies = authorizationPolicyCatalog.Policies,
             FeatureFlags = featureFlagRuntimeCatalog?.FeatureFlags ?? [],

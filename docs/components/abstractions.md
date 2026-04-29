@@ -92,6 +92,9 @@
 - `Data/OutboxDescriptor.cs`
 - `Data/IOutbox.cs`
 - `Data/IOutboxCatalog.cs`
+- `Data/EventSubscriptionExecutionReadinessDescriptor.cs`
+- `Data/EventSubscriptionExecutionReadinessStates.cs`
+- `Data/IEventSubscriptionExecutionReadinessCatalog.cs`
 - `Authorization/AuthorizationPolicyDescriptor.cs`
 - `Authorization/IAuthorizationEvaluator.cs`
 - `Tenancy/TenantContext.cs`
@@ -219,6 +222,15 @@ capture observations back through the same descriptor-backed runtime-state catal
 `executionRuntimeId` and `cdcCaptureId`, while higher-level hosts and adapters can validate the
 effective ownership boundary without introducing a second HTTP-only or provider-only CDC status
 contract.
+
+The same data contract family now carries the event-subscription execution-readiness read seam.
+`EventSubscriptionExecutionReadinessDescriptor`, `EventSubscriptionExecutionReadinessStates`, and
+`IEventSubscriptionExecutionReadinessCatalog` live here so `Cephalon.Engine`, host adapters, and
+operator tooling can read subscription readiness through `/engine/snapshot` and HTTP routes without
+referencing `Cephalon.Eventing` directly. The implementation still belongs to the eventing pack or
+an optional companion; the abstraction only defines the host-agnostic answer for whether a declared
+subscription is `runtime-bound`, `hosted-execution-linked`, `application-managed-state`, or
+`declared-only`.
 
 That same reporting seam now also keeps retry, reporter identity, edge topology, ordering, and
 freshness-expiry policy host-agnostic. `CdcCaptureRuntimeObservation.ReportId` gives external

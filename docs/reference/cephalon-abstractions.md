@@ -45638,6 +45638,175 @@ int TotalReports { get; }
 
 Gets the total number of reported observations across all owned outboxes.
 
+<a id="type-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor"></a>
+
+### `EventSubscriptionExecutionReadinessDescriptor`
+
+Describes the current execution-readiness posture for one declared event subscription.
+
+#### Declaration
+```csharp
+public sealed class EventSubscriptionExecutionReadinessDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventSubscriptionExecutionReadinessDescriptor`
+
+```csharp
+EventSubscriptionExecutionReadinessDescriptor(string subscriptionId, string readinessState, string executionOwnership, string executionMode, string executionRuntimeId, IReadOnlyList<string> reasons, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new event-subscription execution-readiness descriptor.
+
+Parameters:
+- `subscriptionId`: The stable declared subscription identifier.
+- `readinessState`: The stable readiness-state identifier.
+- `executionOwnership`: The operator-facing execution ownership answer.
+- `executionMode`: The operator-facing execution mode answer.
+- `executionRuntimeId`: The managed runtime identifier when a runtime-bound path exists.
+- `reasons`: The ordered machine-readable reasons that explain the readiness state.
+- `metadata`: Optional operator-facing metadata associated with the readiness answer.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+string ExecutionMode { get; }
+```
+
+Gets the operator-facing execution mode answer.
+
+<a id="member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; }
+```
+
+Gets the operator-facing execution ownership answer.
+
+<a id="member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; }
+```
+
+Gets the managed runtime identifier when a runtime-bound path exists.
+
+<a id="member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-hasexecutionpath"></a>
+
+##### `HasExecutionPath`
+
+```csharp
+bool HasExecutionPath { get; }
+```
+
+Gets a value indicating whether Cephalon can currently observe or bind an execution path for the subscription.
+
+<a id="member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the readiness answer.
+
+<a id="member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-readinessstate"></a>
+
+##### `ReadinessState`
+
+```csharp
+string ReadinessState { get; }
+```
+
+Gets the stable readiness-state identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-reasons"></a>
+
+##### `Reasons`
+
+```csharp
+IReadOnlyList<string> Reasons { get; }
+```
+
+Gets the ordered machine-readable reasons that explain the readiness state.
+
+<a id="member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-subscriptionid"></a>
+
+##### `SubscriptionId`
+
+```csharp
+string SubscriptionId { get; }
+```
+
+Gets the stable declared subscription identifier.
+
+<a id="type-cephalon-abstractions-data-eventsubscriptionexecutionreadinessstates"></a>
+
+### `EventSubscriptionExecutionReadinessStates`
+
+Defines stable readiness-state identifiers for declared event-subscription execution paths.
+
+Remarks: These values describe how Cephalon can currently observe or bind a declared subscription without claiming that the core eventing package owns a generic broker runtime.
+
+#### Declaration
+```csharp
+public static class EventSubscriptionExecutionReadinessStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-eventsubscriptionexecutionreadinessstates-applicationmanagedstate"></a>
+
+##### `ApplicationManagedState`
+
+```csharp
+const string ApplicationManagedState
+```
+
+The subscription has reported application-managed runtime observations.
+
+<a id="member-f-cephalon-abstractions-data-eventsubscriptionexecutionreadinessstates-declaredonly"></a>
+
+##### `DeclaredOnly`
+
+```csharp
+const string DeclaredOnly
+```
+
+The subscription is declared but no execution path has been bound, linked, or observed.
+
+<a id="member-f-cephalon-abstractions-data-eventsubscriptionexecutionreadinessstates-hostedexecutionlinked"></a>
+
+##### `HostedExecutionLinked`
+
+```csharp
+const string HostedExecutionLinked
+```
+
+The subscription is linked to a host-managed execution service.
+
+<a id="member-f-cephalon-abstractions-data-eventsubscriptionexecutionreadinessstates-runtimebound"></a>
+
+##### `RuntimeBound`
+
+```csharp
+const string RuntimeBound
+```
+
+The subscription is bound to a managed execution runtime contributed by a companion pack.
+
 <a id="type-cephalon-abstractions-data-icdccapture"></a>
 
 ### `ICdcCapture`
@@ -48676,6 +48845,62 @@ Returns: The matching dispatch-runtime descriptor, or `null` when none exists.
 
 Parameters:
 - `dispatchRuntimeId`: The stable dispatch-runtime identifier to resolve.
+
+<a id="type-cephalon-abstractions-data-ieventsubscriptionexecutionreadinesscatalog"></a>
+
+### `IEventSubscriptionExecutionReadinessCatalog`
+
+Reads execution-readiness posture for declared event subscriptions.
+
+#### Declaration
+```csharp
+public interface IEventSubscriptionExecutionReadinessCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ieventsubscriptionexecutionreadinesscatalog-readiness"></a>
+
+##### `Readiness`
+
+```csharp
+IReadOnlyList<EventSubscriptionExecutionReadinessDescriptor> Readiness { get; }
+```
+
+Gets the current execution-readiness descriptors for declared event subscriptions.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventsubscriptionexecutionreadinesscatalog-getbysubscriptionid-system-string"></a>
+
+##### `GetBySubscriptionId`
+
+```csharp
+EventSubscriptionExecutionReadinessDescriptor GetBySubscriptionId(string subscriptionId)
+```
+
+Gets the current execution-readiness descriptor for a declared subscription.
+
+Returns: The readiness descriptor when the subscription exists; otherwise, `null`.
+
+Parameters:
+- `subscriptionId`: The stable declared subscription identifier.
+
+<a id="member-m-cephalon-abstractions-data-ieventsubscriptionexecutionreadinesscatalog-tryget-system-string-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string subscriptionId, out EventSubscriptionExecutionReadinessDescriptor readiness)
+```
+
+Attempts to get the current execution-readiness descriptor for a declared subscription.
+
+Returns: `true` when the subscription exists; otherwise, `false`.
+
+Parameters:
+- `subscriptionId`: The stable declared subscription identifier.
+- `readiness`: The resolved readiness descriptor when the subscription exists.
 
 <a id="type-cephalon-abstractions-data-iinbox"></a>
 
