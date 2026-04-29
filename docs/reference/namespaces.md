@@ -420,6 +420,18 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration)
 
+## `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.HttpDelivery](cephalon-multitenancy-governance-httpdelivery.md#namespace-cephalon-multitenancy-governance-httpdelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.HttpDelivery](cephalon-multitenancy-governance-httpdelivery.md#namespace-cephalon-multitenancy-governance-httpdelivery-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting)
+
+## `Cephalon.MultiTenancy.Governance.HttpDelivery.Services`
+
+- [Cephalon.MultiTenancy.Governance.HttpDelivery](cephalon-multitenancy-governance-httpdelivery.md#namespace-cephalon-multitenancy-governance-httpdelivery-services): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services)
+
 ## `Cephalon.MultiTenancy.Governance.Registration`
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Registration)

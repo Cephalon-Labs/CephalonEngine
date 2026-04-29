@@ -108,7 +108,7 @@ Technologies are additive workload profiles that prepare the runtime for specifi
 - `edge-native-delivery` — Edge-Native Delivery (Deployment): prepares the app for browser, device, edge, and intermittently connected deployment scenarios. Aliases: `EdgeNativeDelivery`, `EdgeNative`, `Edge`. Package hint: `Cephalon.Edge`.
 - `serverless-hosting` — Serverless Hosting (Deployment): prepares the app for event-triggered or function-style hosting without changing the host-agnostic core runtime model. Aliases: `ServerlessHosting`, `Serverless`.
 - `identity-access` — Identity Access (Security): prepares the app for configurable authentication and authorization flows such as RBAC, ABAC, and policy evaluation. Aliases: `IdentityAccess`, `Identity`. Package hint: `Cephalon.Identity`.
-- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain/action companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`, `Cephalon.MultiTenancy.Governance.AspNetCore`.
+- `multi-tenancy` — Multi-Tenancy (Platform): prepares the app for tenant-aware routing, isolation, tenant resolution, and explicit governance/member/domain/action companion boundaries. Aliases: `MultiTenancy`, `Multitenancy`. Package hints: `Cephalon.MultiTenancy`, `Cephalon.MultiTenancy.Governance`, `Cephalon.MultiTenancy.Governance.AspNetCore`, `Cephalon.MultiTenancy.Governance.HttpDelivery`.
 - `hybrid-cloud-runtime` — Hybrid Cloud Runtime (Platform): prepares the app for mixed on-premises, edge, and cloud deployment handoffs without changing the engine core. Aliases: `HybridCloudRuntime`, `HybridCloud`.
 - `service-mesh-integration` — Service Mesh Integration (Platform): prepares the app for additive service-mesh coordination, policy handoff, and traffic-governance guidance. Aliases: `ServiceMeshIntegration`, `ServiceMesh`.
 
@@ -165,6 +165,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution, ambient tenant-context baseline, and governance-boundary runtime truth.
 - `multi-tenancy-governance` — Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`): tenant-membership catalog/evaluation, opt-in durable membership storage, tenant-invitation catalog/validation, opt-in durable invitation storage, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-driven tenant-administration workflow commands over membership and invitation stores, declared tenant-domain ownership catalog/validation, opt-in durable domain-ownership storage, in-process tenant-domain ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow transitions, opt-in durable action storage, and governance runtime-surface proofs.
+- `multi-tenancy-governance-http-delivery` — Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`): optional provider-managed HTTP webhook sender for tenant-invitation delivery dispatch.
 
 ### Data provider modules (14)
 
@@ -347,6 +348,7 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `tenancy.invitation.catalog` — Tenant Invitation Catalog
 - `tenancy.invitation.store` — Tenant Invitation Store
 - `tenancy.invitation.validation` — Tenant Invitation Validation
+- `tenancy.invitation.delivery-dispatch` — Tenant Invitation Delivery Dispatch
 - `tenancy.administration.workflow` — Tenant Administration Workflow
 - `tenancy.domain-ownership.catalog` — Tenant Domain Ownership Catalog
 - `tenancy.domain-ownership.store` — Tenant Domain Ownership Store
@@ -458,6 +460,8 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ITenantInvitationCatalog` — merged tenant-invitation read model
 - `ITenantInvitationStore` — runtime tenant-invitation storage, with in-memory and opt-in file-backed baselines
 - `ITenantInvitationValidator` — pending tenant-invitation validation
+- `ITenantInvitationDeliveryDispatcher` / `ITenantInvitationDeliverySender` / `ITenantInvitationDeliveryRunCatalog` — host-agnostic invitation delivery dispatch, sender extension, and run-state tracking
+- `HttpInvitationDeliveryPayload` — JSON payload contract for the optional HTTP webhook invitation sender in `Cephalon.MultiTenancy.Governance.HttpDelivery`
 - `ITenantAdministrationWorkflow` — host-driven membership and invitation administration workflow commands
 - `ITenantDomainOwnershipCatalog` — merged declared tenant-domain ownership read model
 - `ITenantDomainOwnershipValidator` — declared tenant-domain ownership validation
@@ -504,6 +508,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Identity (`Cephalon.Identity`) — event IDs 4400–4401
 - Multi-Tenancy (`Cephalon.MultiTenancy`) — event IDs 4500–4502
 - Multi-Tenancy Governance (`Cephalon.MultiTenancy.Governance`) — event IDs 4510–4549
+- Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`) — event IDs 4550–4551
 - Audit (`Cephalon.Audit`) — event IDs 4600–4601
 - Behaviors (`Cephalon.Behaviors`) — event IDs 5100–5109
 

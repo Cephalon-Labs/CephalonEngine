@@ -562,7 +562,7 @@ Delivered:
 
 Follow-up later:
 
-- tenant-admin backoffice UI, public onboarding, provider-specific notification/invitation senders, identity-provider synchronization, remediation execution beyond state transitions, distributed/provider-backed governance stores, and actual DNS/provider proof publication remain future governance slices until a package truly owns those paths; the ASP.NET Core command endpoint is now covered by `ENG-255`, and host-agnostic invitation delivery dispatch is covered by `ENG-256`
+- tenant-admin backoffice UI, public onboarding, provider-specific email/SMS/chat/CRM/identity-provider invitation senders, identity-provider synchronization, remediation execution beyond state transitions, distributed/provider-backed governance stores, and actual DNS/provider proof publication remain future governance slices until a package truly owns those paths; the ASP.NET Core command endpoint is now covered by `ENG-255`, host-agnostic invitation delivery dispatch is covered by `ENG-256`, and the generic HTTP webhook sender is covered by `ENG-257`
 
 ### ENG-255 Multi-tenancy governance ASP.NET Core tenant administration endpoint baseline
 
@@ -605,6 +605,27 @@ Delivered:
 Follow-up later:
 
 - provider-specific email/SMS/chat/identity-provider invitation senders, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
+
+### ENG-257 Multi-tenancy governance HTTP invitation delivery sender baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- after `ENG-256`, the governance core owned truthful dispatch, sender selection, run-state, and outcome recording, but consumer apps still had to implement every concrete sender before the path could call a real external notification or onboarding system
+- the smallest honest next proof is a generic HTTP webhook sender over the existing `ITenantInvitationDeliverySender` extension point, not a SendGrid/Mailgun/Twilio/chat/identity-provider-specific connector
+
+Delivered:
+
+- add `Cephalon.MultiTenancy.Governance.HttpDelivery` as an optional companion package with `HttpInvitationDeliveryOptions`, `AddCephalonHttpInvitationDelivery(...)`, and `HttpInvitationDeliveryPayload`
+- implement a provider-managed `http-webhook` sender that posts bounded JSON payloads to configured HTTP or HTTPS endpoints, supports configurable method, timeout, headers, accepted status codes, supported channels, provider-message id header capture, and safe sender metadata
+- publish diagnostics `4550-4551`, add the package to the supported reference-doc/default catalog and package-surface guardrails, and prove dispatched/suppressed outcomes through focused composition tests over the existing governance dispatcher and store metadata
+- keep provider-specific email/SMS/chat/CRM/identity-provider semantics, retry queues, callbacks, public onboarding, tenant-admin UI, and identity-provider sync outside this proof
+
+Follow-up later:
+
+- provider-specific email/SMS/chat/CRM/identity-provider invitation senders, webhook signing/callback reconciliation, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
 
 ## Completed foundation work
 

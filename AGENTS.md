@@ -45,7 +45,8 @@ When working in this repository:
 - `Cephalon.Observability.Serilog` is the optional logger-provider companion package for Serilog host wiring
 - `Cephalon.Cli` is the user-facing shell for blueprint-driven generation
 - `Cephalon.ReferenceDocs` is the optional repo-local reference-doc publishing tool for XML-comment-driven API output
-- `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, and `Cephalon.Edge` are the baseline technology companion packages
+- `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, and `Cephalon.Edge` are the baseline technology companion packages
+- `Cephalon.MultiTenancy.Governance.HttpDelivery` is the optional HTTP webhook invitation-delivery sender companion package for the multi-tenancy governance dispatcher
 - `Cephalon.Scaffolding` is the generation companion package for turning blueprint scaffold plans into concrete files
 - `templates/Cephalon.TemplatePack` is the installable `dotnet new` surface for the shipped blueprint starters
 - `docs/module-authoring.md` and `samples/Cephalon.ReferenceModule.*` are the module-authoring baseline
@@ -288,6 +289,9 @@ Current source layout:
 - `src/Cephalon.Retrieval/Modules` -> `Cephalon.Retrieval.Modules`
 - `src/Cephalon.Retrieval/Registration` -> `Cephalon.Retrieval.Registration`
 - `src/Cephalon.Retrieval/Services` -> `Cephalon.Retrieval.Services`
+- `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration`
+- `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting`
+- `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Services` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Services`
 - `src/Cephalon.Scaffolding/Generation` -> `Cephalon.Scaffolding.Generation`
 - `src/Cephalon.Scaffolding/IO` -> `Cephalon.Scaffolding.IO`
 - `templates/Cephalon.TemplatePack/templates` -> installable `dotnet new` blueprint templates

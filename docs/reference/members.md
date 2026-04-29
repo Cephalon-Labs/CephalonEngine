@@ -411,6 +411,9 @@ Browse the published API surface by public member.
 - [Actor](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-actor): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Actor&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the actor responsible for the audited operation when one was supplied explicitly.
   - `AuditActor Actor { get; }`
+- [Actor](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-actor): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the actor that requested dispatch.
+  - `string Actor { get; set; }`
 - [Actor](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-actor): `Properties` on `TenantAdministrationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the actor that requested the command when known.
   - `string Actor { get; }`
@@ -759,6 +762,12 @@ Browse the published API surface by public member.
 - [AddCephalonHttpDependencyHealth](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions): `Methods` on `HttpDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.HttpDependencies.Hosting` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=AddCephalonHttpDependencyHealth&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Hosting&scope=members)
   - Adds HTTP dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<HttpDependencyHealthOptions> configure)`
+- [AddCephalonHttpInvitationDelivery](cephalon-multitenancy-governance-httpdelivery.md#member-m-cephalon-multitenancy-governance-httpdelivery-hosting-httpinvitationdeliveryservicecollectionextensions-addcephalonhttpinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions): `Methods` on `HttpInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=AddCephalonHttpInvitationDelivery&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting&scope=members)
+  - Adds HTTP invitation delivery using code-first configuration.
+  - `IServiceCollection AddCephalonHttpInvitationDelivery(this IServiceCollection services, Action<HttpInvitationDeliveryOptions> configure)`
+- [AddCephalonHttpInvitationDelivery](cephalon-multitenancy-governance-httpdelivery.md#member-m-cephalon-multitenancy-governance-httpdelivery-hosting-httpinvitationdeliveryservicecollectionextensions-addcephalonhttpinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions): `Methods` on `HttpInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=AddCephalonHttpInvitationDelivery&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting&scope=members)
+  - Adds HTTP invitation delivery using configuration as the primary source of webhook settings.
+  - `IServiceCollection AddCephalonHttpInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action<HttpInvitationDeliveryOptions> configure)`
 - [AddCephalonHttpLogging](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonhttplogging-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddCephalonHttpLogging&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Adds Cephalon's HTTP request and response logging options to the ASP.NET Core host.
   - `WebApplicationBuilder AddCephalonHttpLogging(this WebApplicationBuilder builder, Action<HttpRequestResponseLoggingOptions> configure)`
@@ -3609,6 +3618,9 @@ Browse the published API surface by public member.
 - [Changes](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-changes): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Changes&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the field-level changes captured for the operation.
   - `IReadOnlyList<AuditChange> Changes { get; }`
+- [Channel](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-channel): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Channel&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the requested delivery channel.
+  - `string Channel { get; set; }`
 - [Channel](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedistributionmanifest-channel): `Properties` on `PackageDistributionManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Channel&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared release channel, when available.
   - `string Channel { get; }`
@@ -5106,6 +5118,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-correlationid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the correlation identifier associated with the event.
   - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-correlationid): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the optional correlation identifier.
+  - `string CorrelationId { get; set; }`
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorcontext-correlationid): `Properties` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the correlation identifier for the current execution, or `null` if not provided.
   - `string CorrelationId { get; }`
@@ -6630,6 +6645,9 @@ Browse the published API surface by public member.
 - [DispatchedAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-dispatchedatutc): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=DispatchedAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the outbox row was dispatched, when known.
   - `DateTimeOffset? DispatchedAtUtc { get; set; }`
+- [DispatchedAtUtc](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-dispatchedatutc): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=DispatchedAtUtc&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the UTC timestamp used for dispatch.
+  - `DateTimeOffset DispatchedAtUtc { get; set; }`
 - [DispatchedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-dispatchedatutc): `Properties` on `TenantInvitationDeliveryContext` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DispatchedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp used for dispatch.
   - `DateTimeOffset DispatchedAtUtc { get; }`
@@ -6783,6 +6801,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-displayname): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the operator-facing hosted-execution name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-displayname): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the optional invitation display name.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisory-displayname): `Properties` on `IBehaviorAdvisory` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the display name shown in runtime surfaces.
   - `string DisplayName { get; }`
@@ -7725,6 +7746,9 @@ Browse the published API surface by public member.
 - [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-enabled): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the feature flag is enabled before targeting is applied.
   - `bool Enabled { get; }`
+- [Enabled](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-enabled): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Enabled&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether the HTTP invitation sender should be registered.
+  - `bool Enabled { get; set; }`
 - [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-enabled): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets a value indicating whether the ASP.NET Core host should log request and response summaries.
   - `bool Enabled { get; set; }`
@@ -7928,6 +7952,9 @@ Browse the published API surface by public member.
   - `string Endpoint { get; set; }`
 - [Endpoint](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-endpoint): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the absolute endpoint that should be probed for this dependency.
+  - `string Endpoint { get; set; }`
+- [Endpoint](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-endpoint): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the absolute HTTP endpoint that receives invitation delivery payloads.
   - `string Endpoint { get; set; }`
 - [Endpoint](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-endpoint): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
   - Gets or sets the base New Relic OTLP endpoint used for direct ingestion.
@@ -8883,6 +8910,9 @@ Browse the published API surface by public member.
 - [ExpectedStatusCodes](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-expectedstatuscodes): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=ExpectedStatusCodes&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the explicit HTTP status codes that should be treated as healthy.
   - `IReadOnlyList<int> ExpectedStatusCodes { get; set; }`
+- [ExpectedStatusCodes](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-expectedstatuscodes): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=ExpectedStatusCodes&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets explicit response status codes that indicate the webhook accepted the dispatch.
+  - `IReadOnlyList<int> ExpectedStatusCodes { get; set; }`
 - [ExpectedTaskCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-expectedtaskcount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExpectedTaskCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared task count when the managed connector reports one.
   - `int? ExpectedTaskCount { get; set; }`
@@ -9357,6 +9387,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Binds HTTP dependency-health options from configuration.
   - `HttpDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-multitenancy-governance-httpdelivery.md#member-m-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Binds HTTP invitation delivery options from configuration.
+  - `HttpInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Binds request and response logging options from configuration.
   - `HttpRequestResponseLoggingOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -11469,6 +11502,9 @@ Browse the published API surface by public member.
 - [Headers](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-headers): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string used for direct Grafana Cloud ingestion.
   - `string Headers { get; set; }`
+- [Headers](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-headers): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Headers&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets additional HTTP headers added to every delivery request.
+  - `IReadOnlyDictionary<string, string> Headers { get; set; }`
 - [Headers](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxmessage-headers): `Properties` on `InboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Headers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets message headers associated with the message.
   - `IReadOnlyDictionary<string, string> Headers { get; }`
@@ -11706,6 +11742,9 @@ Browse the published API surface by public member.
 - [Hostnames](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-hostnames): `Properties` on `KubernetesGatewayTrafficRouteOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=Hostnames&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets the optional hostnames published by the projected HTTPRoute.
   - `IList<string> Hostnames { get; }`
+- [HttpClientName](cephalon-multitenancy-governance-httpdelivery.md#member-f-cephalon-multitenancy-governance-httpdelivery-hosting-httpinvitationdeliveryservicecollectionextensions-httpclientname): `Fields` on `HttpInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=HttpClientName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting&scope=members)
+  - The named HTTP client used by the HTTP invitation delivery sender.
+  - `const string HttpClientName`
 - [HttpCollectionFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-httpcollectionfailed): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=HttpCollectionFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - HTTP proof collection failed before a proof could be evaluated.
   - `const string HttpCollectionFailed`
@@ -11766,6 +11805,12 @@ Browse the published API surface by public member.
 - [HttpFilePath](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanresult-httpfilepath): `Properties` on `TenantDomainOwnershipProofPublicationPlanResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=HttpFilePath&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the HTTP path where the proof file should be published.
   - `string HttpFilePath { get; }`
+- [HttpInvitationDeliveryOptions](cephalon-multitenancy-governance-httpdelivery.md#member-m-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-ctor): `Constructors` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=HttpInvitationDeliveryOptions&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Creates HTTP invitation delivery options with the default sender identifier and timeout.
+  - `HttpInvitationDeliveryOptions()`
+- [HttpInvitationDeliveryPayload](cephalon-multitenancy-governance-httpdelivery.md#member-m-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-ctor): `Constructors` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=HttpInvitationDeliveryPayload&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Creates an empty HTTP invitation delivery payload for JSON serialization.
+  - `HttpInvitationDeliveryPayload()`
 - [HttpMethod](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-httpmethod): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HttpMethod&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the outbound HTTP method that would be used by the provider execution adapter when one was resolved.
   - `string HttpMethod { get; set; }`
@@ -12240,6 +12285,9 @@ Browse the published API surface by public member.
 - [IncludeHttpFile](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-includehttpfile): `Properties` on `TenantDomainOwnershipProofPollingRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IncludeHttpFile&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether HTTP file declarations are eligible.
   - `bool IncludeHttpFile { get; }`
+- [IncludeInvitationMetadata](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-includeinvitationmetadata): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=IncludeInvitationMetadata&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether invitation metadata should be included in the webhook payload.
+  - `bool IncludeInvitationMetadata { get; set; }`
 - [IncludeMissingExpectedProof](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-includemissingexpectedproof): `Properties` on `TenantDomainOwnershipProofPollingRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IncludeMissingExpectedProof&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether declarations without expected proof metadata should still be passed to the verifier.
   - `bool IncludeMissingExpectedProof { get; }`
@@ -12249,6 +12297,12 @@ Browse the published API surface by public member.
 - [IncludeRejected](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingrequest-includerejected): `Properties` on `TenantDomainOwnershipProofPollingRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=IncludeRejected&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether rejected declarations can be retried.
   - `bool IncludeRejected { get; }`
+- [IncludeRequestMetadata](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-includerequestmetadata): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=IncludeRequestMetadata&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether dispatch request metadata should be included in the webhook payload.
+  - `bool IncludeRequestMetadata { get; set; }`
+- [IncludeResponseBodyInMetadata](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-includeresponsebodyinmetadata): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=IncludeResponseBodyInMetadata&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether a bounded response body excerpt should be copied into sender metadata.
+  - `bool IncludeResponseBodyInMetadata { get; set; }`
 - [IncludeRouteValuesAsResourceAttributes](cephalon-identity-aspnetcore.md#member-p-cephalon-identity-aspnetcore-configuration-identityaspnetcoreoptions-includeroutevaluesasresourceattributes): `Properties` on `IdentityAspNetCoreOptions` in `Cephalon.Identity.AspNetCore.Configuration` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=IncludeRouteValuesAsResourceAttributes&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether route values should be projected into `Attributes`.
   - `bool IncludeRouteValuesAsResourceAttributes { get; set; }`
@@ -12480,6 +12534,9 @@ Browse the published API surface by public member.
 - [InvitationExpired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-invitationexpired): `Fields` on `TenantInvitationDeliveryOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationExpired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested invitation expired before dispatch.
   - `const string InvitationExpired`
+- [InvitationId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-invitationid): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the invitation identifier.
+  - `string InvitationId { get; set; }`
 - [InvitationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-invitationid): `Properties` on `TenantAdministrationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the invitation identifier for invitation commands.
   - `string InvitationId { get; }`
@@ -12507,6 +12564,9 @@ Browse the published API surface by public member.
 - [InvitationLifecycle](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-invitationlifecycle): `Fields` on `TenantGovernanceActionKinds` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationLifecycle&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - A governance action that changes an invitation lifecycle.
   - `const string InvitationLifecycle`
+- [InvitationMetadata](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-invitationmetadata): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=InvitationMetadata&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets optional metadata attached to the invitation.
+  - `IReadOnlyDictionary<string, string> InvitationMetadata { get; set; }`
 - [InvitationNotFound](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-invitationnotfound): `Fields` on `TenantAdministrationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationNotFound&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - An invitation command targeted an invitation that does not exist.
   - `const string InvitationNotFound`
@@ -12531,6 +12591,9 @@ Browse the published API surface by public member.
 - [InvitationTargetRequired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-invitationtargetrequired): `Fields` on `TenantAdministrationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationTargetRequired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - An invitation command was missing its required invitation target.
   - `const string InvitationTargetRequired`
+- [InviteeId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-inviteeid): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=InviteeId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the invitee identifier.
+  - `string InviteeId { get; set; }`
 - [InviteeId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-inviteeid): `Properties` on `TenantAdministrationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the invitee identifier for invitation commands.
   - `string InviteeId { get; }`
@@ -12546,6 +12609,9 @@ Browse the published API surface by public member.
 - [InviteeId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-inviteeid): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional invitee identifier expected by the request.
   - `string InviteeId { get; }`
+- [InviteeKind](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-inviteekind): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=InviteeKind&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the invitee kind.
+  - `string InviteeKind { get; set; }`
 - [InviteeKind](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-inviteekind): `Properties` on `TenantAdministrationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InviteeKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the invitee kind for invitation commands.
   - `string InviteeKind { get; }`
@@ -15672,6 +15738,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-metadata): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets operator-facing metadata associated with the hosted execution.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-metadata): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets optional request metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorcontext-metadata): `Properties` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets ambient metadata associated with the current execution (e.g. correlation id, tenant id).
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -15938,6 +16007,9 @@ Browse the published API surface by public member.
   - `const string MeterName`
 - [Method](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-method): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Method&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the HTTP method used for the probe request.
+  - `string Method { get; set; }`
+- [Method](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-method): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Method&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the HTTP method used for delivery requests.
   - `string Method { get; set; }`
 - [Method](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-method): `Properties` on `RestEndpointCandidateProjectionDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Method&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the projected HTTP method.
@@ -19404,6 +19476,9 @@ Browse the published API surface by public member.
 - [ProviderMessageId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverysenderresult-providermessageid): `Properties` on `TenantInvitationDeliverySenderResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the provider message identifier returned by the sender.
   - `string ProviderMessageId { get; }`
+- [ProviderMessageIdHeaderName](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-providermessageidheadername): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=ProviderMessageIdHeaderName&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the response header that contains the provider message identifier.
+  - `string ProviderMessageIdHeaderName { get; set; }`
 - [ProviderOwnedCompleted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedcompleted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution no longer needs another provider command.
   - `const string ProviderOwnedCompleted`
@@ -21150,6 +21225,9 @@ Browse the published API surface by public member.
 - [RequestedRoleIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-requestedroleids): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedRoleIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical requested role ids represented in this group.
   - `IReadOnlyList<string> RequestedRoleIds { get; }`
+- [RequestedSenderId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-requestedsenderid): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=RequestedSenderId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the requested sender identifier.
+  - `string RequestedSenderId { get; set; }`
 - [RequestedSenderId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-requestedsenderid): `Properties` on `TenantInvitationDeliveryContext` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RequestedSenderId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the requested sender identifier when one was specified.
   - `string RequestedSenderId { get; }`
@@ -21633,6 +21711,9 @@ Browse the published API surface by public member.
 - [ResponseBodyLimit](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-responsebodylimit): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResponseBodyLimit&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets the maximum number of response-body characters to log before the payload is truncated.
   - `int ResponseBodyLimit { get; set; }`
+- [ResponseBodyMetadataLimit](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-responsebodymetadatalimit): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=ResponseBodyMetadataLimit&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the maximum response body characters copied into sender metadata when enabled.
+  - `int ResponseBodyMetadataLimit { get; set; }`
 - [ResponseTooLarge](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-responsetoolarge): `Fields` on `TenantDomainOwnershipDnsTxtProofCollectionOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ResponseTooLarge&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The DNS TXT proof resolver response body exceeded the configured collection size limit.
   - `const string ResponseTooLarge`
@@ -22164,6 +22245,9 @@ Browse the published API surface by public member.
 - [Roles](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationsubject-roles): `Properties` on `AuthorizationSubject` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Roles&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the roles assigned to the subject.
   - `IReadOnlyList<string> Roles { get; }`
+- [Roles](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-roles): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Roles&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the tenant-local roles proposed by the invitation.
+  - `IReadOnlyList<string> Roles { get; set; }`
 - [Roles](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-roles): `Properties` on `TenantAdministrationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Roles&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the tenant-local roles associated with the membership or invitation.
   - `IReadOnlyList<string> Roles { get; }`
@@ -22917,6 +23001,9 @@ Browse the published API surface by public member.
 - [SenderFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-senderfailed): `Fields` on `TenantInvitationDeliveryOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SenderFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The sender failed or returned a failed outcome.
   - `const string SenderFailed`
+- [SenderId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-senderid): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the sender identifier used by `TenantInvitationDeliveryRequest.SenderId`.
+  - `string SenderId { get; set; }`
 - [SenderId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliverysender-senderid): `Properties` on `ITenantInvitationDeliverySender` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable sender identifier used by configuration, runtime metadata, and diagnostics.
   - `string SenderId { get; }`
@@ -23207,6 +23294,9 @@ Browse the published API surface by public member.
   - `string Source { get; set; }`
 - [Source](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-source): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Source&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The stable package or subsystem identifier that owns the convention.
+  - `string Source { get; set; }`
+- [Source](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-source): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Source&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the dispatch source.
   - `string Source { get; set; }`
 - [Source](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointbindingdescriptor-source): `Properties` on `RestEndpointBindingDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Source&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the HTTP request source that supplies the value.
@@ -24412,6 +24502,9 @@ Browse the published API surface by public member.
 - [SummaryPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-summarypath): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SummaryPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The aggregate health endpoint path.
   - `string SummaryPath { get; set; }`
+- [SupportedChannels](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-supportedchannels): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SupportedChannels&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets delivery channels accepted by this sender.
+  - `IReadOnlyList<string> SupportedChannels { get; set; }`
 - [SupportedCultures](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-ilocalizedtextcatalog-supportedcultures): `Properties` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=SupportedCultures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
   - Gets the cultures currently available in the catalog.
   - `IReadOnlyList<string> SupportedCultures { get; }`
@@ -24997,6 +25090,9 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-tenantid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the current tenant identifier when one is known.
   - `string TenantId { get; }`
+- [TenantId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-tenantid): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=TenantId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
+  - Gets or sets the tenant identifier.
+  - `string TenantId { get; set; }`
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-ids-idgenerationrequest-tenantid): `Properties` on `IdGenerationRequest` in `Cephalon.Abstractions.Ids` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Ids&scope=members)
   - Gets the tenant identifier associated with the requested identifier when one is known.
   - `string TenantId { get; }`
@@ -25243,6 +25339,9 @@ Browse the published API surface by public member.
 - [Timeout](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-timeout): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Timeout&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional per-request HTTP collection timeout.
   - `TimeSpan? Timeout { get; }`
+- [TimeoutSeconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-timeoutseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
+  - Gets or sets the maximum time allowed for the HTTP delivery request.
+  - `int TimeoutSeconds { get; set; }`
 - [TimeoutSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-timeoutselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TimeoutSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `TimeoutSelection` class.
   - `TimeoutSelection(bool? enabled, int? totalTimeoutSeconds, int? attemptTimeoutSeconds)`

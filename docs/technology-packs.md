@@ -91,6 +91,11 @@ Current baseline packages:
   - maps `MapCephalonTenantDomainOwnershipHttpProofs()` so published HTTP proof files can be served from ASP.NET Core hosts
   - maps `MapCephalonTenantAdministrationCommands()` so tenant-administration workflow commands can be exposed through a fail-closed ASP.NET Core endpoint
   - keeps endpoint enablement, route pattern, cache-control, and endpoint-description posture configurable through `Engine:MultiTenancy:Governance:AspNetCore`
+- `Cephalon.MultiTenancy.Governance.HttpDelivery`
+  - optional HTTP webhook sender companion for `Cephalon.MultiTenancy.Governance`
+  - registers a provider-managed `ITenantInvitationDeliverySender` with sender id `http-webhook` by default
+  - reads `Engine:MultiTenancy:Governance:HttpInvitationDelivery` or code-first options for endpoint, method, headers, accepted status codes, timeout, and supported channels
+  - emits `Cephalon.MultiTenancy.Governance.HttpDelivery` diagnostics while leaving provider-specific email, SMS, chat, CRM, identity-provider, retry, and callback semantics to future provider packs or applications
 - `Cephalon.Edge`
   - runtime services and capability activation for `EdgeNativeDelivery`
   - registers `IEdgeNodeCatalog` when the profile is selected
@@ -249,6 +254,7 @@ Shipped pack-specific extension points:
     - `ITenantInvitationStore` for runtime tenant-invitation state, with in-memory and file-backed baselines
     - `ITenantInvitationValidator` for the current Cephalon-managed invitation validation path
     - `ITenantInvitationDeliveryDispatcher`, `ITenantInvitationDeliverySender`, and `ITenantInvitationDeliveryRunCatalog` for the current host-agnostic invitation delivery dispatch path over registered sender extensions
+    - `Cephalon.MultiTenancy.Governance.HttpDelivery` plus `AddCephalonHttpInvitationDelivery(...)` when a host wants the first-party HTTP webhook sender implementation for that dispatch path
     - `ITenantAdministrationWorkflow` for the current Cephalon-managed host-driven membership and invitation administration path
     - `ITenantDomainOwnershipProofChallengeIssuer` for the current Cephalon-managed proof-challenge issuance path that creates expected proof values and publication hints
     - `ITenantDomainOwnershipProofPublicationPlanner` for the current Cephalon-managed proof-publication planning path that emits DNS TXT or HTTP file instructions

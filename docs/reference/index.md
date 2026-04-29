@@ -78,6 +78,7 @@ Quick links:
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md): Host-agnostic tenant-resolution and ambient tenant-context baseline for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy)
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md): Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads. Contains 3 namespaces and 114 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](cephalon-multitenancy-governance-aspnetcore.md): ASP.NET Core HTTP proof publication and tenant-administration command adapter for Cephalon multi-tenancy governance workloads. Contains 2 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AspNetCore)
+- [Cephalon.MultiTenancy.Governance.HttpDelivery](cephalon-multitenancy-governance-httpdelivery.md): HTTP webhook invitation delivery sender companion package for Cephalon multi-tenancy governance workloads. Contains 3 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.HttpDelivery)
 
 ### Tooling
 
