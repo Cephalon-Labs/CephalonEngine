@@ -41,6 +41,10 @@ module-owned REST endpoints.
   malformed placeholder syntax such as unbalanced `{...}` segments and preserved-fallback profiles that omit
   explicit bindings earlier, while runtime normalization still leaves final route parsing
   authoritative to ASP.NET Core
+- **REST runtime ownership metadata** — behavior-backed REST endpoints now publish stable
+  `RestEndpointRuntimeMetadataKeys` entries so operators can see that profile/publication
+  activation is application-managed while ASP.NET Core materialization, candidate reconciliation,
+  runtime catalogs, and snapshot projection are Cephalon-managed
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` and `.WithOpenApiDocumentName(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
@@ -916,6 +920,26 @@ mappings,
 `MapProfile<TBehavior>()` shorthand consumption, and
 `MapGeneratedProfiles(...)` / `MapGeneratedProfileGroups(...)` shorthand consumption.
 
+Behavior-backed entries also carry stable ownership metadata through
+`RestEndpointRuntimeMetadataKeys`:
+
+- `restPublicationActivationOwnership = application-managed` means a module, inline helper, or host
+  explicitly opted into a public REST boundary; `[AppBehavior]` and
+  `BehaviorRestProfileAttribute` still do not publish public REST by themselves
+- `restMaterializationOwnership = cephalon-managed` means Cephalon owns projection
+  materialization, ASP.NET Core route registration, candidate reconciliation, runtime catalogs, and
+  snapshot projection after that explicit activation
+- `restProfileMetadataOwnership = application-managed` appears on profile/generated shorthand
+  endpoints to show that behavior-authored profile metadata is an input contract, not an automatic
+  publication authority
+- `restPublicationActivationMode` records the explicit activation path, for example
+  `explicit-map-profile`, `explicit-map-generated-profiles`, `explicit-module-dsl`, or
+  `explicit-behavior-helper`
+
+That split is the maturity contract for this package: profile metadata stays intentionally
+non-publishing, while module-owned activation flows through Cephalon-managed materialization and
+operator-visible runtime truth.
+
 Publication-group entries now answer that same runtime truth one behavior at a time: the ordered
 candidate set, the published candidate ids that survived with the winning precedence rank, the
 precedence-suppressed candidate ids, and the governance-suppressed candidate ids. That grouped
@@ -1353,7 +1377,7 @@ reuse it as a universal engine contract.
 Those ambient values are also what the shared behavior feature-gate middleware uses when it builds
 the evaluation context for `IFeatureToggle`.
 
-> Status: ✅ Shipped — commit c957966 · 516/516 tests
+> Status: ✅ Shipped — runtime ownership metadata covered by focused hosting and package-surface validation
 
 ## Related components
 

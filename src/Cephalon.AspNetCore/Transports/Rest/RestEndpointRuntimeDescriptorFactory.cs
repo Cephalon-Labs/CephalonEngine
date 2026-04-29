@@ -158,13 +158,25 @@ internal static class RestEndpointRuntimeDescriptorFactory
         var normalizedRequiredFeatureFlagIds = RestEndpointRuntimeMetadata.NormalizeFeatureFlagIds(requiredFeatureFlagIds);
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["method"] = method,
-            ["authoringStyle"] = authoringStyle,
-            ["behaviorType"] = behaviorType,
-            ["routeGroupPrefix"] = routeGroupPrefix,
-            ["relativePattern"] = relativePattern,
-            ["sourceId"] = $"{behaviorId}:{method}:{relativePattern}"
+            [RestEndpointRuntimeMetadataKeys.Method] = method,
+            [RestEndpointRuntimeMetadataKeys.AuthoringStyle] = authoringStyle,
+            [RestEndpointRuntimeMetadataKeys.BehaviorType] = behaviorType,
+            [RestEndpointRuntimeMetadataKeys.RouteGroupPrefix] = routeGroupPrefix,
+            [RestEndpointRuntimeMetadataKeys.RelativePattern] = relativePattern,
+            [RestEndpointRuntimeMetadataKeys.SourceId] = $"{behaviorId}:{method}:{relativePattern}",
+            [RestEndpointRuntimeMetadataKeys.RestPublicationActivationOwnership] =
+                RestEndpointRuntimeMetadata.ApplicationManagedOwnership,
+            [RestEndpointRuntimeMetadataKeys.RestMaterializationOwnership] =
+                RestEndpointRuntimeMetadata.CephalonManagedOwnership,
+            [RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode] =
+                RestEndpointRuntimeMetadata.ResolvePublicationActivationMode(authoringStyle)
         };
+
+        if (RestEndpointRuntimeMetadata.IsShorthandAuthoringStyle(authoringStyle))
+        {
+            metadata[RestEndpointRuntimeMetadataKeys.RestProfileMetadataOwnership] =
+                RestEndpointRuntimeMetadata.ApplicationManagedOwnership;
+        }
 
         if (bindingFallbackMode is { } fallbackMode)
         {

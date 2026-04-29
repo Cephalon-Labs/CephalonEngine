@@ -78,7 +78,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Transports`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-transports): 53 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-transports): 54 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports)
 
 ## `Cephalon.Agentics.Configuration`
 

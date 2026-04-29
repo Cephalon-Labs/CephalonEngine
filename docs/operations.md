@@ -1214,6 +1214,10 @@ Current payload highlights:
 - the final `/engine/rest-endpoints` answer keeps `CandidateId`, `PublicationGroupId`,
   `AuthoringStyle`, source behavior/module ownership, and original endpoint metadata lineage
   visible so operators can jump back to the candidate that produced the published route
+- behavior-backed REST entries also keep stable ownership metadata visible: publication activation
+  and profile metadata are `application-managed`, materialization/runtime catalog truth is
+  `cephalon-managed`, and `restPublicationActivationMode` records whether the route came from
+  explicit module DSL, `MapProfile<TBehavior>()`, generated profile shorthand, or an inline helper
 - `HostGovernanceScopes`, `EndpointNames`, original explicit `TargetBindings`, route group
   prefixes, OpenAPI document names, tag names, HTTP methods, and effective API major versions are
   all part of the governable selector story across candidate, suppression, override, publication

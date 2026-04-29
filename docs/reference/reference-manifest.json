@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T02:10:47.6777905+00:00",
+  "GeneratedAtUtc": "2026-04-29T02:33:07.957071+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 521
+      "TypeCount": 522
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -679,7 +679,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-transports",
-      "TypeCount": 53
+      "TypeCount": 54
     },
     {
       "NamespaceName": "Cephalon.Agentics.Configuration",
@@ -14792,6 +14792,21 @@
       }
     },
     {
+      "DisplayName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-transports-restendpointruntimemetadatakeys",
+      "Declaration": "public static class RestEndpointRuntimeMetadataKeys",
+      "Summary": "Defines stable metadata keys used by REST endpoint runtime descriptors.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 13,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RestEndpointSuppressionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -24616,6 +24631,17 @@
       "Summary": "Gets the normalized authoring style such as \u0060behavior-module-profile\u0060 or \u0060minimal-api\u0060 when the runtime can classify how the endpoint was published."
     },
     {
+      "DisplayName": "AuthoringStyle",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-authoringstyle",
+      "Signature": "const string AuthoringStyle",
+      "Summary": "Identifies the normalized authoring style that produced the runtime endpoint."
+    },
+    {
       "DisplayName": "AuthoringStyles",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointOverrideDescriptor",
@@ -26289,6 +26315,17 @@
     },
     {
       "DisplayName": "BehaviorType",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-behaviortype",
+      "Signature": "const string BehaviorType",
+      "Summary": "Identifies the concrete behavior implementation type behind a behavior-backed REST endpoint."
+    },
+    {
+      "DisplayName": "BehaviorType",
       "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
@@ -26363,6 +26400,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-bindingfallbackmode",
       "Signature": "RestEndpointBindingFallbackMode? BindingFallbackMode { get; }",
       "Summary": "Gets the resolved request-binding fallback mode when the endpoint preserves deterministic request-binding behavior beyond the explicit binding plan, such as preserved source implicit-query fallback or preserved remaining request-body fallback."
+    },
+    {
+      "DisplayName": "BindingFallbackMode",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-bindingfallbackmode",
+      "Signature": "const string BindingFallbackMode",
+      "Summary": "Identifies the stable wire name for a preserved request-binding fallback mode."
     },
     {
       "DisplayName": "BindingFallbackModes",
@@ -75573,7 +75621,7 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
-      "Summary": "Gets optional additive metadata."
+      "Summary": "Gets optional additive metadata. Stable REST endpoint keys are defined by \u0060RestEndpointRuntimeMetadataKeys\u0060."
     },
     {
       "DisplayName": "Metadata",
@@ -76366,6 +76414,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-method",
       "Signature": "string Method { get; }",
       "Summary": "Gets the resolved HTTP method."
+    },
+    {
+      "DisplayName": "Method",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-method",
+      "Signature": "const string Method",
+      "Summary": "Identifies the HTTP method that was resolved for the runtime endpoint."
     },
     {
       "DisplayName": "Method",
@@ -93973,6 +94032,17 @@
       "Summary": "Gets the resolved route pattern relative to the grouped publication boundary when the runtime can classify that source shape."
     },
     {
+      "DisplayName": "RelativePattern",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-relativepattern",
+      "Signature": "const string RelativePattern",
+      "Summary": "Identifies the route pattern relative to the grouped REST endpoint publication boundary."
+    },
+    {
       "DisplayName": "RelativePatterns",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointOverrideDescriptor",
@@ -95810,6 +95880,17 @@
       "Summary": "Gets the required Cephalon capability key enforced at the REST boundary when one is available."
     },
     {
+      "DisplayName": "RequiredCapabilityKey",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-requiredcapabilitykey",
+      "Signature": "const string RequiredCapabilityKey",
+      "Summary": "Identifies the required Cephalon capability key enforced at the REST boundary."
+    },
+    {
       "DisplayName": "RequiredFeatureFlagIds",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorFeatureDisabledException",
@@ -95885,6 +95966,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-requiredfeatureflagids",
       "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
       "Summary": "Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when any are available."
+    },
+    {
+      "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-requiredfeatureflagids",
+      "Signature": "const string RequiredFeatureFlagIds",
+      "Summary": "Identifies the comma-separated required Cephalon feature flags enforced at the REST boundary."
     },
     {
       "DisplayName": "RequiredFeatureFlagIds",
@@ -98010,6 +98102,17 @@
       "Summary": "Gets the host-level REST endpoint suppression rules visible to the runtime at the time the snapshot was created."
     },
     {
+      "DisplayName": "RestMaterializationOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restmaterializationownership",
+      "Signature": "const string RestMaterializationOwnership",
+      "Summary": "Identifies who owns the ASP.NET Core route materialization, runtime catalog, and governance reconciliation path."
+    },
+    {
       "DisplayName": "RestPrefix",
       "Category": "Properties",
       "DeclaringTypeName": "ApiRoutesOptions",
@@ -98019,6 +98122,39 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-restprefix",
       "Signature": "string RestPrefix { get; set; }",
       "Summary": "Gets or sets the root prefix used by the built-in REST transport mapper."
+    },
+    {
+      "DisplayName": "RestProfileMetadataOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restprofilemetadataownership",
+      "Signature": "const string RestProfileMetadataOwnership",
+      "Summary": "Identifies who owns behavior-authored REST profile metadata consumed by low-code shorthand."
+    },
+    {
+      "DisplayName": "RestPublicationActivationMode",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restpublicationactivationmode",
+      "Signature": "const string RestPublicationActivationMode",
+      "Summary": "Identifies how the public REST publication path was explicitly activated."
+    },
+    {
+      "DisplayName": "RestPublicationActivationOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restpublicationactivationownership",
+      "Signature": "const string RestPublicationActivationOwnership",
+      "Summary": "Identifies who owns the decision to activate the public REST publication path."
     },
     {
       "DisplayName": "ResultModel\u003CTModel\u003E",
@@ -99482,6 +99618,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-routegroupprefix",
       "Signature": "string RouteGroupPrefix { get; }",
       "Summary": "Gets the resolved route-group prefix including the host REST prefix when the runtime can classify the grouped publication boundary that produced the endpoint."
+    },
+    {
+      "DisplayName": "RouteGroupPrefix",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-routegroupprefix",
+      "Signature": "const string RouteGroupPrefix",
+      "Summary": "Identifies the resolved route-group prefix for grouped REST endpoint publication."
     },
     {
       "DisplayName": "RouteGroupPrefixes",
@@ -103838,6 +103985,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourceid",
       "Signature": "string SourceId { get; }",
       "Summary": "Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-sourceid",
+      "Signature": "const string SourceId",
+      "Summary": "Identifies the stable source identity behind the runtime endpoint."
     },
     {
       "DisplayName": "SourceId",

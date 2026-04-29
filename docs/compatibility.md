@@ -64,6 +64,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 
 - when behavior-backed REST authoring, shorthand projection, or host-governance semantics change, update REST-enabled `Cephalon.Scaffolding` output, the REST-enabled blueprint app starters, `cephalon-rest-behavior-module`, the matching blueprint samples, module-authoring guidance, component docs, compatibility guidance, and runtime/operator docs together
 - keep starter guidance aligned with the settled module-owned boundary: REST-enabled blueprint app starters and blueprint samples now treat `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` plus `MapProfile<TBehavior>()` as the default public REST path, `cephalon-rest-behavior-module` remains the recommended package starter for behavior-backed public REST, and `cephalon-rest-module` remains the generic non-behavior REST starter
+- keep behavior REST ownership metadata aligned with the same boundary: `restPublicationActivationOwnership` and `restProfileMetadataOwnership` stay `application-managed`, while `restMaterializationOwnership` stays `cephalon-managed` only for the explicit module-owned activation paths that Cephalon materializes into real ASP.NET Core routes and runtime catalogs
 
 ### Reference-doc and DocFX flows
 

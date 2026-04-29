@@ -245,6 +245,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains("GetProfileRuntimeOrderBehavior", endpoint.BehaviorType, StringComparison.Ordinal);
         Assert.Equal("tests.rest.profile.lookup:GET:/{orderId}", endpoint.SourceId);
         Assert.Equal(candidate.Id, endpoint.CandidateId);
+        Assert.Equal("application-managed", endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationOwnership]);
+        Assert.Equal("cephalon-managed", endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestMaterializationOwnership]);
+        Assert.Equal("application-managed", endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestProfileMetadataOwnership]);
+        Assert.Equal("explicit-map-profile", endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode]);
         Assert.Empty(endpoint.BindingDescriptors);
         Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
         Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
@@ -254,6 +258,18 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(endpoint.RelativePattern, candidate.ProjectedEndpoint.RelativePattern);
         Assert.Equal(endpoint.BehaviorType, candidate.ProjectedEndpoint.BehaviorType);
         Assert.Equal(endpoint.SourceId, candidate.ProjectedEndpoint.SourceId);
+        Assert.Equal(
+            endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationOwnership],
+            candidate.ProjectedEndpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationOwnership]);
+        Assert.Equal(
+            endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestMaterializationOwnership],
+            candidate.ProjectedEndpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestMaterializationOwnership]);
+        Assert.Equal(
+            endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestProfileMetadataOwnership],
+            candidate.ProjectedEndpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestProfileMetadataOwnership]);
+        Assert.Equal(
+            endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode],
+            candidate.ProjectedEndpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode]);
         Assert.Equal(candidate.Id, candidate.ProjectedEndpoint.CandidateId);
         Assert.NotNull(endpoint.OriginalProjection);
         Assert.Equal(candidate.OriginalProjection.ApiVersionMajor, endpoint.OriginalProjection!.ApiVersionMajor);
@@ -359,6 +375,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.AuthoringStyle);
         Assert.Equal("/api/v4/tests/generated/runtime", endpoint.RouteGroupPrefix);
         Assert.Equal("/orders/{orderId}", endpoint.RelativePattern);
+        Assert.Equal("application-managed", endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationOwnership]);
+        Assert.Equal("cephalon-managed", endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestMaterializationOwnership]);
+        Assert.Equal("application-managed", endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestProfileMetadataOwnership]);
+        Assert.Equal("explicit-map-generated-profiles", endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode]);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtime.lookup", StringComparison.Ordinal));
@@ -369,6 +389,18 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(endpoint.AuthoringStyle, candidate.ProjectedEndpoint.AuthoringStyle);
         Assert.Equal(endpoint.RouteGroupPrefix, candidate.ProjectedEndpoint.RouteGroupPrefix);
         Assert.Equal(endpoint.RelativePattern, candidate.ProjectedEndpoint.RelativePattern);
+        Assert.Equal(
+            endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationOwnership],
+            candidate.ProjectedEndpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationOwnership]);
+        Assert.Equal(
+            endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestMaterializationOwnership],
+            candidate.ProjectedEndpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestMaterializationOwnership]);
+        Assert.Equal(
+            endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestProfileMetadataOwnership],
+            candidate.ProjectedEndpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestProfileMetadataOwnership]);
+        Assert.Equal(
+            endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode],
+            candidate.ProjectedEndpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode]);
         Assert.Equal(candidate.Id, candidate.ProjectedEndpoint.CandidateId);
 
         Assert.Contains(snapshot.RestEndpoints, item =>
@@ -376,7 +408,11 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.AuthoringStyle, endpoint.AuthoringStyle, StringComparison.Ordinal) &&
             string.Equals(item.RouteGroupPrefix, endpoint.RouteGroupPrefix, StringComparison.Ordinal) &&
             string.Equals(item.RelativePattern, endpoint.RelativePattern, StringComparison.Ordinal) &&
-            string.Equals(item.CandidateId, candidate.Id, StringComparison.Ordinal));
+            string.Equals(item.CandidateId, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(
+                item.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode],
+                endpoint.Metadata[RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode],
+                StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             item.Status == RestEndpointCandidateStatus.Published);

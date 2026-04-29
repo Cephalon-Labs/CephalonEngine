@@ -11,12 +11,13 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, and host-agnostic governance invitation delivery status reconciliation proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, first agentics managed-execution proof, first retrieval managed index/query proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, host-agnostic governance invitation delivery status reconciliation proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
 - treat the Wolverine-managed event-subscription lane as the first eventing-family managed proof instead of widening descriptor breadth there again
+- treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane as the first agentics-family managed proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane as the first retrieval-family managed proof instead of widening catalog breadth there again
 - keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, opt-in durable membership-store, invitation catalog/validation, opt-in durable invitation-store, host-agnostic invitation delivery dispatch/run-state/outcome persistence over registered sender extensions, host-agnostic invitation delivery status reconciliation over provider or receiver observations, host-driven tenant-administration workflow commands over membership and invitation stores, declared domain-ownership catalog/validation, opt-in durable domain-ownership-store, in-process domain-ownership verification workflow transitions, domain proof challenge issuance, domain proof publication planning, HTTP file proof publication state for host adapters, domain proof evaluation over reported evidence, on-demand HTTP file proof collection, configured on-demand DNS TXT proof collection, domain proof verification runner orchestration, bounded on-demand domain proof polling, opt-in automatic background domain proof polling, approval/remediation action catalog/decision, in-process approval/remediation action workflow, and opt-in durable action-store proofs, while `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional HTTP proof serving and the fail-closed tenant-administration command endpoint; distributed or provider-backed membership/invitation/domain/action-store backends, provider-specific notification/invitation senders, provider-specific delivery-status callback endpoints or provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
@@ -713,6 +714,28 @@ Delivered:
 Follow-up later:
 
 - provider-specific email/SMS/chat/CRM/identity-provider invitation senders, durable retry queues, provider-specific delivery-status callback endpoints or provider polling, public onboarding, tenant-admin UI/backoffice, identity-provider synchronization, distributed/provider-backed governance stores, and broader provider mutation remain future governance slices until a package truly owns those paths
+
+### ENG-262 Behavior REST profile runtime ownership metadata baseline
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `Cephalon.Behaviors.Http` had already shipped module-owned `MapProfile<TBehavior>()`, `MapGeneratedProfiles(...)`, candidate catalogs, runtime catalogs, and governance truth, but the maturity audit still described the lane as metadata-only `M1`
+- the smallest honest proof is to make runtime ownership visible in the existing REST endpoint payloads without claiming that `[AppBehavior]` or `BehaviorRestProfileAttribute` publishes public REST by itself
+
+Delivered:
+
+- add `RestEndpointRuntimeMetadataKeys` to `Cephalon.Abstractions.Transports` so consumers can read stable REST runtime metadata keys instead of hard-coding ownership strings
+- publish `restPublicationActivationOwnership = application-managed`, `restMaterializationOwnership = cephalon-managed`, `restProfileMetadataOwnership = application-managed`, and `restPublicationActivationMode` on behavior-backed profile/generated REST endpoints
+- keep the metadata visible through `/engine/rest-endpoints`, `/engine/rest-endpoint-candidates`, and `snapshot.RestEndpoints` for both `MapProfile<TBehavior>()` and generated-profile shorthand paths
+- promote the `Cephalon.Behaviors.Http` maturity-audit row to mixed `M2` while preserving the contract that profile attributes are metadata-only until a module or host explicitly activates publication
+- prove the runtime/catalog path through focused hosting coverage and package-surface coverage — issue #771
+
+Follow-up later:
+
+- adoption samples, operator automation, and richer docs can build on the same explicit module-owned activation path; ambient behavior-to-REST auto-publication remains out of scope unless a future proof preserves the same ownership split
 
 ## Completed foundation work
 

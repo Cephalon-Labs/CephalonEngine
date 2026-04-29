@@ -11,9 +11,15 @@ internal static class RestEndpointRuntimeMetadata
     internal const string BehaviorModuleDslAuthoringStyle = "behavior-module-dsl";
     internal const string BehaviorModuleGeneratedAuthoringStyle = "behavior-module-generated";
     internal const string BehaviorModuleProfileAuthoringStyle = "behavior-module-profile";
-    internal const string BindingFallbackModeMetadataKey = "bindingFallbackMode";
-    internal const string RequiredCapabilityKeyMetadataKey = "requiredCapabilityKey";
-    internal const string RequiredFeatureFlagIdsMetadataKey = "requiredFeatureFlagIds";
+    internal const string BindingFallbackModeMetadataKey = RestEndpointRuntimeMetadataKeys.BindingFallbackMode;
+    internal const string RequiredCapabilityKeyMetadataKey = RestEndpointRuntimeMetadataKeys.RequiredCapabilityKey;
+    internal const string RequiredFeatureFlagIdsMetadataKey = RestEndpointRuntimeMetadataKeys.RequiredFeatureFlagIds;
+    internal const string ApplicationManagedOwnership = "application-managed";
+    internal const string CephalonManagedOwnership = "cephalon-managed";
+    internal const string ExplicitBehaviorHelperActivationMode = "explicit-behavior-helper";
+    internal const string ExplicitMapGeneratedProfilesActivationMode = "explicit-map-generated-profiles";
+    internal const string ExplicitMapProfileActivationMode = "explicit-map-profile";
+    internal const string ExplicitModuleDslActivationMode = "explicit-module-dsl";
     internal const int BehaviorModuleDslPrecedenceRank = 2;
     internal const int BehaviorModuleProfilePrecedenceRank = 3;
     internal const int BehaviorModuleGeneratedPrecedenceRank = 4;
@@ -22,6 +28,20 @@ internal static class RestEndpointRuntimeMetadata
     {
         return string.Equals(authoringStyle, BehaviorModuleGeneratedAuthoringStyle, StringComparison.OrdinalIgnoreCase) ||
                string.Equals(authoringStyle, BehaviorModuleProfileAuthoringStyle, StringComparison.OrdinalIgnoreCase);
+    }
+
+    internal static string ResolvePublicationActivationMode(string authoringStyle)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
+
+        return authoringStyle.Trim() switch
+        {
+            BehaviorHelperAuthoringStyle => ExplicitBehaviorHelperActivationMode,
+            BehaviorModuleDslAuthoringStyle => ExplicitModuleDslActivationMode,
+            BehaviorModuleGeneratedAuthoringStyle => ExplicitMapGeneratedProfilesActivationMode,
+            BehaviorModuleProfileAuthoringStyle => ExplicitMapProfileActivationMode,
+            _ => authoringStyle.Trim()
+        };
     }
 
     internal static int ResolvePrecedenceRank(string authoringStyle)

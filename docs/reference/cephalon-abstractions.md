@@ -65828,7 +65828,7 @@ Gets the ordered override identifiers that matched this endpoint's originating c
 IReadOnlyDictionary<string, string> Metadata { get; }
 ```
 
-Gets optional additive metadata.
+Gets optional additive metadata. Stable REST endpoint keys are defined by `RestEndpointRuntimeMetadataKeys`.
 
 <a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-method"></a>
 
@@ -66089,6 +66089,151 @@ string TransportId { get; }
 ```
 
 Gets the stable transport identifier that published the endpoint.
+
+<a id="type-cephalon-abstractions-transports-restendpointruntimemetadatakeys"></a>
+
+### `RestEndpointRuntimeMetadataKeys`
+
+Defines stable metadata keys used by REST endpoint runtime descriptors.
+
+Remarks: These keys appear in `Metadata` as additive operator-facing context. First-class descriptor properties remain authoritative for core endpoint shape, while metadata clarifies compatibility and ownership details that should stay inspectable without parsing host-specific endpoint metadata.
+
+#### Declaration
+```csharp
+public static class RestEndpointRuntimeMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-authoringstyle"></a>
+
+##### `AuthoringStyle`
+
+```csharp
+const string AuthoringStyle
+```
+
+Identifies the normalized authoring style that produced the runtime endpoint.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-behaviortype"></a>
+
+##### `BehaviorType`
+
+```csharp
+const string BehaviorType
+```
+
+Identifies the concrete behavior implementation type behind a behavior-backed REST endpoint.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-bindingfallbackmode"></a>
+
+##### `BindingFallbackMode`
+
+```csharp
+const string BindingFallbackMode
+```
+
+Identifies the stable wire name for a preserved request-binding fallback mode.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-method"></a>
+
+##### `Method`
+
+```csharp
+const string Method
+```
+
+Identifies the HTTP method that was resolved for the runtime endpoint.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-relativepattern"></a>
+
+##### `RelativePattern`
+
+```csharp
+const string RelativePattern
+```
+
+Identifies the route pattern relative to the grouped REST endpoint publication boundary.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-requiredcapabilitykey"></a>
+
+##### `RequiredCapabilityKey`
+
+```csharp
+const string RequiredCapabilityKey
+```
+
+Identifies the required Cephalon capability key enforced at the REST boundary.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+const string RequiredFeatureFlagIds
+```
+
+Identifies the comma-separated required Cephalon feature flags enforced at the REST boundary.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restmaterializationownership"></a>
+
+##### `RestMaterializationOwnership`
+
+```csharp
+const string RestMaterializationOwnership
+```
+
+Identifies who owns the ASP.NET Core route materialization, runtime catalog, and governance reconciliation path.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restprofilemetadataownership"></a>
+
+##### `RestProfileMetadataOwnership`
+
+```csharp
+const string RestProfileMetadataOwnership
+```
+
+Identifies who owns behavior-authored REST profile metadata consumed by low-code shorthand.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restpublicationactivationmode"></a>
+
+##### `RestPublicationActivationMode`
+
+```csharp
+const string RestPublicationActivationMode
+```
+
+Identifies how the public REST publication path was explicitly activated.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restpublicationactivationownership"></a>
+
+##### `RestPublicationActivationOwnership`
+
+```csharp
+const string RestPublicationActivationOwnership
+```
+
+Identifies who owns the decision to activate the public REST publication path.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-routegroupprefix"></a>
+
+##### `RouteGroupPrefix`
+
+```csharp
+const string RouteGroupPrefix
+```
+
+Identifies the resolved route-group prefix for grouped REST endpoint publication.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+const string SourceId
+```
+
+Identifies the stable source identity behind the runtime endpoint.
 
 <a id="type-cephalon-abstractions-transports-restendpointsuppressiondescriptor"></a>
 

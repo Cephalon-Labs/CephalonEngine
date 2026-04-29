@@ -538,7 +538,8 @@ public sealed class RestEndpointRuntimeDescriptor
     public RestEndpointBindingFallbackMode? BindingFallbackMode { get; }
 
     /// <summary>
-    /// Gets optional additive metadata.
+    /// Gets optional additive metadata. Stable REST endpoint keys are defined by
+    /// <see cref="RestEndpointRuntimeMetadataKeys"/>.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
 

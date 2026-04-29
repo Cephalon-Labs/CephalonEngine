@@ -1977,6 +1977,9 @@ Browse the published API surface by public member.
 - [AuthoringStyle](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-authoringstyle): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuthoringStyle&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the normalized authoring style such as `behavior-module-profile` or `minimal-api` when the runtime can classify how the endpoint was published.
   - `string AuthoringStyle { get; }`
+- [AuthoringStyle](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-authoringstyle): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuthoringStyle&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the normalized authoring style that produced the runtime endpoint.
+  - `const string AuthoringStyle`
 - [AuthoringStyles](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-authoringstyles): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuthoringStyles&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the normalized authoring styles targeted by this override rule. Explicit module-DSL routes participate only when their owning route group opted into host governance.
   - `IReadOnlyList<string> AuthoringStyles { get; }`
@@ -2436,6 +2439,9 @@ Browse the published API surface by public member.
 - [BehaviorType](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-behaviortype): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the concrete behavior implementation type name when the endpoint dispatches through a Cephalon behavior and the runtime can classify that implementation identity.
   - `string BehaviorType { get; }`
+- [BehaviorType](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-behaviortype): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the concrete behavior implementation type behind a behavior-backed REST endpoint.
+  - `const string BehaviorType`
 - [BehaviorType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-behaviortype): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the concrete choreography behavior implementation type name.
   - `string BehaviorType { get; }`
@@ -2457,6 +2463,9 @@ Browse the published API surface by public member.
 - [BindingFallbackMode](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-bindingfallbackmode): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingFallbackMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the resolved request-binding fallback mode when the endpoint preserves deterministic request-binding behavior beyond the explicit binding plan, such as preserved source implicit-query fallback or preserved remaining request-body fallback.
   - `RestEndpointBindingFallbackMode? BindingFallbackMode { get; }`
+- [BindingFallbackMode](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-bindingfallbackmode): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingFallbackMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the stable wire name for a preserved request-binding fallback mode.
+  - `const string BindingFallbackMode`
 - [BindingFallbackModes](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-bindingfallbackmodes): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingFallbackModes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the original candidate request-binding fallback modes targeted by this override rule.
   - `IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }`
@@ -15907,7 +15916,7 @@ Browse the published API surface by public member.
   - Gets additional metadata associated with the project.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-metadata): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
-  - Gets optional additive metadata.
+  - Gets optional additive metadata. Stable REST endpoint keys are defined by `RestEndpointRuntimeMetadataKeys`.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-metadata): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The operator-facing metadata captured by the latest observation.
@@ -16125,6 +16134,9 @@ Browse the published API surface by public member.
 - [Method](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-method): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Method&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the resolved HTTP method.
   - `string Method { get; }`
+- [Method](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-method): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Method&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the HTTP method that was resolved for the runtime endpoint.
+  - `const string Method`
 - [Method](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigrequest-method): `Properties` on `StranglerFigRequest` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Method&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the normalized request method.
   - `string Method { get; }`
@@ -20937,6 +20949,9 @@ Browse the published API surface by public member.
 - [RelativePattern](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-relativepattern): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RelativePattern&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the resolved route pattern relative to the grouped publication boundary when the runtime can classify that source shape.
   - `string RelativePattern { get; }`
+- [RelativePattern](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-relativepattern): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RelativePattern&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the route pattern relative to the grouped REST endpoint publication boundary.
+  - `const string RelativePattern`
 - [RelativePatterns](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-relativepatterns): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RelativePatterns&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the relative route patterns targeted by this override rule.
   - `IReadOnlyList<string> RelativePatterns { get; }`
@@ -21438,6 +21453,9 @@ Browse the published API surface by public member.
 - [RequiredCapabilityKey](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-requiredcapabilitykey): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredCapabilityKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the required Cephalon capability key enforced at the REST boundary when one is available.
   - `string RequiredCapabilityKey { get; }`
+- [RequiredCapabilityKey](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-requiredcapabilitykey): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredCapabilityKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the required Cephalon capability key enforced at the REST boundary.
+  - `const string RequiredCapabilityKey`
 - [RequiredFeatureFlagIds](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-requiredfeatureflagids): `Properties` on `BehaviorFeatureDisabledException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredFeatureFlagIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the full ordered set of required feature flags declared by the behavior.
   - `IReadOnlyList<string> RequiredFeatureFlagIds { get; }`
@@ -21459,6 +21477,9 @@ Browse the published API surface by public member.
 - [RequiredFeatureFlagIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-requiredfeatureflagids): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredFeatureFlagIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when any are available.
   - `IReadOnlyList<string> RequiredFeatureFlagIds { get; }`
+- [RequiredFeatureFlagIds](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-requiredfeatureflagids): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredFeatureFlagIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the comma-separated required Cephalon feature flags enforced at the REST boundary.
+  - `const string RequiredFeatureFlagIds`
 - [RequiredFeatureFlagIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-requiredfeatureflagids): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredFeatureFlagIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the ordered feature-flag identifiers that gate choreography execution.
   - `IReadOnlyList<string> RequiredFeatureFlagIds { get; }`
@@ -22038,9 +22059,21 @@ Browse the published API surface by public member.
 - [RestEndpointSuppressions](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-restendpointsuppressions): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestEndpointSuppressions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the host-level REST endpoint suppression rules visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<RestEndpointSuppressionDescriptor> RestEndpointSuppressions { get; set; }`
+- [RestMaterializationOwnership](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restmaterializationownership): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestMaterializationOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies who owns the ASP.NET Core route materialization, runtime catalog, and governance reconciliation path.
+  - `const string RestMaterializationOwnership`
 - [RestPrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-restprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RestPrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets the root prefix used by the built-in REST transport mapper.
   - `string RestPrefix { get; set; }`
+- [RestProfileMetadataOwnership](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restprofilemetadataownership): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestProfileMetadataOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies who owns behavior-authored REST profile metadata consumed by low-code shorthand.
+  - `const string RestProfileMetadataOwnership`
+- [RestPublicationActivationMode](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restpublicationactivationmode): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestPublicationActivationMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies how the public REST publication path was explicitly activated.
+  - `const string RestPublicationActivationMode`
+- [RestPublicationActivationOwnership](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-restpublicationactivationownership): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestPublicationActivationOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies who owns the decision to activate the public REST publication path.
+  - `const string RestPublicationActivationOwnership`
 - [ResultModel<TModel>](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-resultmodel-1-ctor): `Constructors` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResultModel%3CTModel%3E&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Initializes a new instance of the `ResultModel<T>` class.
   - `ResultModel<TModel>()`
@@ -22440,6 +22473,9 @@ Browse the published API surface by public member.
 - [RouteGroupPrefix](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-routegroupprefix): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RouteGroupPrefix&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the resolved route-group prefix including the host REST prefix when the runtime can classify the grouped publication boundary that produced the endpoint.
   - `string RouteGroupPrefix { get; }`
+- [RouteGroupPrefix](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-routegroupprefix): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RouteGroupPrefix&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the resolved route-group prefix for grouped REST endpoint publication.
+  - `const string RouteGroupPrefix`
 - [RouteGroupPrefixes](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-routegroupprefixes): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RouteGroupPrefixes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the published route-group prefixes targeted by this override rule.
   - `IReadOnlyList<string> RouteGroupPrefixes { get; }`
@@ -23631,6 +23667,9 @@ Browse the published API surface by public member.
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourceid): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication.
   - `string SourceId { get; }`
+- [SourceId](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointruntimemetadatakeys-sourceid): `Fields` on `RestEndpointRuntimeMetadataKeys` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Identifies the stable source identity behind the runtime endpoint.
+  - `const string SourceId`
 - [SourceId](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-sourceid): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the logical source identifier when it should differ from the watched table path.
   - `string SourceId { get; set; }`

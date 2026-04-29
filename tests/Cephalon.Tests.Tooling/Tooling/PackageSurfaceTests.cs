@@ -552,6 +552,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.IBackendForFrontendRestDocumentRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IBackendForFrontendRestRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeMetadataKeys),
             typeof(global::Cephalon.Abstractions.Transports.TransportDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.TransportFeatures));
     }
@@ -2800,6 +2801,23 @@ public sealed class PackageSurfaceTests
             .GetProperty("OriginalSummary", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("OriginalDescription", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointRuntimeMetadataKeysExposeOwnershipTruth()
+    {
+        Assert.Equal(
+            "restPublicationActivationOwnership",
+            global::Cephalon.Abstractions.Transports.RestEndpointRuntimeMetadataKeys.RestPublicationActivationOwnership);
+        Assert.Equal(
+            "restMaterializationOwnership",
+            global::Cephalon.Abstractions.Transports.RestEndpointRuntimeMetadataKeys.RestMaterializationOwnership);
+        Assert.Equal(
+            "restProfileMetadataOwnership",
+            global::Cephalon.Abstractions.Transports.RestEndpointRuntimeMetadataKeys.RestProfileMetadataOwnership);
+        Assert.Equal(
+            "restPublicationActivationMode",
+            global::Cephalon.Abstractions.Transports.RestEndpointRuntimeMetadataKeys.RestPublicationActivationMode);
     }
 
     [Fact]
