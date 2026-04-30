@@ -7024,7 +7024,7 @@ Browse the published API surface by public member.
   - Gets the stable materialization dimension that produced the condition.
   - `string Dimension { get; }`
 - [Dimension](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-dimension): `Properties` on `TenantInvitationDeliveryStatusObservationSummaryDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Dimension&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
-  - Gets the summarized observation dimension, such as `status`, `attention`, `remediation`, `outcome`, `source`, `channel`, `sender`, or `tenant`.
+  - Gets the summarized observation dimension, such as `status`, `attention`, `remediation`, `outcome`, `source`, `providerMessageId`, `channel`, `sender`, or `tenant`.
   - `string Dimension { get; }`
 - [DirectConnection](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-directconnection): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=DirectConnection&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional value that controls whether the client should connect directly to the target server.

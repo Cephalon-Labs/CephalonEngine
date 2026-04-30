@@ -457,7 +457,7 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal(2, result.TotalCount);
         Assert.Equal(1, result.MatchedCount);
         Assert.Equal(1, result.ReturnedCount);
-        Assert.Equal(6, result.SummaryCount);
+        Assert.Equal(7, result.SummaryCount);
         Assert.Equal(0, result.RemediationHintCount);
         Assert.Equal(1, result.Limit);
         Assert.Equal("tenant-observation", result.Filters["tenantId"]);
@@ -466,6 +466,7 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("tenant-observation", observation.TenantId);
         Assert.Equal("invite-observation-delivered", observation.InvitationId);
         Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, observation.Status);
+        Assert.Equal("provider-message-observation-delivered", observation.ProviderMessageId);
         Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, observation.Outcome);
         Assert.Equal(deliveredAtUtc, observation.ObservedAtUtc);
         Assert.Equal("delivery-observation-delivered", observation.CorrelationId);
@@ -483,11 +484,14 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.NotNull(allResult);
         Assert.Equal(2, allResult.MatchedCount);
         Assert.Equal(1, allResult.ReturnedCount);
-        Assert.Equal(9, allResult.SummaryCount);
+        Assert.Equal(11, allResult.SummaryCount);
         Assert.Equal(1, allResult.RemediationHintCount);
         var statusSummaries = allResult.Summaries.Where(static summary => summary.Dimension == "status").ToArray();
         Assert.Contains(statusSummaries, summary => summary.Value == TenantInvitationDeliveryStatuses.Delivered && summary.Count == 1);
         Assert.Contains(statusSummaries, summary => summary.Value == TenantInvitationDeliveryStatuses.Bounced && summary.Count == 1);
+        var providerMessageSummaries = allResult.Summaries.Where(static summary => summary.Dimension == "providerMessageId").ToArray();
+        Assert.Contains(providerMessageSummaries, summary => summary.Value == "provider-message-observation-delivered" && summary.Count == 1);
+        Assert.Contains(providerMessageSummaries, summary => summary.Value == "provider-message-observation-bounced" && summary.Count == 1);
         var attentionSummary = Assert.Single(
             allResult.Summaries,
             summary => summary.Dimension == "attention" &&
@@ -552,6 +556,20 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("invite-observation-bounced", remediationObservation.InvitationId);
         Assert.Equal(TenantInvitationDeliveryStatuses.Bounced, remediationObservation.Status);
 
+        var providerMessageResponse = await client.GetAsync(
+            "/engine/tenant-invitations/delivery-status/observations?tenantId=tenant-observation&providerMessageId=provider-message-observation-bounced&limit=25");
+        var providerMessageResult =
+            await providerMessageResponse.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusObservationQueryResult>();
+        Assert.Equal(HttpStatusCode.OK, providerMessageResponse.StatusCode);
+        Assert.NotNull(providerMessageResult);
+        Assert.Equal(1, providerMessageResult.MatchedCount);
+        Assert.Equal(1, providerMessageResult.ReturnedCount);
+        Assert.Equal("provider-message-observation-bounced", providerMessageResult.Filters["providerMessageId"]);
+        var providerMessageObservation = Assert.Single(providerMessageResult.Observations);
+        Assert.Equal("invite-observation-bounced", providerMessageObservation.InvitationId);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Bounced, providerMessageObservation.Status);
+        Assert.Equal("provider-message-observation-bounced", providerMessageObservation.ProviderMessageId);
+
         var invalidRemediationResponse = await client.GetAsync(
             "/engine/tenant-invitations/delivery-status/observations?remediation=retry-now");
         Assert.Equal(HttpStatusCode.BadRequest, invalidRemediationResponse.StatusCode);
@@ -565,12 +583,16 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantInvitationDeliveryStatusObservationEndpointOwnership"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationSummaryOwnership"]);
         Assert.Equal("filtered-normalized-observations", endpointEntry.Metadata["observationSummaryScope"]);
-        Assert.Equal("status,attention,remediation,outcome,source,channel,sender,tenant", endpointEntry.Metadata["observationSummaryDimensions"]);
+        Assert.Equal("status,attention,remediation,outcome,source,providerMessageId,channel,sender,tenant", endpointEntry.Metadata["observationSummaryDimensions"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationAttentionSummaryOwnership"]);
         Assert.Equal("matched-normalized-observation-attention", endpointEntry.Metadata["observationAttentionSummaryScope"]);
         Assert.Equal(
             "delivery-failed, delivery-deferred, delivery-suppressed, delivery-unknown, reconciliation-gap, recording-gap",
             endpointEntry.Metadata["observationAttentionCategories"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationProviderMessageFilterOwnership"]);
+        Assert.Equal(
+            "matched-normalized-observation-provider-message",
+            endpointEntry.Metadata["observationProviderMessageFilterScope"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationRemediationFilterOwnership"]);
         Assert.Equal(
             "matched-normalized-observation-remediation",

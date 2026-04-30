@@ -132,6 +132,7 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
             .. BuildRemediationSummaries(observations),
             .. BuildSummaryDimension(observations, "outcome", static observation => observation.Outcome),
             .. BuildSummaryDimension(observations, "source", static observation => observation.Source),
+            .. BuildSummaryDimension(observations, "providerMessageId", static observation => observation.ProviderMessageId),
             .. BuildSummaryDimension(observations, "channel", static observation => observation.Channel),
             .. BuildSummaryDimension(observations, "sender", static observation => observation.SenderId),
             .. BuildSummaryDimension(observations, "tenant", static observation => observation.TenantId)
@@ -273,6 +274,7 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
         var status = ReadFilter(context, "status", filters);
         var outcome = ReadFilter(context, "outcome", filters);
         var source = ReadFilter(context, "source", filters);
+        var providerMessageId = ReadFilter(context, "providerMessageId", filters);
         var correlationId = ReadFilter(context, "correlationId", filters);
         var attention = ReadAttentionFilter(context, filters);
         if (attention.Failure is not null)
@@ -313,6 +315,7 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
                 Matches(observation.Status, status) &&
                 Matches(observation.Outcome, outcome) &&
                 Matches(observation.Source, source) &&
+                Matches(observation.ProviderMessageId, providerMessageId) &&
                 Matches(observation.CorrelationId, correlationId) &&
                 MatchesAttention(observation, attention.Value) &&
                 MatchesRemediation(observation, remediation.Value) &&
