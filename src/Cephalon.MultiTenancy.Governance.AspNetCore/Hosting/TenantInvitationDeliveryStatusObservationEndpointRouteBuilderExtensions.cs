@@ -102,6 +102,7 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
             .Take(query.Limit)
             .ToArray();
         var summaries = BuildSummaries(filtered);
+        var remediationHints = BuildRemediationHints(filtered);
 
         return Results.Json(new TenantInvitationDeliveryStatusObservationQueryResult
         {
@@ -112,10 +113,12 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
             MatchedCount = filtered.Length,
             ReturnedCount = limited.Length,
             SummaryCount = summaries.Length,
+            RemediationHintCount = remediationHints.Length,
             Limit = query.Limit,
             Filters = query.Filters,
             Observations = limited,
-            Summaries = summaries
+            Summaries = summaries,
+            RemediationHints = remediationHints
         });
     }
 
@@ -175,6 +178,67 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
             .OrderByDescending(static summary => summary.Count)
             .ThenBy(static summary => summary.Value, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+    }
+
+    private static TenantInvitationDeliveryStatusObservationRemediationHintDescriptor[] BuildRemediationHints(
+        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations)
+    {
+        return observations
+            .SelectMany(
+                static observation => GetAttentionCategories(observation)
+                    .Select(category => new AttentionObservation(category, observation)))
+            .GroupBy(static item => item.Category, StringComparer.OrdinalIgnoreCase)
+            .Select(static group =>
+            {
+                var definition = GetRemediationHintDefinition(group.Key);
+                return new TenantInvitationDeliveryStatusObservationRemediationHintDescriptor(
+                    group.Key,
+                    definition.Action,
+                    definition.DisplayName,
+                    definition.Description,
+                    group.Count(),
+                    group.Max(static item => item.Observation.ObservedAtUtc),
+                    group.Max(static item => item.Observation.RecordedAtUtc),
+                    $"attention={group.Key}");
+            })
+            .OrderByDescending(static hint => hint.Count)
+            .ThenBy(static hint => hint.AttentionCategory, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static RemediationHintDefinition GetRemediationHintDefinition(string attentionCategory)
+    {
+        return attentionCategory switch
+        {
+            TenantInvitationDeliveryStatusObservationAttentionCategories.DeliveryFailed => new RemediationHintDefinition(
+                TenantInvitationDeliveryStatusObservationRemediationActions.ReviewRecipientOrSender,
+                "Review recipient or sender",
+                "Inspect the recipient address, sender configuration, provider status, and invitation state before retrying or replacing the invitation."),
+            TenantInvitationDeliveryStatusObservationAttentionCategories.DeliveryDeferred => new RemediationHintDefinition(
+                TenantInvitationDeliveryStatusObservationRemediationActions.MonitorDeferredDelivery,
+                "Monitor deferred delivery",
+                "Track provider deferral posture and use an owned delivery-dispatch or retry path only when the sender policy allows it."),
+            TenantInvitationDeliveryStatusObservationAttentionCategories.DeliverySuppressed => new RemediationHintDefinition(
+                TenantInvitationDeliveryStatusObservationRemediationActions.ReviewSuppressionPolicy,
+                "Review suppression policy",
+                "Check unsubscribe, suppression, compliance, or recipient eligibility rules before sending another invitation."),
+            TenantInvitationDeliveryStatusObservationAttentionCategories.DeliveryUnknown => new RemediationHintDefinition(
+                TenantInvitationDeliveryStatusObservationRemediationActions.ReviewStatusTranslation,
+                "Review status translation",
+                "Inspect provider callback translation or normalized status mapping because the observation could not be classified."),
+            TenantInvitationDeliveryStatusObservationAttentionCategories.ReconciliationGap => new RemediationHintDefinition(
+                TenantInvitationDeliveryStatusObservationRemediationActions.ReviewReconciliationInput,
+                "Review reconciliation input",
+                "Verify tenant id, invitation id, provider message id, status, and source ownership before trusting the observation."),
+            TenantInvitationDeliveryStatusObservationAttentionCategories.RecordingGap => new RemediationHintDefinition(
+                TenantInvitationDeliveryStatusObservationRemediationActions.ReviewObservationRecording,
+                "Review observation recording",
+                "Inspect observation-store configuration and reconciliation metadata before relying on the audit trail."),
+            _ => new RemediationHintDefinition(
+                TenantInvitationDeliveryStatusObservationRemediationActions.ReviewStatusTranslation,
+                "Review observation",
+                "Inspect the normalized observation before taking further action.")
+        };
     }
 
     private static ObservationReadQuery ParseQuery(
@@ -497,4 +561,9 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
     private sealed record AttentionObservation(
         string Category,
         TenantInvitationDeliveryStatusObservationDescriptor Observation);
+
+    private sealed record RemediationHintDefinition(
+        string Action,
+        string DisplayName,
+        string Description);
 }

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-30T08:08:47.585346+00:00",
+  "GeneratedAtUtc": "2026-04-30T08:40:07.4531355+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -256,7 +256,7 @@
       "Description": "ASP.NET Core HTTP proof publication and tenant-administration command adapter for Cephalon multi-tenancy governance workloads.",
       "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
       "NamespaceCount": 2,
-      "TypeCount": 12
+      "TypeCount": 14
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
@@ -1395,7 +1395,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-aspnetcore-hosting",
-      "TypeCount": 11
+      "TypeCount": 13
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Configuration",
@@ -18296,7 +18296,37 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusObservationRemediationActions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions",
+      "Declaration": "public static class TenantInvitationDeliveryStatusObservationRemediationActions",
+      "Summary": "Defines stable operator remediation actions for tenant-invitation delivery status observation reads.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor",
+      "Declaration": "public sealed class TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "Summary": "Describes deterministic operator remediation guidance for matched delivery status observations.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -19325,6 +19355,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-action",
       "Signature": "TenantGovernanceActionDescriptor Action { get; }",
       "Summary": "Gets the resulting action descriptor when one exists."
+    },
+    {
+      "DisplayName": "Action",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-action",
+      "Signature": "string Action { get; }",
+      "Summary": "Gets the stable remediation action label."
     },
     {
       "DisplayName": "ActionCount",
@@ -26090,6 +26131,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-attentionactioncount",
       "Signature": "int AttentionActionCount { get; }",
       "Summary": "Gets the number of attention-level actions in the plan."
+    },
+    {
+      "DisplayName": "AttentionCategory",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-attentioncategory",
+      "Signature": "string AttentionCategory { get; }",
+      "Summary": "Gets the attention category that produced this hint."
     },
     {
       "DisplayName": "Attributes",
@@ -39074,6 +39126,17 @@
     {
       "DisplayName": "Count",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-count",
+      "Signature": "int Count { get; }",
+      "Summary": "Gets the number of matched observations in this hint bucket."
+    },
+    {
+      "DisplayName": "Count",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationSummaryDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -44131,6 +44194,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the remediation guidance for this attention category."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "TransportDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -45975,6 +46049,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the optional operator-facing invitation name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the short operator-facing display name."
     },
     {
       "DisplayName": "DisplayName",
@@ -55446,6 +55531,17 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-renderedscaffold-files",
       "Signature": "IReadOnlyList\u003CRenderedFile\u003E Files { get; }",
       "Summary": "Gets the rendered files."
+    },
+    {
+      "DisplayName": "Filter",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-filter",
+      "Signature": "string Filter { get; }",
+      "Summary": "Gets a query-string filter that drills into the relevant observations."
     },
     {
       "DisplayName": "Filters",
@@ -76174,6 +76270,17 @@
     {
       "DisplayName": "LatestObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-latestobservedatutc",
+      "Signature": "DateTimeOffset LatestObservedAtUtc { get; }",
+      "Summary": "Gets the latest observed timestamp in the hint bucket."
+    },
+    {
+      "DisplayName": "LatestObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationSummaryDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -76335,6 +76442,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestrecordedatutc",
       "Signature": "DateTimeOffset? LatestRecordedAtUtc { get; set; }",
       "Summary": "Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed the retry-execution policy."
+    },
+    {
+      "DisplayName": "LatestRecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-latestrecordedatutc",
+      "Signature": "DateTimeOffset LatestRecordedAtUtc { get; }",
+      "Summary": "Gets the latest recorded timestamp in the hint bucket."
     },
     {
       "DisplayName": "LatestRecordedAtUtc",
@@ -83991,6 +84109,17 @@
       "AnchorId": "member-m-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-ctor",
       "Signature": "MongoDbDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060MongoDbDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "MonitorDeferredDelivery",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationActions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-monitordeferreddelivery",
+      "Signature": "const string MonitorDeferredDelivery",
+      "Summary": "Monitor a deferred delivery status or retry through an owned delivery-dispatch path when appropriate."
     },
     {
       "DisplayName": "MoreTargetDimensions",
@@ -101158,6 +101287,28 @@
       "Summary": "A governance action that represents an operator remediation."
     },
     {
+      "DisplayName": "RemediationHintCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationQueryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-remediationhintcount",
+      "Signature": "int RemediationHintCount { get; set; }",
+      "Summary": "Gets the number of operator remediation hints derived from the filtered observations."
+    },
+    {
+      "DisplayName": "RemediationHints",
+      "Category": "Properties",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationQueryResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-remediationhints",
+      "Signature": "IReadOnlyList\u003CTenantInvitationDeliveryStatusObservationRemediationHintDescriptor\u003E RemediationHints { get; set; }",
+      "Summary": "Gets deterministic remediation guidance derived from the filtered observations before the response limit is applied."
+    },
+    {
       "DisplayName": "RemediationRequired",
       "Category": "Fields",
       "DeclaringTypeName": "TenantGovernanceActionDecisionOutcomes",
@@ -106700,6 +106851,61 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-returnedcount",
       "Signature": "int ReturnedCount { get; set; }",
       "Summary": "Gets the number of observations included in this response after filtering and limiting."
+    },
+    {
+      "DisplayName": "ReviewObservationRecording",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationActions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewobservationrecording",
+      "Signature": "const string ReviewObservationRecording",
+      "Summary": "Review observation-store configuration or metadata recording failure before relying on the audit trail."
+    },
+    {
+      "DisplayName": "ReviewRecipientOrSender",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationActions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewrecipientorsender",
+      "Signature": "const string ReviewRecipientOrSender",
+      "Summary": "Review the recipient, sender configuration, or provider status before retrying or replacing the invitation."
+    },
+    {
+      "DisplayName": "ReviewReconciliationInput",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationActions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewreconciliationinput",
+      "Signature": "const string ReviewReconciliationInput",
+      "Summary": "Review reconciliation inputs such as tenant id, invitation id, provider message id, or status ownership."
+    },
+    {
+      "DisplayName": "ReviewStatusTranslation",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationActions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewstatustranslation",
+      "Signature": "const string ReviewStatusTranslation",
+      "Summary": "Review provider callback translation or payload mapping because the normalized status was unknown."
+    },
+    {
+      "DisplayName": "ReviewSuppressionPolicy",
+      "Category": "Fields",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationActions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewsuppressionpolicy",
+      "Signature": "const string ReviewSuppressionPolicy",
+      "Summary": "Review suppression or unsubscribe policy before sending more invitations to the recipient."
     },
     {
       "DisplayName": "Revoked",
@@ -119930,6 +120136,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-ctor",
       "Signature": "TenantInvitationDeliveryStatusObservationQueryResult()",
       "Summary": "Initializes a new instance of the \u0060TenantInvitationDeliveryStatusObservationQueryResult\u0060 class."
+    },
+    {
+      "DisplayName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-ctor-system-string-system-string-system-string-system-string-system-int32-system-datetimeoffset-system-datetimeoffset-system-string",
+      "Signature": "TenantInvitationDeliveryStatusObservationRemediationHintDescriptor(string attentionCategory, string action, string displayName, string description, int count, DateTimeOffset latestObservedAtUtc, DateTimeOffset latestRecordedAtUtc, string filter)",
+      "Summary": "Creates a tenant-invitation delivery status observation remediation hint descriptor."
     },
     {
       "DisplayName": "TenantInvitationDeliveryStatusObservationRoutePattern",

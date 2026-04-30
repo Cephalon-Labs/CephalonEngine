@@ -54,6 +54,11 @@ public sealed class TenantInvitationDeliveryStatusObservationQueryResult
     public int SummaryCount { get; init; }
 
     /// <summary>
+    /// Gets the number of operator remediation hints derived from the filtered observations.
+    /// </summary>
+    public int RemediationHintCount { get; init; }
+
+    /// <summary>
     /// Gets the effective response limit used for this read.
     /// </summary>
     public int Limit { get; init; }
@@ -73,4 +78,9 @@ public sealed class TenantInvitationDeliveryStatusObservationQueryResult
     /// Gets aggregate operator summaries derived from the filtered observations before the response limit is applied.
     /// </summary>
     public IReadOnlyList<TenantInvitationDeliveryStatusObservationSummaryDescriptor> Summaries { get; init; } = [];
+
+    /// <summary>
+    /// Gets deterministic remediation guidance derived from the filtered observations before the response limit is applied.
+    /// </summary>
+    public IReadOnlyList<TenantInvitationDeliveryStatusObservationRemediationHintDescriptor> RemediationHints { get; init; } = [];
 }

@@ -989,6 +989,26 @@ string Ownership { get; set; }
 
 Gets the ownership mode reported by the underlying observation store.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-remediationhintcount"></a>
+
+##### `RemediationHintCount`
+
+```csharp
+int RemediationHintCount { get; set; }
+```
+
+Gets the number of operator remediation hints derived from the filtered observations.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-remediationhints"></a>
+
+##### `RemediationHints`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryStatusObservationRemediationHintDescriptor> RemediationHints { get; set; }
+```
+
+Gets deterministic remediation guidance derived from the filtered observations before the response limit is applied.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-returnedcount"></a>
 
 ##### `ReturnedCount`
@@ -1038,6 +1058,198 @@ int TotalCount { get; set; }
 ```
 
 Gets the number of observations in the store before endpoint filters are applied.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions"></a>
+
+### `TenantInvitationDeliveryStatusObservationRemediationActions`
+
+Defines stable operator remediation actions for tenant-invitation delivery status observation reads.
+
+Remarks: Remediation actions are deterministic guidance derived from normalized observation history. They do not execute provider calls, mutate callback inboxes, run polling loops, or claim distributed remediation ownership.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryStatusObservationRemediationActions
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-monitordeferreddelivery"></a>
+
+##### `MonitorDeferredDelivery`
+
+```csharp
+const string MonitorDeferredDelivery
+```
+
+Monitor a deferred delivery status or retry through an owned delivery-dispatch path when appropriate.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewobservationrecording"></a>
+
+##### `ReviewObservationRecording`
+
+```csharp
+const string ReviewObservationRecording
+```
+
+Review observation-store configuration or metadata recording failure before relying on the audit trail.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewrecipientorsender"></a>
+
+##### `ReviewRecipientOrSender`
+
+```csharp
+const string ReviewRecipientOrSender
+```
+
+Review the recipient, sender configuration, or provider status before retrying or replacing the invitation.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewreconciliationinput"></a>
+
+##### `ReviewReconciliationInput`
+
+```csharp
+const string ReviewReconciliationInput
+```
+
+Review reconciliation inputs such as tenant id, invitation id, provider message id, or status ownership.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewstatustranslation"></a>
+
+##### `ReviewStatusTranslation`
+
+```csharp
+const string ReviewStatusTranslation
+```
+
+Review provider callback translation or payload mapping because the normalized status was unknown.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewsuppressionpolicy"></a>
+
+##### `ReviewSuppressionPolicy`
+
+```csharp
+const string ReviewSuppressionPolicy
+```
+
+Review suppression or unsubscribe policy before sending more invitations to the recipient.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor"></a>
+
+### `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor`
+
+Describes deterministic operator remediation guidance for matched delivery status observations.
+
+Remarks: The descriptor is an aggregate hint over normalized observations that already matched the read filters. It is guidance for an operator or host workflow, not an executed remediation, provider polling result, distributed inbox, or exactly-once delivery guarantee.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryStatusObservationRemediationHintDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-ctor-system-string-system-string-system-string-system-string-system-int32-system-datetimeoffset-system-datetimeoffset-system-string"></a>
+
+##### `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor`
+
+```csharp
+TenantInvitationDeliveryStatusObservationRemediationHintDescriptor(string attentionCategory, string action, string displayName, string description, int count, DateTimeOffset latestObservedAtUtc, DateTimeOffset latestRecordedAtUtc, string filter)
+```
+
+Creates a tenant-invitation delivery status observation remediation hint descriptor.
+
+Parameters:
+- `attentionCategory`: The attention category that produced this hint.
+- `action`: The stable remediation action label.
+- `displayName`: The short operator-facing display name.
+- `description`: The remediation guidance for this attention category.
+- `count`: The number of matched observations in this hint bucket.
+- `latestObservedAtUtc`: The latest observed timestamp in the hint bucket.
+- `latestRecordedAtUtc`: The latest recorded timestamp in the hint bucket.
+- `filter`: A query-string filter that drills into the relevant observations.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-action"></a>
+
+##### `Action`
+
+```csharp
+string Action { get; }
+```
+
+Gets the stable remediation action label.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-attentioncategory"></a>
+
+##### `AttentionCategory`
+
+```csharp
+string AttentionCategory { get; }
+```
+
+Gets the attention category that produced this hint.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of matched observations in this hint bucket.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the remediation guidance for this attention category.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the short operator-facing display name.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-filter"></a>
+
+##### `Filter`
+
+```csharp
+string Filter { get; }
+```
+
+Gets a query-string filter that drills into the relevant observations.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-latestobservedatutc"></a>
+
+##### `LatestObservedAtUtc`
+
+```csharp
+DateTimeOffset LatestObservedAtUtc { get; }
+```
+
+Gets the latest observed timestamp in the hint bucket.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset LatestRecordedAtUtc { get; }
+```
+
+Gets the latest recorded timestamp in the hint bucket.
 
 <a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor"></a>
 

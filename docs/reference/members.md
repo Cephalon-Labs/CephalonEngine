@@ -138,6 +138,9 @@ Browse the published API surface by public member.
 - [Action](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowresult-action): `Properties` on `TenantGovernanceActionWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Action&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the resulting action descriptor when one exists.
   - `TenantGovernanceActionDescriptor Action { get; }`
+- [Action](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-action): `Properties` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Action&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets the stable remediation action label.
+  - `string Action { get; }`
 - [ActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-actioncount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active action identifiers currently visible for the execution runtime.
   - `int ActionCount { get; }`
@@ -1983,6 +1986,9 @@ Browse the published API surface by public member.
 - [AttentionActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-attentionactioncount): `Properties` on `DatabaseTopologyOperationalActionPlan` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AttentionActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of attention-level actions in the plan.
   - `int AttentionActionCount { get; }`
+- [AttentionCategory](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-attentioncategory): `Properties` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=AttentionCategory&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets the attention category that produced this hint.
+  - `string AttentionCategory { get; }`
 - [Attributes](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-attributes): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Attributes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the actor attributes.
   - `IReadOnlyDictionary<string, string> Attributes { get; }`
@@ -5529,6 +5535,9 @@ Browse the published API surface by public member.
 - [Count](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantmembershipstore-count): `Properties` on `ITenantMembershipStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of stored runtime tenant memberships.
   - `int Count { get; }`
+- [Count](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-count): `Properties` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets the number of matched observations in this hint bucket.
+  - `int Count { get; }`
 - [Count](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-count): `Properties` on `TenantInvitationDeliveryStatusObservationSummaryDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Count&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the number of observations in the bucket.
   - `int Count { get; }`
@@ -6909,6 +6918,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimesurface-description): `Properties` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the human-readable description of the surface.
   - `string Description { get; }`
+- [Description](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-description): `Properties` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Description&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets the remediation guidance for this attention category.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-description): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the transport description.
   - `string Description { get; }`
@@ -7412,6 +7424,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverycontext-displayname): `Properties` on `TenantInvitationDeliveryContext` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing invitation name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-displayname): `Properties` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets the short operator-facing display name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdescriptor-displayname): `Properties` on `TenantInvitationDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional operator-facing invitation name.
@@ -10002,6 +10017,9 @@ Browse the published API surface by public member.
 - [Files](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-files): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Files&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the rendered files.
   - `IReadOnlyList<RenderedFile> Files { get; }`
+- [Filter](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-filter): `Properties` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Filter&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets a query-string filter that drills into the relevant observations.
+  - `string Filter { get; }`
 - [Filters](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-filters): `Properties` on `TenantInvitationDeliveryStatusObservationQueryResult` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Filters&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the normalized filters applied to this read.
   - `IReadOnlyDictionary<string, string> Filters { get; set; }`
@@ -15672,6 +15690,9 @@ Browse the published API surface by public member.
 - [LatestMatchingDestructiveAllowanceApplied](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestmatchingdestructiveallowanceapplied): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestMatchingDestructiveAllowanceApplied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether matching command history already recorded an explicit destructive-operation allowance Cephalon can reuse for retry execution.
   - `bool LatestMatchingDestructiveAllowanceApplied { get; set; }`
+- [LatestObservedAtUtc](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-latestobservedatutc): `Properties` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=LatestObservedAtUtc&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets the latest observed timestamp in the hint bucket.
+  - `DateTimeOffset LatestObservedAtUtc { get; }`
 - [LatestObservedAtUtc](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-latestobservedatutc): `Properties` on `TenantInvitationDeliveryStatusObservationSummaryDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=LatestObservedAtUtc&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the latest provider observation timestamp in the bucket.
   - `DateTimeOffset LatestObservedAtUtc { get; }`
@@ -15717,6 +15738,9 @@ Browse the published API surface by public member.
 - [LatestRecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-latestrecordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the timestamp when Cephalon recorded the latest command-execution outcome that informed the retry-execution policy.
   - `DateTimeOffset? LatestRecordedAtUtc { get; set; }`
+- [LatestRecordedAtUtc](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-latestrecordedatutc): `Properties` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets the latest recorded timestamp in the hint bucket.
+  - `DateTimeOffset LatestRecordedAtUtc { get; }`
 - [LatestRecordedAtUtc](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-latestrecordedatutc): `Properties` on `TenantInvitationDeliveryStatusObservationSummaryDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the latest Cephalon record timestamp in the bucket.
   - `DateTimeOffset LatestRecordedAtUtc { get; }`
@@ -17808,6 +17832,9 @@ Browse the published API surface by public member.
 - [MongoDbDependencyHealthOptions](cephalon-observability-mongodbdependencies.md#member-m-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-ctor): `Constructors` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=MongoDbDependencyHealthOptions&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Initializes a new instance of the `MongoDbDependencyHealthOptions` class.
   - `MongoDbDependencyHealthOptions()`
+- [MonitorDeferredDelivery](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-monitordeferreddelivery): `Fields` on `TenantInvitationDeliveryStatusObservationRemediationActions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=MonitorDeferredDelivery&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Monitor a deferred delivery status or retry through an owned delivery-dispatch path when appropriate.
+  - `const string MonitorDeferredDelivery`
 - [MoreTargetDimensions](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-moretargetdimensions): `Fields` on `RestEndpointGovernanceRuleSelectionBasis` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MoreTargetDimensions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - A rule that constrained more selector dimensions won over a less specific rule.
   - `const RestEndpointGovernanceRuleSelectionBasis MoreTargetDimensions`
@@ -22500,6 +22527,12 @@ Browse the published API surface by public member.
 - [Remediation](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-remediation): `Fields` on `TenantGovernanceActionKinds` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Remediation&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - A governance action that represents an operator remediation.
   - `const string Remediation`
+- [RemediationHintCount](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-remediationhintcount): `Properties` on `TenantInvitationDeliveryStatusObservationQueryResult` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=RemediationHintCount&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets the number of operator remediation hints derived from the filtered observations.
+  - `int RemediationHintCount { get; set; }`
+- [RemediationHints](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-remediationhints): `Properties` on `TenantInvitationDeliveryStatusObservationQueryResult` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=RemediationHints&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Gets deterministic remediation guidance derived from the filtered observations before the response limit is applied.
+  - `IReadOnlyList<TenantInvitationDeliveryStatusObservationRemediationHintDescriptor> RemediationHints { get; set; }`
 - [RemediationRequired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionoutcomes-remediationrequired): `Fields` on `TenantGovernanceActionDecisionOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RemediationRequired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The action requires remediation before it can proceed.
   - `const string RemediationRequired`
@@ -24012,6 +24045,21 @@ Browse the published API surface by public member.
 - [ReturnedCount](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-returnedcount): `Properties` on `TenantInvitationDeliveryStatusObservationQueryResult` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ReturnedCount&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the number of observations included in this response after filtering and limiting.
   - `int ReturnedCount { get; set; }`
+- [ReviewObservationRecording](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewobservationrecording): `Fields` on `TenantInvitationDeliveryStatusObservationRemediationActions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ReviewObservationRecording&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Review observation-store configuration or metadata recording failure before relying on the audit trail.
+  - `const string ReviewObservationRecording`
+- [ReviewRecipientOrSender](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewrecipientorsender): `Fields` on `TenantInvitationDeliveryStatusObservationRemediationActions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ReviewRecipientOrSender&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Review the recipient, sender configuration, or provider status before retrying or replacing the invitation.
+  - `const string ReviewRecipientOrSender`
+- [ReviewReconciliationInput](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewreconciliationinput): `Fields` on `TenantInvitationDeliveryStatusObservationRemediationActions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ReviewReconciliationInput&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Review reconciliation inputs such as tenant id, invitation id, provider message id, or status ownership.
+  - `const string ReviewReconciliationInput`
+- [ReviewStatusTranslation](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewstatustranslation): `Fields` on `TenantInvitationDeliveryStatusObservationRemediationActions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ReviewStatusTranslation&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Review provider callback translation or payload mapping because the normalized status was unknown.
+  - `const string ReviewStatusTranslation`
+- [ReviewSuppressionPolicy](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationactions-reviewsuppressionpolicy): `Fields` on `TenantInvitationDeliveryStatusObservationRemediationActions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ReviewSuppressionPolicy&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Review suppression or unsubscribe policy before sending more invitations to the recipient.
+  - `const string ReviewSuppressionPolicy`
 - [Revoked](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationstatuses-revoked): `Fields` on `TenantInvitationStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Revoked&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The invitation has been revoked before acceptance.
   - `const string Revoked`
@@ -27624,6 +27672,9 @@ Browse the published API surface by public member.
 - [TenantInvitationDeliveryStatusObservationQueryResult](cephalon-multitenancy-governance-aspnetcore.md#member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-ctor): `Constructors` on `TenantInvitationDeliveryStatusObservationQueryResult` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=TenantInvitationDeliveryStatusObservationQueryResult&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Initializes a new instance of the `TenantInvitationDeliveryStatusObservationQueryResult` class.
   - `TenantInvitationDeliveryStatusObservationQueryResult()`
+- [TenantInvitationDeliveryStatusObservationRemediationHintDescriptor](cephalon-multitenancy-governance-aspnetcore.md#member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationremediationhintdescriptor-ctor-system-string-system-string-system-string-system-string-system-int32-system-datetimeoffset-system-datetimeoffset-system-string): `Constructors` on `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=TenantInvitationDeliveryStatusObservationRemediationHintDescriptor&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - Creates a tenant-invitation delivery status observation remediation hint descriptor.
+  - `TenantInvitationDeliveryStatusObservationRemediationHintDescriptor(string attentionCategory, string action, string displayName, string description, int count, DateTimeOffset latestObservedAtUtc, DateTimeOffset latestRecordedAtUtc, string filter)`
 - [TenantInvitationDeliveryStatusObservationRoutePattern](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-tenantinvitationdeliverystatusobservationroutepattern): `Properties` on `MultiTenancyGovernanceAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=TenantInvitationDeliveryStatusObservationRoutePattern&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Configuration&scope=members)
   - Gets or sets the endpoint route pattern used for reading normalized tenant-invitation delivery status observations.
   - `string TenantInvitationDeliveryStatusObservationRoutePattern { get; set; }`
