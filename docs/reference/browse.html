@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-29T23:11:53.2332952+00:00",
+  "GeneratedAtUtc": "2026-04-30T01:43:54.5163319+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -368,6 +368,14 @@
       "FileName": "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md",
       "NamespaceCount": 2,
       "TypeCount": 5
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "Microsoft Graph sendMail invitation delivery sender companion package for Cephalon multi-tenancy governance workloads.",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "NamespaceCount": 3,
+      "TypeCount": 6
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -1488,6 +1496,27 @@
       "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-mailgundelivery-services",
       "TypeCount": 3
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-services",
+      "TypeCount": 4
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Registration",
@@ -11305,6 +11334,36 @@
       }
     },
     {
+      "DisplayName": "IMicrosoftGraphInvitationDeliveryAccessTokenProvider",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-microsoftgraphdelivery-services-imicrosoftgraphinvitationdeliveryaccesstokenprovider",
+      "Declaration": "public interface IMicrosoftGraphInvitationDeliveryAccessTokenProvider",
+      "Summary": "Provides bearer tokens for Microsoft Graph invitation delivery requests.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IMicrosoftGraphInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-microsoftgraphdelivery-services-imicrosoftgraphinvitationdeliveryclient",
+      "Declaration": "public interface IMicrosoftGraphInvitationDeliveryClient",
+      "Summary": "Sends Microsoft Graph invitation delivery messages for the Microsoft Graph companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IModule",
       "NamespaceName": "Cephalon.Abstractions.Modules",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13312,6 +13371,66 @@
         "Fields": 0,
         "Properties": 3,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliveryclientresult",
+      "Declaration": "public sealed class MicrosoftGraphInvitationDeliveryClientResult",
+      "Summary": "Describes the result returned by a Microsoft Graph invitation delivery client.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage",
+      "Declaration": "public sealed class MicrosoftGraphInvitationDeliveryMessage",
+      "Summary": "Describes a prepared Microsoft Graph invitation delivery message.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions",
+      "Declaration": "public sealed class MicrosoftGraphInvitationDeliveryOptions",
+      "Summary": "Configures Microsoft Graph \u0060sendMail\u0060 delivery for tenant invitations dispatched by the governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 17,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-microsoftgraphdelivery-hosting-microsoftgraphinvitationdeliveryservicecollectionextensions",
+      "Declaration": "public static class MicrosoftGraphInvitationDeliveryServiceCollectionExtensions",
+      "Summary": "Adds Microsoft Graph \u0060sendMail\u0060 invitation delivery services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 1,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -18581,6 +18700,17 @@
     },
     {
       "DisplayName": "Accepted",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliveryclientresult-accepted",
+      "Signature": "bool Accepted { get; }",
+      "Summary": "Gets a value indicating whether Microsoft Graph accepted the request."
+    },
+    {
+      "DisplayName": "Accepted",
       "Category": "Methods",
       "DeclaringTypeName": "Result",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
@@ -18703,6 +18833,17 @@
     {
       "DisplayName": "AcceptedStatusCodes",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-acceptedstatuscodes",
+      "Signature": "IReadOnlyList\u003Cint\u003E AcceptedStatusCodes { get; set; }",
+      "Summary": "Gets or sets response status codes that indicate Microsoft Graph accepted the request."
+    },
+    {
+      "DisplayName": "AcceptedStatusCodes",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -18754,6 +18895,17 @@
       "AnchorId": "member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-accesspolicytoken",
       "Signature": "string AccessPolicyToken { get; set; }",
       "Summary": "Gets or sets the Grafana Cloud access-policy token used as the Basic-auth password when the package should build the Authorization header from structured settings."
+    },
+    {
+      "DisplayName": "AccessToken",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-accesstoken",
+      "Signature": "string AccessToken { get; set; }",
+      "Summary": "Gets or sets an optional static Microsoft Graph bearer token."
     },
     {
       "DisplayName": "AcknowledgeAsync",
@@ -21627,6 +21779,28 @@
       "Summary": "Adds Memcached dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonMicrosoftGraphInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-hosting-microsoftgraphinvitationdeliveryservicecollectionextensions-addcephalonmicrosoftgraphinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonMicrosoftGraphInvitationDelivery(this IServiceCollection services, Action\u003CMicrosoftGraphInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds Microsoft Graph invitation delivery using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonMicrosoftGraphInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-hosting-microsoftgraphinvitationdeliveryservicecollectionextensions-addcephalonmicrosoftgraphinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonMicrosoftGraphInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action\u003CMicrosoftGraphInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds Microsoft Graph invitation delivery using configuration as the primary source of \u0060sendMail\u0060 settings."
+    },
+    {
       "DisplayName": "AddCephalonMongoDbDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "MongoDbDependencyHealthServiceCollectionExtensions",
@@ -23407,6 +23581,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-apisurface",
       "Signature": "BehaviorApiSurfaceDescriptor ApiSurface { get; }",
       "Summary": "Gets the logical public API surface projected by route-shaped transport adapters."
+    },
+    {
+      "DisplayName": "ApiVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-apiversion",
+      "Signature": "string ApiVersion { get; set; }",
+      "Summary": "Gets or sets the Microsoft Graph API version segment."
     },
     {
       "DisplayName": "ApiVersionMajor",
@@ -27129,6 +27314,17 @@
     {
       "DisplayName": "BaseUrl",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-baseurl",
+      "Signature": "string BaseUrl { get; set; }",
+      "Summary": "Gets or sets the Microsoft Graph API base URL."
+    },
+    {
+      "DisplayName": "BaseUrl",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -29820,6 +30016,28 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-technologyselection-catalog",
       "Signature": "IReadOnlyList\u003CTechnologyDescriptor\u003E Catalog { get; }",
       "Summary": "Gets the technology profiles available to the runtime."
+    },
+    {
+      "DisplayName": "Categories",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-categories",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Categories { get; }",
+      "Summary": "Gets Microsoft Graph categories attached to the message."
+    },
+    {
+      "DisplayName": "Categories",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-categories",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Categories { get; set; }",
+      "Summary": "Gets or sets Microsoft Graph message categories added to each request."
     },
     {
       "DisplayName": "Categories",
@@ -48334,6 +48552,17 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-enabled",
+      "Signature": "bool Enabled { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the Microsoft Graph invitation sender should be registered."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "RateLimitingOverrideSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -55220,6 +55449,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "MicrosoftGraphInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Microsoft Graph invitation delivery options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "MigrationSettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -56074,6 +56314,17 @@
       "AnchorId": "member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-generatedatutcfieldnumber",
       "Signature": "const int GeneratedAtUtcFieldNumber",
       "Summary": "Field number for the \u0022generated_at_utc\u0022 field."
+    },
+    {
+      "DisplayName": "GetAccessTokenAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IMicrosoftGraphInvitationDeliveryAccessTokenProvider",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-services-imicrosoftgraphinvitationdeliveryaccesstokenprovider-getaccesstokenasync-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003Cstring\u003E GetAccessTokenAsync(CancellationToken cancellationToken)",
+      "Summary": "Gets a bearer token that authorizes the Microsoft Graph \u0060sendMail\u0060 request."
     },
     {
       "DisplayName": "GetByActionId",
@@ -60960,6 +61211,17 @@
       "Summary": "Gets a value indicating whether the execution runtime has reported every declared CDC capture."
     },
     {
+      "DisplayName": "HasHtmlBody",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-hashtmlbody",
+      "Signature": "bool HasHtmlBody { get; }",
+      "Summary": "Gets a value indicating whether the message uses HTML content."
+    },
+    {
       "DisplayName": "HasIssuableCommand",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus",
@@ -63140,6 +63402,28 @@
     {
       "DisplayName": "Headers",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; }",
+      "Summary": "Gets safe Microsoft Graph internet message headers."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; set; }",
+      "Summary": "Gets or sets custom Microsoft Graph internet message headers added to each request."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
       "DeclaringTypeName": "NewRelicTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
       "AssemblyName": "Cephalon.Observability.NewRelic",
@@ -64086,6 +64370,17 @@
     {
       "DisplayName": "HtmlBody",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-htmlbody",
+      "Signature": "string HtmlBody { get; }",
+      "Summary": "Gets the optional HTML message body."
+    },
+    {
+      "DisplayName": "HtmlBody",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -64115,6 +64410,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-htmlbodytemplate",
       "Signature": "string HtmlBodyTemplate { get; set; }",
       "Summary": "Gets or sets the optional HTML Mailgun message body template."
+    },
+    {
+      "DisplayName": "HtmlBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-htmlbodytemplate",
+      "Signature": "string HtmlBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the optional HTML Microsoft Graph message body template."
     },
     {
       "DisplayName": "HtmlBodyTemplate",
@@ -64159,6 +64465,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-mailgundelivery-hosting-mailguninvitationdeliveryservicecollectionextensions-httpclientname",
       "Signature": "const string HttpClientName",
       "Summary": "The named HTTP client used by the Mailgun invitation delivery client."
+    },
+    {
+      "DisplayName": "HttpClientName",
+      "Category": "Fields",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-microsoftgraphdelivery-hosting-microsoftgraphinvitationdeliveryservicecollectionextensions-httpclientname",
+      "Signature": "const string HttpClientName",
+      "Summary": "The named HTTP client used by the Microsoft Graph invitation delivery client."
     },
     {
       "DisplayName": "HttpClientName",
@@ -65952,6 +66269,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-includecontextheaders",
       "Signature": "bool IncludeContextHeaders { get; set; }",
       "Summary": "Gets or sets a value indicating whether safe Cephalon custom headers should be added to the Mailgun request."
+    },
+    {
+      "DisplayName": "IncludeContextHeaders",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-includecontextheaders",
+      "Signature": "bool IncludeContextHeaders { get; set; }",
+      "Summary": "Gets or sets a value indicating whether safe Cephalon context headers should be added to the Graph message."
     },
     {
       "DisplayName": "IncludeContextHeaders",
@@ -78936,6 +79264,17 @@
     {
       "DisplayName": "MessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-messageid",
+      "Signature": "string MessageId { get; }",
+      "Summary": "Gets the deterministic Cephalon message identifier carried in request metadata."
+    },
+    {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -80118,6 +80457,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
       "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional safe client metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliveryclientresult-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional safe client metadata."
     },
@@ -81330,6 +81680,39 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-microservicetopology",
       "Signature": "PatternDescriptor MicroserviceTopology { get; }",
       "Summary": "Gets the microservice deployment topology pattern."
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryClientResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliveryclientresult-ctor-system-boolean-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "MicrosoftGraphInvitationDeliveryClientResult(bool accepted, int? statusCode, string providerMessageId, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a Microsoft Graph invitation delivery client result."
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryMessage",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-boolean",
+      "Signature": "MicrosoftGraphInvitationDeliveryMessage(string messageId, string senderUserId, string toEmail, string toName, string subject, string textBody, string htmlBody, IReadOnlyList\u003Cstring\u003E categories, IReadOnlyDictionary\u003Cstring, string\u003E headers, bool saveToSentItems)",
+      "Summary": "Creates a prepared Microsoft Graph invitation delivery message."
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-ctor",
+      "Signature": "MicrosoftGraphInvitationDeliveryOptions()",
+      "Summary": "Initializes a new instance of the \u0060MicrosoftGraphInvitationDeliveryOptions\u0060 class."
     },
     {
       "DisplayName": "Middlewares",
@@ -94121,6 +94504,17 @@
     {
       "DisplayName": "ProviderMessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliveryclientresult-providermessageid",
+      "Signature": "string ProviderMessageId { get; }",
+      "Summary": "Gets the provider message identifier when one is known."
+    },
+    {
+      "DisplayName": "ProviderMessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -96838,6 +97232,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliveryclientresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the provider-facing outcome reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "PackageSignatureTrustDecision",
       "NamespaceName": "Cephalon.Engine.Trust",
       "AssemblyName": "Cephalon.Engine",
@@ -97228,6 +97633,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
       "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-recipientemailmetadatakey",
+      "Signature": "string RecipientEmailMetadataKey { get; set; }",
+      "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
+    },
+    {
+      "DisplayName": "RecipientEmailMetadataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-recipientemailmetadatakey",
       "Signature": "string RecipientEmailMetadataKey { get; set; }",
       "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
     },
@@ -106747,6 +107163,28 @@
       "Summary": "Saves one snapshot for the requested stream."
     },
     {
+      "DisplayName": "SaveToSentItems",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-savetosentitems",
+      "Signature": "bool SaveToSentItems { get; }",
+      "Summary": "Gets a value indicating whether Graph should save the message to Sent Items."
+    },
+    {
+      "DisplayName": "SaveToSentItems",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-savetosentitems",
+      "Signature": "bool SaveToSentItems { get; set; }",
+      "Summary": "Gets or sets a value indicating whether Microsoft Graph should save the message to Sent Items."
+    },
+    {
       "DisplayName": "SayHello",
       "Category": "Methods",
       "DeclaringTypeName": "DiscoveryServiceBase",
@@ -108080,6 +108518,17 @@
     {
       "DisplayName": "SendAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "IMicrosoftGraphInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-services-imicrosoftgraphinvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CMicrosoftGraphInvitationDeliveryClientResult\u003E SendAsync(MicrosoftGraphInvitationDeliveryMessage message, CancellationToken cancellationToken)",
+      "Summary": "Sends one Microsoft Graph invitation delivery message."
+    },
+    {
+      "DisplayName": "SendAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "ISendGridInvitationDeliveryClient",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -108151,6 +108600,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
       "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-senderid",
+      "Signature": "string SenderId { get; set; }",
+      "Summary": "Gets or sets the sender identifier used by \u0060TenantInvitationDeliveryRequest.SenderId\u0060."
+    },
+    {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-senderid",
       "Signature": "string SenderId { get; set; }",
       "Summary": "Gets or sets the sender identifier used by \u0060TenantInvitationDeliveryRequest.SenderId\u0060."
     },
@@ -108274,6 +108734,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-sendernotconfigured",
       "Signature": "const string SenderNotConfigured",
       "Summary": "No matching delivery sender was registered."
+    },
+    {
+      "DisplayName": "SenderUserId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-senderuserid",
+      "Signature": "string SenderUserId { get; }",
+      "Summary": "Gets the Microsoft Graph sender mailbox scope or \u0060me\u0060."
+    },
+    {
+      "DisplayName": "SenderUserId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-senderuserid",
+      "Signature": "string SenderUserId { get; set; }",
+      "Summary": "Gets or sets the mailbox user id or user principal name used in \u0060/users/{id | userPrincipalName}/sendMail\u0060."
     },
     {
       "DisplayName": "SendGridEventId",
@@ -113049,6 +113531,17 @@
     {
       "DisplayName": "StatusCode",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliveryclientresult-statuscode",
+      "Signature": "int? StatusCode { get; }",
+      "Summary": "Gets the HTTP status code returned by Microsoft Graph when one is known."
+    },
+    {
+      "DisplayName": "StatusCode",
+      "Category": "Properties",
       "DeclaringTypeName": "ResultModel\u003CTModel\u003E",
       "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -113742,6 +114235,17 @@
     {
       "DisplayName": "Subject",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-subject",
+      "Signature": "string Subject { get; }",
+      "Summary": "Gets the message subject."
+    },
+    {
+      "DisplayName": "Subject",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -113980,6 +114484,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-subjecttemplate",
       "Signature": "string SubjectTemplate { get; set; }",
       "Summary": "Gets or sets the Mailgun message subject template."
+    },
+    {
+      "DisplayName": "SubjectTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-subjecttemplate",
+      "Signature": "string SubjectTemplate { get; set; }",
+      "Summary": "Gets or sets the Microsoft Graph message subject template."
     },
     {
       "DisplayName": "SubjectTemplate",
@@ -114649,6 +115164,17 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
       "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-supportedchannels",
+      "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
+      "Summary": "Gets or sets delivery channels accepted by this sender."
+    },
+    {
+      "DisplayName": "SupportedChannels",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-supportedchannels",
       "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
       "Summary": "Gets or sets delivery channels accepted by this sender."
     },
@@ -118131,6 +118657,17 @@
     {
       "DisplayName": "TextBody",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-textbody",
+      "Signature": "string TextBody { get; }",
+      "Summary": "Gets the plain-text message body."
+    },
+    {
+      "DisplayName": "TextBody",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -118160,6 +118697,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-textbodytemplate",
       "Signature": "string TextBodyTemplate { get; set; }",
       "Summary": "Gets or sets the plain-text Mailgun message body template."
+    },
+    {
+      "DisplayName": "TextBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-textbodytemplate",
+      "Signature": "string TextBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the plain-text Microsoft Graph message body template."
     },
     {
       "DisplayName": "TextBodyTemplate",
@@ -118314,6 +118862,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-timeoutseconds",
       "Signature": "int TimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the maximum time allowed for the Mailgun API request."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration-microsoftgraphinvitationdeliveryoptions-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the maximum time allowed for the Microsoft Graph API request."
     },
     {
       "DisplayName": "TimeoutSeconds",
@@ -118516,6 +119075,17 @@
     {
       "DisplayName": "ToEmail",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-toemail",
+      "Signature": "string ToEmail { get; }",
+      "Summary": "Gets the recipient email address."
+    },
+    {
+      "DisplayName": "ToEmail",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -118534,6 +119104,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-token",
       "Signature": "string Token { get; set; }",
       "Summary": "Gets or sets the optional auth token used for token-based NATS authentication."
+    },
+    {
+      "DisplayName": "ToName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-toname",
+      "Signature": "string ToName { get; }",
+      "Summary": "Gets the optional recipient display name."
     },
     {
       "DisplayName": "ToName",

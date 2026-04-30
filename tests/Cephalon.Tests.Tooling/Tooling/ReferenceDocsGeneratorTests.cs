@@ -654,6 +654,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.MultiTenancy.Governance.HttpDelivery",
                 "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
                 "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+                "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
                 "Cephalon.MultiTenancy.Governance.SendGridDelivery",
                 "Cephalon.MultiTenancy.Governance",
                 "Cephalon.Observability",
@@ -739,6 +740,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-httpdelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-mailgundelivery.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-microsoftgraphdelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-sendgriddelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-smtpdelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance.md");
@@ -800,6 +802,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.MailgunDelivery", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.SendGridDelivery", StringComparison.Ordinal));

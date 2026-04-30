@@ -460,6 +460,18 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery](cephalon-multitenancy-governance-mailgundelivery.md#namespace-cephalon-multitenancy-governance-mailgundelivery-services): 3 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services)
 
+## `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery](cephalon-multitenancy-governance-microsoftgraphdelivery.md#namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery](cephalon-multitenancy-governance-microsoftgraphdelivery.md#namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting)
+
+## `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services`
+
+- [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery](cephalon-multitenancy-governance-microsoftgraphdelivery.md#namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-services): 4 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services)
+
 ## `Cephalon.MultiTenancy.Governance.Registration`
 
 - [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Registration)

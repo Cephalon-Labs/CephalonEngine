@@ -1108,6 +1108,7 @@ Current shipped event-id ranges include:
 - `Cephalon.MultiTenancy.Governance.HttpDelivery`: `4550-4551`
 - `Cephalon.MultiTenancy.Governance.MailgunDelivery`: `4566-4567`
 - `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`: `4568-4571`
+- `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`: `4572-4573`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery`: `4560-4561`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`: `4562-4565`
 - `Cephalon.MultiTenancy.Governance.SmtpDelivery`: `4558-4559`
@@ -1273,13 +1274,14 @@ Current note:
 - hosts can install `Cephalon.MultiTenancy.Governance.SmtpDelivery` and call `AddCephalonSmtpInvitationDelivery(...)` when invitation dispatch should hand a templated email to a configured SMTP relay through a replaceable client seam while still recording outcome truth through the governance dispatcher
 - hosts can install `Cephalon.MultiTenancy.Governance.SendGridDelivery` and call `AddCephalonSendGridInvitationDelivery(...)` when invitation dispatch should POST a templated Mail Send API payload to SendGrid through a replaceable client seam while still recording outcome truth through the governance dispatcher
 - hosts can install `Cephalon.MultiTenancy.Governance.MailgunDelivery` and call `AddCephalonMailgunInvitationDelivery(...)` when invitation dispatch should POST a templated multipart Messages API payload to Mailgun through a replaceable client seam while still recording outcome truth through the governance dispatcher
+- hosts can install `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery` and call `AddCephalonMicrosoftGraphInvitationDelivery(...)` when invitation dispatch should POST a templated Microsoft Graph `sendMail` payload through a replaceable client and access-token provider seam while still recording outcome truth through the governance dispatcher
 - ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` and call `MapCephalonSendGridInvitationDeliveryStatusCallbacks()` when SendGrid Event Webhook arrays should be translated into the existing delivery-status reconciler without custom host glue; when `RequireSignedEventWebhook` is enabled, the same endpoint can reject duplicate verified signed callbacks inside a bounded process-local replay window
 - ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore` and call `MapCephalonMailgunInvitationDeliveryStatusCallbacks()` when Mailgun webhook objects should be translated, HMAC-verified, protected against duplicate signed tokens inside a bounded process-local replay window, and de-duplicated by observed Mailgun event id without custom host glue; durable inboxing, distributed replay, and distributed event-id ledgers remain separate follow-through
 - hosts can enable `EnableInvitationDeliveryRetryQueue` when `sender-failed` dispatch outcomes should be retained for an explicit `ITenantInvitationDeliveryRetryRunner.RetryPendingAsync(...)` pass; configure `InvitationDeliveryRetryQueueFilePath` only when the local retry queue should survive process restarts
 - the tenant-administration command endpoint is fail-closed by default; keep `RequireTenantAdministrationAuthorization = true` for real hosts, set `TenantAdministrationAuthorizationPolicy` when a named ASP.NET Core policy should guard the command surface, and disable authorization only for deliberate internal/test hosts
 - the delivery status callback and observation read endpoints are fail-closed by default; keep `RequireTenantInvitationDeliveryStatusCallbackAuthorization = true` and `RequireTenantInvitationDeliveryStatusObservationAuthorization = true` for real hosts, set the related authorization policy when a named ASP.NET Core policy should guard callback ingress or observation reads, keep `RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch = true` unless the host deliberately owns another correlation boundary, and keep provider-neutral signed callback replay protection enabled when `TenantInvitationDeliveryStatusCallbackSigningSecret` is configured
 - the SendGrid callback endpoint is also fail-closed by default; keep `RequireStatusCallbackAuthorization = true` for real hosts, enable `RequireSignedEventWebhook` with a SendGrid public key when callbacks should be verified before parsing, and keep `EnableSignedEventWebhookReplayProtection = true` unless the host has a stronger replay boundary outside Cephalon
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, SES/Microsoft Graph or other additional provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, other non-SendGrid/non-Mailgun provider-specific delivery-status callback payload translation and callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, SES or other additional provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, other non-SendGrid/non-Mailgun provider-specific delivery-status callback payload translation and callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
 
 Tenant-administration command endpoint configuration:
 
@@ -1475,7 +1477,7 @@ Operational notes:
 - `ISmtpInvitationDeliveryClient` is replaceable, so test hosts or provider-specific wrappers can reuse the same Cephalon sender contract without changing the governance dispatcher
 - deterministic SMTP `Message-Id` values are derived from tenant id, invitation id, channel, and sender id so retry attempts for the same dispatch boundary can be correlated safely
 - sender metadata records relay host, port, TLS posture, message id, sender id, recipient address, recipient metadata key, and safe client metadata, but it does not record SMTP username, password, message bodies, or unsafe headers
-- this package owns SMTP relay handoff only; Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery` and SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`, while SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce handling, provider polling, distributed retry queues, callback inboxes, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns SMTP relay handoff only; Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`, SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`, and Microsoft Graph `sendMail` handoff lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`, while SES or other provider-specific email API senders, SMS, chat, CRM, identity-provider onboarding, bounce handling, provider polling, distributed retry queues, callback inboxes, and tenant-admin UI remain future provider-pack or application-owned work
 
 ### Mailgun invitation delivery sender
 
@@ -1537,7 +1539,7 @@ Operational notes:
 - the sender carries deterministic Cephalon message ids through Mailgun `v:*` user variables and safe `h:*` headers, and captures the JSON `id` response property as the provider message id by default
 - `EnableTestMode` adds `o:testmode=yes` so Mailgun processes the request without delivering to recipients
 - sender metadata records endpoint host, Mailgun status code, configured domain, test-mode posture, Cephalon message id, sender id, recipient email, recipient metadata key, tag count, variable count, header count, and safe client metadata, but it does not record the API key, authorization header, raw request body, or message bodies
-- this package owns Mailgun Messages API handoff only; Mailgun webhook callback translation, optional HMAC signed-webhook verification, bounded process-local replay-token rejection, and observation-store-backed event-id idempotency live in `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`, while SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce handling, provider polling, distributed retry queues, callback inboxes, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns Mailgun Messages API handoff only; Mailgun webhook callback translation, optional HMAC signed-webhook verification, bounded process-local replay-token rejection, and observation-store-backed event-id idempotency live in `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`, Microsoft Graph `sendMail` handoff lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`, while SES or other provider-specific email API senders, SMS, chat, CRM, identity-provider onboarding, bounce handling, provider polling, distributed retry queues, callback inboxes, and tenant-admin UI remain future provider-pack or application-owned work
 
 ### Mailgun invitation delivery status callbacks
 
@@ -1669,7 +1671,65 @@ Operational notes:
 - the sender carries deterministic Cephalon message ids through SendGrid `custom_args` and safe `X-Cephalon-*` headers, and captures SendGrid's `X-Message-ID` response header as the provider message id by default
 - `EnableSandboxMode` adds `mail_settings.sandbox_mode.enable = true` and treats SendGrid's sandbox `200 OK` validation response as accepted alongside the normal `202 Accepted` response
 - sender metadata records endpoint host, SendGrid status code, sandbox posture, Cephalon message id, sender id, recipient email, recipient metadata key, category count, custom-argument count, and safe client metadata, but it does not record the API key, authorization header, raw request body, or message bodies
-- this package owns SendGrid Mail Send API handoff only; SendGrid Event Webhook callback translation, optional signed-webhook verification, bounded process-local signed-callback replay protection, and observation-store-backed SendGrid event-id idempotency live in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`, Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`, while durable callback inboxes, distributed replay protection, provider polling, dynamic-template lifecycle management, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns SendGrid Mail Send API handoff only; SendGrid Event Webhook callback translation, optional signed-webhook verification, bounded process-local signed-callback replay protection, and observation-store-backed SendGrid event-id idempotency live in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`, Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`, Microsoft Graph `sendMail` handoff lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`, while durable callback inboxes, distributed replay protection, provider polling, dynamic-template lifecycle management, SES or other provider-specific email API senders, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+
+### Microsoft Graph invitation delivery sender
+
+Install `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery` when invitation dispatch should hand a templated email to Microsoft Graph `sendMail` instead of posting a generic webhook, using SMTP directly, or using a dedicated email API provider.
+
+Configuration:
+
+```json
+{
+  "Engine": {
+    "MultiTenancy": {
+      "Governance": {
+        "MicrosoftGraphInvitationDelivery": {
+          "Enabled": true,
+          "SenderId": "microsoft-graph-email",
+          "BaseUrl": "https://graph.microsoft.com",
+          "ApiVersion": "v1.0",
+          "SenderUserId": "invites@example.com",
+          "AccessToken": "${MICROSOFT_GRAPH_ACCESS_TOKEN}",
+          "FromDisplayName": "Example SaaS",
+          "RecipientEmailMetadataKey": "email",
+          "SupportedChannels": ["email"],
+          "SubjectTemplate": "Invitation for {tenantId}",
+          "TextBodyTemplate": "You have been invited to tenant {tenantId}. Invitation: {invitationId}. Roles: {roles}.",
+          "HtmlBodyTemplate": "<p>You have been invited to tenant <strong>{tenantId}</strong>.</p>",
+          "SaveToSentItems": false,
+          "Categories": ["cephalon-invitation"],
+          "Headers": {
+            "X-Cephalon-Product": "Example SaaS"
+          },
+          "AcceptedStatusCodes": [202]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+builder.Services.AddCephalonMicrosoftGraphInvitationDelivery(builder.Configuration);
+
+builder.AddCephalon(engine =>
+{
+    engine.AddMultiTenancyGovernance();
+});
+```
+
+Operational notes:
+
+- recipient email resolution checks dispatch metadata first, invitation metadata second, and finally `InviteeId` when `InviteeKind` is `email`
+- `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` is replaceable; real hosts should usually register an OAuth, managed identity, or workload identity implementation instead of storing a static access token in configuration
+- `IMicrosoftGraphInvitationDeliveryClient` is replaceable, so test hosts, gateway wrappers, or custom HTTP policies can reuse the same Cephalon sender contract without changing the governance dispatcher
+- the sender posts to `/v1.0/users/{SenderUserId}/sendMail` when `SenderUserId` is configured and `/v1.0/me/sendMail` otherwise; Microsoft Graph accepts successful `sendMail` requests with `202 Accepted`, so Cephalon records accepted handoff truth rather than a delivered-email claim
+- the sender carries deterministic Cephalon message ids through safe custom `x-*` internet message headers and request metadata; Graph does not return a mail message id from `sendMail`, so the default provider message id remains empty unless a custom client supplies a truthful id
+- sender metadata records endpoint host, Graph status code, sender id, sender-user posture, save-to-sent-items posture, recipient email, recipient metadata key, category count, safe header count, Graph request ids, and safe client metadata, but it does not record bearer tokens, authorization headers, raw request bodies, or message bodies
+- this package owns Microsoft Graph `sendMail` handoff only; OAuth app registration, token issuance and refresh, Graph change notifications, delivery completion after accepted handoff, provider polling, durable callback inboxes, SES or other provider-specific email API senders, SMS/chat/CRM/identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
 
 ### SendGrid invitation delivery status callbacks
 

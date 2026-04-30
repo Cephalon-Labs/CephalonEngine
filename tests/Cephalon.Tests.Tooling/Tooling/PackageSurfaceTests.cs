@@ -1376,6 +1376,19 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void MultiTenancyGovernanceMicrosoftGraphDeliveryAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting.MicrosoftGraphInvitationDeliveryServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions),
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting.MicrosoftGraphInvitationDeliveryServiceCollectionExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.IMicrosoftGraphInvitationDeliveryAccessTokenProvider),
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.IMicrosoftGraphInvitationDeliveryClient),
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage));
+    }
+
+    [Fact]
     public void MultiTenancyGovernanceMailgunDeliveryAspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
     {
         AssertExportedTypes(

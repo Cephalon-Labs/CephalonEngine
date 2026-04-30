@@ -81,7 +81,7 @@ Configuration example:
 
 The sender returns `dispatched` only when the SMTP client reports that the relay accepted the message. Unsupported channels are reported as `suppressed`; invalid recipient resolution, relay errors, and timeouts are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store, queues retryable sender failures when the retry queue is enabled, and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
 
-This package intentionally owns SMTP relay handoff only. It does not own SendGrid Mail Send API handoff, Mailgun Messages API handoff, SES, Microsoft Graph, SMS, chat, CRM, identity-provider onboarding, bounce/webhook translation, provider polling, distributed retry queues, cross-node leases, public onboarding, or tenant-admin UI. Mailgun Messages API handoff now lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`, and SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; the other paths should remain application-managed or future provider-specific companion packs until a package owns them explicitly.
+This package intentionally owns SMTP relay handoff only. It does not own SendGrid Mail Send API handoff, Mailgun Messages API handoff, Microsoft Graph `sendMail` handoff, SES or other provider-specific email API senders, SMS, chat, CRM, identity-provider onboarding, bounce/webhook translation, provider polling, distributed retry queues, cross-node leases, public onboarding, or tenant-admin UI. Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`, SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`, and Microsoft Graph `sendMail` handoff lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`; the other paths should remain application-managed or future provider-specific companion packs until a package owns them explicitly.
 
 ## Related docs
 
@@ -90,6 +90,7 @@ This package intentionally owns SMTP relay handoff only. It does not own SendGri
 - [Cephalon.MultiTenancy.Governance.AspNetCore](multi-tenancy-governance-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](multi-tenancy-governance-httpdelivery.md)
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery](multi-tenancy-governance-mailgundelivery.md)
+- [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery](multi-tenancy-governance-microsoftgraphdelivery.md)
 - [Cephalon.MultiTenancy.Governance.SendGridDelivery](multi-tenancy-governance-sendgriddelivery.md)
 - [Technology packs](../technology-packs.md)
 - [Operations](../operations.md)

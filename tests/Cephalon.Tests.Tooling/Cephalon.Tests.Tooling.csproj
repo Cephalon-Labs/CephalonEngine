@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.AspNetCore\Cephalon.MultiTenancy.Governance.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.HttpDelivery\Cephalon.MultiTenancy.Governance.HttpDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore\Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery\Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore\Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.SendGridDelivery\Cephalon.MultiTenancy.Governance.SendGridDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.SmtpDelivery\Cephalon.MultiTenancy.Governance.SmtpDelivery.csproj" />

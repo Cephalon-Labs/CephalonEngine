@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Inventory
 
-Architecture inventory in this document reflects the repository state as of `April 29, 2026`.
+Architecture inventory in this document reflects the repository state as of `April 30, 2026`.
 
 Cross-references: `docs/architecture.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -156,7 +156,7 @@ Execution strategies define how behaviors execute under a given pattern.
 
 Modules are the primary composition unit. Each module registers services, capabilities, and lifecycle hooks.
 
-### Core foundation modules (9)
+### Core foundation modules (14)
 
 - `behaviors` — Behaviors (`Cephalon.Behaviors`): ABT foundation with behavior topology, dispatch, and compatibility matrix.
 - `data-runtime` — Data Runtime (`Cephalon.Data`): runtime-neutral command and query dispatching for data workloads.
@@ -168,6 +168,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `multi-tenancy-governance-http-delivery` — Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`): optional provider-managed HTTP webhook sender for tenant-invitation delivery dispatch, including provider-neutral idempotency headers, optional HMAC-SHA256 request signing, and bounded in-process retry/backoff.
 - `multi-tenancy-governance-mailgun-delivery` — Multi-Tenancy Governance Mailgun Delivery (`Cephalon.MultiTenancy.Governance.MailgunDelivery`): optional provider-managed Mailgun Messages API sender for tenant-invitation delivery dispatch, including multipart Messages API payload construction, Mailgun user variables, test-mode validation, safe context headers, and provider message id capture.
 - `multi-tenancy-governance-mailgun-delivery-aspnetcore` — Multi-Tenancy Governance Mailgun Delivery ASP.NET Core (`Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`): optional ASP.NET Core Mailgun webhook translator for tenant-invitation delivery-status reconciliation, including bounded JSON-object and controlled JSON-array parsing, user-variable extraction, `message.headers.message-id` correlation, Mailgun status mapping, optional HMAC-SHA256 signed-webhook verification, bounded process-local signed-token replay protection, observation-store-backed `event-data.id` duplicate suppression, safe callback metadata, and route/auth/runtime-surface truth.
+- `multi-tenancy-governance-microsoftgraph-delivery` — Multi-Tenancy Governance Microsoft Graph Delivery (`Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`): optional provider-managed Microsoft Graph `sendMail` sender for tenant-invitation delivery dispatch, including JSON payload construction, Graph request-id metadata, safe custom `x-*` internet message headers, replaceable Graph client and access-token provider seams, and accepted-handoff truth.
 - `multi-tenancy-governance-sendgrid-delivery` — Multi-Tenancy Governance SendGrid Delivery (`Cephalon.MultiTenancy.Governance.SendGridDelivery`): optional provider-managed SendGrid Mail Send API sender for tenant-invitation delivery dispatch, including templated Mail Send payload construction, SendGrid custom arguments, sandbox-mode validation, safe context headers, and provider message id capture.
 - `multi-tenancy-governance-sendgrid-delivery-aspnetcore` — Multi-Tenancy Governance SendGrid Delivery ASP.NET Core (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`): optional ASP.NET Core SendGrid Event Webhook translator for tenant-invitation delivery-status reconciliation, including bounded JSON-array parsing, custom-argument extraction, `sg_message_id` correlation, SendGrid status mapping, optional signed-webhook verification, bounded process-local signed-callback replay protection, observation-store-backed `sg_event_id` duplicate suppression, safe callback metadata, and route/auth/runtime-surface truth.
 - `multi-tenancy-governance-smtp-delivery` — Multi-Tenancy Governance SMTP Delivery (`Cephalon.MultiTenancy.Governance.SmtpDelivery`): optional provider-managed SMTP relay sender for tenant-invitation delivery dispatch, including templated email message construction, deterministic message ids, safe context headers, and a replaceable SMTP client seam.
@@ -478,6 +479,7 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `HttpInvitationDeliveryPayload` — JSON payload contract for the optional idempotent and signed HTTP webhook invitation sender in `Cephalon.MultiTenancy.Governance.HttpDelivery`
 - `IMailgunInvitationDeliveryClient` / `MailgunInvitationDeliveryMessage` / `MailgunInvitationDeliveryClientResult` — replaceable Mailgun Messages API client seam and prepared message/result contracts for the optional Mailgun invitation sender in `Cephalon.MultiTenancy.Governance.MailgunDelivery`
 - `MailgunInvitationDeliveryStatusCallbackResult` / `MailgunInvitationDeliveryStatusCallbackEventResult` — aggregate and per-event response contracts for accepted, skipped, signed-webhook-verified, replay-protected, and duplicate-event Mailgun webhook translation in `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`
+- `IMicrosoftGraphInvitationDeliveryClient` / `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` / `MicrosoftGraphInvitationDeliveryMessage` / `MicrosoftGraphInvitationDeliveryClientResult` — replaceable Microsoft Graph `sendMail` client and token-provider seams plus prepared message/result contracts for the optional Graph invitation sender in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`
 - `SendGridInvitationDeliveryStatusCallbackResult` / `SendGridInvitationDeliveryStatusCallbackEventResult` — aggregate and per-event response contracts for accepted, skipped, signature/replay-rejected, and duplicate-event SendGrid Event Webhook translation in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`
 - `ISmtpInvitationDeliveryClient` / `SmtpInvitationDeliveryMessage` / `SmtpInvitationDeliveryClientResult` — replaceable SMTP relay client seam and prepared message/result contracts for the optional SMTP invitation sender in `Cephalon.MultiTenancy.Governance.SmtpDelivery`
 - `ITenantAdministrationWorkflow` — host-driven membership and invitation administration workflow commands
@@ -533,6 +535,7 @@ Structured diagnostics sources with stable event ID ranges.
 - Multi-Tenancy Governance HTTP Delivery (`Cephalon.MultiTenancy.Governance.HttpDelivery`) — event IDs 4550–4551
 - Multi-Tenancy Governance Mailgun Delivery (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) — event IDs 4566–4567
 - Multi-Tenancy Governance Mailgun Delivery ASP.NET Core (`Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`) — event IDs 4568–4571
+- Multi-Tenancy Governance Microsoft Graph Delivery (`Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`) — event IDs 4572–4573
 - Multi-Tenancy Governance SendGrid Delivery (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) — event IDs 4560–4561
 - Multi-Tenancy Governance SendGrid Delivery ASP.NET Core (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) — event IDs 4562–4565
 - Multi-Tenancy Governance SMTP Delivery (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) — event IDs 4558–4559
@@ -658,10 +661,10 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Technologies: **11**
 - Transports: **6** + 3 messaging bindings = **9**
 - Execution strategies: **7**
-- Modules: 6 core + 14 data + 10 event-sourcing + 6 specialized + 1 identifier = **37**
+- Modules: 14 core + 14 data + 10 event-sourcing + 6 specialized + 1 identifier = **45**
 - Capabilities: **80+**
 - Data abstractions: **24+** interfaces
-- Diagnostics sources: **10**
+- Diagnostics sources: **17**
 - Dependency health probes: **18**
 - Cloud/platform exporters: **14**
 - Host adapters: **8**
