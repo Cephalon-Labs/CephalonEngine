@@ -2235,6 +2235,18 @@ string Title { get; set; }
 
 Gets or sets the short response title.
 
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-type"></a>
+
+##### `Type`
+
+```csharp
+string Type { get; set; }
+```
+
+Gets or sets the optional problem type URI associated with the response.
+
+Remarks: Success envelopes omit this value by default. Error envelopes derive the RFC problem type from `StatusCode` unless a host or mapper supplies a more specific URI.
+
 <a id="namespace-cephalon-aspnetcore-transports-serversentevents"></a>
 
 ## Namespace Cephalon.AspNetCore.Transports.ServerSentEvents

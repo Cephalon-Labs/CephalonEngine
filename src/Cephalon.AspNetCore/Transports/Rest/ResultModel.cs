@@ -9,11 +9,29 @@ namespace Cephalon.AspNetCore.Transports.Rest;
 /// <typeparam name="TModel">The payload type carried by the response.</typeparam>
 public class ResultModel<TModel>
 {
+    private int statusCode = 200;
+    private string? type;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ResultModel{TModel}"/> class.
     /// </summary>
     public ResultModel()
     {
+    }
+
+    /// <summary>
+    /// Gets or sets the optional problem type URI associated with the response.
+    /// </summary>
+    /// <remarks>
+    /// Success envelopes omit this value by default. Error envelopes derive the RFC problem type from
+    /// <see cref="StatusCode"/> unless a host or mapper supplies a more specific URI.
+    /// </remarks>
+    [JsonPropertyName("type")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Type
+    {
+        get => type ?? (Success ? null : ResultModelProblemTypes.Resolve(StatusCode));
+        set => type = string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
     /// <summary>
@@ -37,8 +55,12 @@ public class ResultModel<TModel>
     /// <summary>
     /// Gets or sets the effective HTTP status code associated with the response.
     /// </summary>
-    [JsonPropertyName("status_code")]
-    public int StatusCode { get; set; } = 200;
+    [JsonPropertyName("status")]
+    public int StatusCode
+    {
+        get => statusCode;
+        set => statusCode = value;
+    }
 
     /// <summary>
     /// Gets or sets the payload returned by the endpoint.
@@ -66,6 +88,7 @@ public sealed class ResultModelError : ResultModel<object?>
         Title = "Error";
         Message = "The request failed.";
         Success = false;
+        StatusCode = 500;
         Data = null;
     }
 }
@@ -106,4 +129,50 @@ public sealed class ResultModelErrorDetail
     /// </summary>
     [JsonPropertyName("details")]
     public string? Details { get; set; }
+}
+
+internal static class ResultModelProblemTypes
+{
+    private const string Rfc9110SectionPrefix = "https://tools.ietf.org/html/rfc9110#section-";
+    private const string Rfc6585SectionPrefix = "https://tools.ietf.org/html/rfc6585#section-";
+    private const string Rfc7725SectionPrefix = "https://tools.ietf.org/html/rfc7725#section-";
+
+    public static string? Resolve(int statusCode)
+        => statusCode switch
+        {
+            400 => Rfc9110SectionPrefix + "15.5.1",
+            401 => Rfc9110SectionPrefix + "15.5.2",
+            402 => Rfc9110SectionPrefix + "15.5.3",
+            403 => Rfc9110SectionPrefix + "15.5.4",
+            404 => Rfc9110SectionPrefix + "15.5.5",
+            405 => Rfc9110SectionPrefix + "15.5.6",
+            406 => Rfc9110SectionPrefix + "15.5.7",
+            407 => Rfc9110SectionPrefix + "15.5.8",
+            408 => Rfc9110SectionPrefix + "15.5.9",
+            409 => Rfc9110SectionPrefix + "15.5.10",
+            410 => Rfc9110SectionPrefix + "15.5.11",
+            411 => Rfc9110SectionPrefix + "15.5.12",
+            412 => Rfc9110SectionPrefix + "15.5.13",
+            413 => Rfc9110SectionPrefix + "15.5.14",
+            414 => Rfc9110SectionPrefix + "15.5.15",
+            415 => Rfc9110SectionPrefix + "15.5.16",
+            416 => Rfc9110SectionPrefix + "15.5.17",
+            417 => Rfc9110SectionPrefix + "15.5.18",
+            418 => Rfc9110SectionPrefix + "15.5.19",
+            421 => Rfc9110SectionPrefix + "15.5.20",
+            422 => Rfc9110SectionPrefix + "15.5.21",
+            425 => "https://tools.ietf.org/html/rfc8470#section-5.2",
+            426 => Rfc9110SectionPrefix + "15.5.22",
+            428 => Rfc6585SectionPrefix + "3",
+            429 => Rfc6585SectionPrefix + "4",
+            431 => Rfc6585SectionPrefix + "5",
+            451 => Rfc7725SectionPrefix + "3",
+            500 => Rfc9110SectionPrefix + "15.6.1",
+            501 => Rfc9110SectionPrefix + "15.6.2",
+            502 => Rfc9110SectionPrefix + "15.6.3",
+            503 => Rfc9110SectionPrefix + "15.6.4",
+            504 => Rfc9110SectionPrefix + "15.6.5",
+            505 => Rfc9110SectionPrefix + "15.6.6",
+            _ => null
+        };
 }

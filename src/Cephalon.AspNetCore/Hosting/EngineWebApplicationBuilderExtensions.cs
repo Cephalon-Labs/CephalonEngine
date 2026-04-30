@@ -87,6 +87,7 @@ public static class EngineWebApplicationBuilderExtensions
             builder.Services.AddOpenApi(documentName, ConfigureOpenApiDocument);
         }
 
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IProblemDetailsWriter, ResultModelProblemDetailsWriter>());
         builder.Services.AddProblemDetails();
         builder.Services.AddHealthChecks()
             .AddCheck<LivenessHealthCheck>("cephalon.liveness", tags: ["live", "engine"])

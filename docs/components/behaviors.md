@@ -185,7 +185,7 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, Result<GetCartO
 ```
 
 That shape lets REST project `404`, `409`, `400`, and similar responses without making the core
-behavior contract depend on HTTP concerns such as `status_code`, `success`, or transport-specific
+behavior contract depend on HTTP concerns such as `status`, `success`, or transport-specific
 error envelopes.
 
 ## Configuration

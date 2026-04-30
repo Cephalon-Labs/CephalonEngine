@@ -345,7 +345,12 @@ The ASP.NET Core host also owns Cephalon's optional REST response envelope polic
 `ApiRoutes:ResultEnvelope:Enabled = true`, module-owned REST endpoints can project raw behavior
 payloads or transport-neutral `Result<T>` outcomes through `ResultModel<T>` /
 `ResultModelError` on the wire, with structured failure details exposed through an `errors`
-collection. That setting is intentionally REST-only. GraphQL keeps the standard
+collection. Error envelopes also carry a problem `type` URI and the HTTP `status` field, matching
+the ASP.NET Core problem-details vocabulary while keeping the Cephalon envelope shape. The host's
+ASP.NET Core `ProblemDetails` writer only translates REST-prefixed problem responses into
+`ResultModelError` when that same envelope flag is enabled; when the flag is `false`, exception
+handler and problem responses stay as native `ProblemDetails`. That setting is intentionally
+REST-only. GraphQL keeps the standard
 `data` / `errors` contract, JSON-RPC keeps the standard `result` / `error` contract, and generic
 behavior HTTP bindings do not get forced through the REST envelope.
 

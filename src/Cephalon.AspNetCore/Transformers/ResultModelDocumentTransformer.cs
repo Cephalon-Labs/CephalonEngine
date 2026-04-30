@@ -69,7 +69,7 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
             return false;
 
         return schema.Properties.Keys.Contains("data", StringComparer.OrdinalIgnoreCase) &&
-               schema.Properties.Keys.Contains("status_code", StringComparer.OrdinalIgnoreCase);
+               schema.Properties.Keys.Contains("status", StringComparer.OrdinalIgnoreCase);
     }
 
     private static bool ContainsErrorProperty(OpenApiSchema schema)

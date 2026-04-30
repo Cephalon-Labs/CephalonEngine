@@ -10,6 +10,7 @@ using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Modules;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 
@@ -97,6 +98,75 @@ public sealed class BehaviorRestOpenApiTests
     }
 
     [Fact]
+    public async Task ResultEnvelopeWrapsExceptionHandlerProblemDetailsForRestRequestsWhenEnabled()
+    {
+        const string route = "/api/v1/tests/problem";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
+        builder.AddCephalon();
+
+        await using var app = builder.Build();
+        app.UseExceptionHandler();
+        app.MapGet(route, ThrowUnhandledRestProblem);
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync(route);
+        var payloadText = await response.Content.ReadAsStringAsync();
+        using var payload = JsonDocument.Parse(payloadText);
+
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        Assert.Equal(
+            "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+            payload.RootElement.GetProperty("type").GetString());
+        Assert.Equal(500, payload.RootElement.GetProperty("status").GetInt32());
+        Assert.False(payload.RootElement.GetProperty("success").GetBoolean());
+        Assert.True(payload.RootElement.TryGetProperty("errors", out var errors), payloadText);
+        Assert.Single(errors.EnumerateArray());
+        Assert.False(payload.RootElement.TryGetProperty("status_code", out _), payloadText);
+    }
+
+    [Fact]
+    public async Task ResultEnvelopeDisabledKeepsExceptionHandlerProblemDetailsForRestRequests()
+    {
+        const string route = "/api/v1/tests/problem";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "false";
+        builder.AddCephalon();
+
+        await using var app = builder.Build();
+        app.UseExceptionHandler();
+        app.MapGet(route, ThrowUnhandledRestProblem);
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync(route);
+        var payloadText = await response.Content.ReadAsStringAsync();
+        using var payload = JsonDocument.Parse(payloadText);
+
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        Assert.Equal(500, payload.RootElement.GetProperty("status").GetInt32());
+        Assert.Equal(
+            "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+            payload.RootElement.GetProperty("type").GetString());
+        Assert.False(payload.RootElement.TryGetProperty("success", out _), payloadText);
+        Assert.False(payload.RootElement.TryGetProperty("errors", out _), payloadText);
+        Assert.False(payload.RootElement.TryGetProperty("status_code", out _), payloadText);
+    }
+
+    [Fact]
     public async Task BehaviorResultResponsesCanBeWrappedInResultModelEnvelopes()
     {
         const string route = "/api/v1/tests/results/widgets/widget-1";
@@ -143,14 +213,20 @@ public sealed class BehaviorRestOpenApiTests
         Assert.Equal("Widget resolved.", successResponse.Message);
         Assert.NotNull(successResponse.Data);
         Assert.Equal("widget-1", successResponse.Data!.WidgetId);
+        Assert.Contains("\"status\":200", successPayload, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"status_code\":", successPayload, StringComparison.Ordinal);
 
         Assert.Equal(HttpStatusCode.NotFound, missingHttpResponse.StatusCode);
         Assert.NotNull(missingResponse);
         Assert.False(missingResponse!.Success);
+        Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", missingResponse.Type);
         Assert.Equal(404, missingResponse.StatusCode);
         Assert.NotNull(missingResponse.Errors);
         Assert.Single(missingResponse.Errors!);
         Assert.Equal("tests.widgets.not_found", missingResponse.Errors[0].Key);
+        Assert.Contains("\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.5\"", missingPayload, StringComparison.Ordinal);
+        Assert.Contains("\"status\":404", missingPayload, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"status_code\":", missingPayload, StringComparison.Ordinal);
         Assert.Contains("\"severity\":", missingPayload, StringComparison.Ordinal);
         Assert.DoesNotContain("\"error\":", missingPayload, StringComparison.Ordinal);
         Assert.Contains("\"errors\":[", missingPayload, StringComparison.Ordinal);
@@ -158,11 +234,15 @@ public sealed class BehaviorRestOpenApiTests
         Assert.Equal(HttpStatusCode.BadRequest, invalidHttpResponse.StatusCode);
         Assert.NotNull(invalidResponse);
         Assert.False(invalidResponse!.Success);
+        Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.1", invalidResponse.Type);
         Assert.Equal(400, invalidResponse.StatusCode);
         Assert.NotNull(invalidResponse.Errors);
         Assert.Equal(2, invalidResponse.Errors!.Count);
         Assert.Contains(invalidResponse.Errors, error => error.Key == "tests.widgets.widget_id.required");
         Assert.Contains(invalidResponse.Errors, error => error.Key == "tests.widgets.widget_id.length");
+        Assert.Contains("\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.1\"", invalidPayload, StringComparison.Ordinal);
+        Assert.Contains("\"status\":400", invalidPayload, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"status_code\":", invalidPayload, StringComparison.Ordinal);
         Assert.DoesNotContain("\"error\":", invalidPayload, StringComparison.Ordinal);
         Assert.Contains("\"errors\":[", invalidPayload, StringComparison.Ordinal);
 
@@ -186,6 +266,8 @@ public sealed class BehaviorRestOpenApiTests
             .GetProperty(componentName);
 
         Assert.True(successSchema.GetProperty("properties").TryGetProperty("data", out _));
+        Assert.True(successSchema.GetProperty("properties").TryGetProperty("status", out _));
+        Assert.False(successSchema.GetProperty("properties").TryGetProperty("status_code", out _));
         Assert.False(successSchema.GetProperty("properties").TryGetProperty("error", out _));
         Assert.False(successSchema.GetProperty("properties").TryGetProperty("errors", out _));
 
@@ -498,6 +580,11 @@ public sealed class BehaviorRestOpenApiTests
         Assert.Contains("owned by module", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("tests.cart", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("tests.conflict", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static IResult ThrowUnhandledRestProblem()
+    {
+        throw new InvalidOperationException("The test REST endpoint failed.");
     }
 
     [AppBehavior("rest.helper.echo")]

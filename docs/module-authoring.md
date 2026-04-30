@@ -266,9 +266,10 @@ descriptor.
 That keeps the behavior contract transport-neutral. REST can still project `Result<T>` to
 HTTP status codes, and hosts can turn on the Cephalon REST envelope with
 `ApiRoutes:ResultEnvelope:Enabled = true` when they want `ResultModel<T>` / `ResultModelError` on
-the wire, including an `errors` collection for validation or multi-reason failures such as the
-`AddToCartBehavior` example above. GraphQL and JSON-RPC keep their own protocol-native response
-shapes.
+the wire, including problem-style `type`, HTTP `status`, and an `errors` collection for validation
+or multi-reason failures such as the `AddToCartBehavior` example above. When the flag is disabled,
+REST expected failures and ASP.NET Core exception-handler responses stay on the native payload shape.
+GraphQL and JSON-RPC keep their own protocol-native response shapes.
 
 `BehaviorResult<T>` remains available as a compatibility alias when older code has not migrated to
 the shorter `Result<T>` name yet.

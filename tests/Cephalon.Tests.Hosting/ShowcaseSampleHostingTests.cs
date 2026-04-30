@@ -1633,7 +1633,7 @@ public sealed class ShowcaseSampleHostingTests
         var body = await response.Content.ReadAsStringAsync();
         var payload = JsonSerializer.Deserialize<JsonElement>(body);
         Assert.False(payload.GetProperty("success").GetBoolean());
-        Assert.Equal(400, payload.GetProperty("status_code").GetInt32());
+        Assert.Equal(400, payload.GetProperty("status").GetInt32());
         Assert.Equal("Cart add-item request is invalid.", payload.GetProperty("message").GetString());
 
         var errors = payload.GetProperty("errors");
@@ -1687,7 +1687,7 @@ public sealed class ShowcaseSampleHostingTests
         var conflictBody = await conflictResponse.Content.ReadAsStringAsync();
         var conflictPayload = JsonSerializer.Deserialize<JsonElement>(conflictBody);
         Assert.False(conflictPayload.GetProperty("success").GetBoolean());
-        Assert.Equal(409, conflictPayload.GetProperty("status_code").GetInt32());
+        Assert.Equal(409, conflictPayload.GetProperty("status").GetInt32());
         Assert.Equal($"Cart 'cart-locked-001' has already been checked out.", conflictPayload.GetProperty("message").GetString());
 
         var errors = conflictPayload.GetProperty("errors");

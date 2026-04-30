@@ -55,7 +55,8 @@ module-owned REST endpoints.
   outcomes, plus skipped explicit-governance visibility when host rules target an authored
   module-owned route that stayed authoritative
 - **Optional REST response envelope** — `ApiRoutes:ResultEnvelope:Enabled` projects REST success
-  and error responses through `ResultModel<T>` / `ResultModelError` with an `errors` collection
+  and error responses through `ResultModel<T>` / `ResultModelError` with `type`, `status`, and
+  an `errors` collection
   while leaving GraphQL,
   JSON-RPC, SSE, and WebSocket bindings on their native protocol envelopes
 - **Hosting** — `IBehaviorCollectionBuilder.AddHttpBehaviorBindings()` extension registering the
@@ -1205,8 +1206,9 @@ separate concerns:
 - REST projects those outcomes into HTTP status codes automatically
 - when `ApiRoutes:ResultEnvelope:Enabled = true`, REST also wraps the payload into
   `ResultModel<T>` / `ResultModelError`
-- error envelopes use an `errors` collection so validation and multi-reason failures can return
-  more than one error item cleanly
+- error envelopes use `type`, `status`, and an `errors` collection so validation and multi-reason
+  failures can return more than one error item cleanly while still carrying problem-details-style
+  status metadata
 - the OpenAPI + Scalar response list for behavior-owned REST helpers is configurable through
   `OpenApi:BehaviorRest:DocumentedStatusCodes`
 - the default documented status set is `200`, `201`, `202`, `204`, `400`, `401`, `403`, `404`,
@@ -1292,7 +1294,7 @@ With `ApiRoutes:ResultEnvelope:Enabled = true`, REST projects that contract into
   "title": "Ok",
   "message": "Cart resolved.",
   "success": true,
-  "status_code": 200,
+  "status": 200,
   "data": {
     "cartId": "cart-123"
   }
@@ -1303,10 +1305,11 @@ and:
 
 ```json
 {
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
   "title": "Not found",
   "message": "Cart 'cart-123' was not found.",
   "success": false,
-  "status_code": 404,
+  "status": 404,
   "data": null,
   "errors": [
     {
@@ -1325,10 +1328,11 @@ projects to payloads such as:
 
 ```json
 {
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
   "title": "Invalid request",
   "message": "Cart add-item request is invalid.",
   "success": false,
-  "status_code": 400,
+  "status": 400,
   "data": null,
   "errors": [
     {
@@ -1357,9 +1361,10 @@ reuse it as a universal engine contract.
   `/engine/rest-endpoints` and request execution keep the same ordered gate list when the behavior
   catalog declares a rollout boundary
 - when shared behavior execution rejects a REST request with `BehaviorFeatureDisabledException`, the
-  helper returns `404 ProblemDetails` with `behaviorId`, the decisive `featureFlagId`, the full
-  ordered `requiredFeatureFlagIds`, and source ownership metadata instead of pretending the
-  endpoint disappeared from runtime truth
+  helper returns `404 ProblemDetails` by default, or `ResultModelError` when the REST result envelope
+  is enabled, with `behaviorId`, the decisive `featureFlagId`, the full ordered
+  `requiredFeatureFlagIds`, and source ownership metadata instead of pretending the endpoint
+  disappeared from runtime truth
 - `JsonRpcHttpBehaviorBinding` keeps that same behavior-owned gate protocol-native through JSON-RPC
   server error `-32004` with message `Feature not available`
 
