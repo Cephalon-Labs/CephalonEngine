@@ -1,15 +1,20 @@
 using Cephalon.Abstractions.Technologies;
+using Cephalon.MultiTenancy.Governance.Configuration;
 using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 namespace Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting;
 
 internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor(
     AmazonSesInvitationDeliveryAspNetCoreOptions options,
-    AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog runtimeCatalog) : ITechnologyRuntimeContributor
+    AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog runtimeCatalog,
+    IServiceProvider serviceProvider) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var governanceOptions = serviceProvider.GetService<MultiTenancyGovernanceOptions>();
+        var observationStoreConfigured = governanceOptions?.EnableInvitationDeliveryStatusObservationStore == true;
         var endpoint = runtimeCatalog.Endpoint;
         var endpointEnabled = options.EnableStatusCallbackEndpoint;
         var endpointMapped = endpoint is not null;
@@ -32,8 +37,12 @@ internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor
         var snsReplayProtectionConfigured = endpoint?.SnsReplayProtectionConfigured ?? options.IsSnsReplayProtectionConfigured();
         var snsReplayRetentionSeconds = endpoint?.SnsReplayRetentionSeconds ?? options.GetSnsReplayRetentionSeconds();
         var snsReplayCacheLimit = endpoint?.SnsReplayCacheLimit ?? options.GetSnsReplayCacheLimit();
+        var snsMessageIdIdempotencyConfigured =
+            (endpoint?.SnsMessageIdIdempotencyConfigured ?? options.IsSnsMessageIdIdempotencyConfigured()) &&
+            observationStoreConfigured;
         var signatureVerificationOwnership = requireSnsSignatureVerification ? "cephalon-managed" : "not-configured";
         var replayProtectionOwnership = snsReplayProtectionConfigured ? "cephalon-managed" : "not-configured";
+        var messageIdIdempotencyOwnership = snsMessageIdIdempotencyConfigured ? "cephalon-managed" : "not-configured";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -76,7 +85,12 @@ internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor
             ["amazonSesSnsReplayProtectionRetentionSeconds"] = snsReplayRetentionSeconds.ToString(CultureInfo.InvariantCulture),
             ["amazonSesSnsReplayProtectionCacheLimit"] = snsReplayCacheLimit.ToString(CultureInfo.InvariantCulture),
             ["amazonSesSnsReplayProtectionRequiresSignature"] = "true",
-            ["amazonSesSnsEventIdIdempotencyOwnership"] = "not-configured",
+            ["amazonSesSnsMessageIdIdempotencyConfigured"] = snsMessageIdIdempotencyConfigured.ToString().ToLowerInvariant(),
+            ["amazonSesSnsMessageIdIdempotencyOwnership"] = messageIdIdempotencyOwnership,
+            ["amazonSesSnsMessageIdIdempotencyPolicy"] = snsMessageIdIdempotencyConfigured ? "sns-message-id" : "none",
+            ["amazonSesSnsMessageIdIdempotencyKey"] = snsMessageIdIdempotencyConfigured ? "MessageId" : "none",
+            ["amazonSesSnsMessageIdIdempotencyScope"] = snsMessageIdIdempotencyConfigured ? "observation-store" : "none",
+            ["amazonSesSnsMessageIdIdempotencyDurability"] = "observation-store-dependent",
             ["tenantInvitationDeliveryStatusReconcilerDependency"] = "ITenantInvitationDeliveryStatusReconciler",
             ["routePattern"] = routePattern,
             ["httpMethod"] = "POST",
@@ -156,7 +170,8 @@ internal sealed class AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog
         bool validateSnsSigningCertificateChain,
         bool snsReplayProtectionConfigured,
         int snsReplayRetentionSeconds,
-        int snsReplayCacheLimit)
+        int snsReplayCacheLimit,
+        bool snsMessageIdIdempotencyConfigured)
     {
         lock (syncRoot)
         {
@@ -179,7 +194,8 @@ internal sealed class AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog
                 validateSnsSigningCertificateChain,
                 snsReplayProtectionConfigured,
                 snsReplayRetentionSeconds,
-                snsReplayCacheLimit);
+                snsReplayCacheLimit,
+                snsMessageIdIdempotencyConfigured);
         }
     }
 }
@@ -203,4 +219,5 @@ internal sealed record AmazonSesInvitationDeliveryStatusCallbackEndpointRuntimeS
     bool ValidateSnsSigningCertificateChain,
     bool SnsReplayProtectionConfigured,
     int SnsReplayRetentionSeconds,
-    int SnsReplayCacheLimit);
+    int SnsReplayCacheLimit,
+    bool SnsMessageIdIdempotencyConfigured);

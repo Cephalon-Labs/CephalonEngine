@@ -31,15 +31,23 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConvention
         MessageTemplate: "Amazon SES invitation delivery status callback replay rejected with outcome {Outcome}.",
         Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint rejects a duplicate verified SNS message inside the process-local replay window.");
 
+    public static readonly DiagnosticEventDefinition AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped = new(
+        Id: 4581,
+        Name: "AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Amazon SES invitation delivery status callback duplicate SNS message skipped for observation {ObservationId}.",
+        Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint skips a translated notification whose SNS message id is already recorded in the observation store.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
-        Description: "Structured diagnostics for ASP.NET Core Amazon SES over SNS tenant-invitation delivery status callback translation, signature verification, and replay protection.",
+        Description: "Structured diagnostics for ASP.NET Core Amazon SES over SNS tenant-invitation delivery status callback translation, signature verification, replay protection, and message-id idempotency.",
         Events:
         [
             AmazonSesInvitationDeliveryStatusCallbackAccepted,
             AmazonSesInvitationDeliveryStatusCallbackSignatureRejected,
-            AmazonSesInvitationDeliveryStatusCallbackReplayRejected
+            AmazonSesInvitationDeliveryStatusCallbackReplayRejected,
+            AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped
         ]);
 }
 
@@ -69,6 +77,14 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreLogs
                 AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusCallbackReplayRejected.Name),
             "Amazon SES invitation delivery status callback replay rejected with outcome {Outcome}.");
 
+    private static readonly Action<ILogger, string, Exception?> CallbackDuplicateMessageSkippedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            new EventId(
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped.Id,
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped.Name),
+            "Amazon SES invitation delivery status callback duplicate SNS message skipped for observation {ObservationId}.");
+
     public static void CallbackAccepted(
         ILogger logger,
         int eventCount,
@@ -82,4 +98,7 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreLogs
 
     public static void CallbackReplayRejected(ILogger logger, string outcome) =>
         CallbackReplayRejectedMessage(logger, outcome, null);
+
+    public static void CallbackDuplicateMessageSkipped(ILogger logger, string observationId) =>
+        CallbackDuplicateMessageSkippedMessage(logger, observationId, null);
 }

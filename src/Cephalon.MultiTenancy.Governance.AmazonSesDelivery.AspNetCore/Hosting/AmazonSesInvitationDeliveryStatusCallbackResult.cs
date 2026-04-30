@@ -20,6 +20,7 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
     /// <param name="events">Per-event translation and reconciliation results.</param>
     /// <param name="snsReplayProtectionEnabled">A value indicating whether process-local SNS replay protection was enabled for this verified callback.</param>
     /// <param name="snsReplayProtectionOutcome">The SNS replay-protection outcome.</param>
+    /// <param name="duplicateEvents">The number of translated Amazon SES SNS events skipped because their SNS message id was already observed.</param>
     public AmazonSesInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -32,7 +33,8 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
         string snsSignatureVerificationOutcome,
         IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events,
         bool snsReplayProtectionEnabled = false,
-        string snsReplayProtectionOutcome = "not-configured")
+        string snsReplayProtectionOutcome = "not-configured",
+        int duplicateEvents = 0)
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -58,6 +60,7 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
         SnsReplayProtectionOutcome = string.IsNullOrWhiteSpace(snsReplayProtectionOutcome)
             ? "unknown"
             : snsReplayProtectionOutcome.Trim();
+        DuplicateEvents = duplicateEvents;
     }
 
     /// <summary>
@@ -89,6 +92,11 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
     /// Gets the number of translated events denied by the reconciler.
     /// </summary>
     public int DeniedEvents { get; }
+
+    /// <summary>
+    /// Gets the number of translated Amazon SES SNS events skipped because their SNS message id was already observed.
+    /// </summary>
+    public int DuplicateEvents { get; }
 
     /// <summary>
     /// Gets a value indicating whether SNS signature verification was required.

@@ -67,6 +67,10 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal("amazon-ses-sns:sns-message-307", invitation.Metadata[TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId]);
         Assert.Equal("cephalon-managed", invitation.Metadata["amazonSesSnsTranslationOwnership"]);
         Assert.Equal("not-configured", invitation.Metadata["amazonSesSnsSignatureVerification"]);
+        Assert.Equal("pending-record", invitation.Metadata["amazonSesSnsMessageIdIdempotency"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["amazonSesSnsMessageIdIdempotencyOwnership"]);
+        Assert.Equal("observation-store", invitation.Metadata["amazonSesSnsMessageIdIdempotencyScope"]);
+        Assert.Equal("amazon-ses-sns:sns-message-307", invitation.Metadata["amazonSesSnsMessageIdObservationId"]);
         Assert.Equal("Delivery", invitation.Metadata["amazonSesEventType"]);
         Assert.Equal("250 2.6.0 Message received", invitation.Metadata["amazonSesDeliverySmtpResponse"]);
 
@@ -87,6 +91,8 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal("mapped", entry.Metadata["runtimeState"]);
         Assert.Equal("cephalon-managed", entry.Metadata["amazonSesSnsTranslationOwnership"]);
         Assert.Equal("not-configured", entry.Metadata["amazonSesSnsSignatureVerificationOwnership"]);
+        Assert.Equal("cephalon-managed", entry.Metadata["amazonSesSnsMessageIdIdempotencyOwnership"]);
+        Assert.Equal("observation-store", entry.Metadata["amazonSesSnsMessageIdIdempotencyScope"]);
         Assert.Equal("application-managed", entry.Metadata["amazonSesSnsInboxOwnership"]);
     }
 
@@ -208,6 +214,10 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal("process-local", invitation.Metadata["amazonSesSnsReplayProtectionScope"]);
         Assert.Equal("topic-arn+message-id", invitation.Metadata["amazonSesSnsReplayProtectionKey"]);
         Assert.StartsWith("sha256:", invitation.Metadata["amazonSesSnsReplayProtectionFingerprint"], StringComparison.Ordinal);
+        Assert.Equal("pending-record", invitation.Metadata["amazonSesSnsMessageIdIdempotency"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["amazonSesSnsMessageIdIdempotencyOwnership"]);
+        Assert.Equal("MessageId", invitation.Metadata["amazonSesSnsMessageIdIdempotencyKey"]);
+        Assert.Equal("amazon-ses-sns:sns-message-308", invitation.Metadata["amazonSesSnsMessageIdObservationId"]);
 
         var technologyCatalog = app.Services.GetRequiredService<ITechnologyRuntimeCatalog>();
         var surface = Assert.Single(
@@ -222,6 +232,9 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal("true", entry.Metadata["amazonSesSnsReplayProtectionConfigured"]);
         Assert.Equal("process-local", entry.Metadata["amazonSesSnsReplayProtectionScope"]);
         Assert.Equal("topic-arn+message-id", entry.Metadata["amazonSesSnsReplayProtectionKey"]);
+        Assert.Equal("cephalon-managed", entry.Metadata["amazonSesSnsMessageIdIdempotencyOwnership"]);
+        Assert.Equal("true", entry.Metadata["amazonSesSnsMessageIdIdempotencyConfigured"]);
+        Assert.Equal("MessageId", entry.Metadata["amazonSesSnsMessageIdIdempotencyKey"]);
     }
 
     [Fact]
@@ -267,6 +280,63 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
         Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
         Assert.Equal("recorded", invitation.Metadata["amazonSesSnsReplayProtection"]);
+        Assert.Single(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
+    }
+
+    [Fact]
+    public async Task AmazonSesSnsStatusCallbackSkipsDuplicateMessageIdAlreadyObservedByStore()
+    {
+        using var rsa = RSA.Create(2048);
+        using var certificate = CreateSigningCertificate(rsa);
+        await using var app = await CreateAppAsync(
+            configureEndpoint: options =>
+            {
+                options.RequireStatusCallbackAuthorization = false;
+                options.RequireSnsSignatureVerification = true;
+                options.EnableSnsReplayProtection = false;
+                options.AllowedSnsTopicArns = [SnsTopicArn];
+                options.PinnedSnsSigningCertificatePem = certificate.ExportCertificatePem();
+                options.ValidateSnsSigningCertificateChain = false;
+            });
+        var client = app.GetTestClient();
+        var payload = CreateSignedSnsNotificationPayload(
+            rsa,
+            snsMessageId: "sns-message-310-idempotency",
+            sesMessageId: "ses-message-307",
+            eventType: "Delivery",
+            eventBody:
+            """
+            "delivery": {
+              "timestamp": "2026-04-30T04:19:00.000Z",
+              "smtpResponse": "250 2.6.0 Message received"
+            }
+            """);
+
+        using var firstResponse = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(payload));
+        using var secondResponse = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(payload));
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+        using var secondResultDocument = JsonDocument.Parse(await secondResponse.Content.ReadAsStringAsync());
+        Assert.Equal(1, secondResultDocument.RootElement.GetProperty("translatedEvents").GetInt32());
+        Assert.Equal(0, secondResultDocument.RootElement.GetProperty("reconciledEvents").GetInt32());
+        Assert.Equal(1, secondResultDocument.RootElement.GetProperty("duplicateEvents").GetInt32());
+
+        var eventResult = Assert.Single(secondResultDocument.RootElement.GetProperty("events").EnumerateArray());
+        Assert.Equal("duplicate-skipped", eventResult.GetProperty("outcome").GetString());
+        Assert.True(eventResult.GetProperty("translated").GetBoolean());
+        Assert.False(eventResult.GetProperty("reconciled").GetBoolean());
+
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
+        Assert.Equal("pending-record", invitation.Metadata["amazonSesSnsMessageIdIdempotency"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["amazonSesSnsMessageIdIdempotencyOwnership"]);
+        Assert.Equal("observation-store", invitation.Metadata["amazonSesSnsMessageIdIdempotencyScope"]);
+        Assert.Equal("amazon-ses-sns:sns-message-310-idempotency", invitation.Metadata["amazonSesSnsMessageIdObservationId"]);
         Assert.Single(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
     }
 

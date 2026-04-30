@@ -10,7 +10,8 @@ namespace Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configur
 /// This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status
 /// reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription
 /// creation, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can
-/// verify the Amazon SNS message signature before translation.
+/// verify the Amazon SNS message signature before translation and skip duplicate SNS message identifiers already
+/// recorded by the Cephalon delivery-status observation store.
 /// </remarks>
 public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
 {
@@ -196,6 +197,17 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
     public int SnsReplayCacheLimit { get; set; } = 4096;
 
     /// <summary>
+    /// Gets or sets a value indicating whether translated SNS notifications should skip duplicate <c>MessageId</c>
+    /// values that already exist in the Cephalon delivery-status observation store.
+    /// </summary>
+    /// <remarks>
+    /// This guard uses the stable SNS <c>MessageId</c>-derived observation id emitted by the translator. It does not
+    /// replace durable inboxing or distributed callback processing; the durability of the guard follows the configured
+    /// <c>ITenantInvitationDeliveryStatusObservationStore</c>.
+    /// </remarks>
+    public bool EnableSnsMessageIdIdempotency { get; set; } = true;
+
+    /// <summary>
     /// Reads Amazon SES ASP.NET Core callback options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -240,6 +252,7 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
         options.EnableSnsReplayProtection = ParseBoolean(section["EnableSnsReplayProtection"], options.EnableSnsReplayProtection);
         options.SnsReplayRetentionSeconds = ParseInt32(section["SnsReplayRetentionSeconds"], options.SnsReplayRetentionSeconds);
         options.SnsReplayCacheLimit = ParseInt32(section["SnsReplayCacheLimit"], options.SnsReplayCacheLimit);
+        options.EnableSnsMessageIdIdempotency = ParseBoolean(section["EnableSnsMessageIdIdempotency"], options.EnableSnsMessageIdIdempotency);
         return options;
     }
 
@@ -271,6 +284,8 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
 
     internal int GetSnsReplayCacheLimit() =>
         Math.Clamp(SnsReplayCacheLimit, 1, 1_000_000);
+
+    internal bool IsSnsMessageIdIdempotencyConfigured() => EnableSnsMessageIdIdempotency;
 
     private static int ParseInt32(string? value, int defaultValue)
     {

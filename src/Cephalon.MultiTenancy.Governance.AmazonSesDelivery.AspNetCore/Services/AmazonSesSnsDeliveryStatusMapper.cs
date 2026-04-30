@@ -271,6 +271,8 @@ internal sealed class AmazonSesSnsDeliveryStatusMapper(AmazonSesInvitationDelive
             ["amazonSesSnsSignatureVerificationOwnership"] = "not-configured",
             ["amazonSesSnsReplayProtection"] = "not-configured",
             ["amazonSesSnsReplayProtectionOwnership"] = "not-configured",
+            ["amazonSesSnsMessageIdIdempotency"] = "not-configured",
+            ["amazonSesSnsMessageIdIdempotencyOwnership"] = "not-configured",
             ["amazonSesEventIndex"] = index.ToString(CultureInfo.InvariantCulture),
             ["amazonSesEventTypeField"] = element.TryGetProperty("eventType", out _) ? "eventType" : "notificationType"
         };
@@ -621,4 +623,19 @@ internal sealed record AmazonSesSnsDeliveryStatusMappingResult(
             translated: true,
             reconciled: reconciliation.Reconciled,
             reconciliation.Reason);
+
+    public AmazonSesInvitationDeliveryStatusCallbackEventResult ToDuplicateEventResult(string reason) =>
+        new(
+            Index,
+            SnsMessageId,
+            SnsMessageType,
+            AmazonSesMessageId,
+            AmazonSesEventType,
+            TenantId,
+            InvitationId,
+            Status,
+            "duplicate-skipped",
+            translated: true,
+            reconciled: false,
+            reason);
 }

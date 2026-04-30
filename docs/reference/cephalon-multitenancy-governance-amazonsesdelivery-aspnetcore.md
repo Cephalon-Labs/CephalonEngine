@@ -18,7 +18,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures ASP.NET Core Amazon SES over SNS callback translation for tenant-invitation delivery status updates.
 
-Remarks: This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription creation, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can verify the Amazon SNS message signature before translation.
+Remarks: This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription creation, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can verify the Amazon SNS message signature before translation and skip duplicate SNS message identifiers already recorded by the Cephalon delivery-status observation store.
 
 #### Declaration
 ```csharp
@@ -70,6 +70,18 @@ string[] AllowedSnsTopicArns { get; set; }
 ```
 
 Gets or sets the SNS topic ARNs accepted by this callback endpoint when topic allow-listing is required.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablesnsmessageididempotency"></a>
+
+##### `EnableSnsMessageIdIdempotency`
+
+```csharp
+bool EnableSnsMessageIdIdempotency { get; set; }
+```
+
+Gets or sets a value indicating whether translated SNS notifications should skip duplicate `MessageId` values that already exist in the Cephalon delivery-status observation store.
+
+Remarks: This guard uses the stable SNS `MessageId`-derived observation id emitted by the translator. It does not replace durable inboxing or distributed callback processing; the durability of the guard follows the configured `ITenantInvitationDeliveryStatusObservationStore`.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablesnsreplayprotection"></a>
 
@@ -511,12 +523,12 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string"></a>
+<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string-system-int32"></a>
 
 ##### `AmazonSesInvitationDeliveryStatusCallbackResult`
 
 ```csharp
-AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome)
+AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome, int duplicateEvents)
 ```
 
 Creates an Amazon SES callback translation response.
@@ -534,6 +546,7 @@ Parameters:
 - `events`: Per-event translation and reconciliation results.
 - `snsReplayProtectionEnabled`: A value indicating whether process-local SNS replay protection was enabled for this verified callback.
 - `snsReplayProtectionOutcome`: The SNS replay-protection outcome.
+- `duplicateEvents`: The number of translated Amazon SES SNS events skipped because their SNS message id was already observed.
 
 #### Properties
 
@@ -546,6 +559,16 @@ int DeniedEvents { get; }
 ```
 
 Gets the number of translated events denied by the reconciler.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-duplicateevents"></a>
+
+##### `DuplicateEvents`
+
+```csharp
+int DuplicateEvents { get; }
+```
+
+Gets the number of translated Amazon SES SNS events skipped because their SNS message id was already observed.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-events"></a>
 
@@ -680,7 +703,7 @@ IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this
 
 Maps the optional Amazon SES over SNS tenant-invitation delivery status callback endpoint.
 
-Remarks: The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. SNS subscription confirmation, durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured, the endpoint verifies the SNS message signature before translation.
+Remarks: The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. SNS subscription confirmation, durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured, the endpoint verifies the SNS message signature before translation and skips duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
 
 Returns: The same endpoint route builder for fluent routing composition.
 

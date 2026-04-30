@@ -1110,7 +1110,7 @@ Current shipped event-id ranges include:
 - `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`: `4568-4571`
 - `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`: `4572-4573`
 - `Cephalon.MultiTenancy.Governance.AmazonSesDelivery`: `4576-4577`
-- `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`: `4578-4580`
+- `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`: `4578-4581`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery`: `4560-4561`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`: `4562-4565`
 - `Cephalon.MultiTenancy.Governance.SmtpDelivery`: `4558-4559`
@@ -1280,7 +1280,7 @@ Current note:
 - hosts can install `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery` and call `AddCephalonMicrosoftGraphInvitationDelivery(...)` when invitation dispatch should POST a templated Microsoft Graph `sendMail` payload through a replaceable client and access-token provider seam while still recording outcome truth through the governance dispatcher
 - ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` and call `MapCephalonSendGridInvitationDeliveryStatusCallbacks()` when SendGrid Event Webhook arrays should be translated into the existing delivery-status reconciler without custom host glue; when `RequireSignedEventWebhook` is enabled, the same endpoint can reject duplicate verified signed callbacks inside a bounded process-local replay window
 - ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore` and call `MapCephalonMailgunInvitationDeliveryStatusCallbacks()` when Mailgun webhook objects should be translated, HMAC-verified, protected against duplicate signed tokens inside a bounded process-local replay window, and de-duplicated by observed Mailgun event id without custom host glue; durable inboxing, distributed replay, and distributed event-id ledgers remain separate follow-through
-- ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` and call `MapCephalonAmazonSesInvitationDeliveryStatusCallbacks()` when Amazon SNS `Notification` envelopes carrying Amazon SES event publishing payloads should be verified, protected against bounded process-local replay, and translated into the existing delivery-status reconciler without custom host glue; subscription confirmation automation, durable inboxing, distributed replay, and distributed event-id ledgers remain separate follow-through
+- ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` and call `MapCephalonAmazonSesInvitationDeliveryStatusCallbacks()` when Amazon SNS `Notification` envelopes carrying Amazon SES event publishing payloads should be verified, protected against bounded process-local replay, de-duplicated by observed SNS message id, and translated into the existing delivery-status reconciler without custom host glue; subscription confirmation automation, durable inboxing, distributed replay, and distributed event-id ledgers remain separate follow-through
 - hosts can enable `EnableInvitationDeliveryRetryQueue` when `sender-failed` dispatch outcomes should be retained for an explicit `ITenantInvitationDeliveryRetryRunner.RetryPendingAsync(...)` pass; configure `InvitationDeliveryRetryQueueFilePath` only when the local retry queue should survive process restarts
 - the tenant-administration command endpoint is fail-closed by default; keep `RequireTenantAdministrationAuthorization = true` for real hosts, set `TenantAdministrationAuthorizationPolicy` when a named ASP.NET Core policy should guard the command surface, and disable authorization only for deliberate internal/test hosts
 - the delivery status callback and observation read endpoints are fail-closed by default; keep `RequireTenantInvitationDeliveryStatusCallbackAuthorization = true` and `RequireTenantInvitationDeliveryStatusObservationAuthorization = true` for real hosts, set the related authorization policy when a named ASP.NET Core policy should guard callback ingress or observation reads, keep `RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch = true` unless the host deliberately owns another correlation boundary, and keep provider-neutral signed callback replay protection enabled when `TenantInvitationDeliveryStatusCallbackSigningSecret` is configured
@@ -1536,7 +1536,7 @@ Operational notes:
 - the default client uses the AWS SDK for .NET SES v2 `SendEmail` API and accepts a successful `200 OK` response with a SES `MessageId` as dispatched handoff truth
 - AWS credentials, IAM policy, verified identities, DKIM/SPF/DMARC, sandbox exit, account-level suppression policy, and SES configuration-set event destinations stay with the host/AWS account rather than `Cephalon.Engine`
 - sender metadata records region, configuration set, SES status code, SES message id, Cephalon message id, sender id, recipient email, recipient metadata key, reply-to count, tag count, and safe client metadata, but it does not record AWS credentials, raw SDK request bodies, or message bodies
-- this package owns Amazon SES v2 accepted handoff only; Amazon SES over SNS callback translation, opt-in SNS signature verification, and bounded process-local SNS replay protection live in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`, while SNS subscription confirmation automation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, deliverability analytics, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns Amazon SES v2 accepted handoff only; Amazon SES over SNS callback translation, opt-in SNS signature verification, bounded process-local SNS replay protection, and observation-store-backed SNS message-id idempotency live in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`, while SNS subscription confirmation automation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, deliverability analytics, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
 
 ### Amazon SES invitation delivery status callbacks
 
@@ -1572,7 +1572,8 @@ Configuration:
             "ValidateSnsSigningCertificateChain": true,
             "EnableSnsReplayProtection": true,
             "SnsReplayRetentionSeconds": 300,
-            "SnsReplayCacheLimit": 4096
+            "SnsReplayCacheLimit": 4096,
+            "EnableSnsMessageIdIdempotency": true
           }
         }
       }
@@ -1600,12 +1601,13 @@ Operational notes:
 - the endpoint parses bounded SNS `Notification` JSON, unwraps the SES event JSON in `Message`, and can accept raw SES event objects or arrays for controlled replay/test harness scenarios when `AcceptRawSesEventPayloads` stays enabled
 - when `RequireSnsSignatureVerification` is enabled, the endpoint rejects raw SES replay payloads, requires an allowed `TopicArn` by default, requires SNS `SignatureVersion` 2 by default, validates the HTTPS Amazon SNS signing-certificate URL, validates the certificate unless a host deliberately disables chain validation for pinned test certificates, and verifies the RSA signature before mapping or reconciliation
 - when `EnableSnsReplayProtection` is enabled with SNS signature verification, the endpoint stores a bounded process-local fingerprint derived from the verified `TopicArn` plus `MessageId` and rejects duplicate verified callbacks with `409 Conflict` before reconciliation
+- when `EnableSnsMessageIdIdempotency` is enabled with the governance observation store, the endpoint checks the normalized `amazon-ses-sns:{MessageId}` observation id before reconciliation, skips already observed SNS messages with `duplicateEvents`, and reports diagnostic `4581`; durability follows the configured observation store and is not a distributed event-id ledger
 - the translator extracts Cephalon context from SES `mail.tags`, including tenant id, invitation id, channel, sender id, and correlation id, and uses `mail.messageId` as the provider message id captured by the SES sender
 - `Send` maps to `accepted`, `Delivery` maps to `delivered`, transient `Bounce` maps to `deferred`, other `Bounce` maps to `bounced`, `Complaint` and `Reject` map to `suppressed`, `Rendering Failure` maps to `failed`, and `DeliveryDelay` maps to `deferred`; `Open`, `Click`, and `Subscription` are skipped by default
 - `PinnedSnsSigningCertificatePem` can be used for controlled tests or deliberate certificate pinning; production hosts usually leave it unset so the endpoint retrieves the AWS SNS signing certificate from the validated `SigningCertURL`
 - `SubscriptionConfirmation` and `UnsubscribeConfirmation` are skipped and are not auto-confirmed; if signature verification is required, those confirmation messages must still verify before being skipped
-- the runtime surface reports whether SNS signature verification is required, whether signature version 2 and topic allow-listing are required, how many allowed topic ARNs are configured, whether pinned certificate or chain validation paths are active, and whether process-local replay protection is configured
-- keep endpoint authorization, gateway policy, SNS topic policy, private networking, or AWS WAF controls in place as defense in depth; SNS topic/subscription setup, topic policies, subscription confirmation, observation-store-backed event-id idempotency, durable inboxes, distributed replay ledgers, and provider polling remain separate follow-through
+- the runtime surface reports whether SNS signature verification is required, whether signature version 2 and topic allow-listing are required, how many allowed topic ARNs are configured, whether pinned certificate or chain validation paths are active, whether process-local replay protection is configured, and whether observation-store-backed SNS message-id idempotency is configured
+- keep endpoint authorization, gateway policy, SNS topic policy, private networking, or AWS WAF controls in place as defense in depth; SNS topic/subscription setup, topic policies, subscription confirmation, durable inboxes, distributed replay ledgers, distributed event-id ledgers, and provider polling remain separate follow-through
 
 ### Mailgun invitation delivery sender
 

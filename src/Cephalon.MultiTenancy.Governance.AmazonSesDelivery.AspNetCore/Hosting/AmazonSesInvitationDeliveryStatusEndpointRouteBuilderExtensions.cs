@@ -1,5 +1,6 @@
 using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration;
 using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services;
+using Cephalon.MultiTenancy.Governance.Configuration;
 using Cephalon.MultiTenancy.Governance.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +32,8 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
     /// The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the
     /// host-agnostic <see cref="ITenantInvitationDeliveryStatusReconciler" />. SNS subscription confirmation,
     /// durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack
-    /// responsibilities. When configured, the endpoint verifies the SNS message signature before translation.
+    /// responsibilities. When configured, the endpoint verifies the SNS message signature before translation and skips
+    /// duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
     /// </remarks>
     public static IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)
     {
@@ -54,9 +56,11 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                     AmazonSesSnsSignatureVerifier signatureVerifier,
                     AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
+                    ITenantInvitationDeliveryStatusObservationStore observationStore,
+                    MultiTenancyGovernanceOptions governanceOptions,
                     ILoggerFactory loggerFactory,
                     CancellationToken cancellationToken) =>
-                    TranslateCallbackAsync(context, mapper, signatureVerifier, replayGuard, reconciler, loggerFactory, options, routePattern, cancellationToken))
+                    TranslateCallbackAsync(context, mapper, signatureVerifier, replayGuard, reconciler, observationStore, governanceOptions, loggerFactory, options, routePattern, cancellationToken))
             .WithName("CephalonAmazonSesInvitationDeliveryStatusCallback")
             .Accepts<JsonElement>("application/json")
             .Produces<AmazonSesInvitationDeliveryStatusCallbackResult>(StatusCodes.Status200OK)
@@ -94,7 +98,8 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 options.ValidateSnsSigningCertificateChain,
                 options.IsSnsReplayProtectionConfigured(),
                 options.GetSnsReplayRetentionSeconds(),
-                options.GetSnsReplayCacheLimit());
+                options.GetSnsReplayCacheLimit(),
+                options.IsSnsMessageIdIdempotencyConfigured());
 
         return endpoints;
     }
@@ -105,6 +110,8 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         AmazonSesSnsSignatureVerifier signatureVerifier,
         AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         ITenantInvitationDeliveryStatusReconciler reconciler,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
+        MultiTenancyGovernanceOptions governanceOptions,
         ILoggerFactory loggerFactory,
         AmazonSesInvitationDeliveryAspNetCoreOptions options,
         string routePattern,
@@ -180,6 +187,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
             var reconciledEvents = 0;
             var skippedEvents = 0;
             var deniedEvents = 0;
+            var duplicateEvents = 0;
 
             try
             {
@@ -195,10 +203,27 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                     }
 
                     translatedEvents++;
-                    var reconciliationRequest = ApplySnsSignatureAndReplayMetadata(
+                    var messageIdIdempotency = EvaluateSnsMessageIdIdempotency(
+                        options,
+                        governanceOptions,
+                        observationStore,
+                        mapping);
+                    if (messageIdIdempotency.Duplicate)
+                    {
+                        duplicateEvents++;
+                        AmazonSesInvitationDeliveryAspNetCoreLogs.CallbackDuplicateMessageSkipped(
+                            logger,
+                            messageIdIdempotency.ObservationId!);
+                        eventResults.Add(mapping.ToDuplicateEventResult("The Amazon SNS message id was already recorded in the delivery-status observation store."));
+                        continue;
+                    }
+
+                    var reconciliationRequest = ApplySnsSignatureReplayAndMessageIdIdempotencyMetadata(
                         mapping.Request!,
                         signatureVerification,
                         replayProtection,
+                        messageIdIdempotency,
+                        observationStore,
                         options);
                     var reconciliation = await reconciler
                         .ReconcileAsync(reconciliationRequest, cancellationToken)
@@ -222,7 +247,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 throw;
             }
 
-            if (translatedEvents > 0 && reconciledEvents == 0)
+            if (translatedEvents > 0 && reconciledEvents == 0 && duplicateEvents == 0)
             {
                 ForgetSnsReplayProtection(replayGuard, replayProtection);
             }
@@ -246,7 +271,8 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 snsSignatureVerificationOutcome: signatureVerification.Outcome,
                 events: eventResults,
                 snsReplayProtectionEnabled: replayProtection.Configured,
-                snsReplayProtectionOutcome: replayProtection.Outcome);
+                snsReplayProtectionOutcome: replayProtection.Outcome,
+                duplicateEvents: duplicateEvents);
 
             return Results.Json(result, SerializerOptions);
         }
@@ -336,31 +362,66 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         }
     }
 
-    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySnsSignatureAndReplayMetadata(
+    private static SnsMessageIdIdempotencyResult EvaluateSnsMessageIdIdempotency(
+        AmazonSesInvitationDeliveryAspNetCoreOptions options,
+        MultiTenancyGovernanceOptions governanceOptions,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
+        AmazonSesSnsDeliveryStatusMappingResult mapping)
+    {
+        if (!options.IsSnsMessageIdIdempotencyConfigured() ||
+            !governanceOptions.EnableInvitationDeliveryStatusObservationStore)
+        {
+            return SnsMessageIdIdempotencyResult.NotConfigured();
+        }
+
+        var request = mapping.Request!;
+        if (string.IsNullOrWhiteSpace(mapping.SnsMessageId) ||
+            !request.Metadata.TryGetValue(TenantInvitationDeliveryMetadataKeys.DeliveryStatusObservationId, out var observationId) ||
+            string.IsNullOrWhiteSpace(observationId) ||
+            !observationId.Trim().StartsWith("amazon-ses-sns:", StringComparison.OrdinalIgnoreCase))
+        {
+            return SnsMessageIdIdempotencyResult.MessageIdMissing();
+        }
+
+        var normalizedObservationId = observationId.Trim();
+        var duplicate = observationStore.Observations.Any(
+            observation => string.Equals(observation.ObservationId, normalizedObservationId, StringComparison.OrdinalIgnoreCase));
+        return duplicate
+            ? SnsMessageIdIdempotencyResult.DuplicateSkipped(normalizedObservationId)
+            : SnsMessageIdIdempotencyResult.PendingRecord(normalizedObservationId);
+    }
+
+    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySnsSignatureReplayAndMessageIdIdempotencyMetadata(
         TenantInvitationDeliveryStatusReconciliationRequest request,
         AmazonSesSnsSignatureVerificationResult signatureVerification,
         SnsReplayProtectionResult replayProtection,
+        SnsMessageIdIdempotencyResult messageIdIdempotency,
+        ITenantInvitationDeliveryStatusObservationStore observationStore,
         AmazonSesInvitationDeliveryAspNetCoreOptions options)
     {
         if (!signatureVerification.Configured &&
-            !replayProtection.Configured)
+            !replayProtection.Configured &&
+            !messageIdIdempotency.Configured)
         {
             return request;
         }
 
         var metadata = CopyMetadata(request.Metadata);
-        metadata["amazonSesSnsSignatureVerification"] = signatureVerification.Outcome;
-        metadata["amazonSesSnsSignatureVerificationOwnership"] = "cephalon-managed";
-        metadata["amazonSesSnsSignaturePayload"] = "sns-canonical-string";
-        AddIfPresent(metadata, "amazonSesSnsSignatureVersion", signatureVerification.SignatureVersion);
-        AddIfPresent(metadata, "amazonSesSnsSignatureAlgorithm", signatureVerification.Algorithm);
-        AddIfPresent(metadata, "amazonSesSnsSignatureTopicArn", signatureVerification.TopicArn);
-        AddIfPresent(metadata, "amazonSesSnsSignatureMessageType", signatureVerification.MessageType);
-        AddIfPresent(metadata, "amazonSesSnsSignatureMessageId", signatureVerification.MessageId);
-        AddIfPresent(metadata, "amazonSesSnsSignatureTimestamp", signatureVerification.Timestamp);
-        AddIfPresent(metadata, "amazonSesSnsSigningCertificateUrlHost", signatureVerification.SigningCertificateUrlHost);
-        AddIfPresent(metadata, "amazonSesSnsSignatureFingerprint", signatureVerification.SignatureFingerprint);
-        AddIfPresent(metadata, "amazonSesSnsSigningCertificateThumbprint", signatureVerification.CertificateThumbprint);
+        if (signatureVerification.Configured)
+        {
+            metadata["amazonSesSnsSignatureVerification"] = signatureVerification.Outcome;
+            metadata["amazonSesSnsSignatureVerificationOwnership"] = "cephalon-managed";
+            metadata["amazonSesSnsSignaturePayload"] = "sns-canonical-string";
+            AddIfPresent(metadata, "amazonSesSnsSignatureVersion", signatureVerification.SignatureVersion);
+            AddIfPresent(metadata, "amazonSesSnsSignatureAlgorithm", signatureVerification.Algorithm);
+            AddIfPresent(metadata, "amazonSesSnsSignatureTopicArn", signatureVerification.TopicArn);
+            AddIfPresent(metadata, "amazonSesSnsSignatureMessageType", signatureVerification.MessageType);
+            AddIfPresent(metadata, "amazonSesSnsSignatureMessageId", signatureVerification.MessageId);
+            AddIfPresent(metadata, "amazonSesSnsSignatureTimestamp", signatureVerification.Timestamp);
+            AddIfPresent(metadata, "amazonSesSnsSigningCertificateUrlHost", signatureVerification.SigningCertificateUrlHost);
+            AddIfPresent(metadata, "amazonSesSnsSignatureFingerprint", signatureVerification.SignatureFingerprint);
+            AddIfPresent(metadata, "amazonSesSnsSigningCertificateThumbprint", signatureVerification.CertificateThumbprint);
+        }
 
         if (replayProtection.Configured)
         {
@@ -378,6 +439,23 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
             if (!string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
             {
                 metadata["amazonSesSnsReplayProtectionFingerprint"] = replayProtection.ReplayFingerprint!;
+            }
+        }
+
+        if (messageIdIdempotency.Configured)
+        {
+            metadata["amazonSesSnsMessageIdIdempotency"] = messageIdIdempotency.Outcome;
+            metadata["amazonSesSnsMessageIdIdempotencyOwnership"] = "cephalon-managed";
+            metadata["amazonSesSnsMessageIdIdempotencyPolicy"] = "sns-message-id";
+            metadata["amazonSesSnsMessageIdIdempotencyKey"] = "MessageId";
+            metadata["amazonSesSnsMessageIdIdempotencyScope"] = "observation-store";
+            metadata["amazonSesSnsMessageIdIdempotencyStoreKind"] = observationStore.StoreKind;
+            metadata["amazonSesSnsMessageIdIdempotencyDurability"] =
+                observationStore.IsDurable ? "local-file" : "none";
+
+            if (!string.IsNullOrWhiteSpace(messageIdIdempotency.ObservationId))
+            {
+                metadata["amazonSesSnsMessageIdObservationId"] = messageIdIdempotency.ObservationId!;
             }
         }
 
@@ -520,6 +598,25 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
             string replayFingerprint,
             IResult failure) =>
             new(true, outcome, replayFingerprint, failure);
+    }
+
+    private sealed record SnsMessageIdIdempotencyResult(
+        bool Configured,
+        bool Duplicate,
+        string Outcome,
+        string? ObservationId)
+    {
+        public static SnsMessageIdIdempotencyResult NotConfigured() =>
+            new(false, false, "not-configured", null);
+
+        public static SnsMessageIdIdempotencyResult MessageIdMissing() =>
+            new(true, false, "message-id-missing", null);
+
+        public static SnsMessageIdIdempotencyResult PendingRecord(string observationId) =>
+            new(true, false, "pending-record", observationId);
+
+        public static SnsMessageIdIdempotencyResult DuplicateSkipped(string observationId) =>
+            new(true, true, "duplicate-skipped", observationId);
     }
 
     private sealed record CallbackRequestBodyReadResult(byte[] Body, IResult? Failure)

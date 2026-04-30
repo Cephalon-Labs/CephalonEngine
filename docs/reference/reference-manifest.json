@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-30T05:32:46.858+00:00",
+  "GeneratedAtUtc": "2026-04-30T06:05:10.3519187+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -2299,7 +2299,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 22,
+        "Properties": 23,
         "Methods": 1
       }
     },
@@ -2404,7 +2404,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 13,
         "Methods": 0
       }
     },
@@ -23860,8 +23860,8 @@
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
-      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string",
-      "Signature": "AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList\u003CAmazonSesInvitationDeliveryStatusCallbackEventResult\u003E events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome)",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string-system-int32",
+      "Signature": "AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList\u003CAmazonSesInvitationDeliveryStatusCallbackEventResult\u003E events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome, int duplicateEvents)",
       "Summary": "Creates an Amazon SES callback translation response."
     },
     {
@@ -47327,6 +47327,17 @@
     {
       "DisplayName": "DuplicateEvents",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-duplicateevents",
+      "Signature": "int DuplicateEvents { get; }",
+      "Summary": "Gets the number of translated Amazon SES SNS events skipped because their SNS message id was already observed."
+    },
+    {
+      "DisplayName": "DuplicateEvents",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -49765,6 +49776,17 @@
       "AnchorId": "member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enablesnapshots",
       "Signature": "bool EnableSnapshots { get; set; }",
       "Summary": "Gets or sets a value indicating whether snapshot-aware paths are enabled."
+    },
+    {
+      "DisplayName": "EnableSnsMessageIdIdempotency",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablesnsmessageididempotency",
+      "Signature": "bool EnableSnsMessageIdIdempotency { get; set; }",
+      "Summary": "Gets or sets a value indicating whether translated SNS notifications should skip duplicate \u0060MessageId\u0060 values that already exist in the Cephalon delivery-status observation store."
     },
     {
       "DisplayName": "EnableSnsReplayProtection",
