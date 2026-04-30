@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore
 
-`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` is the optional ASP.NET Core Amazon SES over SNS callback translator and SNS signature verifier for tenant-invitation delivery status reconciliation.
+`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` is the optional ASP.NET Core Amazon SES over SNS callback translator, SNS signature verifier, and process-local SNS replay guard for tenant-invitation delivery status reconciliation.
 
 ## What it owns
 
@@ -14,6 +14,7 @@
 - SNS `SignatureVersion` 2 enforcement by default, with explicit legacy opt-out for version 1
 - SNS `TopicArn` allow-list enforcement by default through `AllowedSnsTopicArns`
 - SNS signing-certificate URL validation for HTTPS Amazon SNS PEM URLs, optional pinned PEM certificate loading for controlled tests, and certificate validity/chain validation by default
+- bounded process-local replay protection for verified SNS callbacks through `EnableSnsReplayProtection`, `SnsReplayRetentionSeconds`, and `SnsReplayCacheLimit`
 - translation from Amazon SES `eventType` or legacy `notificationType` values into `TenantInvitationDeliveryStatusReconciliationRequest`
 - Cephalon context extraction from SES `mail.tags`, including `cephalon-tenant-id`, `cephalon-invitation-id`, `cephalon-delivery-channel`, `cephalon-sender-id`, and `cephalon-correlation-id`
 - provider message-id correlation from `mail.messageId`, matching the SES `MessageId` captured by `Cephalon.MultiTenancy.Governance.AmazonSesDelivery`
@@ -21,7 +22,7 @@
 - observation-id seeding from SNS message ids through the normalized delivery-status observation path
 - optional engagement-event mapping when a host deliberately sets `MapEngagementEventsAsDelivered`
 - runtime truth through the `tenant-invitation-delivery-amazon-ses-status-callbacks` technology surface
-- stable diagnostics for accepted Amazon SES over SNS callback payloads and signature rejections
+- stable diagnostics for accepted Amazon SES over SNS callback payloads, signature rejections, and replay rejections
 
 ## Main Surfaces
 
@@ -30,6 +31,7 @@
 - `Hosting/AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions.cs`
 - `Hosting/AmazonSesInvitationDeliveryStatusCallbackResult.cs`
 - `Hosting/AmazonSesInvitationDeliveryStatusCallbackEventResult.cs`
+- `Hosting/AmazonSesInvitationDeliveryStatusCallbackReplayGuard.cs`
 - `Services/AmazonSesSnsSignatureVerifier.cs`
 
 ## Source Structure
@@ -85,7 +87,10 @@ Configuration example:
             "AllowedSnsTopicArns": [
               "arn:aws:sns:us-east-1:123456789012:cephalon-governance"
             ],
-            "ValidateSnsSigningCertificateChain": true
+            "ValidateSnsSigningCertificateChain": true,
+            "EnableSnsReplayProtection": true,
+            "SnsReplayRetentionSeconds": 300,
+            "SnsReplayCacheLimit": 4096
           }
         }
       }
@@ -100,9 +105,11 @@ The endpoint returns `AmazonSesInvitationDeliveryStatusCallbackResult` with aggr
 
 Set `RequireSnsSignatureVerification` to require SNS envelope verification before translation. The verifier rejects raw SES replay payloads, enforces an allowed `TopicArn` list by default, requires `SignatureVersion` 2 by default, validates HTTPS Amazon SNS signing-certificate URLs, downloads and validates the signing certificate unless `PinnedSnsSigningCertificatePem` is configured, and verifies the RSA signature over the SNS canonical string-to-sign. `PinnedSnsSigningCertificatePem` is useful for controlled tests, certificate-pinning experiments, or replay harnesses; production hosts usually leave it unset so the endpoint retrieves the AWS SNS signing certificate from the validated `SigningCertURL`.
 
-SNS `SubscriptionConfirmation` and `UnsubscribeConfirmation` messages are reported as skipped and are not auto-confirmed. When signature verification is required, confirmation messages must still pass signature verification before they are skipped. Hosts or infrastructure-as-code should own SNS subscription confirmation and topic policy posture deliberately. Process-local SNS replay protection, observation-store-backed SNS message-id duplicate skipping, and durable callback inboxing remain later follow-through slices.
+When signature verification is required, `EnableSnsReplayProtection` defaults to `true`. The replay guard derives a safe fingerprint from the verified SNS `TopicArn` plus `MessageId`, keeps it in a bounded process-local cache, rejects duplicate verified callbacks with `409 Conflict`, and records replay posture in callback responses and reconciliation metadata. This is intentionally process-local protection, not a durable callback inbox, distributed replay ledger, or exactly-once delivery guarantee.
 
-ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, SNS topic policy, AWS WAF, private networking, or other host-owned controls. This package owns provider payload translation plus opt-in SNS signature verification only; SNS topic/subscription creation, SES configuration-set event destination setup, subscription confirmation automation, durable callback inboxes, distributed replay ledgers, distributed event-id ledgers, provider polling, and exactly-once delivery remain future provider-pack or application-owned work.
+SNS `SubscriptionConfirmation` and `UnsubscribeConfirmation` messages are reported as skipped and are not auto-confirmed. When signature verification is required, confirmation messages must still pass signature verification before they are skipped. Hosts or infrastructure-as-code should own SNS subscription confirmation and topic policy posture deliberately. Observation-store-backed SNS message-id duplicate skipping and durable callback inboxing remain later follow-through slices.
+
+ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, SNS topic policy, AWS WAF, private networking, or other host-owned controls. This package owns provider payload translation, opt-in SNS signature verification, and bounded process-local SNS replay rejection only; SNS topic/subscription creation, SES configuration-set event destination setup, subscription confirmation automation, durable callback inboxes, distributed replay ledgers, distributed event-id ledgers, provider polling, and exactly-once delivery remain future provider-pack or application-owned work.
 
 ## Provider References
 

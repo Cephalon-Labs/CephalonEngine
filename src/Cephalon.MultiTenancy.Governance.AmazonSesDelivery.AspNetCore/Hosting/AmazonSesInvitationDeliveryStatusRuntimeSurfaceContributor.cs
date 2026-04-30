@@ -29,7 +29,11 @@ internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor
         var allowedSnsTopicArnCount = endpoint?.AllowedSnsTopicArnCount ?? options.GetAllowedSnsTopicArns().Count;
         var pinnedSnsSigningCertificateConfigured = endpoint?.PinnedSnsSigningCertificateConfigured ?? options.GetPinnedSnsSigningCertificatePem() is not null;
         var validateSnsSigningCertificateChain = endpoint?.ValidateSnsSigningCertificateChain ?? options.ValidateSnsSigningCertificateChain;
+        var snsReplayProtectionConfigured = endpoint?.SnsReplayProtectionConfigured ?? options.IsSnsReplayProtectionConfigured();
+        var snsReplayRetentionSeconds = endpoint?.SnsReplayRetentionSeconds ?? options.GetSnsReplayRetentionSeconds();
+        var snsReplayCacheLimit = endpoint?.SnsReplayCacheLimit ?? options.GetSnsReplayCacheLimit();
         var signatureVerificationOwnership = requireSnsSignatureVerification ? "cephalon-managed" : "not-configured";
+        var replayProtectionOwnership = snsReplayProtectionConfigured ? "cephalon-managed" : "not-configured";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -63,7 +67,15 @@ internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor
                 : "not-configured",
             ["amazonSesSnsSignaturePayload"] = requireSnsSignatureVerification ? "sns-canonical-string" : "not-configured",
             ["amazonSesSnsSigningCertificateUrlPolicy"] = requireSnsSignatureVerification ? "https-sns-amazonaws-pem" : "not-configured",
-            ["amazonSesSnsReplayProtectionOwnership"] = "not-configured",
+            ["amazonSesSnsReplayProtectionConfigured"] = snsReplayProtectionConfigured.ToString().ToLowerInvariant(),
+            ["amazonSesSnsReplayProtectionOwnership"] = replayProtectionOwnership,
+            ["amazonSesSnsReplayProtectionPolicy"] = snsReplayProtectionConfigured ? "sns-message-id" : "none",
+            ["amazonSesSnsReplayProtectionKey"] = snsReplayProtectionConfigured ? "topic-arn+message-id" : "none",
+            ["amazonSesSnsReplayProtectionScope"] = snsReplayProtectionConfigured ? "process-local" : "none",
+            ["amazonSesSnsReplayProtectionDurability"] = "none",
+            ["amazonSesSnsReplayProtectionRetentionSeconds"] = snsReplayRetentionSeconds.ToString(CultureInfo.InvariantCulture),
+            ["amazonSesSnsReplayProtectionCacheLimit"] = snsReplayCacheLimit.ToString(CultureInfo.InvariantCulture),
+            ["amazonSesSnsReplayProtectionRequiresSignature"] = "true",
             ["amazonSesSnsEventIdIdempotencyOwnership"] = "not-configured",
             ["tenantInvitationDeliveryStatusReconcilerDependency"] = "ITenantInvitationDeliveryStatusReconciler",
             ["routePattern"] = routePattern,
@@ -141,7 +153,10 @@ internal sealed class AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog
         bool requireAllowedSnsTopicArn,
         int allowedSnsTopicArnCount,
         bool pinnedSnsSigningCertificateConfigured,
-        bool validateSnsSigningCertificateChain)
+        bool validateSnsSigningCertificateChain,
+        bool snsReplayProtectionConfigured,
+        int snsReplayRetentionSeconds,
+        int snsReplayCacheLimit)
     {
         lock (syncRoot)
         {
@@ -161,7 +176,10 @@ internal sealed class AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog
                 requireAllowedSnsTopicArn,
                 allowedSnsTopicArnCount,
                 pinnedSnsSigningCertificateConfigured,
-                validateSnsSigningCertificateChain);
+                validateSnsSigningCertificateChain,
+                snsReplayProtectionConfigured,
+                snsReplayRetentionSeconds,
+                snsReplayCacheLimit);
         }
     }
 }
@@ -182,4 +200,7 @@ internal sealed record AmazonSesInvitationDeliveryStatusCallbackEndpointRuntimeS
     bool RequireAllowedSnsTopicArn,
     int AllowedSnsTopicArnCount,
     bool PinnedSnsSigningCertificateConfigured,
-    bool ValidateSnsSigningCertificateChain);
+    bool ValidateSnsSigningCertificateChain,
+    bool SnsReplayProtectionConfigured,
+    int SnsReplayRetentionSeconds,
+    int SnsReplayCacheLimit);

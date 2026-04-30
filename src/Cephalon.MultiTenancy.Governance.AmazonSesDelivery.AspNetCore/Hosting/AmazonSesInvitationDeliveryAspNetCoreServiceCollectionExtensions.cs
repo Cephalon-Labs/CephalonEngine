@@ -33,6 +33,7 @@ public static class AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtens
         services.RemoveAll<AmazonSesInvitationDeliveryAspNetCoreOptions>();
         services.AddSingleton(options);
         services.TryAddSingleton<AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog>();
+        services.TryAddSingleton<AmazonSesInvitationDeliveryStatusCallbackReplayGuard>();
         services.TryAddSingleton<AmazonSesSnsSigningCertificateDownloader>();
         services.TryAddSingleton<AmazonSesSnsSignatureVerifier>();
         services.TryAddSingleton<AmazonSesSnsDeliveryStatusMapper>();

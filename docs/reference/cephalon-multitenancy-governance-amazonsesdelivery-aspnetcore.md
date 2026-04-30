@@ -71,6 +71,18 @@ string[] AllowedSnsTopicArns { get; set; }
 
 Gets or sets the SNS topic ARNs accepted by this callback endpoint when topic allow-listing is required.
 
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablesnsreplayprotection"></a>
+
+##### `EnableSnsReplayProtection`
+
+```csharp
+bool EnableSnsReplayProtection { get; set; }
+```
+
+Gets or sets a value indicating whether verified SNS callbacks should be protected against replay inside the current process.
+
+Remarks: Replay protection is active only when `RequireSnsSignatureVerification` is enabled and the SNS envelope verifies successfully. The built-in guard stores bounded fingerprints derived from `TopicArn` and `MessageId` in memory and does not claim distributed replay protection or durable callback inbox ownership.
+
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablestatuscallbackendpoint"></a>
 
 ##### `EnableStatusCallbackEndpoint`
@@ -206,6 +218,30 @@ bool RequireStatusCallbackAuthorization { get; set; }
 Gets or sets a value indicating whether the Amazon SES callback endpoint should require authorization.
 
 Remarks: The endpoint performs an in-handler authorization check by default. Hosts can satisfy it with ASP.NET Core authentication, a gateway, or deliberately disable it for trusted test hosts.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-snsreplaycachelimit"></a>
+
+##### `SnsReplayCacheLimit`
+
+```csharp
+int SnsReplayCacheLimit { get; set; }
+```
+
+Gets or sets the maximum number of verified SNS callback replay fingerprints retained in the current process.
+
+Remarks: When the bounded cache is full, the oldest fingerprint is evicted before recording a new accepted signed callback.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-snsreplayretentionseconds"></a>
+
+##### `SnsReplayRetentionSeconds`
+
+```csharp
+int SnsReplayRetentionSeconds { get; set; }
+```
+
+Gets or sets the process-local retention window, in seconds, for verified SNS callback replay fingerprints.
+
+Remarks: The endpoint clamps the effective retention to at least one second. The default is five minutes.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-source"></a>
 
@@ -475,12 +511,12 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult"></a>
+<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string"></a>
 
 ##### `AmazonSesInvitationDeliveryStatusCallbackResult`
 
 ```csharp
-AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events)
+AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome)
 ```
 
 Creates an Amazon SES callback translation response.
@@ -496,6 +532,8 @@ Parameters:
 - `snsSignatureVerified`: A value indicating whether the SNS signature verified.
 - `snsSignatureVerificationOutcome`: The SNS signature verification outcome.
 - `events`: Per-event translation and reconciliation results.
+- `snsReplayProtectionEnabled`: A value indicating whether process-local SNS replay protection was enabled for this verified callback.
+- `snsReplayProtectionOutcome`: The SNS replay-protection outcome.
 
 #### Properties
 
@@ -548,6 +586,26 @@ int SkippedEvents { get; }
 ```
 
 Gets the number of events skipped before reconciliation.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snsreplayprotectionenabled"></a>
+
+##### `SnsReplayProtectionEnabled`
+
+```csharp
+bool SnsReplayProtectionEnabled { get; }
+```
+
+Gets a value indicating whether process-local SNS replay protection was enabled for this verified callback.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snsreplayprotectionoutcome"></a>
+
+##### `SnsReplayProtectionOutcome`
+
+```csharp
+string SnsReplayProtectionOutcome { get; }
+```
+
+Gets the SNS replay-protection outcome.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snssignatureverificationoutcome"></a>
 

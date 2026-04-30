@@ -24,14 +24,22 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConvention
         MessageTemplate: "Amazon SES invitation delivery status callback rejected by SNS signature verification with outcome {Outcome}.",
         Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint rejects a payload before translation because SNS signature verification failed.");
 
+    public static readonly DiagnosticEventDefinition AmazonSesInvitationDeliveryStatusCallbackReplayRejected = new(
+        Id: 4580,
+        Name: "AmazonSesInvitationDeliveryStatusCallbackReplayRejected",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Amazon SES invitation delivery status callback replay rejected with outcome {Outcome}.",
+        Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint rejects a duplicate verified SNS message inside the process-local replay window.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
-        Description: "Structured diagnostics for ASP.NET Core Amazon SES over SNS tenant-invitation delivery status callback translation and signature verification.",
+        Description: "Structured diagnostics for ASP.NET Core Amazon SES over SNS tenant-invitation delivery status callback translation, signature verification, and replay protection.",
         Events:
         [
             AmazonSesInvitationDeliveryStatusCallbackAccepted,
-            AmazonSesInvitationDeliveryStatusCallbackSignatureRejected
+            AmazonSesInvitationDeliveryStatusCallbackSignatureRejected,
+            AmazonSesInvitationDeliveryStatusCallbackReplayRejected
         ]);
 }
 
@@ -53,6 +61,14 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreLogs
                 AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusCallbackSignatureRejected.Name),
             "Amazon SES invitation delivery status callback rejected by SNS signature verification with outcome {Outcome}.");
 
+    private static readonly Action<ILogger, string, Exception?> CallbackReplayRejectedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Warning,
+            new EventId(
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusCallbackReplayRejected.Id,
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusCallbackReplayRejected.Name),
+            "Amazon SES invitation delivery status callback replay rejected with outcome {Outcome}.");
+
     public static void CallbackAccepted(
         ILogger logger,
         int eventCount,
@@ -63,4 +79,7 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreLogs
 
     public static void CallbackSignatureRejected(ILogger logger, string outcome) =>
         CallbackSignatureRejectedMessage(logger, outcome, null);
+
+    public static void CallbackReplayRejected(ILogger logger, string outcome) =>
+        CallbackReplayRejectedMessage(logger, outcome, null);
 }

@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting;
@@ -49,10 +52,11 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                     HttpContext context,
                     AmazonSesSnsDeliveryStatusMapper mapper,
                     AmazonSesSnsSignatureVerifier signatureVerifier,
+                    AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
                     ILoggerFactory loggerFactory,
                     CancellationToken cancellationToken) =>
-                    TranslateCallbackAsync(context, mapper, signatureVerifier, reconciler, loggerFactory, options, routePattern, cancellationToken))
+                    TranslateCallbackAsync(context, mapper, signatureVerifier, replayGuard, reconciler, loggerFactory, options, routePattern, cancellationToken))
             .WithName("CephalonAmazonSesInvitationDeliveryStatusCallback")
             .Accepts<JsonElement>("application/json")
             .Produces<AmazonSesInvitationDeliveryStatusCallbackResult>(StatusCodes.Status200OK)
@@ -87,7 +91,10 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 options.RequireAllowedSnsTopicArn,
                 options.GetAllowedSnsTopicArns().Count,
                 options.GetPinnedSnsSigningCertificatePem() is not null,
-                options.ValidateSnsSigningCertificateChain);
+                options.ValidateSnsSigningCertificateChain,
+                options.IsSnsReplayProtectionConfigured(),
+                options.GetSnsReplayRetentionSeconds(),
+                options.GetSnsReplayCacheLimit());
 
         return endpoints;
     }
@@ -96,6 +103,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         HttpContext context,
         AmazonSesSnsDeliveryStatusMapper mapper,
         AmazonSesSnsSignatureVerifier signatureVerifier,
+        AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         ITenantInvitationDeliveryStatusReconciler reconciler,
         ILoggerFactory loggerFactory,
         AmazonSesInvitationDeliveryAspNetCoreOptions options,
@@ -160,39 +168,63 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                     statusCode: StatusCodes.Status413PayloadTooLarge);
             }
 
+            var replayProtection = RecordSnsReplayProtection(options, replayGuard, signatureVerification);
+            if (replayProtection.Failure is not null)
+            {
+                AmazonSesInvitationDeliveryAspNetCoreLogs.CallbackReplayRejected(logger, replayProtection.Outcome);
+                return replayProtection.Failure;
+            }
+
             var eventResults = new List<AmazonSesInvitationDeliveryStatusCallbackEventResult>(eventCount);
             var translatedEvents = 0;
             var reconciledEvents = 0;
             var skippedEvents = 0;
             var deniedEvents = 0;
 
-            foreach (var mapping in eventMappings)
+            try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (!mapping.Translated)
+                foreach (var mapping in eventMappings)
                 {
-                    skippedEvents++;
-                    eventResults.Add(mapping.ToSkippedEventResult());
-                    continue;
-                }
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                translatedEvents++;
-                var reconciliationRequest = ApplySnsSignatureVerificationMetadata(mapping.Request!, signatureVerification);
-                var reconciliation = await reconciler
-                    .ReconcileAsync(reconciliationRequest, cancellationToken)
-                    .ConfigureAwait(false);
+                    if (!mapping.Translated)
+                    {
+                        skippedEvents++;
+                        eventResults.Add(mapping.ToSkippedEventResult());
+                        continue;
+                    }
 
-                if (reconciliation.Reconciled)
-                {
-                    reconciledEvents++;
-                }
-                else
-                {
-                    deniedEvents++;
-                }
+                    translatedEvents++;
+                    var reconciliationRequest = ApplySnsSignatureAndReplayMetadata(
+                        mapping.Request!,
+                        signatureVerification,
+                        replayProtection,
+                        options);
+                    var reconciliation = await reconciler
+                        .ReconcileAsync(reconciliationRequest, cancellationToken)
+                        .ConfigureAwait(false);
 
-                eventResults.Add(mapping.ToReconciledEventResult(reconciliation));
+                    if (reconciliation.Reconciled)
+                    {
+                        reconciledEvents++;
+                    }
+                    else
+                    {
+                        deniedEvents++;
+                    }
+
+                    eventResults.Add(mapping.ToReconciledEventResult(reconciliation));
+                }
+            }
+            catch
+            {
+                ForgetSnsReplayProtection(replayGuard, replayProtection);
+                throw;
+            }
+
+            if (translatedEvents > 0 && reconciledEvents == 0)
+            {
+                ForgetSnsReplayProtection(replayGuard, replayProtection);
             }
 
             AmazonSesInvitationDeliveryAspNetCoreLogs.CallbackAccepted(
@@ -212,7 +244,9 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 snsSignatureVerificationRequired: signatureVerification.Configured,
                 snsSignatureVerified: signatureVerification.Verified,
                 snsSignatureVerificationOutcome: signatureVerification.Outcome,
-                eventResults);
+                events: eventResults,
+                snsReplayProtectionEnabled: replayProtection.Configured,
+                snsReplayProtectionOutcome: replayProtection.Outcome);
 
             return Results.Json(result, SerializerOptions);
         }
@@ -258,11 +292,58 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         return CallbackRequestBodyReadResult.Success(buffer.ToArray());
     }
 
-    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySnsSignatureVerificationMetadata(
-        TenantInvitationDeliveryStatusReconciliationRequest request,
+    private static SnsReplayProtectionResult RecordSnsReplayProtection(
+        AmazonSesInvitationDeliveryAspNetCoreOptions options,
+        AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
         AmazonSesSnsSignatureVerificationResult signatureVerification)
     {
-        if (!signatureVerification.Configured)
+        if (!options.IsSnsReplayProtectionConfigured() ||
+            !signatureVerification.Verified ||
+            string.IsNullOrWhiteSpace(signatureVerification.TopicArn) ||
+            string.IsNullOrWhiteSpace(signatureVerification.MessageId))
+        {
+            return SnsReplayProtectionResult.NotConfigured();
+        }
+
+        var replayFingerprint = CreateReplayFingerprint(signatureVerification.TopicArn!, signatureVerification.MessageId!);
+        var decision = replayGuard.TryRecord(
+            replayFingerprint,
+            DateTimeOffset.UtcNow,
+            TimeSpan.FromSeconds(options.GetSnsReplayRetentionSeconds()),
+            options.GetSnsReplayCacheLimit());
+        if (decision.Accepted)
+        {
+            return SnsReplayProtectionResult.Recorded(replayFingerprint);
+        }
+
+        return SnsReplayProtectionResult.Fail(
+            decision.Outcome,
+            replayFingerprint,
+            Results.Problem(
+                title: "Amazon SES SNS callback replay was rejected.",
+                detail: "The verified Amazon SNS message has already been accepted inside the configured process-local replay window.",
+                statusCode: StatusCodes.Status409Conflict));
+    }
+
+    private static void ForgetSnsReplayProtection(
+        AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        SnsReplayProtectionResult replayProtection)
+    {
+        if (replayProtection.Configured &&
+            !string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
+        {
+            replayGuard.Forget(replayProtection.ReplayFingerprint!);
+        }
+    }
+
+    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySnsSignatureAndReplayMetadata(
+        TenantInvitationDeliveryStatusReconciliationRequest request,
+        AmazonSesSnsSignatureVerificationResult signatureVerification,
+        SnsReplayProtectionResult replayProtection,
+        AmazonSesInvitationDeliveryAspNetCoreOptions options)
+    {
+        if (!signatureVerification.Configured &&
+            !replayProtection.Configured)
         {
             return request;
         }
@@ -281,6 +362,25 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         AddIfPresent(metadata, "amazonSesSnsSignatureFingerprint", signatureVerification.SignatureFingerprint);
         AddIfPresent(metadata, "amazonSesSnsSigningCertificateThumbprint", signatureVerification.CertificateThumbprint);
 
+        if (replayProtection.Configured)
+        {
+            metadata["amazonSesSnsReplayProtection"] = replayProtection.Outcome;
+            metadata["amazonSesSnsReplayProtectionOwnership"] = "cephalon-managed";
+            metadata["amazonSesSnsReplayProtectionPolicy"] = "sns-message-id";
+            metadata["amazonSesSnsReplayProtectionKey"] = "topic-arn+message-id";
+            metadata["amazonSesSnsReplayProtectionScope"] = "process-local";
+            metadata["amazonSesSnsReplayProtectionDurability"] = "none";
+            metadata["amazonSesSnsReplayProtectionRetentionSeconds"] =
+                options.GetSnsReplayRetentionSeconds().ToString(CultureInfo.InvariantCulture);
+            metadata["amazonSesSnsReplayProtectionCacheLimit"] =
+                options.GetSnsReplayCacheLimit().ToString(CultureInfo.InvariantCulture);
+
+            if (!string.IsNullOrWhiteSpace(replayProtection.ReplayFingerprint))
+            {
+                metadata["amazonSesSnsReplayProtectionFingerprint"] = replayProtection.ReplayFingerprint!;
+            }
+        }
+
         return new TenantInvitationDeliveryStatusReconciliationRequest(
             tenantId: request.TenantId,
             invitationId: request.InvitationId,
@@ -296,6 +396,12 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
             recordStatus: request.RecordStatus,
             requireProviderMessageMatch: request.RequireProviderMessageMatch,
             metadata: metadata);
+    }
+
+    private static string CreateReplayFingerprint(string topicArn, string messageId)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(topicArn.Trim() + "\n" + messageId.Trim()));
+        return "sha256:" + Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     private static Dictionary<string, string> CopyMetadata(IReadOnlyDictionary<string, string>? metadata)
@@ -395,6 +501,25 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
+    }
+
+    private sealed record SnsReplayProtectionResult(
+        bool Configured,
+        string Outcome,
+        string? ReplayFingerprint,
+        IResult? Failure)
+    {
+        public static SnsReplayProtectionResult NotConfigured() =>
+            new(false, "not-configured", null, null);
+
+        public static SnsReplayProtectionResult Recorded(string replayFingerprint) =>
+            new(true, "recorded", replayFingerprint, null);
+
+        public static SnsReplayProtectionResult Fail(
+            string outcome,
+            string replayFingerprint,
+            IResult failure) =>
+            new(true, outcome, replayFingerprint, failure);
     }
 
     private sealed record CallbackRequestBodyReadResult(byte[] Body, IResult? Failure)

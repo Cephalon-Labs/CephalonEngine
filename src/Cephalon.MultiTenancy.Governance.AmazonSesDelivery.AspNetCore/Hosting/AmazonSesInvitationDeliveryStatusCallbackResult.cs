@@ -18,6 +18,8 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
     /// <param name="snsSignatureVerified">A value indicating whether the SNS signature verified.</param>
     /// <param name="snsSignatureVerificationOutcome">The SNS signature verification outcome.</param>
     /// <param name="events">Per-event translation and reconciliation results.</param>
+    /// <param name="snsReplayProtectionEnabled">A value indicating whether process-local SNS replay protection was enabled for this verified callback.</param>
+    /// <param name="snsReplayProtectionOutcome">The SNS replay-protection outcome.</param>
     public AmazonSesInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -28,7 +30,9 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
         bool snsSignatureVerificationRequired,
         bool snsSignatureVerified,
         string snsSignatureVerificationOutcome,
-        IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events)
+        IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events,
+        bool snsReplayProtectionEnabled = false,
+        string snsReplayProtectionOutcome = "not-configured")
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -50,6 +54,10 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
         SnsSignatureVerified = snsSignatureVerified;
         SnsSignatureVerificationOutcome = snsSignatureVerificationOutcome.Trim();
         Events = events ?? throw new ArgumentNullException(nameof(events));
+        SnsReplayProtectionEnabled = snsReplayProtectionEnabled;
+        SnsReplayProtectionOutcome = string.IsNullOrWhiteSpace(snsReplayProtectionOutcome)
+            ? "unknown"
+            : snsReplayProtectionOutcome.Trim();
     }
 
     /// <summary>
@@ -96,6 +104,16 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
     /// Gets the SNS signature verification outcome.
     /// </summary>
     public string SnsSignatureVerificationOutcome { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether process-local SNS replay protection was enabled for this verified callback.
+    /// </summary>
+    public bool SnsReplayProtectionEnabled { get; }
+
+    /// <summary>
+    /// Gets the SNS replay-protection outcome.
+    /// </summary>
+    public string SnsReplayProtectionOutcome { get; }
 
     /// <summary>
     /// Gets per-event translation and reconciliation results.

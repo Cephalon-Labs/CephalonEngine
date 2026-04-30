@@ -168,6 +168,34 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
     public bool ValidateSnsSigningCertificateChain { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether verified SNS callbacks should be protected against replay inside the
+    /// current process.
+    /// </summary>
+    /// <remarks>
+    /// Replay protection is active only when <see cref="RequireSnsSignatureVerification" /> is enabled and the SNS
+    /// envelope verifies successfully. The built-in guard stores bounded fingerprints derived from <c>TopicArn</c> and
+    /// <c>MessageId</c> in memory and does not claim distributed replay protection or durable callback inbox ownership.
+    /// </remarks>
+    public bool EnableSnsReplayProtection { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the process-local retention window, in seconds, for verified SNS callback replay fingerprints.
+    /// </summary>
+    /// <remarks>
+    /// The endpoint clamps the effective retention to at least one second. The default is five minutes.
+    /// </remarks>
+    public int SnsReplayRetentionSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Gets or sets the maximum number of verified SNS callback replay fingerprints retained in the current process.
+    /// </summary>
+    /// <remarks>
+    /// When the bounded cache is full, the oldest fingerprint is evicted before recording a new accepted signed
+    /// callback.
+    /// </remarks>
+    public int SnsReplayCacheLimit { get; set; } = 4096;
+
+    /// <summary>
     /// Reads Amazon SES ASP.NET Core callback options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -209,6 +237,9 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
         options.AllowedSnsTopicArns = ReadStringList(section.GetSection("AllowedSnsTopicArns")).ToArray();
         options.PinnedSnsSigningCertificatePem = Normalize(section["PinnedSnsSigningCertificatePem"])?.Replace("\\n", "\n", StringComparison.Ordinal);
         options.ValidateSnsSigningCertificateChain = ParseBoolean(section["ValidateSnsSigningCertificateChain"], options.ValidateSnsSigningCertificateChain);
+        options.EnableSnsReplayProtection = ParseBoolean(section["EnableSnsReplayProtection"], options.EnableSnsReplayProtection);
+        options.SnsReplayRetentionSeconds = ParseInt32(section["SnsReplayRetentionSeconds"], options.SnsReplayRetentionSeconds);
+        options.SnsReplayCacheLimit = ParseInt32(section["SnsReplayCacheLimit"], options.SnsReplayCacheLimit);
         return options;
     }
 
@@ -231,6 +262,15 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
             .Where(static value => value is not null)
             .Select(static value => value!)
             .ToHashSet(StringComparer.Ordinal);
+
+    internal bool IsSnsReplayProtectionConfigured() =>
+        RequireSnsSignatureVerification && EnableSnsReplayProtection;
+
+    internal int GetSnsReplayRetentionSeconds() =>
+        Math.Clamp(SnsReplayRetentionSeconds, 1, 86_400);
+
+    internal int GetSnsReplayCacheLimit() =>
+        Math.Clamp(SnsReplayCacheLimit, 1, 1_000_000);
 
     private static int ParseInt32(string? value, int defaultValue)
     {

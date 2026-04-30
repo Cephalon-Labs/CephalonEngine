@@ -191,6 +191,8 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.True(resultDocument.RootElement.GetProperty("snsSignatureVerificationRequired").GetBoolean());
         Assert.True(resultDocument.RootElement.GetProperty("snsSignatureVerified").GetBoolean());
         Assert.Equal("verified", resultDocument.RootElement.GetProperty("snsSignatureVerificationOutcome").GetString());
+        Assert.True(resultDocument.RootElement.GetProperty("snsReplayProtectionEnabled").GetBoolean());
+        Assert.Equal("recorded", resultDocument.RootElement.GetProperty("snsReplayProtectionOutcome").GetString());
 
         var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
         Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
@@ -201,6 +203,11 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal(SnsTopicArn, invitation.Metadata["amazonSesSnsSignatureTopicArn"]);
         Assert.Equal("sns-message-308", invitation.Metadata["amazonSesSnsSignatureMessageId"]);
         Assert.StartsWith("sha256:", invitation.Metadata["amazonSesSnsSignatureFingerprint"], StringComparison.Ordinal);
+        Assert.Equal("recorded", invitation.Metadata["amazonSesSnsReplayProtection"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["amazonSesSnsReplayProtectionOwnership"]);
+        Assert.Equal("process-local", invitation.Metadata["amazonSesSnsReplayProtectionScope"]);
+        Assert.Equal("topic-arn+message-id", invitation.Metadata["amazonSesSnsReplayProtectionKey"]);
+        Assert.StartsWith("sha256:", invitation.Metadata["amazonSesSnsReplayProtectionFingerprint"], StringComparison.Ordinal);
 
         var technologyCatalog = app.Services.GetRequiredService<ITechnologyRuntimeCatalog>();
         var surface = Assert.Single(
@@ -211,6 +218,56 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal("true", entry.Metadata["amazonSesSnsSignatureVerificationRequired"]);
         Assert.Equal("true", entry.Metadata["amazonSesSnsSignatureVersion2Required"]);
         Assert.Equal("1", entry.Metadata["amazonSesSnsAllowedTopicArnCount"]);
+        Assert.Equal("cephalon-managed", entry.Metadata["amazonSesSnsReplayProtectionOwnership"]);
+        Assert.Equal("true", entry.Metadata["amazonSesSnsReplayProtectionConfigured"]);
+        Assert.Equal("process-local", entry.Metadata["amazonSesSnsReplayProtectionScope"]);
+        Assert.Equal("topic-arn+message-id", entry.Metadata["amazonSesSnsReplayProtectionKey"]);
+    }
+
+    [Fact]
+    public async Task AmazonSesSnsStatusCallbackRejectsDuplicateVerifiedSnsMessageInsideReplayWindow()
+    {
+        using var rsa = RSA.Create(2048);
+        using var certificate = CreateSigningCertificate(rsa);
+        await using var app = await CreateAppAsync(
+            configureEndpoint: options =>
+            {
+                options.RequireStatusCallbackAuthorization = false;
+                options.RequireSnsSignatureVerification = true;
+                options.AllowedSnsTopicArns = [SnsTopicArn];
+                options.PinnedSnsSigningCertificatePem = certificate.ExportCertificatePem();
+                options.ValidateSnsSigningCertificateChain = false;
+            });
+        var client = app.GetTestClient();
+        var payload = CreateSignedSnsNotificationPayload(
+            rsa,
+            snsMessageId: "sns-message-309-replay",
+            sesMessageId: "ses-message-307",
+            eventType: "Delivery",
+            eventBody:
+            """
+            "delivery": {
+              "timestamp": "2026-04-30T04:18:00.000Z",
+              "smtpResponse": "250 2.6.0 Message received"
+            }
+            """);
+
+        using var firstResponse = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(payload));
+        using var secondResponse = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(payload));
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
+        using var secondResultDocument = JsonDocument.Parse(await secondResponse.Content.ReadAsStringAsync());
+        Assert.Equal("Amazon SES SNS callback replay was rejected.", secondResultDocument.RootElement.GetProperty("title").GetString());
+
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
+        Assert.Equal("recorded", invitation.Metadata["amazonSesSnsReplayProtection"]);
+        Assert.Single(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
     }
 
     [Fact]
