@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -30,10 +31,10 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
     /// <returns>The same endpoint route builder for fluent routing composition.</returns>
     /// <remarks>
     /// The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the
-    /// host-agnostic <see cref="ITenantInvitationDeliveryStatusReconciler" />. SNS subscription confirmation,
-    /// durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack
-    /// responsibilities. When configured, the endpoint verifies the SNS message signature before translation and skips
-    /// duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
+    /// host-agnostic <see cref="ITenantInvitationDeliveryStatusReconciler" />. Durable inboxing, distributed replay
+    /// protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured,
+    /// the endpoint verifies the SNS message signature before translation, confirms verified SNS subscription requests,
+    /// and skips duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
     /// </remarks>
     public static IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)
     {
@@ -55,12 +56,13 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                     AmazonSesSnsDeliveryStatusMapper mapper,
                     AmazonSesSnsSignatureVerifier signatureVerifier,
                     AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+                    IAmazonSesSnsSubscriptionConfirmationClient subscriptionConfirmationClient,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
                     ITenantInvitationDeliveryStatusObservationStore observationStore,
                     MultiTenancyGovernanceOptions governanceOptions,
                     ILoggerFactory loggerFactory,
                     CancellationToken cancellationToken) =>
-                    TranslateCallbackAsync(context, mapper, signatureVerifier, replayGuard, reconciler, observationStore, governanceOptions, loggerFactory, options, routePattern, cancellationToken))
+                    TranslateCallbackAsync(context, mapper, signatureVerifier, replayGuard, subscriptionConfirmationClient, reconciler, observationStore, governanceOptions, loggerFactory, options, routePattern, cancellationToken))
             .WithName("CephalonAmazonSesInvitationDeliveryStatusCallback")
             .Accepts<JsonElement>("application/json")
             .Produces<AmazonSesInvitationDeliveryStatusCallbackResult>(StatusCodes.Status200OK)
@@ -68,6 +70,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status413PayloadTooLarge)
+            .ProducesProblem(StatusCodes.Status502BadGateway)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         if (options.ExcludeStatusCallbackEndpointFromDescription)
@@ -99,7 +102,9 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 options.IsSnsReplayProtectionConfigured(),
                 options.GetSnsReplayRetentionSeconds(),
                 options.GetSnsReplayCacheLimit(),
-                options.IsSnsMessageIdIdempotencyConfigured());
+                options.IsSnsMessageIdIdempotencyConfigured(),
+                options.IsSnsSubscriptionConfirmationConfigured(),
+                options.GetSnsSubscriptionConfirmationTimeout());
 
         return endpoints;
     }
@@ -109,6 +114,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         AmazonSesSnsDeliveryStatusMapper mapper,
         AmazonSesSnsSignatureVerifier signatureVerifier,
         AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        IAmazonSesSnsSubscriptionConfirmationClient subscriptionConfirmationClient,
         ITenantInvitationDeliveryStatusReconciler reconciler,
         ITenantInvitationDeliveryStatusObservationStore observationStore,
         MultiTenancyGovernanceOptions governanceOptions,
@@ -155,6 +161,21 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                     title: "Amazon SES SNS signature verification failed.",
                     detail: signatureVerification.Detail,
                     statusCode: signatureVerification.FailureStatusCode.Value);
+            }
+
+            var subscriptionConfirmation = await TryConfirmSnsSubscriptionAsync(
+                    document.RootElement,
+                    signatureVerification,
+                    replayGuard,
+                    subscriptionConfirmationClient,
+                    logger,
+                    options,
+                    routePattern,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            if (subscriptionConfirmation.Handled)
+            {
+                return subscriptionConfirmation.Result!;
             }
 
             var eventMappings = mapper.MapPayload(document.RootElement);
@@ -276,6 +297,133 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
 
             return Results.Json(result, SerializerOptions);
         }
+    }
+
+    private static async Task<SnsSubscriptionConfirmationHandlingResult> TryConfirmSnsSubscriptionAsync(
+        JsonElement root,
+        AmazonSesSnsSignatureVerificationResult signatureVerification,
+        AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        IAmazonSesSnsSubscriptionConfirmationClient subscriptionConfirmationClient,
+        ILogger logger,
+        AmazonSesInvitationDeliveryAspNetCoreOptions options,
+        string routePattern,
+        CancellationToken cancellationToken)
+    {
+        if (!IsSnsSubscriptionConfirmation(root))
+        {
+            return SnsSubscriptionConfirmationHandlingResult.NotHandled();
+        }
+
+        if (!options.EnableSnsSubscriptionConfirmation)
+        {
+            return SnsSubscriptionConfirmationHandlingResult.NotHandled();
+        }
+
+        if (!options.IsSnsSubscriptionConfirmationConfigured() || !signatureVerification.Verified)
+        {
+            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+                title: "Amazon SES SNS subscription confirmation is not safely configured.",
+                detail: "Enable SNS signature verification and allow-list the expected topic before enabling automatic subscription confirmation.",
+                statusCode: StatusCodes.Status500InternalServerError));
+        }
+
+        if (!TryReadString(root, "TopicArn", out var topicArn) ||
+            !TryReadString(root, "MessageId", out var messageId) ||
+            !TryReadString(root, "Token", out var token) ||
+            !TryReadString(root, "Timestamp", out var timestamp) ||
+            !TryReadString(root, "SubscribeURL", out var subscribeUrlValue))
+        {
+            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+                title: "Amazon SES SNS subscription confirmation is invalid.",
+                detail: "A verified SNS subscription-confirmation envelope must include TopicArn, MessageId, Token, Timestamp, and SubscribeURL.",
+                statusCode: StatusCodes.Status400BadRequest));
+        }
+
+        if (!TryCreateTrustedSnsSubscribeUrl(subscribeUrlValue, out var subscribeUrl, out var urlOutcome))
+        {
+            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+                title: "Amazon SES SNS subscription confirmation URL is not trusted.",
+                detail: $"The SubscribeURL failed the configured HTTPS Amazon SNS confirmation policy: {urlOutcome}.",
+                statusCode: StatusCodes.Status400BadRequest));
+        }
+
+        var replayProtection = RecordSnsReplayProtection(options, replayGuard, signatureVerification);
+        if (replayProtection.Failure is not null)
+        {
+            AmazonSesInvitationDeliveryAspNetCoreLogs.CallbackReplayRejected(logger, replayProtection.Outcome);
+            return SnsSubscriptionConfirmationHandlingResult.FromResult(replayProtection.Failure);
+        }
+
+        AmazonSesSnsSubscriptionConfirmationResult confirmation;
+        try
+        {
+            confirmation = await subscriptionConfirmationClient
+                .ConfirmAsync(
+                    new AmazonSesSnsSubscriptionConfirmationRequest(
+                        topicArn,
+                        messageId,
+                        token,
+                        subscribeUrl,
+                        timestamp),
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested &&
+            ex is HttpRequestException or InvalidOperationException or TaskCanceledException)
+        {
+            ForgetSnsReplayProtection(replayGuard, replayProtection);
+            AmazonSesInvitationDeliveryAspNetCoreLogs.SubscriptionConfirmationFailed(logger, messageId, "client-failed");
+            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+                title: "Amazon SES SNS subscription confirmation failed.",
+                detail: "The configured SNS subscription-confirmation client could not complete the provider confirmation request.",
+                statusCode: StatusCodes.Status502BadGateway));
+        }
+
+        if (!confirmation.Succeeded)
+        {
+            ForgetSnsReplayProtection(replayGuard, replayProtection);
+            AmazonSesInvitationDeliveryAspNetCoreLogs.SubscriptionConfirmationFailed(logger, messageId, confirmation.Outcome);
+            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+                title: "Amazon SES SNS subscription confirmation failed.",
+                detail: confirmation.Reason,
+                statusCode: StatusCodes.Status502BadGateway));
+        }
+
+        AmazonSesInvitationDeliveryAspNetCoreLogs.SubscriptionConfirmationConfirmed(logger, messageId, confirmation.Outcome);
+        var result = new AmazonSesInvitationDeliveryStatusCallbackResult(
+            routePattern,
+            totalEvents: 1,
+            translatedEvents: 0,
+            reconciledEvents: 0,
+            skippedEvents: 1,
+            deniedEvents: 0,
+            snsSignatureVerificationRequired: signatureVerification.Configured,
+            snsSignatureVerified: signatureVerification.Verified,
+            snsSignatureVerificationOutcome: signatureVerification.Outcome,
+            events:
+            [
+                new AmazonSesInvitationDeliveryStatusCallbackEventResult(
+                    index: 0,
+                    snsMessageId: messageId,
+                    snsMessageType: "SubscriptionConfirmation",
+                    amazonSesMessageId: null,
+                    amazonSesEventType: null,
+                    tenantId: null,
+                    invitationId: null,
+                    status: null,
+                    outcome: "subscription-confirmed",
+                    translated: false,
+                    reconciled: false,
+                    reason: confirmation.Reason)
+            ],
+            snsReplayProtectionEnabled: replayProtection.Configured,
+            snsReplayProtectionOutcome: replayProtection.Outcome,
+            snsSubscriptionConfirmationEnabled: true,
+            snsSubscriptionConfirmationOutcome: confirmation.Outcome,
+            subscriptionConfirmationAttempts: 1,
+            subscriptionConfirmationsSucceeded: 1);
+
+        return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Json(result, SerializerOptions));
     }
 
     private static async Task<CallbackRequestBodyReadResult> ReadRequestBodyAsync(
@@ -579,6 +727,129 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
+    }
+
+    private static bool IsSnsSubscriptionConfirmation(JsonElement root) =>
+        TryReadString(root, "Type", out var messageType) &&
+        string.Equals(messageType, "SubscriptionConfirmation", StringComparison.Ordinal);
+
+    private static bool TryReadString(JsonElement root, string propertyName, out string value)
+    {
+        value = string.Empty;
+        if (root.ValueKind != JsonValueKind.Object ||
+            !root.TryGetProperty(propertyName, out var property) ||
+            property.ValueKind != JsonValueKind.String)
+        {
+            return false;
+        }
+
+        var raw = property.GetString();
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return false;
+        }
+
+        value = raw.Trim();
+        return true;
+    }
+
+    private static bool TryCreateTrustedSnsSubscribeUrl(string value, out Uri subscribeUrl, out string outcome)
+    {
+        subscribeUrl = null!;
+        if (!Uri.TryCreate(value.Trim(), UriKind.Absolute, out var parsed))
+        {
+            outcome = "subscribe-url-invalid";
+            return false;
+        }
+
+        if (!string.Equals(parsed.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+        {
+            outcome = "subscribe-url-not-https";
+            return false;
+        }
+
+        if (!IsTrustedSnsEndpointHost(parsed.IdnHost.ToLowerInvariant()))
+        {
+            outcome = "subscribe-url-host-untrusted";
+            return false;
+        }
+
+        if (!string.Equals(parsed.AbsolutePath, "/", StringComparison.Ordinal) ||
+            !string.IsNullOrEmpty(parsed.Fragment))
+        {
+            outcome = "subscribe-url-path-untrusted";
+            return false;
+        }
+
+        if (!ContainsConfirmSubscriptionAction(parsed.Query))
+        {
+            outcome = "subscribe-url-action-untrusted";
+            return false;
+        }
+
+        subscribeUrl = parsed;
+        outcome = "verified";
+        return true;
+    }
+
+    private static bool ContainsConfirmSubscriptionAction(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return false;
+        }
+
+        var trimmed = query[0] == '?' ? query[1..] : query;
+        foreach (var pair in trimmed.Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var separatorIndex = pair.IndexOf('=', StringComparison.Ordinal);
+            if (separatorIndex <= 0)
+            {
+                continue;
+            }
+
+            var key = Uri.UnescapeDataString(pair[..separatorIndex]);
+            var value = Uri.UnescapeDataString(pair[(separatorIndex + 1)..]);
+            if (string.Equals(key, "Action", StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(value, "ConfirmSubscription", StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsTrustedSnsEndpointHost(string host)
+    {
+        const string AmazonAwsSuffix = ".amazonaws.com";
+        const string AmazonAwsChinaSuffix = ".amazonaws.com.cn";
+
+        return IsSingleRegionSnsHost(host, AmazonAwsSuffix) ||
+            IsSingleRegionSnsHost(host, AmazonAwsChinaSuffix);
+
+        static bool IsSingleRegionSnsHost(string host, string suffix)
+        {
+            if (!host.StartsWith("sns.", StringComparison.Ordinal) ||
+                !host.EndsWith(suffix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            var region = host["sns.".Length..^suffix.Length];
+            return region.Length > 0 &&
+                region.IndexOf('.', StringComparison.Ordinal) < 0 &&
+                region.Count(static character => character == '-') >= 2 &&
+                char.IsAsciiDigit(region[^1]) &&
+                region.All(static character => char.IsAsciiLetterLower(character) || char.IsAsciiDigit(character) || character == '-');
+        }
+    }
+
+    private sealed record SnsSubscriptionConfirmationHandlingResult(bool Handled, IResult? Result)
+    {
+        public static SnsSubscriptionConfirmationHandlingResult NotHandled() => new(false, null);
+
+        public static SnsSubscriptionConfirmationHandlingResult FromResult(IResult result) => new(true, result);
     }
 
     private sealed record SnsReplayProtectionResult(

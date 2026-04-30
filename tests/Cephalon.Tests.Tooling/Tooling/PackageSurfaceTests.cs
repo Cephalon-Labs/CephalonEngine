@@ -1418,7 +1418,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions),
             typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryStatusCallbackEventResult),
             typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryStatusCallbackResult),
-            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions));
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services.AmazonSesSnsSubscriptionConfirmationRequest),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services.AmazonSesSnsSubscriptionConfirmationResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services.IAmazonSesSnsSubscriptionConfirmationClient));
     }
 
     [Fact]

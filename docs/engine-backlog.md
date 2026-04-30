@@ -2339,7 +2339,7 @@ Issue: #822
 Why:
 
 - after `ENG-306`, the SES sender could capture accepted handoff truth, but operators still needed a first-party way to translate SES event publishing callbacks without writing host glue around the governance reconciler
-- the narrow owned proof is SNS-wrapped Amazon SES event payload translation into the existing delivery-status reconciler; it is not SNS signature verification, subscription confirmation automation, SES event-destination setup, provider polling, durable inboxing, distributed replay, or exactly-once delivery
+- the narrow owned proof is SNS-wrapped Amazon SES event payload translation into the existing delivery-status reconciler; it is not SNS signature verification, verified subscription confirmation, SES event-destination setup, provider polling, durable inboxing, distributed replay, or exactly-once delivery
 
 Delivered:
 
@@ -2351,7 +2351,7 @@ Delivered:
 
 Follow-up later:
 
-- SNS signature verification now ships separately through `ENG-308`; process-local SNS replay protection now ships separately through `ENG-309`; observation-store-backed SNS message-id idempotency now ships separately through `ENG-310`; SNS subscription confirmation automation, SES configuration-set event destination setup, SNS topic/subscription creation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
+- SNS signature verification now ships separately through `ENG-308`; process-local SNS replay protection now ships separately through `ENG-309`; observation-store-backed SNS message-id idempotency now ships separately through `ENG-310`; verified SNS subscription confirmation now ships separately through `ENG-311`; SES configuration-set event destination setup, SNS topic/subscription creation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
 
 ### ENG-308 Multi-tenancy invitation delivery Amazon SES SNS signature verification baseline
 
@@ -2363,7 +2363,7 @@ Why:
 
 - after `ENG-307`, Amazon SES over SNS callbacks could translate delivery events, but the endpoint still lacked a managed SNS signature-verification path
 - AWS recommends verifying SNS signatures before processing HTTP(S) notifications or confirmation messages and rejecting unexpected `TopicArn` values
-- the narrow owned proof is opt-in SNS envelope verification before translation; it is not subscription confirmation automation, SES event-destination setup, provider polling, durable inboxing, distributed replay, or exactly-once delivery
+- the narrow owned proof is opt-in SNS envelope verification before translation; it is not verified subscription confirmation, SES event-destination setup, provider polling, durable inboxing, distributed replay, or exactly-once delivery
 
 Delivered:
 
@@ -2374,7 +2374,7 @@ Delivered:
 
 Follow-up later:
 
-- process-local SNS replay protection now ships separately through `ENG-309`; observation-store-backed SNS message-id idempotency now ships separately through `ENG-310`; SNS subscription confirmation automation, SES configuration-set event destination setup, SNS topic/subscription creation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
+- process-local SNS replay protection now ships separately through `ENG-309`; observation-store-backed SNS message-id idempotency now ships separately through `ENG-310`; verified SNS subscription confirmation now ships separately through `ENG-311`; SES configuration-set event destination setup, SNS topic/subscription creation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
 
 ### ENG-309 Multi-tenancy invitation delivery Amazon SES SNS replay protection baseline
 
@@ -2386,7 +2386,7 @@ Why:
 
 - after `ENG-308`, Amazon SES over SNS callbacks could require SNS signature verification before translation, but a verified SNS message could still be replayed inside the same process window
 - Amazon SNS `Notification` envelopes carry stable `TopicArn` and `MessageId` values, which gives Cephalon a bounded process-local replay key without claiming distributed exactly-once delivery
-- the narrow owned proof is process-local replay rejection for verified SNS callbacks before reconciliation; it is not subscription confirmation automation, SES event-destination setup, provider polling, durable inboxing, distributed replay, or exactly-once delivery
+- the narrow owned proof is process-local replay rejection for verified SNS callbacks before reconciliation; it is not verified subscription confirmation, SES event-destination setup, provider polling, durable inboxing, distributed replay, or exactly-once delivery
 
 Delivered:
 
@@ -2397,7 +2397,7 @@ Delivered:
 
 Follow-up later:
 
-- observation-store-backed SNS message-id idempotency now ships separately through `ENG-310`; SNS subscription confirmation automation, SES configuration-set event destination setup, SNS topic/subscription creation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
+- observation-store-backed SNS message-id idempotency now ships separately through `ENG-310`; verified SNS subscription confirmation now ships separately through `ENG-311`; SES configuration-set event destination setup, SNS topic/subscription creation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
 
 ### ENG-310 Multi-tenancy invitation delivery Amazon SES SNS message-id idempotency baseline
 
@@ -2420,7 +2420,30 @@ Delivered:
 
 Follow-up later:
 
-- SNS subscription confirmation automation, SES configuration-set event destination setup, SNS topic/subscription creation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
+- SNS topic/subscription creation, SES configuration-set event destination setup, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
+
+### ENG-311 Multi-tenancy invitation delivery Amazon SES SNS subscription confirmation baseline
+
+Status: done
+Estimate: 5
+Issue: #826
+
+Why:
+
+- after `ENG-310`, the Amazon SES over SNS callback adapter could verify SNS signatures, reject process-local replays, and skip duplicate notification `MessageId` observations, but hosts still had to manually confirm SNS HTTP subscriptions outside the engine
+- SNS `SubscriptionConfirmation` envelopes use the same signed Amazon SNS envelope model, so Cephalon can own a narrow opt-in confirmation lane without claiming topic/subscription creation, SES event-destination setup, durable inboxing, or subscription lifecycle governance
+
+Delivered:
+
+- add `EnableSnsSubscriptionConfirmation` and `SnsSubscriptionConfirmationTimeoutSeconds` to `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`
+- confirm only verified SNS `SubscriptionConfirmation` envelopes from allowed topics after SNS signature verification succeeds
+- add replaceable `IAmazonSesSnsSubscriptionConfirmationClient` plus default bounded no-redirect HTTPS Amazon SNS `SubscribeURL` confirmation client
+- return subscription-confirmation aggregate fields on `AmazonSesInvitationDeliveryStatusCallbackResult`, emit diagnostics `4582-4583`, and project subscription-confirmation ownership/policy/timeout posture through `tenant-invitation-delivery-amazon-ses-status-callbacks`
+- update component docs, operations guidance, compatibility, maturity-audit ownership, roadmap/backlog/project-memory truth, generated reference docs, GitHub tracking, and focused composition/tooling coverage
+
+Follow-up later:
+
+- SNS topic/subscription creation, SES configuration-set event destination setup, subscription lifecycle governance, provider polling, durable callback inboxes, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, and distributed/provider-backed governance stores remain future governance slices until a package truly owns those paths
 
 ## Completed foundation work
 

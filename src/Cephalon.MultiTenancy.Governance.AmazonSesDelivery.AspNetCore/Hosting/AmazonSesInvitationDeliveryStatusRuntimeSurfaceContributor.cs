@@ -40,9 +40,14 @@ internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor
         var snsMessageIdIdempotencyConfigured =
             (endpoint?.SnsMessageIdIdempotencyConfigured ?? options.IsSnsMessageIdIdempotencyConfigured()) &&
             observationStoreConfigured;
+        var snsSubscriptionConfirmationConfigured =
+            endpoint?.SnsSubscriptionConfirmationConfigured ?? options.IsSnsSubscriptionConfirmationConfigured();
+        var snsSubscriptionConfirmationTimeoutSeconds =
+            (int)(endpoint?.SnsSubscriptionConfirmationTimeout ?? options.GetSnsSubscriptionConfirmationTimeout()).TotalSeconds;
         var signatureVerificationOwnership = requireSnsSignatureVerification ? "cephalon-managed" : "not-configured";
         var replayProtectionOwnership = snsReplayProtectionConfigured ? "cephalon-managed" : "not-configured";
         var messageIdIdempotencyOwnership = snsMessageIdIdempotencyConfigured ? "cephalon-managed" : "not-configured";
+        var subscriptionConfirmationOwnership = snsSubscriptionConfirmationConfigured ? "cephalon-managed" : "application-managed";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -63,7 +68,13 @@ internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor
             ["tenantInvitationDeliveryStatusCallbackEndpointOwnership"] = endpointOwnership,
             ["amazonSesSnsTranslationOwnership"] = endpointOwnership,
             ["amazonSesSnsInboxOwnership"] = "application-managed",
-            ["amazonSesSnsSubscriptionConfirmationOwnership"] = "application-managed",
+            ["amazonSesSnsSubscriptionConfirmationConfigured"] = snsSubscriptionConfirmationConfigured.ToString().ToLowerInvariant(),
+            ["amazonSesSnsSubscriptionConfirmationOwnership"] = subscriptionConfirmationOwnership,
+            ["amazonSesSnsSubscriptionConfirmationRequiresSignature"] = "true",
+            ["amazonSesSnsSubscriptionConfirmationHttpMethod"] = "GET",
+            ["amazonSesSnsSubscriptionConfirmationUrlPolicy"] = snsSubscriptionConfirmationConfigured ? "https-sns-confirm-subscription" : "not-configured",
+            ["amazonSesSnsSubscriptionConfirmationTimeoutSeconds"] = snsSubscriptionConfirmationTimeoutSeconds.ToString(CultureInfo.InvariantCulture),
+            ["amazonSesSnsSubscriptionConfirmationClient"] = "IAmazonSesSnsSubscriptionConfirmationClient",
             ["amazonSesSnsSignatureVerificationOwnership"] = signatureVerificationOwnership,
             ["amazonSesSnsSignatureVerificationRequired"] = requireSnsSignatureVerification.ToString().ToLowerInvariant(),
             ["amazonSesSnsSignatureVersion2Required"] = requireSnsSignatureVersion2.ToString().ToLowerInvariant(),
@@ -171,7 +182,9 @@ internal sealed class AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog
         bool snsReplayProtectionConfigured,
         int snsReplayRetentionSeconds,
         int snsReplayCacheLimit,
-        bool snsMessageIdIdempotencyConfigured)
+        bool snsMessageIdIdempotencyConfigured,
+        bool snsSubscriptionConfirmationConfigured,
+        TimeSpan snsSubscriptionConfirmationTimeout)
     {
         lock (syncRoot)
         {
@@ -195,7 +208,9 @@ internal sealed class AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog
                 snsReplayProtectionConfigured,
                 snsReplayRetentionSeconds,
                 snsReplayCacheLimit,
-                snsMessageIdIdempotencyConfigured);
+                snsMessageIdIdempotencyConfigured,
+                snsSubscriptionConfirmationConfigured,
+                snsSubscriptionConfirmationTimeout);
         }
     }
 }
@@ -220,4 +235,6 @@ internal sealed record AmazonSesInvitationDeliveryStatusCallbackEndpointRuntimeS
     bool SnsReplayProtectionConfigured,
     int SnsReplayRetentionSeconds,
     int SnsReplayCacheLimit,
-    bool SnsMessageIdIdempotencyConfigured);
+    bool SnsMessageIdIdempotencyConfigured,
+    bool SnsSubscriptionConfirmationConfigured,
+    TimeSpan SnsSubscriptionConfirmationTimeout);

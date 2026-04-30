@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-30T06:05:10.3519187+00:00",
+  "GeneratedAtUtc": "2026-04-30T06:38:13.6073745+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -247,8 +247,8 @@
       "Category": "Phase 13 Companion Packs",
       "Description": "ASP.NET Core Amazon SES over SNS callback translation companion package for Cephalon multi-tenancy governance workloads.",
       "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
-      "NamespaceCount": 2,
-      "TypeCount": 5
+      "NamespaceCount": 3,
+      "TypeCount": 8
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -1356,6 +1356,13 @@
       "TypeCount": 4
     },
     {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services",
+      "TypeCount": 3
+    },
+    {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
       "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
@@ -2299,7 +2306,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 23,
+        "Properties": 25,
         "Methods": 1
       }
     },
@@ -2313,7 +2320,7 @@
       "Summary": "Registers ASP.NET Core Amazon SES over SNS callback translation services for tenant-invitation delivery status callbacks.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 0,
+        "Fields": 1,
         "Properties": 0,
         "Methods": 1
       }
@@ -2404,7 +2411,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 13,
+        "Properties": 17,
         "Methods": 0
       }
     },
@@ -2420,6 +2427,36 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AmazonSesSnsSubscriptionConfirmationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest",
+      "Declaration": "public sealed class AmazonSesSnsSubscriptionConfirmationRequest",
+      "Summary": "Describes a verified Amazon SNS subscription-confirmation request received by the Amazon SES callback adapter.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult",
+      "Declaration": "public sealed class AmazonSesSnsSubscriptionConfirmationResult",
+      "Summary": "Represents the result of confirming an Amazon SNS subscription for Amazon SES callbacks.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
         "Methods": 1
       }
     },
@@ -9181,6 +9218,21 @@
       "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-services-iamazonsesinvitationdeliveryclient",
       "Declaration": "public interface IAmazonSesInvitationDeliveryClient",
       "Summary": "Sends Amazon SES invitation delivery messages for the Amazon SES companion pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IAmazonSesSnsSubscriptionConfirmationClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-iamazonsessnssubscriptionconfirmationclient",
+      "Declaration": "public interface IAmazonSesSnsSubscriptionConfirmationClient",
+      "Summary": "Confirms Amazon SNS subscriptions for the Amazon SES callback adapter.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -23860,8 +23912,8 @@
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
-      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string-system-int32",
-      "Signature": "AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList\u003CAmazonSesInvitationDeliveryStatusCallbackEventResult\u003E events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome, int duplicateEvents)",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string-system-int32-system-boolean-system-string-system-int32-system-int32",
+      "Signature": "AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList\u003CAmazonSesInvitationDeliveryStatusCallbackEventResult\u003E events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome, int duplicateEvents, bool snsSubscriptionConfirmationEnabled, string snsSubscriptionConfirmationOutcome, int subscriptionConfirmationAttempts, int subscriptionConfirmationsSucceeded)",
       "Summary": "Creates an Amazon SES callback translation response."
     },
     {
@@ -23874,6 +23926,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-amazonsesmessageid",
       "Signature": "string AmazonSesMessageId { get; }",
       "Summary": "Gets the Amazon SES message identifier when supplied."
+    },
+    {
+      "DisplayName": "AmazonSesSnsSubscriptionConfirmationRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-ctor-system-string-system-string-system-string-system-uri-system-string",
+      "Signature": "AmazonSesSnsSubscriptionConfirmationRequest(string topicArn, string messageId, string token, Uri subscribeUrl, string timestamp)",
+      "Summary": "Initializes a new instance of the \u0060AmazonSesSnsSubscriptionConfirmationRequest\u0060 class."
+    },
+    {
+      "DisplayName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-ctor-system-boolean-system-string-system-string-system-nullable-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AmazonSesSnsSubscriptionConfirmationResult(bool succeeded, string outcome, string reason, int? statusCode, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Initializes a new instance of the \u0060AmazonSesSnsSubscriptionConfirmationResult\u0060 class."
     },
     {
       "DisplayName": "AntiCorruptionLayer",
@@ -36348,6 +36422,28 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-configuretopology",
       "Signature": "Action\u003CIBehaviorTopologyBuilder\u003E ConfigureTopology { get; }",
       "Summary": "Gets the optional topology callback supplied by the owning module."
+    },
+    {
+      "DisplayName": "ConfirmAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAmazonSesSnsSubscriptionConfirmationClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-iamazonsessnssubscriptionconfirmationclient-confirmasync-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CAmazonSesSnsSubscriptionConfirmationResult\u003E ConfirmAsync(AmazonSesSnsSubscriptionConfirmationRequest request, CancellationToken cancellationToken)",
+      "Summary": "Confirms one verified SNS subscription-confirmation envelope."
+    },
+    {
+      "DisplayName": "Confirmed",
+      "Category": "Methods",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-confirmed-system-nullable-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AmazonSesSnsSubscriptionConfirmationResult Confirmed(int? statusCode, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a successful SNS subscription-confirmation result."
     },
     {
       "DisplayName": "Conflict",
@@ -49798,6 +49894,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablesnsreplayprotection",
       "Signature": "bool EnableSnsReplayProtection { get; set; }",
       "Summary": "Gets or sets a value indicating whether verified SNS callbacks should be protected against replay inside the current process."
+    },
+    {
+      "DisplayName": "EnableSnsSubscriptionConfirmation",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablesnssubscriptionconfirmation",
+      "Signature": "bool EnableSnsSubscriptionConfirmation { get; set; }",
+      "Summary": "Gets or sets a value indicating whether verified SNS subscription-confirmation messages should be confirmed by the callback endpoint."
     },
     {
       "DisplayName": "EnableStatusCallbackEndpoint",
@@ -65059,6 +65166,17 @@
     {
       "DisplayName": "HttpClientName",
       "Category": "Fields",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliveryaspnetcoreservicecollectionextensions-httpclientname",
+      "Signature": "const string HttpClientName",
+      "Summary": "Gets the named HTTP client used by the default Amazon SNS subscription-confirmation client."
+    },
+    {
+      "DisplayName": "HttpClientName",
+      "Category": "Fields",
       "DeclaringTypeName": "HttpInvitationDeliveryServiceCollectionExtensions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
@@ -79931,6 +80049,17 @@
     {
       "DisplayName": "MessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-messageid",
+      "Signature": "string MessageId { get; }",
+      "Summary": "Gets the SNS message id from the verified envelope."
+    },
+    {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -80301,6 +80430,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional safe client metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets safe provider metadata for operator reporting."
     },
     {
       "DisplayName": "Metadata",
@@ -88745,6 +88885,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-outcome",
       "Signature": "string Outcome { get; }",
       "Summary": "Gets the translation or reconciliation outcome."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable confirmation outcome."
     },
     {
       "DisplayName": "Outcome",
@@ -97928,6 +98079,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-reason",
       "Signature": "string Reason { get; }",
       "Summary": "Gets the operator-facing reason for the event outcome."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets a human-readable reason for the confirmation result."
     },
     {
       "DisplayName": "Reason",
@@ -111272,6 +111434,39 @@
       "Summary": "Gets a value indicating whether the SNS signature verified."
     },
     {
+      "DisplayName": "SnsSubscriptionConfirmationEnabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snssubscriptionconfirmationenabled",
+      "Signature": "bool SnsSubscriptionConfirmationEnabled { get; }",
+      "Summary": "Gets a value indicating whether SNS subscription confirmation was enabled for this callback."
+    },
+    {
+      "DisplayName": "SnsSubscriptionConfirmationOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snssubscriptionconfirmationoutcome",
+      "Signature": "string SnsSubscriptionConfirmationOutcome { get; }",
+      "Summary": "Gets the SNS subscription-confirmation outcome."
+    },
+    {
+      "DisplayName": "SnsSubscriptionConfirmationTimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-snssubscriptionconfirmationtimeoutseconds",
+      "Signature": "int SnsSubscriptionConfirmationTimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the timeout, in seconds, for an enabled SNS subscription-confirmation HTTP request."
+    },
+    {
       "DisplayName": "Solution",
       "Category": "Fields",
       "DeclaringTypeName": "ScaffoldScopes",
@@ -114649,6 +114844,17 @@
     {
       "DisplayName": "StatusCode",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-statuscode",
+      "Signature": "int? StatusCode { get; }",
+      "Summary": "Gets the provider HTTP status code, when one was observed."
+    },
+    {
+      "DisplayName": "StatusCode",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -115747,6 +115953,17 @@
       "Summary": "The version associated with the event subject when available."
     },
     {
+      "DisplayName": "SubscribeUrl",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-subscribeurl",
+      "Signature": "Uri SubscribeUrl { get; }",
+      "Summary": "Gets the signed SNS subscription confirmation URL."
+    },
+    {
       "DisplayName": "Subscription",
       "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionContext",
@@ -115756,6 +115973,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutioncontext-subscription",
       "Signature": "EventSubscriptionDescriptor Subscription { get; }",
       "Summary": "Gets the declared subscription that is currently being executed."
+    },
+    {
+      "DisplayName": "SubscriptionConfirmationAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-subscriptionconfirmationattempts",
+      "Signature": "int SubscriptionConfirmationAttempts { get; }",
+      "Summary": "Gets the number of subscription-confirmation attempts made by this callback."
+    },
+    {
+      "DisplayName": "SubscriptionConfirmationsSucceeded",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-subscriptionconfirmationssucceeded",
+      "Signature": "int SubscriptionConfirmationsSucceeded { get; }",
+      "Summary": "Gets the number of subscription-confirmation attempts that succeeded."
     },
     {
       "DisplayName": "SubscriptionId",
@@ -115899,6 +116138,17 @@
       "AnchorId": "member-m-cephalon-abstractions-agentics-agenttoolexecutionresult-succeeded-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "AgentToolExecutionResult Succeeded(string outputSummary, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a successful execution result."
+    },
+    {
+      "DisplayName": "Succeeded",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-succeeded",
+      "Signature": "bool Succeeded { get; }",
+      "Summary": "Gets a value indicating whether the subscription confirmation succeeded."
     },
     {
       "DisplayName": "Succeeded",
@@ -120158,6 +120408,17 @@
       "Summary": "Initializes a new instance of the \u0060TimeoutSettings\u0060 class."
     },
     {
+      "DisplayName": "Timestamp",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-timestamp",
+      "Signature": "string Timestamp { get; }",
+      "Summary": "Gets the SNS timestamp from the verified envelope, when available."
+    },
+    {
       "DisplayName": "Title",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalAction",
@@ -120347,6 +120608,17 @@
     {
       "DisplayName": "Token",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-token",
+      "Signature": "string Token { get; }",
+      "Summary": "Gets the SNS confirmation token from the verified envelope."
+    },
+    {
+      "DisplayName": "Token",
+      "Category": "Properties",
       "DeclaringTypeName": "NatsDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
@@ -120519,6 +120791,17 @@
       "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-topic",
       "Signature": "string Topic { get; set; }",
       "Summary": "Gets or sets the optional topic name that should be present in returned cluster metadata."
+    },
+    {
+      "DisplayName": "TopicArn",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationRequest",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-topicarn",
+      "Signature": "string TopicArn { get; }",
+      "Summary": "Gets the SNS topic ARN from the verified envelope."
     },
     {
       "DisplayName": "TopicName",

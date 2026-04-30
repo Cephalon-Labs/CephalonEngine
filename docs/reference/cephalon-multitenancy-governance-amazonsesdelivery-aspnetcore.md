@@ -7,6 +7,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 - `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration`
 - `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting`
+- `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services`
 
 <a id="namespace-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration"></a>
 
@@ -18,7 +19,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures ASP.NET Core Amazon SES over SNS callback translation for tenant-invitation delivery status updates.
 
-Remarks: This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription creation, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can verify the Amazon SNS message signature before translation and skip duplicate SNS message identifiers already recorded by the Cephalon delivery-status observation store.
+Remarks: This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription creation beyond optionally confirming signed subscription-confirmation callbacks, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can verify the Amazon SNS message signature before translation, confirm verified SNS subscription requests, and skip duplicate SNS message identifiers already recorded by the Cephalon delivery-status observation store.
 
 #### Declaration
 ```csharp
@@ -94,6 +95,18 @@ bool EnableSnsReplayProtection { get; set; }
 Gets or sets a value indicating whether verified SNS callbacks should be protected against replay inside the current process.
 
 Remarks: Replay protection is active only when `RequireSnsSignatureVerification` is enabled and the SNS envelope verifies successfully. The built-in guard stores bounded fingerprints derived from `TopicArn` and `MessageId` in memory and does not claim distributed replay protection or durable callback inbox ownership.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablesnssubscriptionconfirmation"></a>
+
+##### `EnableSnsSubscriptionConfirmation`
+
+```csharp
+bool EnableSnsSubscriptionConfirmation { get; set; }
+```
+
+Gets or sets a value indicating whether verified SNS subscription-confirmation messages should be confirmed by the callback endpoint.
+
+Remarks: This option is disabled by default. When enabled, the endpoint only confirms `SubscriptionConfirmation` envelopes after SNS signature verification has succeeded. It does not create SNS topics, configure SES event destinations, own subscription lifecycle governance, or store confirmation tokens.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablestatuscallbackendpoint"></a>
 
@@ -255,6 +268,18 @@ Gets or sets the process-local retention window, in seconds, for verified SNS ca
 
 Remarks: The endpoint clamps the effective retention to at least one second. The default is five minutes.
 
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-snssubscriptionconfirmationtimeoutseconds"></a>
+
+##### `SnsSubscriptionConfirmationTimeoutSeconds`
+
+```csharp
+int SnsSubscriptionConfirmationTimeoutSeconds { get; set; }
+```
+
+Gets or sets the timeout, in seconds, for an enabled SNS subscription-confirmation HTTP request.
+
+Remarks: The effective timeout is clamped between one second and five minutes.
+
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-source"></a>
 
 ##### `Source`
@@ -331,6 +356,18 @@ Registers ASP.NET Core Amazon SES over SNS callback translation services for ten
 ```csharp
 public static class AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions
 ```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliveryaspnetcoreservicecollectionextensions-httpclientname"></a>
+
+##### `HttpClientName`
+
+```csharp
+const string HttpClientName
+```
+
+Gets the named HTTP client used by the default Amazon SNS subscription-confirmation client.
 
 #### Methods
 
@@ -523,12 +560,12 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string-system-int32"></a>
+<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string-system-int32-system-boolean-system-string-system-int32-system-int32"></a>
 
 ##### `AmazonSesInvitationDeliveryStatusCallbackResult`
 
 ```csharp
-AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome, int duplicateEvents)
+AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome, int duplicateEvents, bool snsSubscriptionConfirmationEnabled, string snsSubscriptionConfirmationOutcome, int subscriptionConfirmationAttempts, int subscriptionConfirmationsSucceeded)
 ```
 
 Creates an Amazon SES callback translation response.
@@ -547,6 +584,10 @@ Parameters:
 - `snsReplayProtectionEnabled`: A value indicating whether process-local SNS replay protection was enabled for this verified callback.
 - `snsReplayProtectionOutcome`: The SNS replay-protection outcome.
 - `duplicateEvents`: The number of translated Amazon SES SNS events skipped because their SNS message id was already observed.
+- `snsSubscriptionConfirmationEnabled`: A value indicating whether SNS subscription confirmation was enabled for this callback.
+- `snsSubscriptionConfirmationOutcome`: The SNS subscription-confirmation outcome.
+- `subscriptionConfirmationAttempts`: The number of subscription-confirmation attempts made by this callback.
+- `subscriptionConfirmationsSucceeded`: The number of subscription-confirmation attempts that succeeded.
 
 #### Properties
 
@@ -660,6 +701,46 @@ bool SnsSignatureVerified { get; }
 
 Gets a value indicating whether the SNS signature verified.
 
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snssubscriptionconfirmationenabled"></a>
+
+##### `SnsSubscriptionConfirmationEnabled`
+
+```csharp
+bool SnsSubscriptionConfirmationEnabled { get; }
+```
+
+Gets a value indicating whether SNS subscription confirmation was enabled for this callback.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snssubscriptionconfirmationoutcome"></a>
+
+##### `SnsSubscriptionConfirmationOutcome`
+
+```csharp
+string SnsSubscriptionConfirmationOutcome { get; }
+```
+
+Gets the SNS subscription-confirmation outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-subscriptionconfirmationattempts"></a>
+
+##### `SubscriptionConfirmationAttempts`
+
+```csharp
+int SubscriptionConfirmationAttempts { get; }
+```
+
+Gets the number of subscription-confirmation attempts made by this callback.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-subscriptionconfirmationssucceeded"></a>
+
+##### `SubscriptionConfirmationsSucceeded`
+
+```csharp
+int SubscriptionConfirmationsSucceeded { get; }
+```
+
+Gets the number of subscription-confirmation attempts that succeeded.
+
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-totalevents"></a>
 
 ##### `TotalEvents`
@@ -703,9 +784,228 @@ IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this
 
 Maps the optional Amazon SES over SNS tenant-invitation delivery status callback endpoint.
 
-Remarks: The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. SNS subscription confirmation, durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured, the endpoint verifies the SNS message signature before translation and skips duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
+Remarks: The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. Durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured, the endpoint verifies the SNS message signature before translation, confirms verified SNS subscription requests, and skips duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
 
 Returns: The same endpoint route builder for fluent routing composition.
 
 Parameters:
 - `endpoints`: The endpoint route builder to extend.
+
+<a id="namespace-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services"></a>
+
+## Namespace Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services
+
+<a id="type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest"></a>
+
+### `AmazonSesSnsSubscriptionConfirmationRequest`
+
+Describes a verified Amazon SNS subscription-confirmation request received by the Amazon SES callback adapter.
+
+Remarks: The request intentionally keeps only the values needed by a confirmation client. The signed `SubscribeURL` may contain a provider token and should be treated as sensitive by custom client implementations.
+
+#### Declaration
+```csharp
+public sealed class AmazonSesSnsSubscriptionConfirmationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-ctor-system-string-system-string-system-string-system-uri-system-string"></a>
+
+##### `AmazonSesSnsSubscriptionConfirmationRequest`
+
+```csharp
+AmazonSesSnsSubscriptionConfirmationRequest(string topicArn, string messageId, string token, Uri subscribeUrl, string timestamp)
+```
+
+Initializes a new instance of the `AmazonSesSnsSubscriptionConfirmationRequest` class.
+
+Parameters:
+- `topicArn`: The SNS topic ARN from the verified envelope.
+- `messageId`: The SNS message id from the verified envelope.
+- `token`: The SNS confirmation token from the verified envelope.
+- `subscribeUrl`: The signed SNS subscription confirmation URL.
+- `timestamp`: The SNS timestamp from the verified envelope, when available.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-messageid"></a>
+
+##### `MessageId`
+
+```csharp
+string MessageId { get; }
+```
+
+Gets the SNS message id from the verified envelope.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-subscribeurl"></a>
+
+##### `SubscribeUrl`
+
+```csharp
+Uri SubscribeUrl { get; }
+```
+
+Gets the signed SNS subscription confirmation URL.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-timestamp"></a>
+
+##### `Timestamp`
+
+```csharp
+string Timestamp { get; }
+```
+
+Gets the SNS timestamp from the verified envelope, when available.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-token"></a>
+
+##### `Token`
+
+```csharp
+string Token { get; }
+```
+
+Gets the SNS confirmation token from the verified envelope.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-topicarn"></a>
+
+##### `TopicArn`
+
+```csharp
+string TopicArn { get; }
+```
+
+Gets the SNS topic ARN from the verified envelope.
+
+<a id="type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult"></a>
+
+### `AmazonSesSnsSubscriptionConfirmationResult`
+
+Represents the result of confirming an Amazon SNS subscription for Amazon SES callbacks.
+
+#### Declaration
+```csharp
+public sealed class AmazonSesSnsSubscriptionConfirmationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-ctor-system-boolean-system-string-system-string-system-nullable-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AmazonSesSnsSubscriptionConfirmationResult`
+
+```csharp
+AmazonSesSnsSubscriptionConfirmationResult(bool succeeded, string outcome, string reason, int? statusCode, IReadOnlyDictionary<string, string> metadata)
+```
+
+Initializes a new instance of the `AmazonSesSnsSubscriptionConfirmationResult` class.
+
+Parameters:
+- `succeeded`: A value indicating whether the subscription confirmation succeeded.
+- `outcome`: The stable confirmation outcome.
+- `reason`: A human-readable reason for the confirmation result.
+- `statusCode`: The provider HTTP status code, when one was observed.
+- `metadata`: Safe provider metadata for operator reporting.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets safe provider metadata for operator reporting.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable confirmation outcome.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets a human-readable reason for the confirmation result.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-statuscode"></a>
+
+##### `StatusCode`
+
+```csharp
+int? StatusCode { get; }
+```
+
+Gets the provider HTTP status code, when one was observed.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-succeeded"></a>
+
+##### `Succeeded`
+
+```csharp
+bool Succeeded { get; }
+```
+
+Gets a value indicating whether the subscription confirmation succeeded.
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationresult-confirmed-system-nullable-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Confirmed`
+
+```csharp
+AmazonSesSnsSubscriptionConfirmationResult Confirmed(int? statusCode, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a successful SNS subscription-confirmation result.
+
+Returns: A successful confirmation result.
+
+Parameters:
+- `statusCode`: The observed provider status code.
+- `metadata`: Safe provider metadata for operator reporting.
+
+<a id="type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-iamazonsessnssubscriptionconfirmationclient"></a>
+
+### `IAmazonSesSnsSubscriptionConfirmationClient`
+
+Confirms Amazon SNS subscriptions for the Amazon SES callback adapter.
+
+Remarks: Hosts can replace this service to route subscription confirmation through a platform HTTP policy, an AWS SDK seam, a queue-backed approval workflow, or a test double while keeping the same Cephalon callback result and runtime metadata contract.
+
+#### Declaration
+```csharp
+public interface IAmazonSesSnsSubscriptionConfirmationClient
+```
+
+#### Methods
+
+<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-iamazonsessnssubscriptionconfirmationclient-confirmasync-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-services-amazonsessnssubscriptionconfirmationrequest-system-threading-cancellationtoken"></a>
+
+##### `ConfirmAsync`
+
+```csharp
+ValueTask<AmazonSesSnsSubscriptionConfirmationResult> ConfirmAsync(AmazonSesSnsSubscriptionConfirmationRequest request, CancellationToken cancellationToken)
+```
+
+Confirms one verified SNS subscription-confirmation envelope.
+
+Returns: The normalized confirmation result.
+
+Parameters:
+- `request`: The verified SNS subscription-confirmation request.
+- `cancellationToken`: A token that cancels the confirmation operation.

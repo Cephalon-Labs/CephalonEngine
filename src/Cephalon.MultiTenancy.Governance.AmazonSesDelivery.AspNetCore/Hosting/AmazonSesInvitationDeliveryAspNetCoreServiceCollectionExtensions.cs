@@ -5,6 +5,7 @@ using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Net.Http;
 
 namespace Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting;
 
@@ -13,6 +14,11 @@ namespace Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting;
 /// </summary>
 public static class AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions
 {
+    /// <summary>
+    /// Gets the named HTTP client used by the default Amazon SNS subscription-confirmation client.
+    /// </summary>
+    public const string HttpClientName = "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore";
+
     /// <summary>
     /// Adds Amazon SES over SNS callback translation services using configuration as the primary setup source.
     /// </summary>
@@ -37,6 +43,14 @@ public static class AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtens
         services.TryAddSingleton<AmazonSesSnsSigningCertificateDownloader>();
         services.TryAddSingleton<AmazonSesSnsSignatureVerifier>();
         services.TryAddSingleton<AmazonSesSnsDeliveryStatusMapper>();
+        services.TryAddSingleton<IAmazonSesSnsSubscriptionConfirmationClient, AmazonSesSnsSubscriptionConfirmationClient>();
+        services
+            .AddHttpClient(HttpClientName)
+            .ConfigureHttpClient(static client => client.Timeout = Timeout.InfiniteTimeSpan)
+            .ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
+            {
+                AllowAutoRedirect = false
+            });
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventionContributor>());
         return services;

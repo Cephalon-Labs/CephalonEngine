@@ -2,13 +2,16 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
+using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration;
 using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting;
+using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Services;
 using Cephalon.MultiTenancy.Governance.Registration;
 using Cephalon.MultiTenancy.Governance.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -94,6 +97,8 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal("cephalon-managed", entry.Metadata["amazonSesSnsMessageIdIdempotencyOwnership"]);
         Assert.Equal("observation-store", entry.Metadata["amazonSesSnsMessageIdIdempotencyScope"]);
         Assert.Equal("application-managed", entry.Metadata["amazonSesSnsInboxOwnership"]);
+        Assert.Equal("false", entry.Metadata["amazonSesSnsSubscriptionConfirmationConfigured"]);
+        Assert.Equal("application-managed", entry.Metadata["amazonSesSnsSubscriptionConfirmationOwnership"]);
     }
 
     [Fact]
@@ -127,6 +132,77 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal("sns-message-type-not-translated", eventResult.GetProperty("outcome").GetString());
         Assert.False(eventResult.GetProperty("translated").GetBoolean());
         Assert.Empty(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
+    }
+
+    [Fact]
+    public async Task AmazonSesSnsStatusCallbackConfirmsVerifiedSubscriptionWhenEnabled()
+    {
+        using var rsa = RSA.Create(2048);
+        using var certificate = CreateSigningCertificate(rsa);
+        var confirmationClient = new CapturingSnsSubscriptionConfirmationClient();
+        await using var app = await CreateAppAsync(
+            configureEndpoint: options =>
+            {
+                options.RequireStatusCallbackAuthorization = false;
+                options.RequireSnsSignatureVerification = true;
+                options.EnableSnsSubscriptionConfirmation = true;
+                options.AllowedSnsTopicArns = [SnsTopicArn];
+                options.PinnedSnsSigningCertificatePem = certificate.ExportCertificatePem();
+                options.ValidateSnsSigningCertificateChain = false;
+            },
+            configureServices: services => services.Replace(ServiceDescriptor.Singleton<IAmazonSesSnsSubscriptionConfirmationClient>(confirmationClient)));
+        var client = app.GetTestClient();
+
+        using var response = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(CreateSignedSnsSubscriptionConfirmationPayload(
+                rsa,
+                snsMessageId: "sns-subscribe-311",
+                token: "sns-subscription-token-311",
+                subscribeUrl: "https://sns.us-east-1.amazonaws.com/?Action=ConfirmSubscription&Token=sns-subscription-token-311")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var resultDocument = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal(1, resultDocument.RootElement.GetProperty("totalEvents").GetInt32());
+        Assert.Equal(0, resultDocument.RootElement.GetProperty("translatedEvents").GetInt32());
+        Assert.Equal(0, resultDocument.RootElement.GetProperty("reconciledEvents").GetInt32());
+        Assert.Equal(1, resultDocument.RootElement.GetProperty("skippedEvents").GetInt32());
+        Assert.True(resultDocument.RootElement.GetProperty("snsSignatureVerificationRequired").GetBoolean());
+        Assert.True(resultDocument.RootElement.GetProperty("snsSignatureVerified").GetBoolean());
+        Assert.Equal("verified", resultDocument.RootElement.GetProperty("snsSignatureVerificationOutcome").GetString());
+        Assert.True(resultDocument.RootElement.GetProperty("snsReplayProtectionEnabled").GetBoolean());
+        Assert.Equal("recorded", resultDocument.RootElement.GetProperty("snsReplayProtectionOutcome").GetString());
+        Assert.True(resultDocument.RootElement.GetProperty("snsSubscriptionConfirmationEnabled").GetBoolean());
+        Assert.Equal("confirmed", resultDocument.RootElement.GetProperty("snsSubscriptionConfirmationOutcome").GetString());
+        Assert.Equal(1, resultDocument.RootElement.GetProperty("subscriptionConfirmationAttempts").GetInt32());
+        Assert.Equal(1, resultDocument.RootElement.GetProperty("subscriptionConfirmationsSucceeded").GetInt32());
+
+        var eventResult = Assert.Single(resultDocument.RootElement.GetProperty("events").EnumerateArray());
+        Assert.Equal("sns-subscribe-311", eventResult.GetProperty("snsMessageId").GetString());
+        Assert.Equal("SubscriptionConfirmation", eventResult.GetProperty("snsMessageType").GetString());
+        Assert.Equal("subscription-confirmed", eventResult.GetProperty("outcome").GetString());
+        Assert.False(eventResult.GetProperty("translated").GetBoolean());
+        Assert.False(eventResult.GetProperty("reconciled").GetBoolean());
+
+        var request = Assert.Single(confirmationClient.Requests);
+        Assert.Equal(SnsTopicArn, request.TopicArn);
+        Assert.Equal("sns-subscribe-311", request.MessageId);
+        Assert.Equal("sns-subscription-token-311", request.Token);
+        Assert.Equal("sns.us-east-1.amazonaws.com", request.SubscribeUrl.Host);
+        Assert.Equal("/", request.SubscribeUrl.AbsolutePath);
+        Assert.Empty(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
+
+        var technologyCatalog = app.Services.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var surface = Assert.Single(
+            technologyCatalog.Surfaces,
+            surface => surface.SurfaceId == "tenant-invitation-delivery-amazon-ses-status-callbacks");
+        var entry = Assert.Single(surface.Entries);
+        Assert.Equal("true", entry.Metadata["amazonSesSnsSubscriptionConfirmationConfigured"]);
+        Assert.Equal("cephalon-managed", entry.Metadata["amazonSesSnsSubscriptionConfirmationOwnership"]);
+        Assert.Equal("true", entry.Metadata["amazonSesSnsSubscriptionConfirmationRequiresSignature"]);
+        Assert.Equal("GET", entry.Metadata["amazonSesSnsSubscriptionConfirmationHttpMethod"]);
+        Assert.Equal("https-sns-confirm-subscription", entry.Metadata["amazonSesSnsSubscriptionConfirmationUrlPolicy"]);
+        Assert.Equal("IAmazonSesSnsSubscriptionConfirmationClient", entry.Metadata["amazonSesSnsSubscriptionConfirmationClient"]);
     }
 
     [Fact]
@@ -423,11 +499,13 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
     }
 
     private static async Task<WebApplication> CreateAppAsync(
-        Action<Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration.AmazonSesInvitationDeliveryAspNetCoreOptions> configureEndpoint)
+        Action<AmazonSesInvitationDeliveryAspNetCoreOptions> configureEndpoint,
+        Action<IServiceCollection>? configureServices = null)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
         builder.Services.AddCephalonAmazonSesInvitationDeliveryAspNetCore(configure: configureEndpoint);
+        configureServices?.Invoke(builder.Services);
         builder.Services.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -557,6 +635,33 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         return JsonSerializer.Serialize(values);
     }
 
+    private static string CreateSignedSnsSubscriptionConfirmationPayload(
+        RSA rsa,
+        string snsMessageId,
+        string token,
+        string subscribeUrl,
+        string? signatureOverride = null,
+        string signingCertUrl = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-test.pem")
+    {
+        var values = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["Type"] = "SubscriptionConfirmation",
+            ["MessageId"] = snsMessageId,
+            ["TopicArn"] = SnsTopicArn,
+            ["Message"] = "You have chosen to subscribe to the topic.",
+            ["SubscribeURL"] = subscribeUrl,
+            ["Timestamp"] = "2026-04-30T04:20:00.000Z",
+            ["Token"] = token,
+            ["SignatureVersion"] = "2",
+            ["SigningCertURL"] = signingCertUrl
+        };
+        values["Signature"] = signatureOverride ?? Convert.ToBase64String(rsa.SignData(
+            Encoding.UTF8.GetBytes(CreateSnsSubscriptionConfirmationStringToSign(values)),
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1));
+        return JsonSerializer.Serialize(values);
+    }
+
     private static string CreateSnsNotificationStringToSign(Dictionary<string, string> values) =>
         string.Join(
             "\n",
@@ -572,4 +677,36 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
             values["TopicArn"],
             "Type",
             values["Type"]);
+
+    private static string CreateSnsSubscriptionConfirmationStringToSign(Dictionary<string, string> values) =>
+        string.Join(
+            "\n",
+            "Message",
+            values["Message"],
+            "MessageId",
+            values["MessageId"],
+            "SubscribeURL",
+            values["SubscribeURL"],
+            "Timestamp",
+            values["Timestamp"],
+            "Token",
+            values["Token"],
+            "TopicArn",
+            values["TopicArn"],
+            "Type",
+            values["Type"]);
+
+    private sealed class CapturingSnsSubscriptionConfirmationClient : IAmazonSesSnsSubscriptionConfirmationClient
+    {
+        public List<AmazonSesSnsSubscriptionConfirmationRequest> Requests { get; } = [];
+
+        public ValueTask<AmazonSesSnsSubscriptionConfirmationResult> ConfirmAsync(
+            AmazonSesSnsSubscriptionConfirmationRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            Requests.Add(request);
+            return ValueTask.FromResult(AmazonSesSnsSubscriptionConfirmationResult.Confirmed(200));
+        }
+    }
 }

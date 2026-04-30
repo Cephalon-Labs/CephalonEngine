@@ -21,6 +21,10 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
     /// <param name="snsReplayProtectionEnabled">A value indicating whether process-local SNS replay protection was enabled for this verified callback.</param>
     /// <param name="snsReplayProtectionOutcome">The SNS replay-protection outcome.</param>
     /// <param name="duplicateEvents">The number of translated Amazon SES SNS events skipped because their SNS message id was already observed.</param>
+    /// <param name="snsSubscriptionConfirmationEnabled">A value indicating whether SNS subscription confirmation was enabled for this callback.</param>
+    /// <param name="snsSubscriptionConfirmationOutcome">The SNS subscription-confirmation outcome.</param>
+    /// <param name="subscriptionConfirmationAttempts">The number of subscription-confirmation attempts made by this callback.</param>
+    /// <param name="subscriptionConfirmationsSucceeded">The number of subscription-confirmation attempts that succeeded.</param>
     public AmazonSesInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -34,7 +38,11 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
         IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events,
         bool snsReplayProtectionEnabled = false,
         string snsReplayProtectionOutcome = "not-configured",
-        int duplicateEvents = 0)
+        int duplicateEvents = 0,
+        bool snsSubscriptionConfirmationEnabled = false,
+        string snsSubscriptionConfirmationOutcome = "not-configured",
+        int subscriptionConfirmationAttempts = 0,
+        int subscriptionConfirmationsSucceeded = 0)
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -61,6 +69,12 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
             ? "unknown"
             : snsReplayProtectionOutcome.Trim();
         DuplicateEvents = duplicateEvents;
+        SnsSubscriptionConfirmationEnabled = snsSubscriptionConfirmationEnabled;
+        SnsSubscriptionConfirmationOutcome = string.IsNullOrWhiteSpace(snsSubscriptionConfirmationOutcome)
+            ? "unknown"
+            : snsSubscriptionConfirmationOutcome.Trim();
+        SubscriptionConfirmationAttempts = subscriptionConfirmationAttempts;
+        SubscriptionConfirmationsSucceeded = subscriptionConfirmationsSucceeded;
     }
 
     /// <summary>
@@ -122,6 +136,26 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
     /// Gets the SNS replay-protection outcome.
     /// </summary>
     public string SnsReplayProtectionOutcome { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether SNS subscription confirmation was enabled for this callback.
+    /// </summary>
+    public bool SnsSubscriptionConfirmationEnabled { get; }
+
+    /// <summary>
+    /// Gets the SNS subscription-confirmation outcome.
+    /// </summary>
+    public string SnsSubscriptionConfirmationOutcome { get; }
+
+    /// <summary>
+    /// Gets the number of subscription-confirmation attempts made by this callback.
+    /// </summary>
+    public int SubscriptionConfirmationAttempts { get; }
+
+    /// <summary>
+    /// Gets the number of subscription-confirmation attempts that succeeded.
+    /// </summary>
+    public int SubscriptionConfirmationsSucceeded { get; }
 
     /// <summary>
     /// Gets per-event translation and reconciliation results.

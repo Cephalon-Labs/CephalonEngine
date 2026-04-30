@@ -38,16 +38,32 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConvention
         MessageTemplate: "Amazon SES invitation delivery status callback duplicate SNS message skipped for observation {ObservationId}.",
         Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint skips a translated notification whose SNS message id is already recorded in the observation store.");
 
+    public static readonly DiagnosticEventDefinition AmazonSesInvitationDeliveryStatusSubscriptionConfirmationConfirmed = new(
+        Id: 4582,
+        Name: "AmazonSesInvitationDeliveryStatusSubscriptionConfirmationConfirmed",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Amazon SES invitation delivery status SNS subscription confirmation completed for message {MessageId} with outcome {Outcome}.",
+        Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint confirms a verified SNS subscription-confirmation envelope.");
+
+    public static readonly DiagnosticEventDefinition AmazonSesInvitationDeliveryStatusSubscriptionConfirmationFailed = new(
+        Id: 4583,
+        Name: "AmazonSesInvitationDeliveryStatusSubscriptionConfirmationFailed",
+        Severity: DiagnosticSeverity.Warning,
+        MessageTemplate: "Amazon SES invitation delivery status SNS subscription confirmation failed for message {MessageId} with outcome {Outcome}.",
+        Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint cannot confirm a verified SNS subscription-confirmation envelope.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
-        Description: "Structured diagnostics for ASP.NET Core Amazon SES over SNS tenant-invitation delivery status callback translation, signature verification, replay protection, and message-id idempotency.",
+        Description: "Structured diagnostics for ASP.NET Core Amazon SES over SNS tenant-invitation delivery status callback translation, signature verification, replay protection, message-id idempotency, and subscription confirmation.",
         Events:
         [
             AmazonSesInvitationDeliveryStatusCallbackAccepted,
             AmazonSesInvitationDeliveryStatusCallbackSignatureRejected,
             AmazonSesInvitationDeliveryStatusCallbackReplayRejected,
-            AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped
+            AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped,
+            AmazonSesInvitationDeliveryStatusSubscriptionConfirmationConfirmed,
+            AmazonSesInvitationDeliveryStatusSubscriptionConfirmationFailed
         ]);
 }
 
@@ -85,6 +101,22 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreLogs
                 AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped.Name),
             "Amazon SES invitation delivery status callback duplicate SNS message skipped for observation {ObservationId}.");
 
+    private static readonly Action<ILogger, string, string, Exception?> SubscriptionConfirmationConfirmedMessage =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            new EventId(
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusSubscriptionConfirmationConfirmed.Id,
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusSubscriptionConfirmationConfirmed.Name),
+            "Amazon SES invitation delivery status SNS subscription confirmation completed for message {MessageId} with outcome {Outcome}.");
+
+    private static readonly Action<ILogger, string, string, Exception?> SubscriptionConfirmationFailedMessage =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Warning,
+            new EventId(
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusSubscriptionConfirmationFailed.Id,
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusSubscriptionConfirmationFailed.Name),
+            "Amazon SES invitation delivery status SNS subscription confirmation failed for message {MessageId} with outcome {Outcome}.");
+
     public static void CallbackAccepted(
         ILogger logger,
         int eventCount,
@@ -101,4 +133,10 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreLogs
 
     public static void CallbackDuplicateMessageSkipped(ILogger logger, string observationId) =>
         CallbackDuplicateMessageSkippedMessage(logger, observationId, null);
+
+    public static void SubscriptionConfirmationConfirmed(ILogger logger, string messageId, string outcome) =>
+        SubscriptionConfirmationConfirmedMessage(logger, messageId, outcome, null);
+
+    public static void SubscriptionConfirmationFailed(ILogger logger, string messageId, string outcome) =>
+        SubscriptionConfirmationFailedMessage(logger, messageId, outcome, null);
 }
