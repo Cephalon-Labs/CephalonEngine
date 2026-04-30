@@ -49,6 +49,11 @@ public sealed class TenantInvitationDeliveryStatusObservationQueryResult
     public int ReturnedCount { get; init; }
 
     /// <summary>
+    /// Gets the number of aggregate summary buckets derived from the filtered observations.
+    /// </summary>
+    public int SummaryCount { get; init; }
+
+    /// <summary>
     /// Gets the effective response limit used for this read.
     /// </summary>
     public int Limit { get; init; }
@@ -63,4 +68,9 @@ public sealed class TenantInvitationDeliveryStatusObservationQueryResult
     /// Gets the normalized delivery status observations returned by this read.
     /// </summary>
     public IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> Observations { get; init; } = [];
+
+    /// <summary>
+    /// Gets aggregate operator summaries derived from the filtered observations before the response limit is applied.
+    /// </summary>
+    public IReadOnlyList<TenantInvitationDeliveryStatusObservationSummaryDescriptor> Summaries { get; init; } = [];
 }

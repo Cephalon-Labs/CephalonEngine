@@ -362,7 +362,7 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
     }
 
     [Fact]
-    public async Task MapCephalonTenantInvitationDeliveryStatusObservationsReadsFilteredBoundedHistoryAndReportsMappedRuntimeSurface()
+    public async Task MapCephalonTenantInvitationDeliveryStatusObservationsReadsFilteredBoundedHistoryWithRollupsAndReportsMappedRuntimeSurface()
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -457,6 +457,7 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal(2, result.TotalCount);
         Assert.Equal(1, result.MatchedCount);
         Assert.Equal(1, result.ReturnedCount);
+        Assert.Equal(6, result.SummaryCount);
         Assert.Equal(1, result.Limit);
         Assert.Equal("tenant-observation", result.Filters["tenantId"]);
         Assert.Equal("delivered", result.Filters["status"]);
@@ -467,6 +468,32 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal(TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled, observation.Outcome);
         Assert.Equal(deliveredAtUtc, observation.ObservedAtUtc);
         Assert.Equal("delivery-observation-delivered", observation.CorrelationId);
+        var deliveredSummary = Assert.Single(
+            result.Summaries,
+            summary => summary.Dimension == "status" && summary.Value == TenantInvitationDeliveryStatuses.Delivered);
+        Assert.Equal(1, deliveredSummary.Count);
+        Assert.Equal(1, deliveredSummary.ReconciledCount);
+        Assert.Equal(1, deliveredSummary.RecordedCount);
+        Assert.Equal(deliveredAtUtc, deliveredSummary.LatestObservedAtUtc);
+
+        var allResponse = await client.GetAsync("/engine/tenant-invitations/delivery-status/observations?tenantId=tenant-observation&limit=25");
+        var allResult = await allResponse.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusObservationQueryResult>();
+        Assert.Equal(HttpStatusCode.OK, allResponse.StatusCode);
+        Assert.NotNull(allResult);
+        Assert.Equal(2, allResult.MatchedCount);
+        Assert.Equal(1, allResult.ReturnedCount);
+        Assert.Equal(7, allResult.SummaryCount);
+        var statusSummaries = allResult.Summaries.Where(static summary => summary.Dimension == "status").ToArray();
+        Assert.Contains(statusSummaries, summary => summary.Value == TenantInvitationDeliveryStatuses.Delivered && summary.Count == 1);
+        Assert.Contains(statusSummaries, summary => summary.Value == TenantInvitationDeliveryStatuses.Bounced && summary.Count == 1);
+        var sourceSummary = Assert.Single(
+            allResult.Summaries,
+            summary => summary.Dimension == "source" && summary.Value == "aspnetcore-delivery-status-callback");
+        Assert.Equal(2, sourceSummary.Count);
+        Assert.Equal(2, sourceSummary.ReconciledCount);
+        Assert.Equal(2, sourceSummary.RecordedCount);
+        Assert.Equal(deliveredAtUtc.AddMinutes(1), sourceSummary.LatestObservedAtUtc);
+
         Assert.Equal("mapped", endpointEntry.Metadata["observationEndpointRuntimeState"]);
         Assert.Equal("true", endpointEntry.Metadata["observationEndpointMapped"]);
         Assert.Equal("false", endpointEntry.Metadata["observationRequireAuthorization"]);
@@ -474,6 +501,9 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("GET", endpointEntry.Metadata["observationHttpMethod"]);
         Assert.Equal("TenantInvitationDeliveryStatusObservationQueryResult", endpointEntry.Metadata["observationResponseBodyContract"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantInvitationDeliveryStatusObservationEndpointOwnership"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationSummaryOwnership"]);
+        Assert.Equal("filtered-normalized-observations", endpointEntry.Metadata["observationSummaryScope"]);
+        Assert.Equal("status,outcome,source,channel,sender,tenant", endpointEntry.Metadata["observationSummaryDimensions"]);
         Assert.Equal("1", endpointEntry.Metadata["observationDefaultLimit"]);
         Assert.Equal("1", endpointEntry.Metadata["observationMaxLimit"]);
         Assert.Equal("application-managed", endpointEntry.Metadata["providerSpecificCallbackInboxOwnership"]);

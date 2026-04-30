@@ -446,7 +446,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting`
 
-- [Cephalon.MultiTenancy.Governance.AspNetCore](cephalon-multitenancy-governance-aspnetcore.md#namespace-cephalon-multitenancy-governance-aspnetcore-hosting): 9 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting)
+- [Cephalon.MultiTenancy.Governance.AspNetCore](cephalon-multitenancy-governance-aspnetcore.md#namespace-cephalon-multitenancy-governance-aspnetcore-hosting): 10 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting)
 
 ## `Cephalon.MultiTenancy.Governance.Configuration`
 

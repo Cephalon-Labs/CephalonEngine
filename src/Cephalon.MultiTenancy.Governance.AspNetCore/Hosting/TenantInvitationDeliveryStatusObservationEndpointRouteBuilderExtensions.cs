@@ -101,6 +101,7 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
         var limited = filtered
             .Take(query.Limit)
             .ToArray();
+        var summaries = BuildSummaries(filtered);
 
         return Results.Json(new TenantInvitationDeliveryStatusObservationQueryResult
         {
@@ -110,10 +111,48 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
             TotalCount = observations.Count,
             MatchedCount = filtered.Length,
             ReturnedCount = limited.Length,
+            SummaryCount = summaries.Length,
             Limit = query.Limit,
             Filters = query.Filters,
-            Observations = limited
+            Observations = limited,
+            Summaries = summaries
         });
+    }
+
+    private static TenantInvitationDeliveryStatusObservationSummaryDescriptor[] BuildSummaries(
+        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations)
+    {
+        return
+        [
+            .. BuildSummaryDimension(observations, "status", static observation => observation.Status),
+            .. BuildSummaryDimension(observations, "outcome", static observation => observation.Outcome),
+            .. BuildSummaryDimension(observations, "source", static observation => observation.Source),
+            .. BuildSummaryDimension(observations, "channel", static observation => observation.Channel),
+            .. BuildSummaryDimension(observations, "sender", static observation => observation.SenderId),
+            .. BuildSummaryDimension(observations, "tenant", static observation => observation.TenantId)
+        ];
+    }
+
+    private static TenantInvitationDeliveryStatusObservationSummaryDescriptor[] BuildSummaryDimension(
+        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations,
+        string dimension,
+        Func<TenantInvitationDeliveryStatusObservationDescriptor, string?> selector)
+    {
+        return observations
+            .GroupBy(
+                observation => NormalizeSummaryValue(selector(observation)),
+                StringComparer.OrdinalIgnoreCase)
+            .Select(group => new TenantInvitationDeliveryStatusObservationSummaryDescriptor(
+                dimension,
+                group.Key,
+                group.Count(),
+                group.Count(static observation => observation.Reconciled),
+                group.Count(static observation => observation.Recorded),
+                group.Max(static observation => observation.ObservedAtUtc),
+                group.Max(static observation => observation.RecordedAtUtc)))
+            .OrderByDescending(static summary => summary.Count)
+            .ThenBy(static summary => summary.Value, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     private static ObservationReadQuery ParseQuery(
@@ -333,6 +372,13 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
     {
         return string.IsNullOrWhiteSpace(value)
             ? null
+            : value.Trim();
+    }
+
+    private static string NormalizeSummaryValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? "none"
             : value.Trim();
     }
 

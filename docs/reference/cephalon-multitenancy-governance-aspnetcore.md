@@ -934,6 +934,26 @@ string StoreKind { get; set; }
 
 Gets the observation store kind, such as `in-memory` or `file`.
 
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-summaries"></a>
+
+##### `Summaries`
+
+```csharp
+IReadOnlyList<TenantInvitationDeliveryStatusObservationSummaryDescriptor> Summaries { get; set; }
+```
+
+Gets aggregate operator summaries derived from the filtered observations before the response limit is applied.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-summarycount"></a>
+
+##### `SummaryCount`
+
+```csharp
+int SummaryCount { get; set; }
+```
+
+Gets the number of aggregate summary buckets derived from the filtered observations.
+
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-totalcount"></a>
 
 ##### `TotalCount`
@@ -943,3 +963,109 @@ int TotalCount { get; set; }
 ```
 
 Gets the number of observations in the store before endpoint filters are applied.
+
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor"></a>
+
+### `TenantInvitationDeliveryStatusObservationSummaryDescriptor`
+
+Describes one aggregate bucket in a tenant-invitation delivery status observation read.
+
+Remarks: Observation summaries are derived from the normalized observation store after endpoint filters are applied and before the response limit is applied. They are operator rollups over recorded observations, not a provider callback inbox, distributed replay ledger, or exactly-once delivery proof.
+
+#### Declaration
+```csharp
+public sealed class TenantInvitationDeliveryStatusObservationSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-ctor-system-string-system-string-system-int32-system-int32-system-int32-system-datetimeoffset-system-datetimeoffset"></a>
+
+##### `TenantInvitationDeliveryStatusObservationSummaryDescriptor`
+
+```csharp
+TenantInvitationDeliveryStatusObservationSummaryDescriptor(string dimension, string value, int count, int reconciledCount, int recordedCount, DateTimeOffset latestObservedAtUtc, DateTimeOffset latestRecordedAtUtc)
+```
+
+Creates a tenant-invitation delivery status observation summary descriptor.
+
+Parameters:
+- `dimension`: The summarized observation dimension, such as `status` or `source`.
+- `value`: The normalized bucket value for the dimension.
+- `count`: The number of observations in the bucket.
+- `reconciledCount`: The number of reconciled observations in the bucket.
+- `recordedCount`: The number of observations that recorded invitation delivery metadata in the bucket.
+- `latestObservedAtUtc`: The latest provider observation timestamp in the bucket.
+- `latestRecordedAtUtc`: The latest Cephalon record timestamp in the bucket.
+
+#### Properties
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of observations in the bucket.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-dimension"></a>
+
+##### `Dimension`
+
+```csharp
+string Dimension { get; }
+```
+
+Gets the summarized observation dimension, such as `status`, `outcome`, `source`, `channel`, `sender`, or `tenant`.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-latestobservedatutc"></a>
+
+##### `LatestObservedAtUtc`
+
+```csharp
+DateTimeOffset LatestObservedAtUtc { get; }
+```
+
+Gets the latest provider observation timestamp in the bucket.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-latestrecordedatutc"></a>
+
+##### `LatestRecordedAtUtc`
+
+```csharp
+DateTimeOffset LatestRecordedAtUtc { get; }
+```
+
+Gets the latest Cephalon record timestamp in the bucket.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-reconciledcount"></a>
+
+##### `ReconciledCount`
+
+```csharp
+int ReconciledCount { get; }
+```
+
+Gets the number of reconciled observations in the bucket.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-recordedcount"></a>
+
+##### `RecordedCount`
+
+```csharp
+int RecordedCount { get; }
+```
+
+Gets the number of observations that recorded invitation delivery metadata in the bucket.
+
+<a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-value"></a>
+
+##### `Value`
+
+```csharp
+string Value { get; }
+```
+
+Gets the normalized bucket value for the dimension.
