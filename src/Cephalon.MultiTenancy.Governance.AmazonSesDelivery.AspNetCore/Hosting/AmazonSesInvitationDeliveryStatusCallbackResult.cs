@@ -25,6 +25,9 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
     /// <param name="snsSubscriptionConfirmationOutcome">The SNS subscription-confirmation outcome.</param>
     /// <param name="subscriptionConfirmationAttempts">The number of subscription-confirmation attempts made by this callback.</param>
     /// <param name="subscriptionConfirmationsSucceeded">The number of subscription-confirmation attempts that succeeded.</param>
+    /// <param name="snsUnsubscribeConfirmationObservationEnabled">A value indicating whether SNS unsubscribe-confirmation observation was enabled for this callback.</param>
+    /// <param name="snsUnsubscribeConfirmationOutcome">The SNS unsubscribe-confirmation observation outcome.</param>
+    /// <param name="unsubscribeConfirmationsObserved">The number of unsubscribe-confirmation messages observed by this callback.</param>
     public AmazonSesInvitationDeliveryStatusCallbackResult(
         string routePattern,
         int totalEvents,
@@ -42,7 +45,10 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
         bool snsSubscriptionConfirmationEnabled = false,
         string snsSubscriptionConfirmationOutcome = "not-configured",
         int subscriptionConfirmationAttempts = 0,
-        int subscriptionConfirmationsSucceeded = 0)
+        int subscriptionConfirmationsSucceeded = 0,
+        bool snsUnsubscribeConfirmationObservationEnabled = false,
+        string snsUnsubscribeConfirmationOutcome = "not-configured",
+        int unsubscribeConfirmationsObserved = 0)
     {
         if (string.IsNullOrWhiteSpace(routePattern))
         {
@@ -75,6 +81,11 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
             : snsSubscriptionConfirmationOutcome.Trim();
         SubscriptionConfirmationAttempts = subscriptionConfirmationAttempts;
         SubscriptionConfirmationsSucceeded = subscriptionConfirmationsSucceeded;
+        SnsUnsubscribeConfirmationObservationEnabled = snsUnsubscribeConfirmationObservationEnabled;
+        SnsUnsubscribeConfirmationOutcome = string.IsNullOrWhiteSpace(snsUnsubscribeConfirmationOutcome)
+            ? "unknown"
+            : snsUnsubscribeConfirmationOutcome.Trim();
+        UnsubscribeConfirmationsObserved = unsubscribeConfirmationsObserved;
     }
 
     /// <summary>
@@ -156,6 +167,21 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
     /// Gets the number of subscription-confirmation attempts that succeeded.
     /// </summary>
     public int SubscriptionConfirmationsSucceeded { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether SNS unsubscribe-confirmation observation was enabled for this callback.
+    /// </summary>
+    public bool SnsUnsubscribeConfirmationObservationEnabled { get; }
+
+    /// <summary>
+    /// Gets the SNS unsubscribe-confirmation observation outcome.
+    /// </summary>
+    public string SnsUnsubscribeConfirmationOutcome { get; }
+
+    /// <summary>
+    /// Gets the number of unsubscribe-confirmation messages observed by this callback.
+    /// </summary>
+    public int UnsubscribeConfirmationsObserved { get; }
 
     /// <summary>
     /// Gets per-event translation and reconciliation results.

@@ -11,8 +11,9 @@ namespace Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configur
 /// reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription
 /// creation beyond optionally confirming signed subscription-confirmation callbacks, durable callback inboxes,
 /// distributed replay protection, or provider polling. When configured, it can verify the Amazon SNS message signature
-/// before translation, confirm verified SNS subscription requests, and skip duplicate SNS message identifiers already
-/// recorded by the Cephalon delivery-status observation store.
+/// before translation, confirm verified SNS subscription requests, observe verified unsubscribe-confirmation lifecycle
+/// messages without restoring subscriptions, and skip duplicate SNS message identifiers already recorded by the
+/// Cephalon delivery-status observation store.
 /// </remarks>
 public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
 {
@@ -220,6 +221,17 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
     public bool EnableSnsSubscriptionConfirmation { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether verified SNS unsubscribe-confirmation messages should be reported by the
+    /// callback endpoint without restoring the subscription.
+    /// </summary>
+    /// <remarks>
+    /// This option is active only when <see cref="RequireSnsSignatureVerification" /> is enabled and the SNS envelope
+    /// verifies successfully. The endpoint never visits the unsubscribe envelope's <c>SubscribeURL</c>; that URL would
+    /// re-confirm the subscription and belongs to an explicit operator or provider lifecycle flow.
+    /// </remarks>
+    public bool EnableSnsUnsubscribeConfirmationObservation { get; set; }
+
+    /// <summary>
     /// Gets or sets the timeout, in seconds, for an enabled SNS subscription-confirmation HTTP request.
     /// </summary>
     /// <remarks>
@@ -274,6 +286,7 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
         options.SnsReplayCacheLimit = ParseInt32(section["SnsReplayCacheLimit"], options.SnsReplayCacheLimit);
         options.EnableSnsMessageIdIdempotency = ParseBoolean(section["EnableSnsMessageIdIdempotency"], options.EnableSnsMessageIdIdempotency);
         options.EnableSnsSubscriptionConfirmation = ParseBoolean(section["EnableSnsSubscriptionConfirmation"], options.EnableSnsSubscriptionConfirmation);
+        options.EnableSnsUnsubscribeConfirmationObservation = ParseBoolean(section["EnableSnsUnsubscribeConfirmationObservation"], options.EnableSnsUnsubscribeConfirmationObservation);
         options.SnsSubscriptionConfirmationTimeoutSeconds = ParseInt32(section["SnsSubscriptionConfirmationTimeoutSeconds"], options.SnsSubscriptionConfirmationTimeoutSeconds);
         return options;
     }
@@ -311,6 +324,9 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
 
     internal bool IsSnsSubscriptionConfirmationConfigured() =>
         EnableSnsSubscriptionConfirmation && RequireSnsSignatureVerification;
+
+    internal bool IsSnsUnsubscribeConfirmationObservationConfigured() =>
+        EnableSnsUnsubscribeConfirmationObservation && RequireSnsSignatureVerification;
 
     internal TimeSpan GetSnsSubscriptionConfirmationTimeout() =>
         TimeSpan.FromSeconds(Math.Clamp(SnsSubscriptionConfirmationTimeoutSeconds, 1, 300));

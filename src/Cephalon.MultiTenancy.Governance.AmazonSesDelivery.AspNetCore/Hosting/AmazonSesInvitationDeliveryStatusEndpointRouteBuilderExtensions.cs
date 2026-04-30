@@ -34,7 +34,8 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
     /// host-agnostic <see cref="ITenantInvitationDeliveryStatusReconciler" />. Durable inboxing, distributed replay
     /// protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured,
     /// the endpoint verifies the SNS message signature before translation, confirms verified SNS subscription requests,
-    /// and skips duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
+    /// observes verified unsubscribe-confirmation lifecycle messages without restoring subscriptions, and skips
+    /// duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
     /// </remarks>
     public static IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)
     {
@@ -104,6 +105,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 options.GetSnsReplayCacheLimit(),
                 options.IsSnsMessageIdIdempotencyConfigured(),
                 options.IsSnsSubscriptionConfirmationConfigured(),
+                options.IsSnsUnsubscribeConfirmationObservationConfigured(),
                 options.GetSnsSubscriptionConfirmationTimeout());
 
         return endpoints;
@@ -176,6 +178,18 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
             if (subscriptionConfirmation.Handled)
             {
                 return subscriptionConfirmation.Result!;
+            }
+
+            var unsubscribeConfirmation = TryObserveSnsUnsubscribeConfirmation(
+                document.RootElement,
+                signatureVerification,
+                replayGuard,
+                logger,
+                options,
+                routePattern);
+            if (unsubscribeConfirmation.Handled)
+            {
+                return unsubscribeConfirmation.Result!;
             }
 
             var eventMappings = mapper.MapPayload(document.RootElement);
@@ -299,7 +313,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         }
     }
 
-    private static async Task<SnsSubscriptionConfirmationHandlingResult> TryConfirmSnsSubscriptionAsync(
+    private static async Task<SnsLifecycleMessageHandlingResult> TryConfirmSnsSubscriptionAsync(
         JsonElement root,
         AmazonSesSnsSignatureVerificationResult signatureVerification,
         AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
@@ -311,17 +325,17 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
     {
         if (!IsSnsSubscriptionConfirmation(root))
         {
-            return SnsSubscriptionConfirmationHandlingResult.NotHandled();
+            return SnsLifecycleMessageHandlingResult.NotHandled();
         }
 
         if (!options.EnableSnsSubscriptionConfirmation)
         {
-            return SnsSubscriptionConfirmationHandlingResult.NotHandled();
+            return SnsLifecycleMessageHandlingResult.NotHandled();
         }
 
         if (!options.IsSnsSubscriptionConfirmationConfigured() || !signatureVerification.Verified)
         {
-            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+            return SnsLifecycleMessageHandlingResult.FromResult(Results.Problem(
                 title: "Amazon SES SNS subscription confirmation is not safely configured.",
                 detail: "Enable SNS signature verification and allow-list the expected topic before enabling automatic subscription confirmation.",
                 statusCode: StatusCodes.Status500InternalServerError));
@@ -333,7 +347,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
             !TryReadString(root, "Timestamp", out var timestamp) ||
             !TryReadString(root, "SubscribeURL", out var subscribeUrlValue))
         {
-            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+            return SnsLifecycleMessageHandlingResult.FromResult(Results.Problem(
                 title: "Amazon SES SNS subscription confirmation is invalid.",
                 detail: "A verified SNS subscription-confirmation envelope must include TopicArn, MessageId, Token, Timestamp, and SubscribeURL.",
                 statusCode: StatusCodes.Status400BadRequest));
@@ -341,7 +355,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
 
         if (!TryCreateTrustedSnsSubscribeUrl(subscribeUrlValue, out var subscribeUrl, out var urlOutcome))
         {
-            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+            return SnsLifecycleMessageHandlingResult.FromResult(Results.Problem(
                 title: "Amazon SES SNS subscription confirmation URL is not trusted.",
                 detail: $"The SubscribeURL failed the configured HTTPS Amazon SNS confirmation policy: {urlOutcome}.",
                 statusCode: StatusCodes.Status400BadRequest));
@@ -351,7 +365,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         if (replayProtection.Failure is not null)
         {
             AmazonSesInvitationDeliveryAspNetCoreLogs.CallbackReplayRejected(logger, replayProtection.Outcome);
-            return SnsSubscriptionConfirmationHandlingResult.FromResult(replayProtection.Failure);
+            return SnsLifecycleMessageHandlingResult.FromResult(replayProtection.Failure);
         }
 
         AmazonSesSnsSubscriptionConfirmationResult confirmation;
@@ -373,7 +387,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         {
             ForgetSnsReplayProtection(replayGuard, replayProtection);
             AmazonSesInvitationDeliveryAspNetCoreLogs.SubscriptionConfirmationFailed(logger, messageId, "client-failed");
-            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+            return SnsLifecycleMessageHandlingResult.FromResult(Results.Problem(
                 title: "Amazon SES SNS subscription confirmation failed.",
                 detail: "The configured SNS subscription-confirmation client could not complete the provider confirmation request.",
                 statusCode: StatusCodes.Status502BadGateway));
@@ -383,7 +397,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         {
             ForgetSnsReplayProtection(replayGuard, replayProtection);
             AmazonSesInvitationDeliveryAspNetCoreLogs.SubscriptionConfirmationFailed(logger, messageId, confirmation.Outcome);
-            return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Problem(
+            return SnsLifecycleMessageHandlingResult.FromResult(Results.Problem(
                 title: "Amazon SES SNS subscription confirmation failed.",
                 detail: confirmation.Reason,
                 statusCode: StatusCodes.Status502BadGateway));
@@ -423,7 +437,97 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
             subscriptionConfirmationAttempts: 1,
             subscriptionConfirmationsSucceeded: 1);
 
-        return SnsSubscriptionConfirmationHandlingResult.FromResult(Results.Json(result, SerializerOptions));
+        return SnsLifecycleMessageHandlingResult.FromResult(Results.Json(result, SerializerOptions));
+    }
+
+    private static SnsLifecycleMessageHandlingResult TryObserveSnsUnsubscribeConfirmation(
+        JsonElement root,
+        AmazonSesSnsSignatureVerificationResult signatureVerification,
+        AmazonSesInvitationDeliveryStatusCallbackReplayGuard replayGuard,
+        ILogger logger,
+        AmazonSesInvitationDeliveryAspNetCoreOptions options,
+        string routePattern)
+    {
+        if (!IsSnsUnsubscribeConfirmation(root))
+        {
+            return SnsLifecycleMessageHandlingResult.NotHandled();
+        }
+
+        if (!options.EnableSnsUnsubscribeConfirmationObservation)
+        {
+            return SnsLifecycleMessageHandlingResult.NotHandled();
+        }
+
+        if (!options.IsSnsUnsubscribeConfirmationObservationConfigured() || !signatureVerification.Verified)
+        {
+            return SnsLifecycleMessageHandlingResult.FromResult(Results.Problem(
+                title: "Amazon SES SNS unsubscribe confirmation observation is not safely configured.",
+                detail: "Enable SNS signature verification and allow-list the expected topic before reporting unsubscribe-confirmation lifecycle messages.",
+                statusCode: StatusCodes.Status500InternalServerError));
+        }
+
+        if (!TryReadString(root, "TopicArn", out _) ||
+            !TryReadString(root, "MessageId", out var messageId) ||
+            !TryReadString(root, "Token", out _) ||
+            !TryReadString(root, "Timestamp", out _) ||
+            !TryReadString(root, "SubscribeURL", out var subscribeUrlValue))
+        {
+            return SnsLifecycleMessageHandlingResult.FromResult(Results.Problem(
+                title: "Amazon SES SNS unsubscribe confirmation is invalid.",
+                detail: "A verified SNS unsubscribe-confirmation envelope must include TopicArn, MessageId, Token, Timestamp, and SubscribeURL.",
+                statusCode: StatusCodes.Status400BadRequest));
+        }
+
+        if (!TryCreateTrustedSnsSubscribeUrl(subscribeUrlValue, out _, out var urlOutcome))
+        {
+            return SnsLifecycleMessageHandlingResult.FromResult(Results.Problem(
+                title: "Amazon SES SNS unsubscribe confirmation URL is not trusted.",
+                detail: $"The SubscribeURL failed the configured HTTPS Amazon SNS re-confirmation policy: {urlOutcome}. The endpoint never invokes this URL automatically.",
+                statusCode: StatusCodes.Status400BadRequest));
+        }
+
+        var replayProtection = RecordSnsReplayProtection(options, replayGuard, signatureVerification);
+        if (replayProtection.Failure is not null)
+        {
+            AmazonSesInvitationDeliveryAspNetCoreLogs.CallbackReplayRejected(logger, replayProtection.Outcome);
+            return SnsLifecycleMessageHandlingResult.FromResult(replayProtection.Failure);
+        }
+
+        const string outcome = "observed";
+        AmazonSesInvitationDeliveryAspNetCoreLogs.UnsubscribeConfirmationObserved(logger, messageId, outcome);
+        var result = new AmazonSesInvitationDeliveryStatusCallbackResult(
+            routePattern,
+            totalEvents: 1,
+            translatedEvents: 0,
+            reconciledEvents: 0,
+            skippedEvents: 1,
+            deniedEvents: 0,
+            snsSignatureVerificationRequired: signatureVerification.Configured,
+            snsSignatureVerified: signatureVerification.Verified,
+            snsSignatureVerificationOutcome: signatureVerification.Outcome,
+            events:
+            [
+                new AmazonSesInvitationDeliveryStatusCallbackEventResult(
+                    index: 0,
+                    snsMessageId: messageId,
+                    snsMessageType: "UnsubscribeConfirmation",
+                    amazonSesMessageId: null,
+                    amazonSesEventType: null,
+                    tenantId: null,
+                    invitationId: null,
+                    status: null,
+                    outcome: "unsubscribe-confirmation-observed",
+                    translated: false,
+                    reconciled: false,
+                    reason: "The verified SNS unsubscribe-confirmation envelope was observed. The SubscribeURL was not invoked because it would restore the subscription.")
+            ],
+            snsReplayProtectionEnabled: replayProtection.Configured,
+            snsReplayProtectionOutcome: replayProtection.Outcome,
+            snsUnsubscribeConfirmationObservationEnabled: true,
+            snsUnsubscribeConfirmationOutcome: outcome,
+            unsubscribeConfirmationsObserved: 1);
+
+        return SnsLifecycleMessageHandlingResult.FromResult(Results.Json(result, SerializerOptions));
     }
 
     private static async Task<CallbackRequestBodyReadResult> ReadRequestBodyAsync(
@@ -733,6 +837,10 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         TryReadString(root, "Type", out var messageType) &&
         string.Equals(messageType, "SubscriptionConfirmation", StringComparison.Ordinal);
 
+    private static bool IsSnsUnsubscribeConfirmation(JsonElement root) =>
+        TryReadString(root, "Type", out var messageType) &&
+        string.Equals(messageType, "UnsubscribeConfirmation", StringComparison.Ordinal);
+
     private static bool TryReadString(JsonElement root, string propertyName, out string value)
     {
         value = string.Empty;
@@ -845,11 +953,11 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         }
     }
 
-    private sealed record SnsSubscriptionConfirmationHandlingResult(bool Handled, IResult? Result)
+    private sealed record SnsLifecycleMessageHandlingResult(bool Handled, IResult? Result)
     {
-        public static SnsSubscriptionConfirmationHandlingResult NotHandled() => new(false, null);
+        public static SnsLifecycleMessageHandlingResult NotHandled() => new(false, null);
 
-        public static SnsSubscriptionConfirmationHandlingResult FromResult(IResult result) => new(true, result);
+        public static SnsLifecycleMessageHandlingResult FromResult(IResult result) => new(true, result);
     }
 
     private sealed record SnsReplayProtectionResult(

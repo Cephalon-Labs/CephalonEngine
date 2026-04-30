@@ -52,10 +52,17 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConvention
         MessageTemplate: "Amazon SES invitation delivery status SNS subscription confirmation failed for message {MessageId} with outcome {Outcome}.",
         Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint cannot confirm a verified SNS subscription-confirmation envelope.");
 
+    public static readonly DiagnosticEventDefinition AmazonSesInvitationDeliveryStatusUnsubscribeConfirmationObserved = new(
+        Id: 4584,
+        Name: "AmazonSesInvitationDeliveryStatusUnsubscribeConfirmationObserved",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Amazon SES invitation delivery status SNS unsubscribe confirmation observed for message {MessageId} with outcome {Outcome}.",
+        Description: "Emitted when the ASP.NET Core Amazon SES over SNS callback endpoint observes a verified SNS unsubscribe-confirmation envelope without restoring the subscription.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
         LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
-        Description: "Structured diagnostics for ASP.NET Core Amazon SES over SNS tenant-invitation delivery status callback translation, signature verification, replay protection, message-id idempotency, and subscription confirmation.",
+        Description: "Structured diagnostics for ASP.NET Core Amazon SES over SNS tenant-invitation delivery status callback translation, signature verification, replay protection, message-id idempotency, subscription confirmation, and unsubscribe-confirmation observation.",
         Events:
         [
             AmazonSesInvitationDeliveryStatusCallbackAccepted,
@@ -63,7 +70,8 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConvention
             AmazonSesInvitationDeliveryStatusCallbackReplayRejected,
             AmazonSesInvitationDeliveryStatusCallbackDuplicateMessageSkipped,
             AmazonSesInvitationDeliveryStatusSubscriptionConfirmationConfirmed,
-            AmazonSesInvitationDeliveryStatusSubscriptionConfirmationFailed
+            AmazonSesInvitationDeliveryStatusSubscriptionConfirmationFailed,
+            AmazonSesInvitationDeliveryStatusUnsubscribeConfirmationObserved
         ]);
 }
 
@@ -117,6 +125,14 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreLogs
                 AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusSubscriptionConfirmationFailed.Name),
             "Amazon SES invitation delivery status SNS subscription confirmation failed for message {MessageId} with outcome {Outcome}.");
 
+    private static readonly Action<ILogger, string, string, Exception?> UnsubscribeConfirmationObservedMessage =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            new EventId(
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusUnsubscribeConfirmationObserved.Id,
+                AmazonSesInvitationDeliveryAspNetCoreDiagnosticsConventions.AmazonSesInvitationDeliveryStatusUnsubscribeConfirmationObserved.Name),
+            "Amazon SES invitation delivery status SNS unsubscribe confirmation observed for message {MessageId} with outcome {Outcome}.");
+
     public static void CallbackAccepted(
         ILogger logger,
         int eventCount,
@@ -139,4 +155,7 @@ internal static class AmazonSesInvitationDeliveryAspNetCoreLogs
 
     public static void SubscriptionConfirmationFailed(ILogger logger, string messageId, string outcome) =>
         SubscriptionConfirmationFailedMessage(logger, messageId, outcome, null);
+
+    public static void UnsubscribeConfirmationObserved(ILogger logger, string messageId, string outcome) =>
+        UnsubscribeConfirmationObservedMessage(logger, messageId, outcome, null);
 }

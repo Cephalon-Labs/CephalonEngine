@@ -206,6 +206,68 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
     }
 
     [Fact]
+    public async Task AmazonSesSnsStatusCallbackObservesVerifiedUnsubscribeWithoutRestoringSubscription()
+    {
+        using var rsa = RSA.Create(2048);
+        using var certificate = CreateSigningCertificate(rsa);
+        var confirmationClient = new CapturingSnsSubscriptionConfirmationClient();
+        await using var app = await CreateAppAsync(
+            configureEndpoint: options =>
+            {
+                options.RequireStatusCallbackAuthorization = false;
+                options.RequireSnsSignatureVerification = true;
+                options.EnableSnsUnsubscribeConfirmationObservation = true;
+                options.AllowedSnsTopicArns = [SnsTopicArn];
+                options.PinnedSnsSigningCertificatePem = certificate.ExportCertificatePem();
+                options.ValidateSnsSigningCertificateChain = false;
+            },
+            configureServices: services => services.Replace(ServiceDescriptor.Singleton<IAmazonSesSnsSubscriptionConfirmationClient>(confirmationClient)));
+        var client = app.GetTestClient();
+
+        using var response = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(CreateSignedSnsUnsubscribeConfirmationPayload(
+                rsa,
+                snsMessageId: "sns-unsubscribe-312",
+                token: "sns-restore-token-312",
+                subscribeUrl: "https://sns.us-east-1.amazonaws.com/?Action=ConfirmSubscription&Token=sns-restore-token-312")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var resultDocument = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal(1, resultDocument.RootElement.GetProperty("totalEvents").GetInt32());
+        Assert.Equal(0, resultDocument.RootElement.GetProperty("translatedEvents").GetInt32());
+        Assert.Equal(0, resultDocument.RootElement.GetProperty("reconciledEvents").GetInt32());
+        Assert.Equal(1, resultDocument.RootElement.GetProperty("skippedEvents").GetInt32());
+        Assert.True(resultDocument.RootElement.GetProperty("snsSignatureVerificationRequired").GetBoolean());
+        Assert.True(resultDocument.RootElement.GetProperty("snsSignatureVerified").GetBoolean());
+        Assert.Equal("verified", resultDocument.RootElement.GetProperty("snsSignatureVerificationOutcome").GetString());
+        Assert.True(resultDocument.RootElement.GetProperty("snsReplayProtectionEnabled").GetBoolean());
+        Assert.Equal("recorded", resultDocument.RootElement.GetProperty("snsReplayProtectionOutcome").GetString());
+        Assert.True(resultDocument.RootElement.GetProperty("snsUnsubscribeConfirmationObservationEnabled").GetBoolean());
+        Assert.Equal("observed", resultDocument.RootElement.GetProperty("snsUnsubscribeConfirmationOutcome").GetString());
+        Assert.Equal(1, resultDocument.RootElement.GetProperty("unsubscribeConfirmationsObserved").GetInt32());
+
+        var eventResult = Assert.Single(resultDocument.RootElement.GetProperty("events").EnumerateArray());
+        Assert.Equal("sns-unsubscribe-312", eventResult.GetProperty("snsMessageId").GetString());
+        Assert.Equal("UnsubscribeConfirmation", eventResult.GetProperty("snsMessageType").GetString());
+        Assert.Equal("unsubscribe-confirmation-observed", eventResult.GetProperty("outcome").GetString());
+        Assert.False(eventResult.GetProperty("translated").GetBoolean());
+        Assert.False(eventResult.GetProperty("reconciled").GetBoolean());
+        Assert.Empty(confirmationClient.Requests);
+        Assert.Empty(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
+
+        var technologyCatalog = app.Services.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var surface = Assert.Single(
+            technologyCatalog.Surfaces,
+            surface => surface.SurfaceId == "tenant-invitation-delivery-amazon-ses-status-callbacks");
+        var entry = Assert.Single(surface.Entries);
+        Assert.Equal("true", entry.Metadata["amazonSesSnsUnsubscribeConfirmationObservationConfigured"]);
+        Assert.Equal("cephalon-managed", entry.Metadata["amazonSesSnsUnsubscribeConfirmationObservationOwnership"]);
+        Assert.Equal("observe-only", entry.Metadata["amazonSesSnsUnsubscribeConfirmationAction"]);
+        Assert.Equal("validated-never-invoked", entry.Metadata["amazonSesSnsUnsubscribeConfirmationSubscribeUrlPolicy"]);
+    }
+
+    [Fact]
     public async Task AmazonSesSnsStatusCallbackMapsTransientBounceToDeferred()
     {
         await using var app = await CreateAppAsync(
@@ -643,12 +705,52 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         string? signatureOverride = null,
         string signingCertUrl = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-test.pem")
     {
+        return CreateSignedSnsLifecycleConfirmationPayload(
+            rsa,
+            messageType: "SubscriptionConfirmation",
+            message: "You have chosen to subscribe to the topic.",
+            snsMessageId: snsMessageId,
+            token: token,
+            subscribeUrl: subscribeUrl,
+            signatureOverride: signatureOverride,
+            signingCertUrl: signingCertUrl);
+    }
+
+    private static string CreateSignedSnsUnsubscribeConfirmationPayload(
+        RSA rsa,
+        string snsMessageId,
+        string token,
+        string subscribeUrl,
+        string? signatureOverride = null,
+        string signingCertUrl = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-test.pem")
+    {
+        return CreateSignedSnsLifecycleConfirmationPayload(
+            rsa,
+            messageType: "UnsubscribeConfirmation",
+            message: "You have chosen to deactivate a subscription. To restore the subscription, visit the SubscribeURL included in this message.",
+            snsMessageId: snsMessageId,
+            token: token,
+            subscribeUrl: subscribeUrl,
+            signatureOverride: signatureOverride,
+            signingCertUrl: signingCertUrl);
+    }
+
+    private static string CreateSignedSnsLifecycleConfirmationPayload(
+        RSA rsa,
+        string messageType,
+        string message,
+        string snsMessageId,
+        string token,
+        string subscribeUrl,
+        string? signatureOverride,
+        string signingCertUrl)
+    {
         var values = new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            ["Type"] = "SubscriptionConfirmation",
+            ["Type"] = messageType,
             ["MessageId"] = snsMessageId,
             ["TopicArn"] = SnsTopicArn,
-            ["Message"] = "You have chosen to subscribe to the topic.",
+            ["Message"] = message,
             ["SubscribeURL"] = subscribeUrl,
             ["Timestamp"] = "2026-04-30T04:20:00.000Z",
             ["Token"] = token,
@@ -656,7 +758,7 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
             ["SigningCertURL"] = signingCertUrl
         };
         values["Signature"] = signatureOverride ?? Convert.ToBase64String(rsa.SignData(
-            Encoding.UTF8.GetBytes(CreateSnsSubscriptionConfirmationStringToSign(values)),
+            Encoding.UTF8.GetBytes(CreateSnsLifecycleConfirmationStringToSign(values)),
             HashAlgorithmName.SHA256,
             RSASignaturePadding.Pkcs1));
         return JsonSerializer.Serialize(values);
@@ -678,7 +780,7 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
             "Type",
             values["Type"]);
 
-    private static string CreateSnsSubscriptionConfirmationStringToSign(Dictionary<string, string> values) =>
+    private static string CreateSnsLifecycleConfirmationStringToSign(Dictionary<string, string> values) =>
         string.Join(
             "\n",
             "Message",

@@ -1110,7 +1110,7 @@ Current shipped event-id ranges include:
 - `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`: `4568-4571`
 - `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`: `4572-4573`
 - `Cephalon.MultiTenancy.Governance.AmazonSesDelivery`: `4576-4577`
-- `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`: `4578-4583`
+- `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`: `4578-4584`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery`: `4560-4561`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`: `4562-4565`
 - `Cephalon.MultiTenancy.Governance.SmtpDelivery`: `4558-4559`
@@ -1536,7 +1536,7 @@ Operational notes:
 - the default client uses the AWS SDK for .NET SES v2 `SendEmail` API and accepts a successful `200 OK` response with a SES `MessageId` as dispatched handoff truth
 - AWS credentials, IAM policy, verified identities, DKIM/SPF/DMARC, sandbox exit, account-level suppression policy, and SES configuration-set event destinations stay with the host/AWS account rather than `Cephalon.Engine`
 - sender metadata records region, configuration set, SES status code, SES message id, Cephalon message id, sender id, recipient email, recipient metadata key, reply-to count, tag count, and safe client metadata, but it does not record AWS credentials, raw SDK request bodies, or message bodies
-- this package owns Amazon SES v2 accepted handoff only; Amazon SES over SNS callback translation, opt-in SNS signature verification, bounded process-local SNS replay protection, observation-store-backed SNS message-id idempotency, and opt-in verified SNS subscription confirmation live in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`, while SNS topic/subscription creation, SES event destination setup, provider polling, durable callback inboxes, distributed replay/event-id ledgers, deliverability analytics, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns Amazon SES v2 accepted handoff only; Amazon SES over SNS callback translation, opt-in SNS signature verification, bounded process-local SNS replay protection, observation-store-backed SNS message-id idempotency, opt-in verified SNS subscription confirmation, and opt-in verified SNS unsubscribe-confirmation observation live in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`, while SNS topic/subscription creation, SES event destination setup, automatic resubscribe/restore, subscription lifecycle governance, provider polling, durable callback inboxes, distributed replay/event-id ledgers, deliverability analytics, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
 
 ### Amazon SES invitation delivery status callbacks
 
@@ -1575,7 +1575,8 @@ Configuration:
             "SnsReplayCacheLimit": 4096,
             "EnableSnsMessageIdIdempotency": true,
             "EnableSnsSubscriptionConfirmation": false,
-            "SnsSubscriptionConfirmationTimeoutSeconds": 10
+            "SnsSubscriptionConfirmationTimeoutSeconds": 10,
+            "EnableSnsUnsubscribeConfirmationObservation": false
           }
         }
       }
@@ -1605,12 +1606,13 @@ Operational notes:
 - when `EnableSnsReplayProtection` is enabled with SNS signature verification, the endpoint stores a bounded process-local fingerprint derived from the verified `TopicArn` plus `MessageId` and rejects duplicate verified callbacks with `409 Conflict` before reconciliation
 - when `EnableSnsMessageIdIdempotency` is enabled with the governance observation store, the endpoint checks the normalized `amazon-ses-sns:{MessageId}` observation id before reconciliation, skips already observed SNS messages with `duplicateEvents`, and reports diagnostic `4581`; durability follows the configured observation store and is not a distributed event-id ledger
 - when `EnableSnsSubscriptionConfirmation` is enabled with SNS signature verification, the endpoint confirms only verified SNS `SubscriptionConfirmation` envelopes from allowed topics through the replaceable `IAmazonSesSnsSubscriptionConfirmationClient`; the built-in client performs a bounded no-redirect `GET` to a trusted HTTPS Amazon SNS `SubscribeURL`, returns confirmation aggregate fields, and emits diagnostics `4582` or `4583`
+- when `EnableSnsUnsubscribeConfirmationObservation` is enabled with SNS signature verification, the endpoint observes only verified SNS `UnsubscribeConfirmation` envelopes from allowed topics, validates the trusted HTTPS Amazon SNS `SubscribeURL`, returns unsubscribe-confirmation aggregate fields, emits diagnostic `4584`, and never invokes `SubscribeURL`
 - the translator extracts Cephalon context from SES `mail.tags`, including tenant id, invitation id, channel, sender id, and correlation id, and uses `mail.messageId` as the provider message id captured by the SES sender
 - `Send` maps to `accepted`, `Delivery` maps to `delivered`, transient `Bounce` maps to `deferred`, other `Bounce` maps to `bounced`, `Complaint` and `Reject` map to `suppressed`, `Rendering Failure` maps to `failed`, and `DeliveryDelay` maps to `deferred`; `Open`, `Click`, and `Subscription` are skipped by default
 - `PinnedSnsSigningCertificatePem` can be used for controlled tests or deliberate certificate pinning; production hosts usually leave it unset so the endpoint retrieves the AWS SNS signing certificate from the validated `SigningCertURL`
-- `UnsubscribeConfirmation` is still skipped; automatic topic/subscription provisioning, SES event-destination setup, token storage, and subscription lifecycle governance remain outside this package
-- the runtime surface reports whether SNS signature verification is required, whether signature version 2 and topic allow-listing are required, how many allowed topic ARNs are configured, whether pinned certificate or chain validation paths are active, whether process-local replay protection is configured, whether observation-store-backed SNS message-id idempotency is configured, and whether verified subscription confirmation is configured
-- keep endpoint authorization, gateway policy, SNS topic policy, private networking, or AWS WAF controls in place as defense in depth; SNS topic/subscription setup, topic policies, durable inboxes, distributed replay ledgers, distributed event-id ledgers, and provider polling remain separate follow-through
+- `UnsubscribeConfirmation` stays skipped unless unsubscribe-confirmation observation is enabled; automatic topic/subscription provisioning, SES event-destination setup, automatic resubscribe/restore, token storage, and subscription lifecycle governance remain outside this package
+- the runtime surface reports whether SNS signature verification is required, whether signature version 2 and topic allow-listing are required, how many allowed topic ARNs are configured, whether pinned certificate or chain validation paths are active, whether process-local replay protection is configured, whether observation-store-backed SNS message-id idempotency is configured, whether verified subscription confirmation is configured, and whether verified unsubscribe-confirmation observation is configured
+- keep endpoint authorization, gateway policy, SNS topic policy, private networking, or AWS WAF controls in place as defense in depth; SNS topic/subscription setup, topic policies, automatic resubscribe/restore, subscription lifecycle governance, durable inboxes, distributed replay ledgers, distributed event-id ledgers, and provider polling remain separate follow-through
 
 ### Mailgun invitation delivery sender
 

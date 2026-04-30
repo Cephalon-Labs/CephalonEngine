@@ -19,7 +19,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures ASP.NET Core Amazon SES over SNS callback translation for tenant-invitation delivery status updates.
 
-Remarks: This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription creation beyond optionally confirming signed subscription-confirmation callbacks, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can verify the Amazon SNS message signature before translation, confirm verified SNS subscription requests, and skip duplicate SNS message identifiers already recorded by the Cephalon delivery-status observation store.
+Remarks: This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription creation beyond optionally confirming signed subscription-confirmation callbacks, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can verify the Amazon SNS message signature before translation, confirm verified SNS subscription requests, observe verified unsubscribe-confirmation lifecycle messages without restoring subscriptions, and skip duplicate SNS message identifiers already recorded by the Cephalon delivery-status observation store.
 
 #### Declaration
 ```csharp
@@ -107,6 +107,18 @@ bool EnableSnsSubscriptionConfirmation { get; set; }
 Gets or sets a value indicating whether verified SNS subscription-confirmation messages should be confirmed by the callback endpoint.
 
 Remarks: This option is disabled by default. When enabled, the endpoint only confirms `SubscriptionConfirmation` envelopes after SNS signature verification has succeeded. It does not create SNS topics, configure SES event destinations, own subscription lifecycle governance, or store confirmation tokens.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablesnsunsubscribeconfirmationobservation"></a>
+
+##### `EnableSnsUnsubscribeConfirmationObservation`
+
+```csharp
+bool EnableSnsUnsubscribeConfirmationObservation { get; set; }
+```
+
+Gets or sets a value indicating whether verified SNS unsubscribe-confirmation messages should be reported by the callback endpoint without restoring the subscription.
+
+Remarks: This option is active only when `RequireSnsSignatureVerification` is enabled and the SNS envelope verifies successfully. The endpoint never visits the unsubscribe envelope's `SubscribeURL`; that URL would re-confirm the subscription and belongs to an explicit operator or provider lifecycle flow.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablestatuscallbackendpoint"></a>
 
@@ -560,12 +572,12 @@ public sealed class AmazonSesInvitationDeliveryStatusCallbackResult
 
 #### Constructors
 
-<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string-system-int32-system-boolean-system-string-system-int32-system-int32"></a>
+<a id="member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-system-boolean-system-string-system-int32-system-boolean-system-string-system-int32-system-int32-system-boolean-system-string-system-int32"></a>
 
 ##### `AmazonSesInvitationDeliveryStatusCallbackResult`
 
 ```csharp
-AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome, int duplicateEvents, bool snsSubscriptionConfirmationEnabled, string snsSubscriptionConfirmationOutcome, int subscriptionConfirmationAttempts, int subscriptionConfirmationsSucceeded)
+AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList<AmazonSesInvitationDeliveryStatusCallbackEventResult> events, bool snsReplayProtectionEnabled, string snsReplayProtectionOutcome, int duplicateEvents, bool snsSubscriptionConfirmationEnabled, string snsSubscriptionConfirmationOutcome, int subscriptionConfirmationAttempts, int subscriptionConfirmationsSucceeded, bool snsUnsubscribeConfirmationObservationEnabled, string snsUnsubscribeConfirmationOutcome, int unsubscribeConfirmationsObserved)
 ```
 
 Creates an Amazon SES callback translation response.
@@ -588,6 +600,9 @@ Parameters:
 - `snsSubscriptionConfirmationOutcome`: The SNS subscription-confirmation outcome.
 - `subscriptionConfirmationAttempts`: The number of subscription-confirmation attempts made by this callback.
 - `subscriptionConfirmationsSucceeded`: The number of subscription-confirmation attempts that succeeded.
+- `snsUnsubscribeConfirmationObservationEnabled`: A value indicating whether SNS unsubscribe-confirmation observation was enabled for this callback.
+- `snsUnsubscribeConfirmationOutcome`: The SNS unsubscribe-confirmation observation outcome.
+- `unsubscribeConfirmationsObserved`: The number of unsubscribe-confirmation messages observed by this callback.
 
 #### Properties
 
@@ -721,6 +736,26 @@ string SnsSubscriptionConfirmationOutcome { get; }
 
 Gets the SNS subscription-confirmation outcome.
 
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snsunsubscribeconfirmationobservationenabled"></a>
+
+##### `SnsUnsubscribeConfirmationObservationEnabled`
+
+```csharp
+bool SnsUnsubscribeConfirmationObservationEnabled { get; }
+```
+
+Gets a value indicating whether SNS unsubscribe-confirmation observation was enabled for this callback.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snsunsubscribeconfirmationoutcome"></a>
+
+##### `SnsUnsubscribeConfirmationOutcome`
+
+```csharp
+string SnsUnsubscribeConfirmationOutcome { get; }
+```
+
+Gets the SNS unsubscribe-confirmation observation outcome.
+
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-subscriptionconfirmationattempts"></a>
 
 ##### `SubscriptionConfirmationAttempts`
@@ -761,6 +796,16 @@ int TranslatedEvents { get; }
 
 Gets the number of events translated into Cephalon delivery-status events.
 
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-unsubscribeconfirmationsobserved"></a>
+
+##### `UnsubscribeConfirmationsObserved`
+
+```csharp
+int UnsubscribeConfirmationsObserved { get; }
+```
+
+Gets the number of unsubscribe-confirmation messages observed by this callback.
+
 <a id="type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatusendpointroutebuilderextensions"></a>
 
 ### `AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions`
@@ -784,7 +829,7 @@ IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this
 
 Maps the optional Amazon SES over SNS tenant-invitation delivery status callback endpoint.
 
-Remarks: The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. Durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured, the endpoint verifies the SNS message signature before translation, confirms verified SNS subscription requests, and skips duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
+Remarks: The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. Durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured, the endpoint verifies the SNS message signature before translation, confirms verified SNS subscription requests, observes verified unsubscribe-confirmation lifecycle messages without restoring subscriptions, and skips duplicate SNS message identifiers already present in the Cephalon delivery-status observation store.
 
 Returns: The same endpoint route builder for fluent routing composition.
 

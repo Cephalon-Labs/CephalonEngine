@@ -42,12 +42,15 @@ internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor
             observationStoreConfigured;
         var snsSubscriptionConfirmationConfigured =
             endpoint?.SnsSubscriptionConfirmationConfigured ?? options.IsSnsSubscriptionConfirmationConfigured();
+        var snsUnsubscribeConfirmationObservationConfigured =
+            endpoint?.SnsUnsubscribeConfirmationObservationConfigured ?? options.IsSnsUnsubscribeConfirmationObservationConfigured();
         var snsSubscriptionConfirmationTimeoutSeconds =
             (int)(endpoint?.SnsSubscriptionConfirmationTimeout ?? options.GetSnsSubscriptionConfirmationTimeout()).TotalSeconds;
         var signatureVerificationOwnership = requireSnsSignatureVerification ? "cephalon-managed" : "not-configured";
         var replayProtectionOwnership = snsReplayProtectionConfigured ? "cephalon-managed" : "not-configured";
         var messageIdIdempotencyOwnership = snsMessageIdIdempotencyConfigured ? "cephalon-managed" : "not-configured";
         var subscriptionConfirmationOwnership = snsSubscriptionConfirmationConfigured ? "cephalon-managed" : "application-managed";
+        var unsubscribeConfirmationObservationOwnership = snsUnsubscribeConfirmationObservationConfigured ? "cephalon-managed" : "application-managed";
         var runtimeState = !endpointEnabled
             ? "disabled"
             : endpointMapped ? "mapped" : "configured-not-mapped";
@@ -75,6 +78,11 @@ internal sealed class AmazonSesInvitationDeliveryStatusRuntimeSurfaceContributor
             ["amazonSesSnsSubscriptionConfirmationUrlPolicy"] = snsSubscriptionConfirmationConfigured ? "https-sns-confirm-subscription" : "not-configured",
             ["amazonSesSnsSubscriptionConfirmationTimeoutSeconds"] = snsSubscriptionConfirmationTimeoutSeconds.ToString(CultureInfo.InvariantCulture),
             ["amazonSesSnsSubscriptionConfirmationClient"] = "IAmazonSesSnsSubscriptionConfirmationClient",
+            ["amazonSesSnsUnsubscribeConfirmationObservationConfigured"] = snsUnsubscribeConfirmationObservationConfigured.ToString().ToLowerInvariant(),
+            ["amazonSesSnsUnsubscribeConfirmationObservationOwnership"] = unsubscribeConfirmationObservationOwnership,
+            ["amazonSesSnsUnsubscribeConfirmationRequiresSignature"] = "true",
+            ["amazonSesSnsUnsubscribeConfirmationAction"] = "observe-only",
+            ["amazonSesSnsUnsubscribeConfirmationSubscribeUrlPolicy"] = snsUnsubscribeConfirmationObservationConfigured ? "validated-never-invoked" : "not-configured",
             ["amazonSesSnsSignatureVerificationOwnership"] = signatureVerificationOwnership,
             ["amazonSesSnsSignatureVerificationRequired"] = requireSnsSignatureVerification.ToString().ToLowerInvariant(),
             ["amazonSesSnsSignatureVersion2Required"] = requireSnsSignatureVersion2.ToString().ToLowerInvariant(),
@@ -184,6 +192,7 @@ internal sealed class AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog
         int snsReplayCacheLimit,
         bool snsMessageIdIdempotencyConfigured,
         bool snsSubscriptionConfirmationConfigured,
+        bool snsUnsubscribeConfirmationObservationConfigured,
         TimeSpan snsSubscriptionConfirmationTimeout)
     {
         lock (syncRoot)
@@ -210,6 +219,7 @@ internal sealed class AmazonSesInvitationDeliveryStatusCallbackRuntimeCatalog
                 snsReplayCacheLimit,
                 snsMessageIdIdempotencyConfigured,
                 snsSubscriptionConfirmationConfigured,
+                snsUnsubscribeConfirmationObservationConfigured,
                 snsSubscriptionConfirmationTimeout);
         }
     }
@@ -237,4 +247,5 @@ internal sealed record AmazonSesInvitationDeliveryStatusCallbackEndpointRuntimeS
     int SnsReplayCacheLimit,
     bool SnsMessageIdIdempotencyConfigured,
     bool SnsSubscriptionConfirmationConfigured,
+    bool SnsUnsubscribeConfirmationObservationConfigured,
     TimeSpan SnsSubscriptionConfirmationTimeout);
